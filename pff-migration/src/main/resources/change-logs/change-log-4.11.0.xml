@@ -3432,4 +3432,56 @@ INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS)
 ]]>
 </sql>
 </changeSet>
+
+<changeSet id="47" author="Vinay">
+	<sql>
+		Delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_NOCReport');
+		Delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_NDCReport');
+		Delete from REPORTFILTERFIELDS where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_BalanceCertificate');
+		
+		Delete from REPORTCONFIGURATION where menuitemcode='menu_Item_NOCReport';
+		Delete from REPORTCONFIGURATION where menuitemcode='menu_Item_NDCReport';
+		Delete from REPORTCONFIGURATION where menuitemcode='menu_Item_BalanceCertificate';
+		
+		Insert into REPORTCONFIGURATION  
+		values ((select max(reportid)+1 from reportconfiguration),'No Objection Certificate','No Objection Certificate',1,'NoObjectionCertificate','dataSource',1,'menu_Item_NOCReport',2,1000,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,1,0);
+		
+		Insert into REPORTCONFIGURATION  
+		values ((select max(reportid)+1 from reportconfiguration),'No Dues Certificate','No Dues Certificate',1,'NoDuesCertificate','dataSource',1,'menu_Item_NDCReport',2,1000,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,1,0);
+		
+		Insert into REPORTCONFIGURATION  
+		values ((select max(reportid)+1 from reportconfiguration),'Balance Certificate','Balance Certificate',1,'BalanceCertificate','dataSource',1,'menu_Item_BalanceCertificate',2,1000,null,null,null,null,null,null,0,CURRENT_TIMESTAMP,1,1);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_NOCReport'),1,'Loan Reference','LOVSEARCH','Loan Reference','t1.finreference',null,'ClosedFinance','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_NDCReport'),1,'Loan Reference','LOVSEARCH','Loan Reference','t1.finreference',null,'ClosedFinance','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+		
+		Insert into REPORTFILTERFIELDS 
+		values ((select reportid from reportconfiguration where menuitemcode='menu_Item_BalanceCertificate'),1,'Loan Reference','LOVSEARCH','Loan Reference','t1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,null);
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NOCReport','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_NDCReport','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_BalanceCertificate','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_NOCReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_NDCReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REPORTS_ADMIN') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_BalanceCertificate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				
+	</sql>
+</changeSet>
+<changeSet id="48" author="Vinay">
+	<sql>
+update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_NOCReport';
+update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_NDCReport';
+update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_BalanceCertificate';
+</sql>
+</changeSet>
 </databaseChangeLog>

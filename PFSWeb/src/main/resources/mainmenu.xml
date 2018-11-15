@@ -1029,7 +1029,16 @@
 		        rightName="menuItem_CustomerTemplates_Prov_Certificate" />
 	        <menuItem id="menu_Item_InterestCertficate"
 		        zulNavigation="/WEB-INF/pages/Reports/InterestCertificateGenerationDialog.zul?module=interest"
-		        rightName="menuItem_CustomerTemplates_InterestCertificate" />	
+		        rightName="menuItem_CustomerTemplates_InterestCertificate" />
+		   <!--  <menuItem id="menu_Item_NOCReport"
+		        zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+		        rightName="menu_Item_NOCReport" />	
+	        <menuItem id="menu_Item_NDCReport"
+		        zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+		        rightName="menu_Item_NDCReport" />	
+	        <menuItem id="menu_Item_BalanceCertificate"
+		        zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+		        rightName="menu_Item_BalanceCertificate" />	 -->	
 		</menu>
 		<menu id="menu_Category_Disbursements">
 			<menuItem id="menu_Item_DAILYDISBURSALREPORT"
