@@ -44,6 +44,8 @@ package com.pennant.webui.util;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -139,6 +141,8 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
+
+	private boolean isSystemDate = false;
 
 	public NotesCtrl() {
 		super();
@@ -371,7 +375,15 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		aNotes.setReference(this.notes.getReference());
 		aNotes.setVersion(this.notes.getVersion());
 		aNotes.setInputBy(workspace.getLoggedInUser().getUserId());
-		aNotes.setInputDate(new Timestamp(System.currentTimeMillis()));
+		if (isSystemDate) {
+			aNotes.setInputDate(new Timestamp(System.currentTimeMillis()));
+		} else {
+			Date date = DateUtility.getAppDate();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(System.currentTimeMillis());
+			calendar.set(DateUtility.getYear(date), DateUtility.getMonth(date) - 1, DateUtility.getDay(date));
+			aNotes.setInputDate(new Timestamp(calendar.getTimeInMillis()));
+		}
 		aNotes.setRoleCode(getNotes().getRoleCode());
 		this.newNotes = aNotes;
 		logger.debug("Leaving");
