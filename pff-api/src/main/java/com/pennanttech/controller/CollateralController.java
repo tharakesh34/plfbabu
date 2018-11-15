@@ -456,33 +456,31 @@ public class CollateralController {
 					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 
 					Map<String, Object> mapValues = new HashMap<String, Object>();
-					boolean noUnitCmplted = false;
-					int noOfUnits = 0;
-					boolean unitPriceCmplted = false;
-					BigDecimal curValue = BigDecimal.ZERO;
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
-
-						try {
-							// Setting Number of units
-							if (!noUnitCmplted && mapValues.containsKey("NOOFUNITS")) {
-								noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
-								totalUnits = totalUnits + noOfUnits;
-								noUnitCmplted = true;
-							}
-
-							// Setting Total Value
-							if (!unitPriceCmplted && mapValues.containsKey("UNITPRICE")) {
-								curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
-								totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
-								unitPriceCmplted = true;
-							}
-						} catch (NumberFormatException nfe) {
-							APIErrorHandlerService.logUnhandledException(nfe);
-							logger.error("Exception", nfe);
-							throw nfe;
-						}
 					}
+
+					int noOfUnits = 0;
+					BigDecimal curValue = BigDecimal.ZERO;
+
+					try {
+						// Setting Number of units
+						if (mapValues.containsKey("NOOFUNITS")) {
+							noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
+							totalUnits = totalUnits + noOfUnits;
+						}
+
+						// Setting Total Value
+						if (mapValues.containsKey("UNITPRICE")) {
+							curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
+							totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
+						}
+					} catch (NumberFormatException nfe) {
+						APIErrorHandlerService.logUnhandledException(nfe);
+						logger.error("Exception", nfe);
+						throw nfe;
+					}
+
 					exdFieldRender.setMapValues(mapValues);
 					extendedFieldRenderList.add(exdFieldRender);
 				} else if (StringUtils.equals(procType, PROCESS_TYPE_UPDATE)) {
