@@ -142,7 +142,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 
-	private boolean isSystemDate = false;
+	private boolean isSystemDate = true;
 
 	public NotesCtrl() {
 		super();
