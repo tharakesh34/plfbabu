@@ -493,6 +493,24 @@ public class PennantJavaUtil {
 				new ModuleMapping("Academic", Academic.class, new String[] { "BMTAcademics", "BMTAcademics_AView" },
 						masterWF, new String[] { "AcademicLevel", "AcademicDecipline", "AcademicDesc" }, null, 600));
 
+
+		ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LoanPurpose.class, new String[] {
+				"LoanPurposes", "LoanPurposes_AView" }, masterWF, new String[] { "LoanPurposeCode", "LoanPurposeDesc" },
+				new Object[][] { { "LoanPurposeIsActive", "0", 1 } }, 350));
+		
+		ModuleUtil.register("AddressType", new ModuleMapping("AddressType", AddressType.class, new String[] {
+				"BMTAddressTypes", "BMTAddressTypes_AView" }, masterWF, new String[] { "AddrTypeCode", "AddrTypeDesc" },
+				new Object[][] { { "AddrTypeIsActive", "0", 1 } }, 300));
+		
+		ModuleUtil.register("BuilderGroup",
+				new ModuleMapping("BubanilderGroup", BuilderGroup.class, new String[] { "BuilderGroup",
+						"BuilderGroup_AView" }, masterWF, new String[] { "Name", "Segmentation" }, null, 350));
+		
+		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] { "BuilderCompany",
+						"BuilderCompany_AView" }, masterWF, new String[] { "Name", "Segmentation", "GroupIdName" },
+						null,
+						350));
+
 		ModuleUtil.register("LoanPurpose",
 				new ModuleMapping("LoanPurpose", LoanPurpose.class,
 						new String[] { "LoanPurposes", "LoanPurposes_AView" }, masterWF,
@@ -504,6 +522,7 @@ public class PennantJavaUtil {
 						new String[] { "BMTAddressTypes", "BMTAddressTypes_AView" }, masterWF,
 						new String[] { "AddrTypeCode", "AddrTypeDesc" },
 						new Object[][] { { "AddrTypeIsActive", "0", 1 } }, 300));
+
 
 		ModuleUtil.register("BuilderGroup",
 				new ModuleMapping("BuilderGroup", BuilderGroup.class,
@@ -775,10 +794,21 @@ public class PennantJavaUtil {
 						new String[] { "BMTBankDetail", "BMTBankDetail_AView" }, masterWF,
 						new String[] { "BankCode", "BankName" }, new Object[][] { { "Active", "0", 1 } }, 500));
 
+
+		ModuleUtil.register("BankDetail", new ModuleMapping("BankDetail", BankDetail.class, new String[] {
+				"BMTBankDetail", "BMTBankDetail_AView" }, masterWF, new String[] { "BankCode", "BankName" },
+				new Object[][] { { "Active", "0", 1 } }, 500));
+		
+		ModuleUtil.register("DataEngine", new ModuleMapping("BankBranch", BankBranch.class, new String[] {
+			"BankBranches", "BankBranches_AView" }, masterWF, new String[] { "BranchCode", "BankName", "BankCode",
+			"BranchDesc", "MICR", "IFSC" }, null, 700));
+
 		ModuleUtil.register("BankBranch",
 				new ModuleMapping("BankBranch", BankBranch.class, new String[] { "BankBranches", "BankBranches_AView" },
-						masterWF, new String[] { "BranchCode", "BranchDesc", "BankCode", "BankName", "MICR", "IFSC" },
+						masterWF,
+						new String[] { "BranchCode", "BranchDesc", "BankCode", "BankName", "MICR", "IFSC", "city" },
 						null, 1200));
+
 
 		ModuleUtil.register("DataEngine",
 				new ModuleMapping("BankBranch", BankBranch.class, new String[] { "BankBranches", "BankBranches_AView" },

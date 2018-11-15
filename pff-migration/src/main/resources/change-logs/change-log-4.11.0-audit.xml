@@ -71,4 +71,18 @@
             <column name="BankBranchID" type="bigint" />
     </addColumn>
 </changeSet>
+
+
+
+<changeSet author="swami" id="6">
+	<modifyDataType tableName="adtamtvehicledealer" columnName="PANNumber" newDataType="varchar(10)"/>
+    <modifyDataType tableName="adtamtvehicledealer"	 columnName="UIDNumber" newDataType="varchar(20)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	columnName="TaxNumber"  newDataType="varchar(15)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	 columnName="FromProvince" newDataType="varchar(8)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	 columnName="ToProvince"  newDataType="varchar(8)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	columnName="AccountNo"  newDataType="varchar(50)" />
+	<modifyDataType tableName="adtamtvehicledealer"	columnName="AccountType" newDataType="varchar(8)" /> 
+
+</changeSet>
+
 	</databaseChangeLog>

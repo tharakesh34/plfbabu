@@ -91,6 +91,23 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private boolean active;
 	private String zipCode;
 	private String code;
+	
+	private String panNumber;
+	private String uidNumber;
+	private String taxNumber;
+	private String fromprovince;
+	private String toprovince;
+	private String fromprovinceName;
+	private String toprovinceName;
+	private String accountNo;
+	private String accountType;
+	private long bankBranchID;
+	private String bankBranchCode;
+	private String bankBranchCodeName;
+	private String bankName;
+	private String branchIFSCCode;
+	private String branchMICRCode;
+	private String branchCity;
 
 	public VehicleDealer() {
 		super();
@@ -112,6 +129,14 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("accountingSetDesc");
 		excludeFields.add("calRuleDesc");
 		excludeFields.add("emiratesDescription");
+		excludeFields.add("fromprovinceName");
+		excludeFields.add("toprovinceName");
+		excludeFields.add("bankBranchCode");
+		excludeFields.add("bankBranchCodeName");
+		excludeFields.add("bankName");
+		excludeFields.add("branchIFSCCode");
+		excludeFields.add("branchMICRCode");
+		excludeFields.add("branchCity");
 		return excludeFields;
 	}
 
@@ -423,6 +448,147 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 			}
 		}
 		return customerMap;
+
 	}
 
-}
+	public String getpOBox() {
+		return pOBox;
+	}
+
+	public void setpOBox(String pOBox) {
+		this.pOBox = pOBox;
+	}
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public String getUidNumber() {
+		return uidNumber;
+	}
+
+	public void setUidNumber(String uidNumber) {
+		this.uidNumber = uidNumber;
+	}
+
+	public String getTaxNumber() {
+		return taxNumber;
+	}
+
+	public void setTaxNumber(String taxNumber) {
+		this.taxNumber = taxNumber;
+	}
+
+
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBranchIFSCCode() {
+		return branchIFSCCode;
+	}
+
+	public void setBranchIFSCCode(String branchIFSCCode) {
+		this.branchIFSCCode = branchIFSCCode;
+	}
+
+	public String getBranchMICRCode() {
+		return branchMICRCode;
+	}
+
+	public void setBranchMICRCode(String branchMICRCode) {
+		this.branchMICRCode = branchMICRCode;
+	}
+
+	public String getBranchCity() {
+		return branchCity;
+	}
+
+	public void setBranchCity(String branchCity) {
+		this.branchCity = branchCity;
+	}
+
+	public String getBankBranchCodeName() {
+		return bankBranchCodeName;
+	}
+
+	public void setBankBranchCodeName(String bankBranchCodeName) {
+		this.bankBranchCodeName = bankBranchCodeName;
+	}
+
+	public String getBankBranchCode() {
+		return bankBranchCode;
+	}
+
+	public void setBankBranchCode(String bankBranchCode) {
+		this.bankBranchCode = bankBranchCode;
+	}
+
+	public long getBankBranchID() {
+		return bankBranchID;
+	}
+
+	public void setBankBranchID(long bankBranchID) {
+		this.bankBranchID = bankBranchID;
+	}
+
+	public String getFromprovince() {
+		return fromprovince;
+	}
+
+	public void setFromprovince(String fromprovince) {
+		this.fromprovince = fromprovince;
+	}
+
+	public String getToprovince() {
+		return toprovince;
+	}
+
+	public void setToprovince(String toprovince) {
+		this.toprovince = toprovince;
+	}
+
+	public String getFromprovinceName() {
+		return fromprovinceName;
+	}
+
+	public void setFromprovinceName(String fromprovinceName) {
+		this.fromprovinceName = fromprovinceName;
+	}
+
+	public String getToprovinceName() {
+		return toprovinceName;
+	}
+
+	public void setToprovinceName(String toprovinceName) {
+		this.toprovinceName = toprovinceName;
+	}	
+
+	}
+
