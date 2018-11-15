@@ -805,7 +805,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		source.addValue("LimitCode", quickDisbCode);
 
 		StringBuilder selectSql = new StringBuilder("Select MandInputInStage  From LMTFinRefDetail ");
-		selectSql.append(" Where FinType =:FinType AND FinRefType =:FinRefType AND ");
+		selectSql.append(" Where FinType =:FinType AND FinRefType =:FinRefType AND isActive = 1 AND ");
 		selectSql.append(" FinRefId in(select limitId from limitcodedetail where LimitCode =:LimitCode)");
 
 		logger.debug("selectSql: " + selectSql.toString());
