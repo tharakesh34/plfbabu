@@ -3732,9 +3732,9 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_Ba
  
 </changeSet>
 
- <changeSet id="53_Post" author="swami">
+ <changeSet id="53_Post.1" author="swami">
 	<sql>
-		select deps_restore_dependencies('plf','customers_view');
+		select deps_restore_dependencies('plf','amtvehicledealer');
 	</sql>
 </changeSet>
 
