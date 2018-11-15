@@ -45,6 +45,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,9 +54,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -93,6 +96,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -102,7 +106,6 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -213,7 +216,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	CustomerDetailsService customerDetailsService;
 	@Autowired
 	private SamplingService samplingService;
-
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -504,45 +508,110 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchCustCIF(Event event) {
-		customer = null;
+	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
 		this.row1.setVisible(false);
-		Object dataObject = null;
+		Clients.clearWrongValue(this.btnSearchCustCIF);
+		doSearchCustomerCIF();
+		logger.debug("Leaving");
+	}
 
-		if (cif != null) {
-			Filter filter[] = new Filter[1];
-			if (cif[0] != null) {
-				filter[0] = new Filter("CustCIF", cif, Filter.OP_NOT_IN);
-				//filter[1] = new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL);
-				dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData", filter);
-			} else {
-				dataObject = ExtendedSearchListBox.show(this.window_JountAccountDetailDialog, "CustomerData");
+	/**
+	 * To fill customer data
+	 */
+	private void setCustomersData(){
+		if(this.custCIF.getValue() == null || this.custCIF.getValue().isEmpty()){
+			this.custCIFName.setValue("");
+			this.gb_JointAccountPrimaryJoint.setVisible(false);
+			this.gb_JointAccountSecondaryJoint.setVisible(false);
+			this.gb_JointAccountGuarantorJoint.setVisible(false);
+		}else{
+			customer = getCustomer(this.custCIF.getValue());
+			if(customer != null){
+				this.custCIF.setValue(customer.getCustCIF());
+				this.custCIFName.setValue(customer.getCustShrtName());
+				this.custID.setValue(customer.getCustID());
 			}
-			if (dataObject instanceof String) {
-				this.custCIF.setValue(dataObject.toString());
-				this.custCIFName.setValue("");
-				this.gb_JointAccountPrimaryJoint.setVisible(false);
-				this.gb_JointAccountSecondaryJoint.setVisible(false);
-				this.gb_JointAccountGuarantorJoint.setVisible(false);
-			} else {
-				customer = (Customer) dataObject;
-				if (customer != null) {
-					this.custCIF.setValue(customer.getCustCIF());
-					this.custID.setValue(customer.getCustID());
-					this.custCIFName.setValue(customer.getCustShrtName());
-					if (customer.getCustCoreBank() != null && StringUtils.isNotEmpty(customer.getCustCoreBank())) {
-						this.row1.setVisible(false);
-					} else {
-						this.row1.setVisible(false);
-						this.includeRepay.setChecked(false);
-						this.repayAccountId.setValue("");
-					}
-				}
+			if(customer.getCustCoreBank()!= null && StringUtils.isNotEmpty(customer.getCustCoreBank())){
+				this.row1.setVisible(false);
+			}else{
+				this.row1.setVisible(false);
+				this.includeRepay.setChecked(false);
+				this.repayAccountId.setValue("");
 			}
 		}
 		setCustomerDetails(customer);
 	}
+	
+	/*
+	 * Method to get the Customer Address Details when CustID is Entered
+	 */
+	
+	public Customer getCustomer(String custCIF){
+		logger.debug("Entering");
+		Customer customer = null;
+		JdbcSearchObject<Customer> searchObject=new JdbcSearchObject<Customer>(Customer.class);
+		searchObject.addTabelName("Customers_AEView");
+		searchObject.addFilterEqual("CustCIF", custCIF);
+		List<Customer> customers = pagedListService.getBySearchObject(searchObject);
+		if(customers!=null && !customers.isEmpty()){
+			return customers.get(0);
+		}
+		logger.debug("Leaving");
+		
+		return customer;
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		
+		List<Filter> filterList = new ArrayList<>();
+		for (int i = 0; i < this.cif.length; i++) {
+			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
+		}
+		
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		map.put("filtersList", filterList);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.custCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
 
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.custCIF.setValue(customer.getCustCIF());
+			setCustomersData();
+		} else {
+			this.custCIF.setValue("");
+		}
+		logger.debug("Leaving ");
+	}
+	
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("guarantorDetailDialogCtrl", this);
+		map.put("moduleCode", moduleCode);
+		return map;
+	}
+	
 	public void setCustomerDetails(Customer customer) {
 		if (customer != null) {
 			BigDecimal currentExpoSure = BigDecimal.ZERO;

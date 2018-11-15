@@ -47,6 +47,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -56,6 +57,7 @@ import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -220,7 +222,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 
 	// ServiceDAOs / Domain Classes
 	private transient GuarantorDetailService guarantorDetailService;
-	private transient PagedListService pagedListService;
+	private transient static PagedListService pagedListService;
 	private List<ValueLabel> listGuarantorIDType = PennantAppUtil.getIdentityType();
 	private boolean newRecord = false;
 	private boolean newGuarantor = false;
@@ -246,7 +248,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private String addrCountryTemp;
 	private String addrProvinceTemp;
 	private BigDecimal totSharePerc;
-
+	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -465,44 +468,120 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSearchGuarantorCIF(Event event) {
+	public void onClick$btnSearchGuarantorCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
 		customer = null;
 		doClearMessage();
 		doRemoveValidation();
 		Clients.clearWrongValue(this.btnSearchGuarantorCIF);
-		if (cif != null) {
-			Filter filter[] = new Filter[1];
-			filter[0] = new Filter("CustCIF", cif, Filter.OP_NOT_IN);
-			//filter[1] = new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL);
-			Object dataObject = ExtendedSearchListBox.show(this.window_GuarantorDetailDialog, "CustomerData", filter);
-			if (dataObject instanceof String) {
-				this.guarantorCIF.setValue(dataObject.toString());
-				this.guarantorCIFName.setValue("");
-				this.guarantorIDNumber.setValue("");
-				this.mobileNo.setValue("");
-				this.emailId.setValue("");
-				this.guarantorProofName.setValue("");
-				this.gb_GurantorsPrimaryExposure.setVisible(false);
-				this.gb_GurantorsSecoundaryExposure.setVisible(false);
-				this.gb_GurantorsExposure.setVisible(false);
-			} else {
-				customer = (Customer) dataObject;
-				if (customer != null) {
-					this.guarantorCIF.setValue(customer.getCustCIF());
-					this.guarantorCIFName.setValue(customer.getCustShrtName());
-					this.guarantorIDNumber.setValue(customer.getCustCRCPR());
-					this.mobileNo.setValue(customer.getPhoneNumber());
-					this.emailId.setValue(customer.getEmailID());
-					dosetCustAddress(customer.getCustID());
-				}
+		doSearchCustomerCIF();
+	}
+
+	/**
+	 * do Fill customer data when select a cif
+	 */
+	private void setCustomerData() {
+		if(this.guarantorCIF.getValue() == null || this.guarantorCIF.getValue().isEmpty()){
+			this.guarantorCIFName.setValue("");
+			this.guarantorIDNumber.setValue("");
+			this.mobileNo.setValue("");
+			this.emailId.setValue("");
+			this.guarantorProofName.setValue("");
+			this.gb_GurantorsPrimaryExposure.setVisible(false);
+			this.gb_GurantorsSecoundaryExposure.setVisible(false);
+			this.gb_GurantorsExposure.setVisible(false);
+		}else{
+			customer = getCustomer(this.guarantorCIF.getValue());
+			if(customer != null){
+				this.guarantorCIF.setValue(customer.getCustCIF());
+				this.guarantorCIFName.setValue(customer.getCustShrtName());
+				this.guarantorIDNumber.setValue(customer.getCustCRCPR());
+				this.mobileNo.setValue(customer.getPhoneNumber());
+				this.emailId.setValue(customer.getEmailID());
+				dosetCustAddress(customer.getCustID());
 			}
 		}
 		setCustomerDetails(customer);
 	}
 
+	/*
+	 * Method to get the Customer Address Details when CustID is Entered
+	 */
+	
+	public Customer getCustomer(String custCIF){
+		logger.debug("Entering");
+		Customer customer = null;
+		JdbcSearchObject<Customer> searchObject=new JdbcSearchObject<Customer>(Customer.class);
+		searchObject.addTabelName("Customers_AEView");
+		searchObject.addFilterEqual("CustCIF", custCIF);
+		List<Customer> customers = pagedListService.getBySearchObject(searchObject);
+		if(customers!=null && !customers.isEmpty()){
+			return customers.get(0);
+		}
+		setCustomerData();
+		logger.debug("Leaving");
+		
+		return customer;
+	}
+	
+	/**
+	 * Method for Showing Customer Search Window
+	 */
+	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
+		logger.debug("Entering");
+		
+		List<Filter> filterList = new ArrayList<>();
+		for (int i = 0; i < this.cif.length; i++) {
+			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
+		}
+		
+		Map<String, Object> map = getDefaultArguments();
+		map.put("DialogCtrl", this);
+		map.put("filtertype", "Extended");
+		map.put("searchObject", this.custCIFSearchObject);
+		map.put("filtersList", filterList);
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for setting Customer Details on Search Filters
+	 * 
+	 * @param nCustomer
+	 * @param newSearchObject
+	 * @throws InterruptedException
+	 */
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+		logger.debug("Entering");
+		this.guarantorCIF.clearErrorMessage();
+		this.custCIFSearchObject = newSearchObject;
+
+		Customer customer = (Customer) nCustomer;
+		if (customer != null) {
+			this.guarantorCIF.setValue(customer.getCustCIF());
+			this.guarantorCIFName.setValue(customer.getCustShrtName());
+			this.guarantorIDNumber.setValue(customer.getCustCRCPR());
+			this.mobileNo.setValue(customer.getPhoneNumber());
+			this.emailId.setValue(customer.getEmailID());
+			dosetCustAddress(customer.getCustID());
+			setCustomerDetails(customer);
+		} else {
+			this.guarantorCIF.setValue("");
+		}
+		logger.debug("Leaving ");
+	}
+	
+	public HashMap<String, Object> getDefaultArguments() {
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("guarantorDetailDialogCtrl", this);
+		map.put("moduleCode", moduleCode);
+		return map;
+	}
+	
 	public void setCustomerDetails(Customer customer) {
 		if (customer != null) {
 			getGuarantorDetail().setGuarantorCIF(customer.getCustCIF());
+			getGuarantorDetail().setCustID(customer.getCustID());	
 			getGuarantorDetail().setStatus(customer.getLovDescCustStsName());
 			getGuarantorDetail().setWorstStatus(getGuarantorDetailService().getWorstStaus(customer.getCustID()));
 			this.primaryList = getGuarantorDetailService().getPrimaryExposureList(getGuarantorDetail());
