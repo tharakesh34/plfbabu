@@ -3484,4 +3484,28 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_ND
 update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_BalanceCertificate';
 </sql>
 </changeSet>
+<changeSet id="49" author="Prasadraju" dbms="mssql">
+	<createTable tableName="SeqServiceTaskDetails">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"></column>
+	</createTable>
+</changeSet>
+<changeSet id="50" author="Prasadraju" dbms="mssql">
+	<createTable tableName="SeqPostingId">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"></column>
+	</createTable>
+</changeSet>
+<changeSet id="51" author="Prasadraju" dbms="mssql">
+	<createTable tableName="SEQFEEWAIVERHEADER">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"></column>
+	</createTable>
+</changeSet>
+<changeSet id="52" author="Prasadraju" dbms="mssql">
+	<createTable tableName="SEQFEEWAIVERDETAIL">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"></column>
+	</createTable>
+</changeSet>
 </databaseChangeLog>
