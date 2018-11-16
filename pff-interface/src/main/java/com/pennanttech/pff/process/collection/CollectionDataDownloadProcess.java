@@ -90,7 +90,7 @@ public class CollectionDataDownloadProcess {
 		selectSql.append(
 				" T1.PenaltyDue AS PenaltyDue,T1.PenaltyWaived As PenaltyWaived,(SELECT sum(Adviseamount-paidamount-waivedamount) as bounseAmount  FROM MANUALADVISE WHERE FEETYPEID = 0 and  finreference=T1.Finreference)  As BounceCharge ,T1.FinStatus As FinStatus,");
 		selectSql.append(" T1.FinStsReason As FinStsReason ,T1.FinWorstStatus As FinWorstStatus,");
-		selectSql.append(" T1.FinIsActive As FinActive	,T1.ClosingStatus As RecordStatus");
+		selectSql.append(" T1.FinIsActive As FinActive	,'I' As RecordStatus");
 
 		selectSql.append("  FROM FinPftDetails AS T1 ");
 		selectSql.append("  INNER JOIN Customers AS T2 ON T1.CustId=T2.CustID");
