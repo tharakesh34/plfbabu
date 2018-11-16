@@ -85,4 +85,10 @@
 
 </changeSet>
 
+<changeSet id="7" author="swamy.v">
+	<sql>
+update adtamtvehicledealer set bankbranchid=0 ;
+
+	</sql>
+	</changeSet>
 	</databaseChangeLog>
