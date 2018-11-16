@@ -218,7 +218,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" QuickDisb , WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, BpiAmount, DeductFeeDisb");
 		selectSql.append(
 				" , PromotionCode,RvwRateApplFor , SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin, ReAgeBucket, FinCategory, ProductCategory,EligibilityMethod,connector ");
-		selectSql.append(" ,	AdvanceEMI, AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor");
+		selectSql.append(" ,	AdvanceEMI, AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
@@ -295,7 +295,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescFinTypeName, lovDescFinBranchName, ");
 			if (!isWIF) {
-				selectSql.append(" ReAgeBucket, FinLimitRef, ");
+				selectSql.append(" ReAgeBucket, FinLimitRef, ProcessAttributes, ");
 				selectSql.append(" lovDescAccruedTillLBD, lovDescFinScheduleOn, finBranchProvinceCode,");
 				selectSql.append(
 						" lovDescFinDivision,LovDescStepPolicyName,CustStsDescription, lovDescAccountsOfficer, DsaCodeDesc,  ");
@@ -644,7 +644,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" DsaCode, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ReferralId,EmployeeName, DmaCode, SalesDepartment, QuickDisb, WifReference,");
 			sql.append(
-					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,");
+					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes,");
 		}
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode)");
@@ -692,7 +692,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" :DsaCode,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :ReferralId,:EmployeeName, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference,");
 			sql.append(
-					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector,");
+					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes,");
 		}
 		sql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode)");
@@ -800,7 +800,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz, ReAgeCpz=:ReAgeCpz, MaxUnplannedEmi=:MaxUnplannedEmi, MaxReAgeHolidays=:MaxReAgeHolidays ,");
 			sql.append(
-					" AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,ReAgeBucket=:ReAgeBucket,EligibilityMethod=:EligibilityMethod,samplingRequired=:samplingRequired,legalRequired=:legalRequired,connector=:connector,");
+					" AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,ReAgeBucket=:ReAgeBucket,EligibilityMethod=:EligibilityMethod,samplingRequired=:samplingRequired,legalRequired=:legalRequired,connector=:connector, ProcessAttributes=:ProcessAttributes,");
 		}
 		sql.append(
 				" AdvanceEMI = :AdvanceEMI, AdvEMITerms = :AdvEMITerms, BpiPftDaysBasis = :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor,");
@@ -1459,7 +1459,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, RvwRateApplFor ,SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(
-				" NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason, DueBucket, AdvanceEMI , AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor)");
+				" NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason, DueBucket, AdvanceEMI , AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes)");
 		insertSql.append(" Values(:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		insertSql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		insertSql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -1506,7 +1506,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" :ReferralId, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference, :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,:RvwRateApplFor, :SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin, :FinCategory, :ProductCategory,");
 		insertSql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		insertSql.append(
-				" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :AdvEMITerms, :BpiPftDaysBasis, :FixedTenorRate, :FixedRateTenor)");
+				" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :AdvEMITerms, :BpiPftDaysBasis, :FixedTenorRate, :FixedRateTenor, :ProcessAttributes)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);

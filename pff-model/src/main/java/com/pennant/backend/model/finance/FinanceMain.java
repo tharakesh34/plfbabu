@@ -690,6 +690,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal fixedTenorRate = BigDecimal.ZERO;
 
 	private Date fixedTenorEndDate;
+	private String processAttributes;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -3931,6 +3932,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setFinBranchProvinceCode(String finBranchProvinceCode) {
 		this.finBranchProvinceCode = finBranchProvinceCode;
+	}
+
+	public String getProcessAttributes() {
+		return processAttributes;
+	}
+
+	public void setProcessAttributes(String processAttributes) {
+		this.processAttributes = processAttributes;
 	}
 
 }

@@ -91,4 +91,10 @@ update adtamtvehicledealer set bankbranchid=0 ;
 
 	</sql>
 	</changeSet>
+	
+	<changeSet id="8" author="Vinay">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ProcessAttributes" type="clob" />
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>
