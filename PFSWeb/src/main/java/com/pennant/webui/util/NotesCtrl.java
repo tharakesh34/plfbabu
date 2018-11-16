@@ -427,7 +427,13 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				doCheckNoteEnquiry();
 				this.window_notesDialog.doModal(); // open the dialog in modal mode
 			}
-
+			if (enqiryModule) {
+				this.remarkType.setVisible(false);
+				this.btnSave.setVisible(false);
+				this.remarks.setVisible(false);
+				this.label_NotesDialog_Type.setVisible(false);
+				this.label_NotesDialog_AlignType.setVisible(false);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

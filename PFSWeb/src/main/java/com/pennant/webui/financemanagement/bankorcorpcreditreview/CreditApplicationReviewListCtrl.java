@@ -240,6 +240,9 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 			this.listheader_CreditCustShrtName.setVisible(true);
 			this.listheader_CreditRevCode.setVisible(true);
 		}
+		if (enqiryModule) {
+			this.button_CreditApplicationReviewList_FileUploadCreditApplicationReview.setVisible(false);
+		}
 
 		// Render the page and display the data.
 		doRenderPage();

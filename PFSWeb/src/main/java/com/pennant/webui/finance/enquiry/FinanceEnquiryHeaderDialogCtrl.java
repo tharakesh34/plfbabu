@@ -496,6 +496,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("control", this);
 			map.put("enquiry", true);
 			map.put("isFinanceNotes", true);
+			map.put("enqiryModule", true);
 			path = "/WEB-INF/pages/notes/notes.zul";
 
 		} else if ("DEVENQ".equals(this.enquiryType)) {

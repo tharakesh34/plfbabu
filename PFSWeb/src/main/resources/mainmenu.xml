@@ -819,6 +819,9 @@
 			<menuItem id="menu_Item_CustomerEnquiry"
 				zulNavigation="/WEB-INF/pages/Reports/CustomerEnquiryList.zul"
 				rightName="menuItem_Enquiry_CustomerEnquiry" />
+      		<menuItem id="menu_Item_CreditApplicationReviewEnquiry"
+			    zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?enqiryModule=Y;moduleName=CorpCreditAppReview"
+			    rightName="menuItem_CustomerEnquiry_CreditReviewEnquiry" /> 
 		</menu>
 		<menu id="menu_Category_LimitEnquiry">
 		</menu>
@@ -914,7 +917,10 @@
 				rightName="menuItem_DepositMovements_Enquiry" />
 			<!-- Fee Waivers Enwuiry-->	
 			<menuItem id="menu_Item_FeeWaiverEnquiry"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeWaiverEnquiryList.zul?enqiryModule=Y" rightName="menuItem_FeeWiavers_Enquiry" />	
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeWaiverEnquiryList.zul?enqiryModule=Y" rightName="menuItem_FeeWiavers_Enquiry" />
+			<menuItem id="menu_Item_ChequeDetailEnquiry"
+			    zulNavigation="/WEB-INF/pages/Finance/PDC/ChequeHeaderList.zul?enqiryModule=Y"
+			    rightName="menuItem_Enquiry_ChequeDetailEnquiry" />		
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry"

@@ -958,6 +958,19 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				listBoxHeight--;
 			}
 			this.listBoxChequeDetail.setHeight(getListBoxHeight(listBoxHeight));
+			if (enqiryModule) {
+				this.btnSave.setVisible(false);
+				this.btnNotes.setVisible(false);
+				this.readOnlyComponent(true, this.accountType);
+				this.readOnlyComponent(true, this.bankBranchID);
+				this.readOnlyComponent(true, this.noOfCheques);
+				this.readOnlyComponent(true, this.chequeSerialNo);
+				this.readOnlyComponent(true, this.chequeType);
+				this.readOnlyComponent(true, this.accHolderName);
+				this.readOnlyComponent(true, this.accNumber);
+				this.readOnlyComponent(true, this.chequeSerialNo);
+				this.readOnlyComponent(true, this.amount);
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);

@@ -814,6 +814,12 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				this.bankName.setVisible(false);
 				this.space_BankName.setVisible(false);
 			}
+			if (enqiryModule) {
+				this.btnDelete.setVisible(false);
+				this.btnSave.setVisible(false);
+				this.btnNotes.setVisible(false);
+				this.userAction.setVisible(false);
+			}
 			setLables();
 			setDialog(DialogType.EMBEDDED);
 			//groupboxWf.setVisible(false); // For Present Requirement
@@ -2993,6 +2999,9 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		/***************** Amount ***************/
 		lc = new Listcell();
 		db_Amount = new Decimalbox();
+		if (enqiryModule) {
+			db_Amount.setDisabled(true);
+		}
 		db_Amount.setId("db" + finCreditRevSubCategory.getSubCategoryCode());
 		db_Amount.setAttribute("data", finCreditRevSubCategory);
 		db_Amount.setAttribute("ListBoxdata", listbox);
