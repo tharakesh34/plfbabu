@@ -43,4 +43,9 @@
 		<property name="threadCount" value="${dms.thread.count}" />
 		<property name="threadAwaitPeroid" value="${dms.thread.seconds.timeout}" />
 	</bean>
+	
+	<bean id ="collectionDataDownloadProcess" class ="com.pennanttech.pff.process.collection.CollectionDataDownloadProcess">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
 </beans>
