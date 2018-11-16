@@ -93,7 +93,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		extendedFieldHeader.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,Event,");
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName, Event,");
 		selectSql.append(" SubModuleName, TabHeading, NumberOfColumns, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
@@ -170,13 +170,14 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		source.addValue("SubModuleName", subModuleName);
 
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
-		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
-		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
+		selectSql.append(" SubModuleName, Event, TabHeading, NumberOfColumns,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation");
 		selectSql.append(" From ExtendedFieldHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
+		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName");
+
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ExtendedFieldHeader.class);
@@ -208,8 +209,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 * @param type
 	 *            (String) ""/_Temp/_View
 	 * @return void
-	 * @throws DataAccessExceptionReference
-	 *             , SeqNo
+	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
@@ -260,13 +260,13 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ExtendedFieldHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ModuleId, ModuleName, SubModuleName, Event, TabHeading, NumberOfColumns, ");
-		insertSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation, ");
+		insertSql.append(" (ModuleId, ModuleName, SubModuleName, Event, TabHeading, NumberOfColumns,");
+		insertSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:ModuleId, :ModuleName, :SubModuleName, :Event, :TabHeading, :NumberOfColumns, ");
-		insertSql.append(" :PreValidationReq, :PostValidationReq, :PreValidation, :PostValidation, ");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
+		insertSql.append(" Values(:ModuleId, :ModuleName, :SubModuleName, :Event, :TabHeading, :NumberOfColumns,");
+		insertSql.append(" :PreValidationReq, :PostValidationReq, :PreValidation, :PostValidation,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -298,7 +298,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		StringBuilder updateSql = new StringBuilder("Update ExtendedFieldHeader");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set  ModuleName = :ModuleName, ");
-		updateSql.append(" SubModuleName = :SubModuleName,Event = :Event, TabHeading = :TabHeading, ");
+		updateSql.append(" SubModuleName = :SubModuleName, Event = :Event, TabHeading = :TabHeading, ");
 		updateSql.append(" NumberOfColumns = :NumberOfColumns, ");
 		updateSql.append(" PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, ");
 		updateSql.append(" PreValidation = :PreValidation, PostValidation = :PostValidation, ");
@@ -371,7 +371,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				syntax.append("	NextTaskId		varchar(200) NULL,");
 				syntax.append("	RecordType		varchar(50) NULL,");
 				syntax.append("	WorkflowId 		bigint NULL,");
-				syntax.append(" CONSTRAINT PK_" + tableName);
+				syntax.append(" CONSTRAINT ").append(getPrimaryKeyName(tableName));
 				if (i == 2 || i == 6) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
@@ -409,7 +409,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				syntax.append("	NextTaskId 		varchar2(200) NULL,");
 				syntax.append("	RecordType 		varchar2(50) NULL,");
 				syntax.append("	WorkflowId 		number(19,0) NULL,");
-				syntax.append(" CONSTRAINT PK_" + tableName);
+				syntax.append(" CONSTRAINT ").append(getPrimaryKeyName(tableName));
 				if (i == 2 || i == 6) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
@@ -445,7 +445,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				syntax.append("	NextTaskId 		varchar(200) NULL,");
 				syntax.append("	RecordType 		varchar(50) NULL,");
 				syntax.append("	WorkflowId 		bigint NULL,");
-				syntax.append(" CONSTRAINT PK_" + tableName);
+				syntax.append(" CONSTRAINT ").append(getPrimaryKeyName(tableName));
 				if (i == 2 || i == 6) {
 					syntax.append(" PRIMARY KEY (AuditId ,  AuditDate, AuditSeq, AuditImage ))");
 				} else {
@@ -514,6 +514,22 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		}
 		syntax.append(StringUtils.trimToEmpty(tableType));
 		return syntax.toString();
+	}
+
+	/**
+	 * Preparing the primary key name
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	private Object getPrimaryKeyName(String tableName) {
+
+		String primaryKeyName = "PK_" + tableName;
+
+		if (primaryKeyName.length() > 30) {
+			return StringUtils.substring(primaryKeyName, 0, 30);
+		}
+		return primaryKeyName;
 	}
 
 	/**
