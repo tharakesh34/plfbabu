@@ -3872,10 +3872,10 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_Ba
 
 		</createTable>
 	</changeSet>
-	<changeSet id="55" author="swamy.v">
+	<changeSet id="55.1" author="swamy.v">
 		<sql>
 			update amtvehicledealer set bankbranchid=0 ;
-			update amtvehicledealer_temp set bankbranchid=0
+			update amtvehicledealer_temp set bankbranchid=0;
 
 		</sql>
 	</changeSet>
