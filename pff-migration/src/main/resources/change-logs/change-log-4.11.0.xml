@@ -3094,7 +3094,7 @@ UNION ALL
 </changeSet>
 
 
-<changeSet id="41.0" author="swami">
+<changeSet id="41.2" author="swami">
 <comment>New Columns added for Direct Selling Agent </comment>
 		<createView viewName="amtvehicledealer_aview" replaceIfExists="true" > 
 SELECT 
@@ -3165,13 +3165,13 @@ SELECT
      LEFT JOIN rmtcountryvsprovince t10 ON t1.FromProvince = t10.cpprovince
      LEFT JOIN rmtcountryvsprovince t11 ON t1.ToProvince = t11.cpprovince
      LEFT JOIN BankBranches t12 ON t1.BankBranchID = t12.BankBranchID
-     INNER JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
+     LEFT JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
      
   </createView>
 	</changeSet>
 	
 	
-	<changeSet id="42.0" author="swami">
+	<changeSet id="42.3" author="swami">
 <comment>New Columns added for Direct Selling Agent </comment>
 		<createView viewName="amtvehicledealer_view" replaceIfExists="true" > 
 SELECT 
@@ -3242,7 +3242,7 @@ SELECT
      LEFT JOIN rmtcountryvsprovince t10 ON t1.FromProvince = t10.cpprovince
      LEFT JOIN rmtcountryvsprovince t11 ON t1.ToProvince = t11.cpprovince
      LEFT JOIN BankBranches t12 ON t1.BankBranchID = t12.BankBranchID
-     INNER JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
+     LEFT JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
      
 UNION ALL
 SELECT 
@@ -3313,7 +3313,7 @@ SELECT
      LEFT JOIN rmtcountryvsprovince t10 ON t1.FromProvince = t10.cpprovince
      LEFT JOIN rmtcountryvsprovince t11 ON t1.ToProvince = t11.cpprovince
      LEFT JOIN BankBranches t12 ON t1.BankBranchID = t12.BankBranchID
-     INNER JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
+     LEFT JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
      
  WHERE NOT (EXISTS ( SELECT 1
            FROM amtvehicledealer_temp
@@ -3872,4 +3872,12 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_Ba
 
 		</createTable>
 	</changeSet>
+	<changeSet id="55" author="swamy.v">
+		<sql>
+			update amtvehicledealer set bankbranchid=0 ;
+			update amtvehicledealer_temp set bankbranchid=0
+
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
