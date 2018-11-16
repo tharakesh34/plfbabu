@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,6 +18,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pff.model.CollectionCustomerDetail;
 
 /**
@@ -114,7 +116,8 @@ public class CollectionDataDownloadProcess {
 		List<String> list = jdbcTemplate.queryForList(selectSql.toString(), new MapSqlParameterSource(), String.class);
 
 		logger.debug("Number of Customers: " + list.size());
-		
+		boolean offAddress=false;
+		boolean resAddress=false;
 		for (String custCIF : list) {
 
 			CollectionCustomerDetail customer = getCustomerByID(custCIF);
@@ -124,7 +127,7 @@ public class CollectionDataDownloadProcess {
 				List<CustomerAddres> customerAddres = getCustomerAddresByCustomer(customer.getCustId());
 				if (!customerAddres.isEmpty()) {
 					for (CustomerAddres custAdd : customerAddres) {
-						if (custAdd.getCustAddrType().equalsIgnoreCase("OFFICE")) {
+						if (StringUtils.equalsIgnoreCase(App.getProperty("addresstype.office"), custAdd.getCustAddrType())) {
 							customer.setOffAddrHNbr(custAdd.getCustAddrHNbr());
 							customer.setOffFlatNbr(custAdd.getCustFlatNbr());
 							customer.setOffAddrStreet(custAdd.getCustAddrStreet());
@@ -136,8 +139,8 @@ public class CollectionDataDownloadProcess {
 							customer.setOffAddrProvince(custAdd.getCustAddrProvince());
 							customer.setOffAddrCountry(custAdd.getCustAddrCountry());
 							customer.setOffAddrZip(custAdd.getCustAddrZIP());
-
-						} else if (custAdd.getCustAddrType().equalsIgnoreCase("REGADD")) {
+							offAddress=true;
+						}else if (StringUtils.equalsIgnoreCase(App.getProperty("addresstype.residence"), custAdd.getCustAddrType())) {
 							customer.setResFlatNbr(custAdd.getCustFlatNbr());
 							customer.setResAddrStreet(custAdd.getCustAddrStreet());
 							customer.setResAddrLine1(custAdd.getCustAddrLine1());
@@ -148,17 +151,47 @@ public class CollectionDataDownloadProcess {
 							customer.setResAddrProvince(custAdd.getCustAddrProvince());
 							customer.setResAddrCountry(custAdd.getCustAddrCountry());
 							customer.setResAddrZip(custAdd.getCustAddrZIP());
-
+							resAddress=true;
 						}
+					}
+					
+					if(!offAddress && !resAddress){
+						CustomerAddres resAdd= customerAddres.get(0);
+						customer.setResFlatNbr(resAdd.getCustFlatNbr());
+						customer.setResAddrStreet(resAdd.getCustAddrStreet());
+						customer.setResAddrLine1(resAdd.getCustAddrLine1());
+						customer.setResAddrLine2(resAdd.getCustAddrLine2());
+						customer.setResPoBox(resAdd.getCustPOBox());
 
+						customer.setResAddrCity(resAdd.getCustAddrCity());
+						customer.setResAddrProvince(resAdd.getCustAddrProvince());
+						customer.setResAddrCountry(resAdd.getCustAddrCountry());
+						customer.setResAddrZip(resAdd.getCustAddrZIP());
+						resAddress=true;
+						
+						if (customerAddres.size() >= 2) {
+							CustomerAddres offAdd= customerAddres.get(1);
+							customer.setOffAddrHNbr(offAdd.getCustAddrHNbr());
+							customer.setOffFlatNbr(offAdd.getCustFlatNbr());
+							customer.setOffAddrStreet(offAdd.getCustAddrStreet());
+							customer.setOffAddrLine1(offAdd.getCustAddrLine1());
+							customer.setOffAddrLine2(offAdd.getCustAddrLine2());
+							customer.setOffPoBox(offAdd.getCustPOBox());
+
+							customer.setOffAddrCity(offAdd.getCustAddrCity());
+							customer.setOffAddrProvince(offAdd.getCustAddrProvince());
+							customer.setOffAddrCountry(offAdd.getCustAddrCountry());
+							customer.setOffAddrZip(offAdd.getCustAddrZIP());
+						}
 					}
 				}
 
+				
 				List<CustomerPhoneNumber> phoneNumbers = getCustomerPhoneNumberByCustomer(customer.getCustId());
 				if (!phoneNumbers.isEmpty()) {
 					customer.setPhoneNumber1(phoneNumbers.get(0).getPhoneNumber());
 					if (phoneNumbers.size() >= 2) {
-						customer.setPhoneNumber2(phoneNumbers.get(0).getPhoneNumber());
+						customer.setPhoneNumber2(phoneNumbers.get(1).getPhoneNumber());
 					}
 				}
 
