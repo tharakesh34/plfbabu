@@ -1130,7 +1130,7 @@ public class FinanceDataValidation {
 					String.valueOf(finMain.getAccountsOfficer()), VASConsatnts.VASAGAINST_PARTNER, "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getDsaCode();
+				valueParm[0] = String.valueOf(finMain.getAccountsOfficer());
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			} else {
 				finMain.setAccountsOfficer(vehicleDealer.getDealerId());
@@ -1164,7 +1164,7 @@ public class FinanceDataValidation {
 					"");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getDsaCode();
+				valueParm[0] = finMain.getDmaCode();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			} else {
 				finMain.setDmaCode(String.valueOf(vehicleDealer.getDealerId()));
@@ -1175,7 +1175,7 @@ public class FinanceDataValidation {
 					.getApprovedRelationshipOfficerById(finMain.getReferralId());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getDsaCode();
+				valueParm[0] = finMain.getReferralId();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			}
 		}

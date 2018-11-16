@@ -2397,9 +2397,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (collateralSetup.getExtendedDetails() != null && !collateralSetup.getExtendedDetails().isEmpty()) {
 
 				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
-					List<ExtendedFieldData> extList = defultExtendedValues(details.getExtendedFieldDataList(),
+					/*List<ExtendedFieldData> extList = defultExtendedValues(details.getExtendedFieldDataList(),
 							exdFldConfig);
-					details.setExtendedFieldDataList(extList);
+					details.setExtendedFieldDataList(extList);*/
 					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
@@ -2440,6 +2440,9 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90297", "", null)));
 						return auditDetail;
 					}
+					List<ExtendedFieldData> extList =defultExtendedValues(details.getExtendedFieldDataList(),
+							exdFldConfig);
+					details.setExtendedFieldDataList(extList);
 				}
 			}
 
