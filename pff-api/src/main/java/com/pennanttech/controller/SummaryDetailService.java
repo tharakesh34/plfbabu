@@ -99,6 +99,13 @@ public class SummaryDetailService {
 			summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
 			summary.setOutStandProfit(finPftDetail.getTotalPftBal());
 			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
+			
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+					financeMain.getProductCategory())) {
+				summary.setLimitBalance(financeMain.getFinAssetValue());
+				summary.setBilledAmount(finPftDetail.getTotalPriBal());
+				summary.setUnbilledAmount(summary.getLimitBalance().subtract(summary.getBilledAmount()));
+			}
 
 			// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
 			summary.setAdvPaymentAmount(BigDecimal.ZERO);
