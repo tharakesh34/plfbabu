@@ -943,6 +943,15 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				if (finScheduleData.getErrorDetails() != null) {
+					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(
+								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+						return response;
+					}
+				}
+				if (finScheduleData.getErrorDetails() != null) {
 					if (extendedDetailsList != null && extendedDetailsList.size() > 0) {
 						addExtendedFields(finServiceInst, finType, FinanceConstants.FINSER_EVENT_ADDDISB, "ADSB");
 					}

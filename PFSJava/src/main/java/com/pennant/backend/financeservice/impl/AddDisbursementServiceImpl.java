@@ -235,8 +235,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		// validate RecalType
 		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
-			if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+			if ( !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
@@ -245,15 +244,16 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				String[] valueParm = new String[1];
 				valueParm[0] = finServiceInstruction.getRecalType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91104", valueParm)));
-			} else {
-				if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "RecalType : " + finServiceInstruction.getRecalType();
-					valueParm[1] = "Over Draft Loan";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
-				}
 			}
 		}
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
+				&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "RecalType : " + finServiceInstruction.getRecalType();
+			valueParm[1] = "Over Draft Loan";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+		}
+		
 		// validate reCalFromDate
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 				|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
