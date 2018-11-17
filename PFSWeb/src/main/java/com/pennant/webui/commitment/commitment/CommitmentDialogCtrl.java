@@ -783,7 +783,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		setAgreementDetailTab();
 
 		// Fill Check List Details based on Rule Execution if Rule Exist
-		appendCheckListDetailTab(getCommitment(), true);
+		appendCheckListDetailTab(getCommitment(), false);
 
 		// Collateral Details Tab
 		appendCollateralAssignmentTab();
@@ -1296,7 +1296,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		if (limitDetails != null) {
 			this.limitLine.setFilters(getDefaultFilters(limitDetails.getLimitHeaderId()));
 		} else {
-			this.limitLine.setFilters(getDefaultFilters(0));
+			//this.limitLine.setFilters(getDefaultFilters(0));
 		}
 
 		this.facilityRef.setMaxlength(20);
@@ -1701,10 +1701,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Available Amount
 		try {
-			if (this.cmtAvailable.getValue() != null) {
-				aCommitment.setCmtAvailable(
-						PennantApplicationUtil.unFormateAmount(this.cmtAvailable.getValue(), defaultCCYDecPos));
-			}
+			aCommitment.setCmtAvailable(aCommitment.getCmtAmount().subtract(aCommitment.getCmtUtilizedAmount()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

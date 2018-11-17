@@ -80,6 +80,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
+import com.pennant.webui.commitment.commitment.CommitmentDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.LVerificationCtrl;
@@ -425,9 +426,10 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private int getFormat() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
 		int ccyFormat = 0;
-		if (getFinanceMainDialogCtrl() != null) {
-			ccyFormat = (int) getFinanceMainDialogCtrl().getClass().getMethod("getCcyFormat")
-					.invoke(getFinanceMainDialogCtrl());
+		if(getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl){
+			ccyFormat = 2;
+		}else if(getFinanceMainDialogCtrl() != null && !(getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl)){
+			ccyFormat  = (int) getFinanceMainDialogCtrl().getClass().getMethod("getCcyFormat").invoke(getFinanceMainDialogCtrl());
 		}
 		return ccyFormat;
 	}
@@ -585,7 +587,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 		this.listBoxCollateralAssignments.getItems().clear();
 		setCollateralAssignments(collateralAssignments);
-
+		int ccyFormat = 2;
 		BigDecimal loanAssignedValue = BigDecimal.ZERO;
 		if (collateralAssignments != null && !collateralAssignments.isEmpty()) {
 
@@ -597,7 +599,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 			for (CollateralAssignment collateralAssignment : collateralAssignments) {
 
-				int ccyFormat = CurrencyUtil.getFormat(collateralAssignment.getCollateralCcy());
+				ccyFormat = CurrencyUtil.getFormat(collateralAssignment.getCollateralCcy());
 				Listitem listitem = new Listitem();
 				Listcell listcell;
 				listcell = new Listcell(collateralAssignment.getCollateralRef());

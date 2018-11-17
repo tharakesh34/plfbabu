@@ -623,43 +623,41 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			filters = new Filter[1];
 		}
 
-		if (getLimitHeader() != null) {
-			if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType)) {
-				filters[0] = new Filter("LimitCategory", LimitConstants.LIMIT_CATEGORY_BANK);
+		if (StringUtils.equals(LimitConstants.LIMIT_RULE, limitType)) {
+			filters[0] = new Filter("LimitCategory", LimitConstants.LIMIT_CATEGORY_BANK);
 
-				this.limiDialogRule.setModuleName("LimitFilterQuery");
-				this.limiDialogRule.setValueColumn("QueryCode");
-				this.limiDialogRule.setDescColumn("QueryDesc");
-				this.limiDialogRule.setValidateColumns(new String[] { "QueryCode" });
+			this.limiDialogRule.setModuleName("LimitFilterQuery");
+			this.limiDialogRule.setValueColumn("QueryCode");
+			this.limiDialogRule.setDescColumn("QueryDesc");
+			this.limiDialogRule.setValidateColumns(new String[] { "QueryCode" });
 
-				List<String> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false, true);
-				Filter[] filtersRulebased = new Filter[1];
-				filtersRulebased[0] = new Filter("QueryCode", existingGroups, Filter.OP_NOT_IN);
-				if (existingGroups != null && existingGroups.size() > 0) {
-					this.limiDialogRule.setFilters(filtersRulebased);
-				}
-				gb_CustomerDetails.setVisible(false);
-				gb_GroupDetails.setVisible(false);
-				gb_RuleBased.setVisible(true);
-				//row3.setVisible(false);
-				listheader_ExpiryDate.setVisible(false);
-				window_LimitHeaderDialog_title.setValue(Labels.getLabel("window_LimitHeaderDialogRule.title"));
-				this.listBoxLimitDetail.setHeight(getListBoxHeight(9));
-			} else if (getLimitHeader().getCustomerId() != 0) {
-				filters[0] = new Filter("LimitCategory", LimitConstants.LIMIT_CATEGORY_CUST);
-				gb_CustomerDetails.setVisible(true);
-				gb_GroupDetails.setVisible(false);
-				gb_RuleBased.setVisible(false);
-				row3.setVisible(true);
-				this.listBoxLimitDetail.setHeight(getListBoxHeight(8));
-			} else {
-				filters[0] = new Filter("LimitCategory", LimitConstants.LIMIT_CATEGORY_CUST);
-				gb_CustomerDetails.setVisible(false);
-				gb_GroupDetails.setVisible(true);
-				gb_RuleBased.setVisible(false);
-				row3.setVisible(true);
-				this.listBoxLimitDetail.setHeight(getListBoxHeight(9));
+			List<String> existingGroups = new ArrayList<>();//PennantappUtil.getLimitHeaderCustomer(false, true);
+			Filter[] filtersRulebased = new Filter[1];
+			filtersRulebased[0] = new Filter("QueryCode", existingGroups, Filter.OP_NOT_IN);
+			if (existingGroups != null && existingGroups.size() > 0) {
+				this.limiDialogRule.setFilters(filtersRulebased);
 			}
+			gb_CustomerDetails.setVisible(false);
+			gb_GroupDetails.setVisible(false);
+			gb_RuleBased.setVisible(true);
+			//row3.setVisible(false);
+			listheader_ExpiryDate.setVisible(false);
+			window_LimitHeaderDialog_title.setValue(Labels.getLabel("window_LimitHeaderDialogRule.title"));
+			this.listBoxLimitDetail.setHeight(getListBoxHeight(9));
+		} else if (getLimitHeader().getCustomerId() != 0) {
+			filters[0] = new Filter("LimitCategory", LimitConstants.LIMIT_CATEGORY_CUST);
+			gb_CustomerDetails.setVisible(true);
+			gb_GroupDetails.setVisible(false);
+			gb_RuleBased.setVisible(false);
+			row3.setVisible(true);
+			this.listBoxLimitDetail.setHeight(getListBoxHeight(8));
+		} else {
+			filters[0] = new Filter("LimitCategory", LimitConstants.LIMIT_CATEGORY_CUST);
+			gb_CustomerDetails.setVisible(false);
+			gb_GroupDetails.setVisible(true);
+			gb_RuleBased.setVisible(false);
+			row3.setVisible(true);
+			this.listBoxLimitDetail.setHeight(getListBoxHeight(9));
 		}
 		this.limitStructureCode.setFilters(filters);
 		this.remarks.setMaxlength(1000);

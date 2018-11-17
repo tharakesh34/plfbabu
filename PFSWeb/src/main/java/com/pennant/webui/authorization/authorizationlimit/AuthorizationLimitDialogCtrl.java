@@ -76,6 +76,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -714,22 +715,20 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 					Labels.getLabel("label_AuthorizationLimitDialog_LimitAmount.value"), 0, true, false, 0));
 		}
 
-		if (!this.expiryDate.isReadonly()) {
-
-			Date date = DateUtil.getDatePart(DateUtil.getSysDate());
-			if (startDate.getValue() == null || startDate.getValue().before(date)) {
-				date = DateUtil.getDatePart(DateUtil.getSysDate());
-			} else {
-				date = startDate.getValue();
+		if (!this.expiryDate.isReadonly()){
+			
+			Date date= DateUtil.getDatePart(DateUtility.getAppDate());
+			if(startDate.getValue()==null || startDate.getValue().before(date)){
+				date=DateUtil.getDatePart(DateUtility.getAppDate());
+			}else{
+				date=startDate.getValue();
 			}
 			this.expiryDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_AuthorizationLimitDialog_ExpiryDate.value"), true, date, null, false));
 		}
 
-		if (!this.startDate.isReadonly()) {
-			this.startDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"), true,
-							DateUtil.getDatePart(DateUtil.getSysDate()), null, true));
+		if (!this.startDate.isReadonly()){
+			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"),true,DateUtil.getDatePart(DateUtility.getAppDate()),null,true));
 		}
 
 		if (holdRow.isVisible()) {

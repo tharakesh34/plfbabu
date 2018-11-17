@@ -97,10 +97,10 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		// Group
 		this.group.getTextbox().setReadonly(false);
 		this.group.setModuleName("CustomerGroup");
-		this.group.setValueColumn("CustGrpID");
-		this.group.setValidateColumns(new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" });
+		this.group.setValueColumn("CustGrpCode");
+		this.group.setValidateColumns(new String[] { "CustGrpCode", "CustGrpDesc" });
 
-		List<String> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false, false);
+		List<Long> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false,false);
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("CustGrpID", existingGroups, Filter.OP_NOT_IN);
 		if (existingGroups != null && existingGroups.size() > 0) {
@@ -110,9 +110,8 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		this.customer.getTextbox().setReadonly(false);
 		this.customer.setModuleName("Customer");
 		this.customer.setValueColumn("CustCIF");
-		this.customer.setValidateColumns(
-				new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
-		List<String> existingcustomers = PennantAppUtil.getLimitHeaderCustomer(true, false);
+		this.customer.setValidateColumns(new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
+		List<Long> existingcustomers = PennantAppUtil.getLimitHeaderCustomer(true,false);
 		Filter[] filters2 = new Filter[1];
 		filters2[0] = new Filter("CustID", existingcustomers, Filter.OP_NOT_IN);
 		if (existingcustomers != null && existingcustomers.size() > 0) {

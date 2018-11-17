@@ -1080,6 +1080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.planDeferCount.setMaxlength(3);
 
 		this.commitmentRef.setProperties("Commitment", "CmtReference", "CmtTitle", false, 20);
+		this.commitmentRef.setTextBoxWidth(180);
 		this.commitmentRef.setFilters(new Filter[] { new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL) });
 
 		if (!financeType.isFinCommitmentReq()) {
@@ -7817,9 +7818,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.graceTerms_Two.intValue() > 0 && this.gracePeriodEndDate.getValue() == null) {
 
 				int checkDays = 0;
-				if (this.graceTerms_Two.intValue() == 1) {
+				//if (this.graceTerms_Two.intValue() == 1) {
 					checkDays = getFinanceDetail().getFinScheduleData().getFinanceType().getFddLockPeriod();
-				}
+				//}
 
 				List<Calendar> scheduleDateList = FrequencyUtil
 						.getNextDate(this.gracePftFrq.getValue(), this.graceTerms_Two.intValue(),
@@ -13966,7 +13967,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	protected void doEditCommitment(FinScheduleData finScheduleData) {
 
-		if (finScheduleData.getFinanceType().isFinCommitmentReq()) {
+		if (!finScheduleData.getFinanceType().isFinCommitmentReq()) {
 			this.commitmentRef.setReadonly(true);
 			return;
 		}

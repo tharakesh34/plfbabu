@@ -308,7 +308,7 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 				Operators.STRING);
 		registerField("NonPerforming", nonPerforming, SortOrder.NONE, sortOperator_NonPerforming, Operators.BOOLEAN);
 
-		registerField("CcyEditField");
+		//registerField("CcyEditField");
 		registerField("nextRoleCode");
 
 		// Render the page and display the data.

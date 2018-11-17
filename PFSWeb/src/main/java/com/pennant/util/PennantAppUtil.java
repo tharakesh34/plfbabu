@@ -1698,10 +1698,10 @@ public class PennantAppUtil {
 		return appList;
 	}
 
-	public static List<String> getLimitHeaderCustomer(boolean customer, boolean rule) {
+	public static List<Long> getLimitHeaderCustomer(boolean customer,boolean rule) {
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<String> limitHeader = new ArrayList<String>();
+		List<Long> limitHeader=new ArrayList<Long>();
 
 		JdbcSearchObject<LimitHeader> searchObject = new JdbcSearchObject<LimitHeader>(LimitHeader.class);
 
@@ -1719,11 +1719,11 @@ public class PennantAppUtil {
 		if (limitexisitingList != null) {
 			for (LimitHeader limitCustomer : limitexisitingList) {
 				if (rule) {
-					limitHeader.add(String.valueOf(limitCustomer.getRuleCode()));
+					//limitHeader.add(String.valueOf(limitCustomer.getRuleCode()));
 				} else if (customer) {
-					limitHeader.add(String.valueOf(limitCustomer.getCustomerId()));
+					limitHeader.add(limitCustomer.getCustomerId());
 				} else {
-					limitHeader.add(String.valueOf(limitCustomer.getCustomerGroup()));
+					limitHeader.add(limitCustomer.getCustomerGroup());
 				}
 			}
 		}

@@ -173,11 +173,15 @@
 								<listheader id="listheader_LimitItem" label="${c:l('listheader_LimitDetail_LimitItem.label')}" hflex="min" />
 								<listheader id="listheader_ExpiryDate" label="${c:l('listheader_ExpiryDate.label')}" hflex="min" />
 
-								<listheader id="listheader_LimitCheck" label="${c:l('listheader_LimitCheck.label')}" hflex="min" />
-
-								<listheader id="listheader_Revolving" align="left" label="${c:l('listheader_LimitRevolving.label')}"
-									hflex="min" visible="false" />
-								<listheader id="listheader_ReservedOrActual" label="${c:l('listheader_ReservedOrActual.label')}"
+								<listheader id="listheader_LimitCheck"
+									label="${c:l('listheader_LimitCheck.label')}" hflex="min" />
+									
+								<listheader id="listheader_Revolving"
+									align="left" label="${c:l('listheader_LimitRevolving.label')}"
+									hflex="min" />
+								<listheader
+									id="listheader_ReservedOrActual"
+									label="${c:l('listheader_ReservedOrActual.label')}"
 									hflex="min" />
 								<listheader id="listheader_LimitSanctioned" align="right" label="${c:l('listheader_LimitSanctioned.label')}"
 									hflex="min" />

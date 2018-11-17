@@ -122,6 +122,7 @@ public class LimitManagement {
 
 		BigDecimal tranAmt = BigDecimal.ZERO;
 		BigDecimal reservTranAmt = BigDecimal.ZERO;
+		BigDecimal cmtReserve = BigDecimal.ZERO;
 
 		if (LimitConstants.BLOCK.equals(tranType)) {
 			tranAmt = finMain.getFinAssetValue();
@@ -134,7 +135,14 @@ public class LimitManagement {
 				}
 			}
 
-			reservTranAmt = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue());
+			if(StringUtils.isNotEmpty(finMain.getFinCommitmentRef())){
+				Commitment commitment = commitmentDAO.getCommitmentById(finMain.getFinCommitmentRef(), "");
+				if(commitment != null){
+					cmtReserve = commitment.getCmtAvailable();
+				}
+			}else{
+				reservTranAmt = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue());
+			}
 		}
 
 		int disbSeq = 0;
@@ -159,6 +167,8 @@ public class LimitManagement {
 
 				if (limitTranDetail != null) {
 					blockAmount = limitTranDetail.getLimitAmount();
+				}else if(StringUtils.isNotBlank(finMain.getFinCommitmentRef())){
+					blockAmount = tranAmt;
 				}
 
 				if (LimitConstants.APPROVE.equals(tranType)) {
@@ -382,7 +392,7 @@ public class LimitManagement {
 						details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 					} else {
 						details.setLimitSanctioned(details.getLimitSanctioned().subtract(limitAmount));
-						details.setNonRvlUtilised(details.getNonRvlUtilised().add(limitAmount));
+						details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 					}
 
 					limitDetailDAO.updateReserveUtilise(details, "");
