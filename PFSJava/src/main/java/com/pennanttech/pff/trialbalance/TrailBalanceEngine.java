@@ -69,6 +69,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		this.toDate = toDate;
 	}
 
+	public TrailBalanceEngine(DataSource dataSource, long userId, Date valueDate, Date appDate) {
+		super(dataSource, userId, App.DATABASE.name(), true, appDate, EXTRACT_STATUS);
+		this.appDate = appDate;
+	}
+
 	/**
 	 * Validate the Account Mapping and Posting data
 	 * 
