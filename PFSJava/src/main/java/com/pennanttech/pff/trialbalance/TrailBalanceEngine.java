@@ -265,7 +265,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		// get from sys parm value
 
 		int year = DateUtility.getYear(fromDate);
-		String month = SysParamUtil.getValueAsString("FINANCIAL_START_MONTH");
+		String month = SysParamUtil.getValueAsString("FINANCIAL_YEAR_START_MONTH");
 		String date = "1";// default value;
 
 		String financeStartDate = date + "/" + month + "/" + Integer.toString(year);
