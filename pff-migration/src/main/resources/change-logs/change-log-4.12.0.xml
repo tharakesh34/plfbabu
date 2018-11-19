@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="2" author="somasekhar">
+	<changeSet id="2.1" author="somasekhar">
 		<createView replaceIfExists="true" viewName="DE_FILE_CONTROL_VIEW">
 	     SELECT DS.ID,
 		 	DC.NAME,
@@ -46,7 +46,7 @@
             TH.ENDDATE
 		FROM DATA_ENGINE_CONFIG DC
 		INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME
-        LEFT join TRIAL_BALANCE_HEADER TH on TH.FILENAME=DS.FILENAME ORDER BY DS.ID DESC;
+        LEFT join TRIAL_BALANCE_HEADER TH on TH.FILENAME=DS.FILENAME
 	 </createView>
 </changeSet>
 	
