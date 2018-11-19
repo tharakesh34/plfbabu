@@ -1725,8 +1725,8 @@
 	</menu>
 
 	<!-- Enquiry -->
-	<menuItem id="menu_Item_CreditApplicationReviewEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul" 
-		rightName="menuItem_CustomerEnquiry_CreditReviewEnq" />
+	<!-- <menuItem id="menu_Item_CreditApplicationReviewEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewEnquiry.zul" 
+		rightName="menuItem_CustomerEnquiry_CreditReviewEnq" /> -->
 	<menuItem id="menu_Item_CustomerSummary" zulNavigation="/WEB-INF/pages/CustomerMasters/Enquiry/CustomerSummary.zul" 
 		rightName="menuItem_CustomerEnquiry_CustomerSummaryEnq"/>
 	<!-- <menuItem id="menu_Item_BankBranchEnquiry" zulNavigation="/WEB-INF/pages/BMTMasters/BankBranch/BankBranchList.zul?enqiryModule=Y" 

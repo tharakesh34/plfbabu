@@ -961,6 +961,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			if (enqiryModule) {
 				this.btnSave.setVisible(false);
 				this.btnNotes.setVisible(false);
+				this.btnGen.setVisible(false);
 				this.readOnlyComponent(true, this.accountType);
 				this.readOnlyComponent(true, this.bankBranchID);
 				this.readOnlyComponent(true, this.noOfCheques);
@@ -1423,6 +1424,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				emiReference.addForward("onChange", this.window_ChequeDetailDialog, "onChangeEmiDate", list);
 				chequeStatus.addForward("onChange", this.window_ChequeDetailDialog, "onChangeChequeStatus", list);
 				accTypecmbbox.addForward("onChange", this.window_ChequeDetailDialog, "onChangeAccTypecmbbox", list);
+				if (enqiryModule) {
+					uploadButton.setVisible(false);
+					delButton.setVisible(false);
+					this.readOnlyComponent(true, accTypecmbbox);
+					this.readOnlyComponent(true, emiReference);
+				}
 			}
 		}
 	}
