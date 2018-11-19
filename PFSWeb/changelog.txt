@@ -1,5 +1,51 @@
+pff 4.12.1  2018-11-19
+----------------
+-PPM # 18052 Unable to get validation messages after performing save, submitting , resubmit , reject , approve operations in mandates.
+-bugs #1029 Amount Validation Issue in Add disbursement API.
+-story #1028 Added the 3 fields in Finance Summary Aggregate for OD Loan Category.
+-PSD #130223 :  Getting error while updating the Early Settlement Receipt.
+
+pff 4.11.4.5  2018-11-16 
+----------------
+story #1025 Workflow Process Attributes changes.
+story #1018 New Inquiries addition.
+story #1027 Limit Modules Corrections.
+
+pff 4.11.4.4    2018-11-16
+-story #1019 Customer search modification in CoApp & Guarantors
+-story #974 Collateral Shortfall validation on particular Stage 
+-story #976 Recommendations based on APPDATE or SYSDATE 
+-story #1020 DSA Master Changes(Agency Master) only point 1,2 has done.
+-story #1024 Generic Collection Data Download
+
+pff 4.11.4.3  2018-11-15
+----------------
+- story #910 Enhance to receive on disbursement details.
+- story #1016  Added the 3 fields in Create Loan API.
+
+pff 4.11.4.2   2018-11-13
+----------------
+-story #1011 Balance Certificate
+-story #1014 Credit Review Amount coloring
+-story #1012 Upfront Fee Validation
+-bugs #1015 Corporate financial file upload
+-bugs #1013 Issue While Create Loan API with the DSA 
+-PSD #130013 :  ON PFTCAP Schedule method with the BPI case, schedule on First EMI should 
+-story #910 Enhance to receive on disbursement details.
+-story #1016  Added the 3 fields in Create Loan API.
+
+pff 4.11.4.1  2018-11-13
+----------------
+-bugs #1010 Re-factoring of SELECT ALL option.
+-story #1007  Added the new API for Approved Mandate.
+-bug #1006  Issue While Create Customer through API.
 
 
+pff 4.11.3.6  2018-11-12
+----------------
+-story #973  Added the Extended Details in GET Customer and Get Loan API..
+-story #975 Flag Maintenance of Document is Original or not has done.
+-story #974 Collateral Shortfall validation on particular Stage.
 
 pff 4.11.3.5 2018-11-09
 ----------------
