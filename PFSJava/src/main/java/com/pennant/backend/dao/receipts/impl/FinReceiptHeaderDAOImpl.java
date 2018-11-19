@@ -630,7 +630,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		int count = 0;
 
 		StringBuilder selectSql = new StringBuilder("Select count(*)  from FinReceiptHeader_Temp where ");
-		selectSql.append(" FinReference = :Reference");
+		selectSql.append(" Reference = :Reference");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
