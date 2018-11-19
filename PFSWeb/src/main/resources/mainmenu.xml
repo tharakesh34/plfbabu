@@ -1197,8 +1197,8 @@
 			<menuItem id="menu_Item_TrailBalanceFileDownloads"
 				zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul?module=TrailBalance"
 				rightName="menu_Item_SAPGLFileDownloads" />
-			<!-- <menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul?module=SAPGL" 
-				rightName="menu_Item_SAPGLFileDownloads"/> -->
+			<menuItem id="menu_Item_SAPGLFileDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/GlFileDownloadList.zul?module=SAPGL" 
+				rightName="menu_Item_SAPGLFileDownloads"/>
 		</menu>
 		<menu id="menu_Category_UserLevel">
 			<menuItem id="menu_Item_UserCreation"

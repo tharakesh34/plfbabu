@@ -49,10 +49,12 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 
 	}
 
-	public void extractReport(String[] entityDetails) throws Exception {
+	public void extractReport(String[] entityDetails, Date startDate, Date endDate) throws Exception {
 		this.entityCode = entityDetails[0];
 		this.entityDescription = entityDetails[1];
-
+		this.startDate = startDate;
+		this.endDate = endDate;
+		
 		try {
 			generate();
 			exportSummaryReport();

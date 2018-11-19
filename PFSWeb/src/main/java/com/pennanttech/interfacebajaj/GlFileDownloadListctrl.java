@@ -50,13 +50,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.spring.SpringUtil;
@@ -68,25 +72,34 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -94,6 +107,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -115,22 +129,38 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 	protected Window window_GlFileDownloadList;
 	protected Borderlayout borderLayout_GlFileDownloadList;
-	//protected Paging pagingFileDownloadList;
+	protected Paging pagingFileDownloadList;
 	protected Listbox listBoxFileDownload;
+	protected Listbox listBoxFileDownloadTrailBalance;
 	protected Button btnRefresh;
 	protected Button btnexecute;
 	protected Combobox dimention;
 	protected Combobox months;
-	protected Row row_entity;
 	protected ExtendedCombobox entityCode;
 	private List<ValueLabel> dimentionsList = new ArrayList<>();
-	private List<ValueLabel> monthsList = PennantStaticListUtil.getMontEnds(DateUtility.getAppDate());
+	private List<ValueLabel> monthsList = getMonthEnd();
+
+	protected Textbox stateCode;
+	protected Button btnSearchState;
+	protected Space space_stateType;
+
+	private boolean isTrailBalance = false;
+
+	protected Row row_MonthSelection;
+	protected Row row_DateSelection;
+	protected Row row_State;
+	protected Label id_dimension;
+	protected Hbox hbox_Dimension;
+	protected Datebox fromdate;
+	protected Datebox toDate;
 
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;
 	private Button downlaod;
 
 	protected AmazonS3Bucket bucket;
+
+	protected SecurityUserService securityUserService;
 
 	/**
 	 * default constructor.<br>
@@ -145,6 +175,12 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.pageRightName = "FileDownload";
 		super.tableName = "DE_FILE_CONTROL_VIEW";
 		super.queueTableName = "DE_FILE_CONTROL_VIEW";
+
+		if (StringUtils.equals(getArgument("module"), "TrailBalance")) {
+			this.isTrailBalance = true;
+		} else {
+			this.isTrailBalance = false;
+		}
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
@@ -154,10 +190,19 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	public void onCreate$window_GlFileDownloadList(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		// Set the page level components.
-		setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList, listBoxFileDownload, null);
-		setItemRender(new FileDownloadListModelItemRenderer());
-		setComparator(new FileDownloadComparator());
+		if (isTrailBalance) {
+			// Set the page level components.
+			setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList,
+					listBoxFileDownloadTrailBalance, pagingFileDownloadList);
+			setItemRender(new FileDownloadTrailBalanceListModelItemRenderer());
+			this.listBoxFileDownload.setVisible(false);
+		} else {
+			// Set the page level components.
+			setPageComponents(window_GlFileDownloadList, borderLayout_GlFileDownloadList, listBoxFileDownload, null);
+			setItemRender(new FileDownloadListModelItemRenderer());
+			this.listBoxFileDownloadTrailBalance.setVisible(false);
+			setComparator(new FileDownloadComparator());
+		}
 
 		dimentionsList.add(
 				new ValueLabel(TrailBalanceEngine.Dimension.STATE.name(), TrailBalanceEngine.Dimension.STATE.name()));
@@ -174,12 +219,20 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		registerField("POSTEVENT");
 		registerField("FileName");
 		registerField("FileLocation");
+		registerField("UserId");
+		registerField("endTime");
 		registerField("ValueDate", SortOrder.DESC);
+
+		if (isTrailBalance) {
+			registerField("startDate");
+			registerField("endDate");
+		}
 
 		doRenderPage();
 		search();
 		doSetFieldProperties();
-		this.listBoxFileDownload.setHeight(this.borderLayoutHeight - 60 + "px");
+		this.listBoxFileDownload.setHeight(this.borderLayoutHeight - 100 + "px");
+		this.listBoxFileDownloadTrailBalance.setHeight(this.borderLayoutHeight - 100 + "px");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -202,10 +255,18 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		super.doAddFilters();
 		List<String> list = new ArrayList<>();
 
-		list.add("TRIAL_BALANCE_EXPORT_STATE");
-		list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
-		list.add("GL_TRANSACTION_EXPORT");
-		list.add("GL_TRANSACTION_SUMMARY_EXPORT");
+		if (isTrailBalance) {
+			list.add("TRIAL_BALANCE_EXPORT_STATE");
+			list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
+			if (App.DATABASE == App.Database.ORACLE) {
+				this.searchObject.addWhereClause(" rownum<11 ");
+			} else {
+                
+			}
+		} else {
+			list.add("GL_TRANSACTION_EXPORT");
+			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
+		}
 
 		this.searchObject.addFilterIn("NAME", list);
 	}
@@ -214,14 +275,28 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setTextBoxWidth(135);
+		this.entityCode.setMandatoryStyle(true);
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
 
-		if (ImplementationConstants.ENTITY_REQ_TRAIL_BAL) {
-			row_entity.setVisible(true);
-			this.entityCode.setMandatoryStyle(true);
+		this.stateCode.setMaxlength(500);
+		this.stateCode.setDisabled(true);
+		this.btnSearchState.setDisabled(true);
+		this.space_stateType.setSclass("");
+
+		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.fromdate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		if (isTrailBalance) {
+			this.row_MonthSelection.setVisible(false);
+			this.row_State.setVisible(false);
+		} else {
+			this.row_DateSelection.setVisible(false);
+			this.row_State.setVisible(false);
+			this.id_dimension.setVisible(false);
+			this.hbox_Dimension.setVisible(false);
 		}
 	}
 
@@ -239,10 +314,12 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		doSetValidations();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		try {
-			this.dimention.getValue();
-		} catch (WrongValueException we) {
-			wve.add(we);
+		if (isTrailBalance) {
+			try {
+				this.dimention.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		try {
@@ -253,12 +330,81 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		try {
 			if (!this.entityCode.isReadonly())
-				this.entityCode
-						.setConstraint(new PTStringValidator(Labels.getLabel("label_MandateDialog_EntityCode.value"),
-								null, ImplementationConstants.ENTITY_REQ_TRAIL_BAL, true));
+				this.entityCode.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_MandateDialog_EntityCode.value"), null, true, true));
 			this.entityCode.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		if (isTrailBalance) {
+			try {
+				this.fromdate.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				this.toDate.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
+					throw new WrongValueException(this.toDate, "To Date should be greater than From Date");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (this.toDate != null
+						&& DateUtility.compare(this.toDate.getValue(), DateUtility.getLastBusinessdate()) > 0) {
+					throw new WrongValueException(this.toDate, "To Date should be less than Last Business Date");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (this.fromdate != null && DateUtility.getMonth(this.fromdate.getValue()) < SysParamUtil
+						.getValueAsInt("FINANCIAL_YEAR_START_MONTH")) {
+					throw new WrongValueException(this.fromdate,
+							"From Date should be greater or equal to financial start month");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (this.toDate != null
+						&& DateUtility.getYearsBetween(this.fromdate.getValue(), this.toDate.getValue()) != 0
+						&& DateUtility.getMonth(this.toDate.getValue()) > SysParamUtil
+								.getValueAsInt("FINANCIAL_YEAR_END_MONTH")) {
+					throw new WrongValueException(this.toDate,
+							"To Date should be less or equal to financial End month");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (this.toDate != null && this.fromdate != null
+						&& DateUtility.getYearsBetween(this.fromdate.getValue(), this.toDate.getValue()) > 1) {
+					throw new WrongValueException(this.toDate,
+							"To Date and From Date should be with in financial Year");
+				}
+
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (!this.btnSearchState.isDisabled())
+					this.stateCode.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		doRemoveValidation();
@@ -273,48 +419,58 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 		try {
 			String selectedDimention = dimention.getSelectedItem().getValue();
-			String selectedMonth = months.getSelectedItem().getValue();
 			String entityCode = this.entityCode.getValue();
 
-			Date valueDate = null;
-			Date appDate = null;
+			if (isTrailBalance) {
 
-			appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
-			valueDate = appDate;
+				TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("dataSource"),
+						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppDate(),
+						DateUtility.getAppDate(), this.fromdate.getValue(), this.toDate.getValue());
 
-			TrailBalanceEngine trialbal = new TrailBalanceEngine((DataSource) SpringUtil.getBean("dataSource"),
-					getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate);
+				if (trialbal.isBatchExists(selectedDimention, entityCode)) {
+					int conf = MessageUtil.confirm(
+							"Trial balance already generated for the selected month.\n Do you want to continue?");
 
-			if (trialbal.isBatchExists(entityCode, selectedDimention)) {
-				int conf = MessageUtil
-						.confirm("Trial balance already generated for the selected month.\n Do you want to continue?");
-
-				if (conf == MessageUtil.NO) {
-					return;
+					if (conf == MessageUtil.NO) {
+						return;
+					}
 				}
+
+				DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
+				status.setStatus("I");
+
+				if (selectedDimention.equals(TrailBalanceEngine.Dimension.STATE.name())) {
+					trialbal.extractReport(TrailBalanceEngine.Dimension.STATE,
+							new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
+							this.stateCode.getValue());
+
+				} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
+					trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,
+							new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
+							this.stateCode.getValue());
+				}
+
+			} else {
+
+				Date valueDate = null;
+				Date appDate = null;
+				String selectedMonth = months.getSelectedItem().getValue();
+				appDate = DateUtil.parse(selectedMonth, PennantConstants.DBDateFormat);
+				valueDate = appDate;
+				Date stateDate = DateUtil.getMonthStart(appDate);
+				Date endDate = DateUtil.getMonthEnd(appDate);
+				new SAPGLExtract((DataSource) SpringUtil.getBean("dataSource"),
+						getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport(
+								new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
+								stateDate, endDate);
+
 			}
 
-			DataEngineStatus status = TrailBalanceEngine.EXTRACT_STATUS;
-			status.setStatus("I");
-
-			if (selectedDimention.equals(TrailBalanceEngine.Dimension.STATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimension.STATE,
-						new String[] { this.entityCode.getValue(), this.entityCode.getDescription() });
-
-				if ("S".equals(status.getStatus())) {
-					new SAPGLExtract((DataSource) SpringUtil.getBean("dataSource"),
-							getUserWorkspace().getUserDetails().getUserId(), valueDate, appDate).extractReport(
-									new String[] { this.entityCode.getValue(), this.entityCode.getDescription() });
-				}
-			} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
-				trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,
-						new String[] { this.entityCode.getValue(), this.entityCode.getDescription() });
-			}
-
-			refresh();
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
+
+		refresh();
 
 	}
 
@@ -327,9 +483,21 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 					new StaticListValidator(dimentionsList, Labels.getLabel("label_GLFileList_Dimension.value")));
 		}
 
-		if (!this.months.isDisabled() && PennantConstants.List_Select.equals(this.months.getSelectedItem().getValue()))
+		if (this.row_MonthSelection.isVisible() && !this.months.isDisabled()
+				&& PennantConstants.List_Select.equals(this.months.getSelectedItem().getValue()))
 			this.months.setConstraint(
 					new StaticListValidator(monthsList, Labels.getLabel("label_GLFileList_Months.value")));
+
+		if (this.row_DateSelection.isVisible()) {
+			this.fromdate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_TrailBalance_FromDate.value"), true));
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_TrailBalance_ToDate.value"), true));
+		}
+
+		if (!this.btnSearchState.isDisabled()) {
+			this.stateCode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_TrailBalance_StateCode.value"), null, false, true));
+		}
 	}
 
 	/**
@@ -339,7 +507,10 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		logger.debug("Entering ");
 		this.dimention.setConstraint("");
 		this.months.setConstraint("");
+		this.toDate.setConstraint("");
+		this.fromdate.setConstraint("");
 		this.entityCode.setConstraint("");
+		this.stateCode.setConstraint("");
 
 		logger.debug("Leaving ");
 	}
@@ -407,8 +578,31 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	}
 
 	private void refresh() {
+		doRemoveValidation();
+		doClearMessage();
+		doClearData();
 		doReset();
 		search();
+	}
+
+	protected void doClearMessage() {
+		this.entityCode.setErrorMessage("");
+	}
+
+	private void doClearData() {
+
+		this.entityCode.setValue("");
+		if (isTrailBalance) {
+			this.dimention.setValue(Labels.getLabel("Combo.Select"));
+			this.stateCode.setValue("");
+			this.btnSearchState.setDisabled(true);
+			this.fromdate.setText("");
+			this.toDate.setText("");
+			this.row_State.setVisible(false);
+		} else {
+			this.months.setValue(Labels.getLabel("Combo.Select"));
+			this.row_State.setVisible(false);
+		}
 	}
 
 	/**
@@ -474,5 +668,154 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			}
 
 		}
+	}
+
+	/**
+	 * Item renderer for listitems in the listbox.
+	 * 
+	 */
+	private class FileDownloadTrailBalanceListModelItemRenderer
+			implements ListitemRenderer<FileDownlaod>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+			Listcell lc;
+
+			lc = new Listcell(fileDownlaod.getFileName());
+			lc.setParent(item);
+
+			lc = new Listcell(getSecurityUser(fileDownlaod.getUserId()));
+			lc.setParent(item);
+
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getStartDate(), PennantConstants.dateFormat));
+			lc.setParent(item);
+
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndDate(), PennantConstants.dateFormat));
+			lc.setParent(item);
+
+			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
+			lc.setParent(item);
+
+			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
+			lc.setParent(item);
+
+			lc = new Listcell();
+			downlaod = new Button();
+			downlaod.addForward("onClick", self, "onClick_Downlaod");
+			lc.appendChild(downlaod);
+			downlaod.setLabel("Download");
+			downlaod.setTooltiptext("Download");
+
+			downlaod.setAttribute("object", fileDownlaod);
+			StringBuilder builder = new StringBuilder();
+			builder.append(fileDownlaod.getFileLocation());
+			builder.append(File.separator);
+			builder.append(fileDownlaod.getFileName());
+
+			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("SAPGL request for file generation failed.");
+			}
+
+			if (!com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
+				File file = new File(builder.toString());
+				if (!file.exists()) {
+					downlaod.setDisabled(true);
+					downlaod.setTooltiptext("File not available.");
+				}
+			}
+
+			lc.setParent(item);
+		}
+
+	}
+
+	private String getSecurityUser(long usrId) {
+
+		SecurityUser securityUser = getSecurityUserService().getSecurityUserById(usrId);
+		return securityUser.getUsrLogin();
+
+	}
+
+	private List<ValueLabel> getMonthEnd() {
+
+		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
+
+		SimpleDateFormat valueDateFormat = new SimpleDateFormat(PennantConstants.DBDateFormat);
+		SimpleDateFormat displayDateFormat = new SimpleDateFormat(DateFormat.LONG_MONTH.getPattern());
+
+		GregorianCalendar gc = null;
+		Date appDate = DateUtility.getAppDate();
+		int month = DateUtil.getMonth(appDate);
+		int year = DateUtil.getYear(appDate);
+		Calendar startDate = new GregorianCalendar(2017, Calendar.AUGUST, 01);
+		Calendar endDate = new GregorianCalendar();
+		endDate.setTime(appDate);
+		int yearsInBetween = endDate.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
+		int monthsDiff = yearsInBetween * 12 + endDate.get(Calendar.MONTH) - startDate.get(Calendar.MONTH);
+
+		for (int i = 1; i <= monthsDiff; i++) {
+			if (month == 0) {
+				month = 11;
+				year = year - 1;
+			} else {
+				month = month - 1;
+			}
+			gc = new GregorianCalendar();
+			gc.set(year, month - 1, 1);
+			monthEndList.add(new ValueLabel(valueDateFormat.format(DateUtil.getMonthEnd(gc.getTime())),
+					displayDateFormat.format(gc.getTime())));
+		}
+		return monthEndList;
+	}
+
+	/**
+	 * Salutation codes will be populated based on the selected gender code.
+	 * 
+	 * @param event
+	 */
+	public void onSelect$dimention(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		String code = dimention.getSelectedItem().getValue();
+
+		if (PennantConstants.List_Select.equals(code)
+				|| StringUtils.equals(code, TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
+			this.stateCode.setDisabled(true);
+			this.btnSearchState.setDisabled(true);
+			this.space_stateType.setSclass("");
+			this.row_State.setVisible(false);
+			this.stateCode.setText("");
+		} else {
+			this.stateCode.setDisabled(false);
+			this.btnSearchState.setDisabled(false);
+			this.space_stateType.setSclass("");
+			this.row_State.setVisible(true);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnSearchState(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+		this.stateCode.setErrorMessage("");
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_GlFileDownloadList, "Province",
+				String.valueOf(this.stateCode.getValue()), null);
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			this.stateCode.setValue(details);
+			this.stateCode.setErrorMessage("");
+		}
+		logger.debug("Leaving  " + event.toString());
+
+	}
+
+	public SecurityUserService getSecurityUserService() {
+		return securityUserService;
+	}
+
+	public void setSecurityUserService(SecurityUserService securityUserService) {
+		this.securityUserService = securityUserService;
 	}
 }

@@ -18,6 +18,10 @@ public class FileDownlaod {
 	private String postEvent;
 	private String prefix;
 	private long configId;
+	private String entityCode;
+	private long userId;
+	private Date startDate;
+	private Date endDate;
 
 	public String getName() {
 		return name;
@@ -129,6 +133,38 @@ public class FileDownlaod {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+    public long getUserId() {
+		return userId;
+	}
+	
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 }
