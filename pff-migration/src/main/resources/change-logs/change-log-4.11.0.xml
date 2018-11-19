@@ -3716,12 +3716,12 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_Ba
 		<column name="Value" type="int"></column>
 	</createTable>
 </changeSet>
-<changeSet id="53_Pre" author="swami">
+<changeSet id="53_Pre.1" author="swami" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','amtvehicledealer');
 	</sql>
 </changeSet>
-<changeSet author="swami" id="53">
+<changeSet author="swami" id="53.0">
 	<modifyDataType tableName="amtvehicledealer"  columnName="PANNumber" newDataType="varchar(10)"/>
     <modifyDataType tableName="amtvehicledealer"	 columnName="UIDNumber"  newDataType="varchar(20)"/>
 	<modifyDataType tableName="amtvehicledealer"	columnName="TaxNumber"  newDataType="varchar(15)"/>
@@ -3732,19 +3732,18 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_Ba
  
 </changeSet>
 
- <changeSet id="53_Post.1" author="swami">
+ <changeSet id="53_Post.2" author="swami" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','amtvehicledealer');
 	</sql>
 </changeSet>
 
-
-<changeSet id="54_Pre" author="swami">
+<changeSet id="54_Pre.1" author="swami" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','amtvehicledealer_temp');
 	</sql>
 </changeSet>
-<changeSet author="swami" id="54">
+<changeSet author="swami" id="54.0">
 	<modifyDataType tableName="amtvehicledealer_temp" columnName="PANNumber" newDataType="varchar(10)"/>
     <modifyDataType tableName="amtvehicledealer_temp"	 columnName="UIDNumber" newDataType="varchar(20)"/>
 	<modifyDataType tableName="amtvehicledealer_temp"	columnName="TaxNumber"  newDataType="varchar(15)"/>
@@ -3755,7 +3754,7 @@ update reportconfiguration set alwmultiformat=0 where menuitemcode='menu_Item_Ba
 
 </changeSet>
 
-<changeSet id="54_Post" author="swami">
+<changeSet id="54_Post.1" author="swami" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','amtvehicledealer_temp');
 	</sql>
