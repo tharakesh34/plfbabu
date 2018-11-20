@@ -1574,6 +1574,9 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
 			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DSAN,
 					Labels.getLabel("label_MailTemplateDialog_DSANotification")));
+			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PVRN,
+					Labels.getLabel("label_MailTemplateDialog_PNNotification")));
+
 
 		}
 		return templateForList;
@@ -1585,6 +1588,9 @@ public class PennantStaticListUtil {
 			mailTeplateModulesList = new ArrayList<ValueLabel>(7);
 			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_FIN,
 					Labels.getLabel("label_MailTemplateDialog_Finance")));
+			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_PROVIDER,
+					Labels.getLabel("label_MailTemplateDialog_Provider")));
+
 			// mailTeplateModulesList.add(new
 			// ValueLabel(NotificationConstants.MAIL_MODULE_CAF,
 			// Labels.getLabel("label_MailTemplateDialog_Facility")));

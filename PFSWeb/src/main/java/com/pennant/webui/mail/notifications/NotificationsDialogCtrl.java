@@ -304,7 +304,16 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 */
 	public void onChange$ruleModule(Event event) {
 		logger.debug("Entering");
+		if (StringUtils.equals(this.ruleModule.getSelectedItem().getValue().toString(),
+				NotificationConstants.MAIL_MODULE_FIN)) {
+			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(),
+					listTemplateTypes, ",PN,");
 
+		} else if (StringUtils.equals(this.ruleModule.getSelectedItem().getValue().toString(),
+				NotificationConstants.MAIL_MODULE_PROVIDER)) {
+			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(),
+					listTemplateTypes, ",SP,DN,AE,CN,");
+		}
 		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
 				this.templateType.getSelectedItem().getValue().toString());
 
@@ -441,6 +450,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.listRuleModule = PennantStaticListUtil.getMailModulesList();
 		this.listTemplateTypes = PennantStaticListUtil.getTemplateForList();
 
+		
 		fillComboBox(this.ruleModule, aNotifications.getRuleModule(), listRuleModule, "");
 		fillComboBox(this.templateType, aNotifications.getTemplateType(), listTemplateTypes, "");
 
@@ -479,6 +489,10 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 				break;
 			case NotificationConstants.TEMPLATE_FOR_TAT:
 				this.tab_ruleReciepent.setDisabled(false);
+				break;
+			case NotificationConstants.TEMPLATE_FOR_PVRN:
+				this.tab_ruleReciepent.setDisabled(true);
+				this.tab_ruleAttachment.setDisabled(true);
 				break;
 			default:
 				this.tab_ruleReciepent.setDisabled(true);
@@ -564,7 +578,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 
 		// Rule Attachment
 		try {
-			if (wve.isEmpty() && !this.ruleAttachment.isReadOnly()) {
+			if (wve.isEmpty() && !tab_ruleAttachment.isDisabled() && !this.ruleAttachment.isReadOnly()) {
 				validate(this.ruleAttachment);
 				aNotifications.setRuleAttachment(this.ruleAttachment.getActualQuery());
 				aNotifications.setActualBlockAtachment(this.ruleAttachment.getActualBlock());

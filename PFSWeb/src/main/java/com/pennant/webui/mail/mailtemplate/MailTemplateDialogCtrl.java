@@ -434,11 +434,25 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.templateForEmail.setChecked(aMailTemplate.isEmailTemplate());
 		aMailTemplate.setEmailFormat("H");
 		fillComboBox(this.emailFormat, aMailTemplate.getEmailFormat(), listEmailFormat, "");
-		fillComboBox(this.templateFor, StringUtils.trimToEmpty(aMailTemplate.getTemplateFor()), listTemplateFor, "");
-		fillComboBox(this.templateModule,
-				aMailTemplate.getModule() == null ? NotificationConstants.MAIL_MODULE_FIN : aMailTemplate.getModule(),
-				mailTeplateModulesList, "");
 
+		fillComboBox(this.templateModule, aMailTemplate.getModule(), mailTeplateModulesList, "");
+
+		if (!aMailTemplate.isNewRecord()
+				&& StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_FIN)
+				|| StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_PROVIDER)) {
+			if (StringUtils.equals(aMailTemplate.getTemplateFor(), NotificationConstants.TEMPLATE_FOR_CN)) {
+
+				fillComboBox(this.templateFor, aMailTemplate.getTemplateFor(), listTemplateFor, ",PN,");
+
+			} else if (StringUtils.equals(aMailTemplate.getTemplateFor(), NotificationConstants.TEMPLATE_FOR_PVRN)) {
+
+				fillComboBox(this.templateFor, aMailTemplate.getTemplateFor(), listTemplateFor, ",SP,DN,AE,CN,");
+			}
+		} else {
+			fillComboBox(this.templateFor, StringUtils.trimToEmpty(aMailTemplate.getTemplateFor()), listTemplateFor,
+					"");
+		}
+		
 		if (aMailTemplate.isEmailTemplate()) {
 			this.emailDetailsTab.setDisabled(false);
 			if (NotificationConstants.TEMPLATE_FOR_AE.equals(getMailTemplate().getTemplateFor())) {
@@ -1197,12 +1211,28 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	public void onChange$templateModule(Event event) {
 		logger.debug("Entering " + event);
 
-		if (this.templateModule.getSelectedItem().getValue() != null && (this.templateModule.getSelectedItem()
-				.getValue().toString().equals(NotificationConstants.MAIL_MODULE_CAF)
-				|| this.templateModule.getSelectedItem().getValue().toString()
-						.equals(NotificationConstants.MAIL_MODULE_FIN)
-				|| this.templateModule.getSelectedItem().getValue().toString()
-						.equals(NotificationConstants.MAIL_MODULE_CREDIT))) {
+		if (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
+				NotificationConstants.MAIL_MODULE_FIN)) {
+			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(),
+					listTemplateFor,
+					",PN,");
+
+		} else if (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
+				NotificationConstants.MAIL_MODULE_PROVIDER)) {
+			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(),
+					listTemplateFor,
+					",SP,DN,AE,CN,");
+		}
+
+		if (this.templateModule.getSelectedItem().getValue() != null && (
+				StringUtils.equals(this.templateModule.getSelectedItem()
+				.getValue().toString(),NotificationConstants.MAIL_MODULE_CAF)
+				|| StringUtils.equals(this.templateModule.getSelectedItem()
+						.getValue().toString(),NotificationConstants.MAIL_MODULE_FIN)
+				|| StringUtils.equals(this.templateModule.getSelectedItem()
+						.getValue().toString(),NotificationConstants.MAIL_MODULE_CREDIT)
+				|| StringUtils.equals(this.templateModule.getSelectedItem()
+						.getValue().toString(), NotificationConstants.MAIL_MODULE_PROVIDER))) {
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData);
 			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1);
 		}

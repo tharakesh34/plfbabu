@@ -2207,6 +2207,7 @@
 	<bean id="vehicleDealerDialogCtrl" class="com.pennant.webui.amtmasters.vehicledealer.VehicleDealerDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<!--============ Vehicle Manufacturer Details ============== -->

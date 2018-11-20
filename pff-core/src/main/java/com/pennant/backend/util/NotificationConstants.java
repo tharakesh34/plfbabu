@@ -21,6 +21,7 @@ public class NotificationConstants {
 	public static final String TEMPLATE_FOR_LIMIT = "LT";
 	public static final String TEMPLATE_FOR_SP = "SP";
 	public static final String TEMPLATE_FOR_DSAN = "DN";
+	public static final String TEMPLATE_FOR_PVRN = "PN";// Vehicle Dealer/Provider Approval Notification
 
 	// Module Code for Notification to maintain parameters
 	public static final String MAIL_MODULE_FIN = "FIN";
@@ -30,6 +31,7 @@ public class NotificationConstants {
 	public static final String MAIL_MODULE_PROVISION = "PRV";
 	public static final String MAIL_MODULE_MANUALSUSPENSE = "MSP";
 	public static final String MAIL_MODULE_POAUTHORIZATION = "POA";
+	public static final String MAIL_MODULE_PROVIDER = "PVR";
 	public static final String SYSTEM_NOTIFICATION = "SYS_NOTIFICATION";
 
 	// TAT Alert Notification related

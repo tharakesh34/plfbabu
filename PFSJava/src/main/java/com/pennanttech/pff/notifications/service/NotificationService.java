@@ -168,7 +168,6 @@ public class NotificationService {
 		String role = null;
 		notification.setModule(moduleCode);
 		notification.setSubModule(moduleCode);
-
 		try {
 			FinanceDetail financeDetail;
 			FinanceMain financeMain;
@@ -212,6 +211,10 @@ public class NotificationService {
 				documents = queryDetail.getDocumentDetailsList();
 				keyReference = queryDetail.getFinReference();
 				role = queryDetail.getRoleCode();
+			} else if (object instanceof VehicleDealer) {
+				VehicleDealer vehicleDealer = (VehicleDealer) object;
+				keyReference = String.valueOf(vehicleDealer.getCode());
+				role = vehicleDealer.getRoleCode();
 			}
 
 			notification.setKeyReference(keyReference);
@@ -281,6 +284,10 @@ public class NotificationService {
 			// FIXME
 		} else if (object instanceof QueryDetail) {
 			queryDetail = (QueryDetail) object;
+		} else if (object instanceof VehicleDealer) {
+			VehicleDealer vehicleDealer = (VehicleDealer) object;
+			data = vehicleDealer.getDeclaredFieldValues();
+			data.put("vd_recordStatus", vehicleDealer.getRecordStatus());
 		}
 
 		for (Notifications item : notifications) {
@@ -337,7 +344,7 @@ public class NotificationService {
 					continue;
 				}
 
-				if (template != null && template.isEmailTemplate()) {
+				if (template != null && template.isEmailTemplate() && CollectionUtils.isNotEmpty(documents)) {
 					setAttachements(template, item.getRuleAttachment(), data, documents);
 				}
 
@@ -898,7 +905,6 @@ public class NotificationService {
 
 			int templateId = (Integer) this.ruleExecutionUtil.executeRule(rule, fieldsAndValues, null,
 					RuleReturnType.INTEGER);
-
 			if (templateId == 0) {
 				logger.warn(String.format("Template not found for the notification rule %s", rule));
 				return null;
@@ -922,8 +928,12 @@ public class NotificationService {
 	public Map<String, List<String>> getEmailsAndMobile(CustomerDetails customerDetails, Notifications notification,
 			Map<String, Object> fieldsAndValues, FinanceMain financeMain) {
 		Map<String, List<String>> map = new HashMap<>();
-		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
-		List<CustomerPhoneNumber> custMobiles = customerDetails.getCustomerPhoneNumList();
+		List<CustomerEMail> custEmails = null;
+		List<CustomerPhoneNumber> custMobiles = null;
+		if (customerDetails != null) {
+			custEmails = customerDetails.getCustomerEMailList();
+			custMobiles = customerDetails.getCustomerPhoneNumList();
+		}
 		String templateType = notification.getTemplateType();
 
 		List<String> emails = new ArrayList<>();
@@ -977,6 +987,9 @@ public class NotificationService {
 					emails.addAll(emailList);
 				}
 			}
+		} else if (NotificationConstants.TEMPLATE_FOR_PVRN.equals(templateType)) {
+			emails.add(StringUtils.trimToEmpty(fieldsAndValues.get("vd_email").toString()));
+			mobileNumbers.add(StringUtils.trimToEmpty(fieldsAndValues.get("vd_dealerTelephone").toString()));
 		}
 
 		map.put("EMAILS", emails);

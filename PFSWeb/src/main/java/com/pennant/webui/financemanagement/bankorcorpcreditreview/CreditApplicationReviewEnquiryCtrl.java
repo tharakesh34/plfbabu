@@ -75,6 +75,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
@@ -218,6 +219,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private JountAccountDetailDAO jountAccountDetailDAO;
 	private CreditApplicationReviewDAO creditApplicationReviewDAO;
 	private String finReference;
+	private FinanceDetail financeDetail;
 	Set<Long> custIds = new HashSet<>();
 	private List<FinCreditReviewDetails> auditYears;
 	private List<JointAccountDetail> coAppIds = new ArrayList<>();
@@ -295,8 +297,21 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				this.maxAuditYear = getCreditApplicationReviewService()
 						.getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
 
+				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+
+				if (financeDetail.getJountAccountDetailList() != null
+						&& financeDetail.getJountAccountDetailList().size() > 0) {
+					for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+						if (!StringUtils.equals(jointAccountDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+								&& !StringUtils.equals(jointAccountDetail.getRecordType(),
+										PennantConstants.RECORD_TYPE_CAN)) {
+							coAppIds.add(jointAccountDetail);
+						}
+					}
+				}
+
 				//getting co-applicant id's
-				coAppIds = jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
+				//coAppIds = jountAccountDetailDAO.getCustIdsByFinnRef(finReference);
 				custIds.add(this.custID.getValue());
 
 				//Adding co-applicant id's
