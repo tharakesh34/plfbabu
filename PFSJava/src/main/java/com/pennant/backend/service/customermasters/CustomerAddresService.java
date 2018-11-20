@@ -71,4 +71,6 @@ public interface CustomerAddresService {
 
 	int getVersion(long id, String addtype);
 
+	CustomerAddres getHighPriorityCustAddr(long custID);
+
 }

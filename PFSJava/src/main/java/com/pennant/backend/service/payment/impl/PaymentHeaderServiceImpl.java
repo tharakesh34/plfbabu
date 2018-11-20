@@ -55,29 +55,31 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountEventConstants;
-import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentTaxDetailDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payment.PaymentTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
-import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -98,11 +100,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	private PaymentDetailService paymentDetailService;
 	private PaymentInstructionService paymentInstructionService;
-	private AccountingSetService accountingSetService;
-	private PostingsDAO postingsDAO;
-	private AccountEngineExecution engineExecution;
 	private transient PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentTaxDetailDAO paymentTaxDetailDAO;
+	private FinFeeDetailService finFeeDetailService;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
+	private CustomerAddresDAO customerAddresDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -130,14 +132,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	public void setPaymentInstructionService(PaymentInstructionService paymentInstructionService) {
 		this.paymentInstructionService = paymentInstructionService;
-	}
-
-	public void setAccountingSetService(AccountingSetService accountingSetService) {
-		this.accountingSetService = accountingSetService;
-	}
-
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
@@ -667,6 +661,22 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
 				aeEvent.setValueDate(paymentInstruction.getPostDate());
 			}
+			
+			// GST parameters
+			String highPriorityState = null;
+			String highPriorityCountry = null;
+			
+			// Fetch High priority Address
+			CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(financeMain.getCustID(),"");
+			if (addres != null) {
+				highPriorityState = addres.getCustAddrProvince();
+				highPriorityCountry = addres.getCustAddrCountry();
+			}
+
+			// Set Tax Details if Already exists
+			FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),"");
+			HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
+					financeMain.getFinBranch(), highPriorityState, highPriorityCountry, taxDetail, financeMain.getFinBranch());
 
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.setFinReference(financeMain.getFinReference());
@@ -727,6 +737,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			eventMapping.put("pi_emiInAdvance", emiInAdavance);
 			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 			aeEvent.setDataMap(eventMapping);
+			
+			if (gstExecutionMap != null) {
+				for (String mapkey : gstExecutionMap.keySet()) {
+					if (StringUtils.isNotBlank(mapkey)) {
+						aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+					}
+				}
+			}
 
 			long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
 					AccountEventConstants.ACCEVENT_PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
@@ -747,5 +765,29 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	public void setPaymentTaxDetailDAO(PaymentTaxDetailDAO paymentTaxDetailDAO) {
 		this.paymentTaxDetailDAO = paymentTaxDetailDAO;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public CustomerAddresDAO getCustomerAddresDAO() {
+		return customerAddresDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
 	}
 }

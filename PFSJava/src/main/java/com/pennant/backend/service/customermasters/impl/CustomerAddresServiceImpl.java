@@ -76,7 +76,6 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	private AuditHeaderDAO auditHeaderDAO;
 	private CustomerAddresDAO customerAddresDAO;
 	private CustomerAddressValidation customerAddressValidation;
-	private CityDAO cityDAO;
 	private ProvinceDAO provinceDAO;
 	private PinCodeDAO pinCodeDAO;
 
@@ -333,6 +332,11 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	public List<CustomerAddres> getApprovedCustomerAddresById(long id) {
 		return getCustomerAddresDAO().getCustomerAddresByCustomer(id, "_AView");
 	}
+	
+	@Override
+	public CustomerAddres getHighPriorityCustAddr(long custID) {
+		return getCustomerAddresDAO().getHighPriorityCustAddr(custID, "");
+	}
 
 	@Override
 	public AuditDetail doValidations(CustomerAddres customerAddres, String method) {
@@ -475,10 +479,6 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 			}
 		}
 		return auditDetail;
-	}
-
-	public void setCityDAO(CityDAO cityDAO) {
-		this.cityDAO = cityDAO;
 	}
 
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {

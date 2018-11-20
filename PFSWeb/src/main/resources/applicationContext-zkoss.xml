@@ -4242,6 +4242,9 @@
 		<property name="eventManager" ref="eventManager" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="customerAddresService" ref="customerAddresService" />
+		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 	</bean>
 
 	<!-- DMS DocumentDetails -->

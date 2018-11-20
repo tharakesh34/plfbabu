@@ -2122,7 +2122,6 @@
 	<bean name="customerAddresServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerAddresServiceImpl">
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="cityDAO" ref="cityDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
 	</bean>
@@ -8428,12 +8427,13 @@
 	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl">
 		<property name="paymentDetailService" ref="paymentDetailService" />
 		<property name="paymentInstructionService" ref="paymentInstructionService" />
-		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="paymentTaxDetailDAO" ref="paymentTaxDetailDAO" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 	</bean>
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
