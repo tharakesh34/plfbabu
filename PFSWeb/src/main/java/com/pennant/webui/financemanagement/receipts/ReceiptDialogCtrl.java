@@ -3428,7 +3428,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
+						notificationService.sendNotifications(notification, aReceiptData, financeMain.getFinType(),
 								financeDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(Literal.EXCEPTION, e);

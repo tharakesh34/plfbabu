@@ -4,21 +4,33 @@ import java.util.HashMap;
 
 public class MailTemplateData {
 
-	private String finReference;
-	private String finAmount;
-	private String finCcy;
-	private String finStartDate;
-	private String maturityDate;
-	private String numberOfTerms;
-	private String graceTerms;
-	private String effectiveRate;
+	// Customer Details
 	private String custShrtName;
-	private String downPayment;
-	private String feeAmount;
-	private String insAmount;
-	private String finType;
-	private String nextRepayDate;
+	private String custCIF;
+	private String custCoreBank;
+	private String custPanNumber;
+	private String custAadharNumber;
+	private String custMobileNumber;
+	private String custEmailId;
+	private String custAddrLine1;
+	private String custAddrLine2;
+	private String custAddrHNbr;
+	private String custAddrFlatNo;
+	private String custAddrStreet;
+	private String custAddrCountry;
+	private String custAddrCity;
+	private String custAddrProvince;
+	private String custAddrDistrict;
+	private String custAddrPincode;
 
+	// User Details
+	private String userName;
+	private String userBranch;
+	private String userBranchDetails;
+	private String userDepartment;
+	private String appDate;
+
+	// Existing Beans
 	private String usrName;
 	private String usrRole;
 	private String prevUsrName;
@@ -27,9 +39,63 @@ public class MailTemplateData {
 	private String nextUsrRole;
 	private String nextUsrRoleCode;
 	private String workFlowType;
-	private int priority;
+	// ----------------------------
 
-	//facility
+	// Loan Details
+	private String finReference;
+	private String finStartDate;
+	private int priority;
+	private String finAmount;
+	private String finAssetValue;
+	private String finCurrAssetValue;
+	private String repaymentFrequency;
+	private String firstDueDate;
+	private String maturityDate;
+	private String gracePeriod;
+	private String repayperiod;
+	private String graceRate;
+	private String repayRate;
+	private String graceBaseRate;
+	private String graceSpecialRate;
+	private String graceMargin;
+	private String repayBaseRate;
+	private String repaySpecialRate;
+	private String repayMargin;
+	private String finBranch;
+	private String finBranchContact;
+	private String finCcy;
+	private String finDivision;
+	private String accountsOfficerDesc;
+	private String dsaCode;
+	private String dsaDesc;
+	private String dMACodeDesc;
+	private String totalProfit;
+	private String currReducingRate;
+	private String firstRepay;
+	private String lastRepay;
+	private String totalPriPaid;
+	private String totalPriBalance;
+	private String totalProfitPaid;
+	private String totalProfitBalance;
+	private String nextRepayDate;
+
+	// existing beans
+	private String numberOfTerms;
+	private String graceTerms;
+	private String effectiveRate;
+	private String downPayment;
+	private String feeAmount;
+	private String insAmount;
+	private String finType;
+
+	// Receipts
+	private String paidBy;
+	private String paidAmount;
+	private String paidDetails;
+	private String paidDate;
+	// ---------------------------------
+
+	// facility
 	private String totAmountBD;
 	private String totAmountUSD;
 	private String cafReference;
@@ -42,10 +108,8 @@ public class MailTemplateData {
 	private String recommendations;
 	private String finPurpose;
 	private String finCommitmentRef;
-	private String finBranch;
 
-	//Credit Review
-	private String custCIF;
+	// Credit Review
 	private String auditors;
 	private String location;
 	private String auditType;
@@ -53,7 +117,7 @@ public class MailTemplateData {
 	private String auditYear;
 	private int auditPeriod;
 
-	//Treasury Investment
+	// Treasury Investment
 	private String investmentRef;
 	private String totPrincipalAmt;
 	private String startDate;
@@ -62,7 +126,7 @@ public class MailTemplateData {
 	private String principalDueToInvest;
 	private String avgPftRate;
 
-	//Provision 
+	// Provision
 	private String principalDue;
 	private String profitDue;
 	private String totalDue;
@@ -71,20 +135,20 @@ public class MailTemplateData {
 	private String provisionedAmt;
 	private String provisionedAmtCal;
 
-	//Manual Suspense
+	// Manual Suspense
 	private String manualSusp;
 	private String finSuspDate;
 	private String finSuspAmt;
 	private String finCurSuspAmt;
 
-	//PO Authorization
+	// PO Authorization
 	private String bankName;
 	private String product;
 	private String takeoverAmount;
 	private String rate;
 	private String custPortion;
 
-	//External Usage
+	// External Usage
 	private String roleCode = "";
 	private long custId = 0;
 	private String rcdMaintainSts;
@@ -95,6 +159,14 @@ public class MailTemplateData {
 	private String recordStatus;
 	private String receiptPurpose;
 
+	private String amount;
+	private String receiptAmount;
+	private String valueDate;
+
+	private String bounceDate;
+	private String bounceReason;
+	private String cancellationReason;
+
 	public MailTemplateData() {
 
 	}
@@ -102,6 +174,406 @@ public class MailTemplateData {
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
+	}
+
+	public String getCustPanNumber() {
+		return custPanNumber;
+	}
+
+	public void setCustPanNumber(String custPanNumber) {
+		this.custPanNumber = custPanNumber;
+	}
+
+	public String getCustAadharNumber() {
+		return custAadharNumber;
+	}
+
+	public void setCustAadharNumber(String custAadharNumber) {
+		this.custAadharNumber = custAadharNumber;
+	}
+
+	public String getCustMobileNumber() {
+		return custMobileNumber;
+	}
+
+	public void setCustMobileNumber(String custMobileNumber) {
+		this.custMobileNumber = custMobileNumber;
+	}
+
+	public String getCustEmailId() {
+		return custEmailId;
+	}
+
+	public void setCustEmailId(String custEmailId) {
+		this.custEmailId = custEmailId;
+	}
+
+	public String getCustAddrLine1() {
+		return custAddrLine1;
+	}
+
+	public void setCustAddrLine1(String custAddrLine1) {
+		this.custAddrLine1 = custAddrLine1;
+	}
+
+	public String getCustAddrLine2() {
+		return custAddrLine2;
+	}
+
+	public void setCustAddrLine2(String custAddrLine2) {
+		this.custAddrLine2 = custAddrLine2;
+	}
+
+	public String getCustAddrHNbr() {
+		return custAddrHNbr;
+	}
+
+	public void setCustAddrHNo(String custAddrHNbr) {
+		this.custAddrHNbr = custAddrHNbr;
+	}
+
+	public String getCustAddrFlatNo() {
+		return custAddrFlatNo;
+	}
+
+	public void setCustAddrFlatNo(String custAddrFlatNo) {
+		this.custAddrFlatNo = custAddrFlatNo;
+	}
+
+	public String getCustAddrStreet() {
+		return custAddrStreet;
+	}
+
+	public void setCustAddrStreet(String custAddrStreet) {
+		this.custAddrStreet = custAddrStreet;
+	}
+
+	public String getCustAddrCountry() {
+		return custAddrCountry;
+	}
+
+	public void setCustAddrCountry(String custAddrCountry) {
+		this.custAddrCountry = custAddrCountry;
+	}
+
+	public String getCustAddrProvince() {
+		return custAddrProvince;
+	}
+
+	public void setCustAddrProvince(String custAddrProvince) {
+		this.custAddrProvince = custAddrProvince;
+	}
+
+	public String getCustAddrDistrict() {
+		return custAddrDistrict;
+	}
+
+	public void setCustAddrDistrict(String custAddrDistrict) {
+		this.custAddrDistrict = custAddrDistrict;
+	}
+
+	public String getCustAddrPincode() {
+		return custAddrPincode;
+	}
+
+	public void setCustAddrPincode(String custAddrPincode) {
+		this.custAddrPincode = custAddrPincode;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserBranch() {
+		return userBranch;
+	}
+
+	public void setUserBranch(String userBranch) {
+		this.userBranch = userBranch;
+	}
+
+	public String getUserBranchDetails() {
+		return userBranchDetails;
+	}
+
+	public void setUserBranchDetails(String userBranchDetails) {
+		this.userBranchDetails = userBranchDetails;
+	}
+
+	public String getUserDepartment() {
+		return userDepartment;
+	}
+
+	public void setUserDepartment(String userDepartment) {
+		this.userDepartment = userDepartment;
+	}
+
+	public String getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(String appDate) {
+		this.appDate = appDate;
+	}
+
+	public String getFinCurAssetValue() {
+		return finCurrAssetValue;
+	}
+
+	public void setFinCurAssetValue(String finCurrAssetValue) {
+		this.finCurrAssetValue = finCurrAssetValue;
+	}
+
+	public String getFinAssetValue() {
+		return finAssetValue;
+	}
+
+	public void setFinAssetValue(String finAssetValue) {
+		this.finAssetValue = finAssetValue;
+	}
+
+	public String getRepaymentFrequency() {
+		return repaymentFrequency;
+	}
+
+	public void setRepaymentFrequency(String repaymentFrequency) {
+		this.repaymentFrequency = repaymentFrequency;
+	}
+
+	public String getFirstDueDate() {
+		return firstDueDate;
+	}
+
+	public void setFirstDueDate(String firstDueDate) {
+		this.firstDueDate = firstDueDate;
+	}
+
+	public String getGracePeriod() {
+		return gracePeriod;
+	}
+
+	public void setGracePeriod(String gracePeriod) {
+		this.gracePeriod = gracePeriod;
+	}
+
+	public String getRepayperiod() {
+		return repayperiod;
+	}
+
+	public void setRepayperiod(String repayperiod) {
+		this.repayperiod = repayperiod;
+	}
+
+	public String getGraceRate() {
+		return graceRate;
+	}
+
+	public void setGraceRate(String graceRate) {
+		this.graceRate = graceRate;
+	}
+
+	public String getRepayRate() {
+		return repayRate;
+	}
+
+	public void setRepayRate(String repayRate) {
+		this.repayRate = repayRate;
+	}
+
+	public String getGraceBaseRate() {
+		return graceBaseRate;
+	}
+
+	public void setGraceBaseRate(String graceBaseRate) {
+		this.graceBaseRate = graceBaseRate;
+	}
+
+	public String getGraceSpecialRate() {
+		return graceSpecialRate;
+	}
+
+	public void setGraceSpecialRate(String graceSpecialRate) {
+		this.graceSpecialRate = graceSpecialRate;
+	}
+
+	public String getGraceMargin() {
+		return graceMargin;
+	}
+
+	public void setGraceMargin(String graceMargin) {
+		this.graceMargin = graceMargin;
+	}
+
+	public String getRepayBaseRate() {
+		return repayBaseRate;
+	}
+
+	public void setRepayBaseRate(String repayBaseRate) {
+		this.repayBaseRate = repayBaseRate;
+	}
+
+	public String getRepaySpecialRate() {
+		return repaySpecialRate;
+	}
+
+	public void setRepaySpecialRate(String repaySpecialRate) {
+		this.repaySpecialRate = repaySpecialRate;
+	}
+
+	public String getRepayMargin() {
+		return repayMargin;
+	}
+
+	public void setRepayMargin(String repayMargin) {
+		this.repayMargin = repayMargin;
+	}
+
+	public String getFinDivision() {
+		return finDivision;
+	}
+
+	public void setFinDivision(String finDivision) {
+		this.finDivision = finDivision;
+	}
+
+	public String getAccountsOfficerDesc() {
+		return accountsOfficerDesc;
+	}
+
+	public void setAccountsOfficerDesc(String accountsOfficerDesc) {
+		this.accountsOfficerDesc = accountsOfficerDesc;
+	}
+
+	public String getDsaCode() {
+		return dsaCode;
+	}
+
+	public void setDsaCode(String dsaCode) {
+		this.dsaCode = dsaCode;
+	}
+
+	public String getDsaDesc() {
+		return dsaDesc;
+	}
+
+	public void setDsaDesc(String dsaDesc) {
+		this.dsaDesc = dsaDesc;
+	}
+
+	public String getdMACodeDesc() {
+		return dMACodeDesc;
+	}
+
+	public void setdMACodeDesc(String dMACodeDesc) {
+		this.dMACodeDesc = dMACodeDesc;
+	}
+
+	public String getTotalProfit() {
+		return totalProfit;
+	}
+
+	public void setTotalProfit(String totalProfit) {
+		this.totalProfit = totalProfit;
+	}
+
+	public String getCurrReducingRate() {
+		return currReducingRate;
+	}
+
+	public void setCurrReducingRate(String currReducingRate) {
+		this.currReducingRate = currReducingRate;
+	}
+
+	public String getFirstRepay() {
+		return firstRepay;
+	}
+
+	public void setFirstRepay(String firstRepay) {
+		this.firstRepay = firstRepay;
+	}
+
+	public String getLastRepay() {
+		return lastRepay;
+	}
+
+	public void setLastRepay(String lastRepay) {
+		this.lastRepay = lastRepay;
+	}
+
+	public String getTotalPriPaid() {
+		return totalPriPaid;
+	}
+
+	public void setTotalPriPaid(String totalPriPaid) {
+		this.totalPriPaid = totalPriPaid;
+	}
+
+	public String getTotalPriBalance() {
+		return totalPriBalance;
+	}
+
+	public void setTotalPriBalance(String totalPriBalance) {
+		this.totalPriBalance = totalPriBalance;
+	}
+
+	public String getTotalProfitPaid() {
+		return totalProfitPaid;
+	}
+
+	public void setTotalProfitPaid(String totalProfitPaid) {
+		this.totalProfitPaid = totalProfitPaid;
+	}
+
+	public String getTotalProfitBalance() {
+		return totalProfitBalance;
+	}
+
+	public void setTotalProfitBalance(String totalProfitBalance) {
+		this.totalProfitBalance = totalProfitBalance;
+	}
+
+	public String getPaidBy() {
+		return paidBy;
+	}
+
+	public void setPaidBy(String paidBy) {
+		this.paidBy = paidBy;
+	}
+
+	public String getPaidAmount() {
+		return paidAmount;
+	}
+
+	public void setPaidAmount(String paidAmount) {
+		this.paidAmount = paidAmount;
+	}
+
+	public String getPaidDetails() {
+		return paidDetails;
+	}
+
+	public void setPaidDetails(String paidDetails) {
+		this.paidDetails = paidDetails;
+	}
+
+	public String getPaidDate() {
+		return paidDate;
+	}
+
+	public void setPaidDate(String paidDate) {
+		this.paidDate = paidDate;
+	}
 
 	public String getFinReference() {
 		return finReference;
@@ -707,4 +1179,77 @@ public class MailTemplateData {
 	public void setReceiptPurpose(String receiptPurpose) {
 		this.receiptPurpose = receiptPurpose;
 	}
+
+	public String getFinBranchContact() {
+		return finBranchContact;
+	}
+
+	public void setFinBranchContact(String finBranchContact) {
+		this.finBranchContact = finBranchContact;
+	}
+
+	public String getAmount() {
+		return amount;
+	}
+
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+
+	public String getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(String valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public String getReceiptAmount() {
+		return receiptAmount;
+	}
+
+	public void setReceiptAmount(String receiptAmount) {
+		this.receiptAmount = receiptAmount;
+	}
+
+	public String getCustAddrCity() {
+		return custAddrCity;
+	}
+
+	public void setCustAddrCity(String custAddrCity) {
+		this.custAddrCity = custAddrCity;
+	}
+
+	public String getFinCurrAssetValue() {
+		return finCurrAssetValue;
+	}
+
+	public void setFinCurrAssetValue(String finCurrAssetValue) {
+		this.finCurrAssetValue = finCurrAssetValue;
+	}
+
+	public String getBounceDate() {
+		return bounceDate;
+	}
+
+	public void setBounceDate(String bounceDate) {
+		this.bounceDate = bounceDate;
+	}
+
+	public String getBounceReason() {
+		return bounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
+	}
+
+	public String getCancellationReason() {
+		return cancellationReason;
+	}
+
+	public void setCancellationReason(String cancellationReason) {
+		this.cancellationReason = cancellationReason;
+	}
+
 }

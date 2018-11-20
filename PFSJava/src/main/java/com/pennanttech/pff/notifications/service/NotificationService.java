@@ -1,8 +1,10 @@
 package com.pennanttech.pff.notifications.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +30,17 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennant.backend.model.commitment.Commitment;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.facility.Facility;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSuspHead;
@@ -63,6 +68,7 @@ import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -115,7 +121,7 @@ public class NotificationService {
 		super();
 	}
 
-	public void sendNotification(Notification notification, Object object) throws Exception {
+	public void sendNotification(Notification mailKeyData, Object object) throws Exception {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> data = null;
 
@@ -125,9 +131,9 @@ public class NotificationService {
 			data = getTemplateData(queryDetail);
 		}
 
-		Map<String, byte[]> attachements = notification.getAttachments();
+		Map<String, byte[]> attachements = mailKeyData.getAttachments();
 
-		MailTemplate template = getMailTemplateService().getMailTemplateByCode(notification.getTemplateCode());
+		MailTemplate template = getMailTemplateService().getMailTemplateByCode(mailKeyData.getTemplateCode());
 
 		if (template != null && template.isActive()) {
 			try {
@@ -146,7 +152,7 @@ public class NotificationService {
 			template.setAttchments(attachements);
 		}
 
-		Notification message = prepareNotification(notification, 0, template);
+		Notification message = prepareNotification(mailKeyData, 0, template);
 
 		if (template.isEmailTemplate()) {
 			sendEmailNotification(message);
@@ -228,14 +234,14 @@ public class NotificationService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void sendNotifications(Notification notification, Object object, String finType,
+	public void sendNotifications(Notification mailKeyData, Object object, String finType,
 			List<DocumentDetails> documents) throws IOException, TemplateException {
 		boolean resendNotifications = false;
-		String finReference = notification.getKeyReference();
-		String finEvent = notification.getSubModule();
-		String role = notification.getStage();
-		String module = notification.getModule();
-		List<String> templates = notification.getTemplates();
+		String finReference = mailKeyData.getKeyReference();
+		String finEvent = mailKeyData.getSubModule();
+		String role = mailKeyData.getStage();
+		String module = mailKeyData.getModule();
+		List<String> templates = mailKeyData.getTemplates();
 
 		List<Long> notificationIds;
 		List<Notifications> notifications = null;
@@ -263,38 +269,39 @@ public class NotificationService {
 		FinanceMain financeMain = null;
 		CustomerDetails customerDetails = null;
 		Commitment commitment = null;
-		VASRecording vasRecording;
-		QueryDetail queryDetail = null;
+		FinReceiptData finReceiptData = null;
 
 		if (object instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) object;
 			financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			data = getTemplateData(financeDetail);
 			if ("LOAN_ORG".equals(module)) {
-				data = getTemplateData(financeDetail);
 				module = "LOAN";
-				notification.setModule(module);
-			} else {
-				data = getTemplateData(financeMain);
+				mailKeyData.setModule(module);
 			}
 			customerDetails = financeDetail.getCustomerDetails();
 		} else if (object instanceof Commitment) {
 			commitment = (Commitment) object;
 			customerDetails = commitment.getCustomerDetails();
-		} else if (object instanceof VASRecording) {
-			// FIXME
-		} else if (object instanceof QueryDetail) {
-			queryDetail = (QueryDetail) object;
+		} else if (object instanceof FinReceiptData) {
+
+			finReceiptData = (FinReceiptData) object;
+			financeDetail = finReceiptData.getFinanceDetail();
+			data = getTemplateData(financeDetail);
+			data.putAll(getReceiptTemplateData(finReceiptData.getReceiptHeader()));
+
+			customerDetails = financeDetail.getCustomerDetails();
 		} else if (object instanceof VehicleDealer) {
 			VehicleDealer vehicleDealer = (VehicleDealer) object;
 			data = vehicleDealer.getDeclaredFieldValues();
 			data.put("vd_recordStatus", vehicleDealer.getRecordStatus());
 		}
 
-		for (Notifications item : notifications) {
+		for (Notifications mailNotification : notifications) {
 			boolean sendNotification = false;
-			boolean resenEmail = false;
-			boolean resenSms = false;
-			long notificationId = item.getRuleId();
+			boolean emailAlreadySent = false;
+			boolean smsAlreadySent = false;
+			long notificationId = mailNotification.getRuleId();
 
 			if (resendNotifications) {
 				sendNotification = true;
@@ -303,32 +310,31 @@ public class NotificationService {
 				String stageReq = SysParamUtil.getValueAsString("STAGE_REQ_FOR_MAIL_CHECK");
 
 				if ("Y".equalsIgnoreCase(stageReq)) {
-					resenEmail = emailEngine.isMailExist(finReference, module, finEvent, notificationId, role);
-					resenSms = smsEngine.isSmsExist(finReference, module, finEvent, notificationId, role);
+					emailAlreadySent = emailEngine.isMailExist(finReference, module, finEvent, notificationId, role);
+					smsAlreadySent = smsEngine.isSmsExist(finReference, module, finEvent, notificationId, role);
 
 				} else {
-					resenEmail = emailEngine.isMailExist(finReference, module, finEvent, notificationId);
-					resenSms = smsEngine.isSmsExist(finReference, module, finEvent, notificationId);
+					emailAlreadySent = emailEngine.isMailExist(finReference, module, finEvent, notificationId);
+					smsAlreadySent = smsEngine.isSmsExist(finReference, module, finEvent, notificationId);
 				}
 
-				if (!resenEmail || !resenSms) {
+				if (!emailAlreadySent || !smsAlreadySent) {
 					sendNotification = true;
 				}
 			}
-
 			MailTemplate template = null;
 			if (sendNotification) {
-				emailAndMobiles = getEmailsAndMobile(customerDetails, item, data, financeMain);
+				emailAndMobiles = getEmailsAndMobile(customerDetails, mailNotification, data, financeMain);
 
 				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("EMAILS"))) {
-					notification.getEmails().addAll(emailAndMobiles.get("EMAILS"));
+					mailKeyData.getEmails().addAll(emailAndMobiles.get("EMAILS"));
 				}
 
 				if (CollectionUtils.isNotEmpty(emailAndMobiles.get("MOBILES"))) {
-					notification.getMobileNumbers().addAll(emailAndMobiles.get("MOBILES"));
+					mailKeyData.getMobileNumbers().addAll(emailAndMobiles.get("MOBILES"));
 				}
 
-				template = getMailTemplate(item.getRuleTemplate(), data);
+				template = getMailTemplate(mailNotification.getRuleTemplate(), data);
 				if (template != null && template.isActive()) {
 					try {
 						parseMail(template, data);
@@ -345,28 +351,24 @@ public class NotificationService {
 				}
 
 				if (template != null && template.isEmailTemplate() && CollectionUtils.isNotEmpty(documents)) {
-					setAttachements(template, item.getRuleAttachment(), data, documents);
+					setAttachements(template, mailNotification.getRuleAttachment(), data, documents);
 				}
 
-				Notification emailMessage = null;
-				if (template.isActive()) {
-					emailMessage = prepareNotification(notification, notificationId, template);
+				Notification emailMessage = prepareNotification(mailKeyData, notificationId, template);
+				if (template.isEmailTemplate() && sendNotification) {
+					sendEmailNotification(emailMessage);
+				}
 
-					if (template.isEmailTemplate() && sendNotification) {
-						sendEmailNotification(emailMessage);
-					}
-
-					if (template.isSmsTemplate() && sendNotification) {
-						sendSmsNotification(emailMessage);
-					}
+				if (template.isSmsTemplate() && sendNotification) {
+					sendSmsNotification(emailMessage);
 				}
 			}
 		}
 	}
 
-	private Notification prepareNotification(Notification notification, long notificationId, MailTemplate template) {
+	private Notification prepareNotification(Notification mailKeyData, long notificationId, MailTemplate template) {
 		Notification emailMessage = new Notification();
-		BeanUtils.copyProperties(notification, emailMessage);
+		BeanUtils.copyProperties(mailKeyData, emailMessage);
 
 		emailMessage.setNotificationId(notificationId);
 		emailMessage.setSubject(template.getEmailSubject());
@@ -516,6 +518,7 @@ public class NotificationService {
 					// user Details
 					SecurityUser secUser = getSecurityUserService().getSecurityUserById(notification.getLastMntBy());
 					templateData.setUsrName(secUser.getUsrFName());
+
 				}
 
 				parseMail(template, templateData.getDeclaredFieldValues());
@@ -546,7 +549,7 @@ public class NotificationService {
 					emailEngine.sendEmail(emailMessage);
 				}
 				if (template.isSmsTemplate()) {
-					//sendSMS(mailTemplate);    //not implemented yet
+					// sendSMS(mailTemplate); //not implemented yet
 				}
 			}
 		} catch (Exception e) {
@@ -557,7 +560,7 @@ public class NotificationService {
 
 	}
 
-	public Map<String, Object> getTemplateData(QueryDetail detail) {
+	private Map<String, Object> getTemplateData(QueryDetail detail) {
 		MailTemplateData data = new MailTemplateData();
 		data.setFinReference(detail.getFinReference());
 		data.setCustShrtName(detail.getUserDetails().getUserName());
@@ -572,8 +575,12 @@ public class NotificationService {
 	 * @param main
 	 * @return
 	 */
-	public Map<String, Object> getTemplateData(FinanceMain main) {
+	private Map<String, Object> getTemplData(FinanceDetail financeDetail) {
 		MailTemplateData data = new MailTemplateData();
+		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
+		List<CustomerAddres> custAddressList = financeDetail.getCustomerDetails().getAddressList();
+		List<CustomerEMail> customerEmailList = financeDetail.getCustomerDetails().getCustomerEMailList();
+		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
 		// Finance Data Preparation For Notifications
 		data.setFinReference(main.getFinReference());
@@ -586,6 +593,63 @@ public class NotificationService {
 		data.setMaturityDate(DateUtility.formatToLongDate(main.getMaturityDate()));
 		data.setNumberOfTerms(String.valueOf(main.getNumberOfTerms()));
 		data.setGraceTerms(String.valueOf(main.getGraceTerms()));
+		data.setFinCurrAssetValue(PennantApplicationUtil.amountFormate(main.getFinCurrAssetValue(), format));
+		data.setRepaymentFrequency(main.getRepayFrq());
+		data.setGraceBaseRate(main.getGraceBaseRate());
+		data.setGraceSpecialRate(main.getGraceSpecialRate());
+		data.setRepayBaseRate(main.getRepayBaseRate());
+		data.setRepaySpecialRate(main.getRepaySpecialRate());
+		data.setRepayMargin(PennantApplicationUtil.amountFormate(main.getRepayMargin(), format));
+		data.setFinBranch(main.getFinBranch());
+		data.setFinCcy(main.getFinCcy());
+		data.setFinDivision(main.getLovDescFinDivision());
+		data.setAccountsOfficerDesc(main.getLovDescAccountsOfficer());
+		data.setDsaCode(main.getDsaCode());
+		data.setDsaDesc(main.getDsaCodeDesc());
+		data.setdMACodeDesc(main.getDmaCodeDesc());
+		data.setTotalProfit(PennantApplicationUtil.amountFormate(main.getTotalProfit(), format));
+		data.setFirstRepay(PennantApplicationUtil.amountFormate(main.getFirstRepay(), format));
+		data.setLastRepay(PennantApplicationUtil.amountFormate(main.getLastRepay(), format));
+		data.setUserName(main.getUserDetails().getUserName());
+		data.setUserBranch(main.getUserDetails().getBranchName());
+		data.setUserDepartment(main.getUserDetails().getDepartmentName());
+
+		// Customer Address
+		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
+		for (CustomerAddres customerAddress : custAddressList) {
+			if (priority != customerAddress.getCustAddrPriority()) {
+				continue;
+			}
+			data.setCustAddrLine1(customerAddress.getCustAddrLine1());
+			data.setCustAddrLine2(customerAddress.getCustAddrLine2());
+			data.setCustAddrHNo(customerAddress.getCustAddrHNbr());
+			data.setCustAddrFlatNo(customerAddress.getCustFlatNbr());
+			data.setCustAddrStreet(customerAddress.getCustAddrStreet());
+			data.setCustAddrCountry(customerAddress.getCustAddrCountry());
+			data.setCustAddrProvince(customerAddress.getCustAddrProvince());
+			data.setCustAddrDistrict(customerAddress.getCustDistrict());
+			data.setCustAddrCity(customerAddress.getCustAddrCity());
+			data.setCustAddrPincode(customerAddress.getCustPOBox());
+
+			break;
+		}
+		// Customer Email
+		for (CustomerEMail customerEMail : customerEmailList) {
+			if (priority != customerEMail.getCustEMailPriority()) {
+				continue;
+			}
+			data.setCustEmailId(customerEMail.getCustEMail());
+			break;
+		}
+		// Customer Contact Number
+		for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
+			if (priority != customerPhoneNumber.getPhoneTypePriority()) {
+				continue;
+			}
+			data.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
+			break;
+		}
+
 		if (main.getEffectiveRateOfReturn() != null) {
 			data.setEffectiveRate(PennantApplicationUtil.formatRate(main.getEffectiveRateOfReturn().doubleValue(), 2));
 		} else {
@@ -643,6 +707,35 @@ public class NotificationService {
 		return data.getDeclaredFieldValues();
 	}
 
+	private Map<String, Object> getReceiptTemplateData(FinReceiptHeader header) {
+		MailTemplateData data = new MailTemplateData();
+		int format = CurrencyUtil.getFormat(header.getFinCcy());
+		data.setReceiptAmount(PennantApplicationUtil.amountFormate(header.getReceiptAmount(), format));
+		data.setBounceDate(DateUtility.formatToLongDate(header.getBounceDate()));
+		Date bounceDateValue = header.getBounceDate();
+		if (bounceDateValue != null) {
+			data.setBounceReason(header.getManualAdvise().getBounceCodeDesc());
+		}
+		data.setCancellationReason(header.getCancelReason());
+		Date valueDate = header.getReceiptDate();
+		BigDecimal modeAmount = BigDecimal.ZERO;
+		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
+			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+					valueDate = receiptDetail.getReceivedDate();
+					modeAmount = receiptDetail.getAmount();
+
+				}
+			}
+		}
+		data.setValueDate(DateUtility.formatToLongDate(valueDate));
+		data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
+		return data.getDeclaredFieldValues();
+	}
+
 	/**
 	 * Method for Data Preparion
 	 * 
@@ -650,6 +743,7 @@ public class NotificationService {
 	 * @param facility
 	 * @return
 	 */
+
 	public MailTemplateData getTemplateData(Facility facility) {
 		MailTemplateData data = new MailTemplateData();
 		// Facility Data Preparation For Notifications
@@ -724,12 +818,11 @@ public class NotificationService {
 		data.setNextUsrRole(securityUsrRoles.get(0).getRoleDesc());
 		data.setPrevUsrRole(finCreditReviewDetails.getLastMntBy());
 		data.setUsrRole(finCreditReviewDetails.getRoleCode());
-
 		return data;
 	}
 
 	/**
-	 * Method for Data Preparion
+	 * Method for Data Preparing
 	 * 
 	 * @param data
 	 * @param InvestmentFinHeader
@@ -854,8 +947,7 @@ public class NotificationService {
 	}
 
 	// New Methods
-
-	public Map<String, Object> getTemplateData(FinanceDetail aFinanceDetail) {
+	private Map<String, Object> getTemplateData(FinanceDetail aFinanceDetail) {
 		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
@@ -870,7 +962,7 @@ public class NotificationService {
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
-		declaredFieldValues.putAll(getTemplateData(main));
+		declaredFieldValues.putAll(getTemplData(aFinanceDetail));
 
 		return declaredFieldValues;
 	}
@@ -925,15 +1017,19 @@ public class NotificationService {
 		return StringUtils.trimToEmpty(ruleResString).split(",");
 	}
 
-	public Map<String, List<String>> getEmailsAndMobile(CustomerDetails customerDetails, Notifications notification,
+	private Map<String, List<String>> getEmailsAndMobile(CustomerDetails customerDetails, Notifications notification,
 			Map<String, Object> fieldsAndValues, FinanceMain financeMain) {
 		Map<String, List<String>> map = new HashMap<>();
-		List<CustomerEMail> custEmails = null;
-		List<CustomerPhoneNumber> custMobiles = null;
+
+		MailTemplateData templateData = new MailTemplateData();
+
+		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
+		List<CustomerPhoneNumber> custMobiles = customerDetails.getCustomerPhoneNumList();
 		if (customerDetails != null) {
 			custEmails = customerDetails.getCustomerEMailList();
 			custMobiles = customerDetails.getCustomerPhoneNumList();
 		}
+
 		String templateType = notification.getTemplateType();
 
 		List<String> emails = new ArrayList<>();
@@ -944,12 +1040,15 @@ public class NotificationService {
 			if (CollectionUtils.isNotEmpty(custEmails)) {
 				for (CustomerEMail customerEMail : custEmails) {
 					emails.add(customerEMail.getCustEMail());
+					templateData.setCustEmailId(customerEMail.getCustEMail());
+
 				}
 			}
 
 			if (CollectionUtils.isNotEmpty(custMobiles)) {
 				for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
 					mobileNumbers.add(customerPhoneNumber.getPhoneNumber());
+					templateData.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
 				}
 			}
 		} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(templateType)) {
