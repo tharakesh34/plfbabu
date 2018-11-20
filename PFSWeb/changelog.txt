@@ -1,4 +1,9 @@
-pff 4.12.1  2018-11-19
+pff 4.12.1.0  2018-11-20
+----------------
+-story #1031 Daily Trial Balance Changes.
+-story #1030 Decision not mandatory for deviations when the user has rights.
+
+pff 4.12.1.0  2018-11-19
 ----------------
 -PPM # 18052 Unable to get validation messages after performing save, submitting , resubmit , reject , approve operations in mandates.
 -bugs #1029 Amount Validation Issue in Add disbursement API.
