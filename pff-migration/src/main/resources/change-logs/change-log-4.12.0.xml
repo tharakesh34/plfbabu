@@ -70,6 +70,7 @@
 	 
 	 </sql>
 </changeSet>
-
-	
+<changeSet id="5" author="Dheerendra">
+	<renameColumn tableName="collection_financedetails" oldColumnName="nscddate" newColumnName="nschddate"/>
+</changeSet>
 </databaseChangeLog>
