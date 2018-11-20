@@ -6783,16 +6783,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (ImplementationConstants.ALLOW_DEVIATIONS) {
 			if (StringUtils.isEmpty(moduleDefiner) && deviationDetailDialogCtrl != null) {
-				//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
-				// Check whether user has taken decision on the manual deviations for which he has the authority.
+				// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+				// Check whether user has taken decision on the deviations for which he has the authority.
 				if (this.userAction.getSelectedItem() != null
 						&& !"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+					// Get the list of auto & manual deviations.
 					List<FinanceDeviations> manualDeviations = getDeviationDetailDialogCtrl().getManualDeviationList();
-					List<FinanceDeviations> Autodeviations = getDeviationDetailDialogCtrl().getFinanceDetail()
+					List<FinanceDeviations> autoDeviations = getDeviationDetailDialogCtrl().getFinanceDetail()
 							.getFinanceDeviations();
+
+					// Prepare a single list of all the deviations.
 					List<FinanceDeviations> deviations = new ArrayList<>();
-					deviations.addAll(Autodeviations);
+					deviations.addAll(autoDeviations);
 					deviations.addAll(manualDeviations);
+
+					// Find the deviations that require decision by the user.
 					List<String> pendingDecisions = new ArrayList<>();
 
 					for (FinanceDeviations deviation : deviations) {
@@ -6806,14 +6811,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 
+					// Display a warning to the user, if there are any deviations that he need to take decision.
 					if (pendingDecisions.size() > 0) {
-						String errorMessage = "Please mark your decision for the below deviations.";
+						String errorMessage = "The below deviations require your decision. Would you like to proceed further?";
 						for (String deviation : pendingDecisions) {
 							errorMessage = errorMessage.concat("\n - " + deviation);
 						}
 
-						MessageUtil.showError(errorMessage);
-						return;
+						if (MessageUtil.confirm(errorMessage) == MessageUtil.NO) {
+							return;
+						}
 					}
 				}
 				// ### 01-05-2018 - End
