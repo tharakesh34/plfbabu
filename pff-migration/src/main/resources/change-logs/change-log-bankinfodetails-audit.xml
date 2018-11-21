@@ -98,10 +98,6 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="2" author="Vinay">
-		<addPrimaryKey tableName="AdtBankInfoDetail" columnNames="BankId,MonthYear"/>
-	</changeSet>
-	
 <changeSet id="3.0" author="Vinay">
 		<createTable tableName="AdtBankInfoSubDetail">
 			<column name="AuditId" type="bigint">
@@ -140,10 +136,6 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="4" author="Vinay">
-		<addPrimaryKey tableName="AdtBankInfoSubDetail" columnNames="BankId,MonthYear,Day"/>
-	</changeSet>
-	
 	<changeSet id="5" author="Vinay">
 		<addColumn tableName="AdtBankInfoSubDetail">
 			<column name="Balance" type="decimal(18,0)" defaultValue="0">
@@ -152,5 +144,4 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="" author=""></changeSet>
 </databaseChangeLog>
