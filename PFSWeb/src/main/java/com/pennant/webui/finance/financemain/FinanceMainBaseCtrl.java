@@ -170,6 +170,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
@@ -6831,6 +6832,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				aFinanceDetail.setFinanceDeviations(null);
 			}
+
+			// Get the highest approver for the pending deviations.
+			List<FinanceDeviations> deviations = DeviationUtil.mergeDeviations(
+					getFinanceDetail().getFinanceDeviations(), getFinanceDetail().getManualDeviations());
+			String highestApprover = DeviationUtil.getHighestApprover(deviations, workFlow.getActors(true));
+
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setHigherDeviationApprover(highestApprover);
 		} else {
 			aFinanceDetail.setFinanceDeviations(null);
 		}

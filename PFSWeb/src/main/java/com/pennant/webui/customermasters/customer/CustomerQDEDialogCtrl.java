@@ -209,7 +209,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doLoadWorkFlow(customer.isWorkflow(), customer.getWorkflowId(), customer.getNextTaskId());
 
 		if (isWorkFlowEnabled()) {
-			this.userAction = setListRecordStatus(this.userAction, false);
+			this.userAction = setListRecordStatus(this.userAction, false, null);
 			if (this.financeDetail != null) {
 				if (this.userAction.getItemAtIndex(0) != null
 						&& "Rejected".equals(this.userAction.getItemAtIndex(0).getValue())) {

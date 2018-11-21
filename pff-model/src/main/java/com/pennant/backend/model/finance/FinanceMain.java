@@ -691,6 +691,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private Date fixedTenorEndDate;
 	private String processAttributes;
+	private String higherDeviationApprover;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -849,6 +850,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 		excludeFields.add("fixedTenorEndDate");
 		excludeFields.add("finBranchProvinceCode");
+		excludeFields.add("higherDeviationApprover");
 
 		return excludeFields;
 	}
@@ -3942,4 +3944,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.processAttributes = processAttributes;
 	}
 
+	public String getHigherDeviationApprover() {
+		return higherDeviationApprover;
+	}
+
+	public void setHigherDeviationApprover(String higherDeviationApprover) {
+		this.higherDeviationApprover = higherDeviationApprover;
+	}
 }

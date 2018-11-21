@@ -72,16 +72,20 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	}
 
 	public Radiogroup setListRecordStatus(Radiogroup userAction) {
-		return setListRecordStatus(userAction, true);
+		return setListRecordStatus(userAction, true, null);
+	}
+
+	public Radiogroup setUserActions(Radiogroup userAction, Object object) {
+		return setListRecordStatus(userAction, true, object);
 	}
 
 	public Radiogroup setRejectRecordStatus(Radiogroup userAction) {
 		String sequences = "";
 
 		if (this.role.equals(this.workFlow.allFirstTaskOwners())) {
-			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId());
+			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId(), null);
 		} else {
-			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()));
+			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()), null);
 		}
 
 		String[] list = sequences.split("/");
@@ -95,13 +99,13 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		return userAction;
 	}
 
-	public Radiogroup setListRecordStatus(Radiogroup userAction, boolean defaultSave) {
+	public Radiogroup setListRecordStatus(Radiogroup userAction, boolean defaultSave, Object object) {
 		String sequences = "";
 
 		if (this.role.equals(getFirstTaskOwner())) {
-			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId());
+			sequences = workFlow.getUserActionsAsString(workFlow.firstTaskId(), object);
 		} else {
-			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()));
+			sequences = workFlow.getUserActionsAsString(getTaskId(getRole()), object);
 		}
 
 		String[] list = sequences.split("/");

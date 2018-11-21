@@ -45,6 +45,7 @@ package com.pennant.webui.finance.financemain;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -57,7 +58,9 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
@@ -147,7 +150,14 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		doLoadWorkFlow(financeMain);
 
 		if (isWorkFlowEnabled()) {
-			this.userAction = setListRecordStatus(this.userAction);
+			// Get the highest approver for the pending deviations.
+			List<FinanceDeviations> deviations = DeviationUtil.mergeDeviations(
+					getFinanceDetail().getFinanceDeviations(), getFinanceDetail().getManualDeviations());
+			String highestApprover = DeviationUtil.getHighestApprover(deviations, workFlow.getActors(true));
+
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setHigherDeviationApprover(highestApprover);
+
+			userAction = setUserActions(userAction, financeMain);
 			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), super.pageRightName, menuItemRightName);
 		} else {
 			this.south.setHeight("0px");

@@ -11,11 +11,15 @@
  */
 package com.pennant.backend.delegationdeviation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.finance.FinanceDeviations;
+import com.pennant.backend.util.PennantConstants;
 
 /**
  * <p>
@@ -118,5 +122,52 @@ public final class DeviationUtil {
 		}
 
 		return null;
+	}
+
+	@SafeVarargs
+	public static List<FinanceDeviations> mergeDeviations(List<FinanceDeviations>... args) {
+		List<FinanceDeviations> result = new ArrayList<>();
+
+		for (List<FinanceDeviations> list : args) {
+			if (list != null && !list.isEmpty()) {
+				result.addAll(list);
+			}
+		}
+
+		return result;
+	}
+
+	public static String getHighestApprover(List<FinanceDeviations> deviations, List<String> delegators) {
+		if (deviations.isEmpty()) {
+			return "";
+		}
+
+		// Prepare approver rankings.
+		Map<String, Integer> rankings = new HashMap<>();
+		int rank = 1;
+
+		for (String delegator : delegators) {
+			rankings.put(delegator, rank++);
+		}
+
+		// Get the highest deviation approver.
+		int highestRank = 0;
+		String highestApprover = "";
+		String approver;
+
+		for (FinanceDeviations deviation : deviations) {
+			if (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
+					|| StringUtils.isBlank(deviation.getApprovalStatus())) {
+				approver = deviation.getDelegationRole();
+				rank = rankings.get(approver);
+
+				if (rank > highestRank) {
+					highestRank = rank;
+					highestApprover = approver;
+				}
+			}
+		}
+
+		return highestApprover;
 	}
 }
