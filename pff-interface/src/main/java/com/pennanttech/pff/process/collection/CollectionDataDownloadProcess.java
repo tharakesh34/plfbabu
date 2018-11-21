@@ -67,15 +67,15 @@ public class CollectionDataDownloadProcess {
 		int count = 0;
 		StringBuilder selectSql = new StringBuilder(" INSERT INTO collection_financedetails  ");
 		selectSql.append(
-				" (id,loanreference,custcif,loantype,loantypedesc,currency,productcode,productdesc,branchcode,branchname ,");
+				" (loanreference,custcif,loantype,loantypedesc,currency,productcode,productdesc,branchcode,branchname ,");
 		selectSql.append(
-				"finstartdate,maturitydate,noinst,nopaidinst,firstrepaydate,firstrepayamount,nschddate,nschdpri,nschdpft,");
+				"finstartdate,maturitydate,noinst,nopaidinst,firstrepaydate,firstrepayamount,nscddate,nschdpri,nschdpft,");
 		selectSql.append(
 				"totoutstandingamt,overduedate,noodinst,curoddays,actualoddays,odprincipal,odprofit,duebucket,penaltypaid	,penaltydue	,");
 		selectSql.append(
 				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus )");
 		selectSql.append("Select * from (SELECT ");
-		selectSql.append(" T1.CustId AS Id,T1.FinReference AS LoanReference,T2.CustCIF AS CustCIF,");
+		selectSql.append(" T1.FinReference AS LoanReference,T2.CustCIF AS CustCIF,");
 		selectSql.append(" T1.FinType As LoanType, T3.FinTypeDesc AS LoanTypeDesc,T1.FinCcy AS Currency,");
 		selectSql
 				.append(" T1.FinCategory AS ProductCode	,T3.FinTypeDesc AS ProductDesc,T1.FinBranch As BranchCode	,");
