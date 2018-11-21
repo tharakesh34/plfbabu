@@ -169,5 +169,55 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES
 INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_custShrtName', 'Customer Name', 'A', NULL);
 </sql>
 </changeSet>
+	<changeSet id="9" author="Dheerendra">
+		<createTable tableName="collection_financedetails">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" primaryKeyName="PK_CLCTN_FINDTL_ID" />
+			</column>
+			<column name="loanreference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="custcif" type="varchar(20)" />
+			<column name="loantype" type="varchar(8)" />
+			<column name="loantypedesc" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="currency" type="varchar(3)" />
+			<column name="productcode" type="varchar(8)" />
+			<column name="productdesc" type="varchar(50)" />
 
+			<column name="branchcode" type="varchar(9)">
+				<constraints nullable="false" />
+			</column>
+			<column name="branchname" type="varchar(50)" />
+			<column name="finstartdate" type="datetime" />
+			<column name="maturitydate" type="datetime" />
+			<column name="noinst" type="decimal(6,0)" />
+			<column name="nopaidinst" type="decimal(6,0)" />
+			<column name="firstrepaydate" type="datetime" />
+			<column name="firstrepayamount" type="decimal(18,0)" />
+			<column name="nscddate" type="datetime" />
+			<column name="nschdpri" type="decimal(18,0)" />
+			<column name="nschdpft" type="decimal(18,0)" />
+			<column name="totoutstandingamt" type="decimal(18,0)" />
+			<column name="overduedate" type="datetime" />
+			<column name="noodinst" type="decimal(4,0)" />
+			<column name="curoddays" type="decimal(6,0)" />
+			<column name="actualoddays" type="decimal(6,0)" />
+			<column name="odprincipal" type="decimal(18,0)" />
+			<column name="odprofit" type="decimal(18,0)" />
+			<column name="duebucket" type="decimal(4,0)" />
+			<column name="penaltypaid" type="decimal(18,0)" />
+			<column name="penaltydue" type="decimal(18,0)" />
+			<column name="penaltywaived" type="decimal(18,0)" />
+			<column name="bouncecharges" type="decimal(18,0)" />
+			<column name="finstatus" type="varchar(8)" />
+			<column name="finstsreason" type="varchar(1)" />
+			<column name="finworststatus" type="varchar(8)" />
+			<column name="finactive" type="boolean" />
+			<column name="recordstatus" type="varchar(2)" />
+
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
