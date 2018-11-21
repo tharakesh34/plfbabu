@@ -74,99 +74,10 @@
 	<renameColumn tableName="collection_financedetails" oldColumnName="nscddate" newColumnName="nschddate"/>
 </changeSet>
 
-<changeSet id="6" author="swami.v">
-<sql>
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerName','Name','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_email','e-Mail','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerTelephone','Telephone','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event)values ('PVR','vd_dealerFax','Fax','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerAddress1','Address1','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerAddress2','Address2','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerAddress3','Address3','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_lovDescCountry','Country','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_lovDescProvince','Province/State','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_lovDescCity','City','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_pOBox','pOBox','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_zipCode','PIN/ZIP Code','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_active','Active','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_code','Code','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_panNumber','PAN Number','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_uidNumber','Aadhar Number','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_taxNumber','GST Number','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_fromprovinceName','From Province/Stater','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_toprovinceName','To Province/State','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_accountNo','Account Number','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_accountType','Account Type','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_bankBranchCodeName','Branch Name','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_bankName','Bank Name','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_branchIFSCCode','Branch IFSC Code','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_branchMICRCode','Branch MICR Code','A','');
-Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_branchCity','Branch City','A','');
-</sql>
-</changeSet>
-
-
 <changeSet id="7" author="swami.v">
 <sql>
 Insert into RBFieldDetails (rbmodule, rbevent,  rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('PVR','PVR','vd_recordStatus','Record Status','nvarchar','100','1','1','','static','');
 
-</sql>
-</changeSet>
-<changeSet id="8" author="Kranthi Kumar K">
-<sql>
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finAmount', 'Finance Amount', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'nextRepayDate', 'NextRepayDate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_custAddrCountry', 'custAddrCountry', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'numberOfTerms', 'numberOfTerms', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'repayProfitRate', 'repayProfitRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finRepaymentAmount', 'finRepaymentAmount', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'repayFrq', 'RepayFrq', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finStartDate', 'FinStartDate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_custRO1', 'Source', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrStreet', 'custAddrStreet', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrCity', 'custAddrCity', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrProvince', 'custAddrProvince', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrHNbr', 'custAddrHNbr', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrLine1', 'custAddrLine1', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_repayProfitRate', 'RepayProfitRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrLine2', 'custAddrLine2', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'firstRepay', 'FirstRepay', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'curReducingRate', 'CurReducingRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrFlatNo', 'custAddrFlatNo', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'schd_calculatedRate', 'CalculatedRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'schd_repayAmount', 'RepayAmount', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finReference', 'Loan Reference Number', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finBranchContact', 'Branch Contact Number', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'valueDate', 'Receipt Value Date', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'amount', 'Receipt Amount', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custCoreBank', 'Cust Core Bank ID', 'A', 'null');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finCurrAssetValue', 'FinCurrent Asset Value', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finAssetValue', 'Fin Asset Value', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'repaymentFrequency', 'Repayment Frequency', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'firstDueDate', 'First Due Date Frequency', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'maturityDate', 'Maturity Date', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'graceBaseRate', 'Grace BaseRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'graceSpecialRate', 'Grace SpecialRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'repayBaseRate', 'Repay BaseRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'repaySpecialRate', 'Repay SpecialRate', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'repayMargin', 'Repay Margin', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finBranch', 'Fin Branch', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finCcy', 'FinCcy', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'finDivision', 'FinDivision', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'accountsOfficerDesc', 'Accounts Officer Desc', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'dsaCode', 'DSA Code', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'dsaDesc', 'DSA Desc', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'DMACodeDesc', 'DMA CodeDesc', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'totalProfit', 'Total Profit', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'lastRepay', 'Last Repay', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrDistrict', 'custAddrDistrict', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custAddrPincode', 'custAddrPincode', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custMobileNumber', 'Customer Mobile Number', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custEmailId', 'Customer Email Id', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'receiptAmount', 'Receipt Amount', 'A', '');
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custFlatNbr', 'CustFlatNbr', 'A', NULL);
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'custPOBox', 'CustPOBox', 'A', NULL);
-INSERT INTO templatefields (module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_custShrtName', 'Customer Name', 'A', NULL);
 </sql>
 </changeSet>
 	<changeSet id="9" author="Dheerendra">
