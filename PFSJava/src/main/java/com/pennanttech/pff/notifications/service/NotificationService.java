@@ -1022,9 +1022,8 @@ public class NotificationService {
 		Map<String, List<String>> map = new HashMap<>();
 
 		MailTemplateData templateData = new MailTemplateData();
-
-		List<CustomerEMail> custEmails = customerDetails.getCustomerEMailList();
-		List<CustomerPhoneNumber> custMobiles = customerDetails.getCustomerPhoneNumList();
+		List<CustomerEMail> custEmails = null;
+		List<CustomerPhoneNumber> custMobiles = null;
 		if (customerDetails != null) {
 			custEmails = customerDetails.getCustomerEMailList();
 			custMobiles = customerDetails.getCustomerPhoneNumList();
