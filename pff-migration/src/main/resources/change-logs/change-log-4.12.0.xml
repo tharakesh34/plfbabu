@@ -141,7 +141,7 @@ Insert into RBFieldDetails (rbmodule, rbevent,  rbfldname ,rbflddesc , rbfldtype
 	</addColumn>
 </changeSet>
 
-<changeSet id="6" author="aditya">
+<changeSet id="6.2" author="aditya">
 	 <createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 		SELECT t1.fintype,
     t1.fincategory,
@@ -341,7 +341,6 @@ Insert into RBFieldDetails (rbmodule, rbevent,  rbfldname ,rbflddesc , rbfldtype
     t1.eligibilitymethods,
     t1.alwhybridrate,
     t1.fixedratetenor,
-    t1.odrulecode,
     t1.odmincapamount
    FROM rmtfinancetypes_temp t1
      LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
@@ -555,7 +554,6 @@ UNION ALL
     t1.eligibilitymethods,
     t1.alwhybridrate,
     t1.fixedratetenor,
-    t1.odrulecode,
     t1.odmincapamount
    FROM rmtfinancetypes t1
      LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
@@ -572,16 +570,16 @@ UNION ALL
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
   WHERE NOT (EXISTS ( SELECT 1 AS expr1
            FROM rmtfinancetypes_temp
-          WHERE rmtfinancetypes_temp.fintype = t1.fintype));
+          WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 </createView>
 </changeSet>
 
-<changeSet id="7_Pre" author="Aditya" dbms="postgresql">
+<changeSet id="7_Pre.1" author="Aditya" dbms="postgresql">
 	<sql>
 		select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
 	</sql>
 </changeSet>
-<changeSet id="7" author="aditya">
+<changeSet id="7.2" author="aditya">
 <createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 SELECT t1.fintype,
     t1.fincategory,
@@ -781,7 +779,6 @@ SELECT t1.fintype,
     t1.eligibilitymethods,
     t1.alwhybridrate,
     t1.fixedratetenor,
-    t1.odrulecode,
     t1.odmincapamount
    FROM rmtfinancetypes t1
      LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
@@ -795,10 +792,10 @@ SELECT t1.fintype,
      LEFT JOIN rules t59 ON t1.downpayrule = t59.ruleid
      LEFT JOIN rules t67 ON t1.grcpricingmethod = t67.ruleid
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
-     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid;
+     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 </createView>
 </changeSet>
-<changeSet id="7_Post" author="Aditya" dbms="postgresql">
+<changeSet id="7_Post.1" author="Aditya" dbms="postgresql">
 	<sql>
 		select deps_restore_dependencies('plf','rmtfinancetypes_aview');
 	</sql>
