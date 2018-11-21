@@ -371,12 +371,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Decimalbox oDChargeAmtOrPerc; // autoWired
 	protected Checkbox oDAllowWaiver; // autoWired
 	protected Decimalbox oDMaxWaiverPerc; // autoWired
+	protected Decimalbox oDMinCapAmount; // autoWired
 
 	protected Space space_oDChargeAmtOrPerc; // autoWired
 	protected Space space_oDMaxWaiverPerc; // autoWired
 	protected Space space_oDChargeCalOn; // autoWired
 	protected Space space_oDGraceDays; // autoWired
 	protected Space space_oDChargeType; // autoWired
+	protected Space space_ODMinCapAmount; // autoWired
 
 	protected Groupbox gb_VasDetails;
 	protected Textbox alwdVasProduct;
@@ -881,6 +883,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.oDMaxWaiverPerc.setMaxlength(6);
 		this.oDMaxWaiverPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		this.oDMinCapAmount.setMaxlength(6);
+		this.oDMinCapAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 
 		this.pastduePftMargin.setMaxlength(13);
 		this.pastduePftMargin.setFormat(PennantConstants.rateFormate9);
@@ -1458,6 +1462,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.oDAllowWaiver.setChecked(aFinanceType.isODAllowWaiver());
 		this.oDMaxWaiverPerc.setValue(aFinanceType.getODMaxWaiverPerc());
+		this.oDMinCapAmount.setValue(aFinanceType.getODMinCapAmount());
 
 		// Stepping Details
 		this.stepFinance.setChecked(aFinanceType.isStepFinance());
@@ -3226,6 +3231,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aFinanceType.setODMinCapAmount(this.oDMinCapAmount.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Stepping Details
 		if (this.gb_SteppingDetails.isVisible() && this.stepFinance.isChecked()) {
 			aFinanceType.setStepFinance(this.stepFinance.isChecked());
@@ -3869,6 +3879,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeType.setConstraint("");
 		this.oDChargeAmtOrPerc.setConstraint("");
 		this.oDMaxWaiverPerc.setConstraint("");
+		this.oDMinCapAmount.setConstraint("");
 		// gracemethod
 		this.grcPricingMethod.setConstraint("");
 		logger.debug("Leaving");
@@ -4190,6 +4201,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeAmtOrPerc.setDisabled(isTrue);
 		this.oDAllowWaiver.setDisabled(isTrue);
 		this.oDMaxWaiverPerc.setDisabled(isTrue);
+		this.oDMinCapAmount.setDisabled(isTrue);
 
 		// Stepping Details
 		this.stepFinance.setDisabled(isTrue);
@@ -4258,6 +4270,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_oDChargeType.setSclass("");
 			this.space_oDGraceDays.setSclass("");
 			this.space_oDMaxWaiverPerc.setSclass("");
+			this.space_ODMinCapAmount.setSclass("");
 			this.space_PftDueSchdOn.setSclass("");
 			this.space_planDeferCount.setSclass("");
 			this.space_finTypeDesc.setSclass("");
@@ -4412,9 +4425,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 		this.oDAllowWaiver.setChecked(false);
 		this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
+		this.oDMinCapAmount.setValue(BigDecimal.ZERO);
 		this.oDChargeCalOn.setDisabled(true);
 		this.oDChargeAmtOrPerc.setDisabled(true);
 		this.oDMaxWaiverPerc.setDisabled(true);
+		this.oDMinCapAmount.setDisabled(true);
 		this.alwdVasProduct.setValue("");
 		this.mandVasProduct.setValue("");
 
@@ -5894,6 +5909,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDChargeType.setDisabled(isCompReadonly);
 			this.oDChargeCalOn.setDisabled(isCompReadonly);
 			this.oDAllowWaiver.setDisabled(isCompReadonly);
+			this.oDMinCapAmount.setDisabled(isCompReadonly);
 			if (checkAction) {
 				this.oDChargeAmtOrPerc.setDisabled(true);
 				this.oDMaxWaiverPerc.setDisabled(true);
@@ -5910,6 +5926,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDChargeAmtOrPerc.setDisabled(true);
 			this.oDAllowWaiver.setDisabled(true);
 			this.oDMaxWaiverPerc.setDisabled(true);
+			this.oDMinCapAmount.setDisabled(true);
 			checkAction = true;
 		}
 		if (checkAction) {
@@ -5920,6 +5937,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 			this.oDAllowWaiver.setChecked(false);
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
+			this.oDMinCapAmount.setValue(BigDecimal.ZERO);
 		}
 		if (!this.applyODPenalty.isChecked()) {
 			this.space_oDGraceDays.setSclass("");
@@ -5927,6 +5945,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_oDChargeAmtOrPerc.setSclass("");
 			this.space_oDMaxWaiverPerc.setSclass("");
 			this.space_oDChargeType.setSclass("");
+			this.space_ODMinCapAmount.setSclass("");
 		}
 	}
 
@@ -6459,6 +6478,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeType.setErrorMessage("");
 		this.oDChargeAmtOrPerc.setErrorMessage("");
 		this.oDMaxWaiverPerc.setErrorMessage("");
+		this.oDMinCapAmount.setErrorMessage("");
 		this.alwdVasProduct.setErrorMessage("");
 		this.mandVasProduct.setErrorMessage("");
 

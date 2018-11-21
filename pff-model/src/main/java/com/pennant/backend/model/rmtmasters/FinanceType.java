@@ -218,6 +218,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
+	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
 
 	// Step In Finance Details
 	private boolean stepFinance;
@@ -1337,6 +1338,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setODMaxWaiverPerc(BigDecimal oDMaxWaiverPerc) {
 		this.oDMaxWaiverPerc = oDMaxWaiverPerc;
+	}
+
+	public BigDecimal getODMinCapAmount() {
+		return oDMinCapAmount;
+	}
+
+	public void setODMinCapAmount(BigDecimal oDMinCapAmount) {
+		this.oDMinCapAmount = oDMinCapAmount;
 	}
 
 	public List<FinTypeAccount> getFinTypeAccounts() {

@@ -40,5 +40,10 @@
 		</sql>
 	</changeSet>
 	
-	
+<changeSet id="2" author="aditya">
+<comment>New column added for Loan Type Details(extended details)</comment>
+	<addColumn tableName="adtrmtfinancetypes">
+	    <column name="odmincapamount" type="decimal(18,0)" defaultValueNumeric="0.00"/>
+	</addColumn>
+</changeSet>
 	</databaseChangeLog>
