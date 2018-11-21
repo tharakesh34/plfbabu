@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.dao.customermasters.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -53,9 +54,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -511,4 +515,248 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 	}
+
+	@Override
+	public List<BankInfoDetail> getBankInfoDetailById(long bankId, Date monthYear, String type) {
+		logger.debug("Entering");
+		BankInfoDetail bankInfoDetail = new BankInfoDetail();
+		bankInfoDetail.setBankId(bankId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
+		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  BankInfoDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
+		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BankInfoDetail.class);
+
+		List<BankInfoDetail> bankInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
+		logger.debug("Leaving");
+		return bankInfoDetails;
+	}
+	
+	@Override
+	public List<BankInfoDetail> getBankInfoDetailById(long bankId, String type) {
+		logger.debug("Entering");
+		BankInfoDetail bankInfoDetail = new BankInfoDetail();
+		bankInfoDetail.setBankId(bankId);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
+		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  BankInfoDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankId = :BankId");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
+		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BankInfoDetail.class);
+		
+		List<BankInfoDetail> bankInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		
+		logger.debug("Leaving");
+		return bankInfoDetails;
+	}
+
+	@Override
+	public void save(BankInfoDetail bankInfoDetail, String type) {
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into BankInfoDetail");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
+		insertSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:BankId, :MonthYear, :Balance, :DebitNo, :DebitAmt, :CreditNo,");
+		insertSql.append(" :CreditAmt, :BounceIn, :BounceOut, :ClosingBal, :ODCCLimit,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
+
+		logger.debug("Leaving");
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+	
+		
+	}
+
+	@Override
+	public void update(BankInfoDetail bankInfoDetail, String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder();
+		updateSql.append(" Update BankInfoDetail");
+		updateSql.append(StringUtils.trimToEmpty(type));
+
+		updateSql.append(" Set BankId = :BankId, MonthYear = :MonthYear,Balance = :Balance,");
+		updateSql.append(" DebitNo = :DebitNo, DebitAmt = :DebitAmt,CreditNo = :CreditNo,");
+		updateSql.append(" CreditAmt = :CreditAmt, BounceIn = :BounceIn,BounceOut = :BounceOut,");
+		updateSql.append(" ClosingBal = :ClosingBal, ODCCLimit = :ODCCLimit,");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
+		if (!type.endsWith("_Temp")) {
+			updateSql.append("AND Version= :Version-1");
+		}
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public void delete(BankInfoDetail bankInfoDetail, String type) {
+		logger.debug("Entering");
+		StringBuilder deleteSql = new StringBuilder(" Delete From BankInfoDetail");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where BankId =:BankId And MonthYear =:MonthYear");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
+
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public List<BankInfoSubDetail> getBankInfoSubDetailById(long bankId, Date monthYear, int day, String type) {
+		logger.debug("Entering");
+		BankInfoSubDetail bankInfoSubDetail = new BankInfoSubDetail();
+		bankInfoSubDetail.setBankId(bankId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT BankId, MonthYear, Day");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  BankInfoSubDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankId = :BankId And MonthYear =:MonthYear And Day =:Day");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
+		RowMapper<BankInfoSubDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BankInfoSubDetail.class);
+
+		List<BankInfoSubDetail> bankInfoSubDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
+		logger.debug("Leaving");
+		return bankInfoSubDetails;
+	}
+	
+	@Override
+	public List<BankInfoSubDetail> getBankInfoSubDetailById(long bankId, Date monthYear, String type) {
+		logger.debug("Entering");
+		BankInfoSubDetail bankInfoSubDetail = new BankInfoSubDetail();
+		bankInfoSubDetail.setBankId(bankId);
+		bankInfoSubDetail.setMonthYear(monthYear);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT BankId, MonthYear, Day, Balance,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  BankInfoSubDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
+		RowMapper<BankInfoSubDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BankInfoSubDetail.class);
+		
+		List<BankInfoSubDetail> bankInfoSubDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		
+		logger.debug("Leaving");
+		return bankInfoSubDetails;
+	}
+
+	@Override
+	public void save(List<BankInfoSubDetail> bankInfoSubDetail, String type) {
+
+		logger.debug("Entering");
+
+		StringBuilder insertSql = new StringBuilder();
+		insertSql.append(" Insert Into BankInfoSubDetail");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (BankId, MonthYear, Day, Balance,");
+		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" Values(:BankId, :MonthYear, :Day, :Balance,");
+		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		logger.debug("insertSql: " + insertSql.toString());
+		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(bankInfoSubDetail.toArray());
+		logger.debug("Leaving");
+		this.jdbcTemplate.batchUpdate(insertSql.toString(), params);
+	
+		
+	}
+
+	@Override
+	public void update(BankInfoSubDetail bankInfoSubDetail, String type) {
+		int recordCount = 0;
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder();
+		updateSql.append(" Update BankInfoSubDetail");
+		updateSql.append(StringUtils.trimToEmpty(type));
+
+		updateSql.append(" Set BankId = :BankId, MonthYear = :MonthYear,Day = :Day, Balance = :Balance,");
+		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(" Where BankId = :BankId And MonthYear =:MonthYear And Day =:Day");
+		if (!type.endsWith("_Temp")) {
+			updateSql.append("AND Version= :Version-1");
+		}
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public void delete(List<BankInfoSubDetail>  bankInfoSubDetail, String type) {
+		logger.debug("Entering");
+		StringBuilder deleteSql = new StringBuilder(" Delete From BankInfoSubDetail");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where BankId =:BankId And MonthYear =:MonthYear And Day =:Day");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(bankInfoSubDetail.toArray());
+			this.jdbcTemplate.batchUpdate(deleteSql.toString(), params);
+		logger.debug("Leaving");
+	}
+
 }

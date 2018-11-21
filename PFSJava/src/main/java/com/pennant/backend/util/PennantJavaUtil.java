@@ -172,6 +172,8 @@ import com.pennant.backend.model.commodity.CommodityInventory;
 import com.pennant.backend.model.configuration.AssetType;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
@@ -2947,6 +2949,18 @@ public class PennantJavaUtil {
 				new ModuleMapping("ClosedFinance", FinanceMain.class,
 						new String[] { "FinanceMain", "FinanceMain_View" }, null, new String[] { "FinReference" },
 						new Object[][] { { "FinIsActive", "0", 0 }, { "ClosingStatus", "1", "C" } }, 350));
+		
+		//Indemnity Report
+				ModuleUtil.register("BankInfoDetail",
+						new ModuleMapping("BankInfoDetail", BankInfoDetail.class,
+								new String[] { "BankInfoDetail", "BankInfoDetail_View" }, null, new String[] { "" },
+								null , 350));
+		
+				//Indemnity Report
+				ModuleUtil.register("BankInfoDetail",
+						new ModuleMapping("BankInfoDetail", BankInfoSubDetail.class,
+								new String[] { "BankInfoDetail", "BankInfoDetail" }, null, new String[] { "" },
+								null, 350));
 
 		registerCustomModules();
 	}

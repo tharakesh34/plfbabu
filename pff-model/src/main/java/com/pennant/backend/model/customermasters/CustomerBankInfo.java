@@ -43,7 +43,10 @@
 package com.pennant.backend.model.customermasters;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -52,6 +55,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -108,7 +112,10 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal eodBalMin = BigDecimal.ZERO;
 	private BigDecimal eodBalMax = BigDecimal.ZERO;
 	private BigDecimal eodBalAvg = BigDecimal.ZERO;
-
+	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
+	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
+	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -126,6 +133,10 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("bankCode");
 		excludeFields.add("sourceId");
+		excludeFields.add("bankInfoDetail");
+		excludeFields.add("bankInfoDetails");
+		excludeFields.add("bankInfoSubDetails");
+		excludeFields.add("auditDetailMap");
 		return excludeFields;
 	}
 
@@ -424,6 +435,30 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 
 	public void setEodBalAvg(BigDecimal eodBalAvg) {
 		this.eodBalAvg = eodBalAvg;
+	}
+
+	public List<BankInfoDetail> getBankInfoDetails() {
+		return bankInfoDetails;
+	}
+
+	public void setBankInfoDetails(List<BankInfoDetail> bankInfoDetails) {
+		this.bankInfoDetails = bankInfoDetails;
+	}
+
+	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+
+	public List<BankInfoSubDetail> getBankInfoSubDetails() {
+		return bankInfoSubDetails;
+	}
+
+	public void setBankInfoSubDetails(List<BankInfoSubDetail> bankInfoSubDetails) {
+		this.bankInfoSubDetails = bankInfoSubDetails;
 	}
 
 }

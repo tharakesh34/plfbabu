@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerBankInfoDAO.java                                                   * 	  
+ * FileName    		:  BankInfoSubDetail.java                                                * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  06-05-2011    														*
+ * Creation Date    :  26-05-2011    														*
  *                                                                  						*
- * Modified Date    :  06-05-2011    														*
+ * Modified Date    :  26-05-2011    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
+ * 16-11-2018       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,58 +39,117 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.dao.customermasters;
+ */
+package com.pennant.backend.model.customermasters;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.customermasters.BankInfoDetail;
-import com.pennant.backend.model.customermasters.BankInfoSubDetail;
-import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 /**
- * DAO methods declaration for the <b>CustomerBankInfo model</b> class.<br>
+ * Model class for the <b>BankInfoSubDetail table</b>.<br>
  * 
  */
-public interface CustomerBankInfoDAO {
+public class BankInfoSubDetail extends AbstractWorkflowEntity{
+	private static final long serialVersionUID = -3217987429162088120L;
 
-	/* CustomerBankInfo getCustomerBankInfoById(long id,String typeCode,String type); */
-	CustomerBankInfo getCustomerBankInfoById(long id, String type);
+	private long bankId;
+	private Date monthYear;
+	private int day;
+	private BigDecimal balance;
 
-	List<CustomerBankInfo> getBankInfoByCustomer(final long id, String type);
-
-	void update(CustomerBankInfo customerBankInfo, String type);
-
-	void delete(CustomerBankInfo customerBankInfo, String type);
-
-	void deleteByCustomer(long custID, String type);
-
-	long save(CustomerBankInfo customerBankInfo, String type);
-
-	int getBankCodeCount(String bankCode);
-
-	int getAccTypeCount(String accType);
-
-	int getVersion(long id);
-
-	int getCustomerBankInfoByCustBankName(long custId, String bankName, String accountNumber, long bankId, String type);
-
-	CustomerBankInfo getCustomerBankInfoByCustId(CustomerBankInfo customerBankInfo, String type);
-
-	int getCustomerBankInfoByBank(String bankCode, String type);
-
-	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId);
+	private boolean newRecord = false;
+	private String lovValue;
+	private BankInfoSubDetail befImage;
+	private LoggedInUser userDetails;
 	
-	List<BankInfoDetail> getBankInfoDetailById(long id, Date monthYear, String type);
-	List<BankInfoDetail> getBankInfoDetailById(long id, String type);
-	void save(BankInfoDetail bankInfoDetail, String type);
-	void update(BankInfoDetail bankInfoDetail, String type);
-	void delete(BankInfoDetail bankInfoDetail, String type);
-	List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear, int day, String type);
-	List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear, String type);
-	void save(List<BankInfoSubDetail>  bankInfoSubDetails, String type);
-	void update(BankInfoSubDetail  bankInfoSubDetail, String type);
-	void delete(List<BankInfoSubDetail>  bankInfoSubDetails, String type);
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+	
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
+	public BankInfoSubDetail() {
+		super();
+	}
+
+	public BankInfoSubDetail(long id) {
+		super();
+	}
+
+	public long getBankId() {
+		return bankId;
+	}
+
+	public void setBankId(long bankId) {
+		this.bankId = bankId;
+	}
+
+	public Date getMonthYear() {
+		return monthYear;
+	}
+
+	public void setMonthYear(Date monthYear) {
+		this.monthYear = monthYear;
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public String getLovValue() {
+		return lovValue;
+	}
+
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
+	}
+
+	public BankInfoSubDetail getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(BankInfoSubDetail befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public int getDay() {
+		return day;
+	}
+
+	public void setDay(int day) {
+		this.day = day;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+
 }

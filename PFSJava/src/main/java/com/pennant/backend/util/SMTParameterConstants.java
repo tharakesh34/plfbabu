@@ -70,6 +70,9 @@ public class SMTParameterConstants {
 	public static final String DISB_ALLOW_WITH_OTC_UNDER_COVENANT_FULLFILL = "COVENANT DETAILS REQUIRED";
 	public static final String BAJAJFINANCE_STARTDATE = "1/1/2017";
 	public static final String CUSTBRANCH = "CUSTBRANCH";
+	public static final String BANKINFO_DAYS = "BANKINFO_DAYS";
+	public static final String BANKINFO_MONTH_YEAR = "BANKINFO_MONTH_YEAR";
+	public static final String MONTHLY_INCOME_REQ = "MONTHLY_INCOME_REQ";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule

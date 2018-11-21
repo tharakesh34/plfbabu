@@ -181,6 +181,50 @@
 							</row>
 						</rows>
 					</grid>
+					<toolbar id="toolBar_AccBehaviour" align="end" style="border-style: none;" visible="false">
+						<button id="button_CustomerBankInfoDialog_btnAccBehaviour" label="${c:l('label_btnAccBehaviour')}"
+							tooltiptext="${c:l('button_CustomerBankInfoDialog_btnAccBehaviour.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+					<listbox id="listBoxAccBehaviour" visible="false"
+						emptyMessage="${c:l('listbox.emptyMessage')}"
+						tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+						height="100%" multiple="false" sizedByContent="true" span="true"
+						style="overflow:auto;">
+						<listhead sizable="true" id="listHead_AccBehaviour">
+							<listheader id="listheader_MonthYear"
+								label="${c:l('listheader_MonthYear.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="lRistheader_BankBalance"
+								label="${c:l('listheader_BankBalance.label')}" sort="auto"
+								width="450px" />
+							<listheader id="listheader_DebitNo"
+								label="${c:l('listheader_DebitNo.label')}"
+								sort="auto" hflex="min" />
+							<listheader id="listheader_DebitAmount"
+								align="right" label="${c:l('listheader_DebitAmount.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CreditNo" 
+								label="${c:l('listheader_CreditNo.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_CreditAmount" align="right"
+								label="${c:l('listheader_CreditAmount.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="lRistheader_BounceInward" align="right"
+								label="${c:l('listheader_BounceInward.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_BounceOutward" align="right"
+								label="${c:l('listheader_BounceOutward.label')}"
+								sort="auto" hflex="min" />
+							<listheader id="listheader_ClosingBalance" align="right"
+								label="${c:l('listheader_ClosingBalance.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_ODCCUtl" align="right"
+								label="${c:l('listheader_ODCCUtl.label')}" sort="auto"
+								hflex="min" />
+							<listheader id="listheader_Delete"
+								sort="auto" hflex="min" />
+						</listhead>
+					</listbox>
 				</groupbox>
 
 			</center>

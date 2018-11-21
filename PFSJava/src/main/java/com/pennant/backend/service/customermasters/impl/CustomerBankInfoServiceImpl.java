@@ -12,11 +12,13 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
@@ -100,14 +102,32 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				tranType = PennantConstants.TRAN_ADD;
 				customerBankInfo.setRecordType("");
 				customerBankInfo.setBankId(getCustomerBankInfoDAO().save(customerBankInfo, ""));
+				//BankInfoDetails
+				if(customerBankInfo.getBankInfoDetails().size() > 0){
+					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						customerBankInfoDAO.save(bankInfoDetail, "");
+					}
+				}
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerBankInfo.setRecordType("");
 				getCustomerBankInfoDAO().update(customerBankInfo, "");
+				//BankInfoDetails
+				if(customerBankInfo.getBankInfoDetails().size() > 0){
+					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						customerBankInfoDAO.update(bankInfoDetail, "");
+					}
+				}
 			}
 		}
 		if (!StringUtils.equals(customerBankInfo.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 			getCustomerBankInfoDAO().delete(customerBankInfo, "_Temp");
+			//BankInfoDetails
+			if(customerBankInfo.getBankInfoDetails().size() > 0){
+				for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+					customerBankInfoDAO.delete(bankInfoDetail, "_Temp");
+				}
+			}
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
