@@ -135,6 +135,7 @@ import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
@@ -7773,6 +7774,44 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
 			receipt.setReceiptNo(this.paymentRef.getValue());
 			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
+			
+			for (CustomerPhoneNumber phoneNumber : getFinanceDetail().getCustomerDetails().getCustomerPhoneNumList()) {
+				if(phoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
+					receipt.setMobileNo(phoneNumber.getPhoneNumber());
+				}
+			}
+			receipt.setPanNumber(getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
+			receipt.setFinType(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
+			receipt.setFinTypeDesc(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinTypeName());
+			receipt.setBankCode(this.fundingAccount.getValue());
+			receipt.setBankName(this.fundingAccount.getDescription());
+			receipt.setBranchCode(this.bankCode.getValue());
+			receipt.setBranchName(this.bankCode.getDescription());
+			if(getReceiptHeader().getAllocations() != null){
+				BigDecimal pftPaid = BigDecimal.ZERO;
+				BigDecimal priPaid = BigDecimal.ZERO;
+				BigDecimal bouncePaid = BigDecimal.ZERO;
+				BigDecimal othersPaid = BigDecimal.ZERO;
+				for (ReceiptAllocationDetail aloc : getReceiptHeader().getAllocations()) {
+					if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PFT)){
+						pftPaid = aloc.getPaidAmount();
+					}else if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PRI)){
+						priPaid = aloc.getPaidAmount();
+					}else if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)){
+						bouncePaid = aloc.getPaidAmount();
+					}else{
+						othersPaid = othersPaid.add(aloc.getPaidAmount());
+					}
+				}
+				
+				BigDecimal due  = pftPaid.add(priPaid).subtract(getReceiptData().getAccrued()).subtract(getReceiptData().getFuturePri());
+				receipt.setOverDueEmi(PennantApplicationUtil.amountFormate(due, finFormatter));
+				receipt.setAddInterest(PennantApplicationUtil.amountFormate(getReceiptData().getAccrued(), finFormatter));
+				receipt.setTerminationAmt(PennantApplicationUtil.amountFormate(getReceiptData().getFuturePri(), finFormatter));
+				receipt.setBounceCharges(PennantApplicationUtil.amountFormate(bouncePaid, finFormatter));
+				receipt.setOthers(PennantApplicationUtil.amountFormate(othersPaid, finFormatter));
+			}
+			
 			engine.mergeFields(receipt);
 
 			boolean isDirectPrint = false;

@@ -57,6 +57,20 @@ public class ReceiptReport implements Serializable {
 	private String fundingAc;
 	private String paymentMode;
 
+	private String panNumber;
+	private String mobileNo;
+	private String finType;
+	private String finTypeDesc;
+	private String bankCode;
+	private String bankName;
+	private String branchCode;
+	private String branchName;
+	private String overDueEmi = "0";
+	private String addInterest = "0";
+	private String bounceCharges = "0";
+	private String terminationAmt = "0";
+	private String others = "0";
+	
 	public ReceiptReport() {
 		super();
 	}
@@ -148,5 +162,108 @@ public class ReceiptReport implements Serializable {
 	public void setReceiptDate(String receiptDate) {
 		this.receiptDate = receiptDate;
 	}
+	
+	public String getPanNumber() {
+		return panNumber;
+	}
 
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public String getMobileNo() {
+		return mobileNo;
+	}
+
+	public void setMobileNo(String mobileNo) {
+		this.mobileNo = mobileNo;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public String getFinTypeDesc() {
+		return finTypeDesc;
+	}
+
+	public void setFinTypeDesc(String finTypeDesc) {
+		this.finTypeDesc = finTypeDesc;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public String getOverDueEmi() {
+		return overDueEmi;
+	}
+
+	public void setOverDueEmi(String overDueEmi) {
+		this.overDueEmi = overDueEmi;
+	}
+
+	public String getBounceCharges() {
+		return bounceCharges;
+	}
+
+	public void setBounceCharges(String bounceCharges) {
+		this.bounceCharges = bounceCharges;
+	}
+
+	public String getAddInterest() {
+		return addInterest;
+	}
+
+	public void setAddInterest(String addInterest) {
+		this.addInterest = addInterest;
+	}
+
+	public String getTerminationAmt() {
+		return terminationAmt;
+	}
+
+	public void setTerminationAmt(String terminationAmt) {
+		this.terminationAmt = terminationAmt;
+	}
+
+	public String getOthers() {
+		return others;
+	}
+
+	public void setOthers(String others) {
+		this.others = others;
+	}
 }

@@ -388,6 +388,7 @@ public class ReceiptCalculator implements Serializable {
 						repayMain.setEarlyPayAmount(curSchd.getClosingBalance().subtract(curSchd.getCpzAmount()));
 					}
 
+					receiptData.setFuturePri(priBalance.subtract(curSchd.getPrincipalSchd()));
 					if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 						remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
 
@@ -433,6 +434,8 @@ public class ReceiptCalculator implements Serializable {
 						pftAccruedTillNow = pftAccruedTillNow.add(accruedPft);
 						priBalance = priBalance.add(prvSchd.getClosingBalance());
 						repayMain.setEarlyPayAmount(prvSchd.getClosingBalance());
+						receiptData.setAccrued(accruedPft);
+						receiptData.setFuturePri(prvSchd.getClosingBalance());
 
 						if (finScheduleData.getFinanceMain().isTDSApplicable()) {
 							BigDecimal actualPft = accruedPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);

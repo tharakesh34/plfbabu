@@ -65,6 +65,10 @@ public class FinReceiptData {
 	private Map<String, String> allocationDescMap = new HashMap<>();
 	private FinReceiptHeader receiptHeader;
 	private FinanceDetail financeDetail;
+	
+	// For Receipt Report
+	private BigDecimal accrued = BigDecimal.ZERO;
+	private BigDecimal futurePri = BigDecimal.ZERO;
 
 	public FinReceiptData() {
 
@@ -192,6 +196,22 @@ public class FinReceiptData {
 
 	public void setTotReceiptAmount(BigDecimal totReceiptAmount) {
 		this.totReceiptAmount = totReceiptAmount;
+	}
+
+	public BigDecimal getAccrued() {
+		return accrued;
+	}
+
+	public void setAccrued(BigDecimal accrued) {
+		this.accrued = accrued;
+	}
+
+	public BigDecimal getFuturePri() {
+		return futurePri;
+	}
+
+	public void setFuturePri(BigDecimal futurePri) {
+		this.futurePri = futurePri;
 	}
 
 }
