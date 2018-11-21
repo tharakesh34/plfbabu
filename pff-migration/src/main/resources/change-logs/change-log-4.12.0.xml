@@ -73,4 +73,43 @@
 <changeSet id="5" author="Dheerendra">
 	<renameColumn tableName="collection_financedetails" oldColumnName="nscddate" newColumnName="nschddate"/>
 </changeSet>
+
+<changeSet id="6" author="swami.v">
+<sql>
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerName','Name','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_email','e-Mail','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerTelephone','Telephone','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event)values ('PVR','vd_dealerFax','Fax','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerAddress1','Address1','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerAddress2','Address2','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_dealerAddress3','Address3','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_lovDescCountry','Country','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_lovDescProvince','Province/State','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_lovDescCity','City','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_pOBox','pOBox','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_zipCode','PIN/ZIP Code','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_active','Active','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_code','Code','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_panNumber','PAN Number','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_uidNumber','Aadhar Number','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_taxNumber','GST Number','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_fromprovinceName','From Province/Stater','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_toprovinceName','To Province/State','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_accountNo','Account Number','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_accountType','Account Type','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_bankBranchCodeName','Branch Name','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_bankName','Bank Name','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_branchIFSCCode','Branch IFSC Code','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_branchMICRCode','Branch MICR Code','A','');
+Insert into templatefields (module, field, fielddesc, fieldformat, event) values ('PVR','vd_branchCity','Branch City','A','');
+</sql>
+</changeSet>
+
+
+<changeSet id="7" author="swami.v">
+<sql>
+Insert into RBFieldDetails (rbmodule, rbevent,  rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('PVR','PVR','vd_recordStatus','Record Status','nvarchar','100','1','1','','static','');
+
+</sql>
+</changeSet>
 </databaseChangeLog>
