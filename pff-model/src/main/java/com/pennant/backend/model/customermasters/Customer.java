@@ -69,7 +69,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custGenderCode", "custMaritalSts",
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
-		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
+		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId","custShrtNameLclLng",
 		"returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
@@ -109,6 +109,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String custFNameLclLng;
 	private String custMNameLclLng;
 	private String custLNameLclLng;
+	@XmlElement(name="othersName")
 	private String custShrtNameLclLng;
 
 	private String custDftBranch;

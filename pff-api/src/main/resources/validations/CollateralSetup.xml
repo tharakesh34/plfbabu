@@ -49,6 +49,7 @@
 				<message>collateralType should have maximum 8 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 				<element name="max">8</element>
 			</constraint>
@@ -56,6 +57,7 @@
 				<message>collateralType is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 			</constraint>
 		</field>
@@ -65,6 +67,7 @@
 				<message>collateralCcy should have maximum 3 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 				<element name="max">3</element>
 			</constraint>
@@ -72,6 +75,7 @@
 				<message>collateralCcy is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 			</constraint>
 		</field>
@@ -81,6 +85,7 @@
 				<message>maxCollateralValue allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="value">999999999999999999</element>
@@ -92,6 +97,7 @@
 				<message>splLtv allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="value">999</element>
@@ -103,6 +109,7 @@
 				<message>collateralLoc should have maximum 50 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">50</element>
@@ -114,6 +121,7 @@
 				<message>valuator should have maximum 50 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">50</element>
@@ -125,6 +133,7 @@
 				<message>rvwFrq should have maximum 5 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">5</element>
@@ -135,6 +144,7 @@
 				<message>remarks should have maximum 1000 characters</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 				</groups>
 				<element name="max">1000</element>

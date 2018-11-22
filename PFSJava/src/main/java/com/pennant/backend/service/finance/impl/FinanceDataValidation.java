@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -120,6 +121,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -1419,13 +1421,116 @@ public class FinanceDataValidation {
 			}
 			BigDecimal curAssignValue = BigDecimal.ZERO;
 			BigDecimal totalAvailAssignValue = BigDecimal.ZERO;
+			boolean requiredAssignValidation = false;
+			List<String>assignReferences= new ArrayList<>();
+
 			for (CollateralAssignment collateralAssignment : finCollateralAssignmentDetails) {
-				if (StringUtils.isEmpty(collateralAssignment.getCollateralRef())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "collateralRef";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+				boolean avilId = false;
+				boolean bothAvialble = false;
+				List<String> colltype = new ArrayList<>();
+				if (StringUtils.isBlank(collateralAssignment.getCollateralRef())) {
+					if (CollectionUtils.isEmpty(financeDetail.getCollaterals())) {
+						//collateral setup is mandatory
+						String[] valueParm = new String[2];
+						valueParm[0] = "CollateralSetup";
+						valueParm[1] = "CollateralRef";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+						return errorDetails;
+					}
+				}
+				if(financeDetail.getCollaterals()!=null) {
+					if (assignReferences.contains(collateralAssignment.getAssignmentReference())) {
+						String[] valueParm = new String[2];
+						valueParm[1] = collateralAssignment.getAssignmentReference();
+						valueParm[0] = "AssignmentReference" + ":" ;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+						return errorDetails;
+					} else {
+						assignReferences.add(collateralAssignment.getAssignmentReference());
+					}
+					if(finCollateralAssignmentDetails.size()!=financeDetail.getCollaterals().size()){
+						String[] valueParm = new String[1];
+						valueParm[0] = "CollateralSetupSize Equal";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+					List<String>collAssignReferences= new ArrayList<>();
+				for (CollateralSetup setupDetails : financeDetail.getCollaterals()) {
+					if (StringUtils.isNotBlank(collateralAssignment.getCollateralRef())
+							&& StringUtils.isNotBlank(collateralAssignment.getAssignmentReference())) {
+						bothAvialble = true;
+						break;
+					}
+					if (StringUtils.equals(collateralAssignment.getAssignmentReference(),
+							setupDetails.getAssignmentReference())) {
+						avilId = true;
+					}
+					if (colltype.contains(setupDetails.getCollateralType())) {
+						String[] valueParm = new String[2];
+						valueParm[1] = setupDetails.getCollateralType();
+						valueParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":" ;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+						return errorDetails;
+					} else {
+						colltype.add(setupDetails.getCollateralType());
+					}
+					
+					if (collAssignReferences.contains(setupDetails.getAssignmentReference())) {
+						String[] valueParm = new String[2];
+						valueParm[1] = setupDetails.getAssignmentReference();
+						valueParm[0] = "AssignmentReference" + ":" ;
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+						return errorDetails;
+					} else {
+						collAssignReferences.add(setupDetails.getAssignmentReference());
+					}
+					String collateralType = financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
+					if (StringUtils.isNotBlank(collateralType)) {
+						boolean isCollateralFound = false;
+						String[] types = collateralType.split(PennantConstants.DELIMITER_COMMA);
+						for (String type : types) {
+							if (StringUtils.equals(type, setupDetails.getCollateralType())) {
+								isCollateralFound = true;
+							}
+						}
+						if (!isCollateralFound) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "collateralType";
+							valueParm[1] = "LoanType";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+							return errorDetails;
+						}
+					}
+					AuditDetail auditDetail = collateralSetupService.doValidations(setupDetails, "create");
+					
+					if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
+						return auditDetail.getErrorDetails();
+					} 
+					}
+				}
+				
+				//validation
+				if (bothAvialble) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AssignmentReference";
+					valueParm[1] = "CollateralSetup or Assingment";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 					return errorDetails;
 				}
+				if (!avilId && StringUtils.isBlank(collateralAssignment.getCollateralRef())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "AssignmentReference";
+					valueParm[1] = "CollateralSetup or Assingment";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+					return errorDetails;
+				}
+
+				/*
+				 * if (StringUtils.isEmpty(collateralAssignment.getCollateralRef())) { String[] valueParm = new
+				 * String[1]; valueParm[0] = "collateralRef"; errorDetails.add(ErrorUtil.getErrorDetail(new
+				 * ErrorDetail("90502", valueParm))); return errorDetails; }
+				 */
 				BigDecimal assignPerc = collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
 						: collateralAssignment.getAssignPerc();
 				if (assignPerc.compareTo(BigDecimal.ZERO) <= 0) {
@@ -1435,85 +1540,91 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90205", valueParm)));
 					return errorDetails;
 				}
-				CollateralSetup collateralSetup = collateralSetupService
-						.getApprovedCollateralSetupById(collateralAssignment.getCollateralRef());
-				if (collateralSetup == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = collateralAssignment.getCollateralRef();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90906", valueParm)));
-					return errorDetails;
-				}
-				String collateralType = financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
-				if (StringUtils.isNotBlank(collateralType)) {
-					boolean isCollateralFound = false;
-					String[] types = collateralType.split(PennantConstants.DELIMITER_COMMA);
-					for (String type : types) {
-						if (StringUtils.equals(type, collateralSetup.getCollateralType())) {
-							isCollateralFound = true;
-						}
-					}
-					if (!isCollateralFound) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "collateralref";
-						valueParm[1] = "LoanType";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+				if (StringUtils.isNotBlank(collateralAssignment.getCollateralRef())) {
+					requiredAssignValidation = true;
+					CollateralSetup collateralSetup = collateralSetupService
+							.getApprovedCollateralSetupById(collateralAssignment.getCollateralRef());
+					if (collateralSetup == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = collateralAssignment.getCollateralRef();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90906", valueParm)));
 						return errorDetails;
 					}
-				}
-				if (!StringUtils.equalsIgnoreCase(collateralSetup.getDepositorCif(),
-						financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
-					boolean isNotValidCif = true;
-					if (collateralSetup.getCollateralThirdPartyList() != null
-							&& !collateralSetup.getCollateralThirdPartyList().isEmpty()) {
-						for (CollateralThirdParty collateralThirdParty : collateralSetup
-								.getCollateralThirdPartyList()) {
-							if (StringUtils.equalsIgnoreCase(collateralThirdParty.getCustCIF(),
-									financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
-								isNotValidCif = false;
-								break;
+					String collateralType = financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
+					if (StringUtils.isNotBlank(collateralType)) {
+						boolean isCollateralFound = false;
+						String[] types = collateralType.split(PennantConstants.DELIMITER_COMMA);
+						for (String type : types) {
+							if (StringUtils.equals(type, collateralSetup.getCollateralType())) {
+								isCollateralFound = true;
 							}
 						}
+						if (!isCollateralFound) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "collateralref";
+							valueParm[1] = "LoanType";
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+							return errorDetails;
+						}
+					}
+					if (!StringUtils.equalsIgnoreCase(collateralSetup.getDepositorCif(),
+							financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+						boolean isNotValidCif = true;
+						if (collateralSetup.getCollateralThirdPartyList() != null
+								&& !collateralSetup.getCollateralThirdPartyList().isEmpty()) {
+							for (CollateralThirdParty collateralThirdParty : collateralSetup
+									.getCollateralThirdPartyList()) {
+								if (StringUtils.equalsIgnoreCase(collateralThirdParty.getCustCIF(),
+										financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+									isNotValidCif = false;
+									break;
+								}
+							}
+						}
+
+						if (isNotValidCif) {
+							String[] valueParm = new String[2];
+							valueParm[0] = collateralSetup.getDepositorCif();
+							valueParm[1] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
+							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90249", valueParm)));
+							return errorDetails;
+						}
+
 					}
 
-					if (isNotValidCif) {
-						String[] valueParm = new String[2];
-						valueParm[0] = collateralSetup.getDepositorCif();
-						valueParm[1] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90249", valueParm)));
-						return errorDetails;
-					}
+					BigDecimal totAssignedPerc = collateralSetupService
+							.getAssignedPerc(collateralSetup.getCollateralRef(), "");//TODO:Add reference
+					curAssignValue = curAssignValue.add(collateralSetup.getBankValuation()
+							.multiply(collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
+									: collateralAssignment.getAssignPerc())
+							.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
 
+					BigDecimal totAssignedValue = collateralSetup.getBankValuation().multiply(totAssignedPerc)
+							.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
+					BigDecimal availAssignValue = collateralSetup.getBankValuation().subtract(totAssignedValue);
+					/*
+					 * if (financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(curAssignValue)
+					 * > 0) { String[] valueParm = new String[2]; valueParm[0] = "Collateral available assign value(" +
+					 * String.valueOf(curAssignValue) + ")"; valueParm[1] = "current assign value(" +
+					 * financeDetail.getFinScheduleData().getFinanceMain().getFinAmount() + ")";
+					 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm))); return
+					 * errorDetails; }
+					 */
+					totalAvailAssignValue = totalAvailAssignValue.add(availAssignValue);
+					/*
+					 * if
+					 * (availAssignValue.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) <
+					 * 0) { String[] valueParm = new String[2]; valueParm[0] = "Available assign value(" +
+					 * String.valueOf(availAssignValue) + ")"; valueParm[1] = "loan amount(" +
+					 * String.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) + ")";
+					 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm))); return
+					 * errorDetails; }
+					 */
+				} else {
+					
 				}
-
-				BigDecimal totAssignedPerc = collateralSetupService.getAssignedPerc(collateralSetup.getCollateralRef(),
-						"");//TODO:Add reference
-				curAssignValue = curAssignValue.add(collateralSetup.getBankValuation()
-						.multiply(collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
-								: collateralAssignment.getAssignPerc())
-						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-
-				BigDecimal totAssignedValue = collateralSetup.getBankValuation().multiply(totAssignedPerc)
-						.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
-				BigDecimal availAssignValue = collateralSetup.getBankValuation().subtract(totAssignedValue);
-				/*
-				 * if (financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(curAssignValue) > 0)
-				 * { String[] valueParm = new String[2]; valueParm[0] = "Collateral available assign value(" +
-				 * String.valueOf(curAssignValue) + ")"; valueParm[1] = "current assign value(" +
-				 * financeDetail.getFinScheduleData().getFinanceMain().getFinAmount() + ")";
-				 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm))); return errorDetails;
-				 * }
-				 */
-				totalAvailAssignValue = totalAvailAssignValue.add(availAssignValue);
-				/*
-				 * if (availAssignValue.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) <
-				 * 0) { String[] valueParm = new String[2]; valueParm[0] = "Available assign value(" +
-				 * String.valueOf(availAssignValue) + ")"; valueParm[1] = "loan amount(" +
-				 * String.valueOf(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) + ")";
-				 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm))); return errorDetails;
-				 * }
-				 */
 			}
-
+			if(requiredAssignValidation) {
 			//Collateral coverage will be calculated based on the flag "Partially Secured?” defined loan type.
 			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured()) {
 				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -1542,6 +1653,7 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
+			}
 			}
 		}
 
@@ -2913,7 +3025,13 @@ public class FinanceDataValidation {
 
 		//Validate Repay Dates
 		errorDetails = repayDatesValidation(finScheduleData);
+		
+		//validation for od Loan
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeType.getProductCategory())) {
+			errorDetails = odDatesValidation(finScheduleData);
+		}
 
+			
 		//Validate BPI
 		if (financeType.isAlwBPI()) {
 			errorDetails = bpiValidation(finScheduleData);
@@ -2986,6 +3104,23 @@ public class FinanceDataValidation {
 	 * MANUAL SCHEDULE
 	 * _______________________________________________________________________________________________________________
 	 */
+
+	private List<ErrorDetail> odDatesValidation(FinScheduleData finScheduleData) {
+
+
+		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		// it should match with frequency
+		if ((StringUtils.isNotBlank(finMain.getDroplineFrq())) && (finMain.getFirstDroplineDate() != null)) {
+			if (!FrequencyUtil.isFrqDate(finMain.getDroplineFrq(), finMain.getFirstDroplineDate())) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90183", null)));
+			}
+		}
+		return errorDetails;
+
+	
+	}
 
 	private List<ErrorDetail> manualScheduleValidation(String vldGroup, FinScheduleData finScheduleData) {
 		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();

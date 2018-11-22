@@ -59,7 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CollateralAssignment table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "collateralRef", "assignPerc" })
+@XmlType(propOrder = { "collateralRef", "assignPerc","assignmentReference" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralAssignment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -88,6 +88,8 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private BigDecimal specialLTV = BigDecimal.ZERO;
 	private BigDecimal bankLTV = BigDecimal.ZERO;
 	//### 16-05-2018 End Development Item 82
+	@XmlElement
+	private String assignmentReference;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -103,6 +105,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 		excludeFields.add("specialLTV");
 		excludeFields.add("bankLTV");
 		//### 16-05-2018 End Development Item 82
+		excludeFields.add("assignmentReference");
 
 		return excludeFields;
 	}
@@ -272,5 +275,14 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	}
 
 	//### 16-05-2018 End Development Item 82
+		public String getAssignmentReference() {
+		return assignmentReference;
+	}
+
+	public void setAssignmentReference(String assignmentReference) {
+		this.assignmentReference = assignmentReference;
+	}
+
+	
 
 }

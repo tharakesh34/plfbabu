@@ -80,7 +80,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "depositorCif", "collateralRef", "collateralType", "collateralCcy", "maxCollateralValue",
 		"specialLTV", "collateralLoc", "valuator", "expiryDate", "reviewFrequency", "nextReviewDate",
 		"multiLoanAssignment", "thirdPartyAssignment", "remarks", "collateralThirdPartyList", "extendedDetails",
-		"coOwnerDetailList", "documents", "returnStatus" })
+		"coOwnerDetailList", "documents","assignmentReference","returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "CollateralSetup")
 public class CollateralSetup extends AbstractWorkflowEntity {
@@ -175,6 +175,9 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private String sourceId;
+	
+	@XmlElement
+	private String assignmentReference;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -209,6 +212,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		excludeFields.add("finFlagsDetails");
 		excludeFields.add("assignmentDetails");
 		excludeFields.add("fromLoan");
+		excludeFields.add("assignmentReference");
 		return excludeFields;
 	}
 
@@ -590,5 +594,13 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getAssignmentReference() {
+		return assignmentReference;
+	}
+
+	public void setAssignmentReference(String assignmentReference) {
+		this.assignmentReference = assignmentReference;
 	}
 }

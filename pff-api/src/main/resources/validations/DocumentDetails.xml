@@ -15,6 +15,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -24,6 +25,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 				<element name="max">50</element>
 			</constraint>
@@ -36,6 +38,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -45,6 +48,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 				<element name="max">10</element>
 			</constraint>
@@ -66,6 +70,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -75,6 +80,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 				<element name="max">300</element>
 			</constraint>

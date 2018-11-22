@@ -1444,23 +1444,23 @@ public class ExtendedFieldDetailsService {
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-			if (fieldValue.length() > (deatils.getFieldLength() - deatils.getFieldPrec())) {
+			BigDecimal fValue= new BigDecimal(fieldValue);
+			/*if (fieldValue.length() > (deatils.getFieldLength() - deatils.getFieldPrec())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
 				valueParm[1] = String.valueOf(deatils.getFieldLength() - deatils.getFieldPrec());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
-			}
-			if (Integer.valueOf(fieldValue) < 0 || Integer.valueOf(fieldValue) > 100) {
+			}*/
+			if (fValue.compareTo(BigDecimal.ZERO) < 0 || fValue.compareTo(new BigDecimal(100)) > 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = fieldName;
 				valueParm[1] = "0";
 				valueParm[2] = "100";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
-			}
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));			
+				}
 			if (deatils.getFieldMaxValue() > 0 || deatils.getFieldMinValue() > 0) {
-				if (Integer.valueOf(fieldValue) > deatils.getFieldMaxValue()
-						|| Integer.valueOf(fieldValue) < deatils.getFieldMinValue()) {
+				if (	fValue.compareTo(new BigDecimal(deatils.getFieldMaxValue())) > 0
+						|| 				fValue.compareTo(new BigDecimal(deatils.getFieldMinValue())) < 0) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(deatils.getFieldMinValue());

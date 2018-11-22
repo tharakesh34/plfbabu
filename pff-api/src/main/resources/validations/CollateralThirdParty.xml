@@ -12,6 +12,7 @@
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 				<element name="max">12</element>
 			</constraint>
@@ -20,6 +21,7 @@
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
+					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 				</groups>
 			</constraint>
 		</field>

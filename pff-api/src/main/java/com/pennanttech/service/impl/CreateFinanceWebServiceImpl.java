@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -28,6 +29,7 @@ import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.CreateFinanceGroup;
+import com.pennant.validation.CreateFinanceWithCollateral;
 import com.pennant.validation.CreateFinancewithWIFGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
@@ -65,6 +67,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
+		
+		if (!CollectionUtils.isEmpty(financeDetail.getCollaterals())) {
+			for (CollateralSetup setup : financeDetail.getCollaterals()) {
+					validationUtility.validate(setup, CreateFinanceWithCollateral.class);
+			}
+		}
 		//for logging purpose
 		String[] logFields = getLogFields(financeDetail);
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -93,6 +101,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				FinanceDetail finResponse = createOverDraftLoanValidation(financeDetail);
 				WSReturnStatus status = finResponse.getReturnStatus();
 				if (status != null) {
+					doEmptyResponseObject(finResponse);
 					return finResponse;
 				}
 			}
@@ -249,9 +258,16 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 
 		// Compare first drop line date greater than start date
+		if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()==null){
+			String[] valueParm = new String[1];
+			valueParm[0] = "FirstDroplineDate";
+			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			response.setReturnStatus(status);
+			return response;
+		}
 
 		if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()
-				.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()) == -1) {
+				.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate())<=0) {
 			doEmptyResponseObject(response);
 			response.setStp(financeDetail.isStp());
 			String[] valueParm = new String[2];

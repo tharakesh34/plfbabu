@@ -26,6 +26,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ReferenceUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
@@ -49,8 +50,11 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.collateral.CoOwnerDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.collateral.CollateralStructure;
+import com.pennant.backend.model.collateral.CollateralThirdParty;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -86,6 +90,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -96,12 +101,14 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.AppException;
@@ -149,7 +156,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinFeeReceiptDAO finFeeReceiptDAO;
 	protected transient WorkflowEngine workFlow = null;
+	private CollateralStructureService collateralStructureService;
+	private RuleExecutionUtil ruleExecutionUtil;
 
+	
 	/**
 	 * Method for process create finance request
 	 * 
@@ -732,26 +742,76 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// CollateralAssignment details
 		for (CollateralAssignment detail : financeDetail.getCollateralAssignmentList()) {
-			CollateralSetup collateralSetup = collateralSetupService
-					.getApprovedCollateralSetupById(detail.getCollateralRef());
-			if (collateralSetup != null) {
-				detail.setCollateralValue(collateralSetup.getCollateralValue());
-			}
-			detail.setNewRecord(true);
-			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			detail.setModule(FinanceConstants.MODULE_NAME);
-			detail.setUserDetails(financeMain.getUserDetails());
-			detail.setLastMntBy(userDetails.getUserId());
-			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
-			detail.setVersion(1);
-			//workflow relates
-			detail.setWorkflowId(financeMain.getWorkflowId());
-			detail.setRoleCode(financeMain.getRoleCode());
-			detail.setNextRoleCode(financeMain.getNextRoleCode());
-			detail.setTaskId(financeMain.getTaskId());
-			detail.setNextTaskId(financeMain.getNextTaskId());
+
+			if (StringUtils.isNotBlank(detail.getCollateralRef())) {
+				CollateralSetup collateralSetup = collateralSetupService
+						.getApprovedCollateralSetupById(detail.getCollateralRef());
+				if (collateralSetup != null) {
+					detail.setCollateralValue(collateralSetup.getCollateralValue());
+				}
+				detail.setNewRecord(true);
+				detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				detail.setModule(FinanceConstants.MODULE_NAME);
+				detail.setUserDetails(financeMain.getUserDetails());
+				detail.setLastMntBy(userDetails.getUserId());
+				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+				detail.setVersion(1);
+				//workflow relates
+				detail.setWorkflowId(financeMain.getWorkflowId());
+				detail.setRoleCode(financeMain.getRoleCode());
+				detail.setNextRoleCode(financeMain.getNextRoleCode());
+				detail.setTaskId(financeMain.getTaskId());
+				detail.setNextTaskId(financeMain.getNextTaskId());
+			} 
+			
 		}
+		if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals())) {
+			BigDecimal curAssignValue = BigDecimal.ZERO;
+			BigDecimal totalAvailAssignValue = BigDecimal.ZERO;
+
+			for (CollateralAssignment detail : financeDetail.getCollateralAssignmentList()) {
+				for (CollateralSetup collsetup : financeDetail.getCollaterals()) {
+					if (StringUtils.equals(detail.getAssignmentReference(), collsetup.getAssignmentReference())) {
+						processCollateralsetupDetails(userDetails, stp, financeMain, customerDetails, detail,
+								collsetup);
+						curAssignValue = curAssignValue.add(collsetup.getBankValuation()
+								.multiply(detail.getAssignPerc() == null ? BigDecimal.ZERO : detail.getAssignPerc())
+								.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
+						totalAvailAssignValue = totalAvailAssignValue
+								.add(collsetup.getBankValuation().subtract(curAssignValue));
+					}
+				}
+			}
+
+			//Collateral coverage will be calculated based on the flag "Partially Secured?” defined loan type.
+			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured()) {
+				if (curAssignValue.compareTo(financeMain.getFinAmount()) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Collateral available assign value(" + String.valueOf(curAssignValue) + ")";
+					valueParm[1] = "current assign value(" + financeMain.getFinAmount() + ")";
+					finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+				}
+
+				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT
+						.equals(financeDetail.getFinScheduleData().getFinanceType().getFinLTVCheck())) {
+					if (totalAvailAssignValue.compareTo(financeMain.getFinAssetValue()) < 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Available assign value(" + String.valueOf(totalAvailAssignValue) + ")";
+						valueParm[1] = "loan amount(" + String.valueOf(financeMain.getFinAssetValue()) + ")";
+						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+					}
+				} else {
+					if (totalAvailAssignValue.compareTo(financeMain.getFinAmount()) < 0) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "Available assign value(" + String.valueOf(totalAvailAssignValue) + ")";
+						valueParm[1] = "loan amount(" + String.valueOf(financeMain.getFinAmount()) + ")";
+						finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+					}
+				}
+			}
+		}
+		
 
 		// Set VAS reference as feeCode for VAS related fees
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
@@ -921,6 +981,228 @@ public class CreateFinanceController extends SummaryDetailService {
 			doSetDefaultChequeHeader(financeDetail);
 		}
 		logger.debug("Leaving");
+	}
+
+	private void processCollateralsetupDetails(LoggedInUser userDetails, boolean stp, FinanceMain financeMain,
+			CustomerDetails customerDetails, CollateralAssignment detail,CollateralSetup colSetup) {
+		//collateral setup defaulting
+		colSetup.setUserDetails(financeMain.getUserDetails());
+		colSetup.setSourceId(APIConstants.FINSOURCE_ID_API);
+		colSetup.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+		colSetup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		colSetup.setLastMntBy(userDetails.getUserId());
+		colSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
+		colSetup.setDepositorId(financeMain.getCustID());
+		colSetup.setDepositorCif(financeMain.getCustCIF());
+		colSetup.setNewRecord(true);
+		colSetup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		colSetup.setWorkflowId(financeMain.getWorkflowId());
+		colSetup.setRoleCode(financeMain.getRoleCode());
+		colSetup.setNextRoleCode(financeMain.getNextRoleCode());
+		colSetup.setTaskId(financeMain.getTaskId());
+		colSetup.setNextTaskId(financeMain.getNextTaskId());	
+		List<CollateralThirdParty> thirdPartyCollaterals = colSetup.getCollateralThirdPartyList();
+		if (thirdPartyCollaterals != null) {
+			for (CollateralThirdParty thirdPartyColl : thirdPartyCollaterals) {
+				thirdPartyColl.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				thirdPartyColl.setLastMntBy(userDetails.getUserId());
+				thirdPartyColl.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+				thirdPartyColl.setUserDetails(userDetails);
+
+				// fetch customer id from cif
+				Customer thrdPartyCustomer = customerDetailsService
+						.getCustomerByCIF(thirdPartyColl.getCustCIF());
+				if (thrdPartyCustomer != null) {
+					thirdPartyColl.setCustomerId(thrdPartyCustomer.getCustID());
+				}
+				thirdPartyColl.setCollateralRef(colSetup.getCollateralRef());
+				thirdPartyColl.setNewRecord(true);
+				thirdPartyColl.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				thirdPartyColl.setWorkflowId(financeMain.getWorkflowId());
+				thirdPartyColl.setRoleCode(financeMain.getRoleCode());
+				thirdPartyColl.setNextRoleCode(financeMain.getNextRoleCode());
+				thirdPartyColl.setTaskId(financeMain.getTaskId());
+				thirdPartyColl.setNextTaskId(financeMain.getNextTaskId());	
+			}
+		}
+
+		// process co-owner details
+		List<CoOwnerDetail> coOwnerDetails = colSetup.getCoOwnerDetailList();
+		if (coOwnerDetails != null) {
+			int seqNo = 0;
+			for (CoOwnerDetail coOwnerDetail : coOwnerDetails) {
+				coOwnerDetail.setCollateralRef(colSetup.getCollateralRef());
+				coOwnerDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				coOwnerDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+				coOwnerDetail.setUserDetails(userDetails);
+				coOwnerDetail.setLastMntBy(userDetails.getUserId());
+
+				Customer coOwnerCustomer = customerDetailsService
+						.getCustomerByCIF(coOwnerDetail.getCoOwnerCIF());
+				if (coOwnerCustomer != null) {
+					coOwnerDetail.setCustomerId(coOwnerCustomer.getCustID());
+				}
+
+				coOwnerDetail.setCollateralRef(colSetup.getCollateralRef());
+				coOwnerDetail.setNewRecord(true);
+				coOwnerDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				coOwnerDetail.setCoOwnerId(++seqNo);
+				coOwnerDetail.setWorkflowId(financeMain.getWorkflowId());
+				coOwnerDetail.setRoleCode(financeMain.getRoleCode());
+				coOwnerDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				coOwnerDetail.setTaskId(financeMain.getTaskId());
+				coOwnerDetail.setNextTaskId(financeMain.getNextTaskId());	
+
+			}
+
+		}
+		// get Collateral structure details
+		CollateralStructure collateralStructure = null;
+		String collateralType = colSetup.getCollateralType();
+		if (StringUtils.isNotBlank(collateralType)) {
+			collateralStructure = collateralStructureService
+					.getApprovedCollateralStructureByType(collateralType);
+		} else if (StringUtils.isNotBlank(colSetup.getCollateralRef())) {
+			CollateralSetup setup = collateralSetupService
+					.getApprovedCollateralSetupById(colSetup.getCollateralRef());
+			if (setup != null) {
+				collateralStructure = collateralStructureService
+						.getApprovedCollateralStructureByType(setup.getCollateralType());
+			}
+		}
+		colSetup.setCollateralStructure(collateralStructure);
+		// process Extended field details
+		int totalUnits = 0;
+		BigDecimal totalValue = BigDecimal.ZERO;
+		List<ExtendedField> extendedFields = colSetup.getExtendedDetails();
+		if (extendedFields != null) {
+			List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
+			int seqNo = 0;
+			for (ExtendedField extendedField : extendedFields) {
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(colSetup.getCollateralRef());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+				exdFieldRender.setLastMntBy(userDetails.getUserId());
+
+				exdFieldRender.setSeqNo(++seqNo);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				
+				exdFieldRender.setWorkflowId(financeMain.getWorkflowId());
+				exdFieldRender.setRoleCode(financeMain.getRoleCode());
+				exdFieldRender.setNextRoleCode(financeMain.getNextRoleCode());
+				exdFieldRender.setTaskId(financeMain.getTaskId());
+				exdFieldRender.setNextTaskId(financeMain.getNextTaskId());	
+
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				int noOfUnits = 0;
+				BigDecimal curValue = BigDecimal.ZERO;
+				for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+					mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+				}
+
+				try {
+					// Setting Number of units
+					if (mapValues.containsKey("NOOFUNITS")) {
+						noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
+						totalUnits = totalUnits + noOfUnits;
+					}
+
+					// Setting Total Value
+					if (mapValues.containsKey("UNITPRICE")) {
+						curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
+						totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
+					}
+				} catch (NumberFormatException nfe) {
+					APIErrorHandlerService.logUnhandledException(nfe);
+					logger.error("Exception", nfe);
+					throw nfe;
+				}
+				exdFieldRender.setMapValues(mapValues);
+				extendedFieldRenderList.add(exdFieldRender);
+
+			}
+			colSetup.setCollateralValue(totalValue);
+			colSetup.setExtendedFieldRenderList(extendedFieldRenderList);
+		}
+
+		if (collateralStructure != null) {
+
+			// calculate BankLTV
+			if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.FIXED_LTV)) {
+				colSetup.setBankLTV(collateralStructure.getLtvPercentage());
+			} else if (StringUtils.equals(collateralStructure.getLtvType(), CollateralConstants.VARIABLE_LTV)) {
+				Object ruleResult = null;
+				CustomerDetails custDetails = customerDetailsService.getCustomerById(colSetup.getDepositorId());
+				if (custDetails != null) {
+					colSetup.setCustomerDetails(customerDetails);
+				}
+				HashMap<String, Object> declaredMap = colSetup.getCustomerDetails().getCustomer()
+						.getDeclaredFieldValues();
+				declaredMap.put("collateralType", colSetup.getCollateralType());
+				declaredMap.put("collateralCcy", colSetup.getCollateralCcy());
+				try {
+					ruleResult = ruleExecutionUtil.executeRule(collateralStructure.getSQLRule(), declaredMap,
+							colSetup.getCollateralCcy(), RuleReturnType.DECIMAL);
+				} catch (Exception e) {
+					APIErrorHandlerService.logUnhandledException(e);
+					logger.error("Exception: ", e);
+					ruleResult = "0";
+				}
+				colSetup.setBankLTV(
+						ruleResult == null ? BigDecimal.ZERO : new BigDecimal(ruleResult.toString()));
+			}
+
+			// calculate Bank Valuation
+			BigDecimal ltvValue = colSetup.getBankLTV();
+			if (colSetup.getSpecialLTV() != null && colSetup.getSpecialLTV().compareTo(BigDecimal.ZERO) > 0) {
+				ltvValue = colSetup.getSpecialLTV();
+			}
+
+			BigDecimal colValue = colSetup.getCollateralValue().multiply(ltvValue).divide(new BigDecimal(100),
+					0, RoundingMode.HALF_DOWN);
+			if (colSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) > 0
+					&& colValue.compareTo(colSetup.getMaxCollateralValue()) > 0) {
+				colValue = colSetup.getMaxCollateralValue();
+			}
+			colSetup.setBankValuation(colValue);
+			colSetup.setCollateralStructure(collateralStructure);
+		}
+
+		// process document details
+		List<DocumentDetails> documentDetails = colSetup.getDocuments();
+		if (documentDetails != null) {
+			for (DocumentDetails documentDetail : documentDetails) {
+				documentDetail.setDocModule(CollateralConstants.MODULE_NAME);
+				documentDetail.setUserDetails(colSetup.getUserDetails());
+				documentDetail.setReferenceId(colSetup.getCollateralRef());
+
+				documentDetail.setNewRecord(true);
+				documentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				documentDetail.setWorkflowId(financeMain.getWorkflowId());
+				documentDetail.setRoleCode(financeMain.getRoleCode());
+				documentDetail.setNextRoleCode(financeMain.getNextRoleCode());
+				documentDetail.setTaskId(financeMain.getTaskId());
+				documentDetail.setNextTaskId(financeMain.getNextTaskId());	
+			}
+		}
+detail.setCollateralValue(colSetup.getCollateralValue());
+detail.setNewRecord(true);
+detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+detail.setModule(FinanceConstants.MODULE_NAME);
+detail.setUserDetails(financeMain.getUserDetails());
+detail.setLastMntBy(userDetails.getUserId());
+detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+detail.setVersion(1);
+//workflow relates
+detail.setWorkflowId(financeMain.getWorkflowId());
+detail.setRoleCode(financeMain.getRoleCode());
+detail.setNextRoleCode(financeMain.getNextRoleCode());
+detail.setTaskId(financeMain.getTaskId());
+detail.setNextTaskId(financeMain.getNextTaskId());
+detail.setCollateralRef(colSetup.getCollateralRef());
 	}
 
 	/**
@@ -1204,6 +1486,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// set required mandatory values into finance details object
 			doSetRequiredDetails(financeDetail, false, userDetails, stp, true);
+		
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
 			financeDetail.setStp(false);
 			// set LastMntBy , LastMntOn and status fields to schedule details
@@ -2157,5 +2440,13 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
 		this.finFeeReceiptDAO = finFeeReceiptDAO;
+	}
+	
+	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
+		this.collateralStructureService = collateralStructureService;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 }
