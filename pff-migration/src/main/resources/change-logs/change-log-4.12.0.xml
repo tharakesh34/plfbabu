@@ -70,9 +70,6 @@
 	 
 	 </sql>
 </changeSet>
-<changeSet id="5" author="Dheerendra">
-	<renameColumn tableName="collection_financedetails" oldColumnName="nscddate" newColumnName="nschddate"/>
-</changeSet>
 
 <changeSet id="7" author="swami.v">
 <sql>
@@ -107,7 +104,7 @@ Insert into RBFieldDetails (rbmodule, rbevent,  rbfldname ,rbflddesc , rbfldtype
 			<column name="nopaidinst" type="decimal(6,0)" />
 			<column name="firstrepaydate" type="datetime" />
 			<column name="firstrepayamount" type="decimal(18,0)" />
-			<column name="nscddate" type="datetime" />
+			<column name="nschddate" type="datetime" />
 			<column name="nschdpri" type="decimal(18,0)" />
 			<column name="nschdpft" type="decimal(18,0)" />
 			<column name="totoutstandingamt" type="decimal(18,0)" />
@@ -1062,4 +1059,9 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 </createView>
 </changeSet>
+<changeSet id="11" author="Dheerendra">
+		<addColumn tableName="collection_financedetails">
+			<column name="RepayMethod" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

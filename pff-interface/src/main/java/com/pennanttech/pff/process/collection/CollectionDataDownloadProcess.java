@@ -69,11 +69,11 @@ public class CollectionDataDownloadProcess {
 		selectSql.append(
 				" (loanreference,custcif,loantype,loantypedesc,currency,productcode,productdesc,branchcode,branchname ,");
 		selectSql.append(
-				"finstartdate,maturitydate,noinst,nopaidinst,firstrepaydate,firstrepayamount,nscddate,nschdpri,nschdpft,");
+				"finstartdate,maturitydate,noinst,nopaidinst,firstrepaydate,firstrepayamount,nschddate,nschdpri,nschdpft,");
 		selectSql.append(
 				"totoutstandingamt,overduedate,noodinst,curoddays,actualoddays,odprincipal,odprofit,duebucket,penaltypaid	,penaltydue	,");
 		selectSql.append(
-				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus )");
+				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus,RepayMethod) ");
 		selectSql.append("Select * from (SELECT ");
 		selectSql.append(" T1.FinReference AS LoanReference,T2.CustCIF AS CustCIF,");
 		selectSql.append(" T1.FinType As LoanType, T3.FinTypeDesc AS LoanTypeDesc,T1.FinCcy AS Currency,");
@@ -90,8 +90,9 @@ public class CollectionDataDownloadProcess {
 		selectSql.append(
 				" T1.PenaltyDue AS PenaltyDue,T1.PenaltyWaived As PenaltyWaived,(SELECT sum(Adviseamount-paidamount-waivedamount) as bounseAmount  FROM MANUALADVISE WHERE FEETYPEID = 0 and  finreference=T1.Finreference)  As BounceCharge ,T1.FinStatus As FinStatus,");
 		selectSql.append(" T1.FinStsReason As FinStsReason ,T1.FinWorstStatus As FinWorstStatus,");
-		selectSql.append(" T1.FinIsActive As FinActive	,'I' As RecordStatus");
-
+		selectSql.append(" T1.FinIsActive As FinActive	,'I' As RecordStatus, ");
+		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) as RepayMethod ");
+		
 		selectSql.append("  FROM FinPftDetails AS T1 ");
 		selectSql.append("  INNER JOIN Customers AS T2 ON T1.CustId=T2.CustID");
 		selectSql.append("  INNER JOIN RMTFinanceTypes AS T3 on T1.FinType=T3.FinType ");
