@@ -100,7 +100,6 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_NoOfCheques;
-	protected Listbox sortOperator_TotalAmount;
 
 	private ChequeHeaderService chequeHeaderService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -143,8 +142,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 				Operators.STRING);
 		registerField("noOfCheques", listheader_NoOfCheques, SortOrder.NONE, noOfCheques, sortOperator_NoOfCheques,
 				Operators.NUMERIC);
-		registerField("totalAmount", listheader_TotalAmount, SortOrder.NONE, totalAmount, sortOperator_TotalAmount,
-				Operators.NUMERIC);
+		registerField("totalAmount", listheader_TotalAmount, SortOrder.NONE);
 		registerField("active");
 
 		// Render the page and display the data.
