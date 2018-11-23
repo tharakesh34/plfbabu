@@ -591,7 +591,11 @@
 		<!-- GST Invoice Changes -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="customerService" ref="customerService" />
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="entityService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -713,4 +717,89 @@
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 	</bean>
+	
+	<!--============ Customer Details ============== -->
+	<bean id="customerDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="customerDetailsServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getNewProspectCustomerCIF*">PROPAGATION_NOT_SUPPORTED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="customerDetailsServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl">
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
+		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
+		<property name="customerRatingDAO" ref="customerRatingDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="customerEMailDAO" ref="customerEMailDAO" />
+		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
+		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />		
+		<property name="directorDetailDAO" ref="directorDetailDAO" />		
+	</bean>
+	
+	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl" parent="sequenceDao" />
+	
+	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl" parent="sequenceDao" />
+	
+	<bean id="customerEmploymentDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEmploymentDetailDAOImpl"
+		parent="sequenceDao" />
+	
+	<bean id="custEmployeeDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustEmployeeDetailDAOImpl"
+		parent="basicDao" />
+	
+	<bean id="customerRatingDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerRatingDAOImpl" parent="basicDao" />
+	
+	<bean id="customerEMailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEMailDAOImpl" parent="basicDao" />
+	
+	<bean id="customerPhoneNumberDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerPhoneNumberDAOImpl"
+		parent="basicDao" />
+	
+	<bean id="customerDocumentDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDocumentDAOImpl"
+		parent="basicDao" />
+	
+	<bean id="customerBankInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerBankInfoDAOImpl"
+		parent="sequenceDao" />
+	
+	<bean id="customerChequeInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerChequeInfoDAOImpl"
+		parent="basicDao" />
+	
+	<bean id="directorDetailDAO" class="com.pennant.backend.dao.customermasters.impl.DirectorDetailDAOImpl" parent="sequenceDao" />
+	
+	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="customerServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="customerServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerServiceImpl">
+		<property name="customerDAO" ref="customerDAO" />		
+	</bean>
+	
 </beans>
