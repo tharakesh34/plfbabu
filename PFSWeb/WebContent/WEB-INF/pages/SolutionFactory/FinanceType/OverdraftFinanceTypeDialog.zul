@@ -359,6 +359,14 @@
 												</hbox>
 											</row>
 											<row>
+												<label
+													id="label_FinanceTypeDialog_ODMinCapAmount" value="${c:l('label_OverDraftFinanceTypeDialog_ODMinCapAmount.value')}" />
+												<hbox>
+													<space id="space_ODMinCapAmount" spacing="2px" />
+													<decimalbox id="oDMinCapAmount" width="120px" maxlength="15" />
+												</hbox>
+											</row>
+											<row>
 												<label id="label_FinanceTypeDialog_FinIsGenRef" value="${c:l('label_OverDraftFinanceTypeDialog_FinIsGenRef.value')}" />
 												<hbox>
 													<space spacing="2px" />

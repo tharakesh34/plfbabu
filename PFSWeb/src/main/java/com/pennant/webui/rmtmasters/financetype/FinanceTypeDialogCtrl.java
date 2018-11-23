@@ -883,7 +883,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.oDMaxWaiverPerc.setMaxlength(6);
 		this.oDMaxWaiverPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		this.oDMinCapAmount.setMaxlength(6);
+		this.oDMinCapAmount.setMaxlength(15);
 		this.oDMinCapAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 
 		this.pastduePftMargin.setMaxlength(13);
