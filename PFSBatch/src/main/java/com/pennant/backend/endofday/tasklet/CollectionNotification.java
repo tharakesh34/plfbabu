@@ -16,6 +16,10 @@ public class CollectionNotification implements Tasklet {
 	@Autowired(required = false)
 	private EODNotificationService eodNotificationService;
 
+	public CollectionNotification() {
+		super();
+	}
+
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
