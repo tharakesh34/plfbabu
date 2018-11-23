@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
@@ -271,8 +272,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		// Empty sent any required attributes
 		this.dealerName.setMaxlength(50);
-		this.dealerTelephone.setMaxlength(40);
-		this.dealerFax.setMaxlength(50);
+		this.dealerTelephone.setMaxlength(10);
+		this.dealerFax.setMaxlength(10);
 		this.dealerAddress1.setMaxlength(50);
 		this.dealerAddress2.setMaxlength(50);
 		this.dealerAddress3.setMaxlength(50);
@@ -307,11 +308,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
         
 		
 		this.panNumber.setMaxlength(10);
-		this.uidNumber.setMaxlength(15);
+		this.uidNumber.setMaxlength(12);
 		this.taxNumber.setMaxlength(15);
-		this.accountNo.setMaxlength(50);
+		this.accountNo.setMaxlength(10);
 
 		this.accountType.setMaxlength(15);
+
 
 
 		this.fromProvince.setModuleName("Province");
@@ -329,7 +331,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.bankBranchCode.setDescColumn("BranchDesc");
 		this.bankBranchCode.setValidateColumns(new String[] { "BranchCode" });
 
-		this.bankName.setMaxlength(20);
+		this.bankName.setMaxlength(40);
 		this.bankName.setReadonly(true);
 		this.branchMICRCode.setMaxlength(20);
 		this.branchMICRCode.setReadonly(true);
@@ -577,7 +579,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	public void onFulfill$bankBranchCode(Event event) {
 		logger.debug("Entering");
 		Object dataObject = bankBranchCode.getObject();
-		if (dataObject instanceof String) {
+		if (dataObject == null || dataObject instanceof String) {
 			this.bankBranchCode.setValue("");
 			this.bankBranchCode.setDescription("");
 			this.bankName.setValue("");
@@ -587,9 +589,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		} else {
 			BankBranch details = (BankBranch) dataObject;
 			if (details != null) {
-				this.bankBranchCode.setAttribute("BankBranchID", details.getBankBranchID());
 				this.bankBranchCode.setValue(String.valueOf(details.getBranchCode()));
 				this.bankBranchCode.setDescription(details.getBranchDesc());
+				this.bankBranchCode.setAttribute("BankBranchID", details.getBankBranchID());
 				this.bankName.setValue(details.getBankName());
 				this.branchCity.setValue(details.getCity());
 				this.branchMICRCode.setValue(details.getMICR());
@@ -879,6 +881,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		try {
 			aVehicleDealer.setTaxNumber(this.taxNumber.getValue());
+			if (!StringUtils.isEmpty(aVehicleDealer.getPanNumber())
+					&& !StringUtils.isEmpty(aVehicleDealer.getTaxNumber())) {
+				setGSTValidation();
+			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -941,6 +948,19 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		aVehicleDealer.setRecordStatus(this.recordStatus.getValue());
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * setting the validation based on PanNumber for GST
+	 */
+
+	private void setGSTValidation() {
+		Clients.clearWrongValue(this.taxNumber);
+		if (!this.taxNumber.getValue().substring(2, 12).equals(this.panNumber.getValue())) {
+			throw new WrongValueException(this.taxNumber,
+					Labels.getLabel("FIELD_NOT_VALID",
+							new String[] { Labels.getLabel("label_VehicleDealerDialog_PANNumber.value") }));
+		}
 	}
 
 	/**

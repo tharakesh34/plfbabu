@@ -77,7 +77,7 @@
 								<label id="label_VehicleDealerDialog_DealerTelephone" value="${c:l('label_VehicleDealerDialog_DealerTelephone.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<textbox id="dealerTelephone" width="180px" />
+									<textbox id="dealerTelephone" />
 								</hbox>
 								<label id="label_VehicleDealerDialog_DealerFax" value="${c:l('label_VehicleDealerDialog_DealerFax.value')}" />
 								<hbox>
@@ -261,7 +261,7 @@
 									value="${c:l('label_VehicleDealerDialog_BankName.value')}" />
 								<hbox>
 									<space spacing="2px" />
-									<textbox id="bankName" />
+									<textbox id="bankName" width="160px"/>
 								</hbox>
 								<label
 									id="label_VehicleDealerDialog_BranchIFSCCode"

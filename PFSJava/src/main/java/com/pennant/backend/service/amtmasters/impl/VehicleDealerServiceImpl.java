@@ -53,14 +53,17 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>VehicleDealer</b>.<br>
@@ -71,6 +74,7 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	private AuditHeaderDAO auditHeaderDAO;
 	private VehicleDealerDAO vehicleDealerDAO;
 	private CustomerDAO customerDAO;
+	private ProvinceDAO provinceDAO;
 
 	public VehicleDealerServiceImpl() {
 		super();
@@ -454,13 +458,46 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 						usrLanguage));
 			}
 		}
+		auditDetail = gstNumberValidation(auditDetail, vehicleDealer);
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !vehicleDealer.isWorkflow()) {
 			vehicleDealer.setBefImage(befVehicleDealer);
 		}
 
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	/**
+	 * to validate the GST Number
+	 */
+	public AuditDetail gstNumberValidation(AuditDetail auditDetail, VehicleDealer vehicleDealer) {
+
+		String taxNumber = vehicleDealer.getTaxNumber();
+
+		String gstStateCode = "";
+
+		if (StringUtils.isNotBlank(taxNumber)) {
+
+			Province province = this.provinceDAO.getProvinceById(vehicleDealer.getDealerCountry(),
+					vehicleDealer.getDealerProvince(), "");
+
+			if (province != null) {
+				gstStateCode = province.getTaxStateCode();
+			}
+
+			if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code is not available in taxNumber
+				if (!StringUtils.equalsIgnoreCase(gstStateCode, taxNumber.substring(0, 2))) {
+					auditDetail.setErrorDetail(
+							ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
+				}
+			}
+		}
+
+		return auditDetail;
+
 	}
 
 	@Override
@@ -490,6 +527,14 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	public ProvinceDAO getProvinceDAO() {
+		return provinceDAO;
+	}
+
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
 	}
 
 	@Override

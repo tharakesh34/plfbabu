@@ -46,6 +46,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -440,9 +442,17 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		customerMap = new HashMap<String, Object>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
+				if (StringUtils.equals(this.getClass().getDeclaredFields()[i].getName(), "active")) {
+					if (this.active) {
+						customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(), "1");
+					} else {
+						customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(), "0");
+					}
+				} else {
 				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
 				customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
+				}
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				// Nothing TO DO
 			}
