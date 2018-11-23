@@ -169,6 +169,7 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		try {
 			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
+			logger.debug(e.getMessage());
 		}
 
 		if (count == 0) {
