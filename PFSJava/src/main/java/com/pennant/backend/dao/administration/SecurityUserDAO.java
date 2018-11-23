@@ -80,4 +80,6 @@ public interface SecurityUserDAO {
 	int getActiveUsersCount(long userId);
 
 	int getActiveUsersCount();
+
+	long getUserByName(String userName);
 }

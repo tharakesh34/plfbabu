@@ -593,4 +593,29 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		return jdbcTemplate.queryForObject(sql, paramMap, Integer.class);
 	}
 
+	@Override
+	public long getUserByName(String userName) {
+		logger.debug("Entering ");
+		SecurityUser securityUser = new SecurityUser();
+		securityUser.setUsrLogin(StringUtils.upperCase(userName));
+
+		StringBuilder selectSql = new StringBuilder("Select UsrID ");
+
+		selectSql.append("  From SecUsers");
+		selectSql.append(" Where UsrLogin =:UsrLogin");
+
+		logger.debug("selectSql:" + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
+		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+
+		try {
+			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			securityUser.setUsrID(0);
+		}
+		logger.debug("Leaving ");
+		return securityUser.getUsrID();
+	}
+
 }

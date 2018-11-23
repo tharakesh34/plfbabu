@@ -108,7 +108,8 @@ public interface FinServiceInstRESTService {
 	public FinanceDetail feePayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 	@GET
-	@Path("/loanInstructionService/getLoanPendingDetailsByUsrID/{userID}")
-	public LoanPendingDetails getLoanPendingDetailsByUsrID(@PathParam("userID") long userID) throws ServiceException;
+	@Path("/loanInstructionService/getLoanPendingDetailsByUserName/{userName}")
+	public LoanPendingDetails getLoanPendingDetailsByUserName(@PathParam("userName") String userName)
+			throws ServiceException;
 
 }

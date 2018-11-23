@@ -14,6 +14,7 @@ import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
@@ -102,6 +103,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private FinanceDataValidation financeDataValidation;
 
 	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private SecurityUserDAO securityUserDAO;
 
 	/**
 	 * Method for perform DisbursmentInquiry operation
@@ -1786,12 +1788,24 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	 * Method for get Loan Reference,Customer CIF, Customer Name.
 	 */
 	@Override
-	public LoanPendingDetails getLoanPendingDetailsByUsrID(long userID) throws ServiceException {
+	public LoanPendingDetails getLoanPendingDetailsByUserName(String userName) throws ServiceException {
 		logger.debug("Entering");
 
 		LoanPendingDetails custLoanDetails = new LoanPendingDetails();
 		List<LoanPendingData> customerODLoanData = null;
-		customerODLoanData = finServiceInstController.getCustomerODLoanDetails(userID);
+
+		long userID = securityUserDAO.getUserByName(userName);
+
+		if (userID > 0) {
+			customerODLoanData = finServiceInstController.getCustomerODLoanDetails(userID);
+		} else {
+			LoanPendingDetails error = new LoanPendingDetails();
+			String[] param = new String[2];
+			param[0] = "User Name";
+			param[1] = String.valueOf(userName);
+			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90224", param));
+			return error;
+		}
 
 		if (CollectionUtils.isNullOrEmpty(customerODLoanData)) {
 			LoanPendingDetails error = new LoanPendingDetails();
@@ -1971,6 +1985,15 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
 		this.createFinanceController = createFinanceController;
+	}
+
+	public SecurityUserDAO getSecurityUserDAO() {
+		return securityUserDAO;
+	}
+
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
 	}
 
 }
