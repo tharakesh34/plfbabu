@@ -1443,6 +1443,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					delButton.setVisible(false);
 					this.readOnlyComponent(true, accTypecmbbox);
 					this.readOnlyComponent(true, emiReference);
+					this.readOnlyComponent(true, emiAmount);
+					this.readOnlyComponent(true, bankBranch);
+					this.readOnlyComponent(true, chequeStatus);
 				}
 			}
 		}
