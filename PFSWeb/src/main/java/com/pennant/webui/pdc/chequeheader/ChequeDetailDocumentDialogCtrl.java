@@ -96,6 +96,11 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 			if (arguments.containsKey("chequeDetail")) {
 				chequeDetail = (ChequeDetail) arguments.get("chequeDetail");
 			}
+			if (enqiryModule) {
+				this.btnUploadDoc.setVisible(false);
+				this.btnSave.setVisible(false);
+				this.btnDelete.setVisible(false);
+			}
 
 			int dialogHeight = grid_basicDetails.getRows().getVisibleItemCount() * 20 + 80;
 			int listboxHeight = borderLayoutHeight - dialogHeight;

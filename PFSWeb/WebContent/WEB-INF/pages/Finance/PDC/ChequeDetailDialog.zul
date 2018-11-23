@@ -171,6 +171,7 @@
 								hflex="min" />
 							<listheader hflex="min" />
 							<listheader hflex="min" />
+							<listheader hflex="min" />
 						</listhead>
 					</listbox>
 				</div>

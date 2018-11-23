@@ -1417,10 +1417,24 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				list.add(chequeStatus);
 				list.add(accTypecmbbox);
 
+				//view action
+				listcell = new Listcell();
+				Button viewButton = new Button(Labels.getLabel("ChequeDetailDialog_view"));
+				Object[] viewItem = new Object[1];
+				viewItem[0] = listitem;
+				if (enqiryModule && detail.getDocumentName() != null) {
+					viewButton.setVisible(true);
+				} else {
+					viewButton.setVisible(false);
+				}
+				listcell.appendChild(viewButton);
+				listcell.setParent(listitem);
+
 				bankBranch.addForward("onFulfill", this.window_ChequeDetailDialog, "onFulfill$bankBranch", list);
 				emiAmount.addForward("onFulfill", this.window_ChequeDetailDialog, "onFulfill$EmiAmount", list);
 				delButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickDeleteButton", list);
 				uploadButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickUploadButton", list);
+				viewButton.addForward("onClick", this.window_ChequeDetailDialog, "onClickViewButton", list);
 				emiReference.addForward("onChange", this.window_ChequeDetailDialog, "onChangeEmiDate", list);
 				chequeStatus.addForward("onChange", this.window_ChequeDetailDialog, "onChangeChequeStatus", list);
 				accTypecmbbox.addForward("onChange", this.window_ChequeDetailDialog, "onChangeAccTypecmbbox", list);
@@ -1812,6 +1826,22 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+	}
+
+	public void onClickViewButton(ForwardEvent event) {
+		@SuppressWarnings("unchecked")
+		List<Object> list = (List<Object>) event.getData();
+		ChequeDetail chequeDetail = (ChequeDetail) list.get(0);
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("ChequeDetailDialogCtrl", this);
+		map.put("chequeDetail", chequeDetail);
+		map.put("enqModule", enqiryModule);
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/PDC/ChequeDetailDocumentDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
 	}
 
 	private Combobox getCombobox(String emiNumber) {
