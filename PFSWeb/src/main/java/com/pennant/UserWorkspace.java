@@ -222,16 +222,16 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	}
 
 	private Collection<SecurityRight> getSecurityRights(String page, String roleCode, String menuRightName) {
-		StringBuffer rightKey = new StringBuffer();
+		StringBuilder rightKey = new StringBuilder();
 		rightKey.append(page);
 
 		if (StringUtils.isNotBlank(roleCode)) {
-			rightKey.append("@");
+			rightKey.append('@');
 			rightKey.append(roleCode);
 		}
 
 		if (StringUtils.isNotBlank(menuRightName)) {
-			rightKey.append("@");
+			rightKey.append('@');
 			rightKey.append(menuRightName);
 		}
 
