@@ -190,6 +190,8 @@ public class PennantConstants {
 	public static final String METHOD_DO_VALIDATE_QUERYMGMT_APPROVAL = "doValidateQueryMGMTApproval";
 	public static final String METHOD_DO_VALIDATE_LEGAL_APPROVAL = "executeLegalApproval";
 	public static final String METHOD_OFFERLETTER = "executeofferLetter";
+	public static final String METHOD_UPDATE_ATTRIBUTE = "doUpdateAttribute";
+	public static final String METHOD_REVERT_QUEUE = "doRevertQueue";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";

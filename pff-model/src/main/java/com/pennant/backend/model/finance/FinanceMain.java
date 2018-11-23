@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -58,6 +59,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -692,6 +695,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date fixedTenorEndDate;
 	private String processAttributes;
 	private String higherDeviationApprover;
+	private Map<String, String> attributes = new HashMap<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -851,6 +855,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("fixedTenorEndDate");
 		excludeFields.add("finBranchProvinceCode");
 		excludeFields.add("higherDeviationApprover");
+		excludeFields.add("attributes");
 
 		return excludeFields;
 	}
@@ -3941,7 +3946,29 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	}
 
 	public void setProcessAttributes(String processAttributes) {
-		this.processAttributes = processAttributes;
+		Map<String, String> result = new HashMap<>();
+
+		if (StringUtils.isNotBlank(processAttributes)) {
+			processAttributes = StringUtils.trimToEmpty(processAttributes);
+			String[] params = processAttributes.split(",");
+
+			for (String param : params) {
+				if (StringUtils.isNotBlank(param)) {
+					param = StringUtils.trimToEmpty(param);
+					String[] attr = param.split("=");
+
+					if (attr.length >= 1 && StringUtils.isNotBlank(attr[0])) {
+						if (attr.length == 1) {
+							result.put(StringUtils.trimToEmpty(attr[0]), "");
+						} else {
+							result.put(StringUtils.trimToEmpty(attr[0]), StringUtils.trimToEmpty(attr[1]));
+						}
+					}
+				}
+			}
+		}
+
+		addAttributes(result);
 	}
 
 	public String getHigherDeviationApprover() {
@@ -3950,5 +3977,26 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setHigherDeviationApprover(String higherDeviationApprover) {
 		this.higherDeviationApprover = higherDeviationApprover;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void addAttributes(Map<String, String> attributes) {
+		this.attributes.putAll(attributes);
+
+		// Update process attributes.
+		StringBuilder result = new StringBuilder();
+
+		for (Entry<String, String> entry : this.attributes.entrySet()) {
+			if (result.length() > 0) {
+				result.append(',');
+			}
+
+			result.append(entry.getKey()).append('=').append(entry.getValue());
+		}
+
+		this.processAttributes = result.toString();
 	}
 }

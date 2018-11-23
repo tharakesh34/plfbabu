@@ -209,6 +209,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.IncomeType;
+import com.pennant.backend.service.UpdateAttributeServiceTask;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
@@ -4540,21 +4541,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String taskId = engine.getUserTaskId(role);
-		String finishedTasks = "";
 
 		// Execute service tasks.
 		List<ServiceTask> serviceTasks = engine.getServiceTasks(taskId, afinanceMain);
+		ServiceTask task;
+		List<String> finishedTasks = new ArrayList<>();
 		String finalOperation = null;
 		auditHeader.setProcessCompleted(false);
 
-		for (ServiceTask task : serviceTasks) {
+		while (!serviceTasks.isEmpty()) {
+			task = serviceTasks.get(0);
+
 			if (ProcessUtil.isPersistentTask(task)) {
 				finalOperation = task.getOperation();
 
 				break;
 			}
 
-			auditHeader = execute(auditHeader, task);
+			auditHeader = execute(auditHeader, task, role, engine);
 
 			// Check whether to proceed with next service tasks.
 			auditHeader = nextProcess(auditHeader);
@@ -4563,11 +4567,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				break;
 			}
 
-			finishedTasks = task.getOperation() + ";" + finishedTasks;
-			serviceTasks = getRemainingServiceTasks(serviceTasks, engine, taskId, afinanceMain, finishedTasks);
-			if (serviceTasks.isEmpty()) {
-				break;
-			}
+			// Get the next service tasks.
+			finishedTasks.add(task.getOperation());
+			serviceTasks = getRemainingServiceTasks(engine, taskId, afinanceMain, finishedTasks);
 		}
 
 		// Save the data.
@@ -4581,8 +4583,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
-	private List<ServiceTask> getRemainingServiceTasks(List<ServiceTask> serviceTasks, WorkflowEngine engine,
-			String taskId, FinanceMain afinanceMain, String finishedTasks) {
+	private List<ServiceTask> getRemainingServiceTasks(WorkflowEngine engine, String taskId, FinanceMain afinanceMain,
+			List<String> finishedTasks) {
 		// changes regarding parallel work flow
 		String nextRoleCode = StringUtils.trimToEmpty(afinanceMain.getNextRoleCode());
 		String nextRoleCodes[] = nextRoleCode.split(",");
@@ -4590,22 +4592,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			return new ArrayList<>();
 		}
 
-		String tasks = engine.getServiceOperationsAsString(taskId, afinanceMain);
-		if (StringUtils.isNotBlank(tasks)) {
-			tasks += ";";
-		}
-		if (!"".equals(finishedTasks)) {
-			String[] list = finishedTasks.split(";");
-			for (int i = 0; i < list.length; i++) {
-				tasks = tasks.replace(list[i] + ";", "");
+		List<ServiceTask> newTasks = engine.getServiceTasks(taskId, afinanceMain);
+		List<ServiceTask> result = new ArrayList<>();
+
+		for (ServiceTask newTask : newTasks) {
+			if (!finishedTasks.contains(newTask.getOperation())) {
+				result.add(newTask);
 			}
 		}
 
-		if (StringUtils.isBlank(tasks)) {
-			serviceTasks = new ArrayList<>();
-		}
-
-		return serviceTasks;
+		return result;
 	}
 
 	/**
@@ -4616,7 +4612,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @return
 	 * @throws Exception
 	 */
-	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task) throws Exception {
+	private AuditHeader execute(AuditHeader auditHeader, ServiceTask task, String role, WorkflowEngine engine)
+			throws Exception {
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 
@@ -4682,6 +4679,48 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			break;
 		// ### 01-05-2018 - End
+		case PennantConstants.METHOD_UPDATE_ATTRIBUTE:
+			Map<String, String> result = UpdateAttributeServiceTask.getAttributes(task.getParameters(), financeDetail);
+			afinanceMain.addAttributes(result);
+
+			break;
+		case PennantConstants.METHOD_REVERT_QUEUE:
+			String actor = userActivityLogDAO.getPreviousRole("FINANCE", afinanceMain.getFinReference(), role,
+					task.getParameters());
+
+			if (StringUtils.isEmpty(actor)) {
+				throw new AppException("The workflow stage to revert not found.");
+			}
+
+			String nextTaskId = engine.getUserTaskId(actor);
+
+			if (StringUtils.isNotEmpty(nextTaskId)) {
+				nextTaskId += ";";
+			}
+
+			Map<String, String> nextRoles = ProcessUtil.getNextRoles(engine, nextTaskId);
+			String nextRoleCode = StringUtils.join(nextRoles.keySet(), ",");
+
+			afinanceMain.setTaskId(engine.getUserTaskId(role));
+			afinanceMain.setNextTaskId(nextTaskId);
+			afinanceMain.setRoleCode(role);
+			afinanceMain.setNextRoleCode(nextRoleCode);
+
+			String assignmentMthd = engine.getUserTask(engine.getUserTaskId(role)).getAssignmentLevel();
+			afinanceMain.setLovDescAssignMthd(StringUtils.trimToEmpty(assignmentMthd));
+			afinanceMain.setLovDescBaseRoleCodeMap(nextRoles);
+
+			if (!nextRoleCode.contains(role)) {
+				afinanceMain.setPriority(0);
+				if (StringUtils.isBlank(afinanceMain.getLovDescAssignMthd())) {
+					afinanceMain.setNextUserId(null);
+				}
+			}
+
+			auditHeader = save(null, auditHeader, afinanceMain.getRecordType());
+			auditHeader.setProcessCompleted(true);
+
+			break;
 		default:
 			// Execute any other custom service tasks
 			if (StringUtils.isNotBlank(task.getOperation())) {
@@ -4729,7 +4768,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String nextTaskId = "";
 		if (Action.REVERT.getLabel().equals(action)) {
-			String actor = userActivityLogDAO.getPreviousRole("FINANCE", financeMain.getFinReference(), role);
+			String actor = userActivityLogDAO.getPreviousRole("FINANCE", financeMain.getFinReference(), role, null);
 
 			if (StringUtils.isEmpty(actor)) {
 				throw new AppException("The workflow stage to revert not found.");

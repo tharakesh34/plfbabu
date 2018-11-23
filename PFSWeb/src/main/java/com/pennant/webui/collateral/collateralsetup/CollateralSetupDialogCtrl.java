@@ -339,7 +339,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 
-			if (!"E".equals(module)) {
+			if (!"E".equals(module) && !fromLoan) {
 				// Render the page and display the data.
 				doLoadWorkFlow(this.collateralSetup.isWorkflow(), this.collateralSetup.getWorkflowId(),
 						this.collateralSetup.getNextTaskId());

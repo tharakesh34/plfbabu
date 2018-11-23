@@ -55,5 +55,5 @@ public interface UserActivityLogDAO {
 
 	void saveList(List<UserActivityLog> logList);
 
-	String getPreviousRole(String module, String reference, String role);
+	String getPreviousRole(String module, String reference, String role, String compareRoles);
 }
