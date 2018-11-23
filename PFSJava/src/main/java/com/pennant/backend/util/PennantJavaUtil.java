@@ -2947,7 +2947,7 @@ public class PennantJavaUtil {
 		//Indemnity Report
 		ModuleUtil.register("ClosedFinance",
 				new ModuleMapping("ClosedFinance", FinanceMain.class,
-						new String[] { "FinanceMain", "FinanceMain_View" }, null, new String[] { "FinReference" },
+						new String[] { "FinanceMain", "FinanceMain_View" }, null, new String[] { "FinReference","FinType" },
 						new Object[][] { { "FinIsActive", "0", 0 }, { "ClosingStatus", "1", "C" } }, 350));
 		
 		//Indemnity Report
