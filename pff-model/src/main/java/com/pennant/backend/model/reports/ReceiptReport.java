@@ -56,6 +56,7 @@ public class ReceiptReport implements Serializable {
 	private String receiptNo;
 	private String fundingAc;
 	private String paymentMode;
+	private String transactionRef;
 
 	private String panNumber;
 	private String mobileNo;
@@ -265,5 +266,13 @@ public class ReceiptReport implements Serializable {
 
 	public void setOthers(String others) {
 		this.others = others;
+	}
+
+	public String getTransactionRef() {
+		return transactionRef;
+	}
+
+	public void setTransactionRef(String transactionRef) {
+		this.transactionRef = transactionRef;
 	}
 }

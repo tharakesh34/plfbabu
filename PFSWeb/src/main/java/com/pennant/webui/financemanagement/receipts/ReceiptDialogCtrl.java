@@ -199,7 +199,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
-import com.pennant.fusioncharts.ChartUtil;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
@@ -7417,7 +7416,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 		DashboardConfiguration aDashboardConfiguration = new DashboardConfiguration();
 		ChartDetail chartDetail = new ChartDetail();
-		ChartUtil chartUtil = new ChartUtil();
 
 		//For Finance Vs Amounts Chart z
 		List<ChartSetElement> listChartSetElement = getReportDataForFinVsAmount(finScheduleData, formatter);
@@ -7751,12 +7749,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
 			engine.setTemplate(templateName);
 			engine.loadTemplate();
-			reportName = "Receipt_" + this.finReference.getValue() + "_" + getReceiptHeader().getReceiptID();
+			reportName = "Receipt_" + getReceiptHeader().getReference() + "_" + getReceiptHeader().getReceiptID();
 
 			ReceiptReport receipt = new ReceiptReport();
 			receipt.setUserName(getUserWorkspace().getLoggedInUser().getUserName() + " - "
 					+ getUserWorkspace().getLoggedInUser().getFullName());
-			receipt.setFinReference(this.finReference.getValue());
+			receipt.setFinReference(getReceiptHeader().getReference());
 			receipt.setCustName(this.custShrtName.getValue());
 
 			BigDecimal totalReceiptAmt = getTotalReceiptAmount(false);
@@ -7774,6 +7772,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
 			receipt.setReceiptNo(this.paymentRef.getValue());
 			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
+			receipt.setFundingAc(this.fundingAccount.getValue() +" - "+this.fundingAccount.getDescription());
+			
+			if(StringUtils.equals(receipt.getPaymentMode(), RepayConstants.RECEIPTMODE_CHEQUE) ||
+					StringUtils.equals(receipt.getPaymentMode(), RepayConstants.RECEIPTMODE_DD)){
+				receipt.setTransactionRef(this.favourNo.getValue());
+			}else{
+				receipt.setTransactionRef(this.transactionRef.getValue());
+			}
 			
 			for (CustomerPhoneNumber phoneNumber : getFinanceDetail().getCustomerDetails().getCustomerPhoneNumList()) {
 				if(phoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
@@ -7783,10 +7789,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setPanNumber(getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
 			receipt.setFinType(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
 			receipt.setFinTypeDesc(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinTypeName());
-			receipt.setBankCode(this.fundingAccount.getValue());
-			receipt.setBankName(this.fundingAccount.getDescription());
-			receipt.setBranchCode(this.bankCode.getValue());
-			receipt.setBranchName(this.bankCode.getDescription());
+			receipt.setBankCode(this.bankCode.getValue());
+			receipt.setBankName(this.bankCode.getDescription());
+			receipt.setBranchCode(this.finBranch.getValue());
+			receipt.setBranchName(this.finBranch.getDescription());
 			if(getReceiptHeader().getAllocations() != null){
 				BigDecimal pftPaid = BigDecimal.ZERO;
 				BigDecimal priPaid = BigDecimal.ZERO;
