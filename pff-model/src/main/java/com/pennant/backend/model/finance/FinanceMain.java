@@ -87,7 +87,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
 		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod",
 		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate",
-		"stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate","eligibilityMethod","connector" })
+		"stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate","eligibilityMethod","connector","legalRequired" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -675,6 +675,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal guidedValue = BigDecimal.ZERO;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
 	private boolean samplingRequired;
+	@XmlElement
 	private boolean legalRequired;
 
 	private boolean depositProcess = false; // added for Cash Management 

@@ -1007,6 +1007,16 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 		}
+		if (isCreateLoan && financeDetail.isStp()) {
+			if (financeDetail.getFinScheduleData().getFinanceMain().isLegalRequired()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "LegalRequired";
+				valueParm[1] = "stp Process";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+		}
 		// validate FinReference
 		String financeReference = null;
 		if (financeDetail.getFinScheduleData().getFinReference() != null) {

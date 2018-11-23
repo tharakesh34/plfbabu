@@ -484,7 +484,31 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setRoleCode(roleCode);
 			financeMain.setWorkflowId(workflowId);
 		}
-
+		if(financeMain.isLegalRequired()) {
+			String finType= financeMain.getFinType();
+			int finRefType = FinanceConstants.PROCEDT_LIMIT;
+			String quickDisbCode = FinanceConstants.PROCEDT_LEGAL_INIT;
+			String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode);
+			boolean allowed=false;
+			if (StringUtils.isNotBlank(roles)) {
+				String[] roleCodes = roles.split(PennantConstants.DELIMITER_COMMA);
+				for (String roleCod : roleCodes) {
+					if (StringUtils.equals(financeMain.getRoleCode(), roleCod)) {
+						allowed = true;
+						break;
+					}
+				}
+			}
+			if(!allowed) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				String[] valueParm = new String[2];
+				valueParm[1] = financeMain.getFinType();
+				valueParm[0] = "LegalRequired";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90285", valueParm));
+				return response;
+			}
+		}
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
 	}
