@@ -584,7 +584,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		logger.debug("Entering");
 
 		// clear old data
-		getListModelList().clear();
+		if(getListModelList() != null){
+			getListModelList().clear();
+		}
 
 		setJdbcSearchObject(start);
 

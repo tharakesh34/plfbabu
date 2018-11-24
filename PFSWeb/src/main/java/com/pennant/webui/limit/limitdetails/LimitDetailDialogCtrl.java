@@ -617,8 +617,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.limitStructureCode.setValidateColumns(new String[] { "StructureCode" });
 		Filter[] filters = null;
 		if (getLimitHeader().isNew()) {
-			filters = new Filter[2];
-			filters[1] = new Filter("Active", "1");
+			filters = new Filter[1];
+			//filters[1] = new Filter("Active", "1");
 		} else {
 			filters = new Filter[1];
 		}
@@ -631,7 +631,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			this.limiDialogRule.setDescColumn("QueryDesc");
 			this.limiDialogRule.setValidateColumns(new String[] { "QueryCode" });
 
-			List<String> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false, true);
+			List<String> existingGroups = new ArrayList<>();//PennantappUtil.getLimitHeaderCustomer(false, true);
 			Filter[] filtersRulebased = new Filter[1];
 			filtersRulebased[0] = new Filter("QueryCode", existingGroups, Filter.OP_NOT_IN);
 			if (existingGroups != null && existingGroups.size() > 0) {
