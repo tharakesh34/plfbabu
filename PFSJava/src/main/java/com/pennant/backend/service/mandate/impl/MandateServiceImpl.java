@@ -590,7 +590,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			}
 		}
 		String barCode = mandate.getBarCodeNumber();
-		if (!barCode.isEmpty()
+		if (!StringUtils.isEmpty(barCode)
 				&& !StringUtils.trimToEmpty(mandate.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)
 				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
 			String[] errParm1 = new String[1];
