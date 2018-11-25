@@ -71,10 +71,7 @@ public abstract class JsonService<T> {
 		HttpMethod method = serviceDetail.getMethod();
 		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(),
 				serviceDetail.getRequestString()));
-
-		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(), serviceDetail.getHeaders());
-		getHttpHeader(serviceDetail.getHeaders());
-
+		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(), getHttpHeader(serviceDetail.getHeaders()));
 		ResponseEntity<String> response = null;
 		InterfaceLogDetail logDetail = null;
 
@@ -193,7 +190,7 @@ public abstract class JsonService<T> {
 			mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
 		}
 
-		mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		//mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 
 		return mapper;
 
