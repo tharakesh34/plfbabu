@@ -1065,15 +1065,22 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		</addColumn>
 	</changeSet>
 	
+<changeSet id="11" author="Siva">
+		<addColumn tableName="RejectDocumentDetails">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+</changeSet>
+	
 	<changeSet id="12" author="Kranthi Kumar.K">
 	<sql>
+	<![CDATA[
 		delete from templatefields where field='ct_custShrtName';
 		delete from templatefields where field='repayProfitRate';
 		delete from templatefields where field='ct_repayProfitRate';
 		delete from templatefields where field='schd_repayAmount';
 		delete from templatefields where field='ct_custAddrCountry';
 		delete from templatefields where field='ct_repayProfitRate';
-		delete from templatefields where field='ct_custRO1'
+		delete from templatefields where field='ct_custRO1';
 		
 		
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custShrtName', 'Customer Name', 'A');
@@ -1081,7 +1088,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'schd_repayAmount', 'Schd RepayAmount', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custAddrCountry', 'custAddrCountry', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custRO1', 'Source', 'A');
-	
+	]]>
 	</sql>
 </changeSet>
 	
@@ -1100,6 +1107,25 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 <changeSet id="14" author="aditya">
 	<sql>
 	   update reportlist set fieldtype='String,int,BigDecimal' where code='ChequeHeader';
+	</sql>
+</changeSet>
+
+<changeSet id="15" author="KranthiKumar">
+	<sql>
+		delete from templatefields where field='ct_custShrtName';
+		delete from templatefields where field='repayProfitRate';
+		delete from templatefields where field='ct_repayProfitRate';
+		delete from templatefields where field='schd_repayAmount';
+		delete from templatefields where field='ct_custAddrCountry';
+		delete from templatefields where field='ct_repayProfitRate';
+		delete from templatefields where field='ct_custRO1';
+		
+		
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custShrtName', 'Customer Name', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'repayProfitRate', 'Repay ProfitRate', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'schd_repayAmount', 'Schd RepayAmount', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custAddrCountry', 'custAddrCountry', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custRO1', 'Source', 'A');
 	</sql>
 </changeSet>
 </databaseChangeLog>
