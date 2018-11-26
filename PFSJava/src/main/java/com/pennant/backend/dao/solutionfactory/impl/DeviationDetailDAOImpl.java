@@ -211,6 +211,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(
 				" Where DeviationID IN (Select DeviationID from DeviationHeader where Module = :Module and FinType = :FinType) ");
+		selectSql.append("order by DeviationId, DeviatedValue ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
