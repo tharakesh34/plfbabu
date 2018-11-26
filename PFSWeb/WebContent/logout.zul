@@ -1,10 +1,5 @@
-
-<?page id="logout" title="Pennant Charge Portal" cacheable="false" 
-	language="xul/html" zscriptLanguage="Java"?>
-<?meta content="text/html; charset=UTF-8" 	pageEncoding="UTF-8"?>
-<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
-<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-
+<?page id="LogOut" title="pennApps Product Suite"?>
+<?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
@@ -14,7 +9,7 @@
 				<div id="div1">
 					<hbox pack="stretch" width="100%" widths="200px,*,200px" style="horizental-align:middle;">
 						<div id="divNo" align="left" style="padding: 1px; ">
-							<image src="/images/pennant_logo.gif" width="150px" height="53px" align="left"
+							<image src="/images/Pennant/pennant_logo.gif" width="150px" height="53px" align="left"
 								style="margin-left:0px; margin-top:0px margin-bottom:0px" />
 						</div>
 						<div align="left" style="margin-top:8px;">
@@ -40,9 +35,7 @@
 										<separator />
 										<separator />
 										<div align="center">
-											<a href="/pages/index.zul" visible="false">
-												${c:l('btnBackToStart')}
-											</a>
+											<a href="/pages/index.zul" visible="false">${c:l('btnBackToStart')}</a>
 										</div>
 									</vbox>
 								</panelchildren>

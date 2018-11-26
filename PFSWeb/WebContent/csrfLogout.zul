@@ -1,16 +1,21 @@
+<?page id="LogOut" title="pennApps Product Suite"?>
+<?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
 <zk>
 	<window>
 		<html>
 			<script type="text/javascript">
+
+
 				
 				<![CDATA[ function logOut() { document.forms[0].submit(); }
-	
-				]]>
 
+				]]>
+				
+				
+				
 			</script>
 			<body onload="logOut();">
-				<form action="j_spring_security_logout?${_csrf.parameterName}=${_csrf.token}" method="post">
-				</form>
+				<form action="j_spring_security_logout?${_csrf.parameterName}=${_csrf.token}" method="post"></form>
 			</body>
 		</html>
 	</window>

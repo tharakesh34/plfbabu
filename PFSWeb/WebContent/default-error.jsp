@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="shortcut icon" href="./images/icons/Favicon.png" />
 <title>pennApps Product Suite</title>
 <style>
 p, li, a {
