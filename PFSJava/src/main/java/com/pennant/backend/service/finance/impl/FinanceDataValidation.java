@@ -1433,6 +1433,7 @@ public class FinanceDataValidation {
 			BigDecimal totalAvailAssignValue = BigDecimal.ZERO;
 			boolean requiredAssignValidation = false;
 			List<String>assignReferences= new ArrayList<>();
+			List<String> collReferences = new ArrayList<>();
 
 			for (CollateralAssignment collateralAssignment : finCollateralAssignmentDetails) {
 
@@ -1449,7 +1450,19 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
-				if(financeDetail.getCollaterals()!=null) {
+				
+				if (collReferences.contains(collateralAssignment.getCollateralRef())) {
+					String[] valueParm = new String[2];
+					valueParm[1] = collateralAssignment.getCollateralRef();
+					valueParm[0] = "CollateralReference" + ":";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+					return errorDetails;
+				} else {
+					if (StringUtils.isNotBlank(collateralAssignment.getCollateralRef())) {
+						collReferences.add(collateralAssignment.getCollateralRef());
+					}
+				}
+				if(financeDetail.getCollaterals()!=null ) {
 					if (assignReferences.contains(collateralAssignment.getAssignmentReference())) {
 						String[] valueParm = new String[2];
 						valueParm[1] = collateralAssignment.getAssignmentReference();
@@ -1457,7 +1470,9 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
 						return errorDetails;
 					} else {
+						if(StringUtils.isNotBlank(collateralAssignment.getAssignmentReference())) {
 						assignReferences.add(collateralAssignment.getAssignmentReference());
+						}
 					}
 					if(finCollateralAssignmentDetails.size()!=financeDetail.getCollaterals().size()){
 						String[] valueParm = new String[1];
@@ -1467,6 +1482,13 @@ public class FinanceDataValidation {
 					}
 					List<String>collAssignReferences= new ArrayList<>();
 				for (CollateralSetup setupDetails : financeDetail.getCollaterals()) {
+					if(StringUtils.isBlank(setupDetails.getAssignmentReference())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "CollateralDetails:AssignmentReference";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+						return errorDetails;
+					}
+
 					if (StringUtils.isNotBlank(collateralAssignment.getCollateralRef())
 							&& StringUtils.isNotBlank(collateralAssignment.getAssignmentReference())) {
 						bothAvialble = true;
@@ -1476,6 +1498,7 @@ public class FinanceDataValidation {
 							setupDetails.getAssignmentReference())) {
 						avilId = true;
 					}
+					
 					if (colltype.contains(setupDetails.getCollateralType())) {
 						String[] valueParm = new String[2];
 						valueParm[1] = setupDetails.getCollateralType();
@@ -1493,7 +1516,9 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
 						return errorDetails;
 					} else {
+						if(StringUtils.isNotBlank(setupDetails.getAssignmentReference())) {
 						collAssignReferences.add(setupDetails.getAssignmentReference());
+						}
 					}
 					String collateralType = financeDetail.getFinScheduleData().getFinanceType().getCollateralType();
 					if (StringUtils.isNotBlank(collateralType)) {
@@ -1523,9 +1548,9 @@ public class FinanceDataValidation {
 				//validation
 				if (bothAvialble) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "AssignmentReference";
-					valueParm[1] = "CollateralSetup or Assingment";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+					valueParm[0] = "Collateral Reference";
+					valueParm[1] = "Assignment Reference";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30511", valueParm)));
 					return errorDetails;
 				}
 				if (!avilId && StringUtils.isBlank(collateralAssignment.getCollateralRef())) {
@@ -3124,7 +3149,9 @@ public class FinanceDataValidation {
 		// it should match with frequency
 		if ((StringUtils.isNotBlank(finMain.getDroplineFrq())) && (finMain.getFirstDroplineDate() != null)) {
 			if (!FrequencyUtil.isFrqDate(finMain.getDroplineFrq(), finMain.getFirstDroplineDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90183", null)));
+				String[] valueParm = new String[1];
+				valueParm[0] = "FirstDroplineDate: " + finMain.getFirstDroplineDate();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91123", valueParm)));
 			}
 		}
 		return errorDetails;

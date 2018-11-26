@@ -793,23 +793,29 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals())) {
 			BigDecimal curAssignValue = BigDecimal.ZERO;
 			BigDecimal totalAvailAssignValue = BigDecimal.ZERO;
-
+			Boolean flag=false;
 			for (CollateralAssignment detail : financeDetail.getCollateralAssignmentList()) {
 				for (CollateralSetup collsetup : financeDetail.getCollaterals()) {
-					if (StringUtils.equals(detail.getAssignmentReference(), collsetup.getAssignmentReference())) {
-						processCollateralsetupDetails(userDetails, stp, financeMain, customerDetails, detail,
-								collsetup);
-						curAssignValue = curAssignValue.add(collsetup.getBankValuation()
-								.multiply(detail.getAssignPerc() == null ? BigDecimal.ZERO : detail.getAssignPerc())
-								.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-						totalAvailAssignValue = totalAvailAssignValue
-								.add(collsetup.getBankValuation().subtract(curAssignValue));
+					if (StringUtils.isNotBlank(detail.getAssignmentReference())
+							&& StringUtils.isNotBlank(collsetup.getAssignmentReference())) {
+						if (StringUtils.equals(detail.getAssignmentReference(), collsetup.getAssignmentReference())) {
+							processCollateralsetupDetails(userDetails, stp, financeMain, customerDetails, detail,
+									collsetup);
+							flag=true;
+							curAssignValue = curAssignValue.add(collsetup.getBankValuation()
+									.multiply(detail.getAssignPerc() == null ? BigDecimal.ZERO : detail.getAssignPerc())
+									.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
+							totalAvailAssignValue = totalAvailAssignValue
+									.add(collsetup.getBankValuation().subtract(curAssignValue));
+						}
 					}
 				}
 			}
-
+			if(!flag) {
+				financeDetail.setCollaterals(null);
+			}
 			//Collateral coverage will be calculated based on the flag "Partially Secured?” defined loan type.
-			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured()) {
+			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured() && flag) {
 				if (curAssignValue.compareTo(financeMain.getFinAmount()) < 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Collateral available assign value(" + String.valueOf(curAssignValue) + ")";

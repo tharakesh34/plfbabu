@@ -273,7 +273,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			String[] valueParm = new String[2];
 			valueParm[0] = "First Drop line Date";
 			valueParm[1] = "Finance Start Date";
-			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("65012", valueParm);
+			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("91121", valueParm);
 			status.setReturnText(status.getReturnText());
 			response.setReturnStatus(status);
 			return response;
