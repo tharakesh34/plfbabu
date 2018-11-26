@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-<!-- 	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -1063,7 +1063,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		<addColumn tableName="collection_financedetails">
 			<column name="RepayMethod" type="varchar(8)" />
 		</addColumn>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="12" author="Kranthi Kumar.K">
 	<sql>
@@ -1073,7 +1073,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		delete from templatefields where field='schd_repayAmount';
 		delete from templatefields where field='ct_custAddrCountry';
 		delete from templatefields where field='ct_repayProfitRate';
-		delete from templatefields where field='ct_custRO1';
+		delete from templatefields where field='ct_custRO1'
 		
 		
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custShrtName', 'Customer Name', 'A');
