@@ -144,4 +144,8 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="6" author="Vinay">
+		<modifyDataType tableName="adtbankinfodetail" columnName="debitno" newDataType="int"/>
+		<modifyDataType tableName="adtbankinfodetail" columnName="creditno" newDataType="int"/>
+	</changeSet>
 </databaseChangeLog>

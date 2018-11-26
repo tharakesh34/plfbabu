@@ -533,8 +533,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		hbox = new Hbox();
 		space = new Space();
 		space.setSpacing("2px");
-		Textbox debitNo = new Textbox();
-		debitNo.setMaxlength(20);
+		Intbox debitNo = new Intbox();
+		debitNo.setMaxlength(4);
 		listCell.setId("debitNo".concat(String.valueOf(bankInfoDetail.getKeyValue())));
 		space.setSclass("mandatory");
 		debitNo.setReadonly(isReadOnly);
@@ -567,8 +567,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		hbox = new Hbox();
 		space = new Space();
 		space.setSpacing("2px");
-		Textbox creditNo = new Textbox();
-		creditNo.setMaxlength(20);
+		Intbox creditNo = new Intbox();
+		creditNo.setMaxlength(4);
 		listCell.setId("creditNo".concat(String.valueOf(bankInfoDetail.getKeyValue())));
 		space.setSclass("mandatory");
 		creditNo.setReadonly(isReadOnly);
@@ -1257,14 +1257,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			break;
 		case "debitNo":
 			Hbox hbox3 = (Hbox) getComponent(listitem, "debitNo");
-			Textbox debitNo = (Textbox) hbox3.getLastChild();
+			Intbox debitNo = (Intbox) hbox3.getLastChild();
 			Clients.clearWrongValue(debitNo);
-			String debitNoValue = debitNo.getValue();
-			if (!debitNo.isReadonly() && debitNo.getValue().isEmpty()) {
+			if (!debitNo.isReadonly() && debitNo.getValue() == null) {
 				throw new WrongValueException(debitNo,
 						Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
+			}else if(!debitNo.isReadonly() && debitNo.getValue() <= 0){
+				throw new WrongValueException(debitNo,
+						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit No" }));
 			}
-			bankInfoDetail.setDebitNo(debitNoValue);
+			bankInfoDetail.setDebitNo(debitNo.getValue());
 			break;
 		case "debitAmt":
 			BigDecimal debitAmt = BigDecimal.ZERO;
@@ -1282,14 +1284,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			break;
 		case "creditNo":
 			Hbox hbox5 = (Hbox) getComponent(listitem, "creditNo");
-			Textbox creditNo = (Textbox) hbox5.getLastChild();
+			Intbox creditNo = (Intbox) hbox5.getLastChild();
 			Clients.clearWrongValue(creditNo);
-			String creditNoValue = creditNo.getValue();
-			if (!creditNo.isReadonly() && creditNo.getValue().isEmpty()) {
+			if (!creditNo.isReadonly() && creditNo.getValue() == null) {
 				throw new WrongValueException(creditNo,
 						Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
+			} else if(!creditNo.isReadonly() && creditNo.getValue() <= 0){
+				throw new WrongValueException(creditNo,
+						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit No" }));
 			}
-			bankInfoDetail.setCreditNo(creditNoValue);
+			bankInfoDetail.setCreditNo(creditNo.getValue());
 			break;
 		case "creditAmt":
 			BigDecimal creditAmt = BigDecimal.ZERO;

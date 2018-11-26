@@ -62,9 +62,9 @@ public class BankInfoDetail extends AbstractWorkflowEntity{
 	private long bankId;
 	private Date monthYear;
 	private BigDecimal balance = BigDecimal.ZERO;
-	private String debitNo;
+	private int debitNo;
 	private BigDecimal debitAmt = BigDecimal.ZERO;
-	private String creditNo;
+	private int creditNo;
 	private BigDecimal creditAmt = BigDecimal.ZERO;
 	private BigDecimal bounceIn = BigDecimal.ZERO;
 	private BigDecimal bounceOut = BigDecimal.ZERO;
@@ -126,11 +126,11 @@ public class BankInfoDetail extends AbstractWorkflowEntity{
 		this.balance = balance;
 	}
 
-	public String getDebitNo() {
+	public int getDebitNo() {
 		return debitNo;
 	}
 
-	public void setDebitNo(String debitNo) {
+	public void setDebitNo(int debitNo) {
 		this.debitNo = debitNo;
 	}
 
@@ -142,11 +142,11 @@ public class BankInfoDetail extends AbstractWorkflowEntity{
 		this.debitAmt = debitAmt;
 	}
 
-	public String getCreditNo() {
+	public int getCreditNo() {
 		return creditNo;
 	}
 
-	public void setCreditNo(String creditNo) {
+	public void setCreditNo(int creditNo) {
 		this.creditNo = creditNo;
 	}
 
