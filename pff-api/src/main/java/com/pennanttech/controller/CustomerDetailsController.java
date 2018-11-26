@@ -1751,7 +1751,7 @@ public class CustomerDetailsController {
 		this.customerChequeInfoService = customerChequeInfoService;
 	}
 
-	public void setExternalLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
+	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
 		this.customerExtLiabilityService = customerExtLiabilityService;
 	}
 

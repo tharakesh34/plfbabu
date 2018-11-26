@@ -33,7 +33,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		String view = null;
 		String table = null;
-		if (inputSource.equals("sampling")) {
+		if (StringUtils.equals(inputSource, "sampling")) {
 			view = "sampling_liabilities";
 			table = "link_sampling_liabilities";
 		} else {
@@ -153,7 +153,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select count(*) from bmtcuststatuscodes where finStatus= :finStatus");
+		sql.append("select count(*) from bmtcuststatuscodes where custstscode= :finStatus");
 		logger.trace(Literal.SQL + sql.toString());
 
 		int recordCount = 0;

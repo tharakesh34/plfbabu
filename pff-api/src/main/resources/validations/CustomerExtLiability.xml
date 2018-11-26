@@ -153,7 +153,15 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-
+		<field name="otherFinInstitute">
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>otherFinInstitute should have maximum 50 characters</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+				</groups>
+				<element name="max">50</element>
+			</constraint>
+		</field>
 	</bean>
 </constraint-mappings>
 		

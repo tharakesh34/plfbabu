@@ -29,30 +29,43 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private Date finDate;
 	@XmlElement(name = "bankName")
 	private String loanBank;
-	private BigDecimal rateOfInterest;
+	@XmlElement
+	private BigDecimal rateOfInterest = BigDecimal.ZERO;
+	@XmlElement
 	private int tenure;
 	@XmlElement
-	private BigDecimal instalmentAmount;
+	private BigDecimal instalmentAmount = BigDecimal.ZERO;
 	@XmlElement(name = "outStandingBal")
-	private BigDecimal outstandingBalance;
+	private BigDecimal outstandingBalance = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal originalAmount;
+	private BigDecimal originalAmount = BigDecimal.ZERO;
+	@XmlElement
 	private int balanceTenure;
+	@XmlElement
 	private int bounceInstalments;
-	private BigDecimal principalOutstanding;
-	private BigDecimal overdueAmount;
+	@XmlElement
+	private BigDecimal principalOutstanding = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal overdueAmount = BigDecimal.ZERO;
 	@XmlElement
 	private String finStatus;
+	@XmlElement
 	private boolean foir;
+	@XmlElement
 	private int source;
+	@XmlElement
 	private int checkedBy;
+	@XmlElement
 	private String securityDetails;
+	@XmlElement
 	private String loanPurpose;
+	@XmlElement
 	private String repayBank;
 	private String loanBankName;
 	private String finTypeDesc;
 	private String custStatusDesc;
 	private String repayBankName;
+	@XmlElement
 	private String otherFinInstitute;
 	private boolean newRecord = false;
 	private CustomerExtLiability befImage;

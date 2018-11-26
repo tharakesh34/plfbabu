@@ -2259,6 +2259,54 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 				}
 
+				if (StringUtils.isNotBlank(String.valueOf(liability.getSource()))) {
+					final List<ValueLabel> sourceInfoList = PennantStaticListUtil.getSourceInfoList();
+					boolean isSource = false;
+					for (ValueLabel source : sourceInfoList) {
+						if (liability.getSource() == Integer.valueOf(source.getValue())) {
+							isSource = true;
+							break;
+						}
+					}
+					if (!isSource) {
+						ErrorDetail errorDetail = new ErrorDetail();
+						String[] valueParam = new String[2];
+						valueParam[0] = "source";
+						valueParam[1] = String.valueOf(liability.getSource());
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+
+				if (StringUtils.isNotBlank(String.valueOf(liability.getCheckedBy()))) {
+					final List<ValueLabel> trackCheckList = PennantStaticListUtil.getTrackCheckList();
+					boolean isCheckedBy = false;
+					for (ValueLabel checkedBy : trackCheckList) {
+						if (liability.getCheckedBy() == Integer.valueOf(checkedBy.getValue())) {
+							isCheckedBy = true;
+							break;
+						}
+					}
+					if (!isCheckedBy) {
+						ErrorDetail errorDetail = new ErrorDetail();
+						String[] valueParam = new String[2];
+						valueParam[0] = "checkedBy";
+						valueParam[1] = String.valueOf(liability.getCheckedBy());
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+
+				if (StringUtils.isNotBlank(liability.getLoanPurpose())) {
+					auditDetail.setErrorDetail(
+							validateMasterCode("LoanPurposes", "LoanPurposeCode", liability.getLoanPurpose()));
+				}
+
+				if (StringUtils.isNotBlank(liability.getRepayBank())) {
+					auditDetail
+							.setErrorDetail(validateMasterCode("BMTBankDetail", "BankCode", liability.getRepayBank()));
+				}
+
 				auditDetail.setErrorDetail(validateMasterCode("BankDetail", liability.getLoanBank()));
 				auditDetail.setErrorDetail(validateMasterCode("OtherBankFinanceType", liability.getFinType()));
 				auditDetail.setErrorDetail(validateMasterCode("CustomerStatusCode", liability.getFinStatus()));

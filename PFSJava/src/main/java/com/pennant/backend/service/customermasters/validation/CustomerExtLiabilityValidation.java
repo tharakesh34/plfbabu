@@ -5,15 +5,19 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.zkoss.lang.Objects;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
@@ -22,10 +26,12 @@ import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 public class CustomerExtLiabilityValidation {
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	protected SamplingDAO samplingDAO;
+	private CustomerDAO customerDAO;
 
 	public CustomerExtLiabilityValidation(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
 		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
 		samplingDAO = (SamplingDAO) SpringBeanUtil.getBean("samplingDAO");
+		customerDAO = (CustomerDAO) SpringBeanUtil.getBean("customerDAO");
 	}
 
 	public AuditHeader extLiabilityValidation(AuditHeader auditHeader, String method) {
@@ -196,7 +202,74 @@ public class CustomerExtLiabilityValidation {
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
+
+		if (StringUtils.isNotBlank(String.valueOf(liability.getSource()))) {
+			final List<ValueLabel> sourceInfoList = PennantStaticListUtil.getSourceInfoList();
+			boolean isSource = false;
+			for (ValueLabel source : sourceInfoList) {
+				if (liability.getSource() == Integer.valueOf(source.getValue())) {
+					isSource = true;
+					break;
+				}
+			}
+			if (!isSource) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "source";
+				valueParam[1] = String.valueOf(liability.getSource());
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+				auditDetail.setErrorDetail(errorDetail);
+			}
+		}
+
+		if (StringUtils.isNotBlank(String.valueOf(liability.getCheckedBy()))) {
+			final List<ValueLabel> trackCheckList = PennantStaticListUtil.getTrackCheckList();
+			boolean isCheckedBy = false;
+			for (ValueLabel checkedBy : trackCheckList) {
+				if (liability.getCheckedBy() == Integer.valueOf(checkedBy.getValue())) {
+					isCheckedBy = true;
+					break;
+				}
+			}
+			if (!isCheckedBy) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "checkedBy";
+				valueParam[1] = String.valueOf(liability.getCheckedBy());
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+				auditDetail.setErrorDetail(errorDetail);
+			}
+		}
+
+		if (StringUtils.isNotBlank(liability.getLoanPurpose())) {
+			auditDetail
+					.setErrorDetail(validateMasterCode("LoanPurposes", "LoanPurposeCode", liability.getLoanPurpose()));
+		}
+
+		if (StringUtils.isNotBlank(liability.getRepayBank())) {
+			auditDetail.setErrorDetail(validateMasterCode("BMTBankDetail", "BankCode", liability.getRepayBank()));
+		}
+
 		auditDetail.setErrorDetail(errorDetail);
 		return auditDetail;
 	}
+
+	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
+
+		ErrorDetail errorDetail = new ErrorDetail();
+
+		// validate Master code with PLF system masters
+		int count = customerDAO.getLookupCount(tableName, columnName, value);
+		if (count <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = columnName;
+			valueParm[1] = Objects.toString(value);
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
+		}
+
+		return errorDetail;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
 }
