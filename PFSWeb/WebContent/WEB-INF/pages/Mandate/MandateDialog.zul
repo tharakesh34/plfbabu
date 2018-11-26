@@ -230,11 +230,12 @@
 										<space spacing="2px" id="space_barCodeNumber" />
 										<uppercasebox id="barCodeNumber" width="200px" />
 									</hbox>
-
+								</row>
+								<row visible="true">
 									<label id="label_ExternalMandate" value="${c:l('label_MandateDialog_ExternalMandate.value') }" />
 									<hbox>
 										<space spacing="2px" />
-										<checkbox id="externalMandate" />
+										<checkbox id="externalMandate" checked="false"/>
 									</hbox>
 								</row>
 								<row>
