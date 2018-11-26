@@ -1085,4 +1085,16 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 	</sql>
 </changeSet>
 	
+<changeSet id="13" author="Siva">
+	<sql>
+		UPDATE finscheduledetails SET RecalLock = 0 WHERE RecalLock IS NULL;
+		UPDATE finscheduledetails_log SET RecalLock = 0 WHERE RecalLock IS NULL;
+		UPDATE finscheduledetails_pa SET RecalLock = 0 WHERE RecalLock IS NULL;
+		UPDATE finscheduledetails_temp SET RecalLock = 0 WHERE RecalLock IS NULL;
+		UPDATE rejectfinscheduledetails SET RecalLock = 0 WHERE RecalLock IS NULL;
+		UPDATE wiffinscheduledetails SET RecalLock = 0 WHERE RecalLock IS NULL;
+		UPDATE wiffinscheduledetails_temp SET RecalLock = 0 WHERE RecalLock IS NULL;
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
