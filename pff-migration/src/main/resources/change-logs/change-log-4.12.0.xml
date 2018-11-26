@@ -1097,4 +1097,9 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 	</sql>
 </changeSet>
 	
+<changeSet id="14" author="aditya">
+	<sql>
+	   update reportlist set fieldtype='String,int,BigDecimal' where code='ChequeHeader';
+	</sql>
+</changeSet>
 </databaseChangeLog>
