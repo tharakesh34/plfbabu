@@ -1,12 +1,18 @@
 package com.pennanttech.pff.logging.dao.impl;
 
+import javax.sql.DataSource;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -15,6 +21,9 @@ import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> implements InterfaceLoggingDAO {
 	private static final Logger logger = Logger.getLogger(InterfaceLoggingDAOImpl.class);
+
+	protected DefaultTransactionDefinition transDef;
+	private DataSourceTransactionManager transactionManager;
 
 	@Override
 	public void save(InterfaceLogDetail interfaceLogDetail) {
@@ -31,8 +40,12 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		try {
+			// begin transaction
+			TransactionStatus txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(sql.toString(), beanParameters, keyHolder, new String[] { "seqid" });
 			interfaceLogDetail.setSeqId(keyHolder.getKey().longValue());
+			transactionManager.commit(txStatus);
+			txStatus.flush();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -52,7 +65,11 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
 		try {
+			// begin transaction
+			TransactionStatus txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
+			transactionManager.commit(txStatus);
+			txStatus.flush();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
@@ -92,5 +109,15 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 	@Override
 	public long getSequence(String seqName) {
 		return getNextValue(seqName);
+	}
+	
+	@Override
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+		this.transactionManager = new DataSourceTransactionManager(dataSource);
+		this.transDef = new DefaultTransactionDefinition();
+		this.transDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		this.transDef.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+		this.transDef.setTimeout(60);
 	}
 }
