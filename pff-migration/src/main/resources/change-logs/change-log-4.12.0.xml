@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+<!-- 	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -1059,17 +1059,30 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 </createView>
 </changeSet>
-
-	<changeSet id="11" author="Siva">
-		<addColumn tableName="RejectDocumentDetails">
-			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
-		</addColumn>
-	</changeSet>
-	
-
 <changeSet id="11" author="Dheerendra">
 		<addColumn tableName="collection_financedetails">
 			<column name="RepayMethod" type="varchar(8)" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
+	
+	<changeSet id="12" author="Kranthi Kumar.K">
+	<sql>
+		delete from templatefields where field='ct_custShrtName';
+		delete from templatefields where field='repayProfitRate';
+		delete from templatefields where field='ct_repayProfitRate';
+		delete from templatefields where field='schd_repayAmount';
+		delete from templatefields where field='ct_custAddrCountry';
+		delete from templatefields where field='ct_repayProfitRate';
+		delete from templatefields where field='ct_custRO1';
+		
+		
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custShrtName', 'Customer Name', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'repayProfitRate', 'Repay ProfitRate', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'schd_repayAmount', 'Schd RepayAmount', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custAddrCountry', 'custAddrCountry', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custRO1', 'Source', 'A');
+	
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
