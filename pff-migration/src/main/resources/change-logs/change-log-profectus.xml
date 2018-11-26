@@ -2182,6 +2182,107 @@ UNION ALL
 			<column name="audityear" type="varchar(8)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="131" author="Vinay">
+		<createView viewName="cibil_customer_loans_view" replaceIfExists="true">
+			SELECT cu.custid,
+		    COALESCE(at.code, '00') AS fintype,
+		    fm.finreference,
+		    fm.finstartdate,
+		    fm.finapproveddate,
+		    pd.latestrpydate,
+		    udf_convertcurrency(fm.finassetvalue, fm.finccy, 'INR') AS finassetvalue,
+		    udf_convertcurrency(pd.totalpribal, fm.finccy, 'INR') AS future_schedule_prin,
+		    udf_convertcurrency(pd.tdschdpri + pd.tdschdpft, fm.finccy, 'INR') AS instalment_due,
+		    udf_convertcurrency(pd.totalpripaid + pd.totalpftpaid, fm.finccy, 'INR') AS instalment_paid,
+		    COALESCE(udf_convertcurrency(ma.bounce_due, fm.finccy, 'INR'), 0) AS bounce_due,
+		    COALESCE(udf_convertcurrency(ma.bounce_paid, fm.finccy, 'INR'), 0) AS bounce_paid,
+		    udf_convertcurrency(fo.late_payment_penalty_due, fm.finccy, 'INR') AS late_payment_penalty_due,
+		    udf_convertcurrency(fo.late_payment_penalty_paid, fm.finccy, 'INR') AS late_payment_penalty_paid,
+		    udf_convertcurrency(pd.totalprischd, fm.finccy, 'INR') AS total_pri_schd,
+		    udf_convertcurrency(pd.totalpripaid, fm.finccy, 'INR') AS total_pri_paid,
+		    udf_convertcurrency(pd.totalpftschd, fm.finccy, 'INR') AS total_pft_schd,
+		    udf_convertcurrency(pd.totalpftpaid, fm.finccy, 'INR') AS total_pft_paid,
+		    COALESCE(udf_convertcurrency(fe.excess_amount, fm.finccy, 'INR'), 0) AS excess_amount,
+		    COALESCE(udf_convertcurrency(fe.excess_amt_paid, fm.finccy, 'INR'), 0) AS excess_amt_paid,
+		    pd.curoddays,
+		    fm.closingstatus,
+		    cu.ownership,
+		    udf_convertcurrency(ci.custincome, fm.finccy, 'INR') AS custincome
+		   FROM financemain fm
+		     JOIN cibil_customer_extract cu ON cu.finreference = fm.finreference
+		     JOIN finpftdetails pd ON pd.finreference = fm.finreference
+		     LEFT JOIN cibil_account_types_mapping atm ON atm.fintype = fm.fintype
+		     LEFT JOIN cibil_account_types at ON at.code = atm.code
+		     LEFT JOIN ( SELECT ma_1.finreference,
+		            sum(COALESCE(ma_1.adviseamount, 0) - COALESCE(ma_1.paidamount, 0) - COALESCE(ma_1.waivedamount, 0)) AS bounce_due,
+		            sum(ma_1.paidamount) AS bounce_paid
+		           FROM manualadvise ma_1
+		          WHERE ma_1.bounceid > 0
+		          GROUP BY ma_1.finreference) ma ON ma.finreference = fm.finreference
+		     LEFT JOIN ( SELECT finoddetails.finreference,
+		            sum(finoddetails.totpenaltyamt) AS late_payment_penalty_due,
+		            sum(finoddetails.totpenaltypaid) AS late_payment_penalty_paid
+		           FROM finoddetails
+		          GROUP BY finoddetails.finreference) fo ON fo.finreference = fm.finreference
+		     LEFT JOIN ( SELECT finexcessamount.finreference,
+		            sum(finexcessamount.amount) AS excess_amount,
+		            sum(COALESCE(finexcessamount.utilisedamt, 0) + COALESCE(finexcessamount.reservedamt, 0)) AS excess_amt_paid
+		           FROM finexcessamount
+		          GROUP BY finexcessamount.finreference) fe ON fe.finreference = fm.finreference
+		     LEFT JOIN ( SELECT customerincomes.custid,
+		            COALESCE(sum(customerincomes.custincome), 0) AS custincome
+		           FROM customerincomes
+		          GROUP BY customerincomes.custid) ci ON ci.custid = cu.custid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="132" author="Vinay">
+		<createView viewName="cibil_customer_extarct_view" replaceIfExists="true">
+			SELECT c.custid,
+		    fm.finreference,
+		        CASE
+		            WHEN fm.finreference IS NULL THEN 4
+		            ELSE 1
+		        END AS ownership,
+		    pd.latestrpydate
+		   FROM financemain fm
+		     JOIN customers c ON c.custid = fm.custid
+		     JOIN finpftdetails pd ON pd.finreference = fm.finreference
+		     JOIN rmtfinancetypes rft ON rft.fintype = pd.fintype
+		  WHERE (c.custid IN ( SELECT DISTINCT financemain.custid
+		           FROM financemain)) AND (c.custtypecode IN ( SELECT rmtcusttypes.custtypecode
+		           FROM rmtcusttypes
+		          WHERE rmtcusttypes.custtypectg = 'RETAIL'))
+		UNION ALL
+		 SELECT c.custid,
+		    fm.finreference,
+		    3 AS ownership,
+		    pd.latestrpydate
+		   FROM finguarantorsdetails gd
+		     JOIN customers c ON c.custcif = gd.guarantorcif
+		     JOIN financemain fm ON fm.finreference = gd.finreference
+		     JOIN finpftdetails pd ON pd.finreference = gd.finreference
+		     JOIN rmtfinancetypes rft ON rft.fintype = pd.fintype
+		  WHERE (c.custid IN ( SELECT DISTINCT financemain.custid
+		           FROM financemain)) AND (c.custtypecode IN ( SELECT rmtcusttypes.custtypecode
+		           FROM rmtcusttypes
+		          WHERE rmtcusttypes.custtypectg = 'RETAIL'))
+		UNION ALL
+		 SELECT c.custid,
+		    fm.finreference,
+		    4 AS ownership,
+		    pd.latestrpydate
+		   FROM finjointaccountdetails ja
+		     JOIN customers c ON c.custcif = ja.custcif
+		     JOIN financemain fm ON fm.finreference = ja.finreference
+		     JOIN finpftdetails pd ON pd.finreference = ja.finreference
+		     JOIN rmtfinancetypes rft ON rft.fintype = pd.fintype
+		  WHERE (c.custid IN ( SELECT DISTINCT financemain.custid
+		           FROM financemain)) AND (c.custtypecode IN ( SELECT rmtcusttypes.custtypecode
+		           FROM rmtcusttypes
+		          WHERE rmtcusttypes.custtypectg = 'RETAIL'))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
 	
 	
