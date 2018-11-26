@@ -374,7 +374,7 @@ public class CustomerController {
 				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
 					curCustomerIncome.setNewRecord(true);
 					curCustomerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					curCustomerIncome.setMargin(BigDecimal.ZERO);
+					//curCustomerIncome.setMargin(BigDecimal.ZERO);
 					curCustomerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustomerIncome.setVersion(1);
 

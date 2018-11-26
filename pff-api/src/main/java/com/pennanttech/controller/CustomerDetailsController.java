@@ -681,7 +681,7 @@ public class CustomerDetailsController {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			customerIncome.setUserDetails(userDetails);
 			customerIncome.setCustId(prvCustomer.getCustID());
-			customerIncome.setMargin(new BigDecimal(0));
+			//customerIncome.setMargin(new BigDecimal(0));
 			customerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			customerIncome.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerIncome.setCustCif(cif);

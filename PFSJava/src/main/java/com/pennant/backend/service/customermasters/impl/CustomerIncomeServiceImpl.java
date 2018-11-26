@@ -374,6 +374,22 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 				auditDetail.setErrorDetail(errorDetail);
 			}
 
+			if (incomeType != null && (customerIncome.getMargin() == null
+					|| customerIncome.getMargin().compareTo(BigDecimal.ZERO) == 0)) {
+				if(incomeType.getMargin()==null) {
+					customerIncome.setMargin(BigDecimal.ZERO);
+				} else {
+					customerIncome.setMargin(incomeType.getMargin());
+				}
+			}
+			if (incomeType.getMargin() != null && customerIncome.getMargin().compareTo(new BigDecimal(10000)) > 0) {
+				ErrorDetail errorDetail = new ErrorDetail();
+				String[] valueParm = new String[2];
+				valueParm[0] = "margin";
+				valueParm[1] = "10000";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+			}
 		}
 		return auditDetail;
 	}

@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.customermasters.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2158,6 +2159,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						String[] valueParm = new String[2];
 						valueParm[0] = custIncome.getCustCif();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90113", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+					if (incomeType != null && (custIncome.getMargin() == null
+							|| custIncome.getMargin().compareTo(BigDecimal.ZERO) == 0)) {
+						if(incomeType.getMargin()==null) {
+							custIncome.setMargin(BigDecimal.ZERO);
+						} else {
+						custIncome.setMargin(incomeType.getMargin());
+						}
+					}
+					if (incomeType.getMargin() != null && custIncome.getMargin().compareTo(new BigDecimal(10000)) > 0) {
+						ErrorDetail errorDetail = new ErrorDetail();
+						String[] valueParm = new String[2];
+						valueParm[0] = "margin";
+						valueParm[1] = "10000";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
 				}

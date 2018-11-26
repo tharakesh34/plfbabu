@@ -62,7 +62,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-@XmlType(propOrder = { "incomeExpense", "category", "incomeType", "income" })
+@XmlType(propOrder = { "incomeExpense", "category", "incomeType", "income","margin" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerIncome extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1276183069308329161L;
