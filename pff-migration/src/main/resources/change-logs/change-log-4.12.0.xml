@@ -1059,6 +1059,14 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 </createView>
 </changeSet>
+
+	<changeSet id="11" author="Siva">
+		<addColumn tableName="RejectDocumentDetails">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet>
+	
+
 <changeSet id="11" author="Dheerendra">
 		<addColumn tableName="collection_financedetails">
 			<column name="RepayMethod" type="varchar(8)" />
