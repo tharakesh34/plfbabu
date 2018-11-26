@@ -304,9 +304,7 @@ public class ScheduleGenerator {
 					//Capitalize Flag
 					if (financeMain.isCpzAtGraceEnd()) {
 						curSchd.setCpzOnSchDate(true);
-					}
-
-					if (financeMain.isAllowGrcCpz()) {
+					} else if (financeMain.isAllowGrcCpz()) {
 						if (FrequencyUtil.isFrqDate(financeMain.getGrcCpzFrq(), financeMain.getGrcPeriodEndDate())) {
 							curSchd.setCpzOnSchDate(true);
 						}
