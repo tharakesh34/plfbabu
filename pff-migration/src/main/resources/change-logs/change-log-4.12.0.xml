@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<!--  <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -1109,7 +1109,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 	   update reportlist set fieldtype='String,int,BigDecimal' where code='ChequeHeader';
 	</sql>
 </changeSet>
- -->
+
 <changeSet  id="17" author="kranthikumar.k">
 <sql>
 <![CDATA[
