@@ -23,7 +23,7 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+	<!--  <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
 		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -1109,37 +1109,16 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 	   update reportlist set fieldtype='String,int,BigDecimal' where code='ChequeHeader';
 	</sql>
 </changeSet>
-
-<changeSet id="15" author="KranthiKumar">
-	<sql>
-	<![CDATA[
-		delete from templatefields where field='ct_custShrtName';
-		delete from templatefields where field='repayProfitRate';
-		delete from templatefields where field='ct_repayProfitRate';
-		delete from templatefields where field='schd_repayAmount';
-		delete from templatefields where field='ct_custAddrCountry';
-		delete from templatefields where field='ct_repayProfitRate';
-		delete from templatefields where field='ct_custRO1';
-		
-		
+ -->
+<changeSet  id="17" author="kranthikumar.k">
+<sql>
+<![CDATA[
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custShrtName', 'Customer Name', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'repayProfitRate', 'Repay ProfitRate', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'schd_repayAmount', 'Schd RepayAmount', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custAddrCountry', 'custAddrCountry', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custRO1', 'Source', 'A');
-	]]>
-	</sql>
-</changeSet>
-
-<changeSet id="16" author="KranthiKumar">
-	<sql>
-		delete from templatefields where field='ct_custShrtName';
-		delete from templatefields where field='repayProfitRate';
-		delete from templatefields where field='ct_repayProfitRate';
-		delete from templatefields where field='schd_repayAmount';
-		delete from templatefields where field='ct_custAddrCountry';
-		delete from templatefields where field='ct_repayProfitRate';
-		delete from templatefields where field='ct_custRO1';
-		</sql>
+]]>
+</sql>
 </changeSet>
 </databaseChangeLog>
