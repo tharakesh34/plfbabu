@@ -259,10 +259,11 @@ public class BatchMonitor {
 
 					break;
 				case SQL_SERVER:
-					query.append(" SELECT AVG(DATEDIFF ('millisecond', START_TIME::timestamp - END_TIME::timestamp))");
+					query.append(" SELECT AVG(DATEDIFF (Millisecond, end_time, start_time))");
 					query.append(
 							"avg FROM (SELECT * FROM BATCH_JOB_EXECUTION WHERE JOB_INSTANCE_ID NOT IN(SELECT JOB_INSTANCE_ID ");
 					query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED')))  T");
+
 					break;
 
 				default:
