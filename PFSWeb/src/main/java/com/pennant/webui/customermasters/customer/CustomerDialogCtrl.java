@@ -1316,7 +1316,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
 					.getExtendedFieldRender(aCustomerDetails.getCustomer().getCustCIF());
 
-			this.extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter, "424px");
+			this.extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter, "424px", true);
 			aCustomerDetails.setExtendedFieldHeader(extendedFieldHeader);
 			aCustomerDetails.setExtendedFieldRender(extendedFieldRender);
 

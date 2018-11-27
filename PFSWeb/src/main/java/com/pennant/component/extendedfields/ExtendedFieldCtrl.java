@@ -72,6 +72,7 @@ public class ExtendedFieldCtrl {
 	private static Map<String, Object> tabPanelsMap = new HashMap<>();
 	private UserWorkspace userWorkspace;
 	private String userRole;
+	private boolean overflow;
 
 	/**
 	 * Method for Rendering the Extended field details
@@ -87,6 +88,7 @@ public class ExtendedFieldCtrl {
 		this.generator.setReadOnly(this.isReadOnly);
 		this.generator.setWindow(window);
 		this.generator.setTabHeight(tabHeight);
+		this.generator.setOverflow(overflow);
 		this.generator.setUserWorkspace(userWorkspace);
 		this.generator.setUserRole(userRole);
 		if (tab != null) {
@@ -626,6 +628,12 @@ public class ExtendedFieldCtrl {
 				tabpanel);
 	}
 
+	public void createTab(Tabs tabs, Tabpanels tabPanels, String height, boolean overflow) {
+		this.overflow = overflow;
+
+		createTab(tabs, tabPanels, height);
+	}
+
 	public void createTab(Tabs tabs, Tabpanels tabPanels) {
 		createTab(tabs, tabPanels, "100%");
 	}
@@ -937,6 +945,14 @@ public class ExtendedFieldCtrl {
 
 	public void setUserRole(String userRole) {
 		this.userRole = userRole;
+	}
+
+	public boolean isOverflow() {
+		return overflow;
+	}
+
+	public void setOverflow(boolean overflow) {
+		this.overflow = overflow;
 	}
 
 	public void setValues(Map<String, Object> fieldValueMap) {

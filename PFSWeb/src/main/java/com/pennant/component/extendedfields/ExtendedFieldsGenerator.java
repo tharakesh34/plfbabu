@@ -162,6 +162,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private String userRole;
 	private int columnCount;
 	private String defaultComponentWidth = "250px";
+	private boolean overflow;
 
 	// Constants for scriptlets.
 	private static final String SCRIPTLET_DELIMITER = "^^";
@@ -2670,13 +2671,16 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		tabpanel.setId(TABPANEL_ID + container.getFieldName());
 		tabpanel.setStyle("overflow:auto;border:none;");
 		int height;
-		if (tabHeight == 0) {
+		if (overflow) {
+			tabpanel.setHeight("100%");
+		} else if (tabHeight == 0) {
 			tabHeight = 150;
 			height = getDesktopHeight() - tabHeight;
+			tabpanel.setHeight(height + "px");
 		} else {
 			height = tabHeight;
+			tabpanel.setHeight(height + "px");
 		}
-		tabpanel.setHeight(height + "px");
 		tabpanels.appendChild(tabpanel);
 		tabpanels.setParent(tabbox);
 		return tabpanel;
@@ -2888,4 +2892,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		this.extendedFieldDetails = extendedFieldDetails;
 	}
 
+	public boolean isOverflow() {
+		return overflow;
+	}
+
+	public void setOverflow(boolean overflow) {
+		this.overflow = overflow;
+	}
 }

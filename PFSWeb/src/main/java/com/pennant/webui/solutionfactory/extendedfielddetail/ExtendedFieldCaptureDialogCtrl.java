@@ -198,6 +198,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 
 		try {
 			this.seqNo.setValue(getExtendedFieldRender().getSeqNo());
+			generator.setOverflow(true);
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
 
 			// Height Calculation
