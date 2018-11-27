@@ -310,7 +310,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.panNumber.setMaxlength(10);
 		this.uidNumber.setMaxlength(12);
 		this.taxNumber.setMaxlength(15);
-		this.accountNo.setMaxlength(10);
+		this.accountNo.setMaxlength(20);
 
 		this.accountType.setMaxlength(15);
 
