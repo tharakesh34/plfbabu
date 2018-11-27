@@ -1112,6 +1112,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 
 <changeSet id="15" author="KranthiKumar">
 	<sql>
+	<![CDATA[
 		delete from templatefields where field='ct_custShrtName';
 		delete from templatefields where field='repayProfitRate';
 		delete from templatefields where field='ct_repayProfitRate';
@@ -1126,6 +1127,19 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'schd_repayAmount', 'Schd RepayAmount', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custAddrCountry', 'custAddrCountry', 'A');
 		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'custRO1', 'Source', 'A');
+	]]>
 	</sql>
+</changeSet>
+
+<changeSet id="16" author="KranthiKumar">
+	<sql>
+		delete from templatefields where field='ct_custShrtName';
+		delete from templatefields where field='repayProfitRate';
+		delete from templatefields where field='ct_repayProfitRate';
+		delete from templatefields where field='schd_repayAmount';
+		delete from templatefields where field='ct_custAddrCountry';
+		delete from templatefields where field='ct_repayProfitRate';
+		delete from templatefields where field='ct_custRO1';
+		</sql>
 </changeSet>
 </databaseChangeLog>
