@@ -55,6 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -378,10 +379,27 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				usrFName.setValue(user.getFirstName());
 				usrMName.setValue(user.getMiddleName());
 				usrLName.setValue(user.getLastName());
+				userStaffID.setValue(user.getStaffId());
+				usrBranchCode.setValue(user.getBranchCode());
+				usrLanguage.setValue(user.getLanguage());
+				usrDeptCode.setValue(user.getDepartmentCode());
+				usrDesg.setValue(user.getDesignation());
 			}
 			findUser = true;
-		} catch (InterfaceException e) {
-			throw new WrongValueException(this.usrLogin, e.getErrorMessage());
+		} catch (UsernameNotFoundException e) {
+			if(externalUserSearch!=null){
+				usrEmail.setValue("");
+				usrMobile.setValue("");
+				usrFName.setValue("");
+				usrMName.setValue("");
+				usrLName.setValue("");
+				userStaffID.setValue("");
+				usrBranchCode.setValue("");
+				usrLanguage.setValue("");
+				usrDeptCode.setValue("");
+				usrDesg.setValue("");
+			}
+			throw new WrongValueException(this.usrLogin, e.getMessage());
 		}
 	}
 
