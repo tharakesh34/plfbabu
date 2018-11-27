@@ -1121,4 +1121,37 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 ]]>
 </sql>
 </changeSet>
+
+<changeSet id="18" author="aditya">
+<sql>
+<![CDATA[
+       UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+       UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+       UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+       UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);
+
+       INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2,           'button_BulkRateChangeList_NewBulkRateChange','BulkRateChngList',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+       INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BULKRATE_MAKER', 'Bulk Rate Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+       INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BULKRATE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_BulkRateChangeList_NewBulkRateChange'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+       INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='BULKRATE_MAKER'), (Select   RoleID  From SecRoles Where RoleCd='CANCEL_DISB_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+
+       UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+       UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+       UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+       UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);
+]]> 
+</sql>
+</changeSet>
+
+<changeSet id="19" author="aditya">
+<sql>
+<![CDATA[
+       UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);	
+       
+       INSERT INTO SecOperationRoles values((Select MAX(OprRoleID)+1 From SecOperationRoles),(Select OprId  From SecOperations Where OprCode='ADMIN'), (Select  RoleID  From SecRoles Where RoleCd='CANCEL_DISB_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+       
+       UPDATE SEQSecOperationRoles SET SEQNO= (SELECT MAX(OprRoleID) FROM SecOperationRoles);
+]]> 
+</sql>
+</changeSet>
 </databaseChangeLog>
