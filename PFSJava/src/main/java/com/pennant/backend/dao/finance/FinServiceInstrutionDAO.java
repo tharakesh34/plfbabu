@@ -13,6 +13,8 @@ public interface FinServiceInstrutionDAO {
 
 	List<FinServiceInstruction> getFinServiceInstructions(String finReference, String type, String finEvent);
 
+	void save(FinServiceInstruction finServiceInstruction, String type);
+
 	List<FinServiceInstruction> getFinServInstByServiceReqNo(final String finReference, Date fromDate,
 			String serviceReqNo, String finEvent);
 

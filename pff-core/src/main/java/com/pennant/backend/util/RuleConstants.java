@@ -23,6 +23,7 @@ public class RuleConstants {
 	public static final String MODULE_INSRULE = "INSRULE";
 	public static final String MODULE_BOUNCE = "BOUNCE";
 	public static final String MODULE_GSTRULE = "GSTRULE"; // GST Rules
+	public static final String MODULE_LPPRULE = "LPPRULE"; // LPP Rules
 	public static final String MODULE_AMORTIZATIONMETHOD = "AMZMTH";
 	public static final String MODULE_STGACRULE = "STGRULE"; // Stage Accounting
 																// Rule

@@ -729,5 +729,29 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		}
 		return false;
 	}
+	
+	@Override
+	public Mandate getMandateStatusById(String finReference, long mandateID) {
+		logger.debug("Entering");
+		Mandate mandate = getMandate();
+		mandate.setMandateID(mandateID);
+		mandate.setOrgReference(finReference);
+		StringBuilder selectSql = new StringBuilder("Select Status, ExpiryDate");
+		selectSql.append(" From Mandates");
+		selectSql.append(" Where MandateID =:MandateID AND OrgReference = :OrgReference AND ACTIVE = 1");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
+		RowMapper<Mandate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Mandate.class);
+
+		try {
+			mandate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			mandate = null;
+		}
+		logger.debug("Leaving");
+		return mandate;
+	}
 
 }

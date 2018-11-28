@@ -237,7 +237,7 @@ public class CostOfFundCodeDAOImpl extends BasicDao<CostOfFundCode> implements C
 		StringBuilder sql = null;
 
 		sql = new StringBuilder();
-		sql.append(" Select COUNT(CofCode) from CostOfFunds ");
+		sql.append(" Select COUNT(CofCode) from CostOfFunds");
 		sql.append(" Where CofCode = :CofCode ");
 		logger.debug("Sql: " + sql.toString());
 

@@ -360,7 +360,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getRepayAmount(), format));
 			}
 		}
-		String excludeFields = ",EQUAL,PRI_PFT,PRI,";
+		String excludeFields = ",EQUAL,PRI_PFT,PRI,POSINT,";
+		String nonGrcExclFields = ",GRCNDPAY,PFTCAP,";
+		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinSchData.getFinanceMain().getProductCategory())){
+			nonGrcExclFields = ",GRCNDPAY,PFTCAP,POSINT,";
+		}
 		if (getFinanceScheduleDetail() != null) {
 			if (getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE)
 					|| getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
@@ -369,13 +373,12 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				this.cbSchdMthd.setDisabled(false);
 				this.wIAmount.setDisabled(true);
 			} else {
-				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(),
-						PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
 				this.cbSchdMthd.setDisabled(true);
 				this.wIAmount.setDisabled(false);
 			}
 		} else {
-			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
 			this.cbSchdMthd.setDisabled(true);
 		}
 
@@ -1016,7 +1019,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void fillSchdMethod() {
 		logger.debug("Entering");
-		String excludeFields = ",EQUAL,PRI_PFT,PRI,";
+		String excludeFields = ",EQUAL,PRI_PFT,PRI,POSINT,";
+		String nonGrcExclFields = ",GRCNDPAY,PFTCAP,";
+		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinScheduleData().getFinanceMain().getProductCategory())){
+			nonGrcExclFields = ",GRCNDPAY,PFTCAP,POSINT,";
+		}
 		if (this.cbRepayFromDate.getSelectedIndex() > 0 && this.cbRepayToDate.getSelectedIndex() > 0) {
 			frSpecifier = this.cbRepayFromDate.getSelectedItem().getAttribute("fromSpecifier").toString();
 			toSpecifier = this.cbRepayToDate.getSelectedItem().getAttribute("toSpecifier").toString();
@@ -1025,14 +1032,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE)
 							|| (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)))) {
 				this.cbSchdMthd.setDisabled(true);
-				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
-						PennantStaticListUtil.getScheduleMethods(), excludeFields);
-			} else if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY)
-					|| frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_MATURITY))
-					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY)
-							|| (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_MATURITY)))) {
-				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(),
-						PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), excludeFields);
+			} else if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY) || frSpecifier
+					.equals(CalculationConstants.SCH_SPECIFIER_MATURITY))
+					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY) || (toSpecifier
+							.equals(CalculationConstants.SCH_SPECIFIER_MATURITY)))) {
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(),
+						nonGrcExclFields);
 				this.cbSchdMthd.setDisabled(true);
 				if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT)) {
 					this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,

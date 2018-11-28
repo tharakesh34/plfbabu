@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -61,6 +62,7 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -91,6 +93,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
@@ -392,12 +395,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) {
+	public AuditHeader doApprove(AuditHeader aAuditHeader,boolean isValReq) {
 		logger.debug("Entering");
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
+		if(isValReq){
+			aAuditHeader = businessValidation(aAuditHeader, "doApprove");
+		}
 		if (!aAuditHeader.isNextProcess()) {
 			return aAuditHeader;
 		}
@@ -573,6 +578,37 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+    
+    /*
+     * 
+     * @executeLoanCancelProcess()
+     */
+    @Override
+    public void executeLoanCancelProcess() {
+    	logger.debug("Entering");
+    	Map<String, Date> cancelMap = getFinanceMainDAO().getUnDisbursedFinanceList();
+    	int cancelNoOfDays = SysParamUtil.getValueAsInt(SMTParameterConstants.CANCEL_LOAN_FOR_NODISB);
+    	if (cancelMap != null) {
+    		List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
+
+    		for (String finreference : cancelList) {
+    			Date finStartDate=cancelMap.get(finreference);
+    			Date effctiveDate=DateUtility.addDays(finStartDate, -cancelNoOfDays);
+    			if(DateUtility.compare(DateUtility.getAppDate(), effctiveDate) > 0){
+    				FinanceDetail financeDetail = new FinanceDetail();
+    				FinanceMain financeMain = new FinanceMain();
+    				financeMain.setFinReference(finreference);
+    				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+    				AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
+    				AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
+    						null, new HashMap<String, ArrayList<ErrorDetail>>());
+    				doApprove(auditHeader,false);	
+    			}
+
+			}
+		}
+		logger.debug("Leaving");
 	}
 
 	/**

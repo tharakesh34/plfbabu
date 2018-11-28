@@ -46,6 +46,9 @@ package com.pennant.webui.finance.additional;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -86,9 +89,11 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
@@ -292,20 +297,24 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.fromDate.setDisabled(true);
 		}
 
-		String excludeFields = ",EQUAL,PRI_PFT,PRI,";
+		String excludeFields = ",EQUAL,PRI_PFT,PRI,POSINT,";
+		String nonGrcExclFields = ",GRCNDPAY,PFTCAP,";
+		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinSchData.getFinanceMain().getProductCategory())){
+			nonGrcExclFields = ",GRCNDPAY,PFTCAP,POSINT,";
+		}
 		if (getFinanceScheduleDetail() != null) {
 			if (getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE)
 					|| getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
 				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(),
 						PennantStaticListUtil.getScheduleMethods(), excludeFields);
 				this.cbSchdMthd.setDisabled(true);
-			} else {
-				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(),
-						PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+
+			}else {
+				fillComboBox(this.cbSchdMthd,getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(),nonGrcExclFields );
 				this.cbSchdMthd.setDisabled(true);
 			}
 		} else {
-			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+			fillComboBox(this.cbSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
 			this.cbSchdMthd.setDisabled(true);
 		}
 
@@ -716,6 +725,21 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			aFinScheduleData.setDisbursementDetails(list);
 		}
+		
+		boolean posIntProcess = false;
+		if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, aFinScheduleData.getFinanceType().getFinSchdMthd())){
+			
+			int frqDay = Integer.parseInt(aFinScheduleData.getFinanceMain().getRepayFrq().substring(3));
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(this.fromDate.getValue());
+			calendar.set(Calendar.DAY_OF_MONTH, frqDay);
+			if(DateUtility.compare(this.fromDate.getValue(), calendar.getTime()) > 0){
+				calendar.add(Calendar.MONTH, 1);
+			}
+			
+			maturityDate = DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),PennantConstants.dateFormat));
+			posIntProcess = true;
+		}
 
 		aFinScheduleData.getFinanceMain().setEventToDate(maturityDate);
 		finServiceInstruction.setToDate(maturityDate);
@@ -727,7 +751,83 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			getFinFeeDetailListCtrl().doExecuteFeeCharges(true, getFinScheduleData());
 		}
 
-		if (isOverdraft || isDevFinance) {
+		if(isOverdraft){
+
+			if(posIntProcess){
+				finMain.setRecalType(CalculationConstants.RPYCHG_TILLDATE);
+				finMain.setRecalFromDate(maturityDate);
+				finMain.setRecalSchdMethod(CalculationConstants.SCHMTHD_PRI);
+
+				finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_TILLDATE);
+				finServiceInstruction.setRecalFromDate(maturityDate);
+
+				// Schedule Details
+				List<FinanceScheduleDetail> schList = aFinScheduleData.getFinanceScheduleDetails();
+				Date schDateAfterCurInst = null;
+				for (int i = 0; i < schList.size(); i++) {
+
+					// Schedule Date Finding after new disbursement Date & before Maturity Date
+					if(DateUtility.compare(schList.get(i).getSchDate(), maturityDate) > 0){
+						schDateAfterCurInst = schList.get(i).getSchDate();
+						break;
+					}
+
+					if(DateUtility.compare(schList.get(i).getSchDate(),maturityDate) == 0){
+						schDateAfterCurInst = null;
+						schList.get(i).setPftOnSchDate(true);
+						schList.get(i).setRepayOnSchDate(true);
+					}
+				}
+				
+				// Repay Instructions Setting
+				boolean rpyInstFound = false;
+				boolean futureRpyInst = false;
+				List<RepayInstruction> rpyInstructions = aFinScheduleData.getRepayInstructions();
+				for (int i = 0; i < rpyInstructions.size(); i++) {
+					if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) == 0){
+						rpyInstructions.get(i).setRepayAmount(rpyInstructions.get(i).getRepayAmount().add(finServiceInstruction.getAmount()));
+						rpyInstFound = true;
+						break;
+					}
+					if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) < 0){
+						futureRpyInst = true;
+					}
+				}
+				
+				// If instruction not found then add with Disbursement amount
+				if(!rpyInstFound){
+					RepayInstruction ri = new RepayInstruction();
+					ri.setRepayDate(maturityDate);
+					ri.setRepayAmount(finServiceInstruction.getAmount());
+					ri.setRepaySchdMethod(CalculationConstants.SCHMTHD_PRI);
+					aFinScheduleData.getRepayInstructions().add(ri);
+				}
+
+				// If Schedule instruction not found then add with Zero amount
+				if(!futureRpyInst){
+					RepayInstruction ri = new RepayInstruction();
+					ri.setRepayDate(schDateAfterCurInst);
+					ri.setRepayAmount(BigDecimal.ZERO);
+					ri.setRepaySchdMethod(CalculationConstants.SCHMTHD_PRI);
+					aFinScheduleData.getRepayInstructions().add(ri);
+				}
+				
+				sortRepayInstructions(aFinScheduleData.getRepayInstructions());
+
+			}else{
+				finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+				finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+				finMain.setRecalFromDate(this.fromDate.getValue());
+				finServiceInstruction.setRecalFromDate(this.fromDate.getValue());
+			}
+
+			finMain.setEventFromDate(this.fromDate.getValue());
+			finServiceInstruction.setFromDate(this.fromDate.getValue());
+			finMain.setRecalToDate(maturityDate);
+			finServiceInstruction.setRecalToDate(maturityDate);
+		}
+		//TODO:Once Check
+		if(isDevFinance){
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 			finMain.setEventFromDate(this.fromDate.getValue());
 			finMain.setRecalFromDate(this.fromDate.getValue());
@@ -969,20 +1069,24 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void onChange$fromDate(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
+		boolean isOverDraft = false;
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinScheduleData().getFinanceMain().getProductCategory())){
+			isOverDraft = true;
+		}
 
 		if (this.fromDate.getValue() != null && DateUtility.compare(this.fromDate.getValue(),
 				getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0) {
 
 			this.cbSchdMthd.setDisabled(true);
-			fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
-					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
 
-			if ((StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceType().getFinCategory(),
-					FinanceConstants.PRODUCT_IJARAH)
-					|| StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceType().getFinCategory(),
-							FinanceConstants.PRODUCT_FWIJARAH))
-					&& getFinScheduleData().getFinanceType().isFinIsAlwMD()
-					&& getFinScheduleData().getFinanceMain().isAllowGrcPeriod()) {
+			if(isOverDraft){
+				fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,");
+			}else{
+				fillComboBox(this.cbSchdMthd,getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI_PFT,PRI,POSINT,");
+			}
+			if ((StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceType().getFinCategory(),FinanceConstants.PRODUCT_IJARAH) || 
+					StringUtils.equalsIgnoreCase(getFinScheduleData().getFinanceType().getFinCategory(), FinanceConstants.PRODUCT_FWIJARAH))
+					&& getFinScheduleData().getFinanceType().isFinIsAlwMD() && getFinScheduleData().getFinanceMain().isAllowGrcPeriod()) {
 
 				if (this.fromDate.getValue() != null) {
 					if (getFinScheduleData().getFinanceType().isFinIsAlwMD()) {
@@ -1014,9 +1118,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				//	fillSchDates(cbFromDate, getFinScheduleData());
 				//fillSchDates(cbTillDate, getFinScheduleData());
 			}
-		} else {
-			fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(),
-					PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+
+		}else{
+			if(isOverDraft){
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,");
+			}else{
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(), ",GRCNDPAY,PFTCAP,POSINT,");
+			}
 			this.cbSchdMthd.setDisabled(true);
 		}
 
@@ -1193,6 +1301,38 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		logger.debug("Leaving " + event.toString());
+	}
+	
+	/*
+	 * ________________________________________________________________________________________________________________
+	 * Method : sortRepayInstructions Description: Sort Repay Instructions
+	 * ________________________________________________________________________________________________________________
+	 */
+	private List<RepayInstruction> sortRepayInstructions(List<RepayInstruction> repayInstructions) {
+
+		if (repayInstructions != null && repayInstructions.size() > 0) {
+			Collections.sort(repayInstructions, new Comparator<RepayInstruction>() {
+				@Override
+				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
+					return DateUtility.compare(detail1.getRepayDate(), detail2.getRepayDate());
+				}
+			});
+		}
+		return repayInstructions;
+	}
+	
+	private List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
+
+		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
+			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
+				@Override
+				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
+					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+				}
+			});
+		}
+
+		return financeScheduleDetail;
 	}
 
 	// ******************************************************//

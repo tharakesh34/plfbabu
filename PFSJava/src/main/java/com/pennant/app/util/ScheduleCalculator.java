@@ -1561,7 +1561,10 @@ public class ScheduleCalculator {
 			finScheduleData = setOrgRpyInstructions(finScheduleData, null, BigDecimal.ZERO);
 		}
 
-		finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, reqSchdMethod);
+		if (!(finScheduleData.getFinanceType() != null
+				&& !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finScheduleData.getFinanceType().getFinGrcSchdMthd()))) {
+			finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, reqSchdMethod);
+		}
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 
 		finMain.setScheduleMaintained(true);
@@ -2777,7 +2780,8 @@ public class ScheduleCalculator {
 		boolean isAddNewInstruction = true;
 		int instructIndex = -1;
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-
+		if (!(finScheduleData.getFinanceType() != null
+				&& !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finScheduleData.getFinanceType().getFinGrcSchdMthd()))) {
 		// Find next date for instruction
 		if (DateUtility.compare(toDate, finMain.getMaturityDate()) >= 0) {
 			nextInstructDate = finMain.getMaturityDate();
@@ -2850,7 +2854,7 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData.setRepayInstructions(sortRepayInstructions(finScheduleData.getRepayInstructions()));
-
+		}
 		logger.debug("Leaving");
 		return finScheduleData;
 	}

@@ -154,15 +154,22 @@
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="finRepayMethod" width="200px" />
 													</hbox>
-													<label id="label_FinanceMainDialog_InterestServicingODLimit" value="${c:l('label_FinanceMainDialog_InterestServicingODLimit.value')}" />
 													<hbox>
-														<space spacing="2px" />
-														<checkbox id="pftServicingODLimit" checked="false" />
+														<label
+															id="label_FinanceMainDialog_InterestServicingODLimit"
+															value="${c:l('label_FinanceMainDialog_InterestServicingODLimit.value')}" visible="false" />
+														<label
+															id="label_FinanceMainDialog_ODPurpose"
+															value="${c:l('label_FinanceMainDialog_ODPurpose.value')}" />
 													</hbox>
-												</row>
-												<row>
-													<label id="label_FinanceMainDialog_ODPurpose" value="${c:l('label_FinanceMainDialog_ODPurpose.value')}" />
-													<extendedcombobox id="finPurpose" />
+													<hbox>
+														<space
+															spacing="2px" visible="false" />
+														<checkbox
+															id="pftServicingODLimit" checked="false" visible="false" />
+														<extendedcombobox
+															id="finPurpose" />
+													</hbox>
 												</row>
 												<row id="row_FinAssetValue" visible="false">
 												</row>
@@ -911,10 +918,20 @@
 														<space id="space_oDChargeCalOn" spacing="2px" sclass="mandatory" />
 														<combobox id="oDChargeCalOn" width="200px" readonly="true" />
 													</hbox>
-													<label id="label_FinanceMainDialog_ODChargeAmtOrPerc" value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
+													<hbox>
+														<label
+															id="label_FinanceMainDialog_ODChargeAmtOrPerc"
+															value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
+														<label
+															id="label_FinanceMainDialog_LPPRULE"
+															value="${c:l('label_FinanceMainDialog_LPPRULE.value')}"
+															visible="false" />
+													</hbox>
 													<hbox>
 														<space spacing="2px" id="space_oDChargeAmtOrPerc" sclass="mandatory" />
 														<decimalbox id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
+														<extendedcombobox
+															id="lPPRule" />
 													</hbox>
 												</row>
 												<row visible="true">

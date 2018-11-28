@@ -45,6 +45,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
@@ -62,7 +63,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, String idb,
 			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments,
-			BigDecimal pastduePftMargin, String roundingMode, int roundingTarget) {
+			BigDecimal pastduePftMargin, String roundingMode, FinanceMain financeMain) {
 		logger.debug(" Entering ");
 
 		String finReference = fod.getFinReference();
@@ -149,7 +150,7 @@ public class LatePayInterestService extends ServiceHelper {
 			BigDecimal penaltyRate = getPenaltyRate(finScheduleDetails, dateCur, lpiMargin);
 			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), idb,
 					penaltyRate);
-			penalty = CalculationUtil.roundAmount(penalty, roundingMode, roundingTarget);
+			penalty = CalculationUtil.roundAmount(penalty, roundingMode, financeMain.getRoundingTarget());
 
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
@@ -159,7 +160,7 @@ public class LatePayInterestService extends ServiceHelper {
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
 
-		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
+		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, financeMain.getRoundingTarget()));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 
 		//if the record added for calculation it should not be displayed in screen.

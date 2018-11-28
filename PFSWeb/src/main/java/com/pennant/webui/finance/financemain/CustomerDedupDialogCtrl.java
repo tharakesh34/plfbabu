@@ -17,13 +17,16 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Radiogroup;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -32,6 +35,7 @@ import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BranchService;
@@ -41,6 +45,7 @@ import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.CustomerTypeService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.customermasters.customer.CoreCustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -66,6 +71,12 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Textbox mobileNo;
 	protected Textbox aadhaarNo;
 	protected Textbox pANNo;
+	
+	protected Row row_nameMobile;
+	protected Label label_CustomerDedupDialog_MobileNo;
+	protected Row row_aadharPAN;
+	protected Label label_CustomerDedupDialog_AadharNo;
+	protected Listheader listheader_AadhaarNo;
 
 	protected transient FinanceType financeType;
 	private CustomerDetails customerDetails = null;
@@ -100,6 +111,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private String custCtgCode = "";
 	private Boolean isFromCustomer = false;
 	private Boolean isFromLoan = false;
+	private Boolean isInternalDedupLoan = false;
 
 	/**
 	 * default constructor.<br>
@@ -135,16 +147,16 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setCustomerDetails(befImage);
 		}
 
-		if (arguments.containsKey("parentWindow")) {
-			parentWindow = (Window) arguments.get("parentWindow");
-		}
-
 		if (arguments.containsKey("isFromCustomer")) {
 			isFromCustomer = true;
 		}
 
 		if (arguments.containsKey("isFromLoan")) {
 			isFromLoan = true;
+		}
+		
+		if (arguments.containsKey("isInternalDedupLoan")) {
+			isInternalDedupLoan = true;
 		}
 
 		if (arguments.containsKey("SelectFinanceTypeDialogCtrl")) {
@@ -234,15 +246,27 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private void doWriteBeanToComponents(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
-
+		
 		this.custName.setValue(customerDetails.getCustomer().getCustShrtName());
-		this.mobileNo.setValue(customerDetails.getCustomer().getPhoneNumber());
+		for (CustomerPhoneNumber custPhoneNo : customerDetails.getCustomerPhoneNumList()) {
+			if(StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, custPhoneNo.getPhoneTypeCode())){
+				this.mobileNo.setValue(custPhoneNo.getPhoneNumber());
+			}
+		}
 
 		if (StringUtils.trimToEmpty(customerDetails.getCustomer().getCustCRCPR()).length() == 10) {
 			this.pANNo.setValue(customerDetails.getCustomer().getCustCRCPR());
 		} else {
 			this.aadhaarNo
 					.setValue(PennantApplicationUtil.formatEIDNumber(customerDetails.getCustomer().getCustCRCPR()));
+		}
+		if(isInternalDedupLoan){
+			this.row_nameMobile.setVisible(true);
+			this.label_CustomerDedupDialog_MobileNo.setVisible(true);
+			this.mobileNo.setVisible(true);
+			this.label_CustomerDedupDialog_AadharNo.setVisible(false);
+			this.aadhaarNo.setVisible(false);
+			this.listheader_AadhaarNo.setVisible(false);
 		}
 
 		doFilllistbox(customerDetails.getCustomerDedupList());
@@ -263,7 +287,20 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void onClick$btnNewCustomer(Event event) throws Exception {
 		if (isFromLoan) {
 			selectFinanceTypeDialogCtrl.existingCust.setSelected(false);
-			selectFinanceTypeDialogCtrl.processCustomer(false);
+			if(isInternalDedupLoan){
+				String custCIF = null;
+				String panNumber = "";
+				panNumber = this.pANNo.getValue();
+				if (StringUtils.isNotBlank(panNumber)) {
+					custCIF = getCustomerDetailsService().getEIDNumberById(panNumber, "_View");
+
+					if(StringUtils.isNotEmpty(custCIF)){
+						MessageUtil.showMessage(Labels.getLabel("label_FinanceTypeDialog_PANExist", new String[]{custCIF}));
+						this.window_CustomerDedupDialog.onClose();
+						return;
+					}
+				}}
+			selectFinanceTypeDialogCtrl.processCustomer(false,false);
 		} else if (isFromCustomer) {
 			if (StringUtils.isEmpty(custCtgCode)) {
 				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
@@ -291,7 +328,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if ("RETAIL".equals(custCtgCode)) {
 				isRetail = true;
 			}
-			boolean flag = selectFinanceTypeDialogCtrl.processCustomer(isRetail);
+			boolean flag = selectFinanceTypeDialogCtrl.processCustomer(isRetail,false);
 			if (flag) {
 				closeDialog();
 			}
@@ -402,12 +439,26 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			lc.setParent(item);
 
 			lc = new Listcell(customerDedup.getMobileNumber());
+			if ( getCustomerDetails() != null && getCustomerDetails().getCustomerPhoneNumList() != null
+					&& !getCustomerDetails().getCustomerPhoneNumList().isEmpty()){
+				for (CustomerPhoneNumber customerPhoneNumber : getCustomerDetails().getCustomerPhoneNumList()) {
+					if(StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, customerPhoneNumber.getPhoneTypeCode())
+							&& StringUtils.equals(customerPhoneNumber.getPhoneNumber(),customerDedup.getMobileNumber()))
+						lc.setStyle("color:red");
+				}
+			}
 			lc.setParent(item);
 
 			lc = new Listcell(PennantApplicationUtil.formatEIDNumber(customerDedup.getAadharNumber()));
 			lc.setParent(item);
 
-			lc = new Listcell(customerDedup.getPanNumber());
+			lc = new Listcell(customerDedup.getCustCRCPR());
+			if (getCustomerDetails() != null
+					&& getCustomerDetails().getCustomer() != null
+					&& getCustomerDetails().getCustomer().getCustCRCPR() != null
+					&& getCustomerDetails().getCustomer().getCustCRCPR().equals(customerDedup.getCustCRCPR())) {
+				lc.setStyle("color:red");
+			}
 			lc.setParent(item);
 
 			item.setAttribute("id", customerDedup.getCustId());

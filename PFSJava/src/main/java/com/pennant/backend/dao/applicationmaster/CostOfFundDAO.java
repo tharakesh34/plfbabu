@@ -82,4 +82,6 @@ public interface CostOfFundDAO extends BasicCrudDao<CostOfFund> {
 	int getCostOfFundCountById(String cofCode, String currency, String type);
 
 	List<CostOfFund> getCostOfFundHistByType(String cofCode, String currency, Date cofEffDate);
+
+	void deleteByCOFCode(String string, TableType tableType);
 }

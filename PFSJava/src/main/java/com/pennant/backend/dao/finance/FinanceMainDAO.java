@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
 
@@ -297,5 +298,11 @@ public interface FinanceMainDAO {
 	List<String> getFinanceReferenceList(String type);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
+
+	int getActiveCount(String finType, long custID);
+
+	int getODLoanCount(String finType, long custID);
+
+	Map<String, Date> getUnDisbursedFinanceList();
 
 }

@@ -102,6 +102,9 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 	private String eligibilityMethod;
 	private boolean disbOnGrace = false;
+    private int activeLoansOnFinType = 0;
+	private int totalLoansOnFinType = 0;
+	
 
 	/*
 	 * private String custCIF; private String custSubSector = ""; private String custCOB = ""; private String
@@ -838,6 +841,20 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setDisbOnGrace(boolean disbOnGrace) {
 		this.disbOnGrace = disbOnGrace;
+	}
+
+	public int getActiveLoansOnFinType() {
+		return activeLoansOnFinType;
+	}
+	public void setActiveLoansOnFinType(int activeLoansOnFinType) {
+		this.activeLoansOnFinType = activeLoansOnFinType;
+	}
+
+	public int getTotalLoansOnFinType() {
+		return totalLoansOnFinType;
+	}
+	public void setTotalLoansOnFinType(int totalLoansOnFinType) {
+		this.totalLoansOnFinType = totalLoansOnFinType;
 	}
 
 }

@@ -109,7 +109,7 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		try {
 			accountType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.warn("Exception: Incorrect result size: expected 1, actual 0");
 			accountType = null;
 		}
 		logger.debug("Leaving");

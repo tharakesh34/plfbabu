@@ -355,6 +355,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			penaltyRate.setODGraceDays(0);
 			penaltyRate.setODAllowWaiver(false);
 			penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
+			penaltyRate.setODRuleCode("");
 		}
 		penaltyRate.setFinReference(financeMain.getFinReference());
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());

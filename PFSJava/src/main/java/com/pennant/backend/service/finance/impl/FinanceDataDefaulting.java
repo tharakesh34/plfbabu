@@ -886,6 +886,7 @@ public class FinanceDataDefaulting {
 			finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
 			finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 			finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+			finODPenaltyRate.setODRuleCode(financeType.getODRuleCode());
 			finScheduleData.setFinODPenaltyRate(finODPenaltyRate);
 		} else if (finScheduleData.getFinODPenaltyRate() != null && !financeType.isApplyODPenalty()) {
 			FinODPenaltyRate finODPenaltyRate = finScheduleData.getFinODPenaltyRate();

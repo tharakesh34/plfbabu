@@ -319,6 +319,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox finODTotPenaltyBal;
 	protected Label label_FinanceMainDialog_CollRef;
 	protected Space space_CollRef;
+	protected Row						row_SancationAmount;
+	protected Decimalbox				sanctionAmt;
+	protected Decimalbox				utilizedAmt;
+	protected Row						row_AvailableAmt;
+	protected Decimalbox				availableAmt;
+	
 
 	// Overdue Penalty Details
 	protected Checkbox applyODPenalty;
@@ -718,6 +724,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		}
+		this.sanctionAmt.setMaxlength(18);
+		this.sanctionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+		this.utilizedAmt.setMaxlength(18);
+		this.utilizedAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+		this.availableAmt.setMaxlength(18);
+		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
@@ -1134,7 +1146,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		fillComboBox(this.roundingMode, aFinanceMain.getCalRoundingMode(), PennantStaticListUtil.getRoundingModes(),
 				"");
-
+		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
+			this.row_SancationAmount.setVisible(false);
+			this.row_AvailableAmt.setVisible(false);
+		}
 		// FInance Summary Details
 		FinanceSummary financeSummary = getFinScheduleData().getFinanceSummary();
 		if (financeSummary != null) {
@@ -1171,6 +1186,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.setValue(PennantAppUtil.formateAmount(financeSummary.getFinODTotPenaltyBal(), formatter));
 
 			this.utilisedDef.setValue(financeSummary.getUtilizedDefCnt());
+			
+			this.sanctionAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(),formatter));
+			this.utilizedAmt.setValue(PennantAppUtil.formateAmount(financeSummary.getUnPaidPrincipal(),formatter));
+			this.availableAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue().subtract(financeSummary.getUnPaidPrincipal()),formatter));
 		}
 
 		// Contributor Header Details
@@ -1836,7 +1855,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.profitPaid.setReadonly(true);
 		this.priDueForPayment.setReadonly(true);
 		this.pftDueForPayment.setReadonly(true);
-
+		this.sanctionAmt.setReadonly(true);
+		this.utilizedAmt.setReadonly(true);
+		this.availableAmt.setReadonly(true);
 		//protected 
 		this.applyODPenalty.setDisabled(true);
 		;

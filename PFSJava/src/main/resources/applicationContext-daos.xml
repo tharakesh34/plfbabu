@@ -3390,6 +3390,7 @@
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<!-- Collateral Setup -->
 		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -4331,6 +4332,8 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -7854,6 +7857,8 @@
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
@@ -9138,6 +9143,8 @@
 	</bean>
 
 	<bean name="costOfFundCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.CostOfFundCodeServiceaImpl">
+		<property name="costOfFundDAO" ref="costOfFundDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="costOfFundCodeDAO" ref="costOfFundCodeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
@@ -9949,5 +9956,35 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
+<!-- HoldDisbursement -->
+	<bean id="holdDisbursementDAO"
+		class="com.pennant.backend.dao.finance.impl.HoldDisbursementDAOImpl"
+		parent="basicDao" />
+	<bean id="holdDisbursementService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="holdDisbursementServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
 
+	<bean name="holdDisbursementServiceTarget"
+		class="com.pennant.backend.service.finance.impl.HoldDisbursementServiceImpl">
+		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		
+	</bean>
 </beans>

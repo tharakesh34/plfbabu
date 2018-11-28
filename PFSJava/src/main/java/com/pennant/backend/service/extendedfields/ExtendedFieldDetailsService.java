@@ -1988,6 +1988,7 @@ public class ExtendedFieldDetailsService {
 					mapValues.remove("NextTaskId");
 					mapValues.remove("RecordType");
 					mapValues.remove("WorkflowId");
+					mapValues.get("storeId");
 					List<ExtendedFieldData> extendedFieldDataList = new ArrayList<ExtendedFieldData>();
 					for (Entry<String, Object> entry : mapValues.entrySet()) {
 						ExtendedFieldData exdFieldData = new ExtendedFieldData();

@@ -58,7 +58,8 @@ import javax.xml.bind.annotation.XmlType;
 		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
 		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
 		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
-		"finODDetail", "advPaymentAmount", "finStatus", "fullyDisb" })
+		"finODDetail", "advPaymentAmount", "finStatus", "fullyDisb", "limitBalance", "billedAmount", "unbilledAmount" })
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
 
@@ -208,6 +209,12 @@ public class FinanceSummary implements Serializable {
 	private List<FinODDetails> finODDetail;
 	@XmlElement
 	private boolean fullyDisb;
+	@XmlElement(name="limitBalance")
+	private BigDecimal sanctionAmt = BigDecimal.ZERO;
+	@XmlElement(name="billedAmount")
+	private BigDecimal utilizedAmt = BigDecimal.ZERO;
+	@XmlElement(name="unbilledAmount")
+	private BigDecimal availableAmt = BigDecimal.ZERO;
 
 	public FinanceSummary() {
 
@@ -903,5 +910,29 @@ public class FinanceSummary implements Serializable {
 
 	public void setUnbilledAmount(BigDecimal unbilledAmount) {
 		this.unbilledAmount = unbilledAmount;
+	}
+
+	public BigDecimal getSanctionAmt() {
+		return sanctionAmt;
+	}
+
+	public void setSanctionAmt(BigDecimal sanctionAmt) {
+		this.sanctionAmt = sanctionAmt;
+	}
+
+	public BigDecimal getUtilizedAmt() {
+		return utilizedAmt;
+	}
+
+	public void setUtilizedAmt(BigDecimal utilizedAmt) {
+		this.utilizedAmt = utilizedAmt;
+	}
+
+	public BigDecimal getAvailableAmt() {
+		return availableAmt;
+	}
+
+	public void setAvailableAmt(BigDecimal availableAmt) {
+		this.availableAmt = availableAmt;
 	}
 }

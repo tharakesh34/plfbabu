@@ -56,6 +56,44 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			throw e;
 		}
 	}
+	
+	/**
+	 * 
+	 * @param finServiceInstruction
+	 * @param type
+	 */
+	public void save(FinServiceInstruction finServiceInstruction, String type) {
+		logger.debug("Entering");
+
+		if (finServiceInstruction.getServiceSeqId() == Long.MIN_VALUE) {
+			finServiceInstruction.setServiceSeqId(getNextValue("SeqFinInstruction"));
+			logger.debug("get NextID:" + finServiceInstruction.getServiceSeqId());
+		}
+
+		StringBuilder insertSql = new StringBuilder("Insert Into FinServiceInstruction");
+		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate,");
+		insertSql.append(" PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,");
+		insertSql.append(" RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq,");
+		insertSql.append(" NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType,");
+		insertSql.append(" RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg )");
+		insertSql.append(" Values(:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate,");
+		insertSql.append(" :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate,");
+		insertSql.append(" :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq,");
+		insertSql.append(" :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount,");
+		insertSql.append(" :RecalType, :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks, :PftChg)");
+		logger.debug("selectSql: " + insertSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
+
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		}
+
+		logger.debug("Leaving");
+	}
 
 	@Override
 	public void deleteList(String finReference, String finEvent, String type) {

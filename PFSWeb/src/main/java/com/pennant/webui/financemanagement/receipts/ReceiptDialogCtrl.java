@@ -53,6 +53,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -158,6 +159,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.ReceiptTaxDetail;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -1699,10 +1701,16 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
 
+		boolean isOverDraft = false;
+		if (StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(),
+				FinanceConstants.PRODUCT_ODFACILITY)) {
+			isOverDraft = true;
+		}
+
 		if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
 				|| StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			readOnlyComponent(true, this.effScheduleMethod);
-			this.effScheduleMethod.setSelectedIndex(0);
+			this.effScheduleMethod.setValue("");
 
 			if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 					&& this.allocationMethod.getSelectedIndex() == 0) {
@@ -1710,63 +1718,72 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						PennantStaticListUtil.getAllocationMethods(), "");
 			}
 		} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			readOnlyComponent(true, this.excessAdjustTo);
-			this.excessAdjustTo.setSelectedIndex(0);
-			if (isUserAction) {
-				String dftEPMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
 
-				List<ValueLabel> epyMethodList = new ArrayList<>();
-				FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-				if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
-					String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
-					if (epMthds.length > 0) {
-						List<String> list = Arrays.asList(epMthds);
-						for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
-							if (list.contains(epMthd.getValue().trim())) {
-								if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())) {
-									if (financeMain.isStepFinance() && financeMain.isAllowGrcPeriod()
-											&& StringUtils.equals(financeMain.getStepType(),
-													FinanceConstants.STEPTYPE_PRIBAL)
-											&& DateUtility.compare(DateUtility.getAppDate(),
-													financeMain.getGrcPeriodEndDate()) <= 0
-											&& (StringUtils.equals(financeMain.getScheduleMethod(),
-													CalculationConstants.SCHMTHD_PRI)
-													|| StringUtils.equals(financeMain.getScheduleMethod(),
-															CalculationConstants.SCHMTHD_PRI_PFT))) {
-										epyMethodList.add(epMthd);
-										dftEPMethod = epMthd.getValue().trim();
-									}
-								} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD,
-										epMthd.getValue().trim())) {
-									if (StringUtils.equals(financeMain.getScheduleMethod(),
-											CalculationConstants.SCHMTHD_PRI_PFT)) {
-										if ((this.receivedDate.getValue() == null
+			if (!isOverDraft || !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
+					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd())) {
+				readOnlyComponent(true, this.excessAdjustTo);
+				this.excessAdjustTo.setSelectedIndex(0);
+			}
+
+			if (isOverDraft) {
+				this.effScheduleMethod.setDisabled(true);
+			} else {
+
+				if (isUserAction) {
+					String dftEPMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
+
+					List<ValueLabel> epyMethodList = new ArrayList<>();
+					FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+					if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
+						String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
+						if (epMthds.length > 0) {
+							List<String> list = Arrays.asList(epMthds);
+							for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
+								if (list.contains(epMthd.getValue().trim())) {
+									if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS,
+											epMthd.getValue().trim())) {
+										if (financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && StringUtils
+												.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
 												&& DateUtility.compare(DateUtility.getAppDate(),
-														financeMain.getGrcPeriodEndDate()) > 0)
-												|| DateUtility.compare(this.receivedDate.getValue(),
-														financeMain.getGrcPeriodEndDate()) > 0) {
-											if (financeType.isDeveloperFinance()) {
-												epyMethodList.clear();
-												epyMethodList.add(epMthd);
-												break;
-											} else {
-												epyMethodList.add(epMthd);
+														financeMain.getGrcPeriodEndDate()) <= 0
+												&& (StringUtils.equals(financeMain.getScheduleMethod(),
+														CalculationConstants.SCHMTHD_PRI)
+														|| StringUtils.equals(financeMain.getScheduleMethod(),
+																CalculationConstants.SCHMTHD_PRI_PFT))) {
+											epyMethodList.add(epMthd);
+											dftEPMethod = epMthd.getValue().trim();
+										}
+									} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD,
+											epMthd.getValue().trim())) {
+										if (StringUtils.equals(financeMain.getScheduleMethod(),
+												CalculationConstants.SCHMTHD_PRI_PFT)) {
+											if ((this.receivedDate.getValue() == null
+													&& DateUtility.compare(DateUtility.getAppDate(),
+															financeMain.getGrcPeriodEndDate()) > 0)
+													|| DateUtility.compare(this.receivedDate.getValue(),
+															financeMain.getGrcPeriodEndDate()) > 0) {
+												if (financeType.isDeveloperFinance()) {
+													epyMethodList.clear();
+													epyMethodList.add(epMthd);
+													break;
+												} else {
+													epyMethodList.add(epMthd);
+												}
 											}
+										} else {
+											epyMethodList.add(epMthd);
 										}
 									}
-								} else {
-									epyMethodList.add(epMthd);
 								}
 							}
 						}
+
+						fillComboBox(this.effScheduleMethod, dftEPMethod, epyMethodList, "");
 					}
 				}
-
-				fillComboBox(this.effScheduleMethod, dftEPMethod, epyMethodList, "");
 			}
 		}
-
 		logger.debug("Leaving");
 	}
 
@@ -2129,9 +2146,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		//Schedule Recalculation Depends on Earlypay Effective Schedule method
-		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		financeDetail.setFinScheduleData(
 				getFinanceDetailService().getFinSchDataForReceipt(this.finReference.getValue(), "_AView"));
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinanceMain aFinanceMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -2139,7 +2156,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Setting Effective Recalculation Schedule Method
 		String method = null;
 		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			method = getComboboxValue(this.effScheduleMethod);
+			if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+				if(StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
+					method = CalculationConstants.EARLYPAY_ADJMUR;
+				}else{
+					method = CalculationConstants.EARLYPAY_RECRPY;
+				}
+			}else{
+				method = getComboboxValue(this.effScheduleMethod);
+			}
 		} else if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			method = CalculationConstants.EARLYPAY_ADJMUR;
 		}
@@ -2260,6 +2285,78 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				finScheduleData.setStepPolicyDetails(getFinanceDetailService()
 						.getFinStepPolicyDetails(finScheduleData.getFinReference(), "", false));
 			}
+			
+			//  Finance Repay Instruction Changes
+			if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+				if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd())){
+
+					Date dateValueDate = DateUtility.getAppDate();
+					if(this.receivedDate.getValue() != null){
+						dateValueDate = this.receivedDate.getValue();
+					}
+					int frqDay = Integer.parseInt(finScheduleData.getFinanceMain().getRepayFrq().substring(3));
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(this.receivedDate.getValue());
+					calendar.set(Calendar.DAY_OF_MONTH, frqDay);
+					if(DateUtility.compare(this.receivedDate.getValue(), calendar.getTime()) > 0){
+						calendar.add(Calendar.MONTH, 1);
+					}
+					
+					Date maxRepayAlwDate = DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),PennantConstants.dateFormat));
+					
+					// Repay Instructions Setting
+					boolean rpyInstFound = false;
+					BigDecimal totPaidAmount = receiptData.getRepayMain().getEarlyPayAmount();
+					List<RepayInstruction> rpyInstructions = finScheduleData.getRepayInstructions();
+					for (int i = 0; i < rpyInstructions.size(); i++) {
+						if(DateUtility.compare(dateValueDate, rpyInstructions.get(i).getRepayDate()) == 0){
+							rpyInstFound = true;
+							break;
+						}else if(DateUtility.compare(dateValueDate, rpyInstructions.get(i).getRepayDate()) < 0){
+							break;
+						}
+					}
+					
+					// If instruction not found then add with Disbursement amount
+					if(!rpyInstFound){
+						RepayInstruction ri = new RepayInstruction();
+						ri.setRepayDate(dateValueDate);
+						ri.setRepayAmount(BigDecimal.ZERO);
+						ri.setRepaySchdMethod(CalculationConstants.SCHMTHD_PRI);
+						finScheduleData.getRepayInstructions().add(ri);
+						sortRepayInstructions(finScheduleData.getRepayInstructions());
+						rpyInstructions = finScheduleData.getRepayInstructions();
+					}
+					
+					// Reset Repayment Instructions
+					boolean zeroAmtOnInstFrqDate = false;
+					for (RepayInstruction rpyInst : rpyInstructions) {
+
+						if(totPaidAmount.compareTo(BigDecimal.ZERO) == 0){
+							break;
+						}
+
+						if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) > 0){
+							if(zeroAmtOnInstFrqDate && rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+								rpyInstructions.remove(rpyInst);
+							}
+							break;
+						}
+
+						if(rpyInst.getRepayDate().compareTo(dateValueDate) == 0){
+							rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
+						}else if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) == 0){
+							rpyInst.setRepayAmount(rpyInst.getRepayAmount().subtract(totPaidAmount));
+							if(rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+								zeroAmtOnInstFrqDate = true;
+							}
+						}
+					}
+
+					finScheduleData.setRepayInstructions(rpyInstructions);
+					sortRepayInstructions(finScheduleData.getRepayInstructions());
+				}
+			}
 
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData,
@@ -2269,11 +2366,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Finding Last maturity date after recalculation.
 			List<FinanceScheduleDetail> schList = sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
 			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
-			for (int i = schList.size() - 1; i >= 0; i--) {
-				if (schList.get(i).getClosingBalance().compareTo(BigDecimal.ZERO) > 0) {
-					break;
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
+					finScheduleData.getFinanceMain().getScheduleMethod())) {
+				for (int i = schList.size()-1; i >= 0; i--) {
+					if(schList.get(i).getClosingBalance().compareTo(BigDecimal.ZERO) > 0){
+						break;
+					}
+					actualMaturity = schList.get(i).getSchDate();
 				}
-				actualMaturity = schList.get(i).getSchDate();
 			}
 
 			// Validation against Future Disbursements, if Closing balance is becoming zero before future disbursement date
@@ -3485,11 +3585,18 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
-		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
-				",FeePayment,");
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-				"");
-
+		boolean isOverDraft = false;
+		if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
+				FinanceConstants.PRODUCT_ODFACILITY)){
+			isOverDraft = true;
+		}
+		if(!isOverDraft){
+			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
+		}else{
+			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,EarlySettlement,");
+		}
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+		
 		if (financeType.isDeveloperFinance()) {
 			fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
 		} else {
@@ -3517,42 +3624,43 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-
-		List<ValueLabel> epyMethodList = new ArrayList<>();
-		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
-			String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
-			if (epMthds.length > 0) {
-				List<String> list = Arrays.asList(epMthds);
-				for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
-					if (list.contains(epMthd.getValue().trim())) {
-						if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())) {
-							if (financeMain.isStepFinance() && financeMain.isAllowGrcPeriod()
-									&& StringUtils.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
-									&& DateUtility.compare(DateUtility.getAppDate(),
-											financeMain.getGrcPeriodEndDate()) <= 0
-									&& (StringUtils.equals(financeMain.getScheduleMethod(),
-											CalculationConstants.SCHMTHD_PRI)
-											|| StringUtils.equals(financeMain.getScheduleMethod(),
-													CalculationConstants.SCHMTHD_PRI_PFT))) {
-								epyMethodList.add(epMthd);
-							}
-						} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, epMthd.getValue().trim())) {
-							if (StringUtils.equals(financeMain.getScheduleMethod(),
-									CalculationConstants.SCHMTHD_PRI_PFT)) {
-								if ((valueDate == null && DateUtility.compare(DateUtility.getAppDate(),
-										financeMain.getGrcPeriodEndDate()) > 0)
-										|| DateUtility.compare(valueDate, financeMain.getGrcPeriodEndDate()) > 0) {
-									if (financeType.isDeveloperFinance()) {
-										epyMethodList.clear();
-										epyMethodList.add(epMthd);
-										break;
-									} else {
-										epyMethodList.add(epMthd);
-									}
+		
+		if(isOverDraft){
+			this.effScheduleMethod.setDisabled(true);
+		}else{
+			List<ValueLabel> epyMethodList = new ArrayList<>();
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
+				String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
+				if (epMthds.length > 0) {
+					List<String> list = Arrays.asList(epMthds);
+					for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
+						if (list.contains(epMthd.getValue().trim())) {
+							if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
+								if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+										StringUtils.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL) &&
+										DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) <= 0 &&
+										(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+												StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
+									epyMethodList.add(epMthd);
 								}
+							}else if(StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, epMthd.getValue().trim())){
+								if(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)){
+									if((valueDate == null && DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) > 0) || 
+											DateUtility.compare(valueDate, financeMain.getGrcPeriodEndDate()) > 0){
+										if (financeType.isDeveloperFinance()) {
+											epyMethodList.clear();
+											epyMethodList.add(epMthd);
+											break;
+										}else{
+											epyMethodList.add(epMthd);
+										}
+									}
 
+								}
+							}else{
+								epyMethodList.add(epMthd);
 							}
 
 						} else {
@@ -3561,9 +3669,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-		}
 
-		fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), epyMethodList, "");
+			fillComboBox(this.effScheduleMethod, header.getEffectSchdMethod(), epyMethodList, "");
+		}
 		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
 		fillComboBox(this.receiptModeStatus, header.getReceiptModeStatus(),
 				PennantStaticListUtil.getReceiptModeStatus(), "");
@@ -4362,55 +4470,53 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 				}
 			} else if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
-				if (this.effScheduleMethod.getSelectedIndex() == 0) {
+				if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
+						FinanceConstants.PRODUCT_ODFACILITY)){
+					this.effScheduleMethod.setDisabled(true);
+					fillComboBox(this.effScheduleMethod, CalculationConstants.EARLYPAY_ADJMUR, PennantStaticListUtil.getEarlyPayEffectOn(), "");
+				}else{
+					readOnlyComponent(isReadOnly("ReceiptDialog_effScheduleMethod"), this.effScheduleMethod);
+					if(this.effScheduleMethod.getSelectedIndex() == 0){
 
-					Date valueDate = DateUtility.getAppDate();
-					if (this.receivedDate.getValue() != null) {
-						valueDate = this.receivedDate.getValue();
-					}
-					String dftEPMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
+						Date valueDate = DateUtility.getAppDate();
+						if(this.receivedDate.getValue() != null){
+							valueDate = this.receivedDate.getValue();
+						}
+						String dftEPMethod = getFinanceDetail().getFinScheduleData().getFinanceType().getFinScheduleOn();
 
-					List<ValueLabel> epyMethodList = new ArrayList<>();
-					FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-					if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
-						String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
-						if (epMthds.length > 0) {
-							List<String> list = Arrays.asList(epMthds);
-							for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
-								if (list.contains(epMthd.getValue().trim())) {
-									if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS,
-											epMthd.getValue().trim())) {
-										if (financeMain.isStepFinance() && financeMain.isAllowGrcPeriod()
-												&& StringUtils.equals(financeMain.getStepType(),
-														FinanceConstants.STEPTYPE_PRIBAL)
-												&& DateUtility.compare(valueDate,
-														financeMain.getGrcPeriodEndDate()) <= 0
-												&& (StringUtils.equals(financeMain.getScheduleMethod(),
-														CalculationConstants.SCHMTHD_PRI)
-														|| StringUtils.equals(financeMain.getScheduleMethod(),
-																CalculationConstants.SCHMTHD_PRI_PFT))) {
-											epyMethodList.add(epMthd);
-											dftEPMethod = epMthd.getValue().trim();
-										}
-									} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD,
-											epMthd.getValue().trim())) {
-										if (StringUtils.equals(financeMain.getScheduleMethod(),
-												CalculationConstants.SCHMTHD_PRI_PFT)) {
-											if ((this.receivedDate.getValue() == null
-													&& DateUtility.compare(DateUtility.getAppDate(),
-															financeMain.getGrcPeriodEndDate()) > 0)
-													|| DateUtility.compare(this.receivedDate.getValue(),
-															financeMain.getGrcPeriodEndDate()) > 0) {
-												if (financeType.isDeveloperFinance()) {
-													epyMethodList.clear();
-													epyMethodList.add(epMthd);
-													break;
-												} else {
-													epyMethodList.add(epMthd);
+						List<ValueLabel> epyMethodList = new ArrayList<>();
+						FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+						FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+						if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
+							String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
+							if (epMthds.length > 0) {
+								List<String> list = Arrays.asList(epMthds);
+								for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
+									if (list.contains(epMthd.getValue().trim())) {
+										if(StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())){
+											if(financeMain.isStepFinance() && financeMain.isAllowGrcPeriod() && 
+													StringUtils.equals(financeMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL) &&
+													DateUtility.compare(valueDate, financeMain.getGrcPeriodEndDate()) <= 0 &&
+													(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI) ||
+															StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT))){
+												epyMethodList.add(epMthd);
+												dftEPMethod = epMthd.getValue().trim();
+											}
+										}else if(StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, epMthd.getValue().trim())){
+											if(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)){
+												if((this.receivedDate.getValue() == null && DateUtility.compare(DateUtility.getAppDate(), financeMain.getGrcPeriodEndDate()) > 0) || 
+														DateUtility.compare(this.receivedDate.getValue(), financeMain.getGrcPeriodEndDate()) > 0){
+													if (financeType.isDeveloperFinance()) {
+														epyMethodList.clear();
+														epyMethodList.add(epMthd);
+														break;
+													}else{
+														epyMethodList.add(epMthd);
+													}
 												}
 											}
+										}else{
+											epyMethodList.add(epMthd);
 										}
 									} else {
 										epyMethodList.add(epMthd);
@@ -4418,9 +4524,44 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								}
 							}
 						}
+
+						fillComboBox(this.effScheduleMethod, dftEPMethod, epyMethodList, "");
+					}
+				}
+				
+				// Check the max Schedule payment amount
+				if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
+						FinanceConstants.PRODUCT_ODFACILITY)){
+					List<FinanceScheduleDetail> scheduleList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+					BigDecimal closingBal = null;
+					for (int i = 0; i < scheduleList.size(); i++) {
+
+						if(closingBal == null){
+							closingBal = BigDecimal.ZERO;
+						}
+						FinanceScheduleDetail curSchd = scheduleList.get(i);
+						if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) >= 0) {
+							closingBal = curSchd.getClosingBalance();
+							continue;
+						}
+						if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
+							closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
+							break;
+						}
 					}
 
-					fillComboBox(this.effScheduleMethod, dftEPMethod, epyMethodList, "");
+
+					if (closingBal != null) {
+						if (remBal.compareTo(closingBal) > 0) {
+							readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
+							if(isUserAction){
+								fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS, PennantStaticListUtil.getExcessAdjustmentTypes(), "");
+							}
+						}else {
+							readOnlyComponent(true, this.excessAdjustTo);
+							this.excessAdjustTo.setSelectedIndex(0);
+						}
+					} 
 				}
 			} else if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
@@ -4435,7 +4576,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.effScheduleMethod);
 			if (isUserAction) {
 				this.excessAdjustTo.setSelectedIndex(0);
-				this.effScheduleMethod.setSelectedIndex(0);
+				if(!StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
+						FinanceConstants.PRODUCT_ODFACILITY)){
+					this.effScheduleMethod.setSelectedIndex(0);
+				}
 			}
 		}
 
@@ -5293,7 +5437,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		try {
-			header.setEffectSchdMethod(getComboboxValue(effScheduleMethod));
+			if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
+					FinanceConstants.PRODUCT_ODFACILITY)){
+				header.setEffectSchdMethod(PennantConstants.List_Select);
+			}else{
+				header.setEffectSchdMethod(getComboboxValue(effScheduleMethod));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -7139,6 +7288,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		return repayScheduleDetails;
 	}
+	
+	/*
+	 * ________________________________________________________________________________________________________________
+	 * Method : sortRepayInstructions Description: Sort Repay Instructions
+	 * ________________________________________________________________________________________________________________
+	 */
+	private List<RepayInstruction> sortRepayInstructions(List<RepayInstruction> repayInstructions) {
+
+		if (repayInstructions != null && repayInstructions.size() > 0) {
+			Collections.sort(repayInstructions, new Comparator<RepayInstruction>() {
+				@Override
+				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
+					return DateUtility.compare(detail1.getRepayDate(), detail2.getRepayDate());
+				}
+			});
+		}
+		return repayInstructions;
+	}
 
 	/**
 	 * Method to validate data
@@ -7155,6 +7322,27 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			doClearMessage();
 			doSetValidation();
 			doWriteComponentsToBean();
+		}
+		
+		boolean isOverDraft = false;
+		if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
+				FinanceConstants.PRODUCT_ODFACILITY)){
+			isOverDraft = true;
+		}
+		
+		// No excess amount validation on partial Settlement
+		BigDecimal priDuePaid = BigDecimal.ZERO;
+		BigDecimal pftAdjusted = BigDecimal.ZERO;
+		BigDecimal pftWaivedAdjusted = BigDecimal.ZERO;
+		for (ReceiptAllocationDetail allocation : getReceiptHeader().getAllocations()) {
+			if (StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+				priDuePaid = allocation.getPaidAmount();
+			}
+			if (StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+				pftAdjusted = allocation.getPaidAmount();
+					pftAdjusted = pftAdjusted.add(allocation.getWaivedAmount());
+					pftWaivedAdjusted = allocation.getWaivedAmount();
+			}
 		}
 
 		Date receiptValueDate = DateUtility.getAppDate();
@@ -7292,18 +7480,25 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 				}
 
-				if (!isValidPPDate) {
+				if(!isValidPPDate){
 					MessageUtil.showError(Labels.getLabel("RECEIPT_INVALID_VALUEDATE"));
 					return false;
 				}
 
 				if (closingBal != null) {
-					if (remBal.compareTo(closingBal) >= 0) {
-						MessageUtil.showError(Labels.getLabel("FIELD_IS_LESSER",
-								new String[] {
-										Labels.getLabel("label_ReceiptDialog_Valid_TotalPartialSettlementAmount"),
-										PennantApplicationUtil.amountFormate(closingBal, formatter) }));
-						return false;
+
+					if ((remBal.compareTo(closingBal) >= 0 && !isOverDraft) || (remBal.compareTo(closingBal) > 0 && isOverDraft)) {
+						if(!isOverDraft){
+							MessageUtil.showError(Labels.getLabel("FIELD_IS_LESSER",
+									new String[] { Labels.getLabel("label_ReceiptDialog_Valid_TotalPartialSettlementAmount"),
+											PennantApplicationUtil.amountFormate(closingBal, formatter) }));
+							return false;
+						}else{
+							MessageUtil.showError(Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
+									new String[] { Labels.getLabel("label_ReceiptDialog_Valid_TotalPartialSettlementAmount"),
+											PennantApplicationUtil.amountFormate(closingBal, formatter) }));
+							return false;
+						}
 					}
 				}
 			}

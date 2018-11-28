@@ -88,12 +88,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private boolean islock = false;
 
 	protected ProcessExecution beforeEOD;
+	protected ProcessExecution loanCancel;
 	protected ProcessExecution prepareCustomerQueue;
 
 	protected ProcessExecution masterStep;
 	protected ProcessExecution microEOD;
 	protected ProcessExecution microEODMonitor;
-
 	protected ProcessExecution snapShotPreparation;
 	protected ProcessExecution accountsUpdate;
 	protected ProcessExecution dataExtract;
@@ -125,6 +125,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	public enum PFSBatchProcessess {
 		beforeEOD,
+		loanCancel,
 		prepareCustomerQueue,
 		masterStep,
 		microEOD,
@@ -528,6 +529,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 				renderDetials(this.beforeEOD, status);
 				break;
 
+			case loanCancel:
+				renderDetials(this.loanCancel, status);
+				break;
+				
 			case prepareCustomerQueue:
 				renderDetials(this.prepareCustomerQueue, status);
 				break;
@@ -639,6 +644,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private void resetPanels() {
 
 		clearChilds(beforeEOD);
+		clearChilds(loanCancel);
 		clearChilds(prepareCustomerQueue);
 		clearChilds(masterStep);
 		clearChilds(microEOD);

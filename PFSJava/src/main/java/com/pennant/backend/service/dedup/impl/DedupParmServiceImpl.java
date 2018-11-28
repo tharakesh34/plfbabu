@@ -52,6 +52,7 @@ import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.postgresql.util.PGobject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -88,7 +89,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.external.CustomerDedupService;
 
@@ -1153,9 +1156,24 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		String ruleString = "";
 		try {
 			for (int i = 0; i < queryFieldArray.length; i++) {
-				for (String dbRuleField : fieldNameList) {
-					if (queryFieldArray[i].equalsIgnoreCase(dbRuleField)) {
-						value = value + queryFieldArray[i].trim() + PennantConstants.DELIMITER_COMMA;
+				if(App.DATABASE == Database.POSTGRES){
+					for (Object dbRuleField : fieldNameList) {
+						if (dbRuleField instanceof PGobject) {
+							PGobject pGobject = (PGobject) dbRuleField;
+							if (queryFieldArray[i].equalsIgnoreCase(pGobject.getValue())) {
+								value = value + queryFieldArray[i].trim() + PennantConstants.DELIMITER_COMMA;
+							}
+						} else if (dbRuleField instanceof String) {
+							if (queryFieldArray[i].equalsIgnoreCase(dbRuleField.toString())) {
+								value = value + queryFieldArray[i].trim() + PennantConstants.DELIMITER_COMMA;
+							}
+						}
+					}
+				} else {
+					for (String dbRuleField : fieldNameList) {
+						if (queryFieldArray[i].equalsIgnoreCase(dbRuleField)) {
+							value = value + queryFieldArray[i].trim() + PennantConstants.DELIMITER_COMMA;
+						}
 					}
 				}
 			}

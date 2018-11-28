@@ -58,10 +58,16 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.service.finance.HoldDisbursementService;
 import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.webui.finance.holddisbursement.HoldDisbursementListCtrl;
 import com.pennant.webui.finance.manualadvise.ManualAdviseListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -81,7 +87,10 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	private ManualAdvise manualAdvise = null;
 	private ManualAdviseListCtrl manualAdviseListCtrl;
 	private transient ManualAdviseService manualAdviseService;
-
+	private HoldDisbursement holdDisbursement;
+	private HoldDisbursementListCtrl holdDisbursementListCtrl;
+	private String moduleDefiner = "";
+	private HoldDisbursementService holdDisbursementService;
 	/**
 	 * default constructor.<br>
 	 */
@@ -107,10 +116,20 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		logger.debug("Entering");
 		setPageComponents(window_SelectFinanceReferenceDialog);
 		try {
-			this.manualAdvise = (ManualAdvise) arguments.get("manualAdvise");
-			this.manualAdviseListCtrl = (ManualAdviseListCtrl) arguments.get("manualAdviseListCtrl");
-			if (this.manualAdvise == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
+			if (arguments.get("moduleDefiner") != null && arguments.get("moduleDefiner").equals("holdDisbursement")) {
+				moduleDefiner = arguments.get("moduleDefiner").toString();
+				this.holdDisbursement = (HoldDisbursement) arguments.get("holdDisbursement");
+				this.holdDisbursementListCtrl = (HoldDisbursementListCtrl) arguments.get("holdDisbursementListCtrl");
+				if (this.holdDisbursement == null) {
+					throw new Exception(Labels.getLabel("error.unhandled"));
+				}
+			} else {
+				this.manualAdvise = (ManualAdvise) arguments.get("manualAdvise");
+				this.manualAdviseListCtrl = (ManualAdviseListCtrl) arguments.get("manualAdviseListCtrl");
+
+				if (this.manualAdvise == null) {
+					throw new Exception(Labels.getLabel("error.unhandled"));
+				}
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
@@ -146,7 +165,18 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
+		if (moduleDefiner.equals("holdDisbursement")) {
+			Filter[] filtersFin = new Filter[2];
+			filtersFin[0] = new Filter("finisactive", true, Filter.OP_EQUAL);
+			if(App.DATABASE == Database.POSTGRES){
+				filtersFin[1] = new Filter("CLOSINGSTATUS", "", Filter.OP_NULL);
+			}else{
+				filtersFin[1] = new Filter("CLOSINGSTATUS", null, Filter.OP_EQUAL);
 
+			}
+
+			this.finReference.setFilters(filtersFin);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -162,20 +192,38 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (!doFieldValidation()) {
 			return;
 		}
-		FinanceMain financeMain = manualAdviseService
-				.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
-
 		HashMap<String, Object> arg = new HashMap<String, Object>();
-		arg.put("manualAdvise", manualAdvise);
-		arg.put("manualAdviseListCtrl", manualAdviseListCtrl);
-		arg.put("financeMain", financeMain);
-		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul", null,
-					arg);
-			this.window_SelectFinanceReferenceDialog.onClose();
-		} catch (Exception e) {
-			logger.error("Exception:", e);
-			MessageUtil.showError(e);
+		if (StringUtils.equals(moduleDefiner, "holdDisbursement")) {
+			arg.put("holdDisbursement", holdDisbursement);
+			arg.put("holdDisbursementListCtrl", holdDisbursementListCtrl);
+			//arg.put("financeMain", financeMain);
+			try {
+				//FinanceMain financeMain = (FinanceMain) this.finReference.getObject();
+				//holdDisbursement.setDisbursedAmount(financeMain.getFinCurrAssetValue());
+				//holdDisbursement.setTotalLoanAmt(financeMain.getFinAssetValue());
+				holdDisbursement.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
+				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul",
+						null, arg);
+				this.window_SelectFinanceReferenceDialog.onClose();
+			} catch (Exception e) {
+				logger.error("Exception:", e);
+				MessageUtil.showError(e);
+			}
+		} else {
+			FinanceMain financeMain = manualAdviseService
+					.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
+
+			arg.put("manualAdvise", manualAdvise);
+			arg.put("manualAdviseListCtrl", manualAdviseListCtrl);
+			arg.put("financeMain", financeMain);
+			try {
+				Executions.createComponents("/WEB-INF/pages/FinanceManagement/ManualAdvise/ManualAdviseDialog.zul",
+						null, arg);
+				this.window_SelectFinanceReferenceDialog.onClose();
+			} catch (Exception e) {
+				logger.error("Exception:", e);
+				MessageUtil.showError(e);
+			}
 		}
 
 		logger.debug("Leaving " + event.toString());
@@ -196,6 +244,12 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			if (StringUtils.trimToNull(this.finReference.getValue()) == null) {
 				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY",
 						new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
+			}
+			if (moduleDefiner.equals("holdDisbursement")) {
+				if (getHoldDisbursementService().isFinServiceInstructionExist(this.finReference.getValue(), "_temp",
+						"AddDisbursement")) {
+					throw new WrongValueException(this.finReference, "Not Allowed for Hold Disbursement");
+				}
 			}
 		} catch (WrongValueException e) {
 			wve.add(e);
@@ -261,4 +315,14 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
 		this.manualAdviseService = manualAdviseService;
 	}
+
+	public HoldDisbursementService getHoldDisbursementService() {
+		return holdDisbursementService;
+	}
+
+	public void setHoldDisbursementService(HoldDisbursementService holdDisbursementService) {
+		this.holdDisbursementService = holdDisbursementService;
+	}
+
+
 }

@@ -48,8 +48,10 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CostOfFundCodeDAO;
+import com.pennant.backend.dao.applicationmaster.CostOfFundDAO;
 import com.pennant.backend.dao.applicationmaster.impl.CostOfFundCodeDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.applicationmaster.CostOfFundCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -70,6 +72,8 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private CostOfFundCodeDAO costOfFundCodeDAO;
+	private FinanceTypeDAO financeTypeDAO;
+	private CostOfFundDAO costOfFundDAO;
 
 	public CostOfFundCodeServiceaImpl() {
 		super();
@@ -159,9 +163,16 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 		}
 
 		CostOfFundCode costOfFundCode = (CostOfFundCode) auditHeader.getAuditDetail().getModelData();
+
+		// delete from CostOfFunds
+		getCostOfFundDAO().deleteByCOFCode(costOfFundCode.getCofCode(), TableType.TEMP_TAB);
+		getCostOfFundDAO().deleteByCOFCode(costOfFundCode.getCofCode(), TableType.MAIN_TAB);
+
+		// delete from CostOfFundCodes
 		getCostOfFundCodeDAO().delete(costOfFundCode, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -228,7 +239,14 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 		}
 
 		if (costOfFundCode.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+
 			tranType = PennantConstants.TRAN_DEL;
+
+			// delete from CostOfFund Rates (Table : CostOfFunds)
+			getCostOfFundDAO().deleteByCOFCode(costOfFundCode.getCofCode(), TableType.TEMP_TAB);
+			getCostOfFundDAO().deleteByCOFCode(costOfFundCode.getCofCode(), TableType.MAIN_TAB);
+
+			// delete from CostOfFundCodes
 			getCostOfFundCodeDAO().delete(costOfFundCode, TableType.MAIN_TAB);
 
 		} else {
@@ -332,11 +350,13 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
+		
+		// Dependency Validation : checking COF Code in RMTFinanceTypes
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, costOfFundCode.getRecordType())) {
-			boolean workflowExists = getCostOfFundCodeDAO().isIdExists(costOfFundCode.getCofCode());
-			if (workflowExists) {
+			boolean isExists = getFinanceTypeDAO().isCostOfFundsExist(costOfFundCode.getCofCode(), "_View");
+			if (isExists) {
 				String[] parameters = new String[1];
-				parameters[0] = PennantJavaUtil.getLabel("label_CofCode") + ": " + costOfFundCode.getCofCode();
+				parameters[0] = PennantJavaUtil.getLabel("label_CofCode") + " : " + costOfFundCode.getCofCode();
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
 		}
@@ -345,5 +365,21 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public CostOfFundDAO getCostOfFundDAO() {
+		return costOfFundDAO;
+	}
+
+	public void setCostOfFundDAO(CostOfFundDAO costOfFundDAO) {
+		this.costOfFundDAO = costOfFundDAO;
 	}
 }

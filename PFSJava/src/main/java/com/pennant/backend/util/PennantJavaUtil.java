@@ -250,6 +250,7 @@ import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GuarantorDetail;
+import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -1505,6 +1506,12 @@ public class PennantJavaUtil {
 				new ModuleMapping("CustomerLimit", CustomerLimit.class,
 						new String[] { "LimitAPIDetails", "LimitAPIDetails_Aview" }, masterWF,
 						new String[] { "CustomerReference", "LimitRef", "LimitDesc" }, null, 600));
+
+		ModuleUtil.register("HoldDisbursement",
+				new ModuleMapping("HoldDisbursement", HoldDisbursement.class,
+						new String[] { "HoldDisbursement", "HoldDisbursement_AView" }, masterWF,
+						new String[] { "FinReference", "Hold", "TotalLoanAmt", "DisbursedAmount", "HoldLimitAmount" },
+						null, 600));
 
 		/************* Credit Review Details *************/
 

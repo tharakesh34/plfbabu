@@ -530,6 +530,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected FrequencyBox repayCpzFrq;
 	protected Datebox nextRepayCpzDate;
 	protected Datebox nextRepayCpzDate_two;
+	protected Label   label_FinanceMainDialog_RepayFrq;
 	protected FrequencyBox repayFrq;
 	protected Datebox nextRepayDate;
 	protected Datebox nextRepayDate_two;
@@ -595,6 +596,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Intbox oDGraceDays;
 	protected Combobox oDChargeCalOn;
 	protected Decimalbox oDChargeAmtOrPerc;
+	protected ExtendedCombobox lPPRule; // autoWired
 	protected Checkbox oDAllowWaiver;
 	protected Decimalbox oDMaxWaiverPerc;
 	//###_0.3
@@ -610,6 +612,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row legalRequiredRow;
 	protected Checkbox legalRequired;
 
+	protected Label label_FinanceMainDialog_ODChargeAmtOrPerc;
+	protected Label label_FinanceMainDialog_LPPRULE;
+	
 	protected Space space_oDChargeAmtOrPerc;
 	protected Space space_oDMaxWaiverPerc;
 	protected Space space_oDChargeCalOn;
@@ -1084,6 +1089,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.commitmentRef.setTextBoxWidth(180);
 		this.commitmentRef.setFilters(new Filter[] { new Filter("CustID", financeMain.getCustID(), Filter.OP_EQUAL) });
 
+		this.lPPRule.setVisible(false);
+		if(isOverdraft){
+			this.lPPRule.setMaxlength(8);
+			this.lPPRule.setMandatoryStyle(true);
+			this.lPPRule.setModuleName("Rule");
+			this.lPPRule.setValueColumn("RuleCode");
+			this.lPPRule.setDescColumn("RuleCodeDesc");
+			this.lPPRule.setValidateColumns(new String[] { "RuleCode" });
+			Filter[] filters = new Filter[2];
+			filters[0] = new Filter("RuleModule", RuleConstants.MODULE_LPPRULE, Filter.OP_EQUAL);
+			filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
+			this.lPPRule.setFilters(filters);
+		}
+		
+		if(isOverdraft){
+			this.lPPRule.setVisible(false);
+			this.lPPRule.setMaxlength(8);
+			this.lPPRule.setMandatoryStyle(true);
+			this.lPPRule.setModuleName("Rule");
+			this.lPPRule.setValueColumn("RuleCode");
+			this.lPPRule.setDescColumn("RuleCodeDesc");
+			this.lPPRule.setValidateColumns(new String[] { "RuleCode" });
+			Filter[] filters = new Filter[2];
+			filters[0] = new Filter("RuleModule", RuleConstants.MODULE_LPPRULE, Filter.OP_EQUAL);
+			filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
+			this.lPPRule.setFilters(filters);
+		}
+		
 		if (!financeType.isFinCommitmentReq()) {
 			readOnlyComponent(true, this.commitmentRef);
 			this.commitmentRef.setMandatoryStyle(false);
@@ -1257,6 +1290,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.repayRvwFrq.setAlwFrqDays(financeType.getFrequencyDays());
 		this.repayCpzFrq.setMandatoryStyle(true);
 		this.repayCpzFrq.setAlwFrqDays(financeType.getFrequencyDays());
+		if(isOverdraft && StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeType.getFinSchdMthd())){
+			this.label_FinanceMainDialog_RepayFrq.setValue(Labels.getLabel("label_FinanceMainDialog_ODRepayFrqByPOSINT.value"));
+		}
 		this.repayFrq.setMandatoryStyle(true);
 		this.repayFrq.setAlwFrqDays(financeType.getFrequencyDays());
 		this.rolloverFrq.setMandatoryStyle(true);
@@ -1719,7 +1755,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//Fee Details Tab Addition
-			appendFeeDetailTab(onLoad);
+			if(aFinanceDetail.getFinScheduleData().getFinanceType().getFinTypeFeesList() != null
+					&& !aFinanceDetail.getFinScheduleData().getFinanceType().getFinTypeFeesList().isEmpty()){
+				appendFeeDetailTab(onLoad);
+			}
 		}
 
 		//Advance Payment Detail Tab Addition
@@ -1750,7 +1789,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			//Joint Account and Guaranteer  Tab Addition
-			if (isTabVisible(StageTabConstants.CoApplicants)) {
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,financeType.getFinSchdMthd()) 
+					&& isTabVisible(StageTabConstants.CoApplicants)) {
 				appendJointGuarantorDetailTab(onLoad);
 			}
 
@@ -1780,7 +1820,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			// Covenant Type Tab Addition
-			if (ImplementationConstants.ALLOW_COVENANT_TYPES && isTabVisible(StageTabConstants.Covenant)) {
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,financeType.getFinSchdMthd()) 
+					&& ImplementationConstants.ALLOW_COVENANT_TYPES && isTabVisible(StageTabConstants.Covenant)) {
 				appendCovenantTypeTab(onLoad);
 			}
 			// Deviation Detail Tab 
@@ -1806,7 +1847,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// VAS Recording Detail Tab
-			if (isTabVisible(StageTabConstants.VAS)) {
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,financeType.getFinSchdMthd()) 
+					&& isTabVisible(StageTabConstants.VAS)) {
 				appendVasRecordingTab(onLoad);
 			}
 		} else {
@@ -3281,6 +3323,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayBank.setReadonly(true);
 			this.downPayAccount.setValue(SysParamUtil.getValueAsString("AHB_DOWNPAY_AC"));
 		}
+		
 		setDownPayPercentage();
 		setNetFinanceAmount(true);
 		//Setting DownPayment Supplier to Invisible state to some of the Products
@@ -3379,9 +3422,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.gracePeriodEndDate_two.setValue(aFinanceMain.getGrcPeriodEndDate());
 			fillComboBox(this.grcRateBasis, aFinanceMain.getGrcRateBasis(),
 					PennantStaticListUtil.getInterestRateType(!aFinanceMain.isMigratedFinance()), ",C,D,");
-
+			if(!isOverdraft){
 			fillComboBox(this.cbGrcSchdMthd, aFinanceMain.getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),
-					",EQUAL,PRI_PFT,PRI,");
+					",EQUAL,PRI_PFT,PRI,POSINT,");
+			}else{
+				fillComboBox(this.cbGrcSchdMthd, aFinanceMain.getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),
+						",EQUAL,PRI_PFT,PRI,");
+			}
 			if (aFinanceMain.isAllowGrcRepay()) {
 				this.graceTerms.setVisible(true);
 				this.grcRepayRow.setVisible(true);
@@ -3648,6 +3695,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.finMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
+		}
+		
+		if(isOverdraft && financeType.isAlwZeroIntAcc()){
+			this.repayBaseRateRow.setVisible(false);
 		}
 
 		// Repay Profit Rate
@@ -3945,9 +3996,37 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
-						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
+						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
+						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
 					this.oDChargeAmtOrPerc
 							.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), 2));
+				}else if(FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))){
+					if(isOverdraft){
+						if(aFinanceMain.isNewRecord()){
+							this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
+							this.label_FinanceMainDialog_LPPRULE.setVisible(true);
+							this.space_oDChargeAmtOrPerc.setVisible(false);
+							this.oDChargeAmtOrPerc.setVisible(false);
+							this.lPPRule.setVisible(true);
+							this.lPPRule.setValue(financeType.getODRuleCode());
+
+						}else{
+							this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
+							this.label_FinanceMainDialog_LPPRULE.setVisible(true);
+							this.space_oDChargeAmtOrPerc.setVisible(false);
+							this.oDChargeAmtOrPerc.setVisible(false);
+							this.lPPRule.setVisible(true);
+							this.lPPRule.setValue(penaltyRate.getODRuleCode());
+						}
+					}else{
+						this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(true);
+						this.label_FinanceMainDialog_LPPRULE.setVisible(false);
+						this.space_oDChargeAmtOrPerc.setVisible(true);
+						this.oDChargeAmtOrPerc.setVisible(true);
+						this.lPPRule.setVisible(false);
+						this.lPPRule.setValue("");
+						this.lPPRule.setDescription("");
+					}
 				}
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
@@ -4339,10 +4418,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		// ###_0.3
-		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible)) {
-			this.row_EligibilityMethod.setVisible(true);
-		}
+		
 
 		// setFocus
 		this.finAmount.focus();
@@ -4365,6 +4441,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				afinanceDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
 			isOverDraft = true;
+		}
+		
+		// ###_0.3
+		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible) && !isOverDraft) {
+			this.row_EligibilityMethod.setVisible(true);
 		}
 
 		if (isOverDraft && !afinanceDetail.getFinScheduleData().getFinanceType().isDroplineOD()
@@ -5541,6 +5622,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (isOverdraft && this.lPPRule.isVisible() && !this.lPPRule.isReadonly()) {
+			this.lPPRule.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_LPPRULE.value"),null,true,true));
+		}
 		if (this.gb_ddaRequest.isVisible()) {
 			if (!recSave && !buildEvent) {
 				if (!this.bankName.isReadonly()) {
@@ -11871,6 +11955,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			try {
+				penaltyRate.setODRuleCode(this.lPPRule.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 			try {
 				penaltyRate.setODGraceDays(this.oDGraceDays.intValue());
 			} catch (WrongValueException we) {
@@ -11888,7 +11978,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			try {
 				//Mandatory Validation
-				if (!this.oDChargeAmtOrPerc.isDisabled()) {
+				if (!this.oDChargeAmtOrPerc.isDisabled() && this.oDChargeAmtOrPerc.isVisible()) {
 					if (this.oDChargeAmtOrPerc.getValue() == null
 							|| this.oDChargeAmtOrPerc.getValue().compareTo(BigDecimal.ZERO) == 0) {
 						throw new WrongValueException(this.oDChargeAmtOrPerc, Labels.getLabel("MUST_BE_ENTERED",
@@ -14521,6 +14611,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.oDGraceDays);
 		readOnlyComponent(true, this.oDChargeCalOn);
 		readOnlyComponent(true, this.oDChargeAmtOrPerc);
+		readOnlyComponent(true, this.lPPRule);
 		readOnlyComponent(true, this.oDAllowWaiver);
 		readOnlyComponent(true, this.oDMaxWaiverPerc);
 
@@ -15757,7 +15848,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		detail.setCustomerEligibilityCheck(getFinanceDetailService().getCustEligibilityDetail(customer,
 				detail.getFinScheduleData().getFinanceType().getFinCategory(), financeMain.getFinReference(),
 				financeMain.getFinCcy(), curFinRepayAmt, months, null, detail.getJountAccountDetailList()));
-
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, detail.getFinScheduleData().getFinanceType().getProductCategory())){
+			detail.setCustomerEligibilityCheck(getFinanceDetailService().getODLoanCustElgDetail(detail));
+		}
 		detail.getCustomerEligibilityCheck().setReqFinAmount(financeMain.getFinAmount());
 		detail.getCustomerEligibilityCheck()
 				.setDisbursedAmount(financeMain.getFinAmount().subtract(financeMain.getDownPayment()));
@@ -15963,7 +16056,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		//Corporate Financial Input Data to set Eligibility Rules
 		Set<Long> custIds = new HashSet<>();
-		if (!detail.getJountAccountDetailList().isEmpty()) {
+		if (detail.getJountAccountDetailList() != null && !detail.getJountAccountDetailList().isEmpty()) {
 			for (JointAccountDetail accountDetail : detail.getJountAccountDetailList()) {
 				custIds.add(accountDetail.getCustID());
 			}
@@ -16517,6 +16610,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void onCheckODPenalty(boolean checkAction) {
 		logger.debug(Literal.ENTERING);
+		boolean isOverDraft = false;
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData().getFinanceType().getProductCategory())){
+			isOverDraft = true;
+		}
 
 		int format = CurrencyUtil.getFormat(getFinanceMain().getFinCcy());
 		FinODPenaltyRate penaltyRate = getFinanceDetail().getFinScheduleData().getFinODPenaltyRate();
@@ -16531,6 +16628,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeType"), this.oDChargeType);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeCalOn"), this.oDChargeCalOn);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDAllowWaiver"), this.oDAllowWaiver);
+			readOnlyComponent(isReadOnly("FinanceMainDialog_oDAllowWaiver"), this.lPPRule);
 			this.oDGraceDays.setReadonly(isReadOnly("FinanceMainDialog_oDGraceDays"));
 
 			if (checkAction) {
@@ -16575,6 +16673,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
 			this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 			this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
+			this.lPPRule.setValue(penaltyRate.getODRuleCode());
 		}
 
 		if (!this.applyODPenalty.isChecked()) {
@@ -16582,6 +16681,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.space_oDChargeAmtOrPerc.setSclass("");
 			this.space_oDMaxWaiverPerc.setSclass("");
 			this.space_oDChargeType.setSclass("");
+		}
+		
+		if(isOverDraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)){
+			this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
+			this.label_FinanceMainDialog_LPPRULE.setVisible(true);
+			this.space_oDChargeAmtOrPerc.setVisible(false);
+			this.oDChargeAmtOrPerc.setVisible(false);
+			this.lPPRule.setVisible(true);
+		}else{
+			this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(true);
+			this.label_FinanceMainDialog_LPPRULE.setVisible(false);
+			this.space_oDChargeAmtOrPerc.setVisible(true);
+			this.oDChargeAmtOrPerc.setVisible(true);
+			this.lPPRule.setVisible(false);
+			this.lPPRule.setValue("");
+			this.lPPRule.setDescription("");
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -16601,7 +16716,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void onChangeODChargeType(boolean changeAction) {
 		logger.debug(Literal.ENTERING);
-
+		boolean isOverDraft = false;
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinanceDetail().getFinScheduleData().getFinanceType().getProductCategory())){
+			isOverDraft = true;
+		}
 		if (changeAction) {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 		}
@@ -16637,6 +16755,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDIncGrcDays"), this.oDIncGrcDays);
 			this.oDIncGrcDays.setChecked(true);
+		}
+
+		if(isOverDraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)){
+			this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(false);
+			this.label_FinanceMainDialog_LPPRULE.setVisible(true);
+			this.space_oDChargeAmtOrPerc.setVisible(false);
+			this.oDChargeAmtOrPerc.setVisible(false);
+			this.lPPRule.setVisible(true);
+		}else{
+			this.label_FinanceMainDialog_ODChargeAmtOrPerc.setVisible(true);
+			this.label_FinanceMainDialog_LPPRULE.setVisible(false);
+			this.space_oDChargeAmtOrPerc.setVisible(true);
+			this.oDChargeAmtOrPerc.setVisible(true);
+			this.lPPRule.setVisible(false);
+			this.lPPRule.setValue("");
+			this.lPPRule.setDescription("");
 		}
 		logger.debug(Literal.LEAVING);
 	}

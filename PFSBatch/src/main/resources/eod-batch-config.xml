@@ -18,6 +18,11 @@
 		</listeners>
 		<step id="beforeEOD">
 			<tasklet ref="beforeEODTaskLet" />
+			<next on="*" to="loanCancel" />
+			<fail on="FAILED" />
+		</step>
+		<step id="loanCancel">
+			<tasklet ref="loanCancelTaskLet" />
 			<next on="*" to="prepareCustomerQueue" />
 			<fail on="FAILED" />
 		</step>

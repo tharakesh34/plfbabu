@@ -11,6 +11,12 @@
 		<property name="dateService" ref="dateService" />
 	</bean>
 
+	<!-- loanCancel -->
+
+	<bean id="loanCancelTaskLet" class="com.pennant.backend.endofday.tasklet.AutoFinanceCancellation">
+		<property name="financeCancellationService" ref="financeCancellationService" />
+	</bean>
+	
 	<!-- prepareCustomerQueue -->
 
 	<bean id="prepareCustomerQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue">

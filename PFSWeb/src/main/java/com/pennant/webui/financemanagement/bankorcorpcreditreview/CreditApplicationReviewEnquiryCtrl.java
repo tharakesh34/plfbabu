@@ -299,7 +299,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 
-				if (financeDetail.getJountAccountDetailList() != null
+				if (financeDetail != null && financeDetail.getJountAccountDetailList() != null
 						&& financeDetail.getJountAccountDetailList().size() > 0) {
 					for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
 						if (!StringUtils.equals(jointAccountDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)

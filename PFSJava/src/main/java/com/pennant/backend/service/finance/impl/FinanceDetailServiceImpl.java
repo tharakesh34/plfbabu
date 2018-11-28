@@ -97,6 +97,7 @@ import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
+import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
@@ -338,6 +339,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private VehicleDealerService vehicleDealerService;
 	private PSLDetailService pSLDetailService;
 	private CollateralSetupService collateralSetupService;
+	private HoldDisbursementDAO holdDisbursementDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -5562,7 +5564,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Document Details
 		// =======================================
-		getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(), "_Temp");
+		if(financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()){
+			getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(), "_Temp");
+		}
 
 		// Fee charges deletion
 		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
@@ -7146,8 +7150,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			 * RuleReturnType.DECIMAL); eligibilityCheck.setDSCR(PennantApplicationUtil.getDSR(dscr)); }
 			 */
 		}
+		
+		/*if(){
+			eligibilityCheck.setFinIsActive(finIsActive);
+		}*/
 		logger.debug("Leaving");
 		return eligibilityCheck;
+	}
+	@Override
+	public CustomerEligibilityCheck getODLoanCustElgDetail(FinanceDetail detail) {
+		logger.debug("Entering");
+		//FIXME:in single query we want get the details 
+		if(detail.getCustomerEligibilityCheck() !=null){
+			String finType = detail.getFinScheduleData().getFinanceType().getFinType();
+			long custID  = detail.getCustomerDetails().getCustomer().getCustID();
+			detail.getCustomerEligibilityCheck().setActiveLoansOnFinType(getFinanceMainDAO().getActiveCount(finType, custID));
+			detail.getCustomerEligibilityCheck().setTotalLoansOnFinType(getFinanceMainDAO().getODLoanCount(finType,custID));
+		}
+		logger.debug("Leaving");
+		return detail.getCustomerEligibilityCheck();
 	}
 
 	/**
@@ -10023,6 +10044,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
 		finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 		finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+		finODPenaltyRate.setODRuleCode(financeType.getODRuleCode());
 
 		return finODPenaltyRate;
 	}
@@ -10120,6 +10142,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<FinanceScheduleDetail> getFinScheduleList(String finReference) {
 		return getFinanceScheduleDetailDAO().getFinSchdDetailsForBatch(finReference);
 	}
+	
+	@Override
+	public boolean isholdDisbursementProcess(String finReference) {
+		return holdDisbursementDAO.isholdDisbursementProcess(finReference, "_View");
+	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
@@ -10203,6 +10230,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public HoldDisbursementDAO getHoldDisbursementDAO() {
+		return holdDisbursementDAO;
+	}
+
+	public void setHoldDisbursementDAO(HoldDisbursementDAO holdDisbursementDAO) {
+		this.holdDisbursementDAO = holdDisbursementDAO;
 	}
 
 }

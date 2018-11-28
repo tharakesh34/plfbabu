@@ -242,6 +242,23 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	@Override
+	public void deleteByCOFCode(String cofCode, TableType tableType) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CofCode", cofCode);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" Delete from CostOfFunds");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where CofCode = :CofCode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		this.jdbcTemplate.update(sql.toString(), source);
+	}
+		
 	/**
 	 * Common method for CostOfFunds to get the costOfFund and get the List of objects less than passed Effective
 	 * CostOfFund Date

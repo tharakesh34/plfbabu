@@ -4045,6 +4045,7 @@
 	<bean id="selectManualAdviseFinReferenceDialogCtrl" class="com.pennant.webui.financemanagement.selectmanualadvise.SelectManualAdviseFinReferenceDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="holdDisbursementService" ref="holdDisbursementService"></property>
 	</bean>
 
 	<!-- FinanceStatusCode -->
@@ -4861,5 +4862,17 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
+	</bean>
+	
+	<!-- HoldDisbursement -->
+	<bean id="holdDisbursementListCtrl"
+		class="com.pennant.webui.finance.holddisbursement.HoldDisbursementListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="holdDisbursementService" ref="holdDisbursementService" />
+	</bean>
+	<bean id="holdDisbursementDialogCtrl"
+		class="com.pennant.webui.finance.holddisbursement.HoldDisbursementDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="holdDisbursementService" ref="holdDisbursementService" />
 	</bean>
 </beans>

@@ -245,13 +245,19 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		}
 		setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSN, true);
 		if (isOverdraft) {
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_ADDDBSP, false);
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_INSTDATE, false);
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMZ, false);
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_PROVSN, false);
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_WRITEOFF, false);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMZPD, true);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_CMTDISB, true);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_RATCHG, false);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SCDCHG, false);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EMIHOLIDAY, false);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REAGING, false);
-			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYPAY, false);
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYPAY, true);
+			setAccountingMandStyle(AccountEventConstants.ACCEVENT_REPAY, true);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_EARLYSTL, false);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_AMENDMENT, false);
 			setAccountingMandStyle(AccountEventConstants.ACCEVENT_SEGMENT, false);

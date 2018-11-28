@@ -35,6 +35,8 @@ public class FinODPenaltyRate implements Entity {
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private long logKey = 0;
 
+	private String oDRuleCode;
+	
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinODPenaltyRate validateFinODPenaltyRate = this;
@@ -148,6 +150,14 @@ public class FinODPenaltyRate implements Entity {
 
 	public void setLogKey(long logKey) {
 		this.logKey = logKey;
+	}
+
+	public String getODRuleCode() {
+		return oDRuleCode;
+	}
+
+	public void setODRuleCode(String ODRuleCode) {
+		this.oDRuleCode = ODRuleCode;
 	}
 
 }

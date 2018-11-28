@@ -81,6 +81,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String downPayRuleDesc;
 	private boolean fInIsAlwGrace;
 	private String finRateType;
+	private boolean alwZeroIntAcc;
 	private String finBaseRate;
 	private String finSplRate;
 	private BigDecimal finMargin = BigDecimal.ZERO;
@@ -216,6 +217,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int oDGraceDays;
 	private String oDChargeCalOn;
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
+	private String oDRuleCode;
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
@@ -2161,6 +2163,22 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setBpiPftDaysBasis(String bpiPftDaysBasis) {
 		this.bpiPftDaysBasis = bpiPftDaysBasis;
+	}
+
+	public String getODRuleCode() {
+		return oDRuleCode;
+	}
+
+	public void setODRuleCode(String ODRuleCode) {
+		this.oDRuleCode = ODRuleCode;
+	}
+
+	public boolean isAlwZeroIntAcc() {
+		return alwZeroIntAcc;
+	}
+
+	public void setAlwZeroIntAcc(boolean alwZeroIntAcc) {
+		this.alwZeroIntAcc = alwZeroIntAcc;
 	}
 
 }

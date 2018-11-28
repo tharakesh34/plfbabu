@@ -43,6 +43,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -3366,6 +3367,76 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 
+	}
+
+	public int getActiveCount(String finType,long custID) {
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinType(finType);
+		financeMain.setCustID(custID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+
+		selectSql.append(" From FinanceMain");
+
+		selectSql.append(" Where FinType =:FinType AND CUSTID =:custID AND FinIsActive = 1");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
+
+	@Override
+	public int getODLoanCount(String finType, long custID) {
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinType(finType);
+		financeMain.setCustID(custID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+
+		selectSql.append(" From FinanceMain");
+
+		selectSql.append(" Where FinType =:FinType  AND CUSTID =:custID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
+	
+	@Override
+	public Map<String,Date> getUnDisbursedFinanceList() {
+		logger.debug("Entering");
+		Map<String, Date> map = new HashMap<String, Date>();
+		
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinStartDate From FinanceMain");
+		selectSql.append(" Where FinCurrAssetValue = 0  AND FinIsActive = 1 ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			SqlRowSet rowSet = this.jdbcTemplate.getJdbcOperations().queryForRowSet(selectSql.toString());
+			while (rowSet.next()) {
+				map.put(rowSet.getString(1), rowSet.getDate(2));
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return map;
 	}
 
 }

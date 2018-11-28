@@ -1199,6 +1199,18 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				logger.debug("Leaving");
 				return;
 			}
+
+			if (StringUtils.isNotEmpty(moduleDefiner) && moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				boolean holdDisbursement = getFinanceDetailService()
+						.isholdDisbursementProcess(aFinanceMain.getFinReference());
+
+				if (holdDisbursement) {
+					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("HD99019", null)));
+					logger.debug("Leaving");
+					return;
+				}
+			}
+
 		}
 
 		if (StringUtils.isNotEmpty(moduleDefiner) && !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)

@@ -124,6 +124,7 @@ public class FinanceConstants {
 	public static final String PENALTYTYPE_PERC_ON_DUEDAYS = "D";
 	public static final String PENALTYTYPE_PERC_ON_PD_MTH = "M";
 	public static final String PENALTYTYPE_FLAT_ON_PD_MTH = "A";
+	public static final String PENALTYTYPE_RULEFXDD = "R";
 
 	// Schedule Types
 	public static final String SCH_TYPE_SCHEDULE = "S";
@@ -206,7 +207,7 @@ public class FinanceConstants {
 	public static final String BULK_RATE_CHG = "BulkRateChange";
 	public static final String FINSER_EVENT_FEEPAYMENT = "FeePayment";
 	public static final String FINSER_EVENT_CHGSCHDMETHOD = "ChangeSchdlMethod";
-
+	public static final String FINSER_EVENT_HOLDDISB = "HoldDisbursement";
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String FINSER_EVENT_COVENANTS = "Covenants";
 

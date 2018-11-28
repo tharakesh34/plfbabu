@@ -29,7 +29,7 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_COVENANT_TYPES = true; // Covenants Allowed or not
 	public static final boolean COLLATERAL_INTERNAL = true; // Which Collateral We are using Internal or Third Party Collaterals
 	public static final boolean ALLOW_VAS = true; // VAS required or not F = Administration/Insurance/Other Fees C = Past due Penalty I = Profit P = Principal
-	public static final String REPAY_HIERARCHY_METHOD = "FIPCS";
+	public static final String REPAY_HIERARCHY_METHOD = "FCIP"; 
 
 	public static final String REPAY_INTEREST_HIERARCHY = "LI"; // L = Late pay Profit I = Profit
 	// Calculate PastDue on Day zero
@@ -124,6 +124,12 @@ public class ImplementationConstants {
 
 	// Allow Schedule Recalculation lock period Changes
 	public static final boolean ALW_SCH_RECAL_LOCK = false;
+
+	// LPP Calculation on RULE FIXED
+	public static final boolean ALW_LPP_RULE_FIXED = false;
+
+	// Auto Cancellation of Loans after "N" Days Allowed
+	public static final boolean ALW_LOAN_AUTO_CANCEL = false;
 
 	// Capitalizing on Lock Period of Schedule Profit Balance
 	// 1. TRUE : Default Capitalize Balance amount when Applicable Capitalization

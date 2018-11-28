@@ -779,6 +779,7 @@ UNION ALL
     t1.eligibilitymethods,
     t1.alwhybridrate,
     t1.fixedratetenor,
+	t1.odmincapamount,
     t1.ODRuleCode,
 	t1.AlwZeroIntAcc
    FROM rmtfinancetypes t1
@@ -801,7 +802,7 @@ UNION ALL
          		select deps_restore_dependencies('plf','rmtfinancetypes_aview');
          	</sql>
          </changeSet>
-	<changeSet id="09" author="Irfan" dbms="postgres">
+	<changeSet id="09" author="Irfan" >
 	<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 	  SELECT t1.fintype,
     t1.fincategory,

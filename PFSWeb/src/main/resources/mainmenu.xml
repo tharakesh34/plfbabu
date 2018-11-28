@@ -375,6 +375,9 @@
 		<menuItem id="menu_Item_GSTRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/GstRuleList.zul"
 			rightName="menuItem_RulesFactory_BounceRule" />
+		<menuItem id="menu_Item_LPPRule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LPPRuleList.zul"
+			rightName="menuItem_RulesFactory_LPPRule" />	
 		<menuItem id="menu_Item_ProvisionRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/ProvisionList.zul"
 			rightName="menuItem_RulesFactory_ProvisionRules" />
@@ -616,6 +619,9 @@
 			<menuItem id="menu_Item_PaymentOrderIssue"
 				zulNavigation="/WEB-INF/pages/Finance/PayOrderIssue/PayOrderIssueList.zul"
 				rightName="menuItem_Finance_PaymentOrderIssue" />
+			 <menuItem id="menu_Item_HoldDisbursement"
+				zulNavigation="/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementList.zul"
+				rightName="menuItem_Finance_HoldDisbursement" /> 
 			<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul"
 				rightName="menuItem_payment_PaymentInstructions" />
 		</menu>

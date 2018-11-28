@@ -592,6 +592,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				details.setODGraceDays(penaltyRate.getODGraceDays());
 				details.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 				details.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
+				details.setODRuleCode(penaltyRate.getODRuleCode());
 			} else {
 				details.setApplyODPenalty(false);
 				details.setODIncGrcDays(false);
@@ -601,6 +602,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				details.setODGraceDays(0);
 				details.setODAllowWaiver(false);
 				details.setODMaxWaiverPerc(BigDecimal.ZERO);
+				details.setODRuleCode("");
 			}
 
 		}

@@ -1014,7 +1014,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getODCChargeType() {
 
 		if (overDuechargeTypes == null) {
-			overDuechargeTypes = new ArrayList<ValueLabel>(5);
+			overDuechargeTypes = new ArrayList<ValueLabel>(6);
 			overDuechargeTypes
 					.add(new ValueLabel(FinanceConstants.PENALTYTYPE_FLAT, Labels.getLabel("label_FlatOneTime")));
 			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH,
@@ -1025,6 +1025,11 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
 			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS,
 					Labels.getLabel("label_PercentageOnDueDays")));
+			if (ImplementationConstants.ALW_LPP_RULE_FIXED) {
+				overDuechargeTypes.add(
+						new ValueLabel(FinanceConstants.PENALTYTYPE_RULEFXDD, Labels.getLabel("label_FixedByDueDays")));
+			}
+			
 		}
 		return overDuechargeTypes;
 	}
@@ -2680,7 +2685,7 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getScheduleMethods() {
 		if (schMthdList == null) {
-			schMthdList = new ArrayList<ValueLabel>(6);
+			schMthdList = new ArrayList<ValueLabel>(7);
 			schMthdList.add(
 					new ValueLabel(CalculationConstants.SCHMTHD_EQUAL, Labels.getLabel("label_ScheduleMethod_Equal")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_GRCENDPAY,
@@ -2695,6 +2700,8 @@ public class PennantStaticListUtil {
 			// ValueLabel(CalculationConstants.SCHMTHD_PRI,Labels.getLabel("label_ScheduleMethod_ConstantPrincipal")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCAP,
 					Labels.getLabel("label_ScheduleMethod_CalculatedProfitCap")));
+			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_POS_INT,
+					Labels.getLabel("label_ScheduleMethod_POSandCalculateProfit")));
 		}
 		return schMthdList;
 	}

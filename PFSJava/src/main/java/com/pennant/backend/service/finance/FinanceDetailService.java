@@ -279,6 +279,7 @@ public interface FinanceDetailService {
 	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction,
 			WorkflowEngine engine) throws AppException, JaxenException, Exception;
 
+
 	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
 
 	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
@@ -289,4 +290,8 @@ public interface FinanceDetailService {
 	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
 
 	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schDate);
+
+	CustomerEligibilityCheck getODLoanCustElgDetail(FinanceDetail detail);
+
+	boolean isholdDisbursementProcess(String finReference);
 }

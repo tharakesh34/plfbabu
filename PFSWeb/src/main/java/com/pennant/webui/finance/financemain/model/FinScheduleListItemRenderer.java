@@ -1708,7 +1708,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 												PennantConstants.rateFormate)
 										+ "%");
 							}
-							if (i == 12 || i == 13 || i == 14) {
+
+							if(i == 13 || i == 14 || i == 15){
 								lc = new Listcell("");
 							}
 							lc.setStyle("text-align:right;color:" + bgColor + ";");
@@ -1716,7 +1717,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 								lc.setStyle("text-align:right;color:" + bgColor + ";cursor:default;");
 							}
 						} else {
-							if (i == 12 || i == 13 || i == 14) {
+
+							if(i == 13 || i == 14 || i == 15){
 								lc = new Listcell("");
 							} else {
 								lc = new Listcell(PennantApplicationUtil.formatRate(amountlist[i].doubleValue(),
@@ -1740,8 +1742,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 						if (fillType == 5) {
 							lc = new Listcell("");
 						}
-
-						if (i == 13 && amountlist[i].compareTo(BigDecimal.ZERO) < 0) {
+						
+						if(i == 14 && amountlist[i].compareTo(BigDecimal.ZERO) < 0){
 							lc.setStyle("text-align:right;color:red;");
 						} else {
 
@@ -1759,12 +1761,13 @@ public class FinScheduleListItemRenderer implements Serializable {
 							}
 						}
 					}
-				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 12)) {
+
+				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 13)){
 					lc = new Listcell("");
-					lc.setStyle("text-align:right;color:" + bgColor + ";");
-				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 13)) {
-					if (fillType == 0 && !lastRec
-							&& (count == 1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))) {
+
+					lc.setStyle("text-align:right;color:"+bgColor+";");
+				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 14)){
+					if(fillType==0  && !lastRec  && (count ==1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
 
 						lc = new Listcell(PennantAppUtil.amountFormate(availableLimit, finFormatter));
 						lc.setStyle("text-align:right;");
@@ -1775,9 +1778,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 						lc = new Listcell("");
 						lc.setStyle("text-align:right;");
 					}
-				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 14)) {
-					if (fillType == 0 && !lastRec && showZeroEndBal
-							&& (count == 1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))) {
+
+				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 15)){
+					if(fillType==0 && !lastRec && showZeroEndBal &&(count == 1 ||(data.isDisbOnSchDate() && data.isRepayOnSchDate()) )){
 
 						lc = new Listcell(PennantAppUtil.amountFormate(odLimit, finFormatter));
 						lc.setStyle("text-align:right;");
@@ -1795,9 +1798,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (!isEditable) {
 						lc.setStyle("text-align:right;cursor:default;");
 					}
-				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 1 || i == 2 || i == 3 || (i == 11))
-						&& showZeroEndBal) {
-					if (fillType == 5) {
+
+				}else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 1 || i == 2 || i == 3 || 
+						(i == 12)) && showZeroEndBal) {
+					if(fillType == 5){
 						lc = new Listcell("");
 					} else {
 						lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], finFormatter));
@@ -1806,7 +1810,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (!isEditable) {
 						lc.setStyle("text-align:right;cursor:default;");
 					}
-				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 9) && isFee) {
+
+				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && ( i == 10) && isFee) {
 					lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], finFormatter));
 					if (StringUtils.isNotEmpty(bgColor)) {
 						lc.setStyle("text-align:right;font-weight: bold;color:" + bgColor + ";");

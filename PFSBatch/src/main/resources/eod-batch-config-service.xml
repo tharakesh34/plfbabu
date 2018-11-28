@@ -64,6 +64,9 @@
 
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
+	<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+	<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<!-- NPA Service -->
@@ -178,4 +181,70 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 
+	
+	<import resource="classpath:applicationContext-jdbc.xml" />
+
+	<!-- ====================================================== -->
+	<!-- Audit Details Configuration -->
+	<!-- ====================================================== -->
+
+	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl" parent="auditSequenceDao" />
+	
+	<bean id="limitInterfaceDAO" class="com.pennant.backend.dao.limits.impl.LimitInterfaceDAOImpl" parent="sequenceDao" />
+	
+	<!--Customer Limit Details -->
+	<bean id="limitHeaderDAO" class="com.pennant.backend.dao.limit.impl.LimitHeaderDAOImpl" parent="sequenceDao" />
+
+	<bean id="limitDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitDetailDAOImpl" parent="sequenceDao" />
+	
+	<!-- Ext Tables DAO Details -->
+	<bean id="extTablesDAO" class="com.pennant.backend.dao.ext.impl.ExtTablesDAOImpl" parent="basicDao" />
+	
+	<!--============ Finance Stage Accounting Log Details ============== -->
+	<bean id="finStageAccountingLogDAO" class="com.pennant.backend.dao.finance.impl.FinStageAccountingLogDAOImpl" parent="basicDao" />
+	
+	
+	<bean name="financeCancellationService" class="com.pennant.backend.service.finance.impl.FinanceCancellationServiceImpl">
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="commitmentDAO" ref="commitmentDAO" />
+		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="limitInterfaceDAO" ref="limitInterfaceDAO" />
+		<property name="ddaControllerService" ref="ddaControllerService" />
+		<property name="accountProcessUtil" ref="accountProcessUtil" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
+		<property name="extTablesDAO" ref="extTablesDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+
+		<!-- EOD -->
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<!-- Stage Accounting -->
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="ruleDAO" ref="ruleDAO" />
+	</bean>
+	<!-- Sampling -->
+	<bean id="samplingDAO" class="com.pennanttech.pennapps.pff.sampling.dao.SamplingDAOImpl" parent="sequenceDao" />
+	
+	<!-- Extended field details -->
+	<bean id="extendedFieldRenderDAO" class="com.pennant.backend.dao.collateral.impl.ExtendedFieldRenderDAOImpl" parent="basicDao" />
+	<bean id="extendedFieldHeaderDAO" class="com.pennant.backend.dao.staticparms.impl.ExtendedFieldHeaderDAOImpl" parent="sequenceDao">
+		<property name="auditDataSource" ref="auditDataSource" />
+	</bean>
+   
+   <!-- extendedFieldDetailsService -->
+	<bean id="extendedFieldDetailsService" class="com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService">
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
 </beans>

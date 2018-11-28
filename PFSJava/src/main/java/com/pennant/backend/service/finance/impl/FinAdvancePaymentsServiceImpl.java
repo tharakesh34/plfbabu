@@ -57,8 +57,11 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -68,6 +71,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
@@ -75,9 +79,11 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
@@ -94,6 +100,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
 	private LimitCheckDetails limitCheckDetails;
 	private PartnerBankService partnerBankService;
+	private MandateDAO mandateDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -383,6 +391,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
 		FinAdvancePayments tempFinAdvancePay = null;
+		boolean isOverDraft = false;
+		int maxODDays = SysParamUtil.getValueAsInt(SMTParameterConstants.MAX_ODDAYS_ADDDISB);
+		
+		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())){
+			isOverDraft = true;
+		}
 		if (finAdvancePay.isWorkflow()) {
 			tempFinAdvancePay = getFinAdvancePaymentsDAO().getFinAdvancePaymentsById(finAdvancePay, "_Temp");
 		}
@@ -477,6 +491,43 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 						new ErrorDetail(PennantConstants.KEY_FIELD, "65038", errParam, valueParm), usrLanguage));
 			}
 
+		}
+		
+		// for Overdraft loan types checking for mandate is approved or not. and validate for Expiry date.
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+		if(isOverDraft && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB) 
+				&& financeDetail.getFinScheduleData().getFinanceMain().getMandateID() != 0){
+			
+			Mandate mandate = new Mandate();
+			long mandateID = financeDetail.getFinScheduleData().getFinanceMain().getMandateID();
+			
+			mandate = getMandateDAO().getMandateStatusById(finReference, mandateID);
+			if(mandate !=null && !StringUtils.isEmpty(mandate.getStatus()) && !StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())){
+				String[] errParam = new String[1];
+				errParam[0] =  String.valueOf(mandateID);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM001", errParam, valueParm), usrLanguage));
+			}
+
+			if(mandate !=null && StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus()) && mandate.getExpiryDate() != null  &&
+					DateUtility.compare(DateUtility.getAppDate(),mandate.getExpiryDate()) > 0){
+				String[] errParam = new String[1];
+				errParam[0] =  String.valueOf(mandateID);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM002", errParam, valueParm), usrLanguage));
+			}
+		}
+		
+		//Validation for Automatic Blocking of Add Disbursement after N due days from Overdue schedules. 
+		if(isOverDraft){
+			int currODDays = getProfitDetailsDAO().getCurOddays(finReference, "");
+			if(currODDays != 0 &&  currODDays > maxODDays){
+				String[] errParam = new String[2];
+				errParam[0] =  finReference;
+				errParam[1] =  String.valueOf(maxODDays);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM003", errParam, valueParm), usrLanguage));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -843,4 +894,20 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finRefernce, toDate, "");
 	}
 
+	public MandateDAO getMandateDAO() {
+		return mandateDAO;
+	}
+
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	public FinanceProfitDetailDAO getProfitDetailsDAO() {
+		return profitDetailsDAO;
+	}
+
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
+	
 }

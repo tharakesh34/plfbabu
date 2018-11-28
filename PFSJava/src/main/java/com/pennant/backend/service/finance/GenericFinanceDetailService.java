@@ -2366,6 +2366,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				penaltyRate.setODGraceDays(0);
 				penaltyRate.setODAllowWaiver(false);
 				penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
+				penaltyRate.setODRuleCode("");
 			}
 			penaltyRate.setFinReference(finDetail.getFinReference());
 			penaltyRate.setFinEffectDate(DateUtility.getSysDate());

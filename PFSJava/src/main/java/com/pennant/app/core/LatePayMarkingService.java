@@ -306,8 +306,9 @@ public class LatePayMarkingService extends ServiceHelper {
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
 		fod.setFinLMdfDate(DateUtility.getAppDate());
 
-		latePayPenaltyService.computeLPP(fod, penaltyCalDate, finMain.getProfitDaysBasis(), finScheduleDetails,
-				repayments, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+
+		latePayPenaltyService.computeLPP(fod, penaltyCalDate, finMain.getProfitDaysBasis(), finScheduleDetails, repayments,
+				finMain.getCalRoundingMode(), finMain);
 
 		String lpiMethod = finMain.getPastduePftCalMthd();
 		if (StringUtils.isEmpty(lpiMethod)) {
@@ -317,7 +318,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (!StringUtils.equals(lpiMethod, CalculationConstants.PDPFTCAL_NOTAPP)) {
 			latePayInterestService.computeLPI(fod, penaltyCalDate, finMain.getProfitDaysBasis(), finScheduleDetails,
 					repayments, finMain.getPastduePftMargin(), finMain.getCalRoundingMode(),
-					finMain.getRoundingTarget());
+					finMain);
 		}
 		logger.debug("Leaving");
 	}
@@ -438,6 +439,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setODChargeAmtOrPerc(getDecimal(penaltyRate.getODChargeAmtOrPerc()));
 		finODDetail.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		finODDetail.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
+		finODDetail.setODRuleCode(penaltyRate.getODRuleCode());
 
 		return finODDetail;
 	}

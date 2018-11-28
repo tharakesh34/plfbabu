@@ -177,7 +177,19 @@
 													<checkbox id="finCollateralCheck" width="200px" />
 												</hbox>
 											</row>
-											<row>
+											<row visible="true">
+												<label
+													id="label_FinanceTypeDialog_ZeroIntAcc"
+													value="${c:l('label_FinanceTypeDialog_ZeroIntAcc.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="alwZeroIntAcc" checked="true" />
+												</hbox>
+
+											</row>
+											<row id="row_FinBaseRates">
 												<label id="label_FinanceTypeDialog_BaseRate" value="${c:l('label_FinanceTypeDialog_BaseRate.value')}" />
 												<ratebox id="financeBaserate" />
 												<label id="label_FinanceTypeDialog_FinIntRate" value="${c:l('label_OverDraftFinanceTypeDialog_FinIntRate.value')}" />
@@ -219,7 +231,7 @@
 													<decimalbox id="finMaxRate" width="125px" maxlength="15" style="text-align:right" />
 												</hbox>
 											</row>
-											<row>
+											<row id ="row_FinIsRvwAlw">
 												<label id="label_FinanceTypeDialog_FinIsRvwAlw" value="${c:l('label_OverDraftFinanceTypeDialog_FinIsRvwAlw.value')}" />
 												<hbox>
 													<space spacing="2px" />
@@ -340,10 +352,19 @@
 													<space spacing="2px" id="space_oDChargeCalOn" sclass="mandatory" />
 													<combobox id="oDChargeCalOn" width="200px" readonly="true" />
 												</hbox>
-												<label id="label_FinanceTypeDialog_ODChargeAmtOrPerc" value="${c:l('label_OverDraftFinanceTypeDialog_ODChargeAmtOrPerc.value')}" />
+												<hbox>
+													<label
+														id="label_FinanceTypeDialog_ODChargeAmtOrPerc"
+														value="${c:l('label_OverDraftFinanceTypeDialog_ODChargeAmtOrPerc.value')}" />
+													<label
+														id="label_FinanceTypeDialog_LPPRULE"
+														value="${c:l('label_OverDraftFinanceTypeDialog_LPPRULE.value')}" visible="false"/>
+												</hbox>
 												<hbox>
 													<space spacing="2px" id="space_oDChargeAmtOrPerc" sclass="mandatory" />
 													<decimalbox id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
+													<extendedcombobox
+													id="lPPRule"/>
 												</hbox>
 											</row>
 											<row visible="true">

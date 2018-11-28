@@ -882,10 +882,23 @@
 														<space id="space_oDChargeCalOn" spacing="2px" sclass="mandatory" />
 														<combobox id="oDChargeCalOn" width="200px" readonly="true" />
 													</hbox>
-													<label id="label_FinanceMainDialog_ODChargeAmtOrPerc" value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
 													<hbox>
-														<space spacing="2px" id="space_oDChargeAmtOrPerc" sclass="mandatory" />
-														<decimalbox id="oDChargeAmtOrPerc" width="120px" />
+														<label
+															id="label_FinanceMainDialog_ODChargeAmtOrPerc"
+															value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
+														<label
+															id="label_FinanceMainDialog_LPPRULE"
+															value="${c:l('label_FinanceMainDialog_LPPRULE.value')}"
+															visible="false" />
+													</hbox>
+													<hbox>
+														<space
+															spacing="2px" id="space_oDChargeAmtOrPerc"
+															sclass="mandatory" />
+														<decimalbox
+															id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
+														<extendedcombobox
+															id="lPPRule" />
 													</hbox>
 												</row>
 												<row visible="true">

@@ -512,6 +512,10 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		case RuleConstants.MODULE_BOUNCE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 
+		case RuleConstants.MODULE_LPPRULE:
+			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
+			break;
+			
 		case RuleConstants.MODULE_GSTRULE:
 			this.rule.setReturnType(RuleConstants.RETURNTYPE_DECIMAL);
 			break;

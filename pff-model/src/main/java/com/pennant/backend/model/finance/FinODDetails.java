@@ -108,6 +108,8 @@ public class FinODDetails implements java.io.Serializable {
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 
+	private String oDRuleCode;
+	
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
 	 * inserted rcdAction = "U" record to be updated rcdAction = "D" record to be deleted
@@ -402,6 +404,14 @@ public class FinODDetails implements java.io.Serializable {
 
 	public void setRcdAction(String rcdAction) {
 		this.rcdAction = rcdAction;
+	}
+
+	public String getODRuleCode() {
+		return oDRuleCode;
+	}
+
+	public void setODRuleCode(String oDRuleCode) {
+		this.oDRuleCode = oDRuleCode;
 	}
 
 }
