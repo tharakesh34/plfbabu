@@ -977,11 +977,6 @@ UNION ALL
 	
 	</createView>
 	</changeSet>
-	<changeSet id="10" author="Irfan">
-		<sql>
-			Insert into BMTSCHDMETHOD (SCHDMETHOD,SCHDMETHODDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('POSINT','POS and Calculate Profit',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-		</sql>
-	</changeSet>
 	<changeSet id="13" author="Irfan">
 		<sql>
 			Update bmtaeevents set odapplicable=1 where aeeventcode='INSTDATE';
@@ -1337,5 +1332,20 @@ UNION
 		<sql>
 			Insert into SMTPARAMETERS  values ('CANCEL_LOAN_FOR_NODISB','Cancel loan for not add disbursement.','int',1,'30',8,0,null,null,'Cancel loan for not add disbursement.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>	
+	</changeSet>
+	<changeSet id="39" author="Irfan">
+		<sql>
+			Update bmtaeevents set odapplicable=0 where aeeventcode='B2C';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='C2B';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='CHQ2BR';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='CHQ2B';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='FEEAMZ';
+			Update bmtaeevents set odapplicable=1 where aeeventcode='INSTDATE';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='LATEPAY';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='JVPOST';
+			Update bmtaeevents set odapplicable=0 where aeeventcode='MANFEE';
+			Update bmtaeevents set odapplicable=1 where aeeventcode='PROVSN';
+			Update bmtaeevents set active=1 where aeeventcode='PROVSN';
+		</sql>
 	</changeSet>
 </databaseChangeLog>
