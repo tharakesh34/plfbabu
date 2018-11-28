@@ -1885,6 +1885,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetail errorDetail = new ErrorDetail();
 			for (CustomerAddres adress : custAddress) {
 				auditDetail.setErrorDetail(validateMasterCode("AddressType", adress.getCustAddrType()));
+				if(StringUtils.isNotBlank(adress.getCustAddrZIP())) {
 				auditDetail.setErrorDetail(validateMasterCode("PinCode", adress.getCustAddrZIP()));
 				PinCode pincode = pinCodeDAO.getPinCode(adress.getCustAddrZIP(), "_AView");
 				if (pincode != null) {
@@ -1927,6 +1928,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						adress.setCustAddrCity(pincode.getCity());
 					}
 
+				}
 				}
 				if (StringUtils.isNotBlank(adress.getCustAddrZIP())) {
 					if (adress.getCustAddrZIP().length() < 3 || adress.getCustAddrZIP().length() > 6) {

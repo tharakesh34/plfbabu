@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
@@ -18,6 +19,7 @@ import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -90,7 +92,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private DedupParmDAO dedupParmDAO;
 	private CustomerDedupDAO customerDedupDAO;
+	private BlackListCustomerDAO blacklistCustomerDAO;
 
+	
 	/**
 	 * Method for create customer in PLF system.
 	 * 
@@ -140,20 +144,91 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			}
 			if (!dedupList.isEmpty()) {
 				response = new CustomerDetails();
+				String[] valueParm = new String[1];
+				valueParm[0] = "dedup";
 				doEmptyResponseObject(response);
 				response.setDedupReq(customerDetails.isDedupReq());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343"));
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343",valueParm));
 				response.setCustomerDedupList(dedupList);
 				return response;
 			}
 		}
-
+		
+		// call dedup service for balck list customer 
+		if (customerDetails.isBlackListReq()) {
+			List<BlackListCustomers> blackList = new ArrayList<BlackListCustomers>(1);
+			BlackListCustomers balckListData = doSetBlackListCustomerData(customerDetails);
+			List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST,
+					balckListData.getCustCtgCode(), "");
+			// TO Check black List customer in Local database
+			for (DedupParm dedupParm : dedupParmList) {
+				List<BlackListCustomers> list = blacklistCustomerDAO.fetchBlackListedCustomers(balckListData,
+						dedupParm.getSQLQuery());
+				if (list != null && !list.isEmpty()) {
+					blackList.addAll(list);
+				}
+			}
+			if (!blackList.isEmpty()) {
+				response = new CustomerDetails();
+				String[] valueParm = new String[1];
+				valueParm[0] = "blackList";
+				doEmptyResponseObject(response);
+				response.setBlackListReq(customerDetails.isBlackListReq());
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343",valueParm));
+				response.setBalckListCustomers(blackList);
+				return response;
+			}
+		}
 		// call create customer method in case of no errors
 		response = customerController.createCustomer(customerDetails);
 		// for logging purpose
 		APIErrorHandlerService.logReference(response.getCustCIF());
 		logger.debug("Leaving");
 		return response;
+	}
+
+	private BlackListCustomers doSetBlackListCustomerData(CustomerDetails customerDetails) {
+		Customer customer = customerDetails.getCustomer();
+		if (customer != null) {
+			BlackListCustomers blackListCustomer = new BlackListCustomers();
+			String mobileNumber = "";
+
+			List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+			if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+				if (phoneNumberList.size() > 1) {
+					Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
+						@Override
+						public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+							return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+						}
+					});
+				}
+				CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+				mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+						custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+			}
+			blackListCustomer.setCustCIF(customer.getCustCIF());
+			blackListCustomer.setCustShrtName(customer.getCustShrtName());
+			blackListCustomer.setCustFName(customer.getCustFName());
+			blackListCustomer.setCustLName(customer.getCustLName());
+			blackListCustomer.setCustCRCPR(customer.getCustCRCPR());
+			blackListCustomer.setCustPassportNo(customer.getCustPassportNo());
+			blackListCustomer.setMobileNumber(mobileNumber);
+			blackListCustomer.setCustNationality(customer.getCustNationality());
+			blackListCustomer.setCustDOB(customer.getCustDOB());
+			blackListCustomer.setCustCtgCode(customer.getCustCtgCode());
+
+			blackListCustomer.setLikeCustFName(
+					blackListCustomer.getCustFName() != null ? "%" + blackListCustomer.getCustFName() + "%" : "");
+			blackListCustomer.setLikeCustLName(
+					blackListCustomer.getCustLName() != null ? "%" + blackListCustomer.getCustLName() + "%" : "");
+
+			logger.debug("Leaving");
+
+			return blackListCustomer;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -2552,6 +2627,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
 		this.customerDedupDAO = customerDedupDAO;
+	}
+	@Autowired
+	public void setBlackListCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
+		this.blacklistCustomerDAO = blacklistCustomerDAO;
 	}
 
 }

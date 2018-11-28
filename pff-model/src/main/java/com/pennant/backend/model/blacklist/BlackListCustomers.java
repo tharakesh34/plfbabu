@@ -5,20 +5,32 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
+@XmlType(propOrder = { "custCIF", "custCtgCode","custFName", "custLName", "custShrtName", "custDOB",
+		"custCRCPR", "mobileNumber" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class BlackListCustomers extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 4313500432713459335L;
-
+	@XmlElement(name="cif")
 	private String custCIF;
+	@XmlElement(name="firstName")
 	private String custFName;
+	@XmlElement(name="lastName")
 	private String custLName;
+	@XmlElement(name="shrttName")
 	private String custShrtName;
 	private String custCompName;
+	@XmlElement
 	private Date custDOB;
 	private String custCRCPR;
 	private String custPassportNo;
+	@XmlElement
 	private String mobileNumber;
 	private String custNationality;
 	private long employer;

@@ -57,6 +57,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedField;
@@ -73,8 +74,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "custCIF", "custCoreBank", "custCtgCode", "custDftBranch", "custBaseCcy",
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
-		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "returnStatus",
-		"customerDedupList" })
+		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "balckListCustomers",
+		"blackListReq", "returnStatus", "customerDedupList" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -160,6 +161,9 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElementWrapper(name = "dedup")
 	@XmlElement(name = "dedup")
 	private List<CustomerDedup> customerDedupList;
+	@XmlElementWrapper(name = "balckListCustomers")
+	@XmlElement(name = "balckListCustomers")
+	List<BlackListCustomers> balckListCustomers;
 	private CoreCustomer coreCustomer;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private CustomerDedup custDedup;
@@ -175,6 +179,8 @@ public class CustomerDetails implements java.io.Serializable {
 	private WSReturnStatus returnStatus = null;
 	@XmlElement
 	private boolean dedupReq;
+	@XmlElement
+	private boolean blackListReq;
 
 	private boolean cibilExecuted = false;
 	private boolean cibilALreadyRun = false;
@@ -591,4 +597,22 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setCibilExecuted(boolean cibilExecuted) {
 		this.cibilExecuted = cibilExecuted;
 	}
+	
+
+	public List<BlackListCustomers> getBalckListCustomers() {
+		return balckListCustomers;
+	}
+
+	public void setBalckListCustomers(List<BlackListCustomers> balckListCustomers) {
+		this.balckListCustomers = balckListCustomers;
+	}
+
+	public boolean isBlackListReq() {
+		return blackListReq;
+	}
+
+	public void setBlackListReq(boolean blackListReq) {
+		this.blackListReq = blackListReq;
+	}
+
 }

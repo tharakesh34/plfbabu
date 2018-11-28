@@ -1154,4 +1154,12 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 ]]> 
 </sql>
 </changeSet>
+
+<changeSet id="20" author="Sriklanth">
+	<sql>
+	<![CDATA[
+		UPDATE ErrorDetails set message='Customer {0} found' where code='90343';
+		]]> 
+	</sql>
+	</changeSet>
 </databaseChangeLog>
