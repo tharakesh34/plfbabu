@@ -806,7 +806,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 				doSetCustomer(customer, newSearchObject);
 			}
 			if (PennantConstants.PFF_CUSTCTG_SME.equals(customer.getCustCtgCode())) {
-				this.bankName.setValue(customer.getCustShrtName());
+				//this.bankName.setValue(customer.getCustShrtName());
 				this.bankName.setReadonly(true);
 				this.label_CreditApplicationReviewDialog_BankName
 						.setValue(Labels.getLabel("label_CustomerDialog_CustShrtName.value"));
