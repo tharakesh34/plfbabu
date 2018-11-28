@@ -1162,4 +1162,21 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		]]> 
 	</sql>
 	</changeSet>
+
+<changeSet id="20" author="aditya">
+<sql>
+<![CDATA[
+       update reportlist set code='PromotionWorkFlow' where module='PromotionWorkFlow';
+]]> 
+</sql>
+</changeSet>
+
+<changeSet id="21" author="aditya">
+<comment>Account Type Groups Print Button Query</comment>
+<sql>
+<![CDATA[
+       INSERT INTO REPORTLIST VALUES ('AccountTypeGroup', 'AccountTypeGroup', 'listheader_GroupCode,listheader_AcctTypeLevel,listheader_ParentGroup', 'groupCode,acctTypeLevel,parentGroup', 'String,int,String', '', 'ReportList03', 'Account Type Groups', 'Solution Factory', 3, 1001, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, 0);
+]]> 
+</sql>
+</changeSet>	
 </databaseChangeLog>
