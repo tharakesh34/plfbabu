@@ -3423,7 +3423,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Entering");
 		Map<String, Date> map = new HashMap<String, Date>();
 		
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinStartDate From FinanceMain");
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinStartDate From FinanceMain_View");
 		selectSql.append(" Where FinCurrAssetValue = 0  AND FinIsActive = 1 ");
 
 		logger.debug("selectSql: " + selectSql.toString());
