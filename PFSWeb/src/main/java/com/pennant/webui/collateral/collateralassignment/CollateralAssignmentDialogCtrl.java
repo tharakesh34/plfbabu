@@ -35,8 +35,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
@@ -882,21 +880,16 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 
 		// Requested Collateral Adjustment Calculation
 		if (StringUtils.equals(ImplementationConstants.COLLATERAL_ADJ, CollateralConstants.COLLATERAL_REQ_ADJ)) {
-			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-			BigDecimal utilizedAmt = BigDecimal.ZERO;
-			if (StringUtils.equals(PennantConstants.COLLATERAL_LTV_CHECK_FINAMT, financeType.getFinLTVCheck())) {
-				utilizedAmt = financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount());
-			} else {
-				utilizedAmt = financeMain.getFinAssetValue().subtract(financeMain.getFinRepaymentAmount());
-			}
+
+			BigDecimal utilizedAmt = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount();
+
 			BigDecimal assignedVal = BigDecimal.ZERO;
 
 			// If already exists any Collateral
 			if (collateralAssignments != null) {
 				for (CollateralAssignment assignment : collateralAssignments) {
 					assignedVal = assignedVal.add((assignment.getAssignPerc().multiply(assignment.getBankValuation()))
-							.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
+							.divide(new BigDecimal(100), 2, RoundingMode.UP));
 				}
 			}
 			utilizedAmt = utilizedAmt.subtract(assignedVal);
@@ -906,8 +899,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 				reqAssignPerc = BigDecimal.valueOf(100);
 			} else {
 				//If loan amount is lesser than Collateral amount
-				reqAssignPerc = utilizedAmt.multiply(new BigDecimal(100)).divide(collateralSetup.getBankValuation(), 0,
-						RoundingMode.HALF_DOWN);
+				reqAssignPerc = utilizedAmt.multiply(new BigDecimal(100)).divide(collateralSetup.getBankValuation(), 2,
+						RoundingMode.UP);
 			}
 			if (reqAssignPerc.compareTo(BigDecimal.valueOf(100)) > 0) {
 				reqAssignPerc = BigDecimal.valueOf(100);
