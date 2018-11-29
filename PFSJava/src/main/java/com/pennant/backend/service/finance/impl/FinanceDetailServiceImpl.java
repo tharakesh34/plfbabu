@@ -8422,6 +8422,34 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	private void updateTaskLog(FinanceMain financeMain, boolean isSaveorUpdate) {
 		logger.debug("Entering");
+
+		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+			if (!PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())) {
+				Map<String, String> roleUsers = new HashMap<>();
+				roleUsers.put(financeMain.getRoleCode(), String.valueOf(financeMain.getLastMntBy()));
+
+				String[] nextRoles = StringUtils.split(financeMain.getNextRoleCode(), ",");
+
+				for (String nextRole : nextRoles) {
+					if (!financeMain.getNextRoleCode().contains(financeMain.getRoleCode())) {
+						roleUsers.remove(financeMain.getRoleCode());
+						roleUsers.put(nextRole, String.valueOf("0"));
+					}
+				}
+
+				financeMain.setLovDescNextUsersRolesMap(roleUsers);
+
+				if (financeMain.getLovDescNextUsersRolesMap() != null) {
+					saveUserActivityDetails(financeMain);
+				}
+
+				getUserActivityLogDAO().updateFinStatus(financeMain.getFinReference(),
+						PennantConstants.WORFLOW_MODULE_FINANCE);
+			}
+
+			return;
+		}
+
 		List<QueueAssignment> queueAssignList = new ArrayList<QueueAssignment>();
 		List<TaskOwners> taskOwnerList = new ArrayList<TaskOwners>();
 		TaskOwners taskOwner = null;
@@ -10148,6 +10176,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return holdDisbursementDAO.isholdDisbursementProcess(finReference, "_View");
 	}
 
+	@Override
+	public void updateNextUserId(String finReference, String nextUserId) {
+		if (nextUserId != null) {
+			String currUserId = getFinanceMainDAO().getNextUserId(finReference);
+
+			if (StringUtils.isNotEmpty(currUserId)) {
+				throw new AppException("The record was locked by another user.");
+			}
+		}
+
+		getFinanceMainDAO().updateNextUserId(finReference, nextUserId);
+	}
+
+	@Override
+	public String getNextUserId(String finReference) {
+		return getFinanceMainDAO().getNextUserId(finReference);
+	}
+
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
 	}
@@ -10231,7 +10277,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
-
 	public HoldDisbursementDAO getHoldDisbursementDAO() {
 		return holdDisbursementDAO;
 	}

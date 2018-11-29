@@ -299,6 +299,10 @@ public interface FinanceMainDAO {
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
+	void updateNextUserId(String finReference, String nextUserId);
+
+	String getNextUserId(String finReference);
+
 	int getActiveCount(String finType, long custID);
 
 	int getODLoanCount(String finType, long custID);

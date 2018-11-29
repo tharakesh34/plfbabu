@@ -174,6 +174,7 @@ import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
@@ -656,6 +657,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected Button btnValidate;
 	protected Button btnBuildSchedule;
+	protected Button btnLockRecord;
 	protected Button btnSearchCustCIF;
 
 	protected transient BigDecimal oldVar_finAmount;
@@ -1008,6 +1010,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Schedule related buttons
 		this.btnValidate.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnValidate"));
 		this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
+		if (PennantConstants.ALLOW_LOAN_APP_LOCK && StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()) {
+			btnLockRecord.setVisible(true);
+
+			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+			if (StringUtils.isNotEmpty(financeMain.getNextUserId())) {
+				btnLockRecord.setLabel(Labels.getLabel("btnUnlockRecord"));
+				btnLockRecord.setTooltiptext(Labels.getLabel("btnUnlockRecord.tooltiptext"));
+			}
+		} else {
+			btnLockRecord.setVisible(false);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -6114,6 +6129,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
+
+		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+			String currUserId = getFinanceDetailService()
+					.getNextUserId(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+
+			if (StringUtils.isNotEmpty(currUserId)
+					&& !StringUtils.equals(currUserId, Long.toString(getUserWorkspace().getUserId()))) {
+				SecurityUser user = PennantAppUtil.getUser(Long.valueOf(currUserId));
+				String userName = "";
+
+				if (user != null) {
+					userName = user.getUsrLogin();
+				}
+
+				throw new AppException(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
+			}
+		}
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
@@ -18856,6 +18888,32 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		return null;
+	}
+
+	public void onClick$btnLockRecord(Event event) throws Exception {
+		logger.info(Literal.ENTERING);
+
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		// Lock / Unlock the record.
+		try {
+			if (StringUtils.equals(btnLockRecord.getLabel(), Labels.getLabel("btnLockRecord"))) {
+				getFinanceDetailService().updateNextUserId(financeMain.getFinReference(),
+						String.valueOf(getUserWorkspace().getUserId()));
+
+				btnLockRecord.setLabel(Labels.getLabel("btnUnlockRecord"));
+				btnLockRecord.setTooltiptext(Labels.getLabel("btnUnlockRecord.tooltiptext"));
+			} else {
+				getFinanceDetailService().updateNextUserId(financeMain.getFinReference(), null);
+
+				btnLockRecord.setLabel(Labels.getLabel("btnLockRecord"));
+				btnLockRecord.setTooltiptext(Labels.getLabel("btnLockRecord.tooltiptext"));
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.info(Literal.LEAVING);
 	}
 
 	public List<String> getAssignCollateralRef() {

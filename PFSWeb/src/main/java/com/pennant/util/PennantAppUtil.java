@@ -71,6 +71,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.AccountTypeGroup;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
@@ -2266,5 +2267,19 @@ public class PennantAppUtil {
 		}
 
 		return categoryTypes;
+	}
+
+	public static SecurityUser getUser(long id) {
+		JdbcSearchObject<SecurityUser> jdbcSearchObject = new JdbcSearchObject<>(SecurityUser.class);
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		jdbcSearchObject.addFilterEqual("UsrId", id);
+		List<SecurityUser> users = pagedListService.getBySearchObject(jdbcSearchObject);
+
+		if (users != null && !users.isEmpty()) {
+			return users.get(0);
+		}
+
+		return null;
 	}
 }

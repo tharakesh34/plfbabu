@@ -3439,4 +3439,43 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return map;
 	}
 
+	@Override
+	public void updateNextUserId(String finReference, String nextUserId) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("NextUserId", nextUserId);
+
+		StringBuilder sql = new StringBuilder("update FinanceMain_Temp");
+		sql.append(" set NextUserId = :NextUserId");
+		sql.append(" where FinReference = :FinReference");
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcTemplate.update(sql.toString(), source);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public String getNextUserId(String finReference) {
+		logger.debug(Literal.ENTERING);
+		String nextUserId = null;
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("select NextUserId from FinanceMain_Temp");
+		sql.append(" where FinReference = :FinReference");
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			nextUserId = jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return nextUserId;
+	}
 }

@@ -788,4 +788,6 @@ public class PennantConstants {
 
 	public static final String COLLATERAL_LTV_CHECK_DISBAMT = "LTVDISBAMT";
 	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";
+
+	public static final boolean ALLOW_LOAN_APP_LOCK = false;
 }

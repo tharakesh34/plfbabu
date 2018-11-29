@@ -17,24 +17,26 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
 								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
 									sclass="z-toolbarbutton" />
 								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
 									sclass="z-toolbarbutton" />
 								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
 									sclass="z-toolbarbutton" />
 								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
 									sclass="z-toolbarbutton" />
 								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
 									sclass="z-toolbarbutton" />
 								<button id="btnValidate" label="Verify" tooltiptext="${c:l('btnValidate.tooltiptext')}" sclass="z-toolbarbutton" />
 								<button id="btnBuildSchedule" label="Build" tooltiptext="${c:l('btnSchedule.tooltiptext')}" sclass="z-toolbarbutton" />
-
+								<button id="btnLockRecord" label="${c:l('btnLockRecord')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
+									tooltiptext="${c:l('btnLockRecord.tooltiptext')}" sclass="z-toolbarbutton" visible="false" />
 							</toolbar>
 
 							<!-- SEARCH AREA -->
@@ -48,7 +50,7 @@
 									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
 									sclass="z-toolbarbutton" />
 								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnValidate,btnBuildSchedule,btnLockRecord"
 									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>

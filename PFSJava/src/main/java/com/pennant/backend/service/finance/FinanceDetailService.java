@@ -291,6 +291,10 @@ public interface FinanceDetailService {
 
 	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schDate);
 
+	void updateNextUserId(String finReference, String nextUserId);
+
+	String getNextUserId(String finReference);
+
 	CustomerEligibilityCheck getODLoanCustElgDetail(FinanceDetail detail);
 
 	boolean isholdDisbursementProcess(String finReference);

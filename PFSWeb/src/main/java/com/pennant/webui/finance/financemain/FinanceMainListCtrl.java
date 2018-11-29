@@ -487,6 +487,22 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
+		// Check whether the record was locked by any other user.
+		String userId = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId();
+
+		if (PennantConstants.ALLOW_LOAN_APP_LOCK && StringUtils.isNotEmpty(userId)
+				&& !StringUtils.equals(userId, Long.toString(getUserWorkspace().getUserId()))) {
+			SecurityUser user = PennantAppUtil.getUser(Long.valueOf(userId));
+			String userName = "";
+
+			if (user != null) {
+				userName = user.getUsrLogin();
+			}
+
+			MessageUtil.showMessage(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
+			return;
+		}
+
 		//Check QDP Case
 		boolean allowProcess = DisbursementInstCtrl.checkQDPProceeed(financeDetail);
 		if (!allowProcess) {

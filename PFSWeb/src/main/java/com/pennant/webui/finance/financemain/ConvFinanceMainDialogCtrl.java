@@ -266,7 +266,12 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		if (capturereaonse != null && capturereaonse.intValue() != 0) {
 			doFillReasons(capturereaonse.intValue());
 		} else {
-			doSave();
+			try {
+				doSave();
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+				return;
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

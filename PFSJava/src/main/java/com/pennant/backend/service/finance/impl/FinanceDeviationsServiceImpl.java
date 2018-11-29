@@ -395,13 +395,16 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 						 * owner and Update the update the record process flag to zero. 3. delete the record which
 						 * assigned for next role Code.
 						 */
-
-						TaskOwners taskowner = taskOwnersDAO.getTaskOwner(finref, roleCode);
-						if (taskowner != null) {
-							finmain.setNextUserId(String.valueOf(taskowner.getCurrentOwner()));
-							taskOwnersDAO.deviationReject(finref, roleCode, nextRoleCode);
+						if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+							finmain.setNextUserId(null);
 						} else {
-							finmain.setNextUserId(String.valueOf(0));
+							TaskOwners taskowner = taskOwnersDAO.getTaskOwner(finref, roleCode);
+							if (taskowner != null) {
+								finmain.setNextUserId(String.valueOf(taskowner.getCurrentOwner()));
+								taskOwnersDAO.deviationReject(finref, roleCode, nextRoleCode);
+							} else {
+								finmain.setNextUserId(String.valueOf(0));
+							}
 						}
 					}
 

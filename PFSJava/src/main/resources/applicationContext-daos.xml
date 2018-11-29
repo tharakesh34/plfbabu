@@ -3255,6 +3255,7 @@
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
 				<prop key="doPreApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="executeWorkflowServiceTasks">PROPAGATION_REQUIRED</prop>
+				<prop key="updateNextUserId*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
