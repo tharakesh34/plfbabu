@@ -948,14 +948,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (customerDetails.getCustomerBankInfoList() != null && customerDetails.getCustomerBankInfoList().size() > 0) {
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerBankInfo");
 			details = processingBankInfoList(details, tableType, customerDetails.getCustID());
-			List<AuditDetail> bankInfoAuditList = new ArrayList<>();
+			/*List<AuditDetail> bankInfoAuditList = new ArrayList<>();
 			if(details != null){
 				for (AuditDetail auditDetail : details) {
 					CustomerBankInfo customerBankInfo = (CustomerBankInfo) auditDetail.getModelData();
 					bankInfoAuditList.addAll(customerBankInfo.getAuditDetailMap().get("BankInfoDetail"));
 				}
 			}
-			auditDetails.addAll(bankInfoAuditList);
+			auditDetails.addAll(bankInfoAuditList);*/
 			auditDetails.addAll(details);
 		}
 
