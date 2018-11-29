@@ -674,9 +674,9 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.uidNumber.setValue(aVehicleDealer.getUidNumber());
 		this.taxNumber.setValue(aVehicleDealer.getTaxNumber());
 		this.fromProvince.setValue(aVehicleDealer.getFromprovince());
-		this.fromProvince.setDescription(aVehicleDealer.getLovDescProvince());
+		this.fromProvince.setDescription(aVehicleDealer.getFromprovinceName());
 		this.toProvince.setValue(aVehicleDealer.getToprovince());
-		this.toProvince.setDescription(aVehicleDealer.getLovDescProvince());
+		this.toProvince.setDescription(aVehicleDealer.getToprovinceName());
 		this.accountNo.setValue(aVehicleDealer.getAccountNo());
 		fillComboBox(accountType, aVehicleDealer.getAccountType(), accountTypes, "");
 
