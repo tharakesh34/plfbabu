@@ -1154,6 +1154,64 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 ]]> 
 </sql>
 </changeSet>
+	<changeSet id="20" author="saikrishna.p">
+		<comment>Security related scripts required for Queue Assignment.</comment>
+		<sql>
+		<![CDATA[
+			-- Groups
+			insert into SecGroups(GrpID, GrpCode, GrpDesc, Version, LastMntBy, LastMntOn, RecordStatus, WorkflowId)
+				values ((select MAX(GrpID) + 1 from SecGroups), 'QUEUE_ASSIGNMENT_MAKER', 'Queue Assignment Maker', 1
+					, 1000, current_timestamp, 'Approved', 0);
+			
+			update SeqSecGroups set SeqNo = (select MAX(GrpID) from SecGroups);
+			
+			-- Group Rights
+			insert into SecGroupRights (GrpRightID, GrpID, RightID, Version, LastMntBy, LastMntOn, RecordStatus
+					, WorkflowId, AccessType)
+				values ((select MAX(GrpRightID) + 1 from SecGroupRights)
+					, (select GrpID from SecGroups where GrpCode = 'QUEUE_ASSIGNMENT_MAKER')
+					, (select RightId from SecRights where RightName = 'menuItem_Reassignment')
+					, 1, 1000, current_timestamp, 'Approved', 1, 1);
+			insert into SecGroupRights (GrpRightID, GrpID, RightID, Version, LastMntBy, LastMntOn, RecordStatus
+					, WorkflowId, AccessType)
+				values ((select MAX(GrpRightID) + 1 from SecGroupRights)
+					, (select GrpID from SecGroups where GrpCode = 'QUEUE_ASSIGNMENT_MAKER')
+					, (select RightId from SecRights where RightName = 'button_AssignmentDialog_btnSave')
+					, 1, 1000, current_timestamp, 'Approved', 1, 1);
+			
+			update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);		
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="20.1" author="saikrishna.p">
+		<comment>Security related scripts required for Queue Assignment - Contd...</comment>
+		<sql>
+		<![CDATA[
+			-- Groups
+			insert into SecGroups(GrpID, GrpCode, GrpDesc, Version, LastMntBy, LastMntOn, RecordStatus, WorkflowId)
+				values ((select MAX(GrpID) + 1 from SecGroups), 'QUEUE_ASSIGNMENT_APPROVER', 'Queue Assignment Approver', 1
+					, 1000, current_timestamp, 'Approved', 0);
+			
+			update SeqSecGroups set SeqNo = (select MAX(GrpID) from SecGroups);
+			
+			-- Group Rights
+			insert into SecGroupRights (GrpRightID, GrpID, RightID, Version, LastMntBy, LastMntOn, RecordStatus
+					, WorkflowId, AccessType)
+				values ((select MAX(GrpRightID) + 1 from SecGroupRights)
+					, (select GrpID from SecGroups where GrpCode = 'QUEUE_ASSIGNMENT_APPROVER')
+					, (select RightId from SecRights where RightName = 'menuItem_Reassignment')
+					, 1, 1000, current_timestamp, 'Approved', 1, 1);
+			insert into SecGroupRights (GrpRightID, GrpID, RightID, Version, LastMntBy, LastMntOn, RecordStatus
+					, WorkflowId, AccessType)
+				values ((select MAX(GrpRightID) + 1 from SecGroupRights)
+					, (select GrpID from SecGroups where GrpCode = 'QUEUE_ASSIGNMENT_APPROVER')
+					, (select RightId from SecRights where RightName = 'button_AssignmentDialog_btnSave')
+					, 1, 1000, current_timestamp, 'Approved', 1, 1);
+			
+			update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);		
+		]]>
+		</sql>
+	</changeSet>
 
 <changeSet id="20" author="Sriklanth">
 	<sql>
