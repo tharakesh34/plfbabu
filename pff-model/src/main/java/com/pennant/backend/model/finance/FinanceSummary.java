@@ -149,14 +149,6 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal unPaidInstlementPft = BigDecimal.ZERO;
 	@XmlElement
 	private long numberOfTerms;
-	
-	//API purpose
-	@XmlElement
-	private BigDecimal limitBalance = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal billedAmount = BigDecimal.ZERO;
-	@XmlElement
-	private BigDecimal unbilledAmount = BigDecimal.ZERO;
 	private int NOInst;
 
 	private String custCIF;
@@ -886,30 +878,6 @@ public class FinanceSummary implements Serializable {
 
 	public void setNOInst(int nOInst) {
 		NOInst = nOInst;
-	}
-
-	public BigDecimal getLimitBalance() {
-		return limitBalance;
-	}
-
-	public void setLimitBalance(BigDecimal limitBalance) {
-		this.limitBalance = limitBalance;
-	}
-
-	public BigDecimal getBilledAmount() {
-		return billedAmount;
-	}
-
-	public void setBilledAmount(BigDecimal billedAmount) {
-		this.billedAmount = billedAmount;
-	}
-
-	public BigDecimal getUnbilledAmount() {
-		return unbilledAmount;
-	}
-
-	public void setUnbilledAmount(BigDecimal unbilledAmount) {
-		this.unbilledAmount = unbilledAmount;
 	}
 
 	public BigDecimal getSanctionAmt() {
