@@ -2771,6 +2771,12 @@ public class ScheduleCalculator {
 			BigDecimal repayAmount, String schdMethod) {
 		logger.debug("Entering");
 
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finMain.getScheduleMethod())) {
+			logger.debug("Leaving");
+			return finScheduleData;
+		}
+
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
 		BigDecimal nextInstructAmount = BigDecimal.ZERO;
@@ -2779,9 +2785,7 @@ public class ScheduleCalculator {
 
 		boolean isAddNewInstruction = true;
 		int instructIndex = -1;
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		if (!(finScheduleData.getFinanceType() != null
-				&& !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finScheduleData.getFinanceType().getFinGrcSchdMthd()))) {
+
 		// Find next date for instruction
 		if (DateUtility.compare(toDate, finMain.getMaturityDate()) >= 0) {
 			nextInstructDate = finMain.getMaturityDate();
@@ -2854,7 +2858,7 @@ public class ScheduleCalculator {
 		}
 
 		finScheduleData.setRepayInstructions(sortRepayInstructions(finScheduleData.getRepayInstructions()));
-		}
+
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
