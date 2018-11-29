@@ -108,6 +108,7 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -221,7 +222,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		registerField("FileLocation");
 		registerField("UserId");
 		registerField("endTime");
-		registerField("ValueDate", SortOrder.DESC);
+		registerField("ValueDate");
 
 		if (isTrailBalance) {
 			registerField("startDate");
@@ -258,11 +259,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		if (isTrailBalance) {
 			list.add("TRIAL_BALANCE_EXPORT_STATE");
 			list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
-			if (App.DATABASE == App.Database.ORACLE) {
-				this.searchObject.addWhereClause(" rownum<11 ");
-			} else {
-                
-			}
+			
 		} else {
 			list.add("GL_TRANSACTION_EXPORT");
 			list.add("GL_TRANSACTION_SUMMARY_EXPORT");

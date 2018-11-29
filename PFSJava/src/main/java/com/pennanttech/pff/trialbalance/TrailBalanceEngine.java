@@ -32,6 +32,7 @@ import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -726,7 +727,12 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID ");
 		sql.append(" INNER JOIN ( Select T1.ACCOUNTID,T1.ACBALANCE, T1.POSTDATE from ACCOUNTSHISTORY T1 ");
 		sql.append(" INNER JOIN ( Select T2.accountid, max(T2.postdate)postdate  from ACCOUNTSHISTORY T2 ");
-		sql.append(" where T2.postdate < :FROMDATE group by T2.accountid) T2 ");
+		
+		if (App.DATABASE == Database.POSTGRES) {
+			sql.append(" where to_char(T2.postdate,'dd-MM-yyyy')< :FROMDATE group by T2.accountid) T2 ");
+		} else {
+			sql.append(" where T2.postdate  < :FROMDATE group by T2.accountid) T2 ");
+		}
 		sql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate) T5 ON T5.accountid = T1.account ");
 		sql.append(
 				" AND T5.POSTDATE=T1.POSTDATE where atg.GROUPCODE in ('EXPENSE','INCOME') and T1.EntityCode = :EntityCode ");
@@ -969,7 +975,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		String closingBaltype = "";
 		StringBuilder sql = new StringBuilder();
-		;
 		MapSqlParameterSource parmsource = new MapSqlParameterSource();
 		BigDecimal closingBal = getPreviousFinancialYearBalances();
 		closingBal = closingBal.divide(new BigDecimal(Math.pow(10, PennantConstants.defaultCCYDecPos)));
