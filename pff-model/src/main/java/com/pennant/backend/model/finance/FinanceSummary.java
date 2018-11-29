@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
 		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
 		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
-		"finODDetail", "advPaymentAmount", "finStatus", "fullyDisb", "limitBalance", "billedAmount", "unbilledAmount" })
+		"finODDetail", "advPaymentAmount", "finStatus", "fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {

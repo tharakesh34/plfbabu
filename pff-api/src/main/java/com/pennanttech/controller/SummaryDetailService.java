@@ -102,9 +102,9 @@ public class SummaryDetailService {
 			
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 					financeMain.getProductCategory())) {
-				summary.setLimitBalance(financeMain.getFinAssetValue());
-				summary.setBilledAmount(finPftDetail.getTotalPriBal());
-				summary.setUnbilledAmount(summary.getLimitBalance().subtract(summary.getBilledAmount()));
+				summary.setSanctionAmt(financeMain.getFinAssetValue());
+				summary.setUtilizedAmt(finPftDetail.getTotalPriBal());
+				summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));
 			}
 
 			// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
