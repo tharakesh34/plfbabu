@@ -544,6 +544,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlTransient
 	private LoggedInUser userDetails;
 	private String nextUserId = null;
+	private String nextUsrName;
 	private int priority;
 	private String lovDescAssignMthd;
 	private Map<String, String> lovDescBaseRoleCodeMap = null;
@@ -857,6 +858,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("finBranchProvinceCode");
 		excludeFields.add("higherDeviationApprover");
 		excludeFields.add("attributes");
+		excludeFields.add("nextUsrName");
 
 		return excludeFields;
 	}
@@ -3351,8 +3353,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.availedReAgeH = availedReAgeH;
 	}
 
+	public void setNextUsrName(String nextUsrName) {
+		this.nextUsrName = nextUsrName;
+	}
+
 	public String getNextUsrName() {
-		return "";
+		return nextUsrName;
 	}
 
 	public String getWorkFlowType() {

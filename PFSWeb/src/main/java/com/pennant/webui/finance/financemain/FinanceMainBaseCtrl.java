@@ -1010,7 +1010,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Schedule related buttons
 		this.btnValidate.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnValidate"));
 		this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK && StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()) {
+		if (PennantConstants.ALLOW_LOAN_APP_LOCK && StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()
+				&& !getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()) {
 			btnLockRecord.setVisible(true);
 
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -18900,11 +18901,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.equals(btnLockRecord.getLabel(), Labels.getLabel("btnLockRecord"))) {
 				getFinanceDetailService().updateNextUserId(financeMain.getFinReference(),
 						String.valueOf(getUserWorkspace().getUserId()));
+				curNextUserId = String.valueOf(getUserWorkspace().getUserId());
 
 				btnLockRecord.setLabel(Labels.getLabel("btnUnlockRecord"));
 				btnLockRecord.setTooltiptext(Labels.getLabel("btnUnlockRecord.tooltiptext"));
 			} else {
 				getFinanceDetailService().updateNextUserId(financeMain.getFinReference(), null);
+				curNextUserId = null;
 
 				btnLockRecord.setLabel(Labels.getLabel("btnLockRecord"));
 				btnLockRecord.setTooltiptext(Labels.getLabel("btnLockRecord.tooltiptext"));
