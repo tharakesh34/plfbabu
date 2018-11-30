@@ -1480,4 +1480,35 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 	<changeSet id="40" author="somasekhar" dbms="oracle,mssql">
 	<addAutoIncrement tableName="TRANSACTION_DETAIL_REPORT" columnName="id"/>
 	</changeSet>
+	<changeSet id="41" author="saikrishna.p">
+		<comment>Security related scripts required for Release Lock.</comment>
+		<sql>
+		<![CDATA[
+			-- Rights
+			insert into SecRights (RightID, RightType, RightName, Page, Version, LastMntBy, LastMntOn, RecordStatus
+					, WorkflowId) 
+				values ((select MAX(RightID) + 1 from SecRights), 0, 'menuItem_ReleaseLock', 'MENU', 1
+					, 1000, current_timestamp, 'Approved', 0);
+			
+			update SeqSecRights set SeqNo = (select MAX(RightID) FROM SecRights);
+			
+			-- Groups
+			insert into SecGroups(GrpID, GrpCode, GrpDesc, Version, LastMntBy, LastMntOn, RecordStatus, WorkflowId)
+				values ((select MAX(GrpID) + 1 from SecGroups), 'RELEASE_LOCK_LOAN_QUEUE'
+					, 'Release Lock of Loan Queue Administrator', 1, 1000, current_timestamp, 'Approved', 0);
+			
+			update SeqSecGroups set SeqNo = (select MAX(GrpID) from SecGroups);
+			
+			-- Group Rights
+			insert into SecGroupRights (GrpRightID, GrpID, RightID, Version, LastMntBy, LastMntOn, RecordStatus
+					, WorkflowId, AccessType)
+				values ((select MAX(GrpRightID) + 1 from SecGroupRights)
+					, (select GrpID from SecGroups where GrpCode = 'RELEASE_LOCK_LOAN_QUEUE')
+					, (select RightId from SecRights where RightName = 'menuItem_ReleaseLock')
+					, 1, 1000, current_timestamp, 'Approved', 1, 1);
+			
+			update SeqSecGroupRights set SeqNo = (select MAX(GrpRightID) from SecGroupRights);		
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

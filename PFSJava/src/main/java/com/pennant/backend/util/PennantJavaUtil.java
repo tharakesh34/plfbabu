@@ -2969,6 +2969,9 @@ public class PennantJavaUtil {
 								new String[] { "BankInfoDetail", "BankInfoDetail" }, null, new String[] { "" },
 								null, 350));
 
+		ModuleUtil.register("ReleaseLock", new ModuleMapping("ReleaseLock", FinanceMain.class,
+				new String[] { "LockedFinances_View" }, null, new String[] { "" }, null, 350));
+
 		registerCustomModules();
 	}
 

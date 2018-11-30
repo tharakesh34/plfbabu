@@ -306,7 +306,7 @@
 				rightName="menuItem_SystemMaster_VehicleDealer" />
 			<menuItem id="menu_Item_IRRCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/IRRCode/IRRCodeList.zul" 
 				rightName="menuItem_applicationmaster_IRRCode"/>
-</menu>
+		</menu>
 		<menuItem id="menu_Item_LovFieldDetail"
 			zulNavigation="/WEB-INF/pages/SystemMaster/LovFieldDetail/LovFieldDetailList.zul"
 			rightName="menuItem_SystemMaster_LovFieldDetail" />
@@ -575,6 +575,8 @@
 			rightName="menuItem_LoanQuery_QueryDetail"/>
 		<menuItem id="menu_Item_QueueAssignment" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/QueueAssignmentList.zul"
 			rightName="menuItem_Reassignment" />
+		<menuItem id="menu_Item_ReleaseLock" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/ReleaseLockList.zul"
+			rightName="menuItem_ReleaseLock" />
 	</menu>
 
 	<!-- Verification -->

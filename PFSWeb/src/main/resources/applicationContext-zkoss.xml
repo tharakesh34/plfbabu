@@ -4875,4 +4875,10 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="holdDisbursementService" ref="holdDisbursementService" />
 	</bean>
+
+	<!-- Release Lock of Loan Queue -->
+	<bean id="releaseLockListCtrl" class="com.pennant.webui.finance.financemain.ReleaseLockListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
 </beans>
