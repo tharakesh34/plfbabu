@@ -1286,8 +1286,8 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
     tbrf.closingbaltype,
     tbrf.fintype AS productflag
    FROM trial_balance_report_file tbrf
-     LEFT JOIN rmtcountryvsprovince rmt ON rmt.cpprovince::text = tbrf.province::text
-  ORDER BY tbrf.id
+     LEFT JOIN rmtcountryvsprovince rmt ON rmt.cpprovince = tbrf.province
+  
   
  </createView>
 </changeSet>
@@ -1306,8 +1306,8 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
     tbrf.closingbaltype,
     tbrf.fintype
    FROM trial_balance_report_file tbrf
-     LEFT JOIN rmtcountryvsprovince rmt ON rmt.cpprovince::text = tbrf.province::text
-  ORDER BY tbrf.id
+     LEFT JOIN rmtcountryvsprovince rmt ON rmt.cpprovince= tbrf.province
+  
   
  </createView>
 </changeSet>
@@ -1343,7 +1343,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		FINTYPE
 		FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
 		RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
-		order by ID
+		
 	 </createView>
 	</changeSet>
 		<changeSet id="33" author="somasekhar">
@@ -1364,7 +1364,7 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		FINTYPE AS PRODUCTFLAG
 		FROM 	TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN
 		RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
-		order by  ID
+		
 		 
 		 </createView>
 		</changeSet>
@@ -1375,8 +1375,6 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 			FROM TRANSACTION_DETAIL_REPORT DR
 			INNER JOIN TRANSACTION_SUMMARY_REPORT SR ON SR.LINK = DR.LINK
 			INNER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = SR.CURRCY
-			ORDER BY ID
-	 
 	 </createView>
 	</changeSet>
 	
@@ -1477,9 +1475,6 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		</sql>
 	</changeSet>
 	
-	<changeSet id="40" author="somasekhar" dbms="oracle,mssql">
-	<addAutoIncrement tableName="TRANSACTION_DETAIL_REPORT" columnName="id"/>
-	</changeSet>
 	<changeSet id="41" author="saikrishna.p">
 		<comment>Security related scripts required for Release Lock.</comment>
 		<sql>
