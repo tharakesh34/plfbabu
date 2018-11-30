@@ -1521,4 +1521,9 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		   ]]>
 		</createView>
 	</changeSet>
+<changeSet id="43" author="aditya">
+		<addColumn tableName="Finodpenaltyrates_log">
+		<column name="ODRuleCode" type="Varchar2(8)"/>
+		</addColumn>
+</changeSet>	
 </databaseChangeLog>
