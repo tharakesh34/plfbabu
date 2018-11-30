@@ -565,9 +565,7 @@ public class NotificationService {
 		data.setFinReference(detail.getFinReference());
 		data.setCustShrtName(detail.getUserDetails().getUserName());
 		return data.getDeclaredFieldValues();
-
 	}
-
 	/**
 	 * Method for Data Preparion
 	 * 
@@ -583,6 +581,7 @@ public class NotificationService {
 		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
 		// Finance Data Preparation For Notifications
+		data.setCustShrtName(main.getCustShrtName());
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
 		data.setDownPayment(PennantApplicationUtil.amountFormate(main.getDownPayment(), format));
@@ -613,6 +612,7 @@ public class NotificationService {
 		data.setUserName(main.getUserDetails().getUserName());
 		data.setUserBranch(main.getUserDetails().getBranchName());
 		data.setUserDepartment(main.getUserDetails().getDepartmentName());
+		data.setFinBranchContact(main.getFinBranchContact());
 
 		// Customer Address
 		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);

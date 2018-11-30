@@ -224,6 +224,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String applicationNo;
 	private String swiftBranchCode;
+	private String finBranchContact;
 
 	// ===========================================
 	// ==========Grace Period Details=============
@@ -858,11 +859,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("finBranchProvinceCode");
 		excludeFields.add("higherDeviationApprover");
 		excludeFields.add("attributes");
+		excludeFields.add("finBranchContact");
 		excludeFields.add("nextUsrName");
 
 		return excludeFields;
 	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -4005,5 +4006,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		}
 
 		this.processAttributes = result.toString();
+	}
+
+	public String getFinBranchContact() {
+		return finBranchContact;
+	}
+
+	public void setFinBranchContact(String finBranchContact) {
+		this.finBranchContact = finBranchContact;
 	}
 }
