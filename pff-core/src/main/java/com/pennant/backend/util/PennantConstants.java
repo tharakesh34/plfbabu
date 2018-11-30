@@ -790,4 +790,13 @@ public class PennantConstants {
 	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";
 
 	public static final boolean ALLOW_LOAN_APP_LOCK = false;
+	
+	public static final int     RECEIPT_DEFAULT                                 = 0;
+	public static final int		RECEIPT_DOWNLOADED								= 1;
+	public static final int		RECEIPT_APPROVED								= 2;
+	public static final int		RECEIPT_REJECTED								= 3;
+
+	//active and inactive
+	public static final boolean ACTIVE = true;
+	public static final boolean INACTIVE = false;
 }

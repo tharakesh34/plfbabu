@@ -4231,5 +4231,53 @@ public class ReceiptCalculator implements Serializable {
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
+	
+	
+	public BigDecimal getPftAmount(FinScheduleData finScheduleData, BigDecimal allocAmount) {
+
+		BigDecimal pftAmount = BigDecimal.ZERO;
+
+		List<FinanceScheduleDetail> scheduleDetails = finScheduleData.getFinanceScheduleDetails();
+
+		for (int i = 1; i < scheduleDetails.size(); i++) {
+
+			if (allocAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+				FinanceScheduleDetail curSchd = scheduleDetails.get(i);
+
+				// TDS Calculation, if Applicable
+				BigDecimal tdsMultiplier = BigDecimal.ONE;
+
+				if (finScheduleData.getFinanceMain().isTDSApplicable()) {
+					BigDecimal tdsPerc = new BigDecimal(
+							SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+
+					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
+						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
+								RoundingMode.HALF_DOWN);
+					}
+				}
+
+				BigDecimal unpaidPft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+				BigDecimal actualPft = unpaidPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+				if (allocAmount.compareTo(actualPft) >= 0) {
+
+					pftAmount = pftAmount.add(unpaidPft);
+
+				} else {
+
+					BigDecimal remPft = (allocAmount).multiply(tdsMultiplier);
+					pftAmount = pftAmount.add(remPft);
+				}
+
+				allocAmount = allocAmount.subtract(actualPft);
+			}
+		}
+
+		pftAmount = CalculationUtil.roundAmount(pftAmount, finScheduleData.getFinanceMain().getCalRoundingMode(),
+				finScheduleData.getFinanceMain().getRoundingTarget());
+		return pftAmount;
+
+	}
 
 }

@@ -522,6 +522,129 @@ public class FeeDetailService {
 
 	}
 
+	public void doProcessFeesForInquiryForUpload(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst, boolean enquiry) 
+			throws IllegalAccessException, InvocationTargetException {
+		logger.debug("Entering");
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if(!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent, false,
+					FinanceConstants.MODULEID_FINTYPE));
+		} else {
+			String promotionType = financeDetail.getFinScheduleData().getFinanceType().getPromotionCode();
+			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(promotionType, finEvent,
+					false, FinanceConstants.MODULEID_PROMOTION));
+		}
+		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		String branchCode = userDetails.getBranchCode();
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if (financeDetail.getCustomerDetails() != null) {
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer
+							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branchCode);
+		
+		// set FinType fees details
+		String finReference = finScheduleData.getFinanceMain().getFinReference();
+		setFinFeeDetailList(convertToFinanceFees(financeDetail, finReference, gstExecutionMap));
+		List<FinFeeDetail> finTypeFees = getFinFeeDetailList();
+		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());
+		setFinFeeDetailList(actualFinFeeList);
+
+		// Organize Fee detail changes
+		//doSetFeeChanges(financeDetail, isOriginationFee);
+
+		List<String> feeRuleCodes = new ArrayList<String>();
+		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+			finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
+			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			finFeeDetail.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
+			finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
+			if (StringUtils.isNotEmpty(finFeeDetail.getRuleCode())) {
+				feeRuleCodes.add(finFeeDetail.getRuleCode());
+			}
+		}
+		
+		// Execute fee rules if exists
+		if (feeRuleCodes.size() > 0) {
+			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes, enquiry, gstExecutionMap);
+		}
+
+		// calculate fee percentage if exists
+		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry, gstExecutionMap);
+
+		// set Actual calculated values into feeDetails for Inquiry purpose
+		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+			finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount()).
+					subtract(finFeeDetail.getWaivedAmount()));
+			if(StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+				finFeeDetail.setTerms(1);
+			}
+		}
+
+		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
+		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
+		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+				deductFeeFromDisbTot = deductFeeFromDisbTot.add(finFeeDetail.getRemainingFee());
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+				feeAddToDisbTot = feeAddToDisbTot.add(finFeeDetail.getRemainingFee());
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
+					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+				}
+			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				if (finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
+					finFeeDetail.setWaivedAmount(finFeeDetail.getActualAmount());
+				}
+			}
+			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
+					.subtract(finFeeDetail.getWaivedAmount()));
+		}
+
+		for(FinFeeDetail prvFeeDetail: finScheduleData.getFinFeeDetailList()) {
+			for(FinFeeDetail currFeeDetail: getFinFeeDetailList()) {
+				if(StringUtils.equals(prvFeeDetail.getFinEvent(), currFeeDetail.getFinEvent()) 
+						&& StringUtils.equals(prvFeeDetail.getFeeTypeCode(), currFeeDetail.getFeeTypeCode())) {
+					BeanUtils.copyProperties(prvFeeDetail, currFeeDetail);
+				}
+			}
+		}
+		
+		finScheduleData.getFinFeeDetailList().addAll(getFinFeeDetailList());
+		
+		//### Ticket id:124998
+		if (finServiceInst!=null && finServiceInst.isReceiptUpload()){
+			finServiceInst.setFinFeeDetails(finScheduleData.getFinFeeDetailList());
+		}
+
+		logger.debug("Leaving");
+
+	}
+	
 	private void doExecuteFeeRules(FinanceDetail financeDetail, FinServiceInstruction finServiceInst,
 			FinScheduleData finScheduleData, List<String> feeRuleCodes, boolean enquiry,
 			HashMap<String, Object> gstExecutionMap) {

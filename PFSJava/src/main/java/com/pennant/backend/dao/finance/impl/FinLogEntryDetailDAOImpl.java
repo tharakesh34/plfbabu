@@ -1,10 +1,13 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -97,6 +100,36 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 		logger.debug("Leaving");
 		this.jdbcTemplate.update(selectSql.toString(), beanParameters);
+	}
+
+	/**
+	 * get postdate for particular finreference where schdRecal is happend
+	 * @param finReference
+	 * Ticket id:124998
+	 */
+	@Override
+	public Date getMaxPostDate(String finReference) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("  select max(POSTDATE) from FINLOGENTRYDETAIL");
+		selectSql.append(" where FinReference = :FinReference and SCHDLRECAL=1 ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+
+		mapSqlParameterSource.addValue("FinReference", finReference);
+
+		Date maxPostDate = null;
+		try {
+			maxPostDate = this.jdbcTemplate.queryForObject(selectSql.toString(),
+					mapSqlParameterSource, Date.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			maxPostDate = null;
+		}
+		return maxPostDate;
 	}
 
 }

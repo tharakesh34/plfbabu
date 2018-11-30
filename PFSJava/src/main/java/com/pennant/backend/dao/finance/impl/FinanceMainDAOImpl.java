@@ -59,6 +59,7 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.reports.AvailFinance;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -3477,5 +3478,241 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.LEAVING);
 		return nextUserId;
+	}
+	
+	public FinanceMain getEntityNEntityDesc(String finreference, String type, boolean wif){
+		logger.debug("Entering");
+
+		FinanceMain financeMain = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finreference);
+		StringBuilder sql = new StringBuilder("SELECT t4.ENTITYCODE,t4.ENTITYDESC From ");
+		if (wif) {
+			sql.append("WifFinanceMain");
+		} else {
+			sql.append("FinanceMain");
+		}
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" FM");
+		
+		sql.append(" inner JOIN");
+		sql.append(" RMTFinanceTypes  T2 ON T1.FinType = T2.FinType  inner JOIN");
+		sql.append(" SMTDIVISIONDETAIL T3 ON T2.FinDivision=T3.DIVISIONCODE inner join");
+		sql.append(" ENTITY t4 on t4.entitycode = t4.entitycode");
+
+		sql.append(" Where FinReference = :FinReference");
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source,
+					typeRowMapper);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeMain = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return financeMain;
+	}
+	
+	@Override
+	public FinanceType getFinTypeDetailsByFinreferene(String finReference, String type, boolean wif) {
+		logger.debug("Entering");
+
+		FinanceType financeType = new FinanceType();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		StringBuilder sql = new StringBuilder("SELECT FT.DEVELOPERFINANCE,FT.FinTypeClassification,FT.FinScheduleOn,FT.AlwEarlyPayMethods From ");
+		if (wif) {
+			sql.append("WifFinanceMain FM");
+		} else {
+			sql.append("FinanceMain FM");
+		}
+		sql.append(" Inner Join RmTFinanceTypes FT on FM.FinType = FT.FinType");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference");
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		try {
+			financeType = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeType = new FinanceType();
+		}
+
+		logger.debug("Leaving");
+		return financeType;
+
+	}
+	
+	/**
+	 * getting closing status for perticular loan reference
+	 * @param finReference
+	 * @param tempTab
+	 * @param wif
+	 */
+	@Override
+	public String getClosingStatus(String finReference, TableType tempTab, boolean wif) {
+		logger.debug("Entering");
+
+		String closingStaus = null;
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("SELECT closingstatus From ");
+		if (wif) {
+			sql.append("WifFinanceMain");
+		} else {
+			sql.append("FinanceMain");
+		}
+		sql.append(StringUtils.trimToEmpty(tempTab.getSuffix()));
+		sql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			closingStaus = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			closingStaus = null;
+		}
+
+		logger.debug("Leaving");
+		return closingStaus;
+	}
+
+	/**
+	 * //### 18-07-2018 Ticket ID : 124998,receipt upload
+	 */
+	@Override
+	public long getPartnerBankIdByReference(String finReference, String paymentMode, String fundingAc, String type,String purpose, boolean wif) {
+		logger.debug("Entering");
+		long partnerBankId=0;
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("Purpose", purpose);
+		source.addValue("PARTNERBANKCODE", fundingAc);
+		source.addValue("PAYMENTMODE", paymentMode);
+		
+		StringBuilder sql = new StringBuilder("SELECT FP.PARTNERBANKID From ");
+		if (wif) {
+			sql.append("WifFinanceMain");
+		} else {
+			sql.append("FinanceMain");
+		}
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" FM ");
+		
+		sql.append(" INNER JOIN FINTYPEPARTNERBANKS FP ON FP.FINTYPE =FM.FINTYPE ");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID =FP.PARTNERBANKID ");
+
+		sql.append(" Where FM.FinReference = :FinReference");
+		sql.append(" and FP.PURPOSE = :Purpose");
+		sql.append(" and PB.PARTNERBANKCODE = :PARTNERBANKCODE");
+		sql.append(" and FP.PAYMENTMODE = :PAYMENTMODE");
+		
+		
+		logger.debug("selectSql: " + sql.toString());
+		
+		try {
+			partnerBankId = this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			partnerBankId = 0;
+		}
+		
+		logger.debug("Leaving");
+		return partnerBankId; 
+	}
+	
+	/**
+	 * //### 12-07-2018 Ticket ID : 12499
+	 * 
+	 * check whether loan reference with entity code is present
+	 * @param finReference
+	 * @param type
+	 * @param entity
+	 */
+	@Override
+	public boolean isFinReferenceExitsWithEntity(String finReference,String type, String entity) {
+		logger.debug("Entering");
+		
+		int entityCount = 0;
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FINREFERENCE", finReference);
+		source.addValue("ENTITYCODE", entity);
+		
+		StringBuilder sql = new StringBuilder("SELECT COUNT(t4.ENTITYCODE) FROM ");
+		sql.append("FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" t1");
+		
+		sql.append(" inner JOIN");
+		sql.append(" RMTFinanceTypes  T2 ON T1.FinType = T2.FinType  inner JOIN");
+		sql.append(" SMTDIVISIONDETAIL T3 ON T2.FinDivision=T3.DIVISIONCODE inner join");
+		sql.append(" ENTITY t4 on t4.entitycode = t4.entitycode");
+
+		sql.append(" Where t1.FINREFERENCE = :FINREFERENCE");
+		sql.append(" and t4.ENTITYCODE = :ENTITYCODE");
+		
+		logger.debug("selectSql: " + sql.toString());
+		
+		try {
+			entityCount= this.jdbcTemplate.queryForObject(sql.toString(), source,Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			entityCount = 0;
+		}
+		
+		if(entityCount>0){
+			return true;
+		}
+		
+		logger.debug("Leaving");
+		return false;
+	}
+	
+	/**
+	 * 
+	 * check whether loan reference is developer or not
+	 * @param finReference
+	 * @param type
+	 * @param wif
+	 */
+	@Override
+	public boolean isDeveloperFinance(String finReference, String type, boolean wif) {
+		
+		logger.debug("Entering");
+		
+		boolean isdeveloperFinance =false;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		StringBuilder sql = new StringBuilder("SELECT ft.DEVELOPERFINANCE From ");
+		if (wif) {
+			sql.append("WifFinanceMain FM");
+		} else {
+			sql.append("FinanceMain FM");
+		}
+		sql.append(" Inner Join RmTFinanceTypes FT on FM.FinType = FT.FinType");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference");
+		logger.debug("selectSql: " + sql.toString());
+		
+		try {
+			isdeveloperFinance = this.jdbcTemplate.queryForObject(sql.toString(), source,
+					Boolean.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			isdeveloperFinance = false;
+		}
+		
+		logger.debug("Leaving");
+		return isdeveloperFinance;
+		
 	}
 }

@@ -449,4 +449,9 @@ public class BankDetailServiceImpl extends GenericService<BankDetail> implements
 		this.partnerBankDAO = partnerBankDAO;
 	}
 
+	@Override
+	public boolean isBankCodeExits(String bankCode, String string, boolean active) {
+		return getBankDetailDAO().isBankCodeExits(bankCode, string, active);
+	}
+
 }

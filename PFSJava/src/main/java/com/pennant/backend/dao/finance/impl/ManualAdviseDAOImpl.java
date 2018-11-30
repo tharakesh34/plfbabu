@@ -981,4 +981,42 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Get manual advise list by feetype code
+	 * @param finReference
+	 * @param feeTypeCode
+	 * @param type
+	 * 
+	 * Ticket id:12499
+	 */
+	@Override
+	public List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type) {
+
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId " );
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc ");
+		}
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where FinReference = :FinReference AND FeeTypeCode =:FeeTypeCode  order by adviseid");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setFeeTypeCode(feeTypeCode);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return adviseList;
+	
+	}
+
 }

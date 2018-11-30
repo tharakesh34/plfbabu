@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  BankDetailService.java                                                   * 	  
+ * FileName    		:  UploadHeaderDAO.java                                                 * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  05-05-2011    														*
+ * Creation Date    :  17-12-2017    														*
  *                                                                  						*
- * Modified Date    :  05-05-2011    														*
+ * Modified Date    :  17-12-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
+ * 17-12-2017       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,36 +39,28 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
+package com.pennant.backend.dao.finance;
 
-package com.pennant.backend.service.applicationmaster;
+import java.util.List;
 
-import com.pennant.backend.model.applicationmaster.BankDetail;
-import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
+import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 
-/**
- * Service declaration for methods that depends on <b>BankDetail</b>.<br>
- * 
- */
-public interface BankDetailService {
+public interface ReceiptResponseDetailDAO {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	long saveReceiptResponseFileHeader(String procName);
 
-	BankDetail getBankDetailById(String id);
+	List<ReceiptUploadDetail> getReceiptResponseDetails();
 
-	BankDetail getApprovedBankDetailById(String id);
+	List<UploadAlloctionDetail> getReceiptResponseAllocationDetails(String rootId);
 
-	AuditHeader delete(AuditHeader auditHeader);
+	void updateReceiptResponseFileHeader(long batchId, int recordCount, int sCount, int fCount, String remarks);
 
-	AuditHeader doApprove(AuditHeader auditHeader);
+	void updateReceiptResponseDetails(ReceiptUploadDetail receiptresponseDetail, long jobid);
 
-	AuditHeader doReject(AuditHeader auditHeader);
+	void updateReceiptResponseId(String rootId, long receiptID);
 
-	int getAccNoLengthByCode(String bankCode);
+	void updatePickBatchId(long jobid);
 
-	String getBankCodeByName(String bankName);
-
-	BankDetail getBankDetailsByIfsc(String ifsc);
-
-	boolean isBankCodeExits(String bankCode, String string, boolean active);
 }

@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -645,6 +646,70 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug("Leaving");
 
 		return count > 0;
+	}
+
+	/**
+	 * check with below parameters in receipt details and return true if exits or false
+	 * 
+	 * @param reference
+	 * @param receiptMode
+	 * @param chequeNo
+	 * @param favourNumber
+	 */
+	@Override
+	public boolean isReceiptDetailsExits(String reference, String receiptMode, String chequeNo, String favourNumber) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptheader_temp t ");
+		selectSql.append(" inner join finreceiptdetail_temp t1 on t1.receiptid=t.receiptid ");
+		selectSql.append(" where REFERENCE= :REFERENCE and RECEIPTMODE= :RECEIPTMODE and T1.FAVOURNUMBER= :FAVOURNUMBER and T1.CHEQUEACNO = :CHEQUEACNO ");
+		selectSql.append(" and (T.RECEIPTMODESTATUS in ('A') or T.RECEIPTMODESTATUS is null)");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("REFERENCE", reference);
+		source.addValue("RECEIPTMODE", receiptMode);
+		source.addValue("FAVOURNUMBER", favourNumber);
+		source.addValue("CHEQUEACNO", chequeNo);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+			count = 0 ;
+		}
+
+		logger.debug("Leaving");
+		if (count > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 29-10-2018, Ticket id:124998
+	 * update receipt mode status and realization date
+	 * return boolean condition
+	 */
+	@Override
+	public void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("ReceiptModeStatus", status);
+		source.addValue("RealizationDate", realizationDate);
+		
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
+		updateSql.append(" Set ReceiptModeStatus=:ReceiptModeStatus,REALIZATIONDATE = :RealizationDate ");
+		updateSql.append(" Where ReceiptID =:ReceiptID  ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
 	}
 
 }

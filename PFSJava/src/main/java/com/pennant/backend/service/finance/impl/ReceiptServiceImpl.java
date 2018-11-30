@@ -44,11 +44,13 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -57,6 +59,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -66,10 +70,13 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -118,10 +125,12 @@ import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
+import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -130,12 +139,14 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.rits.cloning.Cloner;
@@ -164,7 +175,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private DepositChequesDAO depositChequesDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-
+	
+	private FeeDetailService feeDetailService;
+	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
+	
 	public ReceiptServiceImpl() {
 		super();
 	}
@@ -184,9 +198,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, type);
 
 		// Fetch Receipt Detail List
-		if (receiptHeader != null) {
-			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID,
-					"_AView");
+		if(receiptHeader != null){
+			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, "_AView");
+			
+			receiptHeader.setReceiptDetails(receiptDetailList);
 
 			if (receiptDetailList != null && !receiptDetailList.isEmpty()) {
 				for (FinReceiptDetail receiptDetail : receiptDetailList) {
@@ -2864,6 +2879,1294 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @return AuditDetail
 	 */
 	@Override
+	public AuditDetail doReceiptValidations(FinServiceInstruction finServiceInstruction, String method) {
+		logger.debug("Entering");
+
+		AuditDetail auditDetail = new AuditDetail();
+		Date appDate = DateUtility.getAppDate();
+		
+		FinanceMain financeMain = null;
+		
+		boolean isTempExits = getFinanceMainDAO().isFinReferenceExists(finServiceInstruction.getFinReference(), "_Temp",
+				false);
+		//### 27-09-2019,upload receipt,Ticket id:124998
+		if (isTempExits && !finServiceInstruction.isReceiptdetailExits()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90248","", valueParm)));
+			return auditDetail;
+		}
+		
+		//validating closing status
+		String closingStaus = getFinanceMainDAO().getClosingStatus(finServiceInstruction.getFinReference(),
+				TableType.MAIN_TAB, false);
+		if (StringUtils.isNotEmpty(closingStaus)
+				&& !StringUtils.equals(closingStaus, FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+			if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)
+					|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getFinReference();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0043","", valueParm)));
+				return auditDetail;
+			} else if (finServiceInstruction.isReceiptUpload()
+					&& StringUtils.isBlank(finServiceInstruction.getExcessAdjustTo())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Excess Adjust to ";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502","", valueParm)));
+				return auditDetail;
+			} else if (StringUtils.isNotBlank(finServiceInstruction.getExcessAdjustTo())
+					&& StringUtils.equalsIgnoreCase(finServiceInstruction.getExcessAdjustTo(),
+							RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Excess Adjust to " + finServiceInstruction.getExcessAdjustTo();
+				valueParm[1] = RepayConstants.EXCESSADJUSTTO_EXCESS;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337","", valueParm)));
+				return auditDetail;
+			}
+		} else if (StringUtils.isNotEmpty(closingStaus)
+				&& StringUtils.equals(closingStaus, FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInstruction.getFinReference();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0044","", valueParm)));
+			return auditDetail;
+		}
+		
+		//fee validation
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {//## PSD Ticket id:124998,ReceiptUpload
+
+			BigDecimal closingBal = BigDecimal.ZERO;
+			FinanceDetail financeDetail = getFinanceDetail(finServiceInstruction, AccountEventConstants.ACCEVENT_EARLYSTL);
+			try {
+				closingBal = getClosingBalance(finServiceInstruction.getFinReference(),
+						finServiceInstruction.getValueDate());
+				financeDetail.getFinScheduleData().getFinanceMain().setRepayAmount(closingBal);
+				finServiceInstruction.setRemPartPayAmt(closingBal);
+				this.feeDetailService.doProcessFeesForInquiryForUpload(financeDetail, AccountEventConstants.ACCEVENT_EARLYSTL, finServiceInstruction, true);
+			} catch (Exception e) {
+				logger.error("Exception: " + e);
+			}
+
+			//setting outstanding amount
+			finServiceInstruction.setClosingBal(closingBal);
+		}
+		
+		//get financeMain details
+		financeMain = getFinanceMainDAO().getFinanceMainById(finServiceInstruction.getFinReference(),
+				"_aview", false);
+		//validate loan maturity date
+		if (!StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			if(financeMain!=null && financeMain.getMaturityDate().compareTo(appDate)<0){
+				String[] valueParm = new String[1];
+				valueParm[0] = method;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0000", " ", valueParm)));
+				return auditDetail;
+			}
+		}
+		
+		//FinanceConstants.PRODUCT_GOLD
+		//validate finreference with gold product
+		if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0002", " ", null)));
+			return auditDetail;
+		}		
+		
+		//validation for receipt response job
+		//setting entity id and entity code
+		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference()) && finServiceInstruction.isReceiptResponse()) {
+            
+			FinanceMain finMain = getFinanceMainDAO().getEntityNEntityDesc(finServiceInstruction.getFinReference(), "_Aview", false);
+            
+			if(finMain!=null){
+				finServiceInstruction.setEntity(finMain.getEntityCode());
+				finServiceInstruction.setEntityDesc(finMain.getEntityDesc());
+			}
+            
+		}
+		
+		
+		// Excess Adjust To
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
+				|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (StringUtils.isBlank(finServiceInstruction.getExcessAdjustTo())) {
+
+				String[] valueParm = new String[1];
+				valueParm[0] = "Excess Adjust to ";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+
+			} else if (!(finServiceInstruction.getExcessAdjustTo().equalsIgnoreCase(RepayConstants.EXAMOUNTTYPE_EXCESS)
+					|| finServiceInstruction.getExcessAdjustTo().equalsIgnoreCase(RepayConstants.EXAMOUNTTYPE_EMIINADV))) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = "Excess Adjust to " + finServiceInstruction.getExcessAdjustTo();
+				valueParm[1] = RepayConstants.EXAMOUNTTYPE_EXCESS+","+RepayConstants.EXAMOUNTTYPE_EMIINADV;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", "", valueParm)));
+				return auditDetail;
+
+			} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+					&& !finServiceInstruction.getExcessAdjustTo().equalsIgnoreCase(RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+
+				String[] valueParm = new String[2];
+				valueParm[0] = "Excess Adjust to " + finServiceInstruction.getExcessAdjustTo();
+				valueParm[1] = RepayConstants.EXAMOUNTTYPE_EXCESS;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", "", valueParm)));
+				return auditDetail;
+			}
+			
+			//marking to UpperCase if small letter given
+			finServiceInstruction.setExcessAdjustTo(finServiceInstruction.getExcessAdjustTo().toUpperCase());
+		} else {
+			finServiceInstruction.setExcessAdjustTo(PennantConstants.List_Select);
+		}
+
+		//Allocation Type
+		if (StringUtils.isBlank(finServiceInstruction.getAllocationType())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Allocation Type";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+
+		} else if (!(finServiceInstruction.getAllocationType().equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_MANUAL)
+				|| finServiceInstruction.getAllocationType().equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_AUTO))) {
+
+			String[] valueParm = new String[2];
+			valueParm[0] = "Allocation Type : " + finServiceInstruction.getAllocationType();
+			valueParm[1] = RepayConstants.ALLOCATIONTYPE_MANUAL+","+RepayConstants.ALLOCATIONTYPE_AUTO;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", "", valueParm)));
+			return auditDetail;
+
+		} else if (!finServiceInstruction.getAllocationType().equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_AUTO)
+				&& (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+						|| StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY))) {
+
+			String[] valueParm = new String[2];
+			valueParm[0] = "Allocation Type: " + finServiceInstruction.getAllocationType();
+			valueParm[1] = RepayConstants.ALLOCATIONTYPE_AUTO;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", "", valueParm)));
+			return auditDetail;
+
+		} else if (finServiceInstruction.isReceiptResponse()
+				&& finServiceInstruction.getAllocationType().equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_MANUAL)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Allocation Type: " + finServiceInstruction.getAllocationType();
+			valueParm[1] = RepayConstants.ALLOCATIONTYPE_AUTO;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", "", valueParm)));
+			return auditDetail;
+		}
+		//making to uppercase
+		finServiceInstruction.setAllocationType(finServiceInstruction.getAllocationType().toUpperCase());
+		
+		//making reference to uppercase
+		finServiceInstruction.setFinReference(finServiceInstruction.getFinReference().toUpperCase());
+		
+		//remarks
+		if (StringUtils.isBlank(finServiceInstruction.getRemarks())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Remarks";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+		} else if (100 < finServiceInstruction.getRemarks().length()) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0005", "", null)));
+			return auditDetail;
+		}
+		
+		
+		//Payment Mode
+		if(StringUtils.isBlank(finServiceInstruction.getPaymentMode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Payment mode";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+		} else {
+			boolean isDeveloperFinance = getFinanceMainDAO().isDeveloperFinance(finServiceInstruction.getFinReference(),
+					"", false);
+			if (isDeveloperFinance) {
+				if (!StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
+						&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),DisbursementConstants.PAYMENT_TYPE_RTGS)
+						&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),DisbursementConstants.PAYMENT_TYPE_IMPS)
+						&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),DisbursementConstants.PAYMENT_TYPE_CASH)
+						&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+						&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),DisbursementConstants.PAYMENT_TYPE_DD)
+						&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),DisbursementConstants.PAYMENT_TYPE_ESCROW)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Payment mode";
+					valueParm[1] = DisbursementConstants.PAYMENT_TYPE_NEFT + ","
+							+ DisbursementConstants.PAYMENT_TYPE_RTGS + "," + DisbursementConstants.PAYMENT_TYPE_IMPS
+							+ "," + DisbursementConstants.PAYMENT_TYPE_CASH + ","
+							+ DisbursementConstants.PAYMENT_TYPE_CHEQUE + "," + DisbursementConstants.PAYMENT_TYPE_DD
+							+ "," + DisbursementConstants.PAYMENT_TYPE_ESCROW;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
+					return auditDetail;
+
+				}
+			} else if (!StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+					DisbursementConstants.PAYMENT_TYPE_NEFT)
+					&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+							DisbursementConstants.PAYMENT_TYPE_RTGS)
+					&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+							DisbursementConstants.PAYMENT_TYPE_IMPS)
+					&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+							DisbursementConstants.PAYMENT_TYPE_CASH)
+					&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+							DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+					&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+							DisbursementConstants.PAYMENT_TYPE_DD)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Payment mode";
+				valueParm[1] = DisbursementConstants.PAYMENT_TYPE_NEFT + "," + DisbursementConstants.PAYMENT_TYPE_RTGS
+						+ "," + DisbursementConstants.PAYMENT_TYPE_IMPS + "," + DisbursementConstants.PAYMENT_TYPE_CASH
+						+ "," + DisbursementConstants.PAYMENT_TYPE_CHEQUE + "," + DisbursementConstants.PAYMENT_TYPE_DD;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
+				return auditDetail;
+			}
+		}
+		
+		//to upper case
+		finServiceInstruction.setPaymentMode(finServiceInstruction.getPaymentMode().toUpperCase());
+		
+		//received date
+		if (finServiceInstruction.getReceivedDate() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Received Date";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+		} else if (finServiceInstruction.getReceivedDate() != null
+				&& finServiceInstruction.getReceivedDate().compareTo(appDate) > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = DateUtility.formatToLongDate(appDate);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0006", " ", valueParm)));
+			return auditDetail;
+		}
+
+		//value Date
+		if (finServiceInstruction.getValueDate() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "ValueDate";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+		} else if (finServiceInstruction.getValueDate().compareTo(appDate) > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = DateUtility.formatToLongDate(appDate);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0007", "", valueParm)));
+			return auditDetail;
+
+		} else if (finServiceInstruction.getValueDate().compareTo(finServiceInstruction.getReceivedDate()) < 0) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0008", "", null)));
+			return auditDetail;
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+
+			// check with system parameter value
+			if (finServiceInstruction.getValueDate().compareTo(appDate) < 0) {
+				int days = DateUtility.getDaysBetween(finServiceInstruction.getValueDate(), appDate);
+				int paramDays = SysParamUtil.getValueAsInt("ALW_SP_BACK_DAYS");
+				if (days > paramDays) {
+					String[] valueParm = new String[3];
+					valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+					valueParm[1] = DateUtility.formatToLongDate(appDate);
+					valueParm[2] =String.valueOf(paramDays);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0009", "", valueParm)));
+					return auditDetail;
+				}
+			}
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			
+			if(finServiceInstruction.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStartDate(appDate),-1))<0){
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+				valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(DateUtility.getMonthStartDate(appDate),-1));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0010", "", valueParm)));
+				return auditDetail;
+			}
+			
+			//last schd date
+			Date lastPrevDate = getFinanceScheduleDetailDAO().getPrevSchdDate(finServiceInstruction.getFinReference(),
+					appDate);
+			if (lastPrevDate != null && finServiceInstruction.getValueDate().compareTo(lastPrevDate) < 0) {
+				
+				boolean isInstSchd = getFinanceScheduleDetailDAO().isInstallSchd(finServiceInstruction.getFinReference(),lastPrevDate);
+				if(isInstSchd){
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+					valueParm[1] = DateUtility.formatToLongDate(lastPrevDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0012", "", valueParm)));
+					return auditDetail;
+				} else {
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+					valueParm[1] = DateUtility.formatToLongDate(lastPrevDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0013", "", valueParm)));
+					return auditDetail;
+				}
+			}
+			
+			//last schedule change date
+			Date lastServDate = getFinLogEntryDetailDAO().getMaxPostDate(finServiceInstruction.getFinReference());
+			if (lastServDate != null && finServiceInstruction.getValueDate().compareTo(lastServDate) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+				valueParm[1] = DateUtility.formatToLongDate(lastServDate);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0013", "", valueParm)));
+				return auditDetail;
+			
+			}
+			
+		} else if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			
+			if(finServiceInstruction.getValueDate().compareTo(DateUtility.addDays(DateUtility.getMonthStartDate(appDate),-1))<0){
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+				valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(DateUtility.getMonthStartDate(appDate),-1));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0010", "", valueParm)));
+				return auditDetail;
+			}
+			
+			//last receipt date
+			Date lastReceivedDate = getMaxReceiptDate(finServiceInstruction.getFinReference());
+			if (lastReceivedDate != null && finServiceInstruction.getValueDate().compareTo(lastReceivedDate) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+				valueParm[1] = DateUtility.formatToLongDate(lastReceivedDate);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0011", "", valueParm)));
+				return auditDetail;
+			}
+			
+			//last installament and schd change date
+			Date lastPrevDate = getFinanceScheduleDetailDAO().getPrevSchdDate(finServiceInstruction.getFinReference(),
+					appDate);
+			if (lastPrevDate != null && finServiceInstruction.getValueDate().compareTo(lastPrevDate) < 0) {
+				
+				boolean isInstSchd = getFinanceScheduleDetailDAO().isInstallSchd(finServiceInstruction.getFinReference(),lastPrevDate);
+				if(isInstSchd){
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+					valueParm[1] = DateUtility.formatToLongDate(lastPrevDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0012", "", valueParm)));
+					return auditDetail;
+				} else {
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+					valueParm[1] = DateUtility.formatToLongDate(lastPrevDate);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0013", "", valueParm)));
+					return auditDetail;
+				}
+			}
+			
+			//last schedule change date
+			Date lastServDate = getFinLogEntryDetailDAO().getMaxPostDate(finServiceInstruction.getFinReference());
+			if (lastServDate != null && finServiceInstruction.getValueDate().compareTo(lastServDate) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+				valueParm[1] = DateUtility.formatToLongDate(lastServDate);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0013", "", valueParm)));
+				return auditDetail;
+			
+			}
+		}		
+		
+		//validating status
+		if (StringUtils.isBlank(finServiceInstruction.getStatus())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Status";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+		} else if (!StringUtils.equalsIgnoreCase(finServiceInstruction.getStatus(), RepayConstants.PAYSTATUS_APPROVED)
+				&& !StringUtils.equalsIgnoreCase(finServiceInstruction.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Status";
+			valueParm[1] = RepayConstants.PAYSTATUS_APPROVED+","+RepayConstants.PAYSTATUS_REALIZED;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90298", "", valueParm)));
+			return auditDetail;
+
+		} else if(!StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD)
+				&& !StringUtils.equals(finServiceInstruction.getPaymentMode(),
+						DisbursementConstants.PAYMENT_TYPE_CHEQUE)){
+			
+			if (StringUtils.equalsIgnoreCase(finServiceInstruction.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Status";
+				valueParm[1] = RepayConstants.PAYSTATUS_APPROVED;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90298", "", valueParm)));
+				return auditDetail;
+			}
+		}
+		
+		//change to uppercase
+		finServiceInstruction.setStatus(finServiceInstruction.getStatus().toUpperCase());
+				
+		if (StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+				|| StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+			
+			//validating bankcode
+			if (StringUtils.isBlank(finServiceInstruction.getBankCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "BankCode";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else {
+				 boolean isBankCodeExits =getBankDetailService().isBankCodeExits(finServiceInstruction.getBankCode(),"",PennantConstants.ACTIVE);
+				if (!isBankCodeExits) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Bank";
+					valueParm[1] = finServiceInstruction.getBankCode();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParm)));
+					return auditDetail;
+				}
+			}
+			
+			//validating favour numnber
+			if (StringUtils.isBlank(finServiceInstruction.getFavourNumber())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Favour Number";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else if (!StringUtils.isNumeric(finServiceInstruction.getFavourNumber())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Favour Number";
+				valueParm[1] = "[0-9]";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
+				return auditDetail;
+			} else if (6<finServiceInstruction.getFavourNumber().length()) {//in screen it is allowing only 6 numbers
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0014", "", null)));
+				return auditDetail;
+			}
+			
+			//validating chequeAccNo
+			if (StringUtils.equalsIgnoreCase(finServiceInstruction.getPaymentMode(),
+					DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
+
+				if (StringUtils.isBlank(finServiceInstruction.getChequeNo())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "ChequeAcNo";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+					return auditDetail;
+				} else if (50 < finServiceInstruction.getChequeNo().length()) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0015", "", null)));
+					return auditDetail;
+				}
+			}
+			
+			//validating deposit date
+			if (finServiceInstruction.getDepositDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Deposit Date";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else if (finServiceInstruction.getDepositDate().compareTo(appDate) > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = DateUtility.formatToLongDate(appDate);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0016", "", valueParm)));
+				return auditDetail;
+			} else if (!(finServiceInstruction.getValueDate().compareTo(finServiceInstruction.getDepositDate()) == 0)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0017", "", valueParm)));
+				return auditDetail;
+			} else if (finServiceInstruction.getDepositDate().compareTo(finServiceInstruction.getReceivedDate()) < 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getReceivedDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0018", "", valueParm)));
+				return auditDetail;
+			}
+			
+			
+			//validating Realization Date
+			if (StringUtils.equals(finServiceInstruction.getStatus(), RepayConstants.PAYSTATUS_REALIZED)
+					&& finServiceInstruction.getRealizationDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Relization Date";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else if (StringUtils.equals(finServiceInstruction.getStatus(), RepayConstants.PAYSTATUS_REALIZED)
+					&& finServiceInstruction.getRealizationDate() != null) {
+				
+				if (finServiceInstruction.getRealizationDate().compareTo(finServiceInstruction.getValueDate()) < 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = DateUtility.formatToLongDate(finServiceInstruction.getValueDate());
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0019", "", valueParm)));
+					return auditDetail;
+				} else if (finServiceInstruction.getRealizationDate().compareTo(appDate) > 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Realization Date should be less than or equal to application Date";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm)));
+					return auditDetail;
+				}
+			}
+				
+			//instrument date
+			if (finServiceInstruction.getInstrumentDate() == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Instrument Date";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			}
+
+		} else {
+			finServiceInstruction.setBankCode(null);
+			finServiceInstruction.setFavourNumber(null);
+			finServiceInstruction.setChequeNo(null);
+			finServiceInstruction.setDepositDate(null);
+			finServiceInstruction.setRealizationDate(null);
+			finServiceInstruction.setInstrumentDate(null);
+			finServiceInstruction.setChequeNo(null);
+		}
+		
+		// validating partner bank code
+		if (finServiceInstruction.isReceiptUpload()) {
+			if (StringUtils.isBlank(finServiceInstruction.getDepositAcc())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Funding Account";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else {
+
+				long PartnerBankId = this.getFinanceMainDAO().getPartnerBankIdByReference(
+						finServiceInstruction.getFinReference(), finServiceInstruction.getPaymentMode(),
+						finServiceInstruction.getDepositAcc(), "", AccountConstants.PARTNERSBANK_RECEIPTS, false);
+				if (PartnerBankId == 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0020", " ", null)));
+					return auditDetail;
+				} else {
+					finServiceInstruction.setFundingAc(PartnerBankId);
+				}
+			}
+			
+		}
+		
+		// validating transaction reference
+		if (StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
+				|| StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_RTGS)
+				|| StringUtils.equals(finServiceInstruction.getPaymentMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)) {
+
+			if (StringUtils.isBlank(finServiceInstruction.getTransactionRef())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Transaction Ref";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else if (50 < finServiceInstruction.getTransactionRef().length()) {
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0021", "", null)));
+				return auditDetail;
+			}
+			
+			FinReceiptDetail receiptDetail = new FinReceiptDetail();
+			receiptDetail.setTransactionRef(finServiceInstruction.getTransactionRef());
+			finServiceInstruction.setReceiptDetail(receiptDetail);
+		} else {
+			finServiceInstruction.setTransactionRef(null);
+		}
+		
+		//validating payment ref
+		if (StringUtils.isNotBlank(finServiceInstruction.getPaymentRef())
+				&& 50 < finServiceInstruction.getPaymentRef().length()) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0022", "", null)));
+			return auditDetail;
+		}
+		
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+
+			if (StringUtils.isBlank(finServiceInstruction.getRecalType())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "EFFECTSCHDMETHOD";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			} else {
+
+				FinanceType financeType = getFinanceMainDAO()
+						.getFinTypeDetailsByFinreferene(finServiceInstruction.getFinReference(), "", false);
+
+				List<ValueLabel> epyMethodList = new ArrayList<>();
+				if (StringUtils.isNotEmpty(financeType.getAlwEarlyPayMethods())) {
+					String[] epMthds = financeType.getAlwEarlyPayMethods().trim().split(",");
+					if (epMthds.length > 0) {
+						List<String> list = Arrays.asList(epMthds);
+						for (ValueLabel epMthd : PennantStaticListUtil.getEarlyPayEffectOn()) {
+							if (list.contains(epMthd.getValue().trim())) {
+								if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, epMthd.getValue().trim())) {
+									if (financeMain.isStepFinance() && financeMain.isAllowGrcPeriod()
+											&& StringUtils.equals(financeMain.getStepType(),
+													FinanceConstants.STEPTYPE_PRIBAL)
+											&& DateUtility.compare(finServiceInstruction.getValueDate(),
+													financeMain.getGrcPeriodEndDate()) <= 0
+											&& (StringUtils.equals(financeMain.getScheduleMethod(),
+													CalculationConstants.SCHMTHD_PRI)
+													|| StringUtils.equals(financeMain.getScheduleMethod(),
+															CalculationConstants.SCHMTHD_PRI_PFT))) {
+										epyMethodList.add(epMthd);
+									}
+								} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD,
+										epMthd.getValue().trim())) {
+									if (StringUtils.equals(financeMain.getScheduleMethod(),
+											CalculationConstants.SCHMTHD_PRI_PFT)) {
+										if (DateUtility.compare(finServiceInstruction.getValueDate(),
+												financeMain.getGrcPeriodEndDate()) > 0) {
+											if (financeType.isDeveloperFinance()) {
+												epyMethodList.clear();
+												epyMethodList.add(epMthd);
+												break;
+											} else {
+												epyMethodList.add(epMthd);
+											}
+										}
+									}
+								} else {
+									epyMethodList.add(epMthd);
+								}
+							}
+						}
+					}
+				}
+
+				boolean found = false;
+				List<String> alwEarlyPayMethodsList = new ArrayList<>();
+				for (ValueLabel value : epyMethodList) {
+
+					alwEarlyPayMethodsList.add(value.getValue());
+					if (StringUtils.equalsIgnoreCase(finServiceInstruction.getRecalType(), value.getValue())) {
+						found = true;
+						break;
+					}
+
+				}
+
+				if (!found) {
+					String alwEarlyPayMethods = String.join(",", alwEarlyPayMethodsList);
+					String[] valueParm = new String[2];
+					valueParm[0] = "EFFECTSCHDMETHOD";
+					valueParm[1] = alwEarlyPayMethods;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90281", "", valueParm)));
+					return auditDetail;
+				}
+
+			}
+
+			//to upper case
+			finServiceInstruction.setRecalType(finServiceInstruction.getRecalType().toUpperCase());
+			
+		} else {
+			finServiceInstruction.setRecalType(PennantConstants.List_Select);
+		}
+		
+		//Amount
+		if (!StringUtils.isNumeric(String.valueOf(finServiceInstruction.getAmount()))) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Amount: " + PennantApplicationUtil.amountFormate(finServiceInstruction.getAmount(), PennantConstants.defaultCCYDecPos) + " is invalid";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm)));
+			return auditDetail;
+		} else if (finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Amount:" + finServiceInstruction.getAmount();
+			valueParm[1] = "Zero";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
+			return auditDetail;
+		} else {/*
+			InstrumentwiseLimit instrumentwiseLimit = getInstrumentwiseLimitDAO().getInstrumentWiseModeLimit(finServiceInstruction.getPaymentMode(), "");
+
+			if (instrumentwiseLimit == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finServiceInstruction.getPaymentMode();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0023", "", valueParm)));
+				return auditDetail;
+			} else if (finServiceInstruction.getAmount().compareTo(instrumentwiseLimit.getReceiptMinAmtperTran()) < 0
+					|| finServiceInstruction.getAmount().compareTo(instrumentwiseLimit.getReceiptMaxAmtperTran()) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = PennantApplicationUtil.amountFormate(instrumentwiseLimit.getReceiptMaxAmtperTran(), PennantConstants.defaultCCYDecPos);
+				valueParm[1] = PennantApplicationUtil.amountFormate(instrumentwiseLimit.getReceiptMinAmtperTran(), PennantConstants.defaultCCYDecPos);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0024", "", valueParm)));
+				return auditDetail;
+			}
+
+		*/}
+		
+		//dedup check
+		
+		FinReceiptHeader receiptHeader = new FinReceiptHeader();
+		receiptHeader.setReference(finServiceInstruction.getFinReference());
+		receiptHeader.setReceiptMode(finServiceInstruction.getPaymentMode());
+		
+		FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
+		finReceiptDetail.setBankCode(finServiceInstruction.getBankCode());
+		finReceiptDetail.setFavourName(finServiceInstruction.getFavourNumber());
+		finReceiptDetail.setTransactionRef(finServiceInstruction.getTransactionRef());
+		finReceiptDetail.setFundingAc(finServiceInstruction.getFundingAc());
+		List<FinReceiptDetail> listrecptDetails = new ArrayList<>();
+		listrecptDetails.add(finReceiptDetail);
+		
+		receiptHeader.setReceiptDetails(listrecptDetails);
+		
+		if (dedupCheckRequest(receiptHeader, method)) {
+			long progressId = CheckDedupSP(receiptHeader, method);
+			if(progressId==0){
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0045",null)));
+				return auditDetail;
+			}
+		}
+		
+		//schedule payment
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
+				&& finServiceInstruction.getExcessAdjustTo().equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_AUTO)) {
+
+			//BigDecimal totalFinCurAmt = getFinODDetailsDAO().getFinCurODAmtByFinRef(finServiceInstruction.getFinReference());
+			
+			FinReceiptData finReceiptData = null;
+			Map<String, BigDecimal> dueMap = null;
+			
+			if (method != null) {
+				finReceiptData = getFinReceiptDataById(finServiceInstruction.getFinReference(),
+						AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINSER_EVENT_RECEIPT, "MSTGRP1_MAKER");
+				finReceiptData.setBuildProcess("I");
+				finReceiptData = getReceiptCalculator().initiateReceipt(finReceiptData,
+						finReceiptData.getFinanceDetail().getFinScheduleData(), finServiceInstruction.getValueDate(),
+						method, false);
+				dueMap = finReceiptData.getAllocationMap();
+			}
+			
+			BigDecimal totalDueAmount = BigDecimal.ZERO;
+			for (Map.Entry<String, BigDecimal> entry : dueMap.entrySet()) {
+				if (!(entry.getKey().equalsIgnoreCase(RepayConstants.ALLOCATION_PFT)
+						|| entry.getKey().equalsIgnoreCase(RepayConstants.ALLOCATION_TDS))) {
+					totalDueAmount = totalDueAmount.add(entry.getValue());
+				}
+			}
+			
+			if(finServiceInstruction.getAmount().compareTo(totalDueAmount)<=0){
+				String[] valueParm = new String[1];
+				valueParm[0] = PennantApplicationUtil.amountFormate(totalDueAmount, PennantConstants.defaultCCYDecPos);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0025", "", valueParm)));
+				return auditDetail;
+			}
+			
+		}
+		
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			
+			FinReceiptData finReceiptData = null;
+			Map<String, BigDecimal> dueMap = null;
+			
+			if (method != null) {
+				finReceiptData = getFinReceiptDataById(finServiceInstruction.getFinReference(),
+						AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINSER_EVENT_RECEIPT, "MSTGRP1_MAKER");
+				finReceiptData.setBuildProcess("I");
+				finReceiptData = getReceiptCalculator().initiateReceipt(finReceiptData,
+						finReceiptData.getFinanceDetail().getFinScheduleData(), finServiceInstruction.getValueDate(),
+						method, false);
+				dueMap = finReceiptData.getAllocationMap();
+			}
+			
+			BigDecimal totalDueAmount = BigDecimal.ZERO;
+			for(Map.Entry<String, BigDecimal> entry:dueMap.entrySet()){
+				if (!(entry.getKey().equalsIgnoreCase(RepayConstants.ALLOCATION_PFT) || entry.getKey().equalsIgnoreCase(RepayConstants.ALLOCATION_TDS))){
+					totalDueAmount=totalDueAmount.add(entry.getValue())	;
+				}
+			}
+			
+			BigDecimal finFeeAmount = BigDecimal.ZERO;
+			for (FinFeeDetail finFeeDetail : finServiceInstruction.getFinFeeDetails()) {
+				finFeeAmount = finFeeAmount.add(finFeeDetail.getCalculatedAmount());
+			}
+			
+			// validate Partial Settlement Amount
+			if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_EARLYRPY)){
+				BigDecimal totOutstandingAmt = totalDueAmount.add(finFeeAmount).add(finServiceInstruction.getClosingBal());
+				totOutstandingAmt = totOutstandingAmt == null ? BigDecimal.ZERO : totOutstandingAmt;
+				if (finServiceInstruction.getAmount().compareTo(totOutstandingAmt) >= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = PennantApplicationUtil.amountFormate(finServiceInstruction.getClosingBal(), PennantConstants.defaultCCYDecPos);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0026", "", valueParm)));
+				}
+			}
+		
+		}
+		
+		//allow manual allocation only for schedule payments
+		if (StringUtils.equalsIgnoreCase(finServiceInstruction.getAllocationType(), RepayConstants.ALLOCATIONTYPE_MANUAL)
+				&& !StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = method;
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0027", "", valueParm)));
+			return auditDetail;
+		}
+		
+		
+		BigDecimal totalAllocAmt = BigDecimal.ZERO;
+		//Receipt Upload Allocation Details
+		if (StringUtils.equalsIgnoreCase(finServiceInstruction.getAllocationType(), RepayConstants.ALLOCATIONTYPE_MANUAL)
+				&& (finServiceInstruction.getUploadAllocationDetails() == null
+						|| finServiceInstruction.getUploadAllocationDetails().isEmpty())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Allocation Details";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+			return auditDetail;
+		} else if (StringUtils.equalsIgnoreCase(finServiceInstruction.getAllocationType(), RepayConstants.ALLOCATIONTYPE_AUTO)
+				&& (finServiceInstruction.getUploadAllocationDetails()!= null
+						&& finServiceInstruction.getUploadAllocationDetails().size()>0)) {
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0028", "", null)));
+			return auditDetail;
+		} else if(StringUtils.equalsIgnoreCase(finServiceInstruction.getAllocationType(), RepayConstants.ALLOCATIONTYPE_MANUAL)){
+			
+			FinReceiptData finReceiptData = null;
+			Map<String, BigDecimal> dueMap = null;
+			if (method != null) {
+				
+				finReceiptData = getFinReceiptDataById(finServiceInstruction.getFinReference(),
+						AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINSER_EVENT_RECEIPT, "MSTGRP1_MAKER");
+				finReceiptData.setBuildProcess("I");
+				finReceiptData = getReceiptCalculator().initiateReceipt(finReceiptData,
+						finReceiptData.getFinanceDetail().getFinScheduleData(), finServiceInstruction.getValueDate(),
+						method, false);
+				 dueMap =finReceiptData.getAllocationMap();
+				 finServiceInstruction.setDueMap(dueMap);
+			}
+			
+			Map<String,BigDecimal> allocMap=getManualAllocMap(finServiceInstruction.getUploadAllocationDetails());
+			Map<String,BigDecimal> waiverMap=getManualWaiverMap(finServiceInstruction.getUploadAllocationDetails());
+			
+			finServiceInstruction.setManualAllocMap(allocMap);
+			finServiceInstruction.setManualWaiverMap(waiverMap);
+			
+			
+			if (finServiceInstruction.getManualAllocMap().containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS)
+					|| finServiceInstruction.getManualAllocMap().containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+
+				if (finServiceInstruction.getManualAllocMap().containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS)
+						&& finServiceInstruction.getManualAllocMap().containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0029", "", null)));
+					return auditDetail;
+				}
+				
+				if (finServiceInstruction.getManualWaiverMap().containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS)
+						&& finServiceInstruction.getManualWaiverMap().get(RepayConstants.EXAMOUNTTYPE_EXCESS).compareTo(BigDecimal.ZERO) > 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = RepayConstants.EXAMOUNTTYPE_EXCESS;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0030", "", valueParm)));
+					return auditDetail;
+				}
+				
+				if (finServiceInstruction.getManualWaiverMap().containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV)
+						&& finServiceInstruction.getManualWaiverMap().get(RepayConstants.EXAMOUNTTYPE_EMIINADV).compareTo(BigDecimal.ZERO) > 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = RepayConstants.EXAMOUNTTYPE_EMIINADV;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0030", "", valueParm)));
+					return auditDetail;
+				}
+				
+				BigDecimal totalDueAmount = BigDecimal.ZERO;
+				for (Map.Entry<String, BigDecimal> entry : dueMap.entrySet()) {
+					if (!(entry.getKey().equalsIgnoreCase(RepayConstants.ALLOCATION_PFT)
+							|| entry.getKey().equalsIgnoreCase(RepayConstants.ALLOCATION_TDS))) {
+						totalDueAmount = totalDueAmount.add(entry.getValue());
+					}
+				}
+				
+				if(finServiceInstruction.getManualWaiverMap().containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV) && finServiceInstruction.getAmount().compareTo(totalDueAmount)<=0){
+					String[] valueParm = new String[2];
+					valueParm[0] = "Excess Adjust to A in Allocation is not allowed because";
+					valueParm[1] = PennantApplicationUtil.amountFormate(totalDueAmount, PennantConstants.defaultCCYDecPos);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0031", "", valueParm)));
+					return auditDetail;
+				}
+				
+				if (finServiceInstruction.getManualAllocMap().containsKey(RepayConstants.EXAMOUNTTYPE_EXCESS) && StringUtils.equalsIgnoreCase(
+						finServiceInstruction.getExcessAdjustTo(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+
+					String[] valueParm = new String[1];
+					valueParm[0] = "Excess Adjust to " + finServiceInstruction.getExcessAdjustTo()
+							+ " in Sheet 1 and Allocation Type (E) in sheet 2 should be same";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm)));
+					return auditDetail;
+				}
+				
+				if (finServiceInstruction.getManualAllocMap().containsKey(RepayConstants.EXAMOUNTTYPE_EMIINADV) && StringUtils.equalsIgnoreCase(
+						finServiceInstruction.getExcessAdjustTo(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+
+					String[] valueParm = new String[1];
+					valueParm[0] = "Excess Adjust to " + finServiceInstruction.getExcessAdjustTo()
+							+ " in Sheet 1 and Allocation Type (A) in sheet 2 should be same";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm)));
+					return auditDetail;
+				}
+				
+			}
+			
+			
+			for (UploadAlloctionDetail uploadAlloctionDetail : finServiceInstruction.getUploadAllocationDetails()) {
+
+				if (!(StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "B")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "I")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "M")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "P")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "O")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "F")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "E")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "A"))) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = "Allocation Type";
+					valueParm[1] = "B,I,M,P,O,F,E,A";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90298", "", valueParm)));
+					return auditDetail;
+				}
+				
+				BigDecimal remBal = BigDecimal.ZERO;
+				String allocationType = "";
+				allocationType = getAllocType(uploadAlloctionDetail.getAllocationType());
+				if (StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "M")) {
+
+					if (StringUtils.isBlank(uploadAlloctionDetail.getReferenceCode())) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0032", "", null)));
+						return auditDetail;
+					} else if (!StringUtils.isBlank(uploadAlloctionDetail.getReferenceCode())) {
+
+						String feeTypeCode = uploadAlloctionDetail.getReferenceCode();
+
+						long feeTypeid = getFeeTypeDAO().getFinFeeTypeIdByFeeType(feeTypeCode, "");
+
+						if (feeTypeid <= 0) {
+							String[] valueParm = new String[1];
+							valueParm[0] = uploadAlloctionDetail.getReferenceCode();
+							auditDetail
+									.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0033", "", valueParm)));
+							return auditDetail;
+						}
+					}
+
+					//allocationType = allocationType + "_" + uploadAlloctionDetail.getReferenceCode();
+				}
+				
+				if(uploadAlloctionDetail.getPaidAmount()==null){
+					uploadAlloctionDetail.setPaidAmount(BigDecimal.ZERO);
+				}
+				if(uploadAlloctionDetail.getWaivedAmount() == null){
+					uploadAlloctionDetail.setWaivedAmount(BigDecimal.ZERO);
+				}
+				
+				
+				//check negative value for paid amount
+				if (uploadAlloctionDetail.getPaidAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = PennantApplicationUtil.amountFormate(uploadAlloctionDetail.getPaidAmount(),PennantConstants.defaultCCYDecPos);
+					valueParm[1] = uploadAlloctionDetail.getAllocationType(); 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0034", "", valueParm)));
+					return auditDetail;
+				}
+				
+				//check negative value for waived amount
+				if (uploadAlloctionDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = PennantApplicationUtil.amountFormate(uploadAlloctionDetail.getWaivedAmount(),PennantConstants.defaultCCYDecPos);
+					valueParm[1] = uploadAlloctionDetail.getAllocationType(); 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0035", "", valueParm)));
+					return auditDetail;
+				}
+				
+				//check if allocation type is F
+				if (StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "F")) {
+					String[] valueParm = new String[1];
+
+					valueParm[0] = uploadAlloctionDetail.getAllocationType() + " (" + allocationType + ")";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0039", "", valueParm)));
+					return auditDetail;
+				}
+				
+				//check waiver amount
+				
+				if (StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "P")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "I")) {
+
+					if(uploadAlloctionDetail.getWaivedAmount().compareTo(BigDecimal.ZERO)>0){
+						String[] valueParm = new String[1];
+						valueParm[0] = uploadAlloctionDetail.getAllocationType(); 
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0036", "", valueParm)));
+						return auditDetail;
+					}
+				}
+
+				if(uploadAlloctionDetail.getPaidAmount().compareTo(BigDecimal.ZERO)==0){
+					String[] valueParm = new String[1];
+					valueParm[0] = uploadAlloctionDetail.getAllocationType(); 
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0037", "", valueParm)));
+					return auditDetail;
+				}
+				
+				if (!StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "M")) {
+
+					if (dueMap.containsKey(allocationType)) {
+						if (dueMap.get(allocationType).compareTo(uploadAlloctionDetail.getPaidAmount()
+								.add(uploadAlloctionDetail.getWaivedAmount())) < 0) {
+
+							if (uploadAlloctionDetail.getWaivedAmount().compareTo(dueMap.get(allocationType)) > 0) {
+								String[] valueParm = new String[2];
+								valueParm[0] = uploadAlloctionDetail.getAllocationType();
+								valueParm[1] = PennantApplicationUtil.amountFormate(dueMap.get(allocationType),
+										PennantConstants.defaultCCYDecPos);
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("RU0038", "", valueParm)));
+								return auditDetail;
+							} else {
+								if (dueMap.get(allocationType).compareTo(uploadAlloctionDetail.getWaivedAmount()) >= 0) {
+									
+									remBal = uploadAlloctionDetail.getPaidAmount().subtract(dueMap.get(allocationType).subtract(uploadAlloctionDetail.getWaivedAmount())); 
+									uploadAlloctionDetail
+											.setPaidAmount(dueMap.get(allocationType).subtract(uploadAlloctionDetail.getWaivedAmount()));
+									
+									finServiceInstruction.getManualAllocMap().remove(getAllocType(uploadAlloctionDetail.getAllocationType()));
+									finServiceInstruction.getManualAllocMap().put(getAllocType(uploadAlloctionDetail.getAllocationType()), dueMap.get(allocationType).subtract(uploadAlloctionDetail.getWaivedAmount()));
+									
+
+								}
+							}
+
+						}
+					} else {
+						if (!(StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "E")
+								|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "A"))) {
+							
+							finServiceInstruction.getManualAllocMap().remove(getAllocType(uploadAlloctionDetail.getAllocationType()));
+							if (uploadAlloctionDetail.getWaivedAmount().compareTo(BigDecimal.ZERO)>0) {
+								String[] valueParm = new String[1];
+
+								valueParm[0] = uploadAlloctionDetail.getAllocationType() + " (" + allocationType + ")";
+
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("RU0036", "", valueParm)));
+								return auditDetail;
+
+							}
+							
+						}
+					}
+				} 
+				
+				if(StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "M")){
+					
+					List<ManualAdvise> listManualAdv = getManualAdviseDetails(finServiceInstruction.getFinReference(),
+							uploadAlloctionDetail.getPaidAmount(), uploadAlloctionDetail.getWaivedAmount(),
+							uploadAlloctionDetail.getReferenceCode());
+					
+					if (listManualAdv.isEmpty()) {
+						if (uploadAlloctionDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+							String[] valueParm = new String[1];
+
+							valueParm[0] = uploadAlloctionDetail.getAllocationType() + " (" + allocationType + ")";
+
+							auditDetail.setErrorDetail(
+									ErrorUtil.getErrorDetail(new ErrorDetail("RU0036", "", valueParm)));
+							return auditDetail;
+
+						}
+					}
+
+					BigDecimal manualDueAmnt = BigDecimal.ZERO;
+					for(ManualAdvise manualAdvise : listManualAdv){
+						manualDueAmnt= manualDueAmnt.add(manualAdvise.getAdviseAmount());
+					}
+					
+					if (uploadAlloctionDetail.getWaivedAmount().compareTo(manualDueAmnt) > 0) {
+						String[] valueParm = new String[4];
+
+						valueParm[0] = "Total allocated waiver amount for allocationType";
+						valueParm[1] = uploadAlloctionDetail.getAllocationType();
+						valueParm[2] = uploadAlloctionDetail.getReferenceCode();
+						valueParm[3] = PennantApplicationUtil.amountFormate(manualDueAmnt,
+								PennantConstants.defaultCCYDecPos);
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0041", "", valueParm)));
+						return auditDetail;
+					} else {
+						if (manualDueAmnt.compareTo(uploadAlloctionDetail.getWaivedAmount()) >= 0) {
+							remBal = uploadAlloctionDetail.getPaidAmount()
+									.subtract(manualDueAmnt.subtract(uploadAlloctionDetail.getWaivedAmount()));
+							uploadAlloctionDetail
+									.setPaidAmount(manualDueAmnt.subtract(uploadAlloctionDetail.getWaivedAmount()));
+
+						}
+					}
+					
+					
+					for(ManualAdvise manualAdvise : listManualAdv){
+						if (manualAdvise.getPaidAmount().compareTo(BigDecimal.ZERO)>0 ||manualAdvise.getWaivedAmount().compareTo(BigDecimal.ZERO)>0 ){
+							finServiceInstruction.getManualAllocMap().put(getAllocType(uploadAlloctionDetail.getAllocationType())+"_"+manualAdvise.getAdviseID(), manualAdvise.getPaidAmount());
+							finServiceInstruction.getManualWaiverMap().put(getAllocType(uploadAlloctionDetail.getAllocationType())+"_"+manualAdvise.getAdviseID(), manualAdvise.getWaivedAmount());
+						}
+					}
+					
+					finServiceInstruction.getManualAllocMap().remove(getAllocType(uploadAlloctionDetail.getAllocationType())+"_"+uploadAlloctionDetail.getReferenceCode());
+					finServiceInstruction.getManualWaiverMap().remove(getAllocType(uploadAlloctionDetail.getAllocationType())+"_"+uploadAlloctionDetail.getReferenceCode());
+					
+				}
+			
+				if (!(StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "E")
+						|| StringUtils.equalsIgnoreCase(uploadAlloctionDetail.getAllocationType(), "A"))) {
+					
+					//considering only paid amounts and leaving waived amounts
+					//### PSD Ticket id:128549
+					totalAllocAmt = totalAllocAmt
+							.add(uploadAlloctionDetail.getPaidAmount()).add(remBal);
+				} else {
+					finServiceInstruction.setExcessAdjustTo(finServiceInstruction.getExcessAdjustTo().toUpperCase());
+					totalAllocAmt = totalAllocAmt.add(uploadAlloctionDetail.getPaidAmount());
+				}
+				
+			}
+			
+			//compare total allocation amount with receipt amount
+			if (totalAllocAmt.compareTo(finServiceInstruction.getAmount()) != 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = PennantApplicationUtil.amountFormate(totalAllocAmt, PennantConstants.defaultCCYDecPos);
+				valueParm[1] = PennantApplicationUtil.amountFormate(finServiceInstruction.getAmount(), PennantConstants.defaultCCYDecPos);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0042", "", valueParm)));
+				return auditDetail;
+			}
+			
+		}
+		
+		logger.debug("Leaving");
+		return auditDetail;
+	}
+	
+	public Map<String, BigDecimal> getManualAllocMap(List<UploadAlloctionDetail> uploadAllocationDetails){
+		Map<String, BigDecimal> allocMap= new HashMap<>();
+		for (UploadAlloctionDetail alloc:uploadAllocationDetails){
+			if ("M".equalsIgnoreCase(alloc.getAllocationType())){
+				
+				if(allocMap.containsKey(getAllocType(alloc.getAllocationType())+"_"+alloc.getReferenceCode())){
+					
+					BigDecimal allocamt = allocMap.get(getAllocType(alloc.getAllocationType())+"_"+alloc.getReferenceCode());
+					allocMap.put(getAllocType(alloc.getAllocationType())+"_"+alloc.getReferenceCode(), alloc.getPaidAmount()==null? BigDecimal.ZERO.add(allocamt) :alloc.getPaidAmount().add(allocamt));
+				} else {
+					allocMap.put(getAllocType(alloc.getAllocationType())+"_"+alloc.getReferenceCode(), alloc.getPaidAmount()==null? BigDecimal.ZERO :alloc.getPaidAmount());
+				}
+				
+			}else if ("F".equalsIgnoreCase(alloc.getAllocationType())){
+				allocMap.put(getAllocType(alloc.getAllocationType())+"_"+alloc.getReferenceCode(), alloc.getPaidAmount()==null? BigDecimal.ZERO :alloc.getPaidAmount());
+			}else{
+				allocMap.put(getAllocType(alloc.getAllocationType()), alloc.getPaidAmount()==null? BigDecimal.ZERO :alloc.getPaidAmount());
+			}
+			
+		}
+		return allocMap;
+	}
+	
+	public Map<String, BigDecimal> getManualWaiverMap(List<UploadAlloctionDetail> uploadAllocationDetails){
+		Map<String, BigDecimal> allocMap= new HashMap<>();
+		for (UploadAlloctionDetail alloc:uploadAllocationDetails){
+			if ("M".equalsIgnoreCase(alloc.getAllocationType())) {
+				
+				if (allocMap.containsKey(getAllocType(alloc.getAllocationType()) + "_" + alloc.getReferenceCode())) {
+
+					BigDecimal waivedAmt = allocMap.get(getAllocType(alloc.getAllocationType()) + "_" + alloc.getReferenceCode());
+					allocMap.put(getAllocType(alloc.getAllocationType()) + "_" + alloc.getReferenceCode(),alloc.getWaivedAmount() == null ? BigDecimal.ZERO.add(waivedAmt) : alloc.getWaivedAmount().add(waivedAmt));
+				} else {
+					allocMap.put(getAllocType(alloc.getAllocationType()) + "_" + alloc.getReferenceCode(),alloc.getWaivedAmount() == null ? BigDecimal.ZERO : alloc.getWaivedAmount());
+				}
+
+			}else if ("F".equalsIgnoreCase(alloc.getAllocationType())){
+				allocMap.put(getAllocType(alloc.getAllocationType())+"_"+alloc.getReferenceCode(), alloc.getWaivedAmount()==null? BigDecimal.ZERO :alloc.getWaivedAmount());
+			}else{
+				allocMap.put(getAllocType(alloc.getAllocationType()), alloc.getWaivedAmount()==null? BigDecimal.ZERO :alloc.getWaivedAmount());
+			}
+			
+		}
+		return allocMap;
+	}
+	
+	public List<ManualAdvise> getManualAdviseDetails(String reference, BigDecimal paidAmount, BigDecimal waiverAmnt,
+			String referenceCode) {
+		String allocationType = "";
+
+		List<ManualAdvise> listManualAdvise = getManualAdviseDAO().getManualAdviseByRef(reference, referenceCode,"_AVIEW");
+
+		List<ManualAdvise> listManualAdv = new ArrayList<>();
+		BigDecimal advisePaidAmount = paidAmount;
+		BigDecimal adviseWaiverAmount = waiverAmnt;
+		for (ManualAdvise advise : listManualAdvise) {
+
+			ManualAdvise adv = new ManualAdvise();
+
+			adv.setAdviseID(advise.getAdviseID());
+
+			if (advise.getAdviseAmount().compareTo(advise.getPaidAmount().add(advise.getWaivedAmount())) > 0) {
+				BigDecimal balAdvAmount = advise.getAdviseAmount()
+						.subtract(advise.getPaidAmount().add(advise.getWaivedAmount()));
+
+				 adv.setAdviseAmount(balAdvAmount);
+				if (adviseWaiverAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+					if (balAdvAmount.compareTo(adviseWaiverAmount) >= 0) {
+						allocationType = allocationType + "_" + advise.getAdviseID();
+
+						adv.setWaivedAmount(adviseWaiverAmount);
+
+						balAdvAmount = balAdvAmount.subtract(adviseWaiverAmount);
+						adviseWaiverAmount = BigDecimal.ZERO;
+
+					} else {
+						adv.setWaivedAmount(balAdvAmount);
+						adviseWaiverAmount = adviseWaiverAmount.subtract(balAdvAmount);
+
+					}
+
+				}
+
+				if (advisePaidAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+					if (balAdvAmount.compareTo(BigDecimal.ZERO) > 0) {
+						if (balAdvAmount.compareTo(advisePaidAmount) >= 0) {
+							allocationType = allocationType + "_" + advise.getAdviseID();
+
+							adv.setPaidAmount(advisePaidAmount);
+
+							balAdvAmount = balAdvAmount.subtract(advisePaidAmount);
+							advisePaidAmount = BigDecimal.ZERO;
+
+						} else {
+							adv.setPaidAmount(balAdvAmount);
+
+							advisePaidAmount = advisePaidAmount.subtract(balAdvAmount);
+						}
+					}
+
+				}
+			}
+
+			listManualAdv.add(adv);
+		}
+		
+		return listManualAdv;
+	}
+	
+	public String getAllocType(String value) {
+		switch (value) {
+
+		case "B":
+			return RepayConstants.ALLOCATION_BOUNCE;
+
+		case "I":
+			return RepayConstants.ALLOCATION_NPFT;
+
+		case "M":
+			return RepayConstants.ALLOCATION_MANADV;
+
+		case "P":
+			return RepayConstants.ALLOCATION_PRI;
+
+		case "O":
+			return RepayConstants.ALLOCATION_ODC;
+		case "F":
+			return RepayConstants.ALLOCATION_FEE;
+		case "L":
+			return RepayConstants.ALLOCATION_LPFT;
+		
+		default:
+			return value;
+		}
+	}
+	
+	/**
+	 * Method for validate Receipt details
+	 * 
+	 * @param finServiceInstruction
+	 * @param method
+	 * @return AuditDetail
+	 */
+	@Override
 	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction, String method) {
 		logger.debug("Entering");
 
@@ -3118,7 +4421,107 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		return isPending;
 	}
+	
+	@Override
+	public String getClosingStatus(String finReference, TableType tempTab, boolean wif) {
+		return getFinanceMainDAO().getClosingStatus(finReference, tempTab, wif);
+	}
+	
+	/**
+	 * Ticket id:124998
+	 * check whether same details present already
+	 * @param receiptHeader
+	 * @param purpose
+	 */
+	public boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose) {
+		
+		boolean isExits = false;
+		if (StringUtils.equals(receiptHeader.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+				|| StringUtils.equals(receiptHeader.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+			isExits = finReceiptDetailDAO.isFinReceiptDetailExitsByFavourNo(receiptHeader, purpose);
+			
+		} else {
+			isExits = finReceiptDetailDAO.isFinReceiptDetailExitsByTransactionRef(receiptHeader, purpose);
 
+		}
+
+		return isExits;
+	}
+	
+	public FinanceDetail getFinanceDetail(FinServiceInstruction finServiceInst, String eventCode) {
+		logger.debug("Entering");
+
+		FinanceDetail financeDetail = null;
+
+		String finReference = finServiceInst.getFinReference();
+		String finSerEvent="";
+		if ("SP".equalsIgnoreCase(finServiceInst.getReceiptPurpose())){
+			finSerEvent=FinanceConstants.FINSER_EVENT_SCHDRPY;
+		}else if ("EP".equalsIgnoreCase(finServiceInst.getReceiptPurpose())){
+			finSerEvent=FinanceConstants.FINSER_EVENT_EARLYRPY;
+		}else{
+			finSerEvent=FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+		}
+		if (!finServiceInst.isWif()) {
+			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
+					finSerEvent, "");
+		} else {
+			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
+		}
+
+
+		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
+		if (financeDetail != null) {
+			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
+				for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+					if (finSerEvent.equalsIgnoreCase(feeDetail.getFinEvent())){
+					if (feeDetail.isOriginationFee()) {
+						feeDetail.setOriginationFee(true);
+						feeDetail.setRcdVisible(false);
+						feeDetail.setRecordType(PennantConstants.RCD_UPD);
+						feeDetail.setRecordStatus(PennantConstants.RECORD_TYPE_UPD);
+						newList.add(feeDetail);
+					}
+					}
+				}
+			}
+			financeDetail.getFinScheduleData().setFinFeeDetailList(newList);
+			financeDetail.setAccountingEventCode(eventCode);
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
+			financeDetail.setEtihadCreditBureauDetail(null);
+		}
+
+		logger.debug("Leaving");
+
+		return financeDetail;
+	}
+	
+	public long CheckDedupSP(FinReceiptHeader receiptHeader, String method) {
+		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
+				&& (StringUtils.equals(receiptHeader.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+						|| StringUtils.equals(receiptHeader.getReceiptMode(),
+								DisbursementConstants.PAYMENT_TYPE_DD))
+				&& StringUtils.equals(receiptHeader.getReceiptDetails().get(0).getStatus(),
+						RepayConstants.PAYSTATUS_REALIZED)) {
+			long receiptHeaderId = this.finReceiptDetailDAO.getReceiptIdByReceiptDetails(receiptHeader, method);
+
+			if (receiptHeaderId == 0) {
+				return receiptHeaderId;
+			} else {
+				return receiptHeaderId;
+			}
+
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public BigDecimal getClosingBalance(String finReference, Date valueDate) {
+		return getFinanceScheduleDetailDAO().getClosingBalance(finReference,valueDate);
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -3265,5 +4668,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
 		this.depositChequesDAO = depositChequesDAO;
+	}
+	
+	public FeeDetailService getFeeDetailService() {
+		return feeDetailService;
+	}
+
+	public void setFeeDetailService(FeeDetailService feeDetailService) {
+		this.feeDetailService = feeDetailService;
+	}
+
+	public ReceiptUploadDetailDAO getReceiptUploadDetailDAO() {
+		return receiptUploadDetailDAO;
+	}
+
+	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
+		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
 	}
 }

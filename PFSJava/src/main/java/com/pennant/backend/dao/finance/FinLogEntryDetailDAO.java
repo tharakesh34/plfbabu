@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.finance;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinLogEntryDetail;
@@ -13,4 +14,6 @@ public interface FinLogEntryDetailDAO {
 	List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, long logKey);
 
 	FinLogEntryDetail getFinLogEntryDetail(long logKey);
+	
+	Date getMaxPostDate(String finReference);
 }

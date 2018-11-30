@@ -30,7 +30,10 @@
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
  * 03-06-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
+ * 29-09-2018       somasekhar               0.2         added backdate sp also,            * 
+ * 10-10-2018       somasekhar               0.3         Ticket id:124998,defaulting receipt* 
+ *                                                       purpose and excessadjustto for     * 
+ *                                                       closed loans                       **                                                       Ticket id:124998                   * 
  * 13-06-2018       Siva					 0.2        Receipt auto printing on approval   * 
  *                                                                                          * 
  * 13-06-2018       Siva					 0.3        Receipt Print Option Added 			* 
@@ -224,6 +227,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
@@ -566,6 +570,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				this.listBoxSchedule.setHeight(getListBoxHeight(6));
 				this.receiptDetailsTab.setSelected(true);
 
+				//set default data for closed loans
+				setClosedLoanDetails(financeMain.getFinReference());
+				
 				// Setting tile Name based on Service Action
 				this.windowTitle.setValue(Labels.getLabel(moduleDefiner + "_Window.Title"));
 				setDialog(DialogType.EMBEDDED);
@@ -599,6 +606,24 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
 		this.btnChangeReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnChangeReceipt"));
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * ticket id:124998,checking closed loans and setting default data
+	 * 
+	 * @param finReference
+	 */
+	private void setClosedLoanDetails(String finReference) {
+		String closingStatus = getReceiptService().getClosingStatus(finReference, TableType.MAIN_TAB, false);
+
+		if (StringUtils.isNotEmpty(closingStatus)
+				&& !StringUtils.equals(closingStatus, FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+			fillComboBox(this.receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY,
+					PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,EarlySettlement,EarlyPayment,");
+			fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
+					PennantStaticListUtil.getExcessAdjustmentTypes(), ",A,");
+
+		}
 	}
 
 	/**
@@ -3316,6 +3341,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								receiptDetail.setPartnerBankAcType(partnerBank.getAcType());
 							}
 						}
+						//### 30-OCT-2018,Ticket id :124998
+						receiptDetail.setStatus(getComboboxValue(receiptModeStatus));
 					}
 				}
 				// Extended Fields
@@ -4377,6 +4404,20 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						allocationWaived.setReadonly(true);
 					}
 				}
+				
+				//### 03-09-2018,Ticket id:124998
+				boolean allowWaiver = false;
+				if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
+						&& StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_MANUAL)
+						&& (StringUtils.equals(allocationType, RepayConstants.ALLOCATION_NPFT)
+								|| StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)
+								|| StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PRI))
+						&& DateUtility.compare(
+								getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate(),
+								DateUtility.getAppDate()) < 0) {
+					allocationWaived.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
+					allowWaiver = true;
+				}
 
 				lc.appendChild(allocationWaived);
 				lc.setStyle("text-align:right;");
@@ -4404,8 +4445,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (StringUtils.equals(allocationType, RepayConstants.ALLOCATION_TDS)
 						|| StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)) {
 					allocationPaid.setReadonly(true);
-					if (StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT)
-							&& StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+
+					if(StringUtils.equals(allocationType, RepayConstants.ALLOCATION_PFT) && 
+							(StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE) || allowWaiver)){
 						allocationWaived.setReadonly(isReadOnly("ReceiptDialog_PastdueAmount"));
 					} else {
 						allocationWaived.setReadonly(true);
@@ -4565,10 +4607,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 			} else if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				readOnlyComponent(isReadOnly("ReceiptDialog_excessAdjustTo"), this.excessAdjustTo);
-				if (isUserAction) {
-					fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS,
-							PennantStaticListUtil.getExcessAdjustmentTypes(), "");
-				}
+				// EXcluding emi Advance for early settlement case
+				//### 03=09-2018 ,Ticket id:124998
+				fillComboBox(this.excessAdjustTo, RepayConstants.EXCESSADJUSTTO_EXCESS, PennantStaticListUtil.getExcessAdjustmentTypes(), ","+RepayConstants.EXCESSADJUSTTO_EMIINADV+",");
 			}
 
 		} else {
@@ -5222,7 +5263,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if (!this.receivedDate.isDisabled()) {
 				Date prvMaxReceivedDate = getReceiptService().getMaxReceiptDate(getFinanceMain().getFinReference());
-				if (prvMaxReceivedDate == null) {
+				
+				//### 26-09-2018 Ticket id :124998
+				if (prvMaxReceivedDate == null || StringUtils.equals(getComboboxValue(receiptPurpose),
+						FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 					prvMaxReceivedDate = getFinanceMain().getFinStartDate();
 				}
 				Date curBussDate = DateUtility.getAppDate();

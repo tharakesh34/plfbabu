@@ -304,4 +304,44 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 			return null;
 		}
 	}
+
+	/**
+	 * Ticket id:124998
+	 * return boolean value based on bankcode and active status exists in table . 
+	 * @param bankCode
+	 * @param type
+	 * @param active
+	 */
+	@Override
+	public boolean isBankCodeExits(String bankCode, String type, boolean active) {
+		logger.debug("Entering");
+
+		int bankCount = 0;
+		
+		BankDetail bankDetail =new BankDetail();
+		bankDetail.setBankCode(bankCode);
+		bankDetail.setActive(active);
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) ");
+		
+		selectSql.append(" From BMTBankDetail");
+		selectSql.append(type);
+		selectSql.append(" Where BankCode =:BankCode and Active = :Active");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankDetail);
+
+		try {
+			bankCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (DataAccessException dae) {
+			logger.debug(dae);
+			bankCount = 0;
+		}
+		
+		if(bankCount>0){
+			return true;
+		}
+		
+		return false;
+	}
 }

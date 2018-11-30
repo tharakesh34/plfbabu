@@ -699,7 +699,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String processAttributes;
 	private String higherDeviationApprover;
 	private Map<String, String> attributes = new HashMap<>();
-
+	private BigDecimal repayAmount = BigDecimal.ZERO;
+	private String entityCode;
+	//### 10-09-2018,Ticket id:124998
+	private String entityDesc;
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -859,9 +863,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("finBranchProvinceCode");
 		excludeFields.add("higherDeviationApprover");
 		excludeFields.add("attributes");
+		excludeFields.add("repayAmount");
+		excludeFields.add("entityDesc");
+		excludeFields.add("entityCode");
 		excludeFields.add("finBranchContact");
 		excludeFields.add("nextUsrName");
-
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -4014,5 +4020,29 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setFinBranchContact(String finBranchContact) {
 		this.finBranchContact = finBranchContact;
+	}
+	
+	public BigDecimal getRepayAmount() {
+		return repayAmount;
+	}
+
+	public void setRepayAmount(BigDecimal repayAmount) {
+		this.repayAmount = repayAmount;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
 	}
 }

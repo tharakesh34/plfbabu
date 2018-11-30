@@ -63,6 +63,7 @@ public class FinanceConstants {
 	public static final String PRODUCT_FWIJARAH = "FWIJARAH";
 	public static final String PRODUCT_ODFACILITY = "ODFCLITY";
 	public static final String PRODUCT_DISCOUNT = "DISCOUNT";
+	public static final String	PRODUCT_GOLD = "GOLD";
 
 	// Finance Division Details
 	public static final String FIN_DIVISION_RETAIL = "BFSD";

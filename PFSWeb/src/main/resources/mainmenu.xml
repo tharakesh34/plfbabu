@@ -650,6 +650,8 @@
 				rightName="menuItem_FinanceManagement_FeeReceiptCancellation" />
 			<menuItem id="menu_Item_DepositDetails"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsList.zul" rightName="menuItem_FinanceManagement_DepositDetails"/>
+			<menuItem id="menu_Item_ReceiptUpload" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N"  rightName="menu_Item_ReceiptUpload"/>
+ 	   		<menuItem id="menu_Item_ReceiptUploadApproval" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y"  rightName="menu_Item_ReceiptUploadApprover"/>
 		</menu>
 		<menu id="menu_Category_LmsManualPostings">
 			<menuItem id="menu_Item_ManualAdvise"

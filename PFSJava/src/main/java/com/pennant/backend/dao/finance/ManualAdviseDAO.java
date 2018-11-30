@@ -113,5 +113,8 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<ManualAdvise> getManualAdvisesByFinRef(String finReference, String type);
 
 	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(String finReference, String type);
+	
+	//### Ticket id :124998
+	List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type);
 
 }

@@ -318,6 +318,7 @@ import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.policecase.PoliceCase;
+import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.reports.ReportList;
@@ -2968,6 +2969,10 @@ public class PennantJavaUtil {
 						new ModuleMapping("BankInfoDetail", BankInfoSubDetail.class,
 								new String[] { "BankInfoDetail", "BankInfoDetail" }, null, new String[] { "" },
 								null, 350));
+				
+				//Receipt Upload 
+				ModuleUtil.register("ReceiptUploadHeader", new ModuleMapping("ReceiptUploadHeader", ReceiptUploadHeader.class, new String[] { "ReceiptUploadHeader",
+				"ReceiptUploadHeader_AVIEW" }, masterWF, new String[] {"uploadHeaderId","FileName"},null, 600));
 
 		ModuleUtil.register("ReleaseLock", new ModuleMapping("ReleaseLock", FinanceMain.class,
 				new String[] { "LockedFinances_View" }, null, new String[] { "" }, null, 350));

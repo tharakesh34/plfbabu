@@ -1,14 +1,20 @@
 package com.pennanttech.pff.jobs;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.TriggerBuilder;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.scheduler.AbstractJobScheduler;
 import com.pennanttech.pennapps.core.scheduler.Job;
 
 public class DefaultJobSchedular extends AbstractJobScheduler {
+	private static final Logger logger = LogManager.getLogger(DefaultJobSchedular.class);
+
 	private static final String GST_INVOICE_GENERATE_JOB = "GST_INVOICE_GENERATE_JOB";
 	private static final boolean GENERATE_GST_INVOICE_NO = Boolean.valueOf(App.getProperty("gstInvoice.job.enabled"));
 	private static final String GST_INVOICE_SCHEDULE_TIME = App.getProperty("gstInvoice.scheduleTime");
@@ -18,19 +24,21 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 			.getProperty("sys.notification.process.cronExpression");
 	private static final String SYS_NOTIFICATIONS_INVOKE_JOB = "SYS_NOTIFICATIONS_INVOKE_JOB";
 	private static final String SYS_NOTIFICATIONS_PROCESS_JOB = "SYS_NOTIFICATIONS_PROCESS_JOB";
+	private static final String AUTO_RECPT_RESPONSE_JOB = "AUTO_RECPT_RES_JOB";
+	private static final String AUTO_RECPT_RESPONSE_JOB_TRIGGER = "AUTO_RECPT_RES_JOB_TRIGGER";
 
 	@Override
 	protected void registerJobs() throws Exception {
 		registerGstInvoiceJob();
 		registerSystemNotificationInvokeJob();
 		registerSystemNotificationProcessJob();
+		autoReceiptResponseJob();
 	}
 
 	/**
 	 * Invoice number Auto Generation
 	 */
 	private void registerGstInvoiceJob() {
-
 		if (GENERATE_GST_INVOICE_NO) {
 			Job job = new Job();
 			job.setJobDetail(JobBuilder.newJob(GSTInvoiceGeneratorJob.class)
@@ -47,7 +55,6 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	}
 
 	private void registerSystemNotificationInvokeJob() {
-
 		Job job = new Job();
 		job.setJobDetail(JobBuilder.newJob(SystemNotificationsInvokeJob.class)
 				.withIdentity(SYS_NOTIFICATIONS_INVOKE_JOB, SYS_NOTIFICATIONS_INVOKE_JOB)
@@ -62,7 +69,6 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	}
 
 	private void registerSystemNotificationProcessJob() {
-
 		Job job = new Job();
 		job.setJobDetail(JobBuilder.newJob(SystemNotificationsProcessJob.class)
 				.withIdentity(SYS_NOTIFICATIONS_PROCESS_JOB, SYS_NOTIFICATIONS_PROCESS_JOB)
@@ -74,6 +80,25 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		jobs.put(SYS_NOTIFICATIONS_PROCESS_JOB, job);
 
+	}
+
+	private void autoReceiptResponseJob() {
+		logger.debug(Literal.ENTERING);
+		Job job = new Job();
+
+		String scheduleTime = SysParamUtil.getValueAsString("RECEIPT_RESPONSE_JOB_CORNEXP");
+
+		job.setJobDetail(JobBuilder.newJob(ReceiptResponseJob.class)
+				.withIdentity(AUTO_RECPT_RESPONSE_JOB, AUTO_RECPT_RESPONSE_JOB)
+				.withDescription("Auto receipt reponse job").build());
+		job.setTrigger(TriggerBuilder.newTrigger()
+				.withIdentity(AUTO_RECPT_RESPONSE_JOB_TRIGGER, AUTO_RECPT_RESPONSE_JOB_TRIGGER)
+				.withDescription("Auto receipt reponse trigger")
+				.withSchedule(CronScheduleBuilder.cronSchedule(scheduleTime)).build());
+
+		jobs.put(AUTO_RECPT_RESPONSE_JOB, job);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 }

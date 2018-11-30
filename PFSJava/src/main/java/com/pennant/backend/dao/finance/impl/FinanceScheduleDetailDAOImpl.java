@@ -1416,4 +1416,99 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return finSchdDetails;
 
 	}
+
+	/**
+	 * retrive last schdate be present appDate
+	 * @param finReference
+	 * @param appDate
+	 */
+	@Override
+	public Date getPrevSchdDate(String finReference , Date appDate) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("  select max(SchDate) from FinScheduleDetails");
+		selectSql.append(" where FinReference = :FinReference AND ");
+		selectSql.append("  SchDate <= :schdate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		
+		mapSqlParameterSource.addValue("FinReference", finReference);
+		mapSqlParameterSource.addValue("schdate", appDate);
+		
+		
+		Date prevSchdDate = null;
+		try {
+			prevSchdDate = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			prevSchdDate = null;
+		}
+		return prevSchdDate;
+	}
+
+	/**
+	 * method return true if given date is Installment schedule
+	 * or it will consider as schedule change date
+	 */
+	@Override
+	public boolean isInstallSchd(String finReference, Date lastPrevDate) {
+         logger.debug("Entering");
+		
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("FinReference", finReference);
+		detail.addValue("schDate", lastPrevDate);
+		
+		StringBuilder selectSql = new StringBuilder(" Select (REPAYAMOUNT -PARTIALPAIDAMT) ");
+		selectSql.append(" From FinScheduleDetails");
+		selectSql.append(" Where FinReference = :FinReference AND SchDate = :schDate");
+		
+		logger.debug("selectSql: " + selectSql.toString());
+		
+		BigDecimal repayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
+		if (repayAmount == null) {
+			repayAmount = BigDecimal.ZERO;
+		}
+		
+		logger.debug("Leaving");
+		
+		if(repayAmount.compareTo(BigDecimal.ZERO)>0){
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	/**
+	 * Ticket id:124998,receipt upload
+	 * Retrieve closing balance for given schedule date
+	 * @param finReference
+	 * @param valueDate
+	 */
+	@Override
+	public BigDecimal getClosingBalance(String finReference, Date valueDate) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("FinReference", finReference);
+		detail.addValue("schDate", valueDate);
+	
+		StringBuilder selectSql = new StringBuilder("SELECT CLOSINGBALANCE FROM FINSCHEDULEDETAILS ");
+		selectSql.append(" Where FinReference = :FinReference AND SCHDATE =(SELECT  MAX(SCHDATE) FROM FINSCHEDULEDETAILS ");
+		selectSql.append("WHERE FINREFERENCE=:FinReference AND SCHDATE <=:schDate)");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		BigDecimal closingBal = this.jdbcTemplate.queryForObject(selectSql.toString(), detail,
+				BigDecimal.class);
+		if (closingBal == null) {
+			closingBal = BigDecimal.ZERO;
+		}
+
+		logger.debug("Leaving");
+		return closingBal;
+	}
 }

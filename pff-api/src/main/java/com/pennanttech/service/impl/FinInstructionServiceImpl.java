@@ -3,6 +3,7 @@ package com.pennanttech.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -36,6 +38,7 @@ import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.DisbursementServiceReq;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -43,12 +46,14 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ZIPCodeDetails;
+import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
 import com.pennant.validation.AddTermsGroup;
@@ -104,6 +109,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private SecurityUserDAO securityUserDAO;
+	
+	private FeeDetailService feeDetailService;
+
+	private ReceiptCalculator receiptCalculator;
+
+	
 
 	/**
 	 * Method for perform DisbursmentInquiry operation
@@ -1551,14 +1562,33 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				return status;
 			}
 		}
-		// validate service instruction data
-		AuditDetail auditDetail = receiptService.doValidations(finServiceInstruction, moduleDefiner);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				status = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
-				return status;
+		
+		AuditDetail auditDetail = null;
+		//validate service instruction data
+		if (!finServiceInstruction.isReceiptUpload()) {
+
+			auditDetail = receiptService.doValidations(finServiceInstruction, moduleDefiner);
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					status = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+					return status;
+				}
 			}
+		} else {
+
+			
+			// validate service instruction upload /APi data
+			auditDetail = receiptService.doReceiptValidations(finServiceInstruction, moduleDefiner);
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					status = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+					return status;
+				}
+			}
+			
+			finServiceInstruction.setFinFeeDetails(null);
 		}
+		
 		// validate fees
 		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
 		if (!errors.isEmpty()) {
@@ -1758,6 +1788,20 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 				errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
 			}
 		} else {
+			if (finSrvcInst.isReceiptUpload()){//FIXME
+				
+				FinanceDetail financeDetail=receiptService.getFinanceDetail(finSrvcInst, eventCode);
+				try{
+					BigDecimal dueAmount=getDueAmount(finSrvcInst, financeDetail, eventCode);
+					BigDecimal extraAmount=finSrvcInst.getAmount().subtract(dueAmount);
+					financeDetail.getFinScheduleData().getFinanceMain().setRepayAmount(extraAmount);
+					feeDetailService.doProcessFeesForInquiryForUpload(financeDetail, eventCode, finSrvcInst, true);
+					buildFinFeeForUpload(finSrvcInst);
+					
+				} catch (Exception e) {
+					logger.error("Exception: " + e);
+				}
+			}
 			errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
 		}
 		logger.debug("Leaving");
@@ -1994,6 +2038,35 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
+	}
+	
+	public BigDecimal getDueAmount(FinServiceInstruction finSerInst,FinanceDetail financeDetail, String eventCode){
+		BigDecimal dueAmount=BigDecimal.ZERO;
+		Map<String,BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(financeDetail, finSerInst.getAmount(),
+				finSerInst.getValueDate(), finSerInst.getReceiptPurpose(), false);
+		for (Map.Entry<String, BigDecimal> alloc:allocationMap.entrySet()){
+			if (!alloc.getKey().equals(RepayConstants.ALLOCATION_TDS) && !alloc.getKey().equals(RepayConstants.ALLOCATION_PFT)){
+				dueAmount=dueAmount.add(alloc.getValue());
+			}
+		}
+		return dueAmount;
+		
+	}
+	
+	private void buildFinFeeForUpload(FinServiceInstruction finSrvcInst) {
+		for (FinFeeDetail feeDtl:finSrvcInst.getFinFeeDetails()){
+			feeDtl.setFeeScheduleMethod("");
+		}
+	}
+		
+    @Autowired
+	public void setFeeDetailService(FeeDetailService feeDetailService) {
+		this.feeDetailService = feeDetailService;
+	}
+
+    @Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
 	}
 
 }

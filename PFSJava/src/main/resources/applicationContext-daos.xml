@@ -4597,8 +4597,9 @@
 		<!-- Stage Accounting -->
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
-
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="feeDetailService" ref="feeDetailService"/>
+		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO"/>
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -9950,8 +9951,7 @@
 		parent="basicDao">
 	</bean>
 
-	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular">
-	</bean>
+	<bean id="defaultJobSchedular" class="com.pennanttech.pff.jobs.DefaultJobSchedular"/>
 
 	<bean id="systemNotificationsDAO" class="com.pennanttech.pff.notifications.dao.SystemNotificationsDAOImpl" parent="sequenceDao">
 		<property name="dataSource" ref="dataSource" />
@@ -9987,5 +9987,60 @@
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		
+	</bean>
+	
+	<!-- RECEIPT Upload Service -->
+	<bean id="receiptUploadHeaderDAO"
+		class="com.pennant.backend.dao.finance.impl.ReceiptUploadHeaderDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="receiptUploadHeaderService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="receiptUploadHeaderServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="updateUploadProgress*">PROPAGATION_REQUIRED</prop>
+				<prop key="uploadHeaderStatusCnt*">PROPAGATION_REQUIRED</prop>
+				<prop key="updateStatusOFList*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="receiptUploadHeaderServiceTarget"
+		class="com.pennant.backend.service.finance.impl.ReceiptUploadHeaderServiceImpl">
+		<property name="receiptUploadHeaderDAO" ref="receiptUploadHeaderDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO"/>
+		<property name="uploadAllocationDetailDAO" ref="uploadAllocationDetailDAO"/>
+		<property name="manualAdviseDAO" ref="manualAdviseDAO"/>
+		<property name="receiptResponseDetailDAO" ref="receiptResponseDetailDAO"/>
+		<property name="financeMainDAO" ref="financeMainDAO"/>
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO"/>
+	</bean>
+	
+	<bean id="receiptUploadDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.ReceiptUploadDetailDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="receiptResponseDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.ReceiptResponseDetailDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="uploadAllocationDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.UploadAllocationDetailDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 </beans>

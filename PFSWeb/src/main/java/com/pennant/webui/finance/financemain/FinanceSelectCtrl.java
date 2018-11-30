@@ -971,18 +971,30 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// Default Sort on the table	
 		Date appDate = DateUtility.getAppDate();
-		StringBuilder whereClause = new StringBuilder(" FinIsActive = 1 ");
+		StringBuilder whereClause = new StringBuilder();
+
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
 			whereClause = new StringBuilder(" FinIsActive = 0 ");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
 			whereClause = new StringBuilder(" ");
+		} else if(!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)){
+			 whereClause = new StringBuilder(" FinIsActive = 1 ");
 		}
-
-		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
-			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)) {
-				whereClause = new StringBuilder(" (" + buildedWhereCondition + ") ");
-			} else {
-				whereClause.append(" AND (" + buildedWhereCondition + ") ");
+		
+		//### 11-10-2018,Ticket id:124998
+		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RECEIPT)) {
+			whereClause.append(" CLOSINGSTATUS!='" + FinanceConstants.CLOSE_STATUS_CANCELLED
+					+ "' or (CLOSINGSTATUS is null or CLOSINGSTATUS  in ('" + FinanceConstants.CLOSE_STATUS_EARLYSETTLE
+					+ "','" + FinanceConstants.CLOSE_STATUS_WRITEOFF + "','" + FinanceConstants.CLOSE_STATUS_MATURED
+					+ "')) and ProductCategory != '" + FinanceConstants.PRODUCT_GOLD + "'");
+		} else {
+			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_GOLD + "'");
+		}
+		if(StringUtils.isNotEmpty(buildedWhereCondition)){
+			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_BASICMAINTAIN)){
+				 whereClause = new StringBuilder(" ("+buildedWhereCondition +") ");
+			}else{
+				whereClause.append(" AND ("+buildedWhereCondition +") ");
 			}
 		}
 

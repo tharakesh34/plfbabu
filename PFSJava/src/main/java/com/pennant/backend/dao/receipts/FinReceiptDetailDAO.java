@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptDetailDAO {
@@ -35,4 +36,14 @@ public interface FinReceiptDetailDAO {
 	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
 
 	BigDecimal getFinReceiptDetailsByFinRef(String finReference);
+	
+	//### 29-10-2018, Ticket id:124998
+	boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose);
+	//### 29-10-2018, Ticket id:124998
+	boolean isFinReceiptDetailExitsByTransactionRef(FinReceiptHeader receiptHeader, String purpose);
+	//### 29-10-2018, Ticket id:124998
+	long getReceiptIdByReceiptDetails(FinReceiptHeader receiptHeader, String purpose);
+
+	//### 30-10-2018, Ticket id:124998
+	void updateReceiptStatusByReceiptId(long receiptId, String status);
 }

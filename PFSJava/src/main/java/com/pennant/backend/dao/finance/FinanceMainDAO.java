@@ -59,6 +59,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.reports.AvailFinance;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pff.core.TableType;
@@ -309,4 +310,17 @@ public interface FinanceMainDAO {
 
 	Map<String, Date> getUnDisbursedFinanceList();
 
+	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type, String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
+
+	boolean isFinReferenceExitsWithEntity(String finReference,String type, String entity);//### 12-07-2018 Ticket ID : 12499
+	
+	//### 10-09-2018,Ticket id:124998
+	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
+
+	FinanceType getFinTypeDetailsByFinreferene(String finReference, String string, boolean b);
+
+	//### 10-10-2018,Ticket id:124998
+	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	boolean isDeveloperFinance(String finReference, String type, boolean wif);
+	
 }

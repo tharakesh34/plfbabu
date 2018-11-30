@@ -4881,4 +4881,30 @@
 		scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
+	
+	<!-- Receipt Upload -->
+	 <bean id="receiptUploadHeaderListCtrl"
+		class="com.pennant.webui.finance.receiptupload.ReceiptUploadHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService"/>
+	</bean>
+	
+	<bean id="selectReceiptUploadHeaderCtrl"
+		class="com.pennant.webui.finance.receiptupload.SelectReceiptUploadHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService"/>
+		<property name="receiptService" ref="receiptService"/>
+		 
+	</bean>
+	
+	<bean id="receiptUploadHeaderDialogCtrl"
+		class="com.pennant.webui.finance.receiptupload.ReceiptUploadHeaderDialogCtrl"
+			parent="basisCtrl" scope="prototype">
+		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
+	</bean>
+	
+	<bean id="receiptUploadReportDialogCtrl"
+		class="com.pennant.webui.reports.ReceiptUploadReportDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>

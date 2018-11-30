@@ -1,0 +1,1654 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+<changeSet id="1" author="Vinay">
+	<createTable tableName= "ReceiptUploadHeader">
+		<column name="ReceiptUploadId" 				 type="number(19,0)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>	
+		<column name="FileName"	 		    	type="nvarchar(250)" > 
+			<constraints nullable="false"/>
+		</column>	
+		<column name="Transactiondate"			type ="datetime"> 	
+			<constraints nullable="false"/> 
+		</column>	
+		<column name="TotalRecords"				type ="int"/> 	
+		<column name="SuccessCount"				type ="int"/> 	 	
+		<column name="FailedCount"				type ="int"/> 	 	
+		<column name="Version" 			    	type="number(10,0)" />
+		<column name="Lastmntby" 				type="number(19,0)" />
+		<column name="Lastmnton" 				type="datetime" />
+		<column name="Recordstatus" 			type="nvarchar(50)" />
+		<column name="Rolecode" 				type="nvarchar(50)" />
+		<column name="Nextrolecode" 			type="nvarchar(200)" />
+		<column name="Taskid" 					type="nvarchar(50)" />
+		<column name="Nexttaskid" 				type="nvarchar(200)" />
+		<column name="Recordtype" 				type="nvarchar(50)" />
+		<column name="Workflowid" 				type="number(19,0)" />
+	</createTable>	
+</changeSet>
+
+<changeSet id="2" author="Vinay">
+	<createTable tableName= "ReceiptUploadHeader_temp">
+		<column name="ReceiptUploadId" 				 type="number(19,0)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>	
+		<column name="FileName"	 		    	type="nvarchar(250)" > 
+			<constraints nullable="false"/>
+		</column>	
+		<column name="Transactiondate"			type ="datetime"> 	
+			<constraints nullable="false"/> 
+		</column>	
+		<column name="TotalRecords"				type ="int"/> 	
+		<column name="SuccessCount"				type ="int"/> 	 	
+		<column name="FailedCount"				type ="int"/> 	 	
+		<column name="Version" 			    	type="number(10,0)" />
+		<column name="Lastmntby" 				type="number(19,0)" />
+		<column name="Lastmnton" 				type="datetime" />
+		<column name="Recordstatus" 			type="nvarchar(50)" />
+		<column name="Rolecode" 				type="nvarchar(50)" />
+		<column name="Nextrolecode" 			type="nvarchar(200)" />
+		<column name="Taskid" 					type="nvarchar(50)" />
+		<column name="Nexttaskid" 				type="nvarchar(200)" />
+		<column name="Recordtype" 				type="nvarchar(50)" />
+		<column name="Workflowid" 				type="number(19,0)" />
+	</createTable>	
+</changeSet>	
+
+<changeSet id="3.0" author="Vinay" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqReceiptUploadHeader" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+</changeSet>
+
+<changeSet id="3.1" author="Vinay" dbms="mssql">
+	<createTable tableName="SeqReceiptUploadHeader">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"/>
+	</createTable>
+</changeSet>
+
+ <changeSet id="4" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_VIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+				   T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM       ReceiptUploadHeader_temp T1 
+				   
+		UNION ALL
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				 
+		FROM       ReceiptUploadHeader T1 
+				    
+		
+		WHERE  NOT EXISTS (SELECT 1 FROM ReceiptUploadHeader_temp  WHERE  ReceiptUploadId =T1.ReceiptUploadId)
+	</createView>
+</changeSet>
+
+<changeSet id="5" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_AVIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				 
+		FROM       ReceiptUploadHeader T1 
+	</createView>
+</changeSet>
+
+<changeSet id="6" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_TVIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				 
+		FROM       ReceiptUploadHeader_temp T1 
+	</createView>
+</changeSet>
+
+<changeSet id="7" author="Vinay">
+	<createTable tableName="UploadReceipt">
+		<column name="uploadid" type="number(19,0)" />
+		<column name="finreference" type="varchar(20)" />
+		<column name="Status" type="varchar(20)" />
+		<column name="Reason" type="varchar(300)" />
+	</createTable>
+ 
+</changeSet>
+
+
+<changeSet  author="Vinay" id="8">
+	  <sql>
+	  Delete from SMTParameters Where sysparmcode = 'RECEIPTAPIURL'; 
+      Insert into SMTParameters values('RECEIPTAPIURL','receipt url request data.', 'String',1,'http://192.168.1.168:8080/pff-api/services/finInstructionRest/loanInstructionService/','30',0,null,null,'receipt url request data.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null, null,null,null,0); 
+	 </sql>
+   </changeSet>
+   
+   <changeSet  author="Vinay" id="9.1">
+	  <sql>
+	  Delete from SMTParameters Where sysparmcode = 'URLAuthorization'; 
+      Insert into SMTParameters values('URLAuthorization','receipt authorization .', 'String',1,'dXNlcjpBRE1JTjp0ZXN0','30',0,null,null,'receipt authorization ..',1,1000,CURRENT_TIMESTAMP,'Approved',null,null, null,null,null,0); 
+	 </sql>
+   </changeSet>
+ <changeSet  author="Vinay" id="10">
+	  <sql>
+		Delete from SMTParameters Where sysparmcode = 'RECEIPTAPIURL'; 
+		Insert into SMTParameters values('RECEIPTAPIURL','receipt url request data.', 'String',1,'http://192.168.1.168:8080/pff-api/services/','200',0,null,null,'receipt url request data.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null, null,null,null,0); 
+	 </sql>
+   </changeSet>
+   
+   <changeSet id="13" author="Vinay">
+	<createTable tableName="ReceiptUploaddetails">
+		<column name="UploadHeaderId"	 type="number(19,0)" />
+		<column name="UploadDetailId" 	type="number(19,0)" />
+		<column name="finreference" 	type="varchar(20)" />
+		<column name="receiptPurpose" 	type="varchar(40)" />
+		<column name="receiptamount" 	type="number(18,0)" />
+		<column name="allocationType" 	type="varchar(20)" />
+		<column name="uploadStatus" 	type="varchar(20)" />
+		<column name="jsonobject"       type="clob"/>
+		<column name="Version" 			type="number(10,0)" />
+		<column name="Lastmntby" 		type="number(19,0)" />
+		<column name="Lastmnton" 		type="datetime" />
+		<column name="Recordstatus" 	type="nvarchar(50)" />
+		<column name="Rolecode" 		type="nvarchar(50)" />
+		<column name="Nextrolecode" 	type="nvarchar(200)" />
+		<column name="Taskid" 			type="nvarchar(50)" />
+		<column name="Nexttaskid" 		type="nvarchar(200)" />
+		<column name="Recordtype" 		type="nvarchar(50)" />
+		<column name="Workflowid" 		type="number(19,0)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="14" author="Vinay">
+ <dropTable tableName="ReceiptUploaddetails"/>
+</changeSet>
+
+<changeSet id="15" author="Vinay">
+	<createTable tableName="ReceiptUploaddetails">
+		<column name="UploadHeaderId"	 type="number(19,0)" />
+		<column name="UploadDetailId" 	type="number(19,0)" />
+		<column name="finreference" 	type="varchar(20)" />
+		<column name="receiptPurpose" 	type="varchar(40)" />
+		<column name="receiptamount" 	type="number(18,0)" />
+		<column name="allocationType" 	type="varchar(20)" />
+		<column name="uploadStatus" 	type="varchar(20)" />
+		<column name="reason" type="varchar(1000)"/>
+		<column name="jsonobject"       type="clob"/>
+		<column name="Version" 			type="number(10,0)" />
+		<column name="Lastmntby" 		type="number(19,0)" />
+		<column name="Lastmnton" 		type="datetime" />
+		<column name="Recordstatus" 	type="nvarchar(50)" />
+		<column name="Rolecode" 		type="nvarchar(50)" />
+		<column name="Nextrolecode" 	type="nvarchar(200)" />
+		<column name="Taskid" 			type="nvarchar(50)" />
+		<column name="Nexttaskid" 		type="nvarchar(200)" />
+		<column name="Recordtype" 		type="nvarchar(50)" />
+		<column name="Workflowid" 		type="number(19,0)" />
+	</createTable>
+</changeSet>
+
+
+<changeSet id="16" author="Vinay">
+ <dropTable tableName="ReceiptUploaddetails"/>
+</changeSet>
+
+<changeSet id="17" author="Vinay">
+	<createTable tableName="ReceiptUploaddetails">
+		<column name="UploadHeaderId"	 type="number(19,0)" />
+		<column name="UploadDetailId" 	type="number(19,0)" />
+		<column name="Reference" 	type="varchar(20)" />
+		<column name="receiptPurpose" 	type="varchar(40)" />
+		<column name="receiptamount" 	type="number(18,0)" />
+		<column name="allocationType" 	type="varchar(20)" />
+		<column name="uploadStatus" 	type="varchar(20)" />
+		<column name="reason" type="varchar(1000)"/>
+		<column name="jsonobject"       type="clob"/>
+		<column name="Version" 			type="number(10,0)" />
+		<column name="Lastmntby" 		type="number(19,0)" />
+		<column name="Lastmnton" 		type="datetime" />
+		<column name="Recordstatus" 	type="nvarchar(50)" />
+		<column name="Rolecode" 		type="nvarchar(50)" />
+		<column name="Nextrolecode" 	type="nvarchar(200)" />
+		<column name="Taskid" 			type="nvarchar(50)" />
+		<column name="Nexttaskid" 		type="nvarchar(200)" />
+		<column name="Recordtype" 		type="nvarchar(50)" />
+		<column name="Workflowid" 		type="number(19,0)" />
+	</createTable>
+</changeSet> 
+
+<changeSet id="18" author="Vinay">
+  <sql>
+  
+insert into SecRights values((select max(rightid) from secrights)+1,0,'menu_Item_ReceiptUpload','MENU',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+
+insert into SecRights values((select max(rightid) from secrights)+1,2,'button_ReceiptUpload_btnNew','ReceiptUpload',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+insert into SecRights values((select max(rightid) from secrights)+1,2,'button_ReceiptUpload_btnEdit','ReceiptUpload',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+insert into SecRights values((select max(rightid) from secrights)+1,2,'button_ReceiptUpload_btnDelete','ReceiptUpload',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+insert into SecRights values((select max(rightid) from secrights)+1,2,'button_ReceiptUpload_btnSave','ReceiptUpload',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+
+
+insert into Secgroups values((select max(grpid) from secgroups)+1,'ReceiptUpload_MAKER','Maker for ReceiptUpload',0,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+insert into Secgroups values((select max(grpid) from secgroups)+1,'ReceiptUpload_APPROVER','Aprover for ReceiptUpload',0,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='menu_Item_ReceiptUpload'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='button_ReceiptUpload_btnNew'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='button_ReceiptUpload_btnEdit'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='button_ReceiptUpload_btnDelete'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='button_ReceiptUpload_btnSave'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_APPROVER'),(select rightid from secrights where rightname='menu_Item_ReceiptUpload'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_APPROVER'),(select rightid from secrights where rightname='button_ReceiptUpload_btnSave'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+
+
+insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select roleid from secroles where rolecd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(select grpid from secgroups where grpcode='ReceiptUpload_APPROVER'),(select roleid from secroles where rolecd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+  
+  
+  
+  </sql>
+</changeSet>
+
+
+<changeSet id="19.0" author="Vinay" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqReceiptUploadDetail" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+</changeSet>
+
+<changeSet id="19.1" author="Vinay" dbms="mssql">
+	<createTable tableName="SeqReceiptUploadDetail">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"/>
+	</createTable>
+</changeSet>
+
+ <changeSet id="20" author="Vinay">
+	<sql>
+ 		update smtparameters set sysparmlength=200 where sysparmcode='URLAuthorization';
+	</sql> 	
+ </changeSet>
+ 
+  <changeSet  author="Vinay" id="21">
+	  <sql>
+	  Delete from SMTParameters Where sysparmcode = 'ALW_SP_BACK_DAYS'; 
+
+      Insert into SMTParameters values('ALW_SP_BACK_DAYS','Allow special back days.', 'int',1,'10','200',0,null,null,'Allow special back days.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null, null,null,null,0); 
+	 </sql>
+   </changeSet>
+   
+   <changeSet id="22" author="Vinay">
+		<createTable tableName="UploadAlloctionDetails">
+			<column name="UploadDetailId" type="number(19,0)" />
+			<column name="UploadAlloctionDetailId" type="number(19,0)" />
+			<column name="allocationType" type="varchar(20)" />
+			<column name="referenceCode" type="varchar(20)" />
+			<column name="paidAmount" type="number(18,0)" />
+			<column name="waivedAmount" type="number(18,0)" />
+			<column name="Version" type="number(10,0)" />
+			<column name="Lastmntby" type="number(19,0)" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="nvarchar(50)" />
+			<column name="Rolecode" type="nvarchar(50)" />
+			<column name="Nextrolecode" type="nvarchar(200)" />
+			<column name="Taskid" type="nvarchar(50)" />
+			<column name="Nexttaskid" type="nvarchar(200)" />
+			<column name="Recordtype" type="nvarchar(50)" />
+			<column name="Workflowid" type="number(19,0)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="23" author="Vinay">
+	<addColumn tableName="ReceiptUploaddetails">
+		<column name="ROOTID" type="VARCHAR(8)" />
+		<column name="EXCESSADJUSTTO" type="char(1)" />
+		<column name="EFFECTSCHDMETHOD" type="VARCHAR(10)" />
+		<column name="REMARKS" type="VARCHAR(200)" />
+		<column name="VALUEDATE" type="datetime" />
+		<column name="RECEIVEDDATE" type="datetime" />
+		<column name="RECEIPTMODE" type="VARCHAR(10)" />
+		<column name="FUNDINGAC" type="number(19,0)" />
+		<column name="PAYMENTREF" type="VARCHAR(50)" />
+		<column name="FAVOURNUMBER" type="VARCHAR(50)" />
+		<column name="BANKCODE" type="VARCHAR(8)" />
+		<column name="CHEQUEACNO" type="VARCHAR(50)" />
+		<column name="TRANSACTIONREF" type="VARCHAR(50)" />
+		<column name="STATUS" type="CHAR(1)" />
+		<column name="DEPOSITDATE" type="datetime" />
+		<column name="REALIZATIONDATE" type="datetime" />
+		<column name="INSTRUMENTDATE" type="datetime" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="24.0" author="Vinay" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqUploadAllocationDetail" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+</changeSet>
+
+<changeSet id="24.1" author="Vinay" dbms="mssql">
+	<createTable tableName="SeqUploadAllocationDetail">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"/>
+	</createTable>
+</changeSet>
+
+ <changeSet id="25" author="Vinay">
+	<addColumn tableName="ReceiptUploadHeader">
+		<column name="entityCode" type="varchar(8)" />
+	</addColumn>
+</changeSet>
+ 
+ <changeSet id="26" author="Vinay">
+	<addColumn tableName="ReceiptUploadHeader_temp">
+		<column name="entityCode" type="varchar(8)" />
+	</addColumn>
+</changeSet>
+ 
+ <changeSet id="27" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_VIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+				   T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.entityCode
+		FROM       ReceiptUploadHeader_temp T1 
+				   
+		UNION ALL
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode
+				 
+		FROM       ReceiptUploadHeader T1 
+				    
+		
+		WHERE  NOT EXISTS (SELECT 1 FROM ReceiptUploadHeader_temp  WHERE  ReceiptUploadId =T1.ReceiptUploadId)
+	</createView>
+</changeSet>
+
+<changeSet id="28" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_AVIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode
+				 
+		FROM       ReceiptUploadHeader T1 
+	</createView>
+</changeSet>
+
+<changeSet id="29" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_TVIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode
+				 
+		FROM       ReceiptUploadHeader_temp T1 
+	</createView>
+</changeSet>
+
+<changeSet id="30" author="Vinay">
+	<addColumn tableName="UPLOADALLOCTIONDETAILS">
+		<column name="ROOTID" type="VARCHAR(8)" />
+	</addColumn>
+</changeSet>
+			
+<changeSet id="31" author="Vinay">
+	<addColumn tableName="ReceiptUploadHeader">
+		<column name="UploadProgress" type="number(10,0)" />
+	</addColumn>
+</changeSet>
+ 
+ <changeSet id="32" author="Vinay">
+	<addColumn tableName="ReceiptUploadHeader_temp">
+		<column name="UploadProgress" type="number(10,0)" />
+	</addColumn>
+</changeSet>
+ 
+ <changeSet id="33" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_VIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+				   T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.entityCode, T1.UploadProgress
+		FROM       ReceiptUploadHeader_temp T1 
+				   
+		UNION ALL
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode, T1.UploadProgress
+				 
+		FROM       ReceiptUploadHeader T1 
+				    
+		
+		WHERE  NOT EXISTS (SELECT 1 FROM ReceiptUploadHeader_temp  WHERE  ReceiptUploadId =T1.ReceiptUploadId)
+	</createView>
+</changeSet>
+
+<changeSet id="34" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_AVIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode, T1.UploadProgress
+				 
+		FROM       ReceiptUploadHeader T1 
+	</createView>
+</changeSet>
+
+<changeSet id="35" author="Vinay" >
+	<createView replaceIfExists="true" viewName="ReceiptUploadHeader_TVIEW">
+		SELECT     T1.ReceiptUploadId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode, T1.UploadProgress
+				 
+		FROM       ReceiptUploadHeader_temp T1 
+	</createView>
+</changeSet>
+
+<changeSet id="36" author="Vinay">
+	<sql>
+
+		Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Receipt Upload Details','Receipt Upload Details',1,'ReceiptUploadDetails','pfsDatasource',1,'menu_Item_ReceiptUploadDetails',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+
+       Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ReceiptUploadDetails'),1,'File Name','LOVSEARCH','File Name','FILENAME',null,'ReceiptUploadHeader','getFileName','getFileName',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	</sql>
+</changeSet>
+
+<changeSet id="37" author="Vinay">
+	<sql>
+     Delete from SMTParameters Where sysparmcode = 'RECEIPT_DOWNLOAD_FILEPATH'; 
+
+      Insert into SMTParameters values('RECEIPT_DOWNLOAD_FILEPATH','receipt download path.', 'String',1,'D:\Pennant\PFF\BASE\ReceiptDownload','200',0,'','','Receipt download path',1,1000,CURRENT_TIMESTAMP,'Approved','','', '','','',0); 
+	</sql>
+</changeSet>
+
+<changeSet id="38" author="Vinay">
+ <sql>
+ insert into SecRights values((select max(rightid) from secrights)+1,0,'menu_Item_ReceiptUploadApprover','MENU',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+ insert into SecRights values((select max(rightid) from secrights)+1,0,'menu_Item_ReceiptUploadREPORT','MENU',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+ </sql>
+</changeSet>
+
+<changeSet id="39" author="Vinay">
+	<addColumn tableName="ReceiptUploaddetails">
+		<column name="ReceiptID" type="number(19,0)" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="40" author="Vinay">
+ <sql>
+ 
+ insert into Secgroups values((select max(grpid) from secgroups)+1,'ReceiptUploadApprover','ReceiptUpload Approve ',0,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+ 
+ insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUploadApprover'),(select rightid from secrights where rightname='menu_Item_ReceiptUploadApprover'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+ insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUploadApprover'),(select rightid from secrights where rightname='menu_Item_ReceiptUploadREPORT'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+ 
+insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(select grpid from secgroups where grpcode='ReceiptUploadApprover'),(select roleid from secroles where rolecd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+
+insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(select grpid from secgroups where grpcode='ReceiptUploadApprover'),(select roleid from secroles where rolecd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+ </sql>
+</changeSet>
+<changeSet id="42" author="Vinay">
+ <sql>
+ delete from reportlist where code='ReceiptUploadHeader';
+ Insert into ReportList (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('ReceiptUploadHeader','ReceiptUploadHeader','listheader_UploadId.label,listheader_FileName.label,listheader_SuccessCount.label,listheader_FiledCount.label,listheader_TotalCount.label','receiptUploadId,fileName,successCount,failedCount,totalRecords','long,String,int,int,int',' ','ReportList05','Receipt Upload','Loan Managment',2,1001,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+ </sql>
+</changeSet>
+
+<changeSet id="43" author="Vinay">
+ <sql>
+  DELETE FROM SECRIGHTS WHERE RIGHTNAME='button_ReceiptUpload_FailedRecordTab';
+  DELETE FROM SECGROUPRIGHTS WHERE RIGHTID =(select rightid from secrights where rightname='button_ReceiptUpload_FailedRecordTab');
+  insert into SecRights values((select max(rightid) from secrights)+1,2,'button_ReceiptUpload_FailedRecordTab','ReceiptUpload',1,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+  insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='button_ReceiptUpload_FailedRecordTab'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+ </sql>
+</changeSet>
+
+<changeSet id="44" author="Vinay">
+ <sql>
+ delete from errordetails where code in ('RU0000','RU0001','RU0002','RU0003','RU0004','RU0005','RU0006','RU0007','RU0008','RU0009','RU0010','RU0011','RU0012','RU0013','RU0014','RU0015','RU0016','RU0017','RU0018','RU0019','RU0020','RU0021','RU0022','RU0023','RU0024','RU0025','RU0026','RU0027','RU0028','RU0029','RU0030','RU0031','RU0032','RU0033','RU0034','RU0035','RU0036','RU0037','RU0038','RU0039','RU0040','RU0041','RU0042');
+ </sql>
+</changeSet>
+<changeSet id="45.1" author="Vinay">
+       <insert tableName="ErrorDetails">
+			<column name="Code">RU0000</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Not allowed to do process of {0}, because loan maturity date reached value date.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.2" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0001</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Root id is mandatory.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.3" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0002</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Receipt upload is not allowed for Gold Loan Product Reference.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.4.1" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0003</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Another service request is in-progress in Receipt Upload Screen for Reference: {0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.4" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0004</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Loan reference :{0} is not matching with Entity.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.5" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0005</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Remarks length should be less than or equal 100 .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.6" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0006</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Received Date should be less than or equal to application Date:{0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.7" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0007</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Value Date Should be less than or equal to application Date :{0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.8" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0008</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Value Date shall be greater than or equal to received date.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.9" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0009</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Difference between valueDate: {0} and application Date:{1} should be less than or equal to {2}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.10" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0010</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Value Date: {0} should be less than or equal to last Month end date :{1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.11" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0011</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Value Date: {0} should not be before last Receipt Date :{1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.12" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0012</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Value Date:{0} should not be before last Installment Date:{1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.13" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0013</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Value Date:{0} should not be before last Schedule change Date:{1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.14" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0014</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Favour Number length should be less than or equal 6 .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.15" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0015</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">ChequeAcNo length should be less than or equal 50 .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.16" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0016</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Deposit Date is less than or equal to application Date:{0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.17" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0017</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Deposit Date should be equal to value Date:{0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.18" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0018</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Deposit Date should be greater or equal than received Date:{0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.19" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0019</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Realization date should be greater or equal to value date:{0} .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.20" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0020</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Funding Account should be match with configured LoanType .</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.21" author="Vinay">
+         <insert tableName="ErrorDetails">
+			<column name="Code">RU0021</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Transaction Ref length should be less than or equal 50.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.22" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0022</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Payment Ref length should be less than or equal 50.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.23" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0023</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">{0} not defined in Instrument Wise Limit master.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.24" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0024</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Receipt Amount should be less than or equal to:{0} or greater than or equal to : {1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.25" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0025</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Excess Adjust to A is not allowed as Receipt Amount should be greater than total overdue amount:{0}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.26" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0026</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Total Partial Settlement Amount should be less than {0}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.27" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0027</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Manual Allocation is not allowed for {0}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.28" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0028</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Allocation Details is not required when allocation Type is AUTO(A).</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.29" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0029</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Either E or A are allowed in allocation details.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.30" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0030</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Waiver Amount for {0} is not allowed.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.31" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0031</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">{0} Receipt Amount should be greater than total overdue amount:{1}..</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.32" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0032</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Reference code is required when allocation Type is M.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.33" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0033</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Reference code: {0} should present in fee Type Master.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.34" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0034</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Negative amount for Paid Amount: {0} is not allowed for {1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.35" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0035</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Negative amount for Waiver Amount: {0} is not allowed for {1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.36" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0036</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Waiver Amount for {0} is not allowed.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.37" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0037</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Paid Amount for {0} should be greater than Zero.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.38" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0038</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Total allocated amount for allocationType:{0} should be less than or equal to {1}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.39" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0039</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message"> {0} not applicable/not required.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.40" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0040</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message"> {0} is not valid.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.41" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0041</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">{0}:{1} with reference code:{2} should be less than or equal to {3}.</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="45.42" author="Vinay">
+		<insert tableName="ErrorDetails">
+			<column name="Code">RU0042</column>
+			<column name="Language">EN</column>
+			<column name="Severity">E</column>
+			<column name="Message">Total allocated amount:{0} and receipt amount : {1} should be equal".</column>
+			<column name="ExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+		</insert>
+</changeSet>
+<changeSet id="47" author="Vinay">
+	<modifyDataType tableName="receiptuploaddetails" columnName="REFERENCE" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="RECEIPTPURPOSE" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="ALLOCATIONTYPE" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="ROOTID" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="EXCESSADJUSTTO" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="EFFECTSCHDMETHOD" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="REMARKS" newDataType="varchar(500)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="RECEIPTMODE" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="FUNDINGAC" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="PAYMENTREF" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="FAVOURNUMBER" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="BANKCODE" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="CHEQUEACNO" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="TRANSACTIONREF" newDataType="varchar(100)"/>
+	<modifyDataType tableName="receiptuploaddetails" columnName="STATUS" newDataType="varchar(100)"/>
+
+	<modifyDataType tableName="UPLOADALLOCTIONDETAILS" columnName="ALLOCATIONTYPE" newDataType="varchar(100)"/>
+	<modifyDataType tableName="UPLOADALLOCTIONDETAILS" columnName="REFERENCECODE" newDataType="varchar(100)"/>
+</changeSet>
+
+<changeSet id="48" author="Vinay">
+	<createTable tableName="ReceiptBatchFileHeader">
+		<column name="Id" type="number(19,0)">
+			<constraints nullable="false" />
+		</column>
+		<column name="fileName" type="varchar(100)">
+			<constraints nullable="false" />
+		</column>
+		<column name="StartTime" type="datetime" />
+		<column name="EndTime" type="datetime" />
+		<column name="TotalRecords" type="number(10,0)" />
+		<column name="SuccessRecords" type="number(10,0)" />
+		<column name="FailedRecords" type="number(10,0)" />
+		<column name="remarks" type="varchar(200)" />
+	</createTable>
+</changeSet>
+
+<changeSet id="49.0" author="Vinay" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqReceiptResponse" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+</changeSet>
+
+<changeSet id="49.1" author="Vinay" dbms="mssql">
+	<createTable tableName="SeqReceiptResponse">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"/>
+	</createTable>
+</changeSet>
+
+ <changeSet id="50" author="Vinay">
+	<createTable tableName="RECEIPTDETAILS_RESPONSE">
+		<column name="ROOTID" type="number(19,0)">
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+
+		<column name="REFERENCE" type="varchar(20)">
+			<constraints nullable="false" />
+		</column>
+
+		<column name="RECEIPTPURPOSE" type="varchar(10)">
+			<constraints nullable="false" />
+		</column>
+
+		<column name="RECEIPTAMOUNT" type="number(18,0)">
+			<constraints nullable="false" />
+		</column>
+
+		<column name="ALLOCATIONTYPE" type="varchar(10)" />
+		<column name="EXCESSADJUSTTO" type="varchar(10)" />
+		<column name="EFFECTSCHDMETHOD" type="varchar(10)" />
+		<column name="REMARKS" type="varchar(500)" />
+		<column name="VALUEDATE" type="datetime" />
+		<column name="RECEIVEDDATE" type="datetime" />
+		<column name="RECEIPTMODE" type="varchar(10)" />
+		<column name="FUNDINGAC" type="varchar(10)" />
+		<column name="PAYMENTREF" type="varchar(50)" />
+		<column name="FAVOURNUMBER" type="VARCHAR(50)" />
+		<column name="BANKCODE" type="VARCHAR(8)" />
+		<column name="CHEQUEACNO" type="VARCHAR(50)" />
+		<column name="TRANSACTIONREF" type="VARCHAR(50)" />
+		<column name="STATUS" type="CHAR(1)" />
+		<column name="DEPOSITDATE" type="datetime" />
+		<column name="REALIZATIONDATE" type="datetime" />
+		<column name="INSTRUMENTDATE" type="datetime" />
+		<column name="INPUTDATE" type="datetime" />
+		<column name="PICKUPFLAG" type="boolean" />
+		<column name="PICKUPBATCHID" type="number(19,0)" />
+		<column name="RESPONSESTATUS" type="varchar(20)" />
+		<column name="ERRORMESSAGE" type="varchar(2000)" />
+		<column name="PICKUPDATE" type="datetime" />
+		<column name="RECEIPTID" type="number(19,0)" />
+	</createTable>
+</changeSet>
+
+	<changeSet id="51" author="Vinay">
+		<createTable tableName="RECEIPTALLOCATION_RESPONSE">
+			<column name="ROOTID" type="number(19,0)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="ALLOCATIONTYPE" type="varchar(20)" />
+			<column name="REFERENCECODE" type="varchar(20)" />
+			<column name="PAIDAMOUNT" type="number(18,0)" />
+			<column name="WAIVEDAMOUNT" type="number(18,0)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="52" author="Vinay">
+	 <sql>
+      Delete from SMTParameters Where sysparmcode = 'RECEIPT_RESPONSE_JOB_CORNEXP'; 
+
+      Insert into SMTParameters values('RECEIPT_RESPONSE_JOB_CORNEXP','receipt response corn exp.', 'String',1,'0 0/15 * 1/1 * ? *','200',0,'','','Receipt response CORN Expression',1,1000,CURRENT_TIMESTAMP,'Approved','','', '','','',0); 
+	 </sql>
+	</changeSet>
+	
+	<changeSet id="53" author="Vinay">
+	 <sql>
+      Delete from SMTParameters Where sysparmcode = 'IS_RECEIPT_RESPONSE_JOB_REQ'; 
+
+      Insert into SMTParameters values('IS_RECEIPT_RESPONSE_JOB_REQ','receipt response job required.', 'String',1,'Y','200',0,'','','Receipt response job required',1,1000,CURRENT_TIMESTAMP,'Approved','','', '','','',0); 
+	 </sql>
+	</changeSet>
+	
+	<changeSet id="54" author="Vinay">
+		<renameColumn tableName="RECEIPTDETAILS_RESPONSE" oldColumnName="EXCESSADJUSTTO" newColumnName="EXCESSSADJUSTTO"/>
+	</changeSet>		
+	 <changeSet id="55" author="Vinay">
+		<renameTable newTableName="Auto_ReceiptDetails" oldTableName="receiptdetails_response"/>
+		<renameTable newTableName="Auto_ReceiptAllocations" oldTableName="RECEIPTALLOCATION_RESPONSE"/>
+    </changeSet>
+	
+	<changeSet id="56" author="Vinay">
+		<renameColumn tableName="Auto_ReceiptDetails" oldColumnName="EXCESSSADJUSTTO" newColumnName="EXCESSADJUSTTO"/>
+    </changeSet>
+    
+    <changeSet id="57" author="Vinay">
+		<renameColumn tableName="Auto_ReceiptDetails" oldColumnName="ROOTID" newColumnName="ID"/>
+		<renameColumn tableName="Auto_ReceiptAllocations" oldColumnName="ROOTID" newColumnName="ID"/>
+    </changeSet>
+	<changeSet id="58" author="Vinay">
+     <sql>
+		update errordetails set message ='Value Date: {0} should be greater than or equal to last Month end date :{1}.' where CODE ='RU0010';
+     </sql>
+    </changeSet>
+	 <changeSet id="58.1" author="Vinay">
+     <dropView viewName="RECEIPTUPLOADHEADER_TVIEW"/>
+     <dropView viewName="RECEIPTUPLOADHEADER_AVIEW"/>
+     <dropView viewName="RECEIPTUPLOADHEADER_VIEW"/>
+    </changeSet>
+    
+    <changeSet id="59" author="Vinay">
+    <renameColumn tableName="receiptuploadheader" oldColumnName="receiptuploadid" newColumnName="UploadHeaderId"/>
+    <renameColumn tableName="receiptuploadheader_temp" oldColumnName="receiptuploadid" newColumnName="UploadHeaderId"/>
+    </changeSet>
+    
+    <changeSet id="60" author="Vinay">
+     <createView replaceIfExists="true" viewName="RECEIPTUPLOADHEADER_AVIEW">
+     SELECT     T1.UploadHeaderId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode, T1.UploadProgress
+				 
+		FROM       ReceiptUploadHeader T1
+     </createView>
+    </changeSet>
+			
+	<changeSet id="61" author="Vinay">
+	 <createView replaceIfExists="true" viewName="RECEIPTUPLOADHEADER_TVIEW">
+	 SELECT     T1.UploadHeaderId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode, T1.UploadProgress
+				 
+		FROM       ReceiptUploadHeader_temp T1
+	 </createView>
+	</changeSet>
+	
+	<changeSet id="62" author="Vinay">
+	 <createView replaceIfExists="true" viewName="RECEIPTUPLOADHEADER_VIEW">
+	 SELECT     T1.UploadHeaderId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+				   T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.entityCode, T1.UploadProgress
+		FROM       ReceiptUploadHeader_temp T1 
+				   
+		UNION ALL
+		SELECT     T1.UploadHeaderId, T1.FileName,T1.Transactiondate, T1.TotalRecords,  T1.SuccessCount,T1.FailedCount,
+		           T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				   T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.entityCode, T1.UploadProgress
+				 
+		FROM       ReceiptUploadHeader T1 
+				    
+		WHERE  NOT EXISTS (SELECT 1 FROM ReceiptUploadHeader_temp  WHERE  UploadHeaderId =T1.UploadHeaderId)
+	 
+	 </createView>
+	</changeSet>
+	
+	<changeSet id="63" author="Vinay">
+	 <sql>
+		update errordetails set message='Earlier Receipt approved with valuedate:{0}. Receipts not allowed before the date.' where code='60211';
+	 </sql>
+	</changeSet>
+	<changeSet id="64" author="Vinay">
+	 <sql>
+	 DELETE from SECGROUPRIGHTS where grpid in (select grpid from SECGROUPS where GRPCODE='ReceiptUploadApprover');
+     DELETE FROM SECROLEGROUPS WHERE GRPID IN (select grpid from SECGROUPS where GRPCODE='ReceiptUploadApprover');
+     DELETE from SECGROUPS where GRPCODE='ReceiptUploadApprover';
+
+     DELETE from SECGROUPRIGHTS where grpid in (select grpid from SECGROUPS where GRPCODE='ReceiptUpload_APPROVER');
+     Insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_APPROVER'),(select rightid from secrights where rightname='menu_Item_ReceiptUploadApprover'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0); 
+	 
+	 
+	 </sql>
+	</changeSet>
+	
+	<changeSet id="65" author="Vinay">
+	 <sql>
+	 DELETE from SECGROUPRIGHTS where grpid in (select grpid from SECGROUPS where GRPCODE='REPORTS_RECEIPTUPLOADEXPRPT');
+     DELETE FROM SECROLEGROUPS WHERE GRPID IN (select grpid from SECGROUPS where GRPCODE='REPORTS_RECEIPTUPLOADEXPRPT');
+     DELETE from SECGROUPS where GRPCODE='REPORTS_RECEIPTUPLOADEXPRPT';
+
+     insert into Secgroups values((select max(grpid) from secgroups)+1,'REPORTS_RECEIPTUPLOADEXPRPT','ReceiptUpload Approve ',0,1000,CURRENT_timestamp,' ',' ',' ',' ',' ',' ',0);
+     insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='REPORTS_RECEIPTUPLOADEXPRPT'),(select rightid from secrights where rightname='menu_Item_ReceiptUploadREPORT'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+     insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(select grpid from secgroups where grpcode='REPORTS_RECEIPTUPLOADEXPRPT'),(select roleid from secroles where rolecd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+     insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(select grpid from secgroups where grpcode='REPORTS_RECEIPTUPLOADEXPRPT'),(select roleid from secroles where rolecd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+	 
+	 
+	 </sql>
+	</changeSet>
+	<changeSet id="65_Post" author="Vinay">
+	 <sql>
+			update SeqSECGROUPS set seqno = (Select max(grpid)+1 from SECGROUPS);
+			update seqsecrolegroups set seqno = (Select max(rolegrpid)+1 from secrolegroups);
+			update seqsecgrouprights set seqno = (Select max(grprightid)+1 from secgrouprights);
+	 </sql>
+	</changeSet>
+	<changeSet id="66_post" author="Vinay">
+	 <sql>
+			delete from secgrouprights where rightid in (select rightid from secrights where rightname='menuCat_FinanceManagement')
+			and grpid in (select grpid from secgroups where grpcode in ('ReceiptUpload_MAKER','ReceiptUpload_APPROVER'));
+	 </sql>
+	</changeSet>
+	<changeSet id="66" author="Vinay">
+	 <sql>
+	 
+	 Insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_MAKER'),(select rightid from secrights where rightname='menuCat_FinanceManagement'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+	 
+	 Insert into secgrouprights values((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='ReceiptUpload_APPROVER'),(select rightid from secrights where rightname='menuCat_FinanceManagement'),1,0,1000,current_timestamp,'Aproved',' ',' ',' ',' ',' ',0);
+	 </sql>
+	</changeSet>
+	<changeSet id="67" author="Vinay">
+	 <sql>
+			update seqsecgrouprights set seqno = (Select max(grprightid)+1 from secgrouprights);
+	 </sql>
+	</changeSet>
+	<changeSet id="68" author="Vinay">
+	 <sql>
+		update ERRORDETAILS set MESSAGE='Total allocated Waiver amount for allocationType:{0} should be less than or equal to {1}.' where CODE='RU0038';
+	 </sql>
+	</changeSet>
+	<changeSet id="69" author="Vinay">
+	 <sql>
+	  delete from errordetails where code in ('RU0043','RU0044');
+	  
+	  Insert into ERRORDETAILS values ('RU0043','EN','E','for Closed loans EarlyPayment or EarlySettlement is not allowed',null,'Approved',null,null,null,null,null,0,null,1000,0);
+	  Insert into ERRORDETAILS values ('RU0044','EN','E','Cancelled Loans not allowed',null,'Approved',null,null,null,null,null,0,null,1000,0);
+	  
+	 
+	 </sql>
+	</changeSet>
+	
+	<changeSet id="70" author="Vinay">
+	 <sql>
+	 update reportlist set fieldvalues='uploadHeaderId,fileName,successCount,failedCount,totalRecords'  where code='ReceiptUploadHeader';
+	 </sql>
+	</changeSet>
+	
+	<changeSet id="71" author="Vinay">
+	 <sql>
+	 delete from ERRORDETAILS where CODE='RU0045';
+	 Insert into ERRORDETAILS values ('RU0045','EN','E','Receipt Already exits with given details','Receipt Upload Dedub check validate','Approved',null,null,null,null,null,0,current_timeStamp,1000,3);
+	 </sql>
+	</changeSet>
+</databaseChangeLog>
+	

@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.receipts;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -47,4 +48,9 @@ public interface FinReceiptHeaderDAO {
 	public boolean isExtRefAssigned(String finReference);
 
 	List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type);
+	
+	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber);
+	//### 29-10-2018, Ticket id:124998
+	void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate);
+	
 }

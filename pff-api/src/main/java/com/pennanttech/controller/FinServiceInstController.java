@@ -36,7 +36,10 @@ import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
+import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
+import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -52,6 +55,7 @@ import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
@@ -96,6 +100,7 @@ import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -113,6 +118,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.ZIPCodeDetailsService;
+import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -120,8 +126,10 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -167,7 +175,14 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
-
+	
+	//### 18-07-2018 Ticket ID : 124998,Receipt upload
+	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
+	private ReceiptResponseDetailDAO receiptResponseDetailDAO;
+	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private FinanceWorkFlowService financeWorkFlowService;
+	protected transient WorkflowEngine workFlow = null;
+	
 	/**
 	 * Method for fetch DisbursementInquiryDetails by FinReference and linkedTranId
 	 * 
@@ -1729,6 +1744,9 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();
+		
+		long receiptId=getFinReceiptHeaderDAO().generatedReceiptID(receiptHeader);
+		receiptHeader.setReceiptID(receiptId);
 		receiptHeader.setReference(finServiceInst.getFinReference());
 		receiptHeader.setExcessAdjustTo(finServiceInst.getExcessAdjustTo());
 		receiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
@@ -1736,9 +1754,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setReceiptDate(DateUtility.getAppDate());
 		receiptHeader.setReceiptPurpose(purpose);
 		receiptHeader.setEffectSchdMethod(finServiceInst.getRecalType());
-		long receiptId = getFinReceiptHeaderDAO().generatedReceiptID(receiptHeader);
-		receiptHeader.setReceiptID(receiptId);
-
 		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
 				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			if (StringUtils.isBlank(receiptHeader.getExcessAdjustTo())) {
@@ -1785,14 +1800,64 @@ public class FinServiceInstController extends SummaryDetailService {
 		finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 		finReceiptDetail.setPaymentType(finServiceInst.getPaymentMode());
 		finReceiptDetail.setAmount(finServiceInst.getAmount());
-		finReceiptDetail.setReceiptID(receiptId);
-		receiptHeader.getReceiptDetails().add(finReceiptDetail);
+		
 
 		receiptHeader.setRemarks(finReceiptDetail.getRemarks());
 		finReceiptData.setReceiptHeader(receiptHeader);
 		finReceiptData.setFinanceDetail(financeDetail);
 		finReceiptData.setFinReference(finServiceInst.getFinReference());
 		finReceiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
+
+		if (finServiceInst.isReceiptUpload()) {// receipt upload details setting
+
+			receiptHeader.setAllocationType(finServiceInst.getAllocationType());
+			finReceiptDetail.setReceiptID(receiptId);
+			finReceiptDetail.setFavourName(finServiceInst.getEntityDesc());
+			finReceiptDetail.setFavourNumber(finServiceInst.getFavourNumber());
+
+			// add fin service instruction field data to finreceipt details
+			// as in receipt upload,we had added validation in reverse stage
+			// setting value date with received date and received date with
+			// value date
+			// as per bajaj UD,this is written in reverse order
+			// ### PSD Ticket id:124998
+			finReceiptDetail.setValueDate(finServiceInst.getReceivedDate());
+			finReceiptDetail.setReceivedDate(finServiceInst.getValueDate());
+			finReceiptDetail.setFundingAc(finServiceInst.getFundingAc());
+			finReceiptDetail.setPaymentRef(finServiceInst.getPaymentRef());
+			finReceiptDetail.setBankCode(finServiceInst.getBankCode());
+			finReceiptDetail.setChequeAcNo(finServiceInst.getChequeNo());
+			finReceiptDetail.setTransactionRef(finServiceInst.getTransactionRef());
+			finReceiptDetail.setStatus(finServiceInst.getStatus());
+
+			if (StringUtils.equals(finReceiptDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+				receiptHeader.setRealizationDate(finServiceInst.getRealizationDate());
+				receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			}
+
+			finReceiptDetail.setDepositDate(finServiceInst.getDepositDate());
+			receiptHeader.setRemarks(finServiceInst.getRemarks());
+
+		}
+
+		receiptHeader.getReceiptDetails().add(finReceiptDetail);
+
+		// check dedup condition
+		// this check will validate given details with already exit details
+		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)
+				&& receiptService.dedupCheckRequest(receiptHeader, purpose)) {
+			long receiptHeaderId = receiptService.CheckDedupSP(receiptHeader, purpose);
+
+			FinanceDetail response = new FinanceDetail();
+
+			this.finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(receiptHeaderId,
+					RepayConstants.PAYSTATUS_REALIZED, receiptHeader.getRealizationDate());
+			this.finReceiptDetailDAO.updateReceiptStatusByReceiptId(receiptHeaderId, RepayConstants.PAYSTATUS_REALIZED);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+			return response;
+
+		}
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		Date receiDate = DateUtility
@@ -1842,76 +1907,106 @@ public class FinServiceInstController extends SummaryDetailService {
 		receiptHeader.setTotFeeAmount(totFeeAmount);
 		BigDecimal totReceiptAmt = receiptHeader.getReceiptAmount().subtract(totFeeAmount);
 
-		// calculate allocations
-		Map<String, BigDecimal> allocationMap = receiptCalculator.recalAutoAllocation(financeDetail, totReceiptAmt,
-				finReceiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose(), false);
+		Map<String, BigDecimal> allocationMap = null;
+		if (finServiceInst.isReceiptUpload() && finServiceInst.getAllocationType().equalsIgnoreCase("M")) {
+			// calculate manual Allocations
+			allocationMap = finServiceInst.getManualAllocMap();
+			allocationMap.remove("E");
+			allocationMap.remove("A");
+
+			if (allocationMap.containsKey(RepayConstants.ALLOCATION_NPFT)) {
+
+				BigDecimal calPft = BigDecimal.ZERO;
+
+				BigDecimal allocAmt = BigDecimal.ZERO;
+
+				if (finServiceInst.getManualWaiverMap().containsKey(RepayConstants.ALLOCATION_NPFT)) {
+					allocAmt = allocationMap.get(RepayConstants.ALLOCATION_NPFT)
+							.add(finServiceInst.getManualWaiverMap().get(RepayConstants.ALLOCATION_NPFT));
+				} else {
+					allocAmt = allocationMap.get(RepayConstants.ALLOCATION_NPFT);
+				}
+				calPft = receiptCalculator.getPftAmount(financeDetail.getFinScheduleData(), allocAmt);
+				allocationMap.put(RepayConstants.ALLOCATION_PFT, calPft);
+			}
+
+			finReceiptData.setWaiverMap(finServiceInst.getManualWaiverMap());
+		} else {
+			// calculate Auto allocations
+			allocationMap = receiptCalculator.recalAutoAllocation(financeDetail, totReceiptAmt,
+					finReceiptDetail.getReceivedDate(), receiptHeader.getReceiptPurpose(), false);
+		}
 		finReceiptData.setAllocationMap(allocationMap);
 
 		// validate repayment amount
-		Map<String, String> returnMap = validateRepayAmount(finScheduleData, finServiceInst, totReceiptAmt);
-		if (StringUtils.isNotBlank(returnMap.get("ReturnCode"))) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			WSReturnStatus status = new WSReturnStatus();
-			status.setReturnCode(returnMap.get("ReturnCode"));
-			status.setReturnText(returnMap.get("ReturnText"));
-			response.setReturnStatus(status);
-			return response;
-		}
-		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
-			BigDecimal partPayment = new BigDecimal(returnMap.get("partPaidAmt"));
-			BigDecimal closingBal = null;
-			for (int i = 0; i < scheduleList.size(); i++) {
-				FinanceScheduleDetail curSchd = scheduleList.get(i);
-				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) >= 0) {
-					closingBal = curSchd.getClosingBalance();
-					continue;
-				}
-				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0
-						|| closingBal == null) {
-					if (closingBal == null) {
-						closingBal = BigDecimal.ZERO;
-					}
-					closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
-					break;
-				}
-			}
-
-			if (closingBal != null) {
-				if (partPayment.compareTo(closingBal) >= 0) {
-					FinanceDetail response = new FinanceDetail();
-					doEmptyResponseObject(response);
-					String[] valueParm = new String[1];
-					valueParm[0] = String.valueOf(closingBal);
-					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
-					return response;
-				}
-			}
-		}
-
-		if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
-				|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
-			FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-			Date valueDate = DateUtility.getAppDate();
-			if (finReceiptDetail.getReceivedDate() != null) {
-				valueDate = finReceiptDetail.getReceivedDate();
-			}
-			finReceiptData.setBuildProcess("I");
-			finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, scheduleData, valueDate, purpose, false);
-			finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose,
-					new BigDecimal(returnMap.get("partPaidAmt")));
-		} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
-			finReceiptData = receiptService.calculateRepayments(finReceiptData, false);
-		}
-
-		List<ErrorDetail> errorDetails = finReceiptData.getFinanceDetail().getFinScheduleData().getErrorDetails();
-		if (!errorDetails.isEmpty()) {
-			for (ErrorDetail error : errorDetails) {
+		//### 28-09-2018,Receipt upload,if receipt details exits we are not validating repay amount
+		if (!finServiceInst.isReceiptdetailExits()) {
+			Map<String, String> returnMap = validateRepayAmount(finScheduleData, finServiceInst, totReceiptAmt);
+			if (StringUtils.isNotBlank(returnMap.get("ReturnCode"))) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus(error.getCode()));
+				WSReturnStatus status = new WSReturnStatus();
+				status.setReturnCode(returnMap.get("ReturnCode"));
+				status.setReturnText(returnMap.get("ReturnText"));
+				response.setReturnStatus(status);
 				return response;
+			}
+			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+				List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
+				BigDecimal partPayment = new BigDecimal(returnMap.get("partPaidAmt"));
+				BigDecimal closingBal = null;
+				for (int i = 0; i < scheduleList.size(); i++) {
+					FinanceScheduleDetail curSchd = scheduleList.get(i);
+					if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) >= 0) {
+						closingBal = curSchd.getClosingBalance();
+						continue;
+					}
+					if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0
+							|| closingBal == null) {
+						if (closingBal == null) {
+							closingBal = BigDecimal.ZERO;
+						}
+						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
+						break;
+					}
+				}
+
+				if (closingBal != null) {
+					if (partPayment.compareTo(closingBal) >= 0) {
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						String[] valueParm = new String[1];
+						valueParm[0] = String.valueOf(closingBal);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
+						return response;
+					}
+				}
+			}
+
+			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
+					|| StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+				FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+				Date valueDate = DateUtility.getAppDate();
+				if (finReceiptDetail.getReceivedDate() != null) {
+					valueDate = finReceiptDetail.getReceivedDate();
+				}
+				finReceiptData.setBuildProcess("I");
+				finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, scheduleData, valueDate, purpose,
+						false);
+				finReceiptData = receiptService.recalEarlypaySchdl(finReceiptData, finServiceInst, purpose,
+						new BigDecimal(returnMap.get("partPaidAmt")));
+			} else if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+				finReceiptData = receiptService.calculateRepayments(finReceiptData, false);
+			}
+
+			List<ErrorDetail> errorDetails = finReceiptData.getFinanceDetail().getFinScheduleData().getErrorDetails();
+			if (!errorDetails.isEmpty()) {
+				for (ErrorDetail error : errorDetails) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(error.getCode()));
+					return response;
+				}
 			}
 		}
 
@@ -1919,9 +2014,16 @@ public class FinServiceInstController extends SummaryDetailService {
 		finScheduleData = finReceiptData.getFinanceDetail().getFinScheduleData();
 		finScheduleData.setFinFeeDetailList(aFinanceDetail.getFinScheduleData().getFinFeeDetailList());
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
+
+			long fundingAccount = 0;
+			if (finServiceInst.isReceiptUpload()) {// Ticket id:124998
+				fundingAccount = finServiceInst.getFundingAc();
+			} else {
+				fundingAccount = finReceiptDetail.getFundingAc();
+			}
+
 			int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(),
-					finServiceInst.getPaymentMode(), AccountConstants.PARTNERSBANK_RECEIPTS,
-					finReceiptDetail.getFundingAc());
+					finServiceInst.getPaymentMode(), AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
 			if (count <= 0) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
@@ -1936,7 +2038,9 @@ public class FinServiceInstController extends SummaryDetailService {
 				finReceiptDetail.setPartnerBankAcType(partnerBank.getAcType());
 			}
 
-			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			// ### PSD Ticket id:124998
+			if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+					&& !finServiceInst.isReceiptUpload()) {
 				if (DateUtility.compare(finReceiptDetail.getReceivedDate(), DateUtility.getAppDate()) < 0) {
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
@@ -1956,22 +2060,111 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 			}
-			// Set Version value
-			int version = finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
-			finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setVersion(version + 1);
-			finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setRecordType("");
-			finReceiptData.getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
+
+			int version = 0;
+			// Receipt upload process
+			if (finServiceInst.isReceiptdetailExits()) {
+				FinReceiptData receiptData = this.receiptService.getFinReceiptDataById(finServiceInst.getFinReference(),
+						AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINSER_EVENT_RECEIPT,
+						"RECEIPTREALIZE_MAKER");
+				finReceiptData = receiptData;
+
+				version = finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
+				finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain()
+						.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setRecordType("");
+				finReceiptData.getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
+				finReceiptData.getReceiptHeader().setRealizationDate(finServiceInst.getRealizationDate());
+			} else {
+				// Set Version value
+				version = finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
+				finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setVersion(version + 1);
+				finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setRecordType("");
+				finReceiptData.getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
+			}
 
 			// Save the Schedule details
 			AuditHeader auditHeader = getAuditHeader(finReceiptData, PennantConstants.TRAN_WF);
 
-			// Get the header details from the request
-			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-					.get(APIHeader.API_HEADER_KEY);
-			// set the headerDetails to AuditHeader
-			auditHeader.setApiHeader(reqHeaderDetails);
+			// ### ticket id:124998,
+			// setting to temp table
+			if (!finServiceInst.isReceiptdetailExits() && finServiceInst.isReceiptUpload()
+					&& !StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_SCHDRPY)
+					&& StringUtils.equals(finServiceInst.getStatus(), "A")
+					&& (StringUtils.equals(finServiceInst.getPaymentMode(), "CHEQUE")
+							|| StringUtils.equals(finServiceInst.getPaymentMode(), "DD"))) {
 
-			auditHeader = receiptService.doApprove(auditHeader);
+				WorkFlowDetails workFlowDetails = null;
+				String roleCode = "DEPOSIT_APPROVER";// default value
+				String nextRolecode = "RECEIPTREALIZE_MAKER";// defaulting role
+																// codes
+				String taskid = null;
+				String nextTaskId = null;
+				long workFlowId = 0;
+
+				String finEvent = FinanceConstants.FINSER_EVENT_RECEIPT;
+				FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
+						financeMain.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+
+				if (financeWorkFlow != null) {
+					workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
+					if (workFlowDetails != null) {
+						workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+						taskid = workFlow.getUserTaskId(roleCode);
+						workFlowId = workFlowDetails.getWorkFlowId();
+						nextTaskId = workFlow.getUserTaskId(nextRolecode);
+					}
+
+					financeMain.setWorkflowId(workFlowId);
+					financeMain.setTaskId(taskid);
+					financeMain.setRoleCode(roleCode);
+					financeMain.setNextRoleCode(nextRolecode);
+					financeMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					financeMain.setNextTaskId(nextTaskId + ";");
+					financeMain.setNewRecord(true);
+					financeMain.setVersion(version + 1);
+					financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+					financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
+
+					// remove unwanted fees
+
+					String eventCode = null;
+					if (StringUtils.equals(purpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+						eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
+					} else {
+						eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
+					}
+
+					List<FinFeeDetail> listFeeDetails = new ArrayList<>();
+					if (finScheduleData.getFinFeeDetailList() != null) {
+						for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
+							if (finFeeDetail.isOriginationFee()) {
+								continue;
+							} else {
+								listFeeDetails.add(finFeeDetail);
+							}
+						}
+					}
+					finReceiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(listFeeDetails);
+
+				}
+
+				finReceiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				auditHeader.setApiHeader(reqHeaderDetails);
+
+				auditHeader = receiptService.saveOrUpdate(auditHeader);
+
+			} else {
+
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				auditHeader.setApiHeader(reqHeaderDetails);
+
+				auditHeader = receiptService.doApprove(auditHeader);
+			}
 
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1984,6 +2177,20 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 			finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			financeDetail = getServiceInstResponse(finReceiptData.getFinanceDetail().getFinScheduleData());
+
+
+			// set receipt id in data
+			if (finServiceInst.isReceiptUpload() && !finServiceInst.isReceiptResponse()) {
+				this.receiptUploadDetailDAO.updateReceiptId(finServiceInst.getUploadDetailId(),
+						finReceiptDetail.getReceiptID());
+			}
+
+			// set receipt id response job
+			if (finServiceInst.isReceiptUpload() && finServiceInst.isReceiptResponse()) {
+				this.receiptResponseDetailDAO.updateReceiptResponseId(finServiceInst.getRootId(),
+						finReceiptDetail.getReceiptID());
+			}
+
 		} else {
 			// Schedule Updations
 			List<FinanceScheduleDetail> actualSchedules = finReceiptData.getFinanceDetail().getFinScheduleData()
@@ -3157,4 +3364,19 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
 
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+	
+	public FinanceWorkFlowService getFinanceWorkFlowService() {
+		return financeWorkFlowService;
+	}
+	
+	protected String getTaskAssignmentMethod(String taskId) {
+		return workFlow.getUserTask(taskId).getAssignmentLevel();
+	}
 }

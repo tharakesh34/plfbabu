@@ -62,6 +62,8 @@ public class FinReceiptData {
 
 	private RepayMain repayMain = new RepayMain();
 	private Map<String, BigDecimal> allocationMap = new HashMap<>();
+	private Map<String, BigDecimal> waiverMap = new HashMap<>();
+	
 	private Map<String, String> allocationDescMap = new HashMap<>();
 	private FinReceiptHeader receiptHeader;
 	private FinanceDetail financeDetail;
@@ -212,6 +214,14 @@ public class FinReceiptData {
 
 	public void setFuturePri(BigDecimal futurePri) {
 		this.futurePri = futurePri;
+	}
+
+	public Map<String, BigDecimal> getWaiverMap() {
+		return waiverMap;
+	}
+
+	public void setWaiverMap(Map<String, BigDecimal> waiverMap) {
+		this.waiverMap = waiverMap;
 	}
 
 }

@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  BankDetailService.java                                                   * 	  
+ * FileName    		:  UploadHeaderService.java                                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  05-05-2011    														*
+ * Creation Date    :  17-12-2017    														*
  *                                                                  						*
- * Modified Date    :  05-05-2011    														*
+ * Modified Date    :  17-12-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
+ * 14-08-2013       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,36 +39,65 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
+*/
 
-package com.pennant.backend.service.applicationmaster;
+package com.pennant.backend.service.finance;
 
-import com.pennant.backend.model.applicationmaster.BankDetail;
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
+import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
+import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 
-/**
- * Service declaration for methods that depends on <b>BankDetail</b>.<br>
- * 
- */
-public interface BankDetailService {
-
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	BankDetail getBankDetailById(String id);
-
-	BankDetail getApprovedBankDetailById(String id);
-
-	AuditHeader delete(AuditHeader auditHeader);
+public interface ReceiptUploadHeaderService {
+	
+	
+	ReceiptUploadHeader getUploadHeaderById(long id);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	int getAccNoLengthByCode(String bankCode);
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	String getBankCodeByName(String bankName);
+	AuditHeader delete(AuditHeader auditHeader);
 
-	BankDetail getBankDetailsByIfsc(String ifsc);
+	boolean isFileNameExist(String value);
 
-	boolean isBankCodeExits(String bankCode, String string, boolean active);
+	void updateStatusOFList(List<ReceiptUploadDetail> receiptUploadDetailList);
+
+	void uploadHeaderStatusCnt(long receiptUploadId, int sucessCount, int failedCount);
+
+	boolean isFileDownloaded(long id, int receiptDownloaded);
+
+	void updateUploadProgress(long id, int receiptDownloaded);
+
+	void updateRejectStatusById(String id, String errorMsg);
+
+	List<ManualAdvise> getManualAdviseByRef(String reference, String referenceCode, String type);
+
+	long saveReceiptResponseFileHeader(String procName);
+
+	List<ReceiptUploadDetail> getReceiptResponseDetails();
+
+	List<UploadAlloctionDetail> getReceiptResponseAllocationDetails(String rootId);
+
+	void updateReceiptResponseFileHeader(long batchId, int recordCount, int sCount, int fCount, String remarks);
+
+	void updateReceiptResponseDetails(ReceiptUploadDetail receiptresponseDetail, long jobid);
+
+	void updatePickBatchId(long jobid);
+
+	String getLoanReferenc(String reference, String value);
+
+	int getFinanceCountById(String reference, String string, boolean b);
+
+	boolean isFinReferenceExitsWithEntity(String reference, String string, String validatedValue);
+
+	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber);
+
+	boolean isFinReferenceExists(String reference, String type, boolean b);
+
 }

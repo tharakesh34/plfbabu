@@ -70,5 +70,7 @@ public interface BankDetailDAO extends BasicCrudDao<BankDetail> {
 	int getAccNoLengthByCode(String bankCode, String type);
 
 	String getBankCodeByName(String bankName);
+	//### 18-07-2018 Ticket ID : 124998,receipt upload
+	boolean isBankCodeExits(String bankCode ,String type, boolean active);
 
 }

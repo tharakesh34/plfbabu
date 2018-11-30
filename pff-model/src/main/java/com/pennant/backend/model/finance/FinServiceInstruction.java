@@ -3,7 +3,9 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,6 +15,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
@@ -61,16 +64,51 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String processStage;
 	@XmlElement
 	private String reqType;
+	//### 27-09-2019 Ticket id:124998
+	@XmlElement
+	private boolean receiptdetailExits;
 	@XmlElement
 	private BigDecimal amount = BigDecimal.ZERO;
 	@XmlElement
 	private String schdMethod;
 	@XmlElement
+	private String allocationType;
+	@XmlElement(name = "fundingAccount")
+	private long fundingAc	= 0;
+	@XmlElementWrapper(name="allocationDetails")
+	@XmlElement(name="allocationDetail")
+	private List<UploadAlloctionDetail> uploadAllocationDetails;
+	@XmlElement
+	private String receiptPurpose;
+	private Map<String, BigDecimal> dueMap = new HashMap<>();
+	@XmlElement
 	private boolean pftIntact = false;
 	@XmlElement
 	private int terms = 0;
 	@XmlElement
+	private List<WSReturnStatus> returnStatus = null;
+	@XmlElement
+	private String paymentRef;
+	@XmlElement
+	private String favourNumber;
+	@XmlElement
+	private String bankCode;
+	@XmlElement
+	private String chequeNo;
+	@XmlElement
+	private String transactionRef;
+	@XmlElement
+	private String status;
+	@XmlElement
+	private Date depositDate;
+	@XmlElement
+	private Date realizationDate;
+	@XmlElement
+	private Date instrumentDate;
+	@XmlElement
 	private String serviceReqNo;
+	@XmlElement
+	private Date receivedDate;
 	@XmlElement
 	private String remarks;
 	@XmlElement
@@ -100,8 +138,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private String rateReviewFrq;
 
-	@XmlElement
-	private List<WSReturnStatus> returnStatus = null;
 	@XmlElement
 	private int frqDay;
 	@XmlElement
@@ -136,10 +172,44 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private boolean wif;
 	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
 
+	@XmlElement
+	private long UploadDetailId;//### 18-07-2018 Ticket ID : 124998,receipt upload
+	
+	//### 27-07-2018 Ticket id:124998
+	@XmlElement
+	private String receiptFileName;
+	
+	
+	@XmlElement
+	private String entity;
+	
+	@XmlElement
+	private String entityDesc;
+	
+	@XmlElement(name="depositAccount")
+	private String depositAcc;
+
+	//### 16-08-2018 Ticket ID : 124998,receipt upload
+	private BigDecimal closingBal = BigDecimal.ZERO;	
+
+	@XmlElement
+	private String rootId;
+	
+	@XmlElement
+	private boolean receiptResponse;
+	
+	
+	private Map<String, BigDecimal> manualAllocMap = new HashMap<>();
+	
+	private Map<String, BigDecimal>		manualWaiverMap = new HashMap<>();
+	
 	// Bean validation purpose
 	@SuppressWarnings("unused")
 	private FinServiceInstruction validateAddRateChange = this;
 
+	@XmlElement(name="isUpload")
+	private boolean isReceiptUpload;
+	
 	@SuppressWarnings("unused")
 	private FinServiceInstruction validateChangeRepayment = this;
 
@@ -714,4 +784,236 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 		this.extendedDetails = extendedDetails;
 	}
 
+	public String getPaymentRef() {
+		return paymentRef;
+	}
+
+	public void setPaymentRef(String paymentRef) {
+		this.paymentRef = paymentRef;
+	}
+
+	public String getFavourNumber() {
+		return favourNumber;
+	}
+
+	public void setFavourNumber(String favourNumber) {
+		this.favourNumber = favourNumber;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getChequeNo() {
+		return chequeNo;
+	}
+
+	public void setChequeNo(String chequeNo) {
+		this.chequeNo = chequeNo;
+	}
+
+	public String getTransactionRef() {
+		return transactionRef;
+	}
+
+	public void setTransactionRef(String transactionRef) {
+		this.transactionRef = transactionRef;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Date getDepositDate() {
+		return depositDate;
+	}
+
+	public void setDepositDate(Date depositDate) {
+		this.depositDate = depositDate;
+	}
+
+	public Date getRealizationDate() {
+		return realizationDate;
+	}
+
+	public void setRealizationDate(Date realizationDate) {
+		this.realizationDate = realizationDate;
+	}
+
+	public Date getInstrumentDate() {
+		return instrumentDate;
+	}
+
+	public void setInstrumentDate(Date instrumentDate) {
+		this.instrumentDate = instrumentDate;
+	}
+
+	public Date getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+	
+	public boolean isReceiptdetailExits() {
+		return receiptdetailExits;
+	}
+
+	public void setReceiptdetailExits(boolean receiptdetailExits) {
+		this.receiptdetailExits = receiptdetailExits;
+	}
+
+	public FinServiceInstruction getValidateAddRateChange() {
+		return validateAddRateChange;
+	}
+
+	public void setValidateAddRateChange(FinServiceInstruction validateAddRateChange) {
+		this.validateAddRateChange = validateAddRateChange;
+	}
+
+	public FinServiceInstruction getValidateChangeRepayment() {
+		return validateChangeRepayment;
+	}
+
+	public void setValidateChangeRepayment(FinServiceInstruction validateChangeRepayment) {
+		this.validateChangeRepayment = validateChangeRepayment;
+	}
+
+	public BigDecimal getClosingBal() {
+		return closingBal;
+	}
+
+	public void setClosingBal(BigDecimal closingBal) {
+		this.closingBal = closingBal;
+	}
+
+	public Map<String, BigDecimal> getManualAllocMap() {
+		return manualAllocMap;
+	}
+
+	public void setManualAllocMap(Map<String, BigDecimal> manualAllocMap) {
+		this.manualAllocMap = manualAllocMap;
+	}
+
+	public Map<String, BigDecimal> getManualWaiverMap() {
+		return manualWaiverMap;
+	}
+
+	public void setManualWaiverMap(Map<String, BigDecimal> manualWaiverMap) {
+		this.manualWaiverMap = manualWaiverMap;
+	}
+
+	public long getUploadDetailId() {
+		return UploadDetailId;
+	}
+
+	public void setUploadDetailId(long uploadDetailId) {
+		UploadDetailId = uploadDetailId;
+	}
+
+	public String getReceiptFileName() {
+		return receiptFileName;
+	}
+
+	public void setReceiptFileName(String receiptFileName) {
+		this.receiptFileName = receiptFileName;
+	}
+
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getDepositAcc() {
+		return depositAcc;
+	}
+
+	public void setDepositAcc(String depositAcc) {
+		this.depositAcc = depositAcc;
+	}
+
+	public String getRootId() {
+		return rootId;
+	}
+
+	public void setRootId(String rootId) {
+		this.rootId = rootId;
+	}
+
+	public boolean isReceiptResponse() {
+		return receiptResponse;
+	}
+
+	public void setReceiptResponse(boolean receiptResponse) {
+		this.receiptResponse = receiptResponse;
+	}
+
+	public boolean isReceiptUpload() {
+		return isReceiptUpload;
+	}
+
+	public void setReceiptUpload(boolean isReceiptUpload) {
+		this.isReceiptUpload = isReceiptUpload;
+	}
+
+	public String getAllocationType() {
+		return allocationType;
+	}
+
+	public void setAllocationType(String allocationType) {
+		this.allocationType = allocationType;
+	}
+
+	public Map<String, BigDecimal> getDueMap() {
+		return dueMap;
+	}
+
+	public void setDueMap(Map<String, BigDecimal> dueMap) {
+		this.dueMap = dueMap;
+	}
+
+	public long getFundingAc() {
+		return fundingAc;
+	}
+
+	public void setFundingAc(long fundingAc) {
+		this.fundingAc = fundingAc;
+	}
+
+	public List<UploadAlloctionDetail> getUploadAllocationDetails() {
+		return uploadAllocationDetails;
+	}
+
+	public void setUploadAllocationDetails(List<UploadAlloctionDetail> uploadAllocationDetails) {
+		this.uploadAllocationDetails = uploadAllocationDetails;
+	}
+
+	public String getReceiptPurpose() {
+		return receiptPurpose;
+	}
+
+	public void setReceiptPurpose(String receiptPurpose) {
+		this.receiptPurpose = receiptPurpose;
+	}
+	
 }
