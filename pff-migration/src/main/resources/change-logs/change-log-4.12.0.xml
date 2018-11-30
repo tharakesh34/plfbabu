@@ -1511,4 +1511,14 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
 		]]>
 		</sql>
 	</changeSet>
+	<changeSet id="42" author="SaiKrishna.P">
+		<comment> user able to lock record and work on it. admin has provison to unlock</comment>
+		<createView viewName="LockedFinances_View" replaceIfExists="true">
+		   <![CDATA[
+		   select t1.finreference , t2.usrlogin nextusrname, t2.usrmobile lovvalue,t1.recordtype,t1.recordstatus 
+		   from financemain_temp t1
+		   inner join secusers t2 on cast(t2.usrid as varchar(20)) = t1.nextuserid
+		   ]]>
+		</createView>
+	</changeSet>
 </databaseChangeLog>
