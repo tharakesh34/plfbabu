@@ -73,6 +73,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Groupbox gb_ReceiptDetails;
 	protected Caption caption_receiptDetail;
 	protected Label label_ReceiptDialog_favourNo;
+	protected Label label_ReceiptDialog_FundingAccount;
 	protected Uppercasebox favourNo;
 	protected Datebox valueDate;
 	protected ExtendedCombobox bankCode;
@@ -313,6 +314,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
+				this.fundingAccount.setVisible(false);
+				this.label_ReceiptDialog_FundingAccount.setVisible(false);
 
 			} else {
 				this.row_favourNo.setVisible(false);

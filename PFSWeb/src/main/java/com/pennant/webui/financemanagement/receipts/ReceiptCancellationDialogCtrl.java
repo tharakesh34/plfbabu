@@ -167,6 +167,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Datebox receivedDate;
 	protected Textbox remarks;
 	protected Label label_ReceiptCancellationDialog_BounceDate;
+	protected Label label_ReceiptCancellationDialog_FundingAccount;
 	protected Hbox hbox_ReceiptCancellationDialog_BounceDate;
 	protected Datebox bounceDate;
 
@@ -513,6 +514,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
+				this.fundingAccount.setVisible(false);
+				this.label_ReceiptCancellationDialog_FundingAccount.setVisible(false);
 
 			} else {
 				this.row_favourNo.setVisible(false);
