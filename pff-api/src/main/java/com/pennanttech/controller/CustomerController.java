@@ -403,7 +403,12 @@ public class CustomerController {
 
 			}
 		}
-
+		String docCategory=null;
+		if(StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)){
+			docCategory =(String) SysParamUtil.getValue("CUST_PRIMARY_ID_RETL_DOC_TYPE");
+		} else {
+			docCategory =(String) SysParamUtil.getValue("CUST_PRIMARY_ID_CORP_DOC_TYPE");
+		}
 		// customer document details
 		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
 		if (customerDocumentsList != null) {
@@ -414,7 +419,8 @@ public class CustomerController {
 					curCustDocument.setVersion(1);
 					//curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					if (StringUtils.equals(curCustDocument.getCustDocCategory(), "03")) {
+					
+					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
 					/*
