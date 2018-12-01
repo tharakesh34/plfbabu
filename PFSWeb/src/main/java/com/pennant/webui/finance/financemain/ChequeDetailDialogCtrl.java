@@ -1163,34 +1163,39 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
 		} else if (!this.btnGen.isDisabled()) {
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			if (FinanceConstants.REPAYMTH_PDC.equals(financeMain.getFinRepayMethod())) {
-				int noOfSchedules = getFinanceSchedules().size();
-				noOfSchedules = noOfSchedules - 1;
-				int noOfPDCCheques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_PDC_CHEQUES);
-				int number;
-				if (noOfSchedules >= noOfPDCCheques) {
-					number = noOfPDCCheques;
-				} else {
-					number = noOfSchedules;
-				}
-				if (this.totNoOfCheques.intValue() < number) {
-					parenttab.setSelected(true);
-					throw new WrongValueException(this.totNoOfCheques,
-							Labels.getLabel("NUMBER_MINVALUE_EQ",
-									new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
-											String.valueOf(number) }));
-				}
-			} else if (financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq()) {
-				int noOfUndateCHeques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_UNDATED_CHEQUES);
-				if (this.totNoOfCheques.intValue() < noOfUndateCHeques) {
-					parenttab.setSelected(true);
-					throw new WrongValueException(this.totNoOfCheques,
-							Labels.getLabel("NUMBER_MINVALUE_EQ",
-									new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
-											String.valueOf(noOfUndateCHeques) }));
-				}
+			try {
 
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if (FinanceConstants.REPAYMTH_PDC.equals(financeMain.getFinRepayMethod())) {
+					int noOfSchedules = getFinanceSchedules().size();
+					noOfSchedules = noOfSchedules - 1;
+					int noOfPDCCheques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_PDC_CHEQUES);
+					int number;
+					if (noOfSchedules >= noOfPDCCheques) {
+						number = noOfPDCCheques;
+					} else {
+						number = noOfSchedules;
+					}
+					if (this.totNoOfCheques.intValue() < number) {
+						parenttab.setSelected(true);
+						throw new WrongValueException(this.totNoOfCheques,
+								Labels.getLabel("NUMBER_MINVALUE_EQ",
+										new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
+												String.valueOf(number) }));
+					}
+				} else if (financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq()) {
+					int noOfUndateCHeques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_UNDATED_CHEQUES);
+					if (this.totNoOfCheques.intValue() < noOfUndateCHeques) {
+						parenttab.setSelected(true);
+						throw new WrongValueException(this.totNoOfCheques,
+								Labels.getLabel("NUMBER_MINVALUE_EQ",
+										new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
+												String.valueOf(noOfUndateCHeques) }));
+					}
+
+				}
+			} catch (WrongValueException e) {
+				wve.add(e);
 			}
 		}
 		showErrorDetails(wve);
