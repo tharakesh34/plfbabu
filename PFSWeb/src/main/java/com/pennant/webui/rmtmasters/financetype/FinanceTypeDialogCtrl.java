@@ -4134,6 +4134,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.btnAlwIRRDetails.setDisabled(isTrue);
 		}
 
+		if (getFinanceType().isNewRecord()
+				|| StringUtils.equals(getFinanceType().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			this.cbfinProductType.setDisabled(isTrue);
+		} else {
+			this.cbfinProductType.setDisabled(true);
+		}
+
 		this.finIsGenRef.setDisabled(isTrue);
 		this.finMaxAmount.setReadonly(isTrue);
 		this.finMinAmount.setReadonly(isTrue);
@@ -4141,7 +4148,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnSearchCollateralType.setDisabled(isTrue);
 		this.btnAlwElgMthdDetails.setDisabled(isTrue);
 		this.btnSearchAlwEarlyMethod.setDisabled(isTrue);
-		this.cbfinProductType.setDisabled(isTrue);
+
 		this.finIsOpenPftPayAcc.setDisabled(isTrue);
 		this.finDepreciationReq.setDisabled(isTrue);
 		this.finCollateralReq.setDisabled(isTrue);
