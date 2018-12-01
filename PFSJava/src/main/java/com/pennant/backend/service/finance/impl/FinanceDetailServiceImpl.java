@@ -77,6 +77,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -164,6 +165,7 @@ import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -1570,7 +1572,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		scheduleData.setFinServiceInstructions(getFinServiceInstructionDAO().getFinServiceInstructions(finReference,
-				tableType, financeDetail.getModuleDefiner()));
+				tableType, FinanceConstants.FINSER_EVENT_ORG));
 
 		// Finance Overdue Penalty Rate Details
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
@@ -2048,6 +2050,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
 		Date curBDay = DateUtility.getAppDate();
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;
+		
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null 
+				|| financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(finReference);		
+			finServInst.setFinEvent(financeDetail.getModuleDefiner());
+
+			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+		 
+		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+				if (reference == Long.MIN_VALUE){
+					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(reference);
+			}
+			serviceUID = finSerList.getInstructionUID();
+		}
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
@@ -2403,7 +2426,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 				details = processingDocumentDetailsList(details, tableType.getSuffix(),
-						financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+						financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
 				auditDetails.addAll(details);
 			}
 
@@ -2577,7 +2600,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						VASConsatnts.MODULE_NAME, null, tableType.getSuffix());
+						VASConsatnts.MODULE_NAME, null, tableType.getSuffix(),serviceUID);
 				auditDetails.addAll(details);
 			}
 
@@ -2591,7 +2614,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					extendedFieldRender.setReference(finReference);
 				}
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						AssetConstants.EXTENDEDFIELDS_MODULE, null, tableType.getSuffix());
+						AssetConstants.EXTENDEDFIELDS_MODULE, null, tableType.getSuffix(),serviceUID);
 				auditDetails.addAll(details);
 			}
 
@@ -2603,7 +2626,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeDetail.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						ExtendedFieldConstants.MODULE_LOAN, event, tableType.getSuffix());
+						ExtendedFieldConstants.MODULE_LOAN, event, tableType.getSuffix(),serviceUID);
 				if (details != null && !details.isEmpty()) {
 					auditDetails.addAll(details);
 				}
@@ -3424,6 +3447,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String roleCode = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF);
+		long serviceUID = Long.MIN_VALUE;
 		if (!isWIF) {
 			aAuditHeader = processLimitApprove(aAuditHeader, true);
 		}
@@ -3452,6 +3476,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			financeMain.setFinApprovedDate(curBDay);
 
@@ -3858,7 +3885,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// Vas Recording Extended Field Details
 					List<AuditDetail> exdDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
 					exdDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							VASConsatnts.MODULE_NAME, null, "");
+							VASConsatnts.MODULE_NAME, null, "",serviceUID);
 					auditDetails.addAll(exdDetails);
 				}
 
@@ -3998,7 +4025,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						&& financeDetail.getDocumentDetailsList().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 					details = processingDocumentDetailsList(details, "",
-							financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+							financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
 					auditDetails.addAll(details);
 					listDocDeletion(financeDetail, "_Temp");
 				}
@@ -4148,7 +4175,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						extendedFieldRender.setReference(financeMain.getFinReference());
 					}
 					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							AssetConstants.EXTENDEDFIELDS_MODULE, null, "");
+							AssetConstants.EXTENDEDFIELDS_MODULE, null, "",serviceUID);
 					auditDetails.addAll(details);
 				}
 
@@ -4156,7 +4183,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getExtendedFieldRender() != null) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
 					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(), "");
+							ExtendedFieldConstants.MODULE_LOAN, financeDetail.getExtendedFieldHeader().getEvent(), "",serviceUID);
 					auditDetails.addAll(details);
 				}
 
@@ -4726,10 +4753,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		default:
 			// Execute any other custom service tasks
 			if (StringUtils.isNotBlank(task.getOperation())) {
-				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
+				/*boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
 				if (taskExecuted) {
 					return auditHeader;
-				}
+				}*/
 			}
 
 			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
@@ -4955,6 +4982,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String tranType = "";
 		String roleCode = "";
+		long serviceUID= Long.MIN_VALUE;
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF);
 		if (!aAuditHeader.isNextProcess()) {
@@ -4971,6 +4999,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			financeMain.setFinApprovedDate(curBDay);
 
@@ -5150,7 +5181,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						&& financeDetail.getDocumentDetailsList().size() > 0) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 					details = processingDocumentDetailsList(details, preApprovalTableType,
-							financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+							financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
 					auditDetails.addAll(details);
 					listDocDeletion(financeDetail, "_Temp");
 				}

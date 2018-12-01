@@ -19,7 +19,8 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 	private Map<String, Object> auditMapValues = null;
 	private boolean newRecord = false;
 	private ExtendedFieldRender befImage;
-
+	private long  instructionUID =  Long.MIN_VALUE;
+	
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 
@@ -108,6 +109,12 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 
 	public void setTypeCodeDesc(String typeCodeDesc) {
 		this.typeCodeDesc = typeCodeDesc;
+	}
+	public long getInstructionUID() {
+		return instructionUID;
+	}
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
 	}
 
 }

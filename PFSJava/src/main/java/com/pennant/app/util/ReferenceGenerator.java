@@ -192,6 +192,22 @@ public class ReferenceGenerator implements Serializable {
 		logger.debug("Leaving");
 		return rcptNo;
 	}
+	
+	/**
+	 * Method for Generating Sequence Service Unique ID based Sequence Object
+	 * @param isWIF
+	 * @param finDivision
+	 * @return
+	 */
+	public static String generateNewServiceUID() {
+		logger.debug("Entering");
+
+		// Get the sequence number.
+		long servUIDSeqNumber = sequenceGenetor.getNextValue("SeqFinInstructionUID");
+		String servUIDNo = String.valueOf(servUIDSeqNumber);
+		logger.debug("Leaving");
+		return servUIDNo;
+	}
 
 	public static void setSequenceGenetor(SequenceDao<?> sequenceGenetor) {
 		ReferenceGenerator.sequenceGenetor = sequenceGenetor;

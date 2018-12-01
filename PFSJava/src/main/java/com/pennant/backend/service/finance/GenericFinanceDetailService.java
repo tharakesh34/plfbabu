@@ -867,7 +867,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @return
 	 */
 	public List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, String type,
-			FinanceMain financeMain, String procEdtEvent) {
+			FinanceMain financeMain, String procEdtEvent,long instructionUID) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -899,6 +899,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 				documentDetails.setLastMntBy(financeMain.getLastMntBy());
 				documentDetails.setWorkflowId(0);
+				documentDetails.setInstructionUID(instructionUID);
 
 				if (DocumentCategories.CUSTOMER.getKey().equals(documentDetails.getCategoryCode())) {
 					approveRec = true;
@@ -2343,6 +2344,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
 			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
 			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
+			//Set FinService Instruction Unique ID.
+			for (FinServiceInstruction finServInst : finDetail.getFinServiceInstructions()) {
+				finDetail.getDisbursementDetails().get(i).setInstructionUID(finServInst.getInstructionUID());
+			}
 		}
 		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, isWIF);
 

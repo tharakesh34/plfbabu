@@ -56,6 +56,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.dao.finance.TreasuaryFinHeaderDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
@@ -64,6 +65,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
@@ -255,15 +257,32 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 	private List<AuditDetail> saveOrUpdateDetails(List<FinanceDetail> financeDetails, String tableType,
 			String tranType) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;
 
 		List<AuditDetail> auditDetail;
 		for (FinanceDetail finDetail : financeDetails) {
 			List<AuditDetail> details = finDetail.getAuditDetailMap().get("DocumentDetails");
+			if (finDetail.getFinScheduleData().getFinServiceInstructions() == null){
+				FinServiceInstruction finServInst= new FinServiceInstruction();
+				finServInst.setFinReference(finDetail.getFinScheduleData().getFinanceMain().getFinReference());		
+				finServInst.setFinEvent(finDetail.getModuleDefiner());
+				finDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+			}
+
+			for (FinServiceInstruction finSerList : finDetail.getFinScheduleData().getFinServiceInstructions()) {
+				if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+					if (reference == Long.MIN_VALUE){
+						reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+					}
+					finSerList.setInstructionUID(reference);
+				}
+				serviceUID = finSerList.getInstructionUID();
+			}
 
 			if (details != null && !details.isEmpty()) {
 				FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
-				auditDetail = processingDocumentDetailsList(details, tableType, financeMain,
-						FinanceConstants.FINSER_EVENT_ORG);
+				auditDetail = processingDocumentDetailsList(details, tableType, financeMain,FinanceConstants.FINSER_EVENT_ORG,serviceUID);
 				auditDetails.addAll(auditDetail);
 
 			}
@@ -282,13 +301,16 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 
 		List<AuditDetail> auditDetail;
 
 		List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-		if (details != null && !details.isEmpty()) {
-			auditDetail = processingDocumentDetailsList(details, tableType, financeMain,
-					FinanceConstants.FINSER_EVENT_ORG);
+		if(details != null && !details.isEmpty()) {
+			auditDetail = processingDocumentDetailsList(details, tableType,financeMain,FinanceConstants.FINSER_EVENT_ORG,serviceUID);
 			auditDetails.addAll(auditDetail);
 
 		}

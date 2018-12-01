@@ -59,6 +59,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
@@ -79,6 +80,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinWriteoffPayment;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -325,7 +327,25 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;		
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());		
+			finServInst.setFinEvent(financeDetail.getModuleDefiner());
 
+			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+				if (reference == Long.MIN_VALUE){
+					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(reference);
+			}
+			serviceUID = finSerList.getInstructionUID();
+		}
 		//Finance Stage Accounting Process
 		//=======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -437,7 +457,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, tableType.getSuffix(),
-					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -686,6 +706,11 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
@@ -706,7 +731,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, "_Temp",
-					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
 			auditDetailList.addAll(details);
 		}
 
@@ -838,6 +863,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		//=====================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceProfitDetail profitDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 
 		String accEventCode = "";
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
@@ -920,7 +949,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, "", financeDetail.getFinScheduleData().getFinanceMain(),
-					financeDetail.getModuleDefiner());
+					financeDetail.getModuleDefiner(),serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}

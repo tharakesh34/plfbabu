@@ -22,6 +22,7 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -529,9 +530,13 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		List<AuditDetail> auditDetails = financeDetail.getAuditDetailMap().get("checkListDetails");
 
+		
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinanceCheckListReference finChecklistRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
 			finChecklistRef.setWorkflowId(0);
+			for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+				finChecklistRef.setInstructionUID(finServInst.getInstructionUID());
+			}
 			if (StringUtils.isEmpty(tableType)) {
 				finChecklistRef.setVersion(finChecklistRef.getVersion() + 1);
 				finChecklistRef.setRoleCode("");

@@ -72,6 +72,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	// Verification Fields
 	private int doumentType;
+	private long  instructionUID =  Long.MIN_VALUE;
 
 	public DocumentDetails() {
 		super();
@@ -418,6 +419,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setDocOriginal(boolean docOriginal) {
 		this.docOriginal = docOriginal;
+	}
+	
+	public long getInstructionUID() {
+		return instructionUID;
+	}
+
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
 	}
 
 }

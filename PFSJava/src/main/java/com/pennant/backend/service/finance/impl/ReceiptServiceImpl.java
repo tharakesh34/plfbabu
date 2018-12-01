@@ -68,6 +68,7 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SessionUserDetails;
@@ -551,6 +552,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
 
 		String finReference = financeMain.getFinReference();
+		
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;		
+		if (rceiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions() == null){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(finReference);		
+			finServInst.setFinEvent(rceiptData.getFinanceDetail().getModuleDefiner());
+
+			rceiptData.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction finSerList : rceiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+				if (reference == Long.MIN_VALUE){
+					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(reference);
+			}
+			serviceUID = finSerList.getInstructionUID();
+		}
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -793,7 +814,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& rceiptData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = rceiptData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
 			auditDetails.addAll(processingDocumentDetailsList(details, tableType.getSuffix(), financeMain,
-					receiptHeader.getReceiptPurpose()));
+					receiptHeader.getReceiptPurpose(),serviceUID));
 		}
 
 		// set Finance Check List audit details to auditDetails
@@ -939,7 +960,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		List<AuditDetail> auditDetails = new ArrayList<>();
-
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : receiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
 		cancelStageAccounting(financeMain.getFinReference(), receiptData.getReceiptHeader().getReceiptPurpose());
@@ -1038,9 +1062,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = receiptData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(),
-					receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
-					receiptData.getReceiptHeader().getReceiptPurpose());
+			details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(), receiptData.getFinanceDetail().getFinScheduleData()
+					.getFinanceMain(), receiptData.getReceiptHeader().getReceiptPurpose(),serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -1605,7 +1628,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
 		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
 		FinanceMain financeMain = rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : rceiptData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
 		cancelStageAccounting(financeMain.getFinReference(), receiptHeader.getReceiptPurpose());
@@ -1707,9 +1733,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (rceiptData.getFinanceDetail().getDocumentDetailsList() != null
 					&& rceiptData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 				List<AuditDetail> details = rceiptData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-				details = processingDocumentDetailsList(details, "",
-						rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
-						receiptHeader.getReceiptPurpose());
+				details = processingDocumentDetailsList(details, "", rceiptData.getFinanceDetail().getFinScheduleData()
+						.getFinanceMain(), receiptHeader.getReceiptPurpose(),serviceUID);
 				auditDetails.addAll(details);
 				listDocDeletion(rceiptData.getFinanceDetail(), TableType.TEMP_TAB.getSuffix());
 			}

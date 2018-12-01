@@ -33,6 +33,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -602,7 +603,7 @@ public class ExtendedFieldDetailsService {
 	}
 
 	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> details, String module, String event,
-			String type) {
+			String type,long instructionUID) {
 		logger.debug(Literal.ENTERING);
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -697,6 +698,10 @@ public class ExtendedFieldDetailsService {
 					mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
 					mapValues.put("RecordType", extendedFieldRender.getRecordType());
 					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, event)){
+						extendedFieldRender.setInstructionUID(instructionUID);
+						mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+					}
 				}
 
 				if (saveRecord) {
@@ -1898,6 +1903,7 @@ public class ExtendedFieldDetailsService {
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
 
 		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
+		long instructionUID = Long.MIN_VALUE;
 		if (extendedFieldHeader != null) {
 			int seqNo = 0;
 			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
@@ -1910,6 +1916,10 @@ public class ExtendedFieldDetailsService {
 			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			exdFieldRender.setVersion(1);
 			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
+			for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+				instructionUID = finServiceInstruction.getInstructionUID(); 
+				exdFieldRender.setInstructionUID(instructionUID);
+			}
 
 			if (extendedFields != null) {
 				for (ExtendedField extendedField : extendedFields) {
@@ -1938,7 +1948,7 @@ public class ExtendedFieldDetailsService {
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = auditDetailMap.get("LoanExtendedFieldDetails");
 			details = processingExtendedFieldDetailList(details, ExtendedFieldConstants.MODULE_LOAN,
-					financeDetail.getExtendedFieldHeader().getEvent(), suffix);
+					financeDetail.getExtendedFieldHeader().getEvent(), suffix, instructionUID);
 			auditDetails.addAll(details);
 		}
 		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(),

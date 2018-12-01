@@ -63,6 +63,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -373,7 +374,26 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		Date curBDay = DateUtility.getAppDate();
 
 		String actualRepayAcc = financeMain.getRepayAccountId();
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;
+		
+		if (repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions() == null){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(finReference);		
+			finServInst.setFinEvent(repayData.getFinanceDetail().getModuleDefiner());
 
+			repayData.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction finSerList : repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+				if (reference == Long.MIN_VALUE){
+					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(reference);
+			}
+			serviceUID = finSerList.getInstructionUID();
+		}
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -489,7 +509,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				&& repayData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = repayData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
 			auditDetails.addAll(processingDocumentDetailsList(details, tableType.getSuffix(), financeMain,
-					finRepayHeader.getFinEvent()));
+					finRepayHeader.getFinEvent(),serviceUID));
 		}
 
 		// set Finance Check List audit details to auditDetails
@@ -579,7 +599,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData scheduleData = repayData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
-
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
 		cancelStageAccounting(financeMain.getFinReference(), repayData.getFinRepayHeader().getFinEvent());
@@ -601,9 +624,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = repayData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp",
-					repayData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
-					repayData.getFinRepayHeader().getFinEvent());
+			details = processingDocumentDetailsList(details, "_Temp", repayData.getFinanceDetail().getFinScheduleData()
+					.getFinanceMain(), repayData.getFinRepayHeader().getFinEvent(),serviceUID);
 			auditHeader.setAuditDetails(details);
 		}
 
@@ -696,7 +718,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setTaskId("");
 		financeMain.setNextTaskId("");
 		financeMain.setWorkflowId(0);
-
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		boolean emptyRepayInstructions = scheduleData.getRepayInstructions() == null ? true : false;
 
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
@@ -788,9 +813,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			if (repayData.getFinanceDetail().getDocumentDetailsList() != null
 					&& repayData.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 				List<AuditDetail> details = repayData.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-				details = processingDocumentDetailsList(details, "",
-						repayData.getFinanceDetail().getFinScheduleData().getFinanceMain(),
-						finRepayHeader.getFinEvent());
+				details = processingDocumentDetailsList(details, "", repayData.getFinanceDetail().getFinScheduleData()
+						.getFinanceMain(), finRepayHeader.getFinEvent(),serviceUID);
 				auditDetails.addAll(details);
 				listDocDeletion(repayData.getFinanceDetail(), "_Temp");
 			}

@@ -58,6 +58,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
@@ -65,6 +66,7 @@ import com.pennant.backend.dao.finance.liability.LiabilityRequestDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -195,7 +197,25 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;		
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());		
+			finServInst.setFinEvent(financeDetail.getModuleDefiner());
 
+			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+				if (reference == Long.MIN_VALUE){
+					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(reference);
+			}
+			serviceUID = finSerList.getInstructionUID();
+		}
 		//Finance Stage Accounting Process
 		//=======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -230,7 +250,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeMain, liabilityRequest.getFinEvent());
+			details = processingDocumentDetailsList(details, tableType, financeMain,liabilityRequest.getFinEvent(),serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -339,6 +359,10 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		//Finance Stage Accounting Process
 		//=======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -382,7 +406,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeMain, liabilityRequest.getFinEvent());
+			details = processingDocumentDetailsList(details, "", financeMain,liabilityRequest.getFinEvent(),serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
@@ -471,7 +495,10 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
 		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
@@ -488,7 +515,7 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 				}
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", financeMain, liabilityRequest.getFinEvent());
+			details = processingDocumentDetailsList(details,  "_Temp", financeMain,liabilityRequest.getFinEvent(),serviceUID);
 			auditHeader.setAuditDetails(details);
 		}
 

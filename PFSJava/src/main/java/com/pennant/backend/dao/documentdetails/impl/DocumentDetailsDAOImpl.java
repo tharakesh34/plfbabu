@@ -194,11 +194,11 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		insertSql.append(
 				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId, :FinEvent,");
 		insertSql.append(
 				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal , :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId)");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -230,11 +230,11 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		insertSql.append(
 				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, DocRefId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, DocRefId, instructionUID)");
 		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId,:FinEvent");
 		insertSql.append(
 				", :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived,  :docOriginal , :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId)");
+		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -269,7 +269,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				", DocReceived = :DocReceived, DocOriginal  =:docOriginal , Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
 		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, docRefId = :docRefId ");
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, docRefId = :docRefId,instructionUID = :instructionUID ");
 		updateSql.append(" Where DocId =:DocId");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -291,7 +291,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		sql.append(
 				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
 		sql.append(" from DocumentDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where ReferenceId = :ReferenceId AND DocModule =:DocModule ");
@@ -324,7 +324,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		sql.append(
 				" Doctype, DocName, ReferenceId,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId ");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID ");
 		sql.append(" from DocumentDetails");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where ReferenceId = :ReferenceId AND DocModule=:DocModule ");
@@ -356,7 +356,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				"Select DocId, DocModule, DocCategory, DocReceivedDate, DocReceived, DocOriginal,");
 		selectSql.append(" Doctype, DocName, DocRefId, ReferenceId ,FinEvent, DocUri,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
 		selectSql.append(" From DocumentDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DocId =:DocId");
@@ -395,7 +395,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		}
 
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
 		selectSql.append(" From DocumentDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" T1 Inner Join ");
@@ -441,7 +441,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		selectSql.append(
 				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
 		selectSql.append(" From DocumentDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ReferenceId =:ReferenceId AND DocCategory =:DocCategory AND DocModule =:DocModule");

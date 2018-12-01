@@ -107,6 +107,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private FinanceDisbursement befImage;
 	private LoggedInUser userDetails;
 	private boolean posted = false;
+	private long  instructionUID =  Long.MIN_VALUE;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -417,6 +418,14 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setPosted(boolean posted) {
 		this.posted = posted;
+	}
+
+	public long getInstructionUID() {
+		return instructionUID;
+	}
+
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
 	}
 
 }

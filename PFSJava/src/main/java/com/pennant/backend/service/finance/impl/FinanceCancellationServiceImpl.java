@@ -62,6 +62,7 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -79,6 +80,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -228,8 +230,28 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
+		long reference = Long.MIN_VALUE;
+		long serviceUID = Long.MIN_VALUE;
 		String finReference = financeMain.getFinReference();
+		
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(finReference);		
+			finServInst.setFinEvent(financeDetail.getModuleDefiner());
+
+			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+		 
+			for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+				if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+					if (reference == Long.MIN_VALUE){
+						reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+					}
+					finSerList.setInstructionUID(reference);
+				}
+				serviceUID = finSerList.getInstructionUID();
+			}
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -291,8 +313,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType.getSuffix(),
-					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner(),serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -334,6 +355,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
 
 		// Cancel All Transactions done by Finance Reference
 		//=======================================
@@ -353,8 +378,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp",
-					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details,  "_Temp",financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner(),serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -417,6 +441,11 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
 
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			serviceUID = finServInst.getInstructionUID();
+		}
+		
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO().getNextSchPayment(finReference, curBDay);
 
@@ -482,8 +511,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeDetail.getFinScheduleData().getFinanceMain(),
-					financeDetail.getModuleDefiner());
+			details = processingDocumentDetailsList(details, "",financeDetail.getFinScheduleData().getFinanceMain(),financeDetail.getModuleDefiner(),serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}

@@ -226,6 +226,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private String toBranch;
 
+	private long  instructionUID =  Long.MIN_VALUE;
+	
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
@@ -783,7 +785,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
 		this.extendedDetails = extendedDetails;
 	}
+	
+	public long getInstructionUID() {
+		return instructionUID;
+	}
 
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
+	}
 	public String getPaymentRef() {
 		return paymentRef;
 	}
