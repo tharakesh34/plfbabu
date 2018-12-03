@@ -622,4 +622,14 @@ UNION ALL
 			Update loan_usl_org_ed set InstructionUID=0 where InstructionUID is null;
 		</sql>
 	</changeSet>
+	<changeSet id="40" author="Irfan">
+		<addColumn tableName="FinDisbursementDetails_Log">
+		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
+	</addColumn>
+	</changeSet>
+	<changeSet id="41" author="Irfan">
+		<sql>
+			Update FinDisbursementDetails_Log set InstructionUID=0 where InstructionUID is null;
+		</sql>
+	</changeSet>
 	</databaseChangeLog>
