@@ -1788,9 +1788,9 @@ INSERT INTO templatefields (module, field, fielddesc, fieldformat) VALUES ('FIN'
      LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
      LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
      LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
-     LEFT JOIN relationshipofficers t37 ON t1.employeename::text = t37.rofficercode::text
-     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'::citext
-     LEFT JOIN loanpurposes t39 ON t1.finpurpose::text = t39.loanpurposecode::text
+     LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+     LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
      LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
 UNION ALL
  SELECT t1.finreference,
@@ -2057,13 +2057,13 @@ UNION ALL
      LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
      LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
      LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
-     LEFT JOIN relationshipofficers t37 ON t1.employeename::text = t37.rofficercode::text
-     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'::citext
-     LEFT JOIN loanpurposes t39 ON t1.finpurpose::text = t39.loanpurposecode::text
+     LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+     LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
      LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
   WHERE NOT (EXISTS ( SELECT 1 AS expr1
            FROM financemain_temp
-          WHERE financemain_temp.finreference = t1.finreference));
+          WHERE financemain_temp.finreference = t1.finreference))
 </createView>
 </changeSet>
 <changeSet id="44.2" author="kranthikumar.k">
@@ -2322,9 +2322,9 @@ UNION ALL
      LEFT JOIN relationshipofficers t9 ON t1.dmacode = t9.rofficercode
      LEFT JOIN rmtgendepartments t10 ON t1.salesdepartment = t10.gendepartment
      LEFT JOIN smtdivisiondetail t11 ON t2.findivision = t11.divisioncode
-     LEFT JOIN relationshipofficers t12 ON t1.employeename::text = t12.rofficercode::text
-     LEFT JOIN rmtlovfielddetail t13 ON t1.eligibilitymethod = t13.fieldcodeid AND t13.fieldcode = 'ELGMETHOD'::citext
-     LEFT JOIN loanpurposes t14 ON t1.finpurpose::text = t14.loanpurposecode::text
+     LEFT JOIN relationshipofficers t12 ON t1.employeename = t12.rofficercode
+     LEFT JOIN rmtlovfielddetail t13 ON t1.eligibilitymethod = t13.fieldcodeid AND t13.fieldcode = 'ELGMETHOD'
+     LEFT JOIN loanpurposes t14 ON t1.finpurpose = t14.loanpurposecode
      LEFT JOIN amtvehicledealer t15 ON t1.connector = t15.dealerid
 </createView>
 </changeSet>
@@ -2597,9 +2597,9 @@ UNION ALL
      LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
      LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
      LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
-     LEFT JOIN relationshipofficers t37 ON t1.employeename::text = t37.rofficercode::text
-     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'::citext
-     LEFT JOIN loanpurposes t39 ON t1.finpurpose::text = t39.loanpurposecode::text
+     LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+     LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
      LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
 
 </createView>
