@@ -197,7 +197,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			if (arguments.containsKey("isWIF")) {
-				isWIF = true;
+				isWIF = (boolean) arguments.get("isWIF");
 				this.disbursementAccount.setVisible(false);
 			}
 			if (arguments.containsKey("moduleDefiner")) {
@@ -787,10 +787,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) == 0){
 						rpyInstructions.get(i).setRepayAmount(rpyInstructions.get(i).getRepayAmount().add(finServiceInstruction.getAmount()));
 						rpyInstFound = true;
+						if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) <= 0){
+							futureRpyInst = true;
+						}
 						break;
-					}
-					if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) < 0){
-						futureRpyInst = true;
 					}
 				}
 				
