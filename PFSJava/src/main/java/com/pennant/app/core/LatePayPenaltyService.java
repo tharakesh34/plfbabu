@@ -44,6 +44,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -137,6 +138,13 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		penalty = CalculationUtil.roundAmount(penalty, roundingMode, financeMain.getRoundingTarget());
+		
+		// Check Whether Min cap Amount reached or not
+		if(ImplementationConstants.ALW_LPP_MIN_CAP_AMT){
+			if(penalty.compareTo(BigDecimal.ZERO) > 0 && penalty.compareTo(fod.getoDMinCapAmount()) < 0){
+				penalty = fod.getoDMinCapAmount();
+			}
+		}
 
 		fod.setTotPenaltyAmt(penalty);
 		fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));

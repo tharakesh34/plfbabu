@@ -33,6 +33,7 @@ public class FinODPenaltyRate implements Entity {
 	private boolean oDAllowWaiver;
 	@XmlElement(name = "odMaxWaiverPerc")
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
+	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
 	private long logKey = 0;
 
 	private String oDRuleCode;
@@ -159,5 +160,12 @@ public class FinODPenaltyRate implements Entity {
 	public void setODRuleCode(String ODRuleCode) {
 		this.oDRuleCode = ODRuleCode;
 	}
+	
+	public BigDecimal getoDMinCapAmount() {
+		return oDMinCapAmount;
+	}
 
+	public void setoDMinCapAmount(BigDecimal oDMinCapAmount) {
+		this.oDMinCapAmount = oDMinCapAmount;
+	}
 }

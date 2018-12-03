@@ -44,6 +44,7 @@ package com.pennant.webui.util.searchdialogs;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -77,6 +78,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -113,6 +115,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private String selectedValues = null;
 	private Map<String, String> checkMap = new HashMap<String, String>();
 	private ModuleMapping moduleMapping = null;
+	private List<ValueLabel> staticList = null;
+	private static boolean searchRequired = true;
 	private Filter[] filters;
 	private String whereClause = null;
 
@@ -131,6 +135,18 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	public static Object show(Component parent, String listCode, String selectedValues, Filter[] filters) {
 		return new MultiSelectionSearchListBox(parent, listCode, selectedValues, filters, null).getObject();
 	}
+	
+	/**
+	 * Method for selecting values from Static List
+	 * @param parent
+	 * @param listCode
+	 * @param selectedValues
+	 * @param filters
+	 * @return
+	 */
+	public static Object show(Component parent, List<ValueLabel> staticList, String selectedValues, Filter[] filters) {
+		return new MultiSelectionSearchListBox(parent, staticList, selectedValues, filters, null).getObject();
+	}
 
 	public static Object show(Component parent, String listCode, String selectedValues, Filter[] filters,
 			String whereClause) {
@@ -147,8 +163,32 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		super();
 		this.filters = filters;
 		this.selectedValues = selectedValues;
+		this.staticList = null;
 		this.whereClause = whereClause;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
+		setCheckMap();
+		setParent(parent);
+		createBox();
+	}
+
+	/**
+	 * Private Constructor. So it can only be created with the static show() method.<br>
+	 * 
+	 * @param parent
+	 */
+	private MultiSelectionSearchListBox(Component parent, List<ValueLabel> staticList, String selectedValues, Filter[] filters,
+			String whereClause) {
+		super();
+		this.filters = filters;
+		this.selectedValues = selectedValues;
+		this.whereClause = whereClause;
+		searchRequired = false;
+		this.staticList = staticList;
+		fieldString = new String[2];
+		fieldString[0] = "Value";
+		fieldString[1] = "Label";
+		setModuleMapping(null);
+		this.setTitle(Labels.getLabel("label_StaticList"));
 		setCheckMap();
 		setParent(parent);
 		createBox();
@@ -161,7 +201,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private void createBox() {
 		logger.debug("Entering");
 
-		if (getModuleMapping().getLovWidth() != 0) {
+		if (staticList == null && getModuleMapping().getLovWidth() != 0) {
 			this._width = getModuleMapping().getLovWidth();
 		}
 
@@ -250,6 +290,13 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		this._searchButton.setImage("/images/icons/search.gif");
 		this._searchButton.addEventListener("onClick", new OnSearchListener());
 		this._searchButton.setParent(hbox);
+		if (searchRequired) {
+			hbox.setVisible(true);
+			north2.setVisible(true);
+		} else {
+			hbox.setVisible(false);
+			north2.setVisible(false);
+		}
 
 		final South south = new South();
 		south.setBorder("none");
@@ -287,13 +334,18 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		 */
 
 		logger.debug("Before fetch jdbc Search");
-		setJdbcSearchObject(0);
+		if(searchRequired){
+			setJdbcSearchObject(0);
 
-		final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
-		logger.debug("After fetch jdbc Search Count:" + searchResult.getTotalCount());
+			final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());
+			logger.debug("After fetch jdbc Search Count:" + searchResult.getTotalCount());
 
-		this._paging.setTotalSize(searchResult.getTotalCount());
-		setListModelList(new ListModelList(searchResult.getResult()));
+			this._paging.setTotalSize(searchResult.getTotalCount());
+			setListModelList(new ListModelList(searchResult.getResult()));
+		} else {
+			this._paging.setTotalSize(staticList.size());
+			setListModelList(new ListModelList(staticList));
+		}
 		this.listbox.setModel(getListModelList());
 
 		try {

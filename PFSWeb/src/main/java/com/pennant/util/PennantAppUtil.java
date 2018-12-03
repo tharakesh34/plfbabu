@@ -96,6 +96,7 @@ import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.psl.PSLCategory;
+import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.limit.LimitGroup;
 import com.pennant.backend.model.limit.LimitGroupLines;
 import com.pennant.backend.model.limit.LimitHeader;
@@ -122,6 +123,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
@@ -2281,5 +2283,24 @@ public class PennantAppUtil {
 		}
 
 		return null;
+	}
+	
+	public static ArrayList<ValueLabel> getReceiptModesByFinType(String finType) {
+		ArrayList<ValueLabel> receiptModesList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<FinTypeReceiptModes> searchObject = new JdbcSearchObject<FinTypeReceiptModes>(FinTypeReceiptModes.class);
+		searchObject.addSort("FinTypeReceiptModes", false);
+		searchObject.addFilterEqual("FinType", finType);
+		searchObject.addField("FinType");
+		searchObject.addField("ReceiptMode");
+
+		List<FinTypeReceiptModes> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()),
+					PennantAppUtil.getlabelDesc(appList.get(i).getReceiptMode(),
+							PennantStaticListUtil.getReceiptModes()));
+			receiptModesList.add(receiptMode);
+		}
+		return receiptModesList;
 	}
 }

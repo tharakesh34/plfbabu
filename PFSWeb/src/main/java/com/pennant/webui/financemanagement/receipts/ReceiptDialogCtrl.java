@@ -133,6 +133,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BounceReason;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.commitment.Commitment;
@@ -176,6 +177,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.accounts.AccountsService;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.feetype.FeeTypeService;
@@ -416,7 +418,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private transient PartnerBankService partnerBankService;
 	private transient FinFeeDetailService finFeeDetailService;
 	private transient FinanceTaxDetailService financeTaxDetailService;
-
+	private transient BranchService branchService;
+	
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl = null;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl = null;
 	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl = null;
@@ -3612,6 +3615,15 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
+		if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwPartialRpy()){
+			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
+					",FeePayment,");
+		}else{
+			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
+					",FeePayment,EarlyPayment,");
+		}
+		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
+				"");
 		boolean isOverDraft = false;
 		if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
 				FinanceConstants.PRODUCT_ODFACILITY)){
@@ -3625,9 +3637,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		
 		if (financeType.isDeveloperFinance()) {
-			fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(), "");
+			fillComboBox(this.receiptMode, header.getReceiptMode(), PennantAppUtil.getReceiptModesByFinType(this.finType.getValue()), "");
 		} else {
-			fillComboBox(this.receiptMode, header.getReceiptMode(), PennantStaticListUtil.getReceiptModes(),
+			fillComboBox(this.receiptMode, header.getReceiptMode(), PennantAppUtil.getReceiptModesByFinType(this.finType.getValue()),
 					",ESCROW,");
 		}
 
@@ -8013,11 +8025,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
 			receipt.setFundingAc(this.fundingAccount.getValue() +" - "+this.fundingAccount.getDescription());
 			
-			if(StringUtils.equals(receipt.getPaymentMode(), RepayConstants.RECEIPTMODE_CHEQUE) ||
-					StringUtils.equals(receipt.getPaymentMode(), RepayConstants.RECEIPTMODE_DD)){
+			if(StringUtils.equals(getComboboxValue(this.receiptMode), RepayConstants.RECEIPTMODE_CHEQUE) ||
+					StringUtils.equals(getComboboxValue(this.receiptMode), RepayConstants.RECEIPTMODE_DD)){
 				receipt.setTransactionRef(this.favourNo.getValue());
 			}else{
-				receipt.setTransactionRef(this.transactionRef.getValue());
+				receipt.setTransactionRef(this.transactionRef.getValue() == null ? "" : this.transactionRef.getValue());
 			}
 			
 			for (CustomerPhoneNumber phoneNumber : getFinanceDetail().getCustomerDetails().getCustomerPhoneNumList()) {
@@ -8030,8 +8042,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setFinTypeDesc(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinTypeName());
 			receipt.setBankCode(this.bankCode.getValue());
 			receipt.setBankName(this.bankCode.getDescription());
-			receipt.setBranchCode(this.finBranch.getValue());
-			receipt.setBranchName(this.finBranch.getDescription());
+			receipt.setBranchCode(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch());
+			receipt.setBranchName(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinBranchName());
 			if(getReceiptHeader().getAllocations() != null){
 				BigDecimal pftPaid = BigDecimal.ZERO;
 				BigDecimal priPaid = BigDecimal.ZERO;
@@ -8055,6 +8067,22 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				receipt.setTerminationAmt(PennantApplicationUtil.amountFormate(getReceiptData().getFuturePri(), finFormatter));
 				receipt.setBounceCharges(PennantApplicationUtil.amountFormate(bouncePaid, finFormatter));
 				receipt.setOthers(PennantApplicationUtil.amountFormate(othersPaid, finFormatter));
+			}
+			receipt.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
+			
+			Branch branch = getBranchService().getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
+			if(branch != null){
+				receipt.setBranchAddrLine1(branch.getBranchAddrLine1());
+				receipt.setBranchAddrLine2(branch.getBranchAddrLine2());
+				receipt.setBranchAddrHNbr(branch.getBranchAddrHNbr());
+				receipt.setBranchAddrFlatNo(branch.getBranchFlatNbr());
+				receipt.setBranchAddrStreet(branch.getBranchAddrStreet());
+				receipt.setBranchAddrCountry(branch.getBranchCountry());
+				receipt.setBranchAddrCity(branch.getBranchCity());
+				receipt.setBranchAddrProvince(branch.getBranchProvince());
+				receipt.setBranchAddrDistrict("");
+				receipt.setBranchAddrPincode(branch.getPinCode());
+				receipt.setBranchPhone(branch.getBranchTel());
 			}
 			
 			engine.mergeFields(receipt);
@@ -8414,6 +8442,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
+	}
+	
+	public BranchService getBranchService() {
+		return branchService;
+	}
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
 	}
 
 }

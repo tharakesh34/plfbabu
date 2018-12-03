@@ -84,6 +84,7 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_IMPS = "IMPS";
 	public static final String RECEIPTMODE_EXCESS = "EXCESS";
 	public static final String RECEIPTMODE_ESCROW = "ESCROW";
+	/*public static final String RECEIPTMODE_NACH = "NACH";*/
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";

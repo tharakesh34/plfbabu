@@ -915,6 +915,13 @@
 														<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="6" />
 													</hbox>
 												</row>
+												<row id="row_ODMinCapAmount" visible="false" >
+													<label id="label_FinanceMainDialog_ODMinCapAmount" value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
+													<hbox>
+														<space id="space_ODMinCapAmount" spacing="2px" />
+													<decimalbox id="oDMinCapAmount" width="120px" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

@@ -54,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinTypeReceiptModesDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -67,6 +68,7 @@ import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -109,6 +111,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private ProductAssetDAO productAssetDAO;
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
+	private FinTypeReceiptModesDAO finTypeReceiptModesDAO;
 	private TransactionEntryDAO transactionEntryDAO;
 	// Validation Service Classes
 	private FinTypeVasDetailValidation finTypeVasDetailValidation;
@@ -231,6 +234,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			details = processingVasProductDetailList(details, financeType.getFinAcType(), tableType);
 			auditDetails.addAll(details);
 		}
+		
+		//FinTypeReceiptModes Details
+		if (financeType.getFinTypeReceiptModesList() != null && !financeType.getFinTypeReceiptModesList().isEmpty()) {
+			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeReceiptModes");
+			details = processingReceiptModesList(details, financeType.getFinAcType(), tableType);
+			auditDetails.addAll(details);
+		}
 
 		// IRR Code details
 		if (financeType.getIrrFinanceTypeList() != null && financeType.getIrrFinanceTypeList().size() > 0) {
@@ -319,6 +329,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_View"));
 			//FinTypeVasProduct Details
 			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View"));
+			financeType.setFinTypeReceiptModesList(getFinTypeReceiptModesDAO().getReceiptModesByFinType(finType, "_View"));
 			financeType.setFinTypeFeesList(
 					getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType,
@@ -499,6 +510,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			if (financeType.getFinTypeVASProductsList() != null && financeType.getFinTypeVASProductsList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
 				details = processingVasProductDetailList(details, financeType.getFinAcType(), "");
+				auditDetails.addAll(details);
+			}
+			
+			//FinTypeReceiptModes Details
+			if (financeType.getFinTypeReceiptModesList() != null && financeType.getFinTypeReceiptModesList().size() > 0) {
+				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeReceiptModes");
+				details = processingReceiptModesList(details, financeType.getFinAcType(), "");
 				auditDetails.addAll(details);
 			}
 
@@ -905,6 +923,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetailMap.put("FinTypeVASProducts", setFinTypeVasProcuctAuditData(financeType, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeVASProducts"));
 		}
+		
+		//FinTypeReceiptModes Details
+		if (financeType.getFinTypeReceiptModesList() != null && financeType.getFinTypeReceiptModesList().size() > 0) {
+			auditDetailMap.put("FinTypeReceiptModes", setFinTypeReceiptModesAuditData(financeType, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinTypeReceiptModes"));
+		}
 
 		// FinTypeExpense
 		if (financeType.getFinTypeExpenseList() != null && financeType.getFinTypeExpenseList().size() > 0) {
@@ -1012,6 +1036,20 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			}
 			getFinTypeVASProductsDAO().deleteList(financeType.getFinType(), tableType);
+		}
+		
+		// Finance Type Receipt Modes
+		if (financeType.getFinTypeReceiptModesList() != null && !financeType.getFinTypeReceiptModesList().isEmpty()) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeReceiptModes(),
+					new FinTypeReceiptModes().getExcludeFields());
+			for (int i = 0; i < financeType.getFinTypeReceiptModesList().size(); i++) {
+				FinTypeReceiptModes finTypeReceiptModes = financeType.getFinTypeReceiptModesList().get(i);
+				if (StringUtils.isNotEmpty(finTypeReceiptModes.getRecordType()) || StringUtils.isEmpty(tableType)) {
+					auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+							finTypeReceiptModes.getBefImage(), finTypeReceiptModes));
+				}
+			}
+			getFinTypeReceiptModesDAO().deleteList(financeType.getFinType(), tableType);
 		}
 
 		// IRRCode Details
@@ -1474,6 +1512,103 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		return auditDetails;
 	}
+	
+	/**
+	 * Method For Preparing List of AuditDetails for Check List for Finance Type ReceiptModes Details
+	 * 
+	 * @param auditDetails
+	 * @param financeType
+	 * @param type
+	 * @return
+	 */
+	private List<AuditDetail> processingReceiptModesList(List<AuditDetail> auditDetails, String financeType,
+			String type) {
+		logger.debug("Entering");
+		
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		
+		for (int i = 0; i < auditDetails.size(); i++) {
+			FinTypeReceiptModes finTypeReceiptModes = (FinTypeReceiptModes) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				finTypeReceiptModes.setRoleCode("");
+				finTypeReceiptModes.setNextRoleCode("");
+				finTypeReceiptModes.setTaskId("");
+				finTypeReceiptModes.setNextTaskId("");
+			}
+			
+			finTypeReceiptModes.setWorkflowId(0);
+			
+			if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (finTypeReceiptModes.isNewRecord()) {
+				saveRecord = true;
+				if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					finTypeReceiptModes.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					finTypeReceiptModes.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					finTypeReceiptModes.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			} else if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (finTypeReceiptModes.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			
+			if (approveRec) {
+				rcdType = finTypeReceiptModes.getRecordType();
+				recordStatus = finTypeReceiptModes.getRecordStatus();
+				finTypeReceiptModes.setRecordType("");
+				finTypeReceiptModes.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			
+			if (saveRecord) {
+				getFinTypeReceiptModesDAO().save(finTypeReceiptModes, type);
+			}
+			
+			if (updateRecord) {
+				getFinTypeReceiptModesDAO().update(finTypeReceiptModes, type);
+			}
+			
+			if (deleteRecord) {
+				getFinTypeReceiptModesDAO().delete(finTypeReceiptModes.getFinType(), finTypeReceiptModes.getReceiptMode(),
+						type);
+			}
+			
+			if (approveRec) {
+				finTypeReceiptModes.setRecordType(rcdType);
+				finTypeReceiptModes.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(finTypeReceiptModes);
+		}
+		
+		logger.debug("Leaving");
+		
+		return auditDetails;
+	}
 
 	/**
 	 * Methods for Creating List Finance Type VAS Details of Audit Details with detailed fields
@@ -1541,6 +1676,75 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		logger.debug("Leaving");
 
+		return auditDetails;
+	}
+	
+	/**
+	 * Methods for Creating List Finance Type ReceiptModes Details of Audit Details with detailed fields
+	 * 
+	 * @param financeType
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setFinTypeReceiptModesAuditData(FinanceType financeType, String auditTranType,
+			String method) {
+		logger.debug("Entering");
+		
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		FinTypeReceiptModes finTypeReceiptModes = new FinTypeReceiptModes();
+		String[] fields = PennantJavaUtil.getFieldDetails(finTypeReceiptModes, finTypeReceiptModes.getExcludeFields());
+		
+		for (int i = 0; i < financeType.getFinTypeReceiptModesList().size(); i++) {
+			FinTypeReceiptModes finTypeReceiptMode = financeType.getFinTypeReceiptModesList().get(i);
+			
+			if (StringUtils.isEmpty(finTypeReceiptMode.getRecordType())) {
+				continue;
+			}
+			
+			finTypeReceiptMode.setFinType(financeType.getFinType());
+			finTypeReceiptMode.setWorkflowId(financeType.getWorkflowId());
+			
+			boolean isRcdType = false;
+			
+			if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				finTypeReceiptMode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				finTypeReceiptMode.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (financeType.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				finTypeReceiptMode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+			
+			if ("saveOrUpdate".equals(method) && isRcdType) {
+				finTypeReceiptMode.setNewRecord(true);
+			}
+			
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+			
+			finTypeReceiptMode.setRecordStatus(financeType.getRecordStatus());
+			finTypeReceiptMode.setUserDetails(financeType.getUserDetails());
+			finTypeReceiptMode.setLastMntOn(financeType.getLastMntOn());
+			finTypeReceiptMode.setLastMntBy(financeType.getLastMntBy());
+			
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					finTypeReceiptMode.getBefImage(), finTypeReceiptMode));
+		}
+		
+		logger.debug("Leaving");
+		
 		return auditDetails;
 	}
 
@@ -2013,6 +2217,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	public String getAllowedRepayMethods(String finType) {
 		return getFinanceTypeDAO().getAllowedRepayMethods(finType, " ");
 
+	}
+
+	public FinTypeReceiptModesDAO getFinTypeReceiptModesDAO() {
+		return finTypeReceiptModesDAO;
+	}
+
+	public void setFinTypeReceiptModesDAO(FinTypeReceiptModesDAO finTypeReceiptModesDAO) {
+		this.finTypeReceiptModesDAO = finTypeReceiptModesDAO;
 	}
 
 }

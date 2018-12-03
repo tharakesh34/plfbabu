@@ -3297,6 +3297,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
 			receiptModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
+			/*receiptModes.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_NACH, Labels.getLabel("label_ReceiptMode_NACH")));*/
 		}
 		return receiptModes;
 	}

@@ -271,6 +271,7 @@ import com.pennant.backend.model.finance.psl.PSLWeakerSection;
 import com.pennant.backend.model.financemanagement.FileBatchStatus;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinSuspHold;
+import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.financemanagement.ManagerCheque;
@@ -2959,16 +2960,22 @@ public class PennantJavaUtil {
 						new Object[][] { { "FinIsActive", "0", 0 }, { "ClosingStatus", "1", "C" } }, 350));
 		
 		//Indemnity Report
-				ModuleUtil.register("BankInfoDetail",
-						new ModuleMapping("BankInfoDetail", BankInfoDetail.class,
-								new String[] { "BankInfoDetail", "BankInfoDetail_View" }, null, new String[] { "" },
-								null , 350));
+		ModuleUtil.register("BankInfoDetail",
+				new ModuleMapping("BankInfoDetail", BankInfoDetail.class,
+						new String[] { "BankInfoDetail", "BankInfoDetail_View" }, null, new String[] { "" },
+						null , 350));
 		
-				//Indemnity Report
-				ModuleUtil.register("BankInfoDetail",
-						new ModuleMapping("BankInfoDetail", BankInfoSubDetail.class,
-								new String[] { "BankInfoDetail", "BankInfoDetail" }, null, new String[] { "" },
-								null, 350));
+		//Indemnity Report
+		ModuleUtil.register("BankInfoSubDetail",
+				new ModuleMapping("BankInfoSubDetail", BankInfoSubDetail.class,
+						new String[] { "BankInfoSubDetail", "BankInfoSubDetail" }, null, new String[] { "" },
+						null, 350));
+		
+		//Indemnity Report
+		ModuleUtil.register("FinTypeReceiptModes",
+				new ModuleMapping("FinTypeReceiptModes", FinTypeReceiptModes.class,
+						new String[] { "FinTypeReceiptModes", "FinTypeReceiptModes_View" }, masterWF,
+						new String[] { "FinType", "ReceiptMode" }, null, 300));
 				
 				//Receipt Upload 
 				ModuleUtil.register("ReceiptUploadHeader", new ModuleMapping("ReceiptUploadHeader", ReceiptUploadHeader.class, new String[] { "ReceiptUploadHeader",

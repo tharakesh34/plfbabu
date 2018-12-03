@@ -72,6 +72,19 @@ public class ReceiptReport implements Serializable {
 	private String terminationAmt = "0";
 	private String others = "0";
 	
+	// User Branch Address Details
+	private String branchAddrLine1;
+	private String branchAddrLine2;
+	private String branchAddrHNbr;
+	private String branchAddrFlatNo;
+	private String branchAddrStreet;
+	private String branchAddrCountry;
+	private String branchAddrCity;
+	private String branchAddrProvince;
+	private String branchAddrDistrict;
+	private String branchAddrPincode;
+	private String branchPhone;
+	
 	public ReceiptReport() {
 		super();
 	}
@@ -275,4 +288,94 @@ public class ReceiptReport implements Serializable {
 	public void setTransactionRef(String transactionRef) {
 		this.transactionRef = transactionRef;
 	}
+
+	public String getBranchAddrLine1() {
+		return branchAddrLine1;
+	}
+
+	public void setBranchAddrLine1(String branchAddrLine1) {
+		this.branchAddrLine1 = branchAddrLine1;
+	}
+
+	public String getBranchAddrLine2() {
+		return branchAddrLine2;
+	}
+
+	public void setBranchAddrLine2(String branchAddrLine2) {
+		this.branchAddrLine2 = branchAddrLine2;
+	}
+
+	public String getBranchAddrHNbr() {
+		return branchAddrHNbr;
+	}
+
+	public void setBranchAddrHNbr(String branchAddrHNbr) {
+		this.branchAddrHNbr = branchAddrHNbr;
+	}
+
+	public String getBranchAddrFlatNo() {
+		return branchAddrFlatNo;
+	}
+
+	public void setBranchAddrFlatNo(String branchAddrFlatNo) {
+		this.branchAddrFlatNo = branchAddrFlatNo;
+	}
+
+	public String getBranchAddrStreet() {
+		return branchAddrStreet;
+	}
+
+	public void setBranchAddrStreet(String branchAddrStreet) {
+		this.branchAddrStreet = branchAddrStreet;
+	}
+
+	public String getBranchAddrCountry() {
+		return branchAddrCountry;
+	}
+
+	public void setBranchAddrCountry(String branchAddrCountry) {
+		this.branchAddrCountry = branchAddrCountry;
+	}
+
+	public String getBranchAddrCity() {
+		return branchAddrCity;
+	}
+
+	public void setBranchAddrCity(String branchAddrCity) {
+		this.branchAddrCity = branchAddrCity;
+	}
+
+	public String getBranchAddrProvince() {
+		return branchAddrProvince;
+	}
+
+	public void setBranchAddrProvince(String branchAddrProvince) {
+		this.branchAddrProvince = branchAddrProvince;
+	}
+
+	public String getBranchAddrDistrict() {
+		return branchAddrDistrict;
+	}
+
+	public void setBranchAddrDistrict(String branchAddrDistrict) {
+		this.branchAddrDistrict = branchAddrDistrict;
+	}
+
+	public String getBranchAddrPincode() {
+		return branchAddrPincode;
+	}
+
+	public void setBranchAddrPincode(String branchAddrPincode) {
+		this.branchAddrPincode = branchAddrPincode;
+	}
+
+	public String getBranchPhone() {
+		return branchPhone;
+	}
+
+	public void setBranchPhone(String branchPhone) {
+		this.branchPhone = branchPhone;
+	}
+	
+	
 }

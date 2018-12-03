@@ -107,6 +107,7 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal oDChargeAmtOrPerc = BigDecimal.ZERO;
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
+	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
 
 	private String oDRuleCode;
 	
@@ -405,7 +406,15 @@ public class FinODDetails implements java.io.Serializable {
 	public void setRcdAction(String rcdAction) {
 		this.rcdAction = rcdAction;
 	}
+	
+	public BigDecimal getoDMinCapAmount() {
+		return oDMinCapAmount;
+	}
 
+	public void setoDMinCapAmount(BigDecimal oDMinCapAmount) {
+		this.oDMinCapAmount = oDMinCapAmount;
+	}
+	
 	public String getODRuleCode() {
 		return oDRuleCode;
 	}

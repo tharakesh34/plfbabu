@@ -2523,6 +2523,7 @@
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="branchService" ref="branchService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->

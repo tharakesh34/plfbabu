@@ -3007,6 +3007,7 @@
 		<property name="finTypeExpenseService" ref="finTypeExpenseService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="irrFinanceTypeDAO" ref="irrFinanceTypeDAO" />
+		<property name="finTypeReceiptModesDAO" ref="finTypeReceiptModesDAO" />
 	</bean>
 
 	<bean id="finTypeAccountDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypeAccountDAOImpl" parent="basicDao" />
@@ -9180,6 +9181,9 @@
 
 	<!--=== IRR Finance Type === -->
 	<bean id="irrFinanceTypeDAO" class="com.pennant.backend.dao.applicationmaster.impl.IRRFinanceTypeDAOImpl" parent="basicDao" />
+
+	<!--=== Finance Type Receipt Modes === -->
+	<bean id="finTypeReceiptModesDAO" class="com.pennant.backend.dao.finance.impl.FinTypeReceiptModesDAOImpl" parent="basicDao" />
 
 	<!--============ Caste Details ============== -->
 	<bean id="casteDAO" class="com.pennant.backend.dao.systemmasters.impl.CasteDAOImpl" parent="sequenceDao" />

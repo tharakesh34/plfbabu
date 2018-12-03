@@ -440,7 +440,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		finODDetail.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
 		finODDetail.setODRuleCode(penaltyRate.getODRuleCode());
-
+		finODDetail.setoDMinCapAmount(penaltyRate.getoDMinCapAmount());
+		
 		return finODDetail;
 	}
 

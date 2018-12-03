@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -232,6 +233,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String lovDescDftStepPolicyName;
 	private String remarks;
 	private List<FinTypeVASProducts> finTypeVASProductsList;
+	private List<FinTypeReceiptModes> finTypeReceiptModesList = new ArrayList<>();
 
 	// Suspend details 
 	private String finSuspTrigger;
@@ -338,6 +340,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("finTypeAccountingMap");
 		excludeFields.add("finTypeFeesList");
 		excludeFields.add("finTypeVASProductsList");
+		excludeFields.add("finTypeReceiptModesList");
 		excludeFields.add("addrLine1");
 		excludeFields.add("promotionCode");
 		excludeFields.add("promotionDesc");
@@ -2180,5 +2183,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setAlwZeroIntAcc(boolean alwZeroIntAcc) {
 		this.alwZeroIntAcc = alwZeroIntAcc;
 	}
+	
+	public List<FinTypeReceiptModes> getFinTypeReceiptModesList() {
+		return finTypeReceiptModesList;
+	}
 
+	public void setFinTypeReceiptModesList(List<FinTypeReceiptModes> finTypeReceiptModesList) {
+		this.finTypeReceiptModesList = finTypeReceiptModesList;
+	}
 }

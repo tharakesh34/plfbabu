@@ -600,6 +600,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox lPPRule; // autoWired
 	protected Checkbox oDAllowWaiver;
 	protected Decimalbox oDMaxWaiverPerc;
+	protected Row row_ODMinCapAmount;
+	protected Decimalbox oDMinCapAmount;
+	
 	//###_0.3
 	protected Row row_EligibilityMethod;
 	protected ExtendedCombobox eligibilityMethod;
@@ -4046,6 +4049,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
+				this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
 			} else {
 				this.applyODPenalty.setChecked(false);
 				this.gb_OverDuePenalty.setVisible(false);
@@ -4470,6 +4474,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.btnBuildSchedule.setVisible(false);
 		}
 
+		//
+		if(ImplementationConstants.ALW_LPP_MIN_CAP_AMT){
+			this.row_ODMinCapAmount.setVisible(true);
+		}
+		
 		try {
 			// fill the components with the data
 			if (StringUtils.isEmpty(moduleDefiner)) {
@@ -5630,6 +5639,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.oDMaxWaiverPerc.isDisabled()) {
 				this.oDMaxWaiverPerc.setConstraint(new PTDecimalValidator(
 						Labels.getLabel("label_FinanceMainDialog_ODMaxWaiver.value"), 2, true, false, 100));
+			}
+			
+			if (!this.oDMinCapAmount.isDisabled()) {
+				this.oDMinCapAmount.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_FinanceMainDialog_ODMinCapAmount.value"), 2, false, false));
 			}
 
 			if (!this.oDGraceDays.isReadonly()) {
@@ -12066,6 +12080,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			try {
+				penaltyRate.setoDMinCapAmount(this.oDMinCapAmount.getValue() == null ? BigDecimal.ZERO
+							: this.oDMinCapAmount.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		//FinanceMain Details Tab ---> 5. DDA Registration Details
@@ -14647,6 +14667,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.lPPRule);
 		readOnlyComponent(true, this.oDAllowWaiver);
 		readOnlyComponent(true, this.oDMaxWaiverPerc);
+		readOnlyComponent(true, this.oDMinCapAmount);
 
 		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
@@ -16663,10 +16684,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDAllowWaiver"), this.oDAllowWaiver);
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDAllowWaiver"), this.lPPRule);
 			this.oDGraceDays.setReadonly(isReadOnly("FinanceMainDialog_oDGraceDays"));
+			readOnlyComponent(isReadOnly("FinanceMainDialog_oDMinCapAmount"), this.oDMinCapAmount);
 
 			if (checkAction) {
 				readOnlyComponent(true, this.oDChargeAmtOrPerc);
 				readOnlyComponent(true, this.oDMaxWaiverPerc);
+				readOnlyComponent(true, this.oDMinCapAmount);
 				readOnlyComponent(true, this.oDChargeCalOn);
 				readOnlyComponent(true, this.oDIncGrcDays);
 				this.space_oDChargeCalOn.setSclass("");
@@ -16684,6 +16707,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.oDChargeAmtOrPerc);
 			readOnlyComponent(true, this.oDAllowWaiver);
 			readOnlyComponent(true, this.oDMaxWaiverPerc);
+			readOnlyComponent(true, this.oDMinCapAmount);
 
 			checkAction = true;
 		}
@@ -16696,6 +16720,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 			this.oDAllowWaiver.setChecked(false);
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
+			this.oDMinCapAmount.setValue(BigDecimal.ZERO);
 		} else {
 			this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
 			fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
@@ -16706,6 +16731,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
 			this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 			this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
+			this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
 			this.lPPRule.setValue(penaltyRate.getODRuleCode());
 		}
 

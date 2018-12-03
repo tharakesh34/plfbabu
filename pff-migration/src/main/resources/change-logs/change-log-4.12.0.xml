@@ -2604,4 +2604,198 @@ UNION ALL
 
 </createView>
 </changeSet>
+
+<changeSet author="Vinay" id="23">
+		<createTable tableName="FinTypeReceiptModes">
+			<column name="FinType" type="nvarchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ReceiptMode" type="nvarchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="Vinay" id="24">
+		<createTable tableName="FinTypeReceiptModes_Temp">
+			<column name="FinType" type="nvarchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ReceiptMode" type="nvarchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="25" author="Vinay">
+		<createView viewName="FinTypeReceiptModes_AView" replaceIfExists="true">
+			SELECT   FinType, ReceiptMode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,
+       		 NextTaskId, RecordType, WorkflowId FROM   FinTypeReceiptModes T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="26" author="Vinay">
+		<createView viewName="FinTypeReceiptModes_View" replaceIfExists="true">
+			SELECT   FinType, ReceiptMode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,
+        NextTaskId, RecordType, WorkflowId FROM   FinTypeReceiptModes_Temp 
+		UNION ALL
+		SELECT   FinType, ReceiptMode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,
+        NextTaskId, RecordType, WorkflowId FROM   FinTypeReceiptModes T1
+        WHERE     NOT EXISTS   (SELECT     1  FROM          FinTypeReceiptModes_Temp WHERE    
+			  FinType = T1.FinType AND ReceiptMode = T1.ReceiptMode)  
+    
+		</createView>
+	</changeSet>
+	
+	<changeSet id="27" author="Vinay">
+		<addColumn tableName="FinODPenaltyRates">
+			<column name="ODMinCapAmount" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>	
+
+	<changeSet id="28" author="Vinay">
+		<addColumn tableName="FinODPenaltyRates_Temp">
+			<column name="ODMinCapAmount" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>	
+
+	<changeSet id="29" author="Vinay">
+		<addColumn tableName="FinODDetails">
+			<column name="ODMinCapAmount" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>	
+
+	<changeSet id="30.0" author="Vinay">
+		<createView viewName="finodpenaltyrates_aview" replaceIfExists="true">
+			SELECT finodpenaltyrates.finreference,
+		    finodpenaltyrates.fineffectdate,
+		    finodpenaltyrates.applyodpenalty,
+		    finodpenaltyrates.odincgrcdays,
+		    finodpenaltyrates.odchargetype,
+		    finodpenaltyrates.odgracedays,
+		    finodpenaltyrates.odchargecalon,
+		    finodpenaltyrates.odchargeamtorperc,
+		    finodpenaltyrates.odallowwaiver,
+		    finodpenaltyrates.odmaxwaiverperc,
+		    finodpenaltyrates.odrulecode,
+		    finodpenaltyrates.ODMinCapAmount
+		   FROM finodpenaltyrates
+		</createView>
+	</changeSet>
+	
+	<changeSet id="31.0" author="Vinay">
+		<createView viewName="finodpenaltyrates_tview" replaceIfExists="true">
+			SELECT finodpenaltyrates_temp.finreference,
+		    finodpenaltyrates_temp.fineffectdate,
+		    finodpenaltyrates_temp.applyodpenalty,
+		    finodpenaltyrates_temp.odincgrcdays,
+		    finodpenaltyrates_temp.odchargetype,
+		    finodpenaltyrates_temp.odgracedays,
+		    finodpenaltyrates_temp.odchargecalon,
+		    finodpenaltyrates_temp.odchargeamtorperc,
+		    finodpenaltyrates_temp.odallowwaiver,
+		    finodpenaltyrates_temp.odmaxwaiverperc,
+		    finodpenaltyrates_temp.odrulecode,
+		    finodpenaltyrates_temp.ODMinCapAmount
+		   FROM finodpenaltyrates_temp
+		</createView>
+	</changeSet>
+	
+	<changeSet id="32.0" author="Vinay">
+		<createView viewName="finodpenaltyrates_view" replaceIfExists="true">
+			SELECT finodpenaltyrates_temp.finreference,
+		    finodpenaltyrates_temp.fineffectdate,
+		    finodpenaltyrates_temp.applyodpenalty,
+		    finodpenaltyrates_temp.odincgrcdays,
+		    finodpenaltyrates_temp.odchargetype,
+		    finodpenaltyrates_temp.odgracedays,
+		    finodpenaltyrates_temp.odchargecalon,
+		    finodpenaltyrates_temp.odchargeamtorperc,
+		    finodpenaltyrates_temp.odallowwaiver,
+		    finodpenaltyrates_temp.odmaxwaiverperc,
+		    finodpenaltyrates_temp.odrulecode,
+		    finodpenaltyrates_temp.ODMinCapAmount
+		   FROM finodpenaltyrates_temp
+		UNION
+		 SELECT finodpenaltyrates.finreference,
+		    finodpenaltyrates.fineffectdate,
+		    finodpenaltyrates.applyodpenalty,
+		    finodpenaltyrates.odincgrcdays,
+		    finodpenaltyrates.odchargetype,
+		    finodpenaltyrates.odgracedays,
+		    finodpenaltyrates.odchargecalon,
+		    finodpenaltyrates.odchargeamtorperc,
+		    finodpenaltyrates.odallowwaiver,
+		    finodpenaltyrates.odmaxwaiverperc,
+		    finodpenaltyrates.odrulecode,
+		    finodpenaltyrates.ODMinCapAmount
+		   FROM finodpenaltyrates
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM finodpenaltyrates_temp
+		          WHERE finodpenaltyrates_temp.finreference = finodpenaltyrates.finreference))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="33" author="Vinay">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_oDMinCapAmount','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_oDMinCapAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='OD_ODMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_oDMinCapAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MAINTAINBASIC_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_oDMinCapAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_oDMinCapAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_oDMinCapAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="34" author="Vinay">
+		<addColumn tableName="FinODPenaltyRates_Log">
+			<column name="ODMinCapAmount" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>	
+	
+	<changeSet id="35" author="Vinay">
+		<addPrimaryKey tableName="FinTypeReceiptModes" columnNames="FinType,ReceiptMode"/>
+	</changeSet>
+	
+	<changeSet id="36" author="Vinay">
+		<sql>
+			insert into fintypereceiptmodes
+			Select fintype,'CHEQUE',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'CASH',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'DD',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'NEFT',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'RTGS',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'IMPS',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'EXCESS',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes UNION ALL
+			Select fintype,'ESCROW',1,1000,current_timestamp,'Approved',null,null,null,null,null,0 from rmtfinancetypes;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

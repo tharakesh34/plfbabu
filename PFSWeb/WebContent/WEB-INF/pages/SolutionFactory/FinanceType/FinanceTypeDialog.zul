@@ -1075,7 +1075,7 @@
 												<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="5" />
 											</hbox>
 										</row>
-										<row visible="true">
+										<row id="row_ODMinCapAmount" visible="false" >
 											<label id="label_FinanceTypeDialog_ODMinCapAmount" value="${c:l('label_FinanceTypeDialog_ODMinCapAmount.value')}" />
 											<hbox>
 												<space id="space_ODMinCapAmount" spacing="2px" />
@@ -1105,6 +1105,26 @@
 											<hbox>
 												<textbox id="mandVasProduct" width="170px" readonly="true" />
 												<button id="btnMandatoryVasProduct" image="/images/icons/LOVSearch.png" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="gb_ReceiptModes" visible="true">
+								<caption label="${c:l('label_gp_FinanceTypeDialog_ReceiptModes')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row visible="true">
+											<label id="label_FinanceTypeDialog_ReceiptModes" value="${c:l('label_FinanceTypeDialog_ReceiptModes.value')}" />
+											<hbox>
+												<textbox id="alwdReceiptModes" width="170px" readonly="true" />
+												<button id="btnAlwReceiptModes" image="/images/icons/LOVSearch.png" />
 											</hbox>
 										</row>
 									</rows>

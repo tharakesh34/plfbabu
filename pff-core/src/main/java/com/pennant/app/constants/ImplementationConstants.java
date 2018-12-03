@@ -141,5 +141,9 @@ public class ImplementationConstants {
 	// 2. FULL_ADJ : Full Adjustment(100%)
 	// 3. REQ_ADJ : Requested Adjustment based on Utilization
 	public static final String COLLATERAL_ADJ = "NO_ADJ";
+	
+	// In Penalty Calculation , If calculated amount is less than cap amount
+	// Need to rest amount with CAP amount only
+	public static final boolean ALW_LPP_MIN_CAP_AMT = false;
 
 }

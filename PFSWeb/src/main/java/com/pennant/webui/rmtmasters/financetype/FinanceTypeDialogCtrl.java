@@ -121,6 +121,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -374,6 +375,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Decimalbox oDChargeAmtOrPerc; // autoWired
 	protected Checkbox oDAllowWaiver; // autoWired
 	protected Decimalbox oDMaxWaiverPerc; // autoWired
+	protected Row row_ODMinCapAmount; // autoWired
 	protected Decimalbox oDMinCapAmount; // autoWired
 	protected ExtendedCombobox lPPRule; // autoWired
 
@@ -395,6 +397,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Label label_FinanceTypeDialog_ODChargeAmtOrPerc;
 	protected Label label_FinanceTypeDialog_LPPRULE;
 
+	protected Groupbox gb_ReceiptModes;
+	protected Textbox alwdReceiptModes;
+	protected Button btnAlwReceiptModes;
+	private List<FinTypeReceiptModes> finTypeReceiptModesList = null;
+	
 	// Accounting SetUp Details Tab
 
 	protected Row row_ProgCliamEvent; // autoWired
@@ -1001,6 +1008,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.advEMIDftTerms.setMaxlength(3);
 		this.advEMIMaxTerms.setMaxlength(3);
 		this.advEMIMinTerms.setMaxlength(3);
+		
+		//Allow Minimum Cap Amount
+		this.row_ODMinCapAmount.setVisible(ImplementationConstants.ALW_LPP_MIN_CAP_AMT);
 		logger.debug("Leaving");
 
 	}
@@ -1568,6 +1578,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.finSuspTrigger, suspTrigger, PennantStaticListUtil.getSuspendedTriggers(), "");
 		// FinTypeVasProducts
 		doFillAlwVasProductDetails(aFinanceType.getFinTypeVASProductsList());
+		// FinTypeReceiptModes
+		doFillAlwReceiptModess(aFinanceType.getFinTypeReceiptModesList());
 
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			doFillAlwIRRCodesDetails(aFinanceType.getIrrFinanceTypeList());
@@ -4292,6 +4304,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowManualSteps.setDisabled(isTrue);
 		this.dftStepPolicy.setDisabled(isTrue);
 		this.btnMandatoryVasProduct.setDisabled(isTrue);
+		this.btnAlwReceiptModes.setDisabled(isTrue);
 		this.btnAlwVasProducts.setDisabled(isTrue);
 
 		// Profit on past Due
@@ -4518,6 +4531,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDMinCapAmount.setDisabled(true);
 		this.alwdVasProduct.setValue("");
 		this.mandVasProduct.setValue("");
+		this.alwdReceiptModes.setValue("");
 
 		// Stepping Details
 		this.stepFinance.setChecked(false);
@@ -4584,6 +4598,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setFinTypeVASProductsList(getFinTypeVASProductsList());
 		} else {
 			aFinanceType.setFinTypeVASProductsList(null);
+		}
+		
+		//Fin Type Receipt Modes
+		fetchReceiptModes();
+		if (getFinTypeReceiptModesList() != null && !getFinTypeReceiptModesList().isEmpty()) {
+			aFinanceType.setFinTypeReceiptModesList(getFinTypeReceiptModesList());
+		} else {
+			aFinanceType.setFinTypeReceiptModesList(null);
 		}
 
 		//IRR codes
@@ -4701,6 +4723,28 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			String operationRefs = getServiceOperations(taskId, aFinanceType);
 
+			if (aFinanceType.getFinTypeReceiptModesList() != null && !aFinanceType.getFinTypeReceiptModesList().isEmpty()) {
+				for (FinTypeReceiptModes details : finTypeReceiptModesList) {
+					if (StringUtils.isNotBlank(details.getRecordType())) {
+						details.setFinType(aFinanceType.getFinType());
+						details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+						details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						details.setRecordStatus(aFinanceType.getRecordStatus());
+						details.setWorkflowId(aFinanceType.getWorkflowId());
+						details.setTaskId(taskId);
+						details.setNextTaskId(nextTaskId);
+						details.setRoleCode(getRole());
+						details.setNextRoleCode(nextRoleCode);
+						if (PennantConstants.RECORD_TYPE_DEL.equals(aFinanceType.getRecordType())) {
+							if (StringUtils.trimToNull(details.getRecordType()) == null) {
+								details.setRecordType(aFinanceType.getRecordType());
+								details.setNewRecord(true);
+							}
+						}
+					}
+				}
+			}
+			
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
@@ -6643,6 +6687,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDMinCapAmount.setErrorMessage("");
 		this.alwdVasProduct.setErrorMessage("");
 		this.mandVasProduct.setErrorMessage("");
+		this.alwdReceiptModes.setErrorMessage("");
 
 		// Stepping Details
 		this.lovDescStepPolicyCodename.setErrorMessage("");
@@ -7294,7 +7339,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-
+	
 	/**
 	 * Method for processing Vas product details
 	 * 
@@ -7541,6 +7586,155 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving");
 	}
 
+	/**
+	 * Method for selecting Receipt Modes for the Loan Type
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnAlwReceiptModes(Event event) throws Exception {
+		logger.debug("Entering");
+		
+		setReceiptModes();
+		
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method for processing Vas product details
+	 * 
+	 * @param isAlwReceipts
+	 */
+	private void setReceiptModes() {
+		logger.debug("Entering");
+
+		this.alwdReceiptModes.setConstraint("");
+		this.alwdReceiptModes.setErrorMessage("");
+
+		String selectedValues = null;
+		selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog,
+				PennantStaticListUtil.getReceiptModes(), this.alwdReceiptModes.getValue(), null);
+		if (selectedValues != null) {
+			this.alwdReceiptModes.setValue(selectedValues);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Method Used for set list of values been class to components VAS Products list
+	 * 
+	 * @param FinTypeVASProducts
+	 */
+	private void doFillAlwReceiptModess(List<FinTypeReceiptModes> finTypeReceiptModes) {
+		logger.debug("Entering");
+
+		setFinTypeReceiptModesList(finTypeReceiptModes);
+		if (finTypeReceiptModes == null || finTypeReceiptModes.isEmpty()) {
+			return;
+		}
+
+		String tempReceiptMode = "";
+		for (FinTypeReceiptModes receiptModes : finTypeReceiptModes) {
+			if (!StringUtils.equals(receiptModes.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+				if (StringUtils.isEmpty(tempReceiptMode)) {
+					tempReceiptMode = receiptModes.getReceiptMode();
+				} else {
+					tempReceiptMode = tempReceiptMode.concat(",").concat(receiptModes.getReceiptMode());
+				}
+			}
+		}
+		this.alwdReceiptModes.setValue(tempReceiptMode);
+
+		logger.debug("Entering");
+	}
+	
+	/**
+	 * Method for Used for render the Data from List
+	 * 
+	 * @param cmtFlagDetailList
+	 */
+	private void fetchReceiptModes() {
+		logger.debug("Entering");
+
+		Map<String, FinTypeReceiptModes> receiptModesMap = new HashMap<>();
+
+		List<String> finReceiptModes = Arrays.asList(this.alwdReceiptModes.getValue().split(","));
+		if (this.finTypeReceiptModesList == null) {
+			this.finTypeReceiptModesList = new ArrayList<>();
+		}
+
+		// Prepare Map with Existing List
+		for (FinTypeReceiptModes finTypeReceiptModes : finTypeReceiptModesList) {
+			receiptModesMap.put(finTypeReceiptModes.getReceiptMode(), finTypeReceiptModes);
+		}
+
+		for (String reciptModes : finReceiptModes) {
+			if (StringUtils.isEmpty(reciptModes)) {
+				continue;
+			}
+
+			// Check object is already exists in saved list or not
+			if (receiptModesMap.containsKey(reciptModes)) {
+				// Do Nothing
+
+				// Removing from map to identify existing modifications
+				boolean isDelete = false;
+				if (this.userAction.getSelectedItem() != null) {
+					if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+							|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+							|| this.userAction.getSelectedItem().getLabel().contains("Decline")) {
+						isDelete = true;
+					}
+				}
+
+				if (!isDelete) {
+					receiptModesMap.remove(reciptModes);
+				}
+			} else {
+				FinTypeReceiptModes aFinTypeReceiptModes = new FinTypeReceiptModes();
+
+				aFinTypeReceiptModes.setReceiptMode(reciptModes);
+				aFinTypeReceiptModes.setNewRecord(true);
+				aFinTypeReceiptModes.setVersion(1);
+				aFinTypeReceiptModes.setRecordType(PennantConstants.RCD_ADD);
+
+				this.finTypeReceiptModesList.add(aFinTypeReceiptModes);
+			}
+		}
+
+		// Removing unavailable records from DB by using Workflow details
+		for (int i = 0; i < finTypeReceiptModesList.size(); i++) {
+			FinTypeReceiptModes finTypeReceiptModes = finTypeReceiptModesList.get(i);
+
+			boolean oldReceiptMode = finTypeReceiptModes.isNew();
+
+			if (receiptModesMap.containsKey(finTypeReceiptModes.getReceiptMode())) {
+
+				if (StringUtils.isBlank(finTypeReceiptModes.getRecordType())) {
+					finTypeReceiptModes.setNewRecord(true);
+					finTypeReceiptModes.setVersion(finTypeReceiptModes.getVersion() + 1);
+					finTypeReceiptModes.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else {
+					if (!StringUtils.equals(finTypeReceiptModes.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+						finTypeReceiptModes.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+					}
+				}
+			} else {
+
+				if (StringUtils.isEmpty(finTypeReceiptModes.getRecordType())
+						&& !StringUtils.equals(finTypeReceiptModes.getRecordType(), PennantConstants.RCD_ADD)) {
+					if (oldReceiptMode != finTypeReceiptModes.isNewRecord()) {
+						finTypeReceiptModes.setNewRecord(true);
+						finTypeReceiptModes.setVersion(finTypeReceiptModes.getVersion() + 1);
+						finTypeReceiptModes.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					}
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+	
 	private void doStoreEventDetails() {
 		List<AccountEngineEvent> accEventsList = getAccountingEvents();
 		this.eventDetailMap.clear();
@@ -7885,5 +8079,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void setIrrFinanceTypeList(List<IRRFinanceType> irrFinanceTypeList) {
 		this.irrFinanceTypeList = irrFinanceTypeList;
+	}
+
+	public List<FinTypeReceiptModes> getFinTypeReceiptModesList() {
+		return finTypeReceiptModesList;
+	}
+
+	public void setFinTypeReceiptModesList(List<FinTypeReceiptModes> finTypeReceiptModesList) {
+		this.finTypeReceiptModesList = finTypeReceiptModesList;
 	}
 }
