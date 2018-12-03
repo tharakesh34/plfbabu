@@ -122,14 +122,14 @@ public class ImplementationConstants {
 	// BPI on Deduct from disbursement is Incomized or Receivable
 	public static final boolean BPI_INCOMIZED_ON_ORG = true;
 
-	// Allow Schedule Recalculation lock period Changes
+	// Allow Schedule Recalculation lock period Changes.
 	public static final boolean ALW_SCH_RECAL_LOCK = false;
 
-	// LPP Calculation on RULE FIXED
-	public static final boolean ALW_LPP_RULE_FIXED = false;
+	// LPP Calculation on RULE FIXED .ONLY FOR FGROUP IT SHOULD BE TRUE
+	public static final boolean ALW_LPP_RULE_FIXED = true;
 
-	// Auto Cancellation of Loans after "N" Days Allowed
-	public static final boolean ALW_LOAN_AUTO_CANCEL = false;
+	// Auto Cancellation of Loans after "N" Days Allowed.ONLY FOR FGROUP IT SHOULD BE TRUE
+	public static final boolean ALW_LOAN_AUTO_CANCEL = true;
 
 	// Capitalizing on Lock Period of Schedule Profit Balance
 	// 1. TRUE : Default Capitalize Balance amount when Applicable Capitalization
