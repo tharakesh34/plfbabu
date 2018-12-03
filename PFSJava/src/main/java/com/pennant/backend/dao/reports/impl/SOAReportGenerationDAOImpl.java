@@ -113,7 +113,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(
 				" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType, FixedRateTenor,");
 		selectSql.append(
-				" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin ");
+				" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin, advemiterms,advanceemi,MaturityDate ");
 		selectSql.append(" FROM  FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -1089,4 +1089,25 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		return feeWaiverDetails;
 	}
 
+	@Override
+	public List<String> getCustLoanDetails(long custID) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustID", custID);
+		List<String> list = null;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select finReference from FinanceMain ");
+		sql.append(" Where CustId = :CustID");
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			list = this.jdbcTemplate.queryForList(sql.toString(), source, String.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION);
+		} finally {
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+
+		return list;
+	}
 }

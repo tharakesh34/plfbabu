@@ -205,6 +205,9 @@ public class StatementOfAccount {
 	//API Purpose
 	private WSReturnStatus returnStatus;
 
+	//Customer Loan Refrence Details
+	private List<String> custFinRefDetails = new ArrayList<String>();
+
 	/**
 	 * Default Constructor
 	 */
@@ -1059,6 +1062,14 @@ public class StatementOfAccount {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public List<String> getCustFinRefDetails() {
+		return custFinRefDetails;
+	}
+
+	public void setCustFinRefDetails(List<String> custFinRefDetails) {
+		this.custFinRefDetails = custFinRefDetails;
 	}
 
 }

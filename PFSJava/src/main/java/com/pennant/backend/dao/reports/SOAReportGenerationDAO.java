@@ -131,4 +131,7 @@ public interface SOAReportGenerationDAO {
 	List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference);
 
 	List<FeeWaiverDetail> getFeeWaiverDetail(String finReference);
+
+	List<String> getCustLoanDetails(long custID);
+
 }

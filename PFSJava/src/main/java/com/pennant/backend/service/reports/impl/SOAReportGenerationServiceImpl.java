@@ -209,9 +209,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference) {
 		return this.soaReportGenerationDAO.getCustOtherFinDetails(custID, finReference);
 	}
-
 	public void setSoaReportGenerationDAO(SOAReportGenerationDAO soaReportGenerationDAO) {
 		this.soaReportGenerationDAO = soaReportGenerationDAO;
+	}
+
+	private List<String> getCustLoanDetails(long custID) {
+		return this.soaReportGenerationDAO.getCustLoanDetails(custID);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -219,8 +222,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate) {
 		logger.debug("Entering");
 		long custId = 0;
+		boolean finRefs = false;
 		List<ApplicantDetail> applicantDetails = null;
 		List<OtherFinanceDetail> otherFinanceDetails = null;
+		List<OtherFinanceDetail> otherFinanceRefDetails = null;
+		List<String> custFinRefDetails = null;
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
 
@@ -242,6 +248,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setFinStartDate(financeProfitDetail.getFinStartDate());
 			statementOfAccount.setLinkedFinRef(financeProfitDetail.getLinkedFinRef());
 			statementOfAccount.setClosedlinkedFinRef(financeProfitDetail.getClosedlinkedFinRef());
+
+
 			//BFSD Related
 			statementOfAccount.setFinPurpose(financeProfitDetail.getFinPurpose());
 			statementOfAccount.setCurrentDate(DateUtility.getAppDate());
@@ -272,6 +280,19 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setNextRpyPft(
 					PennantApplicationUtil.formateAmount(financeProfitDetail.getNSchdPft(), ccyEditField));
 
+			//Rate Code will be displayed when Referential Rate is selected against the loan
+			String plrRate = statementOfAccount.getPlrRate();
+			statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
+
+			//Including advance EMI terms
+			int tenure = statementOfAccount.getTenure();
+			statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
+
+			// Advance EMI Installments
+			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
+					+ " / " + finMain.getAdvEMITerms());
+
+
 			//get the Customer Details
 			StatementOfAccount statementOfAccountCustDetails = getSOACustomerDetails(custId);
 
@@ -280,6 +301,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Other Finance Details
 			otherFinanceDetails = getCustOtherFinDetails(custId, finReference);
+
+			//Customer information only irrespective of Active and Inactive Finance
+			if (finRefs) {
+				custFinRefDetails = getCustLoanDetails(custId);
+			}
 
 			if (statementOfAccountCustDetails != null) {
 				statementOfAccount.setCustShrtName(
@@ -380,7 +406,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//Transaction Details Filtering
 		for (SOATransactionReport soaTransactionReport : soaTransactionReportsList) {
-
 			if (DateUtility.compare(soaTransactionReport.getTransactionDate(), startDate) >= 0
 					&& DateUtility.compare(soaTransactionReport.getTransactionDate(), endDate) <= 0) {
 
@@ -395,8 +420,22 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaTransactionReport.setCreditAmount(
 						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
 
-				finalSOATransactionReports.add(soaTransactionReport);
 			}
+			else {
+				//AdvanceEMI credit entry with maturity date
+				soaTransactionReport.setFinReference(finReference);
+				soaTransactionReport.setCcyEditField(statementOfAccount.getCcyEditField());
+				soaTransactionReport.setFromDate(finMain.getMaturityDate());
+				soaTransactionReport.setToDate(finMain.getMaturityDate());
+				soaTransactionReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
+
+				soaTransactionReport.setDebitAmount(
+						PennantApplicationUtil.formateAmount(soaTransactionReport.getDebitAmount(), ccyEditField));
+				soaTransactionReport.setCreditAmount(
+						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
+
+			}
+			finalSOATransactionReports.add(soaTransactionReport);
 		}
 		//Get the Selected Loan Types are Adding ValueDate and balance for the SOA Report.
 		List<String> soaFinTypes = getSOAFinTypes();
@@ -479,6 +518,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			interestRateDetails.add(detail);
 		}
 
+
 		//Summary Reports List
 		statementOfAccount.setSoaSummaryReports(soaSummaryDetailsList);
 
@@ -488,11 +528,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Other Finance Details
 		statementOfAccount.setOtherFinanceDetails(otherFinanceDetails);
 
+		//Customer Loan Reference Details
+		statementOfAccount.setOtherFinanceDetails(otherFinanceRefDetails);
+
 		//Co-Applicant/Borrower Details
 		statementOfAccount.setApplicantDetails(applicantDetails);
 
 		//Interest Rate Details
 		statementOfAccount.setInterestRateDetails(interestRateDetails);
+
+		//Customer Finance Refrence Details
+		statementOfAccount.setCustFinRefDetails(custFinRefDetails);
 
 		logger.debug("Leaving");
 		return statementOfAccount;
@@ -572,16 +618,16 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaSummaryReport.setOverDue(overDue);
 
 				soaSummaryReportsList.add(soaSummaryReport);
-
+                
 				due = totalPrincipalSchd;
 				receipt = totalSchdPriPaid;
 
 				overDue = due.subtract(receipt);
-
+                
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Principal Component");
-				soaSummaryReport.setDue(due);
-				soaSummaryReport.setReceipt(receipt);
+				soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
+				soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
 				soaSummaryReport.setOverDue(overDue);
 
 				soaSummaryReportsList.add(soaSummaryReport);
@@ -803,6 +849,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String manualAdvFeeType = "- Payable"; //12
 		String manualAdvPrentmentNotIn = "FeeDesc or Bounce - Due "; //10
 		String manualAdvPrentmentIn = ""; // 11
+        
 
 		//Receipt Header
 		String rHEventExcess = "Payment Received vide ";
@@ -820,6 +867,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String rHPenaltyWaived = "Penalty from customer Waived Off ";
 		String lppWaived = "Penalty from customer Waived Off ";
 		String lpiIWaived = "Penalty Interest from customer Waived Off ";
+
+		//AdvanceEMI Details
+		String advEmiDebitEntry = "Total Disbursement, Advance EMI"; //25
+		String advEmiCreditEntry = "Advance EMI with maturity date"; //26
 
 		SOATransactionReport soaTranReport = null;
 		List<SOATransactionReport> soaTransactionReports = new ArrayList<SOATransactionReport>();
@@ -905,6 +956,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTransactionReports.add(soaTranReport);
 					}
 				}
+
+
 
 				//fore closure Amount 
 				BigDecimal partialPaidAmt = finSchdDetail.getPartialPaidAmt();
@@ -1205,7 +1258,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									soaTranReport.setTransactionDate(receiptDate);
 									if (!(StringUtils.equals("EXCESS", rpaymentType)
 											|| StringUtils.equals("CASH", rpaymentType))) {
-
 										for (PresentmentDetail presentmentDetail : PresentmentDetailsList) {
 											String mandateType = StringUtils
 													.trimToEmpty(presentmentDetail.getMandateType());
@@ -1565,6 +1617,32 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				}
 			}
+			
+			//Advance EMI should be shown on transaction as total disbursement, advance emi debit entry.
+			if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
+				for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {
+					if (financeScheduleDetail.getDisbAmount() != null) {
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(advEmiDebitEntry + finRef);
+						soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
+						soaTranReport.setValueDate(finMain.getFinStartDate());
+						soaTranReport.setDebitAmount(finMain.getAdvanceEMI());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setPriority(25);
+					}
+					soaTransactionReports.add(soaTranReport);
+					break;
+				}
+			}
+
+			//AdvanceEMI credit entry with maturity date
+			soaTranReport = new SOATransactionReport();
+			soaTranReport.setTransactionDate(finMain.getMaturityDate());
+			soaTranReport.setValueDate(finMain.getMaturityDate());
+			soaTranReport.setEvent(advEmiCreditEntry + finRef);
+			soaTranReport.setCreditAmount(finMain.getAdvanceEMI());
+			soaTranReport.setPriority(26);
+			soaTransactionReports.add(soaTranReport);
 
 		}
 
