@@ -2798,4 +2798,25 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="37_Pre" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','fintaxuploadheader');
+			select deps_save_and_drop_dependencies('plf','fintaxuploadheader_temp');
+		</sql>
+	</changeSet>
+	<changeSet id="37" author="aditya">
+	<comment>changing data type of batchreference from varchar to bigint</comment>
+	<modifyDataType tableName="fintaxuploadheader" columnName="batchreference" newDataType="bigint"/>
+	</changeSet>
+	a
+	<changeSet id="38" author="aditya">
+	<comment>changing data type of batchreference from varchar to bigint</comment>
+	<modifyDataType tableName="fintaxuploadheader_temp" columnName="batchreference" newDataType="bigint"/>
+	</changeSet>
+		<changeSet id="37_Post" author="Jayant" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','fintaxuploadheader');
+			select deps_restore_dependencies('plf','fintaxuploadheader_temp');
+		</sql>
+	</changeSet>
 </databaseChangeLog>

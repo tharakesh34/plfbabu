@@ -79,4 +79,9 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="4" author="aditya">
+	<comment>changing data type of batchreference from varchar to bigint</comment>
+	<modifyDataType tableName="adtfintaxuploadheader" columnName="batchreference" newDataType="bigint"/>
+	</changeSet>
 	</databaseChangeLog>
