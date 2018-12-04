@@ -2824,5 +2824,12 @@ UNION ALL
 		<addColumn tableName="RejectFinODPenaltyRates">
 			<column name="ODMinCapAmount" type="decimal(18,0)" defaultValue="0"/>
 		</addColumn>
-	</changeSet>	
+	</changeSet>
+	
+	<changeSet id="40" author="Irfan">
+		<dropColumn tableName="RejectFinODPenaltyRates" columnName="ODRuleCode"/>
+		<addColumn tableName="REJECTFINODPENALTYRATES">
+		<column name="ODRuleCode" type="Varchar2(8)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
