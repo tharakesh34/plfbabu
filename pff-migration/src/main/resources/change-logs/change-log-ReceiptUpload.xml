@@ -1650,5 +1650,12 @@ insert into secrolegroups values((select max(rolegrpid) from secrolegroups)+1,(s
 	 Insert into ERRORDETAILS values ('RU0045','EN','E','Receipt Already exits with given details','Receipt Upload Dedub check validate','Approved',null,null,null,null,null,0,current_timeStamp,1000,3);
 	 </sql>
 	</changeSet>
+	
+	<changeSet id="72" author="Vinay">
+	<comment>Removing right for bulk uploads menu</comment>
+		<sql>
+			delete from secgrouprights where grpid in (select grpid from secgroups where grpcode='External_Upload') and rightid in (select rightid from secrights where rightname='menu_Item_ExternalUpload');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
