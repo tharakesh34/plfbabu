@@ -2819,4 +2819,10 @@ UNION ALL
 			select deps_restore_dependencies('plf','fintaxuploadheader_temp');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="39" author="Vinay">
+		<addColumn tableName="RejectFinODPenaltyRates">
+			<column name="ODMinCapAmount" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>	
 </databaseChangeLog>
