@@ -841,6 +841,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.setAuditModule("FinanceDetail");
 		getAuditHeaderDAO().addAudit(auditHeader);
 
+		//Reset Finance Detail Object for Service Task Verifications
+		rceiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
+		auditHeader.getAuditDetail().setModelData(rceiptData);
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}

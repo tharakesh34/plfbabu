@@ -448,6 +448,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinanceMain befImage;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
+	private long receiptID = 0;
 
 	/**
 	 * default constructor.<br>
@@ -3548,12 +3549,12 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 					Notification notification = new Notification();
-					//notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE); // FIXME Check with siva
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					notification.setModule("RECEIPTS");
-					notification.setSubModule(moduleDefiner);
-					notification.setKeyReference(financeMain.getFinReference());
+					notification.setModule(FinanceConstants.FINSER_EVENT_RECEIPT);
+					notification.setSubModule(FinanceConstants.FINSER_EVENT_RECEIPT);
+					notification.setKeyReference(String.valueOf(receiptID));
 					notification.setStage(financeMain.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
@@ -7028,6 +7029,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				auditHeader = ErrorControl.showErrorDetails(this.window_ReceiptDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
+
+				FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+				receiptID = receiptData.getReceiptHeader().getReceiptID();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
