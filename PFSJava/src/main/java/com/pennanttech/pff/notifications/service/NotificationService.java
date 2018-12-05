@@ -263,7 +263,7 @@ public class NotificationService {
 			return;
 		}
 
-		Map<String, Object> data = null;
+		Map<String, Object> data = new HashMap<>();
 		Map<String, List<String>> emailAndMobiles = null;
 		FinanceDetail financeDetail = null;
 		FinanceMain financeMain = null;
@@ -274,7 +274,7 @@ public class NotificationService {
 		if (object instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) object;
 			financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			data = getTemplateData(financeDetail);
+			data = getTemplateData(financeDetail, null);
 			if ("LOAN_ORG".equals(module)) {
 				module = "LOAN";
 				mailKeyData.setModule(module);
@@ -287,8 +287,7 @@ public class NotificationService {
 
 			finReceiptData = (FinReceiptData) object;
 			financeDetail = finReceiptData.getFinanceDetail();
-			data = getTemplateData(financeDetail);
-			data.putAll(getReceiptTemplateData(finReceiptData.getReceiptHeader()));
+			data = getTemplateData(financeDetail, finReceiptData.getReceiptHeader());
 
 			customerDetails = financeDetail.getCustomerDetails();
 		} else if (object instanceof VehicleDealer) {
@@ -321,6 +320,7 @@ public class NotificationService {
 				if (!emailAlreadySent || !smsAlreadySent) {
 					sendNotification = true;
 				}
+				sendNotification = true;
 			}
 			MailTemplate template = null;
 			if (sendNotification) {
@@ -573,7 +573,7 @@ public class NotificationService {
 	 * @param main
 	 * @return
 	 */
-	private Map<String, Object> getTemplData(FinanceDetail financeDetail) {
+	private HashMap<String, Object> getTemplData(FinanceDetail financeDetail, FinReceiptHeader receiptHeader) {
 		MailTemplateData data = new MailTemplateData();
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 		List<CustomerAddres> custAddressList = financeDetail.getCustomerDetails().getAddressList();
@@ -581,7 +581,7 @@ public class NotificationService {
 		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
 		// Finance Data Preparation For Notifications
-		data.setCustShrtName(main.getCustShrtName());
+		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
 		data.setDownPayment(PennantApplicationUtil.amountFormate(main.getDownPayment(), format));
@@ -655,7 +655,6 @@ public class NotificationService {
 		} else {
 			data.setEffectiveRate("");
 		}
-		data.setCustShrtName(main.getLovDescCustShrtName());
 		data.setCustId(main.getCustID());
 		data.setCustCIF(main.getLovDescCustCIF());
 		data.setFinType(main.getFinType());
@@ -704,35 +703,33 @@ public class NotificationService {
 		data.setRecommendations(recommendations.toString());
 		data.setRecordStatus(main.getRecordStatus());
 		data.setReceiptPurpose(main.getReceiptPurpose());
-		return data.getDeclaredFieldValues();
-	}
 
-	private Map<String, Object> getReceiptTemplateData(FinReceiptHeader header) {
-		MailTemplateData data = new MailTemplateData();
-		int format = CurrencyUtil.getFormat(header.getFinCcy());
-		data.setReceiptAmount(PennantApplicationUtil.amountFormate(header.getReceiptAmount(), format));
-		data.setBounceDate(DateUtility.formatToLongDate(header.getBounceDate()));
-		Date bounceDateValue = header.getBounceDate();
-		if (bounceDateValue != null) {
-			data.setBounceReason(header.getManualAdvise().getBounceCodeDesc());
-		}
-		data.setCancellationReason(header.getCancelReason());
-		Date valueDate = header.getReceiptDate();
-		BigDecimal modeAmount = BigDecimal.ZERO;
-		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
-			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
-				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
-					valueDate = receiptDetail.getReceivedDate();
-					modeAmount = receiptDetail.getAmount();
+		if (receiptHeader != null) {
+			data.setReceiptAmount(PennantApplicationUtil.amountFormate(receiptHeader.getReceiptAmount(), format));
+			data.setBounceDate(DateUtility.formatToLongDate(receiptHeader.getBounceDate()));
+			Date bounceDateValue = receiptHeader.getBounceDate();
+			if (bounceDateValue != null) {
+				data.setBounceReason(receiptHeader.getManualAdvise().getBounceCodeDesc());
+			}
+			data.setCancellationReason(receiptHeader.getCancelReason());
+			Date valueDate = receiptHeader.getReceiptDate();
+			BigDecimal modeAmount = BigDecimal.ZERO;
+			if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
+				for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
+					FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
+					if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+							&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+							&& !StringUtils.equals(receiptDetail.getPaymentType(),
+									RepayConstants.RECEIPTMODE_PAYABLE)) {
+						valueDate = receiptDetail.getReceivedDate();
+						modeAmount = receiptDetail.getAmount();
 
+					}
 				}
 			}
+			data.setValueDate(DateUtility.formatToLongDate(valueDate));
+			data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
 		}
-		data.setValueDate(DateUtility.formatToLongDate(valueDate));
-		data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
 		return data.getDeclaredFieldValues();
 	}
 
@@ -947,7 +944,7 @@ public class NotificationService {
 	}
 
 	// New Methods
-	private Map<String, Object> getTemplateData(FinanceDetail aFinanceDetail) {
+	private HashMap<String, Object> getTemplateData(FinanceDetail aFinanceDetail, FinReceiptHeader receiptHeader) {
 		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
@@ -962,8 +959,7 @@ public class NotificationService {
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
-		declaredFieldValues.putAll(getTemplData(aFinanceDetail));
-
+		declaredFieldValues.putAll(getTemplData(aFinanceDetail, receiptHeader));
 		return declaredFieldValues;
 	}
 

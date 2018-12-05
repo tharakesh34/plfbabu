@@ -448,7 +448,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinanceMain befImage;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
-	private long receiptID = 0;
+	//private long receiptID = 0;
 
 	/**
 	 * default constructor.<br>
@@ -3554,7 +3554,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					notification.setModule(FinanceConstants.FINSER_EVENT_RECEIPT);
 					notification.setSubModule(FinanceConstants.FINSER_EVENT_RECEIPT);
-					notification.setKeyReference(String.valueOf(receiptID));
+					notification.setKeyReference(aFinanceMain.getFinReference());
 					notification.setStage(financeMain.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
@@ -7030,8 +7030,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				auditHeader = ErrorControl.showErrorDetails(this.window_ReceiptDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-				receiptID = receiptData.getReceiptHeader().getReceiptID();
+				/*FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+				receiptID = receiptData.getReceiptHeader().getReceiptID();*/
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;

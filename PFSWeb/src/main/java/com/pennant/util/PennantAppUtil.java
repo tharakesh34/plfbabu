@@ -2290,6 +2290,7 @@ public class PennantAppUtil {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<FinTypeReceiptModes> searchObject = new JdbcSearchObject<FinTypeReceiptModes>(FinTypeReceiptModes.class);
 		searchObject.addSort("FinTypeReceiptModes", false);
+		searchObject.addTabelName("FinTypeReceiptModes");
 		searchObject.addFilterEqual("FinType", finType);
 		searchObject.addField("FinType");
 		searchObject.addField("ReceiptMode");

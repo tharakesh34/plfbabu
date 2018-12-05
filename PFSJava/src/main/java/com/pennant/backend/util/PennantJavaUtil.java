@@ -2953,25 +2953,25 @@ public class PennantJavaUtil {
 				new ModuleMapping("MasterDef", MasterDef.class, new String[] { "master_def", "master_def" }, null,
 						new String[] { "masterType,keyType,keyCode" }, null, 600));
 
-		//Indemnity Report
+		// Indemnity Report
 		ModuleUtil.register("ClosedFinance",
 				new ModuleMapping("ClosedFinance", FinanceMain.class,
 						new String[] { "FinanceMain", "FinanceMain_View" }, null, new String[] { "FinReference","FinType" },
 						new Object[][] { { "FinIsActive", "0", 0 }, { "ClosingStatus", "1", "C" } }, 350));
 		
-		//Indemnity Report
+		// Bank Information Detail
 		ModuleUtil.register("BankInfoDetail",
 				new ModuleMapping("BankInfoDetail", BankInfoDetail.class,
 						new String[] { "BankInfoDetail", "BankInfoDetail_View" }, null, new String[] { "" },
 						null , 350));
 		
-		//Indemnity Report
+		// Bank Info Sub Details
 		ModuleUtil.register("BankInfoSubDetail",
 				new ModuleMapping("BankInfoSubDetail", BankInfoSubDetail.class,
 						new String[] { "BankInfoSubDetail", "BankInfoSubDetail" }, null, new String[] { "" },
 						null, 350));
 		
-		//Indemnity Report
+		// Receipt Modes
 		ModuleUtil.register("FinTypeReceiptModes",
 				new ModuleMapping("FinTypeReceiptModes", FinTypeReceiptModes.class,
 						new String[] { "FinTypeReceiptModes", "FinTypeReceiptModes_View" }, masterWF,

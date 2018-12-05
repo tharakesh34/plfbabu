@@ -88,16 +88,22 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -112,10 +118,13 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -217,8 +226,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	private FinReceiptHeader receiptHeader = null;
 	private ReceiptCancellationListCtrl receiptCancellationListCtrl;
 	private ReceiptCancellationService receiptCancellationService;
+	private CustomerDetailsService customerDetailsService;
+	private FinanceDetailService financeDetailService;
 	private RuleService ruleService;
 	private RuleExecutionUtil ruleExecutionUtil;
+	private NotificationService notificationService;
 	private String module;
 
 	/**
@@ -671,6 +683,38 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 						aReceiptHeader.getNextRoleCode(), aReceiptHeader.getReference(), " Finance ",
 						aReceiptHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
+
+				//Mail Alert Notification for Customer/Dealer/Provider...etc
+				/*if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+
+					Notification notification = new Notification();
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+
+					notification.setModule(FinanceConstants.FINSER_EVENT_RECEIPT);
+					notification.setSubModule(FinanceConstants.FINSER_EVENT_RECEIPT);
+					notification.setKeyReference(aReceiptHeader.getReference());
+					notification.setStage(aReceiptHeader.getRoleCode());
+					notification.setReceivedBy(getUserWorkspace().getUserId());
+					
+					FinanceDetail detail = new FinanceDetail();
+					// Finance Main Details
+					detail.getFinScheduleData().setFinanceMain(getFinanceDetailService().getFinanceMain(aReceiptHeader.getReference(), "_AView"));
+					// Customer Details
+					detail.setCustomerDetails(getCustomerDetailsService().getCustomerById(aReceiptHeader.getCustID()));
+					
+					FinReceiptData receiptData = new FinReceiptData();
+					receiptData.setFinanceDetail(detail);
+					receiptData.setReceiptHeader(aReceiptHeader);
+					try {
+						notificationService.sendNotifications(notification, receiptData, aReceiptHeader.getFinType(),
+								null);
+					} catch (Exception e) {
+						logger.debug(Literal.EXCEPTION, e);
+
+					}
+
+				}*/
 
 				refreshList();
 				closeDialog();
@@ -1575,6 +1619,26 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }
