@@ -2865,4 +2865,10 @@ UNION ALL
 		DELETE FROM templatefields WHERE MODULE = 'FIN' AND field = 'finBranchContact';
 		</sql>
 	</changeSet>
+	<changeSet id="43" author="Siva">
+		<sql>
+		UPDATE FinanceDeviations SET MODULE = 'ELIGIBILITY' WHERE MODULE = 'EILIBILITY';
+		UPDATE DeviationHeader SET MODULE = 'ELIGIBILITY' WHERE MODULE = 'EILIBILITY';
+		</sql>
+	</changeSet>
 </databaseChangeLog>

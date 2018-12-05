@@ -61,7 +61,7 @@ public class DeviationConstants {
 
 	public static final String TY_LOAN = "LOAN";
 	public static final String TY_PRODUCT = "PRODUCT";
-	public static final String TY_ELIGIBILITY = "EILIBILITY";
+	public static final String TY_ELIGIBILITY = "ELIGIBILITY";
 	public static final String TY_CHECKLIST = "CHECKLIST";
 	public static final String TY_FEE = "FEES";
 	public static final String TY_SCORE = "SCORE";
