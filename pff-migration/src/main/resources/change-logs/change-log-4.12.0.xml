@@ -2832,4 +2832,37 @@ UNION ALL
 		<column name="ODRuleCode" type="Varchar2(8)"/>
 		</addColumn>
 	</changeSet>
+	<changeSet id="41" author="Siva">
+		<sql>
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrLine1', 'User branch Address Line1', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrLine2', 'User branch Address Line2', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrHNbr', 'User branch Address House', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrFlatNo', 'User branch Address Flat', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrStreet', 'User branch Address Street', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrCountry', 'User branch Address Country', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrCity', 'User branch Address City', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrProvince', 'User branch Address State', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrDistrict', 'User branch Address District', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchAddrPincode', 'User branch Address Pincode', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'userBranchPhone', 'User branch Address Phone', 'A');
+		
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrLine1', 'Loan branch Address Line1', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrLine2', 'Loan branch Address Line2', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrHNbr', 'Loan branch Address House', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrFlatNo', 'Loan branch Address Flat', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrStreet', 'Loan branch Address Street', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrCountry', 'Loan branch Address Country', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrCity', 'Loan branch Address City', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrProvince', 'Loan branch Address State', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrDistrict', 'Loan branch Address District', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchAddrPincode', 'Loan branch Address Pincode', 'A');
+		INSERT INTO templatefields(module, field, fielddesc, fieldformat) VALUES ('FIN', 'finBranchPhone', 'Loan branch Address Phone', 'A');
+		
+		</sql>
+	</changeSet>
+	<changeSet id="42" author="Siva">
+		<sql>
+		DELETE FROM templatefields WHERE MODULE = 'FIN' AND field = 'finBranchContact';
+		</sql>
+	</changeSet>
 </databaseChangeLog>

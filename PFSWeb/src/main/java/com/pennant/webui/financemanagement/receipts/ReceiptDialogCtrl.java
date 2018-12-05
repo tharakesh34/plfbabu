@@ -3563,9 +3563,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								financeDetail.getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(Literal.EXCEPTION, e);
-
 					}
-
 				}
 
 				// User Notifications Message/Alert
@@ -3594,7 +3592,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-
 				closeDialog();
 			}
 

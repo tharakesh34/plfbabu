@@ -30,6 +30,19 @@ public class MailTemplateData {
 	private String userDepartment;
 	private String appDate;
 
+	// User Branch Address Details
+	private String userBranchAddrLine1;
+	private String userBranchAddrLine2;
+	private String userBranchAddrHNbr;
+	private String userBranchAddrFlatNo;
+	private String userBranchAddrStreet;
+	private String userBranchAddrCountry;
+	private String userBranchAddrCity;
+	private String userBranchAddrProvince;
+	private String userBranchAddrDistrict;
+	private String userBranchAddrPincode;
+	private String userBranchPhone;
+
 	// Existing Beans
 	private String usrName;
 	private String usrRole;
@@ -62,7 +75,6 @@ public class MailTemplateData {
 	private String repaySpecialRate;
 	private String repayMargin;
 	private String finBranch;
-	private String finBranchContact;
 	private String finCcy;
 	private String finDivision;
 	private String accountsOfficerDesc;
@@ -79,6 +91,19 @@ public class MailTemplateData {
 	private String totalProfitBalance;
 	private String nextRepayDate;
 
+	// User Branch Address Details
+	private String finBranchAddrLine1;
+	private String finBranchAddrLine2;
+	private String finBranchAddrHNbr;
+	private String finBranchAddrFlatNo;
+	private String finBranchAddrStreet;
+	private String finBranchAddrCountry;
+	private String finBranchAddrCity;
+	private String finBranchAddrProvince;
+	private String finBranchAddrDistrict;
+	private String finBranchAddrPincode;
+	private String finBranchPhone;
+
 	// existing beans
 	private String numberOfTerms;
 	private String graceTerms;
@@ -89,10 +114,12 @@ public class MailTemplateData {
 	private String finType;
 
 	// Receipts
-	private String paidBy;
-	private String paidAmount;
-	private String paidDetails;
-	private String paidDate;
+	private String amount;
+	private String receiptAmount;
+	private String valueDate;
+	private String bounceDate;
+	private String bounceReason;
+	private String cancellationReason;
 	// ---------------------------------
 
 	// facility
@@ -158,14 +185,6 @@ public class MailTemplateData {
 	private int finCurODDays;
 	private String recordStatus;
 	private String receiptPurpose;
-
-	private String amount;
-	private String receiptAmount;
-	private String valueDate;
-
-	private String bounceDate;
-	private String bounceReason;
-	private String cancellationReason;
 
 	public MailTemplateData() {
 
@@ -541,38 +560,6 @@ public class MailTemplateData {
 
 	public void setTotalProfitBalance(String totalProfitBalance) {
 		this.totalProfitBalance = totalProfitBalance;
-	}
-
-	public String getPaidBy() {
-		return paidBy;
-	}
-
-	public void setPaidBy(String paidBy) {
-		this.paidBy = paidBy;
-	}
-
-	public String getPaidAmount() {
-		return paidAmount;
-	}
-
-	public void setPaidAmount(String paidAmount) {
-		this.paidAmount = paidAmount;
-	}
-
-	public String getPaidDetails() {
-		return paidDetails;
-	}
-
-	public void setPaidDetails(String paidDetails) {
-		this.paidDetails = paidDetails;
-	}
-
-	public String getPaidDate() {
-		return paidDate;
-	}
-
-	public void setPaidDate(String paidDate) {
-		this.paidDate = paidDate;
 	}
 
 	public String getFinReference() {
@@ -1180,14 +1167,6 @@ public class MailTemplateData {
 		this.receiptPurpose = receiptPurpose;
 	}
 
-	public String getFinBranchContact() {
-		return finBranchContact;
-	}
-
-	public void setFinBranchContact(String finBranchContact) {
-		this.finBranchContact = finBranchContact;
-	}
-
 	public String getAmount() {
 		return amount;
 	}
@@ -1250,6 +1229,182 @@ public class MailTemplateData {
 
 	public void setCancellationReason(String cancellationReason) {
 		this.cancellationReason = cancellationReason;
+	}
+
+	public String getFinBranchAddrLine1() {
+		return finBranchAddrLine1;
+	}
+
+	public void setFinBranchAddrLine1(String finBranchAddrLine1) {
+		this.finBranchAddrLine1 = finBranchAddrLine1;
+	}
+
+	public String getFinBranchAddrLine2() {
+		return finBranchAddrLine2;
+	}
+
+	public void setFinBranchAddrLine2(String finBranchAddrLine2) {
+		this.finBranchAddrLine2 = finBranchAddrLine2;
+	}
+
+	public String getFinBranchAddrHNbr() {
+		return finBranchAddrHNbr;
+	}
+
+	public void setFinBranchAddrHNbr(String finBranchAddrHNbr) {
+		this.finBranchAddrHNbr = finBranchAddrHNbr;
+	}
+
+	public String getFinBranchAddrFlatNo() {
+		return finBranchAddrFlatNo;
+	}
+
+	public void setFinBranchAddrFlatNo(String finBranchAddrFlatNo) {
+		this.finBranchAddrFlatNo = finBranchAddrFlatNo;
+	}
+
+	public String getFinBranchAddrStreet() {
+		return finBranchAddrStreet;
+	}
+
+	public void setFinBranchAddrStreet(String finBranchAddrStreet) {
+		this.finBranchAddrStreet = finBranchAddrStreet;
+	}
+
+	public String getFinBranchAddrCountry() {
+		return finBranchAddrCountry;
+	}
+
+	public void setFinBranchAddrCountry(String finBranchAddrCountry) {
+		this.finBranchAddrCountry = finBranchAddrCountry;
+	}
+
+	public String getFinBranchAddrCity() {
+		return finBranchAddrCity;
+	}
+
+	public void setFinBranchAddrCity(String finBranchAddrCity) {
+		this.finBranchAddrCity = finBranchAddrCity;
+	}
+
+	public String getFinBranchAddrProvince() {
+		return finBranchAddrProvince;
+	}
+
+	public void setFinBranchAddrProvince(String finBranchAddrProvince) {
+		this.finBranchAddrProvince = finBranchAddrProvince;
+	}
+
+	public String getFinBranchAddrDistrict() {
+		return finBranchAddrDistrict;
+	}
+
+	public void setFinBranchAddrDistrict(String finBranchAddrDistrict) {
+		this.finBranchAddrDistrict = finBranchAddrDistrict;
+	}
+
+	public String getFinBranchAddrPincode() {
+		return finBranchAddrPincode;
+	}
+
+	public void setFinBranchAddrPincode(String finBranchAddrPincode) {
+		this.finBranchAddrPincode = finBranchAddrPincode;
+	}
+
+	public String getFinBranchPhone() {
+		return finBranchPhone;
+	}
+
+	public void setFinBranchPhone(String finBranchPhone) {
+		this.finBranchPhone = finBranchPhone;
+	}
+
+	public String getUserBranchAddrLine1() {
+		return userBranchAddrLine1;
+	}
+
+	public void setUserBranchAddrLine1(String userBranchAddrLine1) {
+		this.userBranchAddrLine1 = userBranchAddrLine1;
+	}
+
+	public String getUserBranchAddrLine2() {
+		return userBranchAddrLine2;
+	}
+
+	public void setUserBranchAddrLine2(String userBranchAddrLine2) {
+		this.userBranchAddrLine2 = userBranchAddrLine2;
+	}
+
+	public String getUserBranchAddrHNbr() {
+		return userBranchAddrHNbr;
+	}
+
+	public void setUserBranchAddrHNbr(String userBranchAddrHNbr) {
+		this.userBranchAddrHNbr = userBranchAddrHNbr;
+	}
+
+	public String getUserBranchAddrFlatNo() {
+		return userBranchAddrFlatNo;
+	}
+
+	public void setUserBranchAddrFlatNo(String userBranchAddrFlatNo) {
+		this.userBranchAddrFlatNo = userBranchAddrFlatNo;
+	}
+
+	public String getUserBranchAddrStreet() {
+		return userBranchAddrStreet;
+	}
+
+	public void setUserBranchAddrStreet(String userBranchAddrStreet) {
+		this.userBranchAddrStreet = userBranchAddrStreet;
+	}
+
+	public String getUserBranchAddrCountry() {
+		return userBranchAddrCountry;
+	}
+
+	public void setUserBranchAddrCountry(String userBranchAddrCountry) {
+		this.userBranchAddrCountry = userBranchAddrCountry;
+	}
+
+	public String getUserBranchAddrCity() {
+		return userBranchAddrCity;
+	}
+
+	public void setUserBranchAddrCity(String userBranchAddrCity) {
+		this.userBranchAddrCity = userBranchAddrCity;
+	}
+
+	public String getUserBranchAddrProvince() {
+		return userBranchAddrProvince;
+	}
+
+	public void setUserBranchAddrProvince(String userBranchAddrProvince) {
+		this.userBranchAddrProvince = userBranchAddrProvince;
+	}
+
+	public String getUserBranchAddrDistrict() {
+		return userBranchAddrDistrict;
+	}
+
+	public void setUserBranchAddrDistrict(String userBranchAddrDistrict) {
+		this.userBranchAddrDistrict = userBranchAddrDistrict;
+	}
+
+	public String getUserBranchAddrPincode() {
+		return userBranchAddrPincode;
+	}
+
+	public void setUserBranchAddrPincode(String userBranchAddrPincode) {
+		this.userBranchAddrPincode = userBranchAddrPincode;
+	}
+
+	public String getUserBranchPhone() {
+		return userBranchPhone;
+	}
+
+	public void setUserBranchPhone(String userBranchPhone) {
+		this.userBranchPhone = userBranchPhone;
 	}
 
 }

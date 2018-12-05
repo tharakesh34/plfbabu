@@ -28,6 +28,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.SysNotificationDetails;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
@@ -60,6 +61,7 @@ import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
@@ -103,6 +105,7 @@ public class NotificationService {
 	private WorkFlowDetailsService workFlowDetailsService;
 	private NotesService notesService;
 	private DocumentManagerDAO documentManagerDAO;
+	private BranchService branchService;
 
 	@Autowired
 	private VehicleDealerService vehicleDealerService;
@@ -612,7 +615,40 @@ public class NotificationService {
 		data.setUserName(main.getUserDetails().getUserName());
 		data.setUserBranch(main.getUserDetails().getBranchName());
 		data.setUserDepartment(main.getUserDetails().getDepartmentName());
-		data.setFinBranchContact(main.getFinBranchContact());
+
+		// Finance Branch Details
+		Branch branch = getBranchService().getApprovedBranchById(main.getFinBranch());
+		if (branch != null) {
+			data.setFinBranchAddrLine1(branch.getBranchAddrLine1());
+			data.setFinBranchAddrLine2(branch.getBranchAddrLine2());
+			data.setFinBranchAddrHNbr(branch.getBranchAddrHNbr());
+			data.setFinBranchAddrFlatNo(branch.getBranchFlatNbr());
+			data.setFinBranchAddrStreet(branch.getBranchAddrStreet());
+			data.setFinBranchAddrCountry(branch.getBranchCountry());
+			data.setFinBranchAddrCity(branch.getBranchCity());
+			data.setFinBranchAddrProvince(branch.getBranchProvince());
+			data.setFinBranchAddrDistrict("");
+			data.setFinBranchAddrPincode(branch.getPinCode());
+			data.setFinBranchPhone(branch.getBranchTel());
+		}
+
+		// User Branch Details
+		if (!StringUtils.equals(main.getFinBranch(), main.getUserDetails().getBranchCode())) {
+			branch = getBranchService().getApprovedBranchById(main.getUserDetails().getBranchCode());
+		}
+		if (branch != null) {
+			data.setUserBranchAddrLine1(branch.getBranchAddrLine1());
+			data.setUserBranchAddrLine2(branch.getBranchAddrLine2());
+			data.setUserBranchAddrHNbr(branch.getBranchAddrHNbr());
+			data.setUserBranchAddrFlatNo(branch.getBranchFlatNbr());
+			data.setUserBranchAddrStreet(branch.getBranchAddrStreet());
+			data.setUserBranchAddrCountry(branch.getBranchCountry());
+			data.setUserBranchAddrCity(branch.getBranchCity());
+			data.setUserBranchAddrProvince(branch.getBranchProvince());
+			data.setUserBranchAddrDistrict("");
+			data.setUserBranchAddrPincode(branch.getPinCode());
+			data.setUserBranchPhone(branch.getBranchTel());
+		}
 
 		// Customer Address
 		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
@@ -1213,6 +1249,14 @@ public class NotificationService {
 
 	public void setEmailEngine(EmailEngine emailEngine) {
 		this.emailEngine = emailEngine;
+	}
+
+	public BranchService getBranchService() {
+		return branchService;
+	}
+
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
 	}
 
 }
