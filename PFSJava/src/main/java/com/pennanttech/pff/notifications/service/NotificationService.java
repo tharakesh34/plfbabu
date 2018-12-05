@@ -619,17 +619,17 @@ public class NotificationService {
 		// Finance Branch Details
 		Branch branch = getBranchService().getApprovedBranchById(main.getFinBranch());
 		if (branch != null) {
-			data.setFinBranchAddrLine1(branch.getBranchAddrLine1());
-			data.setFinBranchAddrLine2(branch.getBranchAddrLine2());
-			data.setFinBranchAddrHNbr(branch.getBranchAddrHNbr());
-			data.setFinBranchAddrFlatNo(branch.getBranchFlatNbr());
-			data.setFinBranchAddrStreet(branch.getBranchAddrStreet());
-			data.setFinBranchAddrCountry(branch.getBranchCountry());
-			data.setFinBranchAddrCity(branch.getBranchCity());
-			data.setFinBranchAddrProvince(branch.getBranchProvince());
+			data.setFinBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+			data.setFinBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+			data.setFinBranchAddrHNbr(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+			data.setFinBranchAddrFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+			data.setFinBranchAddrStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+			data.setFinBranchAddrCountry(StringUtils.trimToEmpty(branch.getBranchCountry()));
+			data.setFinBranchAddrCity(StringUtils.trimToEmpty(branch.getBranchCity()));
+			data.setFinBranchAddrProvince(StringUtils.trimToEmpty(branch.getBranchProvince()));
 			data.setFinBranchAddrDistrict("");
-			data.setFinBranchAddrPincode(branch.getPinCode());
-			data.setFinBranchPhone(branch.getBranchTel());
+			data.setFinBranchAddrPincode(StringUtils.trimToEmpty(branch.getPinCode()));
+			data.setFinBranchPhone(StringUtils.trimToEmpty(branch.getBranchTel()));
 		}
 
 		// User Branch Details
@@ -637,17 +637,17 @@ public class NotificationService {
 			branch = getBranchService().getApprovedBranchById(main.getUserDetails().getBranchCode());
 		}
 		if (branch != null) {
-			data.setUserBranchAddrLine1(branch.getBranchAddrLine1());
-			data.setUserBranchAddrLine2(branch.getBranchAddrLine2());
-			data.setUserBranchAddrHNbr(branch.getBranchAddrHNbr());
-			data.setUserBranchAddrFlatNo(branch.getBranchFlatNbr());
-			data.setUserBranchAddrStreet(branch.getBranchAddrStreet());
-			data.setUserBranchAddrCountry(branch.getBranchCountry());
-			data.setUserBranchAddrCity(branch.getBranchCity());
-			data.setUserBranchAddrProvince(branch.getBranchProvince());
+			data.setUserBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+			data.setUserBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+			data.setUserBranchAddrHNbr(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+			data.setUserBranchAddrFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+			data.setUserBranchAddrStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+			data.setUserBranchAddrCountry(StringUtils.trimToEmpty(branch.getBranchCountry()));
+			data.setUserBranchAddrCity(StringUtils.trimToEmpty(branch.getBranchCity()));
+			data.setUserBranchAddrProvince(StringUtils.trimToEmpty(branch.getBranchProvince()));
 			data.setUserBranchAddrDistrict("");
-			data.setUserBranchAddrPincode(branch.getPinCode());
-			data.setUserBranchPhone(branch.getBranchTel());
+			data.setUserBranchAddrPincode(StringUtils.trimToEmpty(branch.getPinCode()));
+			data.setUserBranchPhone(StringUtils.trimToEmpty(branch.getBranchTel()));
 		}
 
 		// Customer Address
@@ -723,9 +723,7 @@ public class NotificationService {
 		data.setNextUsrRole(nextRoleCode);
 		data.setPrevUsrRole(main.getLastMntBy());
 		data.setUsrRole(main.getRoleCode());
-		data.setFinPurpose(main.getLovDescFinPurposeName());
 		data.setFinCommitmentRef(main.getFinCommitmentRef());
-		data.setFinBranch(main.getLovDescFinBranchName());
 		data.setRcdMaintainSts(main.getRcdMaintainSts());
 
 		Notes note = new Notes();
@@ -989,8 +987,6 @@ public class NotificationService {
 		// user Details
 		main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
 		main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
-		main.setFinPurpose(main.getLovDescFinPurposeName());
-		main.setFinBranch(main.getLovDescFinBranchName());
 
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());

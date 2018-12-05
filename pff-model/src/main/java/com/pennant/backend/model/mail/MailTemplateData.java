@@ -5,121 +5,120 @@ import java.util.HashMap;
 public class MailTemplateData {
 
 	// Customer Details
-	private String custShrtName;
-	private String custCIF;
-	private String custCoreBank;
-	private String custPanNumber;
-	private String custAadharNumber;
-	private String custMobileNumber;
-	private String custEmailId;
-	private String custAddrLine1;
-	private String custAddrLine2;
-	private String custAddrHNbr;
-	private String custAddrFlatNo;
-	private String custAddrStreet;
-	private String custAddrCountry;
-	private String custAddrCity;
-	private String custAddrProvince;
-	private String custAddrDistrict;
-	private String custAddrPincode;
+	private String custShrtName = "";
+	private String custCIF = "";
+	private String custCoreBank = "";
+	private String custPanNumber = "";
+	private String custAadharNumber = "";
+	private String custMobileNumber = "";
+	private String custEmailId = "";
+	private String custAddrLine1 = "";
+	private String custAddrLine2 = "";
+	private String custAddrHNbr = "";
+	private String custAddrFlatNo = "";
+	private String custAddrStreet = "";
+	private String custAddrCountry = "";
+	private String custAddrCity = "";
+	private String custAddrProvince = "";
+	private String custAddrDistrict = "";
+	private String custAddrPincode = "";
 
 	// User Details
-	private String userName;
-	private String userBranch;
-	private String userBranchDetails;
-	private String userDepartment;
-	private String appDate;
+	private String userName = "";
+	private String userBranch = "";
+	private String userDepartment = "";
+	private String appDate = "";
 
 	// User Branch Address Details
-	private String userBranchAddrLine1;
-	private String userBranchAddrLine2;
-	private String userBranchAddrHNbr;
-	private String userBranchAddrFlatNo;
-	private String userBranchAddrStreet;
-	private String userBranchAddrCountry;
-	private String userBranchAddrCity;
-	private String userBranchAddrProvince;
-	private String userBranchAddrDistrict;
-	private String userBranchAddrPincode;
-	private String userBranchPhone;
+	private String userBranchAddrLine1 = "";
+	private String userBranchAddrLine2 = "";
+	private String userBranchAddrHNbr = "";
+	private String userBranchAddrFlatNo = "";
+	private String userBranchAddrStreet = "";
+	private String userBranchAddrCountry = "";
+	private String userBranchAddrCity = "";
+	private String userBranchAddrProvince = "";
+	private String userBranchAddrDistrict = "";
+	private String userBranchAddrPincode = "";
+	private String userBranchPhone = "";
 
 	// Existing Beans
-	private String usrName;
-	private String usrRole;
-	private String prevUsrName;
+	private String usrName = "";
+	private String usrRole = "";
+	private String prevUsrName = "";
 	private long prevUsrRole = 0;
-	private String nextUsrName;
-	private String nextUsrRole;
-	private String nextUsrRoleCode;
-	private String workFlowType;
+	private String nextUsrName = "";
+	private String nextUsrRole = "";
+	private String nextUsrRoleCode = "";
+	private String workFlowType = "";
 	// ----------------------------
 
 	// Loan Details
-	private String finReference;
-	private String finStartDate;
-	private int priority;
-	private String finAmount;
-	private String finAssetValue;
-	private String finCurrAssetValue;
-	private String repaymentFrequency;
-	private String firstDueDate;
-	private String maturityDate;
-	private String gracePeriod;
-	private String repayperiod;
-	private String graceRate;
-	private String repayRate;
-	private String graceBaseRate;
-	private String graceSpecialRate;
-	private String graceMargin;
-	private String repayBaseRate;
-	private String repaySpecialRate;
-	private String repayMargin;
-	private String finBranch;
-	private String finCcy;
-	private String finDivision;
-	private String accountsOfficerDesc;
-	private String dsaCode;
-	private String dsaDesc;
-	private String dMACodeDesc;
-	private String totalProfit;
-	private String currReducingRate;
-	private String firstRepay;
-	private String lastRepay;
-	private String totalPriPaid;
-	private String totalPriBalance;
-	private String totalProfitPaid;
-	private String totalProfitBalance;
-	private String nextRepayDate;
+	private String finReference = "";
+	private String finStartDate = "";
+	private int priority = 0;
+	private String finAmount = "";
+	private String finAssetValue = "";
+	private String finCurrAssetValue = "";
+	private String repaymentFrequency = "";
+	private String firstDueDate = "";
+	private String maturityDate = "";
+	private String gracePeriod = "";
+	private String repayperiod = "";
+	private String graceRate = "";
+	private String repayRate = "";
+	private String graceBaseRate = "";
+	private String graceSpecialRate = "";
+	private String graceMargin = "";
+	private String repayBaseRate = "";
+	private String repaySpecialRate = "";
+	private String repayMargin = "";
+	private String finBranch = "";
+	private String finCcy = "";
+	private String finDivision = "";
+	private String accountsOfficerDesc = "";
+	private String dsaCode = "";
+	private String dsaDesc = "";
+	private String dMACodeDesc = "";
+	private String totalProfit = "";
+	private String currReducingRate = "";
+	private String firstRepay = "";
+	private String lastRepay = "";
+	private String totalPriPaid = "";
+	private String totalPriBalance = "";
+	private String totalProfitPaid = "";
+	private String totalProfitBalance = "";
+	private String nextRepayDate = "";
 
 	// User Branch Address Details
-	private String finBranchAddrLine1;
-	private String finBranchAddrLine2;
-	private String finBranchAddrHNbr;
-	private String finBranchAddrFlatNo;
-	private String finBranchAddrStreet;
-	private String finBranchAddrCountry;
-	private String finBranchAddrCity;
-	private String finBranchAddrProvince;
-	private String finBranchAddrDistrict;
-	private String finBranchAddrPincode;
-	private String finBranchPhone;
+	private String finBranchAddrLine1 = "";
+	private String finBranchAddrLine2 = "";
+	private String finBranchAddrHNbr = "";
+	private String finBranchAddrFlatNo = "";
+	private String finBranchAddrStreet = "";
+	private String finBranchAddrCountry = "";
+	private String finBranchAddrCity = "";
+	private String finBranchAddrProvince = "";
+	private String finBranchAddrDistrict = "";
+	private String finBranchAddrPincode = "";
+	private String finBranchPhone = "";
 
 	// existing beans
-	private String numberOfTerms;
-	private String graceTerms;
-	private String effectiveRate;
-	private String downPayment;
-	private String feeAmount;
-	private String insAmount;
-	private String finType;
+	private String numberOfTerms = "";
+	private String graceTerms = "";
+	private String effectiveRate = "";
+	private String downPayment = "";
+	private String feeAmount = "";
+	private String insAmount = "";
+	private String finType = "";
 
 	// Receipts
-	private String amount;
-	private String receiptAmount;
-	private String valueDate;
-	private String bounceDate;
-	private String bounceReason;
-	private String cancellationReason;
+	private String amount = "";
+	private String receiptAmount = "";
+	private String valueDate = "";
+	private String bounceDate = "";
+	private String bounceReason = "";
+	private String cancellationReason = "";
 	// ---------------------------------
 
 	// facility
@@ -320,14 +319,6 @@ public class MailTemplateData {
 
 	public void setUserBranch(String userBranch) {
 		this.userBranch = userBranch;
-	}
-
-	public String getUserBranchDetails() {
-		return userBranchDetails;
-	}
-
-	public void setUserBranchDetails(String userBranchDetails) {
-		this.userBranchDetails = userBranchDetails;
 	}
 
 	public String getUserDepartment() {
