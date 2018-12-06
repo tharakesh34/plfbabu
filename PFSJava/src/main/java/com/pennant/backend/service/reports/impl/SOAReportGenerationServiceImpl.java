@@ -285,8 +285,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
 
 			//Including advance EMI terms
-			int tenure = statementOfAccount.getTenure();
-			statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
+			//int tenure = statementOfAccount.getTenure();
+			//statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
 
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
@@ -626,8 +626,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
                 
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Principal Component");
-				soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
-				soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
+				soaSummaryReport.setDue(due);
+				soaSummaryReport.setReceipt(receipt);
 				soaSummaryReport.setOverDue(overDue);
 
 				soaSummaryReportsList.add(soaSummaryReport);
