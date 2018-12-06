@@ -63,8 +63,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "paymentDetail", "paymentType", "llDate", "amtToBeReleased", "branchBankCode", "branchBankName",
 		"branchCode", "iFSC", "custShrtName", "beneficiaryAccNo", "beneficiaryName", "linkedTranId", "partnerBankID",
-		"phoneCountryCode", "phoneAreaCode", "phoneNumber", "remarks", "bankCode", "liabilityHoldName", "payableLoc",
-		"printingLoc", "valueDate", "llReferenceNo" })
+		"partnerbankCode", "phoneCountryCode", "phoneAreaCode", "phoneNumber", "remarks", "bankCode",
+		"liabilityHoldName", "payableLoc", "printingLoc", "valueDate", "llReferenceNo" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity {
@@ -155,6 +155,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private LoggedInUser userDetails;
 	@XmlElement(name = "partnerBankId")
 	private long partnerBankID;
+	@XmlElement
 	private String partnerbankCode;
 	private String partnerBankName;
 	private String finType;
