@@ -59,6 +59,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
@@ -72,6 +73,7 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -93,6 +95,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -158,6 +161,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	protected transient WorkflowEngine workFlow = null;
 	private CollateralStructureService collateralStructureService;
 	private RuleExecutionUtil ruleExecutionUtil;
+	private DedupParmService dedupParmService;
 
 	
 	/**
@@ -383,7 +387,18 @@ public class CreateFinanceController extends SummaryDetailService {
 					financeMain.setRecordStatus("Saved");
 					role = workFlow.firstTaskOwner();
 				}
-
+				//dedup check 
+				if (!stp) {
+					List<FinanceDedup> financeDedupList = prepareFinanceDedup(role, financeDetail);
+					if (CollectionUtils.isNotEmpty(financeDedupList)) {
+						FinanceDetail response = new FinanceDetail();
+						String[] valueParm = new String[1];
+						valueParm[0] = "Loan Dedup";
+						doEmptyResponseObject(response);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343", valueParm));
+						return response;
+					}
+				}
 				auditHeader = financeDetailService.executeWorkflowServiceTasks(auditHeader, role, usrAction, workFlow);
 
 			}
@@ -450,6 +465,63 @@ public class CreateFinanceController extends SummaryDetailService {
 		return null;
 	}
 
+	private List<FinanceDedup> prepareFinanceDedup(String userRole, FinanceDetail aFinanceDetail) {
+		//Data Preparation for Rule Executions
+		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
+		FinanceDedup financeDedup = new FinanceDedup();
+		financeDedup.setCustId(customer.getCustID());
+		financeDedup.setCustCRCPR(customer.getCustCRCPR());
+		financeDedup.setCustCIF(customer.getCustCIF());
+		financeDedup.setCustFName(customer.getCustFName());
+		financeDedup.setCustMName(customer.getCustMName());
+		financeDedup.setCustLName(customer.getCustLName());
+		financeDedup.setCustShrtName(customer.getCustShrtName());
+		financeDedup.setCustMotherMaiden(customer.getCustMotherMaiden());
+		financeDedup.setCustNationality(customer.getCustNationality());
+		financeDedup.setCustParentCountry(customer.getCustParentCountry());
+		financeDedup.setCustDOB(customer.getCustDOB());
+		financeDedup.setMobileNumber(getCustMobileNum(aFinanceDetail));
+		financeDedup.setTradeLicenceNo(customer.getCustTradeLicenceNum());
+
+		//Check Customer is Existing or New Customer Object
+		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+
+		//finance data to set in to finance dedup 
+		financeDedup.setFinanceAmount(aFinanceMain.getFinAmount());
+		financeDedup.setProfitAmount(aFinanceMain.getTotalGrossPft());
+		financeDedup.setFinanceType(aFinanceMain.getFinType());
+		financeDedup.setStartDate(aFinanceMain.getFinStartDate());
+		financeDedup.setFinLimitRef(aFinanceMain.getFinLimitRef());
+
+		financeDedup.setFinReference(aFinanceMain.getFinReference());
+		financeDedup
+				.setLikeCustFName(financeDedup.getCustFName() != null ? "%" + financeDedup.getCustFName() + "%" : "");
+		financeDedup
+				.setLikeCustMName(financeDedup.getCustMName() != null ? "%" + financeDedup.getCustMName() + "%" : "");
+		financeDedup
+				.setLikeCustLName(financeDedup.getCustLName() != null ? "%" + financeDedup.getCustLName() + "%" : "");
+
+		//For Existing Customer/ New Customer
+		List<FinanceDedup> loanDedup = new ArrayList<FinanceDedup>();
+		List<FinanceDedup> dedupeRuleData = dedupParmService.fetchFinDedupDetails(userRole, financeDedup, null,
+				aFinanceMain.getFinType());
+		loanDedup.addAll(dedupeRuleData);
+		return loanDedup;
+	}
+	//get the mobile number for Customer
+	private String getCustMobileNum(FinanceDetail aFinanceDetail) {
+		String custMobileNumber = "";
+		if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
+			for (CustomerPhoneNumber custPhone : aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList()) {
+				if (custPhone.getPhoneTypeCode().equals(PennantConstants.PHONETYPE_MOBILE)) {
+					custMobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+							custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+					break;
+				}
+			}
+		}
+		return custMobileNumber;
+	}
 	private FinanceDetail nonStpProcess(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -2478,5 +2550,13 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public DedupParmService getDedupParmService() {
+		return dedupParmService;
+	}
+
+	public void setDedupParmService(DedupParmService dedupParmService) {
+		this.dedupParmService = dedupParmService;
 	}
 }
