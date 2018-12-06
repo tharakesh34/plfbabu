@@ -75,29 +75,29 @@ public class CollectionDataDownloadProcess {
 		selectSql.append(
 				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus,RepayMethod) ");
 		selectSql.append("Select * from (SELECT ");
-		selectSql.append(" T1.FinReference AS LoanReference,T2.CustCIF AS CustCIF,");
-		selectSql.append(" T1.FinType As LoanType, T3.FinTypeDesc AS LoanTypeDesc,T1.FinCcy AS Currency,");
+		selectSql.append(" T1.FinReference LoanReference,T2.CustCIF CustCIF,");
+		selectSql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
 		selectSql
-				.append(" T1.FinCategory AS ProductCode	,T3.FinTypeDesc AS ProductDesc,T1.FinBranch As BranchCode	,");
+				.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
 		selectSql.append(
-				" T4.BranchDesc As BranchDesc,T1.FinStartDate As FinStartDate,T1.MaturityDate As MaturityDate,");
-		selectSql.append(" T1.NoInst As NoInt,T1.NoPaidInst As NoPaidInst,T1.FirstRepayDate As FirstRepayDate,");
-		selectSql.append(" T1.FirstRepayAmt As FirstRepayAmount,T1.NSchdDate As NSchdDate,T1.NSchdPri  AS NSchdPri,");
-		selectSql.append(" T1.NSchdPft As NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) AS TotOustandingAmt,T1.PrvOdDate AS OverdueDate,");
-		selectSql.append(" T1.NoOdInst AS NoOdInst,T1.CurODDays AS curODDays,T1.ActualOdDays As ActualOdDays,");
+				" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
+		selectSql.append(" T1.NoInst NoInt,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
+		selectSql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
+		selectSql.append(" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
+		selectSql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
 		selectSql.append(
-				" T1.ODPrincipal As ODPrincipal,T1.ODProfit As ODProfit,round(T1.CurODDays/30,0) As DueBucket, T1.PenaltyPaid As PenaltyPaid, ");
+				" T1.ODPrincipal ODPrincipal,T1.ODProfit ODProfit,round(T1.CurODDays/30,0) DueBucket, T1.PenaltyPaid PenaltyPaid, ");
 		selectSql.append(
-				" T1.PenaltyDue AS PenaltyDue,T1.PenaltyWaived As PenaltyWaived,(SELECT sum(Adviseamount-paidamount-waivedamount) as bounseAmount  FROM MANUALADVISE WHERE FEETYPEID = 0 and  finreference=T1.Finreference)  As BounceCharge ,T1.FinStatus As FinStatus,");
-		selectSql.append(" T1.FinStsReason As FinStsReason ,T1.FinWorstStatus As FinWorstStatus,");
-		selectSql.append(" T1.FinIsActive As FinActive	,'I' As RecordStatus, ");
-		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) as RepayMethod ");
+				" T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,(SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount  FROM MANUALADVISE WHERE FEETYPEID = 0 and  finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
+		selectSql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
+		selectSql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
+		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod ");
 		
-		selectSql.append("  FROM FinPftDetails AS T1 ");
-		selectSql.append("  INNER JOIN Customers AS T2 ON T1.CustId=T2.CustID");
-		selectSql.append("  INNER JOIN RMTFinanceTypes AS T3 on T1.FinType=T3.FinType ");
-		selectSql.append("  INNER JOIN RmtBranches AS T4 on  T1.FinBranch=T4.BranchCode ");
-		selectSql.append("   WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) As collectionFinance");
+		selectSql.append("  FROM FinPftDetails T1 ");
+		selectSql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
+		selectSql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
+		selectSql.append("  INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
+		selectSql.append("   WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
 		
 		logger.trace("insertSql: " + selectSql.toString());
 		
