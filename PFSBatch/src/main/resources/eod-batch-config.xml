@@ -45,10 +45,22 @@
 
 		<step id="accountsUpdate">
 			<tasklet ref="accountsUpdateTaskLet" />
-			<next on="*" to="datesUpdate" />
+			<next on="*" to="ledgerDownLoad" />
 			<fail on="FAILED" />
 		</step>
 
+		<step id="ledgerDownLoad">
+			<tasklet ref="ledgerDownloadTaskLet" />
+			<next on="*" to="ledgerNotification" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="ledgerNotification">
+			<tasklet ref="ledgerNotificationTaskLet" />
+			<fail on="FAILED" />
+			<next on="*" to="datesUpdate" />			
+		</step> 
+		
 		<step id="datesUpdate">
 			<tasklet ref="datesUpdateTaskLet" />
 			<!-- <next on="*" to="posidex" /> -->
@@ -64,12 +76,6 @@
 
 		<step id="collectionNotification">
 			<tasklet ref="collectionNotificationTaskLet" />
-			<fail on="FAILED" />
-			<next on="*" to="ledgerNotification" />
-		</step>
-
-		<step id="ledgerNotification">
-			<tasklet ref="ledgerNotificationTaskLet" />
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>

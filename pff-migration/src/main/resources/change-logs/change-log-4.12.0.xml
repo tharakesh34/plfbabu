@@ -2871,4 +2871,28 @@ UNION ALL
 		UPDATE DeviationHeader SET MODULE = 'ELIGIBILITY' WHERE MODULE = 'EILIBILITY';
 		</sql>
 	</changeSet>
+	<changeSet id="44" author="Srinivasa Varma">
+		<createTable tableName="GL_DownloadData">
+			<column name="BatchId" type="varchar(10)" />
+			<column name="Voucher" type="int" />
+			<column name="TranOrder" type="int" />
+			<column name="TranSource" type="varchar(8)" />
+			<column name="TransDate" type="datetime" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Account" type="varchar(50)" />
+			<column name="HostAccount" type="varchar(50)" />
+			<column name="Narration" type="varchar(50)" />
+			<column name="DrCrType" type="varchar(6)" />
+			<column name="Dr_Amount" type="decimal(18,0)" />
+			<column name="Cr_Amount" type="decimal(18,0)" />
+			<column name="Branch" type="varchar(12)" />
+			<column name="BranchDesc" type="varchar(50)" />
+			<column name="RefNumber" type="varchar(20)" />
+			<column name="VoucherType" type="varchar(2)" />
+			<column name="Product" type="varchar(8)" />
+			<column name="GLType" type="varchar(4)" />
+			<column name="RecorStatus" type="varchar(2)" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
