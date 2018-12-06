@@ -506,4 +506,42 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		return null;
 	}
 
+	@Override
+	public PartnerBank getPartnerBankByCode(String partnerBankCode, String type) {
+
+		logger.debug("Entering");
+		PartnerBank partnerBank = new PartnerBank();
+		partnerBank.setPartnerBankCode(partnerBankCode);
+		partnerBank.setActive(true);
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(
+				"Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
+		selectSql.append(
+				", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity");
+		selectSql.append(
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(",BankCodeName,BankBranchCodeName,AcTypeName,Entitydesc");
+		}
+
+		selectSql.append(" From PartnerBanks");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where PartnerBankCode =:PartnerBankCode AND Active =:Active");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(partnerBank);
+		RowMapper<PartnerBank> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PartnerBank.class);
+
+		try {
+			partnerBank = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			partnerBank = null;
+		}
+		logger.debug("Leaving");
+		return partnerBank;
+	
+	}
+
 }

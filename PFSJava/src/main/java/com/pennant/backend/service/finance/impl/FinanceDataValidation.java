@@ -860,8 +860,10 @@ public class FinanceDataValidation {
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90315", valueParm)));
 				}
 			} else {
-				if (StringUtils.isBlank(finODPenaltyRate.getODChargeType())
-						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0) {
+				if ((StringUtils.isBlank(finODPenaltyRate.getODChargeType())
+						|| finODPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) <= 0)
+						&& !(StringUtils.equals(finScheduleData.getFinanceMain().getProductCategory(),
+								FinanceConstants.PRODUCT_ODFACILITY))) {
 					String[] valueParm = new String[1];
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90314", valueParm)));
 				}
@@ -2396,7 +2398,7 @@ public class FinanceDataValidation {
 		if (finAdvPayments != null) {
 			for (FinAdvancePayments advPayment : finAdvPayments) {
 				// partnerbankid
-				if (advPayment.getPartnerBankID() <= 0) {
+				if (advPayment.getPartnerBankID() <= 0 && StringUtils.isBlank(advPayment.getPartnerbankCode())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "PartnerBankID";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
@@ -2445,6 +2447,16 @@ public class FinanceDataValidation {
 						String[] valueParm = new String[1];
 						valueParm[0] = advPayment.getPaymentType();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90216", valueParm)));
+					}
+				}
+				if (advPayment.getPartnerBankID() <= 0 && StringUtils.isNotBlank(advPayment.getPartnerbankCode())) {
+					PartnerBank partnerBank = partnerBankDAO.getPartnerBankByCode(advPayment.getPartnerbankCode(), "");
+					if (partnerBank == null) {
+						String[] valueParm = new String[1];
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90263", valueParm)));
+						return errorDetails;
+					} else {
+						advPayment.setPartnerBankID(partnerBank.getPartnerBankId());	
 					}
 				}
 				String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
@@ -3031,7 +3043,8 @@ public class FinanceDataValidation {
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
+				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)
+				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90189", null)));
 		}
 

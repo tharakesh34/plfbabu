@@ -44,6 +44,7 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -2352,7 +2353,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Setting Effective Recalculation Schedule Method
 		String method = null;
 		if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+				if(StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
+					method = CalculationConstants.EARLYPAY_ADJMUR;
+				}else{
+					method = CalculationConstants.EARLYPAY_RECRPY;
+				}
+			} else {
 			method = finServiceInstruction.getRecalType();
+			}
 		} else if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			method = CalculationConstants.EARLYPAY_ADJMUR;
@@ -2582,14 +2591,98 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						.getFinStepPolicyDetails(finScheduleData.getFinReference(), "", false));
 			}
 
+		//  Finance Repay Instruction Changes
+					if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+						if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeDetail.getFinScheduleData().getFinanceType().getFinSchdMthd())){
+
+							Date dateValueDate = DateUtility.getAppDate();
+							if(finServiceInstruction.getReceiptDetail().getReceivedDate() != null){
+								dateValueDate = finServiceInstruction.getReceiptDetail().getReceivedDate();
+							}
+							int frqDay = Integer.parseInt(finScheduleData.getFinanceMain().getRepayFrq().substring(3));
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTime(finServiceInstruction.getReceiptDetail().getReceivedDate());
+							calendar.set(Calendar.DAY_OF_MONTH, frqDay);
+							if(DateUtility.compare(finServiceInstruction.getReceiptDetail().getReceivedDate(), calendar.getTime()) > 0){
+								calendar.add(Calendar.MONTH, 1);
+							}
+							
+							Date maxRepayAlwDate = DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),PennantConstants.dateFormat));
+							
+							// Repay Instructions Setting
+							boolean rpyInstFound = false;
+							BigDecimal totPaidAmount = receiptData.getRepayMain().getEarlyPayAmount();
+							List<RepayInstruction> rpyInstructions = finScheduleData.getRepayInstructions();
+							for (int i = 0; i < rpyInstructions.size(); i++) {
+								if(DateUtility.compare(dateValueDate, rpyInstructions.get(i).getRepayDate()) == 0){
+									rpyInstFound = true;
+									break;
+								}else if(DateUtility.compare(dateValueDate, rpyInstructions.get(i).getRepayDate()) < 0){
+									break;
+								}
+							}
+							
+							// If instruction not found then add with Disbursement amount
+							if(!rpyInstFound){
+								RepayInstruction ri = new RepayInstruction();
+								ri.setRepayDate(dateValueDate);
+								ri.setRepayAmount(BigDecimal.ZERO);
+								ri.setRepaySchdMethod(CalculationConstants.SCHMTHD_PRI);
+								finScheduleData.getRepayInstructions().add(ri);
+								sortRepayInstructions(finScheduleData.getRepayInstructions());
+								rpyInstructions = finScheduleData.getRepayInstructions();
+							}
+							
+							// Reset Repayment Instructions
+							boolean zeroAmtOnInstFrqDate = false;
+							for (RepayInstruction rpyInst : rpyInstructions) {
+
+								if(totPaidAmount.compareTo(BigDecimal.ZERO) == 0){
+									break;
+								}
+
+								if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) > 0){
+									if(zeroAmtOnInstFrqDate && rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+										rpyInstructions.remove(rpyInst);
+									}
+									break;
+								}
+
+								if(rpyInst.getRepayDate().compareTo(dateValueDate) == 0){
+									rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
+								}else if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) == 0){
+									rpyInst.setRepayAmount(rpyInst.getRepayAmount().subtract(totPaidAmount));
+									if(rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
+										zeroAmtOnInstFrqDate = true;
+									}
+								}
+							}
+
+							finScheduleData.setRepayInstructions(rpyInstructions);
+							sortRepayInstructions(finScheduleData.getRepayInstructions());
+						}
+					}
 			//Calculation of Schedule Changes for Early Payment to change Schedule Effects Depends On Method
 			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData,
 					receiptData.getRepayMain().getEarlyPayOnSchDate(), nextRepaySchDate,
 					receiptData.getRepayMain().getEarlyPayAmount(), method);
 
+			// Finding Last maturity date after recalculation.
+			List<FinanceScheduleDetail> schList = sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
+			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
+					finScheduleData.getFinanceMain().getScheduleMethod())) {
+				for (int i = schList.size() - 1; i >= 0; i--) {
+					if (schList.get(i).getClosingBalance().compareTo(BigDecimal.ZERO) > 0) {
+						break;
+					}
+					actualMaturity = schList.get(i).getSchDate();
+				}
+			}
+			
 			// Validation against Future Disbursements, if Closing balance is becoming zero before future disbursement date
 			List<FinanceDisbursement> disbList = finScheduleData.getDisbursementDetails();
-			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
+			 actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
 			for (int i = 0; i < disbList.size(); i++) {
 				FinanceDisbursement curDisb = disbList.get(i);
 				if (curDisb.getDisbDate().compareTo(actualMaturity) >= 0) {
@@ -2598,7 +2691,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					return receiptData;
 				}
 			}
-
+	
 			financeDetail.setFinScheduleData(finScheduleData);
 			aFinanceMain = finScheduleData.getFinanceMain();
 			aFinanceMain.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
@@ -2609,6 +2702,25 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData = calculateRepayments(receiptData, false);
 		logger.debug("Leaving");
 		return receiptData;
+	}
+	
+
+	/*
+	 * ________________________________________________________________________________________________________________
+	 * Method : sortRepayInstructions Description: Sort Repay Instructions
+	 * ________________________________________________________________________________________________________________
+	 */
+	private List<RepayInstruction> sortRepayInstructions(List<RepayInstruction> repayInstructions) {
+
+		if (repayInstructions != null && repayInstructions.size() > 0) {
+			Collections.sort(repayInstructions, new Comparator<RepayInstruction>() {
+				@Override
+				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
+					return DateUtility.compare(detail1.getRepayDate(), detail2.getRepayDate());
+				}
+			});
+		}
+		return repayInstructions;
 	}
 
 	/**

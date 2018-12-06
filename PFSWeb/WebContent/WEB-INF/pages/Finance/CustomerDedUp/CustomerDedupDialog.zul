@@ -46,12 +46,6 @@
 								<column />
 							</columns>
 							<rows>
-								<row visible="false">
-									<label id="label_CustomerDedupDialog_CustomerName" value="${c:l('label_CustomerDedupDialog_CustomerName.value')}" />
-									<textbox id="custName" width="180px" readonly="true" />
-									<label id="label_CustomerDedupDialog_MobileNo" value="${c:l('label_CustomerDedupDialog_MobileNo.value')}" />
-									<textbox id="mobileNo" width="180px" maxlength="10" readonly="true" />
-								</row>
 								<row id ="row_nameMobile" visible="false">
 									<label
 										id="label_CustomerDedupDialog_MobileNo"

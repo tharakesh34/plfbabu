@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -229,12 +230,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return response;
 		}
 
-		if (!financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod().equals("PFT")) {
+		if (!financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod().equals(CalculationConstants.SCHMTHD_POS_INT)) {
 			doEmptyResponseObject(response);
 			response.setStp(financeDetail.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Schedule Method ";
-			valueParm[1] = " PFT";
+			valueParm[1] = CalculationConstants.SCHMTHD_POS_INT;
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90337", valueParm);
 			status.setReturnText(status.getReturnText());
 			response.setReturnStatus(status);
@@ -292,6 +293,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			response.setReturnStatus(status);
 			return response;
 		}
+		financeDetail.getFinScheduleData().getFinanceMain().setRecalType("");
+		if(StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getRepayBaseRate())){
+		financeDetail.getFinScheduleData().getFinanceMain().setRepayBaseRate(null);
+		}
+
 		return financeDetail;
 	}
 
