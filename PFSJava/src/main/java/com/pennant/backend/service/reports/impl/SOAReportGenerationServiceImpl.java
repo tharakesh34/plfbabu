@@ -213,20 +213,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		this.soaReportGenerationDAO = soaReportGenerationDAO;
 	}
 
-	private List<String> getCustLoanDetails(long custID) {
-		return this.soaReportGenerationDAO.getCustLoanDetails(custID);
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate) {
 		logger.debug("Entering");
 		long custId = 0;
-		boolean finRefs = false;
 		List<ApplicantDetail> applicantDetails = null;
 		List<OtherFinanceDetail> otherFinanceDetails = null;
 		List<OtherFinanceDetail> otherFinanceRefDetails = null;
-		List<String> custFinRefDetails = null;
 		//get the Loan Basic Details
 		StatementOfAccount statementOfAccount = getSOALoanDetails(finReference);
 
@@ -287,7 +281,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			//Including advance EMI terms
 			//int tenure = statementOfAccount.getTenure();
 			//statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
-
+			
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
 					+ " / " + finMain.getAdvEMITerms());
@@ -301,11 +295,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Other Finance Details
 			otherFinanceDetails = getCustOtherFinDetails(custId, finReference);
-
-			//Customer information only irrespective of Active and Inactive Finance
-			if (finRefs) {
-				custFinRefDetails = getCustLoanDetails(custId);
-			}
 
 			if (statementOfAccountCustDetails != null) {
 				statementOfAccount.setCustShrtName(
@@ -353,7 +342,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//Formatting the amounts
 		statementOfAccount
-				.setLoanAmount(PennantApplicationUtil.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
+				.setLoanAmount(PennantApplicationUtil
+						.formateAmount(statementOfAccount.getLoanAmount().add(finMain.getAdvanceEMI()), ccyEditField));
 		statementOfAccount.setPreferredCardLimit(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getPreferredCardLimit(), ccyEditField));
 		statementOfAccount.setChargeCollCust(
@@ -366,7 +356,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				PennantApplicationUtil.formateAmount(statementOfAccount.getClosedlinkedFinRef(), ccyEditField));
 
 		statementOfAccount.setEmiReceivedPri(
-				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPri(), ccyEditField));
+				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPri().add(finMain.getAdvanceEMI()), ccyEditField));
 		statementOfAccount.setEmiReceivedPft(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPft(), ccyEditField));
 
@@ -537,9 +527,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Interest Rate Details
 		statementOfAccount.setInterestRateDetails(interestRateDetails);
 
-		//Customer Finance Refrence Details
-		statementOfAccount.setCustFinRefDetails(custFinRefDetails);
-
 		logger.debug("Leaving");
 		return statementOfAccount;
 	}
@@ -623,13 +610,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				receipt = totalSchdPriPaid;
 
 				overDue = due.subtract(receipt);
-                
+
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Principal Component");
-				soaSummaryReport.setDue(due);
-				soaSummaryReport.setReceipt(receipt);
+				soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
+				soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
 				soaSummaryReport.setOverDue(overDue);
-
 				soaSummaryReportsList.add(soaSummaryReport);
 
 				due = totalProfitSchd;
