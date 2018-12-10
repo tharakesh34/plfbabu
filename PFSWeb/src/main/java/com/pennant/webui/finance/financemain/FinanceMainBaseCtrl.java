@@ -1774,8 +1774,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//Fee Details Tab Addition
-			if(aFinanceDetail.getFinScheduleData().getFinanceType().getFinTypeFeesList() != null
-					&& !aFinanceDetail.getFinScheduleData().getFinanceType().getFinTypeFeesList().isEmpty()){
+			if (aFinanceDetail.getFinTypeFeesList() != null && !aFinanceDetail.getFinTypeFeesList().isEmpty()) {
 				appendFeeDetailTab(onLoad);
 			}
 		}
