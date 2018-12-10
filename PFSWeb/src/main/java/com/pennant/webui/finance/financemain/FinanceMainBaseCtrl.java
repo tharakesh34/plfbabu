@@ -16170,7 +16170,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		setFinanceDetail(detail);
 		//Corporate Financial Input Data to set Eligibility Rules
 		Set<Long> custIds = new HashSet<>();
-		if (!detail.getJountAccountDetailList().isEmpty()) {
+		if (detail.getJountAccountDetailList() != null && !detail.getJountAccountDetailList().isEmpty()) {
 			for (JointAccountDetail accountDetail : detail.getJountAccountDetailList()) {
 				custIds.add(accountDetail.getCustID());
 			}
