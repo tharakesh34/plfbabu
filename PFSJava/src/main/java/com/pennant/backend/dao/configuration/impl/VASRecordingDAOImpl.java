@@ -62,6 +62,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>VASRecording model</b> class.<br>
@@ -76,7 +77,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new VASRecording
+	 * This method set the Work Flow id based on the module name and return the
+	 * new VASRecording
 	 * 
 	 * @return VASRecording
 	 */
@@ -90,8 +92,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method get the module from method getVASRecording() and set the new record flag as true and return
-	 * VASRecording()
+	 * This method get the module from method getVASRecording() and set the new
+	 * record flag as true and return VASRecording()
 	 * 
 	 * @return VASRecording
 	 */
@@ -121,15 +123,18 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		StringBuilder sql = null;
 
 		sql = new StringBuilder(
-				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,");
+				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
 		sql.append(
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
-				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt");
+				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt, Status ,");
+		sql.append("  Remarks  , Reason, CancelAmt , ServiceReqNumber, CancelAfterFLP, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
-			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc ");
+			sql.append(
+					", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc  , finType ,flpDays");
 		}
+
 		sql.append(" From VASRecording");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where VasReference =:VasReference");
@@ -139,6 +144,56 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		source = new MapSqlParameterSource();
 		source.addValue("VasReference", vasReference);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	/**
+	 * Fetch the Record VASRecording details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return VASRecording
+	 */
+	@Override
+	public VASRecording getVASRecording(String vasReference, String vasStatus, String type) {
+		logger.debug("Entering");
+		
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		
+		sql = new StringBuilder(
+				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
+		sql.append(
+				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
+		sql.append(
+				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt, Status ,");
+		sql.append("  Remarks  , Reason, CancelAmt , ServiceReqNumber, CancelAfterFLP, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId  ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
+			sql.append(
+					", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc  , finType ,flpDays");
+		}
+		
+		sql.append(" From VASRecording");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where VasReference =:VasReference AND VasStatus = :VasStatus");
+		logger.debug("selectSql: " + sql.toString());
+		
+		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+		
+		source = new MapSqlParameterSource();
+		source.addValue("VasReference", vasReference);
+		source.addValue("VasStatus", vasStatus);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -169,11 +224,11 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		List<VASRecording> vasRecordingList = new ArrayList<>();
 
 		sql = new StringBuilder(
-				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,");
+				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
 		sql.append(
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
-				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt");
+				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt,Status, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
 			sql.append(", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc, FeeAccounting ");
@@ -193,8 +248,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method Deletes the Record from the VASRecording or VASRecording_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete VASRecording by key ProductCode
+	 * This method Deletes the Record from the VASRecording or
+	 * VASRecording_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete VASRecording by key ProductCode
 	 * 
 	 * @param VASRecording
 	 *            (vASRecording)
@@ -228,8 +284,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method Deletes the Record from the VASRecording or VASRecording_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete VASRecording by key ProductCode
+	 * This method Deletes the Record from the VASRecording or
+	 * VASRecording_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete VASRecording by key ProductCode
 	 * 
 	 * @param VASRecording
 	 *            (vASRecording)
@@ -276,16 +333,17 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		insertSql.append("Insert Into VASRecording");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, ValueDate, AccrualTillDate, RecurringDate,");
+				" (ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, ValueDate, AccrualTillDate, RecurringDate,EntityCode,");
 		insertSql.append(
-				"  DsaId, DmaId, FulfilOfficerId, ReferralId, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt)");
+				"  DsaId, DmaId, FulfilOfficerId, ReferralId, Status, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt,");
+		insertSql.append("  Remarks  , Reason  , CancelAmt , ServiceReqNumber  , CancelAfterFLP, OldVasReference, ManualAdviseId, ReceivableAdviseId )");
 		insertSql.append(
 				"  Values(:ProductCode, :PostingAgainst, :PrimaryLinkRef, :VasReference, :Fee, :RenewalFee, :FeePaymentMode, :ValueDate, :AccrualTillDate,");
-		insertSql.append("  :RecurringDate, :DsaId, :DmaId, :FulfilOfficerId, :ReferralId,");
+		insertSql.append("  :RecurringDate, :EntityCode, :DsaId, :DmaId, :FulfilOfficerId, :ReferralId, :Status,");
 		insertSql.append(
-				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess, :PaidAmt, :WaivedAmt)");
-
+				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess, :PaidAmt, :WaivedAmt");
+		insertSql.append(", :Remarks ,  :Reason ,  :CancelAmt , :ServiceReqNumber , :CancelAfterFLP, :OldVasReference, :ManualAdviseId, :ReceivableAdviseId )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
@@ -295,8 +353,9 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method updates the Record VASRecording or VASRecording_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update VASRecording by key ProductCode and Version
+	 * This method updates the Record VASRecording or VASRecording_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
+	 * update VASRecording by key ProductCode and Version
 	 * 
 	 * @param VASRecording
 	 *            (vASRecording)
@@ -315,9 +374,11 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		updateSql.append(
 				" Set ProductCode = :ProductCode, PostingAgainst = :PostingAgainst, PrimaryLinkRef = :PrimaryLinkRef, Fee = :Fee, RenewalFee = :RenewalFee, FeePaymentMode = :FeePaymentMode, ");
 		updateSql.append(
-				" ValueDate = :ValueDate, AccrualTillDate = :AccrualTillDate, RecurringDate = :RecurringDate, DsaId = :DsaId, DmaId = :DmaId, FulfilOfficerId = :FulfilOfficerId, ReferralId = :ReferralId,");
+				" ValueDate = :ValueDate, AccrualTillDate = :AccrualTillDate, EntityCode = :EntityCode, RecurringDate = :RecurringDate, DsaId = :DsaId, DmaId = :DmaId, FulfilOfficerId = :FulfilOfficerId, ReferralId = :ReferralId,");
 		updateSql.append(
 				" Version= :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		updateSql.append(
+				"  Remarks = :Remarks , Reason = :Reason , CancelAmt =:CancelAmt , ServiceReqNumber = :ServiceReqNumber , CancelAfterFLP = :CancelAfterFLP , OldVasReference = :OldVasReference, ManualAdviseId = :ManualAdviseId, ReceivableAdviseId = :ReceivableAdviseId, ");
 		updateSql.append(
 				" RecordType = :RecordType, WorkflowId = :WorkflowId,VasStatus = :VasStatus,FinanceProcess =:FinanceProcess, PaidAmt =:PaidAmt, WaivedAmt =:WaivedAmt");
 		updateSql.append(" Where VasReference = :VasReference");
@@ -439,6 +500,36 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		}
 		logger.debug("Leaving");
 		return vasCustomer;
+	}
+
+	@Override
+	public void updateVasStatus(String status, String vasReference) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update VASRecording");
+		sql.append(" Set Status = :Status  Where VasReference = :VasReference");
+		logger.debug("sql: " + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Status", status);
+		source.addValue("VasReference", vasReference);
+
+		this.jdbcTemplate.update(sql.toString(), source);
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void updateVasStatus(String reference, long paymentInsId) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update VASRecording");
+		sql.append(" Set PaymentInsId = :PaymentInsId  Where VasReference = :VasReference");
+		logger.debug("sql: " + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PaymentInsId", paymentInsId);
+		source.addValue("VasReference", reference);
+
+		this.jdbcTemplate.update(sql.toString(), source);
+		logger.debug(Literal.LEAVING);
 	}
 
 }

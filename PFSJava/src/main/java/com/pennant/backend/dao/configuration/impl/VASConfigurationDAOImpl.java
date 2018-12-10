@@ -120,12 +120,13 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 				"Select ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting,");
 		sql.append(
 				" RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ProductType, VasFee,");
-		sql.append("  AllowFeeToModify, ManufacturerId, PreValidation, PostValidation,");
+		sql.append(
+				"  AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, FeeType, FLPCalculatedOn, ShortCode,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeAccountingName, AccrualAccountingName, FeeAccountingDesc, AccrualAccountingDesc");
-			sql.append(" ,ProductTypeDesc, ProductCategory, ManufacturerName");
+			sql.append(" ,ProductTypeDesc, ProductCategory, ManufacturerName ,FeeTypeCode, FeeTypeDesc");
 		}
 		sql.append(" From VasStructure");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -206,12 +207,14 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		insertSql.append(
 				" (ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting, RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ");
 		insertSql.append("  ProductType, VasFee, AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, ");
+		insertSql.append(" FeeType, FLPCalculatedOn, ShortCode, ");
 		insertSql.append(
 				"  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
 				"  Values(:ProductCode, :ProductDesc, :RecAgainst, :FeeAccrued, :FeeAccounting, :AccrualAccounting, :RecurringType, :FreeLockPeriod, :PreValidationReq, :PostValidationReq, :Active, :Remarks, ");
 		insertSql.append(
 				"  :ProductType, :VasFee, :AllowFeeToModify, :ManufacturerId, :PreValidation, :PostValidation, ");
+		insertSql.append(" :FeeType, :FlpCalculatedOn, :ShortCode, ");
 		insertSql.append(
 				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -250,7 +253,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		updateSql.append(
 				"  ProductType= :ProductType , VasFee = :VasFee, AllowFeeToModify = :AllowFeeToModify, ManufacturerId= :ManufacturerId, ");
 		updateSql.append(
-				"  PreValidation = :PreValidation, PostValidation= :PostValidation, Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+				"  PreValidation = :PreValidation, PostValidation= :PostValidation, FeeType = :FeeType, FLPCalculatedOn = :FlpCalculatedOn, ShortCode = :ShortCode,");
+		updateSql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(
 				"  RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where ProductCode =:ProductCode");

@@ -1019,4 +1019,92 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	
 	}
 
+	
+	@Override
+	public List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeID) {
+		logger.debug(Literal.ENTERING);
+		
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("");
+		sql.append(
+				" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
+		sql.append(
+				" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ManualAdvise");
+		sql.append(" Where  AdviseType = :AdviseType And FeeTypeID = :FeeTypeID");
+		
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setAdviseType(adviseType);
+		manualAdvise.setFeeTypeID(feeTypeID);
+		
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		
+		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return adviseList;
+	}
+
+	/**
+	 * Method for Update Paid Amount Only after amounts Approval
+	 */
+	@Override
+	public void updatePaidAmountOnly(long adviseID, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("AdviseID", adviseID);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update ManualAdvise");
+		updateSql.append(" Set PaidAmount = PaidAmount + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
+		updateSql.append(" Where AdviseID = :AdviseID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public List<ManualAdvise> getManualAdviseByRefAndFeeCode(String finReference, int adviseType, String feeTypeCode) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("");
+		sql.append(
+				" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
+		sql.append(
+				" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,  FeeTypeCode, FeeTypeDesc,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ManualAdvise_Aview");
+		sql.append(" Where FinReference = :FinReference And AdviseType = :AdviseType And FeeTypeCode = :FeeTypeCode");
+		sql.append(" Order By ValueDate");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setAdviseType(adviseType);
+		manualAdvise.setFeeTypeCode(feeTypeCode);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return adviseList;
+	}
+	
 }
