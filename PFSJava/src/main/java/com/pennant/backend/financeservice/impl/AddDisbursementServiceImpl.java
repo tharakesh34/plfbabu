@@ -319,14 +319,16 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		//### 02-05-2018-END
 		//validate serviceReqNo
 		if (isOverdraft) {
-			servNoExist = finServiceInstrutionDAO.getFinServInstDetails(finServiceInstruction.getFinEvent(),
-					finServiceInstruction.getServiceReqNo());
-			if (servNoExist) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "serviceReqNo with ";
-				valueParm[1] = finServiceInstruction.getServiceReqNo();
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
-				return auditDetail;
+			if (StringUtils.isNotBlank(finServiceInstruction.getServiceReqNo())) {
+				servNoExist = finServiceInstrutionDAO.getFinServInstDetails(finServiceInstruction.getFinEvent(),
+						finServiceInstruction.getServiceReqNo());
+				if (servNoExist) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "serviceReqNo with ";
+					valueParm[1] = finServiceInstruction.getServiceReqNo();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
+					return auditDetail;
+				}
 			}
 		}
 
