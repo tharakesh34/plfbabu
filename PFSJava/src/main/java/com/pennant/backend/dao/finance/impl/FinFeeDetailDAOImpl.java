@@ -135,7 +135,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference, Status,");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(
@@ -181,7 +181,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status, ");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(
@@ -225,7 +225,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" T1.WaivedAmount, T1.PaidAmount, T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType, T1.VasReference, T1.Status, ");
 		selectSql.append(
-				" T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.TaxPercent");
+				" T1.RuleCode, T1.FixedAmount, T1.Percentage, T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee, T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable,");
 
 		selectSql.append(" From FinFeeDetail T1 ");
 		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
@@ -255,7 +255,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status,");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(
@@ -295,7 +295,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status,");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(
@@ -339,7 +339,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
-				" SELECT FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee, VasReference, Status");
+				" SELECT FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee, VasReference, Status, Refundable");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent ");
 		}
@@ -449,7 +449,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType,VasReference,Status,");
 		insertSql.append(
 				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
-		insertSql.append(" PostDate,");
+		insertSql.append(" PostDate, Refundable,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		insertSql.append(
@@ -462,7 +462,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 				" :WaivedAmount, :PaidAmount, :FeeScheduleMethod, :Terms, :RemainingFee, :PaymentRef, :CalculationType,:VasReference,:Status,");
 		insertSql.append(
 				" :RuleCode, :FixedAmount, :Percentage, :CalculateOn, :AlwDeviation, :MaxWaiverPerc, :AlwModifyFee, :AlwModifyFeeSchdMthd,");
-		insertSql.append(" :PostDate,");
+		insertSql.append(" :PostDate, :Refundable, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId,");
 		insertSql.append(
@@ -511,7 +511,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		updateSql.append(
 				"  Status=:Status,FixedAmount = :FixedAmount, Percentage = :Percentage, CalculateOn = :CalculateOn, AlwDeviation = :AlwDeviation,");
 		updateSql.append(
-				"  MaxWaiverPerc = :MaxWaiverPerc, AlwModifyFee = :AlwModifyFee, AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd,");
+				"  MaxWaiverPerc = :MaxWaiverPerc, AlwModifyFee = :AlwModifyFee, AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd, Refundable = :Refundable,");
 		updateSql.append(
 				"  Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, ");
 		updateSql.append(
@@ -686,7 +686,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference,Status,");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		selectSql.append(
@@ -750,7 +750,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference,Status,");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		selectSql.append(
@@ -790,7 +790,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" WaivedAmount, PaidAmount, FeeScheduleMethod, Terms, RemainingFee, PaymentRef, CalculationType, VasReference,Status,");
 		selectSql.append(
-				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd,");
+				" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Refundable,");
 		selectSql.append(
 				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
 		selectSql.append(
@@ -829,7 +829,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		selectSql.append(
 				" SELECT FeeID, FinReference, OriginationFee, FinEvent, FeeTypeID, FeeSeq, FeeOrder, CalculatedAmount, ActualAmount,");
 		selectSql.append(
-				" WaivedAmount, PaidAmount, FeeScheduleMethod, RemainingFee, PaymentRef, CalculationType,VasReference,Status, ");
+				" WaivedAmount, PaidAmount, FeeScheduleMethod, RemainingFee, PaymentRef, CalculationType,VasReference,Status, Refundable,");
 		selectSql.append(" RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, ");
 		selectSql.append(" LastMntBy, LastMntOn, ");
 		selectSql.append(" PaidAmountGST, ");

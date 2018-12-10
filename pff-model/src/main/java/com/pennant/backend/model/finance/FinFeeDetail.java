@@ -140,6 +140,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private Date postDate;
 	private String transactionId;
+	private boolean refundable;
 
 	private boolean alwPreIncomization;
 
@@ -699,6 +700,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setAlwPreIncomization(boolean alwPreIncomization) {
 		this.alwPreIncomization = alwPreIncomization;
+	}
+
+	public boolean isRefundable() {
+		return refundable;
+	}
+
+	public void setRefundable(boolean refundable) {
+		this.refundable = refundable;
 	}
 
 }
