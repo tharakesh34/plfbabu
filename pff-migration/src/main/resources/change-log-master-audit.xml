@@ -21,4 +21,6 @@
 	<include file="change-logs/change-log-4.11.0-audit.xml"/>
 	<include file="change-logs/change-log-4.12.0-audit.xml"/>
 	<include file="change-logs/change-log-AdtCore_MLOD.xml"/>
+	<include file="change-logs/change-log-insurance-masters_audit.xml"/>
+	<include file="change-logs/change-log-insuranceAudit.xml"/>
 </databaseChangeLog>

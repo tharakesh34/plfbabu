@@ -22,4 +22,8 @@
 	<include file="change-logs/change-log-4.11.0.xml"/> 
 	<include file="change-logs/change-log-4.12.0.xml"/>
 	<include file="change-logs/change-log-Core_MLOD.xml"/>
+	<include file="change-logs/change-log-insurance-masters.xml"/>
+ 	<include file="change-logs/change-log-insurance.xml"/>
+ 	<include file="change-logs/change-log-insurance_vas_structure.xml"/>
+	
 </databaseChangeLog>
