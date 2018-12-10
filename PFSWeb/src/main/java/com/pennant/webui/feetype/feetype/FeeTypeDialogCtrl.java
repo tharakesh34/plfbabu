@@ -147,6 +147,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	protected Groupbox gb_statusDetails;
 	private boolean enqModule = false;
 
+	protected Checkbox refundableFee;
+
 	private FeeType feeType;
 	private transient FeeTypeListCtrl feeTypeListCtrl;
 	private List<ValueLabel> listAdviseType = PennantStaticListUtil.getManualAdviseTypes();
@@ -504,6 +506,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
+		this.refundableFee.setValue(aFeeType.isrefundable());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 
 		if (this.manualAdvice.isChecked()) {
@@ -607,6 +610,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		//ApplicableFor
 		try {
 			aFeeType.setManualAdvice(this.manualAdvice.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//Refundable fee
+		try {
+			aFeeType.setrefundable(this.refundableFee.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -806,7 +816,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.hostFeeTypeCode.setReadonly(isReadOnly("FeeTypeDialog_HostFeeTypeCode"));
 		this.taxApplicable.setDisabled(isReadOnly("FeeTypeDialog_TaxApplicable"));
 		this.taxComponent.setDisabled(isReadOnly("FeeTypeDialog_TaxComponent"));
-
+		this.refundableFee.setDisabled(isReadOnly("FeeTypeDialog_RefundableFee"));
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.amortzReq);
 
 		if (isWorkFlowEnabled()) {

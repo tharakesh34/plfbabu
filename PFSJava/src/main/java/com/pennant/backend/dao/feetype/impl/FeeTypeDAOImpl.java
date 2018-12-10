@@ -92,7 +92,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, AdviseType, AccountSetId, TaxComponent, TaxApplicable,");
+				" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice,refundable, AdviseType, AccountSetId, TaxComponent, TaxApplicable,");
 		if (type.contains("View")) {
 			selectSql.append(" AccountSetCode, AccountSetCodeName,");
 		}
@@ -161,12 +161,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder sql = new StringBuilder("insert into FeeTypes");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,");
+				" (feeTypeID, feeTypeCode, feeTypeDesc, manualAdvice, AdviseType, AccountSetId, active, TaxComponent, TaxApplicable,refundable,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode,  AmortzReq)");
 		sql.append(" values(");
 		sql.append(
-				" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable,");
+				" :feeTypeID, :feeTypeCode, :feeTypeDesc, :manualAdvice, :AdviseType, :AccountSetId, :active, :TaxComponent, :TaxApplicable, :refundable,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:HostFeeTypeCode, :AmortzReq)");
 
@@ -198,7 +198,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		sql.append(" set feeTypeCode=:feeTypeCode,feeTypeDesc=:feeTypeDesc,");
 		sql.append(" active=:active,");
 		sql.append(
-				" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,");
+				" manualAdvice = :manualAdvice, AdviseType = :AdviseType, AccountSetId = :AccountSetId, TaxComponent = :TaxComponent, TaxApplicable = :TaxApplicable,refundable =:refundable,");
 		sql.append(
 				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(
@@ -264,7 +264,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent");
+				" Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent,refundable");
 		selectSql.append(" From FeeTypes");
 		selectSql.append(" Where FeeTypeCode = :FeeTypeCode");
 
@@ -353,7 +353,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		feeType.setFeeTypeCode(feeTypeCode);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId, FeeTypeCode, FeeTypeDesc");
+				" Select TaxComponent, TaxApplicable, AmortzReq, AccountSetId, FeeTypeCode, FeeTypeDesc,refundable");
 		selectSql.append(" From FeeTypes Where FeeTypeCode = :FeeTypeCode");
 
 		logger.debug("sql: " + selectSql.toString());

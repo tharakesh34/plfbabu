@@ -77,6 +77,7 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 	private String taxComponent;
 
 	private boolean amortzReq;
+	private boolean refundable;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -244,5 +245,13 @@ public class FeeType extends AbstractWorkflowEntity implements Entity {
 
 	public void setTaxComponent(String taxComponent) {
 		this.taxComponent = taxComponent;
+	}
+
+	public boolean isrefundable() {
+		return refundable;
+	}
+
+	public void setrefundable(boolean refundable) {
+		this.refundable = refundable;
 	}
 }

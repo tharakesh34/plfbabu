@@ -84,4 +84,18 @@
 	<comment>changing data type of batchreference from varchar to bigint</comment>
 	<modifyDataType tableName="adtfintaxuploadheader" columnName="batchreference" newDataType="bigint"/>
 	</changeSet>
+	
+	<changeSet id="5" author="swami.v">
+	<comment>Added Refundable of new column in Fee type Details</comment>
+	<addColumn tableName="adtFeeTypes">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+	
+	<changeSet id="6" author="swami.v">
+	<comment>Added Refundable of new column </comment>
+	<addColumn tableName="adtfinfeedetail">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
 	</databaseChangeLog>

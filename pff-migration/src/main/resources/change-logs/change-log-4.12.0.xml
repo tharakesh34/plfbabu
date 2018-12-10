@@ -2895,4 +2895,609 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="44" author="swami.v">
+	<comment>Added Refundable of new column in Fee type Details</comment>
+	<addColumn tableName="FeeTypes">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="45" author="swami.v">
+	<comment>Added Refundable of new column in Fee type Details</comment>
+	<addColumn tableName="FeeTypes_temp">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+
+<changeSet id="46" author="swami.v">
+	<comment>Added Refundable of new column in Fee type Details</comment>
+ <sql>
+        UPDATE FeeTypes SET Refundable = 0;
+	UPDATE FeeTypes_TEMP SET Refundable = 0;
+ </sql>
+</changeSet>
+	
+	 
+	 <changeSet id="47" author="swami.v">
+<comment>Added Refundable of new column in Fee type Details</comment>
+		<createView viewName="feetypes_view" replaceIfExists="true" > 
+
+SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.Refundable,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+UNION ALL
+ SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.Refundable,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM feetypes_temp
+          WHERE feetypes_temp.feetypeid = t1.feetypeid))
+
+</createView>
+	</changeSet>
+
+
+
+
+
+<changeSet id="48" author="swami.v">
+<comment>Added Refundable of new column in Fee type Details</comment>
+		<createView viewName="feetypes_aview" replaceIfExists="true" > 
+
+SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.Refundable,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+
+</createView>
+	</changeSet>
+
+
+<changeSet id="49" author="swami.v">
+<comment>Added Refundable of new column in Fee type Details</comment>
+		<createView viewName="feetypes_tview" replaceIfExists="true" > 
+
+
+SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.Refundable,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+
+</createView>
+	</changeSet>
+	 
+
+<changeSet id="50" author="swami.v">
+<comment> Added SECRights,SECGROUPRIGHTS of new column of "Refundable" added</comment>
+<sql>
+
+
+UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+ 
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FeeTypeDialog_RefundableFee','FeeTypeDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FEETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FeeTypeDialog_RefundableFee'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+</sql>
+</changeSet>
+	
+<changeSet id="51" author="swami.v">
+	<comment>Added new column of "Refundable" </comment>
+	<addColumn tableName="finfeedetail">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+
+<changeSet id="52" author="swami.v">
+	<comment>Added new column of "Refundable" </comment>
+	<addColumn tableName="finfeedetail_temp">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+
+<changeSet id="53" author="swami.v">
+	<comment>Added new column of "Refundable" </comment>
+	<addColumn tableName="finfeedetail_pa">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="54" author="swami.v">
+	<comment>Added new column of "Refundable" </comment>
+	<addColumn tableName="rejectfinfeedetail">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="55" author="swami.v">
+	<comment>Added new column of "Refundable" </comment>
+	<addColumn tableName="WIFFINFEEDETAIL">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+
+<changeSet id="56" author="swami.v">
+	<comment>Added new column of "Refundable" </comment>
+	<addColumn tableName="WIFFINFEEDETAIL_TEMP">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+
+
+
+
+<changeSet id="57" author="swami.v">
+	<comment>Added Refundable of new column </comment>
+ <sql>
+
+    UPDATE finfeedetail SET Refundable = 0;
+	UPDATE finfeedetail_temp SET Refundable = 0;
+    UPDATE finfeedetail_pa   SET Refundable = 0;
+    UPDATE rejectfinfeedetail SET Refundable = 0;
+    UPDATE WIFFINFEEDETAIL SET Refundable = 0;
+    UPDATE WIFFINFEEDETAIL_TEMP SET Refundable = 0;
+    
+ </sql>
+</changeSet>
+
+<changeSet id="58" author="swami.v">
+<comment>Added Refundable of new column </comment>
+		<createView viewName="finfeedetail_aview" replaceIfExists="true" > 
+
+SELECT t1.feeid,
+    t1.finreference,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeseq,
+    t1.feeorder,
+    t1.calculatedamount,
+    t1.actualamount,
+    t1.waivedamount,
+    t1.paidamount,
+    t1.feeschedulemethod,
+    t1.terms,
+    t1.remainingfee,
+    t1.paymentref,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.fixedamount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.vasreference,
+    t1.status,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.paidamountoriginal,
+    t1.paidamountgst,
+    t1.netamountoriginal,
+    t1.netamountgst,
+    t1.netamount,
+    t1.remainingfeeoriginal,
+    t1.remainingfeegst,
+    t1.actualamountoriginal,
+    t1.actualamountgst,
+    t1.feeamz,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t1.Refundable
+   FROM finfeedetail t1
+     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+
+</createView>
+	</changeSet>
+
+
+
+<changeSet id="59" author="swami.v">
+<comment>Added Refundable of new column </comment>
+		<createView viewName="finfeedetail_tview" replaceIfExists="true" > 
+
+SELECT t1.feeid,
+    t1.finreference,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeseq,
+    t1.feeorder,
+    t1.calculatedamount,
+    t1.actualamount,
+    t1.waivedamount,
+    t1.paidamount,
+    t1.feeschedulemethod,
+    t1.terms,
+    t1.remainingfee,
+    t1.paymentref,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.fixedamount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.vasreference,
+    t1.status,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.paidamountoriginal,
+    t1.paidamountgst,
+    t1.netamountoriginal,
+    t1.netamountgst,
+    t1.netamount,
+    t1.remainingfeeoriginal,
+    t1.remainingfeegst,
+    t1.actualamountoriginal,
+    t1.actualamountgst,
+    t1.feeamz,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypecode,
+    t2.feetypedesc,  
+    t1.Refundable
+   FROM finfeedetail_temp t1
+     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+
+</createView>
+	</changeSet>
+
+
+<changeSet id="60" author="swami.v">
+<comment>Added Refundable of new column </comment>
+		<createView viewName="finfeedetail_view" replaceIfExists="true" > 
+
+ SELECT t1.feeid,
+    t1.finreference,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeseq,
+    t1.feeorder,
+    t1.calculatedamount,
+    t1.actualamount,
+    t1.waivedamount,
+    t1.paidamount,
+    t1.feeschedulemethod,
+    t1.terms,
+    t1.remainingfee,
+    t1.paymentref,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.fixedamount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.vasreference,
+    t1.status,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.paidamountoriginal,
+    t1.paidamountgst,
+    t1.netamountoriginal,
+    t1.netamountgst,
+    t1.netamount,
+    t1.remainingfeeoriginal,
+    t1.remainingfeegst,
+    t1.actualamountoriginal,
+    t1.actualamountgst,
+    t1.feeamz,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.transactionid,
+    t1.workflowid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t1.Refundable
+   FROM finfeedetail_temp t1
+     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+UNION ALL
+ SELECT t1.feeid,
+    t1.finreference,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeseq,
+    t1.feeorder,
+    t1.calculatedamount,
+    t1.actualamount,
+    t1.waivedamount,
+    t1.paidamount,
+    t1.feeschedulemethod,
+    t1.terms,
+    t1.remainingfee,
+    t1.paymentref,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.fixedamount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.vasreference,
+    t1.status,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.paidamountoriginal,
+    t1.paidamountgst,
+    t1.netamountoriginal,
+    t1.netamountgst,
+    t1.netamount,
+    t1.remainingfeeoriginal,
+    t1.remainingfeegst,
+    t1.actualamountoriginal,
+    t1.actualamountgst,
+    t1.feeamz,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.transactionid,
+    t1.workflowid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t1.Refundable
+   FROM finfeedetail t1
+     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM finfeedetail_temp
+          WHERE finfeedetail_temp.feeid = t1.feeid))
+
+</createView>
+	</changeSet>
+
+
+<changeSet id="61" author="swami.v">
+<comment>Added Refundable of new column </comment>
+		<createView viewName="wiffinfeedetail_view" replaceIfExists="true" > 
+
+SELECT t1.feeid,
+    t1.finreference,
+    t1.feeseq,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.calculatedamount,
+    t1.actualamount,
+    t1.waivedamount,
+    t1.paidamount,
+    t1.feeschedulemethod,
+    t1.terms,
+    t1.remainingfee,
+    t1.paymentref,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.fixedamount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.vasreference,
+    t1.status,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.paidamountoriginal,
+    t1.paidamountgst,
+    t1.netamountoriginal,
+    t1.netamountgst,
+    t1.netamount,
+    t1.remainingfeeoriginal,
+    t1.remainingfeegst,
+    t1.actualamountoriginal,
+    t1.actualamountgst,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t1.Refundable
+   FROM wiffinfeedetail_temp t1
+     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+UNION ALL
+ SELECT t1.feeid,
+    t1.finreference,
+    t1.feeseq,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.calculatedamount,
+    t1.actualamount,
+    t1.waivedamount,
+    t1.paidamount,
+    t1.feeschedulemethod,
+    t1.terms,
+    t1.remainingfee,
+    t1.paymentref,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.fixedamount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.vasreference,
+    t1.status,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.paidamountoriginal,
+    t1.paidamountgst,
+    t1.netamountoriginal,
+    t1.netamountgst,
+    t1.netamount,
+    t1.remainingfeeoriginal,
+    t1.remainingfeegst,
+    t1.actualamountoriginal,
+    t1.actualamountgst,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t1.Refundable
+   FROM wiffinfeedetail t1
+     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM wiffinfeedetail_temp
+          WHERE wiffinfeedetail_temp.finreference = t1.finreference AND wiffinfeedetail_temp.originationfee = t1.originationfee AND wiffinfeedetail_temp.finevent = t1.finevent AND wiffinfeedetail_temp.feetypeid = t1.feetypeid))
+
+</createView>
+	</changeSet>
+
+
+	
 </databaseChangeLog>

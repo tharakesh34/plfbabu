@@ -74,6 +74,15 @@
 										<textbox id="hostFeeTypeCode" width="200px" maxlength="50" />
 									</hbox>
 								</row>
+								<row>
+									<label
+										id="label_FeeTypeDialog_RefundableFee"
+										value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
+									<hbox>
+									<space spacing="2px"></space>
+										<checkbox id="refundableFee" />
+									</hbox>
+								</row>
 								<row id="row2">
 									<label id="label_ManualAdvice" value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
 									<hbox id="hlayout_ManualAdvice">
