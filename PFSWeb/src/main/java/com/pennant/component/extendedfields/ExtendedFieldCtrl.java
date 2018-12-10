@@ -79,7 +79,27 @@ public class ExtendedFieldCtrl {
 	 */
 	public void render() throws ScriptException {
 		logger.debug(Literal.ENTERING);
+		renderData();
+		logger.debug(Literal.LEAVING);
+	}
 
+	/**
+	 * Setting the multiple objects into bindings for setting the default values.
+	 * @param objectList
+	 * @throws ScriptException
+	 */
+	public void render(List<Object> objectList) throws ScriptException {
+		logger.debug(Literal.ENTERING);
+		scriptValidationService.setObjectList(objectList);
+		renderData();
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Rendering data
+	 * @throws ScriptException
+	 */
+	private void renderData() throws ScriptException {
 		// Extended Field Details auto population / Rendering into Screen
 		this.generator = new ExtendedFieldsGenerator();
 		this.generator.setTabpanel(tabpanel);
@@ -139,7 +159,6 @@ public class ExtendedFieldCtrl {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**

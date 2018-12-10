@@ -534,19 +534,36 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			// array of variables
 			variables = (JSONArray) data[1];
 
+			if (!isPostValidation) {
+				return noerrors;
+			}
+			
 			// if no errors
 			if (variables != null && errors.size() == 0) {
 				// check for new declared variables
 				for (int i = 0; i < variables.size(); i++) {
 					JSONObject variable = (JSONObject) variables.get(i);
-					if (!"errors".equals(variable.get("name"))) {
-						if (!fieldNames.contains(variable.get("name"))) {
-							// if new variables found throw error message
-							noerrors = false;
-							MessageUtil.showError("Unknown Variable :" + variable.get("name"));
-							return noerrors;
-						} else {
-							noerrors = true;
+					if(isPostValidation){
+						if (!"errors".equals(variable.get("name"))) {
+							if (!fieldNames.contains(variable.get("name"))) {
+								// if new variables found throw error message
+								noerrors = false;
+								MessageUtil.showError("Unknown Variable :" + variable.get("name"));
+								return noerrors;
+							} else {
+								noerrors = true;
+							}
+						}
+					} else {
+						if (!"defaults".equals(variable.get("name"))) {
+							if (!fieldNames.contains(variable.get("name"))) {
+								// if new variables found throw error message
+								noerrors = false;
+								MessageUtil.showError("Unknown Variable :" + variable.get("name"));
+								return noerrors;
+							} else {
+								noerrors = true;
+							}
 						}
 					}
 				}
@@ -586,14 +603,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					return false;
 				}
 			} else {
-				if (!this.preValidation.getValue().contains("errors")) {
+				if (!this.preValidation.getValue().contains("defaults")) {
 					MessageUtil.showError("Error Details not found ");
 					return false;
 				}
 			}
 		} else {
 			if (StringUtils.isNotEmpty(this.preValidation.getValue())
-					&& !this.preValidation.getValue().contains("errors")) {
+					&& !this.preValidation.getValue().contains("defaults")) {
 				MessageUtil.showError("Error Details not found in Pre Validations.");
 				return false;
 			} else if (StringUtils.isNotEmpty(this.postValidation.getValue())

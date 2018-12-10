@@ -67,6 +67,8 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -100,6 +102,8 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private List<VASRecording> vasRecordings = null;
 	private String finType = "";
 	private VASConfigurationService vasConfigurationService;
+	private FinanceDetail financeDetail;
+	private List<JointAccountDetail> jointAccountDetails;
 
 	/**
 	 * default constructor.<br>
@@ -150,6 +154,9 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 			if (arguments.containsKey("finType")) {
 				this.finType = (String) arguments.get("finType");
+			}
+			if (arguments.containsKey("financeDetail")) {
+				this.setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
 			}
 
 			doCheckRights();
@@ -215,7 +222,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, this.roleCode);
-		this.btnNew_VasRecording.setVisible(getUserWorkspace().isAllowed("button_FinVasRecordingDialog_btnNew"));
+		this.btnNew_VasRecording.setVisible(true);
 
 		logger.debug("Leaving");
 	}
@@ -243,6 +250,8 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		map.put("vASRecording", recording);
 		map.put("newRecord", true);
 		map.put("waivedFlag", true);
+		map.put("financeDetail", getFinanceDetail());
+		map.put("jointAccountDetails", getJointAccountDetails());
 
 		List<String> roles = new ArrayList<>();
 		roles.add(roleCode);
@@ -349,6 +358,8 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				map.put("finVasRecordingDialogCtrl", this);
 				map.put("roleCode", this.roleCode);
 				map.put("vASRecording", recording);
+				map.put("financeDetail", getFinanceDetail());
+				map.put("jointAccountDetails", getJointAccountDetails());
 
 				// call the zul-file with the parameters packed in a map
 				try {
@@ -416,4 +427,19 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.vasConfigurationService = vasConfigurationService;
 	}
 
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public void addCoApplicants(List<JointAccountDetail> jountAccountDetails) {
+		this.jointAccountDetails = jountAccountDetails;
+	}
+
+	public List<JointAccountDetail> getJointAccountDetails() {
+		return jointAccountDetails;
+	}
 }

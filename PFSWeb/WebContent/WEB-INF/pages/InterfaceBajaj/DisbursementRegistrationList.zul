@@ -104,6 +104,11 @@
 										<checkbox id="qdp" width="171px" />
 									</hbox>
 								</row>
+								<row id="row_VasManufacturer" visible="false">
+									<label value="${c:l('label_DisbursementList_VasManufacturer.value')}" />
+									<listbox id="sortOperator_VasManufacturer" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="vasManufacturer" width="125px" />
+								</row>
 							</rows>
 						</grid>
 						<listbox id="listBoxDisbursementRegistration" fixedLayout="true" span="true" width="100%" height="100%"

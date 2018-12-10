@@ -86,6 +86,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -245,7 +246,6 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 
 		try {
-
 			// New button visibility.
 			this.btnNew_DocumentDetails.setVisible(!enqiryModule);
 
@@ -272,7 +272,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)
 					|| VerificationType.LV.getValue().equals(moduleName)
 					|| VerificationType.RCU.getValue().equals(moduleName)
-					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName)) {
+					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName) || VASConsatnts.MODULE_NAME.equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}
 

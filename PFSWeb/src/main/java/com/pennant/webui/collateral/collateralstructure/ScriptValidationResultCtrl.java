@@ -26,6 +26,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -98,7 +99,12 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 				row.setParent(rows_Fields);
 			}
 		}
-		this.window.setHeight(variables.size() * 35 + "px");
+		if (variables.size() <= 0) {
+			this.window_ScriptValidationResult.setHeight("100px");
+		} else {
+			this.window_ScriptValidationResult.setHeight(variables.size() * 55 + "px");
+		}
+		
 		this.window_ScriptValidationResult.doModal();
 		logger.debug("Leaving" + event.toString());
 	}
@@ -162,7 +168,8 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 			factory = null;
 
 		} catch (Exception e) {
-			MessageUtil.showError(e);
+			MessageUtil.showMessage(Labels.getLabel("label_ExtendedFieldModule_ScriptValidation.value"));
+			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug("Leaving" + event.toString());
 	}

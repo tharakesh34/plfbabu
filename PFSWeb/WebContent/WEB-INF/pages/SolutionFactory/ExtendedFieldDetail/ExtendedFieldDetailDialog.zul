@@ -95,6 +95,14 @@
 									<checkbox id="fieldMandatory" checked="false" />
 								</hbox>
 							</row>
+							<row id="rowValFromScript" visible="false">
+								<label
+									value="${c:l('label_ExtendedFieldDetailDialog_ValFromScript.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="valFromScript" checked="false" />
+								</hbox>
+							</row>
 							<row visible="true" id="rowUnique">
 								<label id="label_ExtendedFieldDetailDialog_FieldUnique" value="${c:l('label_ExtendedFieldDetailDialog_FieldUnique.value')}" />
 								<hbox>

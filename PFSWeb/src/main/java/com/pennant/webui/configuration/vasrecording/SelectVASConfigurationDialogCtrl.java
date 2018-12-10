@@ -70,6 +70,9 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.configuration.VASConfigurationService;
@@ -109,6 +112,9 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 	protected Row collateralRow;
 	protected ExtendedCombobox collteralType;
+	
+	protected Row entityCodeRow;
+	private ExtendedCombobox entityCode;
 
 	private VASRecording vasRecording;
 	private VASConfiguration vasConfiguration;
@@ -123,6 +129,8 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private CustomerDAO customerDAO;
 	private FinTypeVASProducts finTypeVASProducts;
+	private FinanceDetail financeDetail;
+	private List<JointAccountDetail> jointAccountDetails;
 
 	private List<String> userRoleCodeList = new ArrayList<String>();
 	private boolean isFinanceProcess = false;
@@ -164,9 +172,19 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			if (arguments.containsKey("finType")) {
 				this.finType = (String) arguments.get("finType");
 			}
+			
 			if (arguments.containsKey("waivedFlag")) {
 				this.waivedFlag = (boolean) arguments.get("waivedFlag");
 			}
+			
+			if (arguments.containsKey("financeDetail")) {
+				this.setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+			}
+			
+			if (arguments.containsKey("jointAccountDetails")) {
+				this.setJointAccountDetails((List<JointAccountDetail>) arguments.get("jointAccountDetails"));
+			}
+			
 			doSetFieldProperties();
 		} catch (Exception e) {
 			closeDialog();
@@ -224,7 +242,16 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 				this.productType.setWhereClause(whereClause);
 			}
 		}
-
+		this.entityCode.setMaxlength(8);
+		this.entityCode.setDisplayStyle(2);
+		this.entityCode.setMandatoryStyle(true);
+		this.entityCode.setModuleName("Entity");
+		this.entityCode.setValueColumn("EntityCode");
+		this.entityCode.setDescColumn("EntityDesc");
+		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		this.entityCode.setFilters(filter);
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 
 		// loanType
@@ -298,6 +325,18 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasRecording.setPrimaryLinkRef(this.loanType.getValue());
 		} else if (this.collateralRow.isVisible()) {
 			vasRecording.setPrimaryLinkRef(this.collteralType.getValue());
+		}
+		if (entityCodeRow.isVisible()) {
+			vasRecording.setEntityCode(this.entityCode.getValue());
+			vasRecording.setEntityDesc(this.entityCode.getDescription());
+		} else if (this.loanRow.isVisible() && this.loanType.getAttribute("financeMain") != null) {
+			FinanceMain financeMain = (FinanceMain) this.loanType.getAttribute("financeMain");
+			vasRecording.setEntityCode(financeMain.getEntityCode());
+			vasRecording.setEntityDesc(financeMain.getLovDescEntityCode());
+		
+		} else if (isFinanceProcess && getFinanceDetail() != null) {
+			vasRecording.setEntityCode(getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescEntityCode());
+			vasRecording.setEntityDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescEntityDesc());
 		}
 
 		// Setting Workflow Details
@@ -382,6 +421,8 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		}
 		arguments.put("newRecord", this.newRecord);
 		arguments.put("waivedFlag", this.waivedFlag);
+		arguments.put("financeDetail", getFinanceDetail());
+		arguments.put("jointAccountDetails", getJointAccountDetails());
 		if (userRoleCodeList != null && !userRoleCodeList.isEmpty()) {
 			arguments.put("roleCode", userRoleCodeList.get(0));
 		}
@@ -443,6 +484,15 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			if (this.collateralRow.isVisible() && StringUtils.trimToNull(this.collteralType.getValue()) == null) {
 				throw new WrongValueException(this.collteralType, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_SelectCollateralTypeDialog_CollateralType.value") }));
+			}
+		} catch (WrongValueException e) {
+			wve.add(e);
+		}
+
+		try {
+			if (this.entityCodeRow.isVisible() && StringUtils.trimToNull(this.entityCode.getValue()) == null) {
+				throw new WrongValueException(this.entityCode, Labels.getLabel("FIELD_NO_EMPTY",
+						new String[] { Labels.getLabel("label_SelectCollateralTypeDialog_EntityCode.value") }));
 			}
 		} catch (WrongValueException e) {
 			wve.add(e);
@@ -589,6 +639,33 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 		logger.debug("Leaving " + event.toString());
 	}
+	/**
+	 * When user clicks on button "loanType" button
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onFulfill$loanType(Event event) throws InterruptedException {
+		logger.debug("Entering " + event.toString());
+
+		this.loanType.setConstraint("");
+		this.loanType.clearErrorMessage();
+		Clients.clearWrongValue(loanType);
+		Object dataObject = this.loanType.getObject();
+		if (dataObject instanceof String) {
+			this.loanType.setValue(dataObject.toString());
+			this.loanType.setDescription("");
+		} else {
+			if (dataObject instanceof FinanceMain) {
+				FinanceMain details = (FinanceMain) dataObject;
+				/* Set FinanceWorkFloe object */
+				this.loanType.setValue(details.getFinReference());
+				this.loanType.setDescription(details.getFinType());
+				this.loanType.setAttribute("financeMain", details);
+			}
+		}
+		logger.debug("Leaving " + event.toString());
+	}
 
 	/*
 	 * display the customer,Loan or commitemet deatils based on produtype selection
@@ -598,18 +675,22 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 		if (VASConsatnts.VASAGAINST_CUSTOMER.equals(recAgainst)) {
 			this.customerRow.setVisible(true);
+			this.entityCodeRow.setVisible(true);
 			this.collateralRow.setVisible(false);
 			this.loanRow.setVisible(false);
 		} else if (VASConsatnts.VASAGAINST_FINANCE.equals(recAgainst)) {
 			this.customerRow.setVisible(false);
+			this.entityCodeRow.setVisible(false);
 			this.collateralRow.setVisible(false);
 			this.loanRow.setVisible(true);
 		} else if (VASConsatnts.VASAGAINST_COLLATERAL.equals(recAgainst)) {
 			this.customerRow.setVisible(false);
+			this.entityCodeRow.setVisible(false);
 			this.collateralRow.setVisible(true);
 			this.loanRow.setVisible(false);
 		} else {
 			this.customerRow.setVisible(false);
+			this.entityCodeRow.setVisible(false);
 			this.collateralRow.setVisible(false);
 			this.loanRow.setVisible(false);
 		}
@@ -622,6 +703,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		this.productType.setConstraint("");
 		this.custCIF.setConstraint("");
 		this.collteralType.setConstraint("");
+		this.entityCode.setConstraint("");
 		this.loanType.setConstraint("");
 		logger.debug("Leaving");
 	}
@@ -632,6 +714,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		this.productType.setErrorMessage("");
 		this.custCIF.setErrorMessage("");
 		this.collteralType.setErrorMessage("");
+		this.entityCode.setErrorMessage("");
 		this.loanType.setErrorMessage("");
 		logger.debug("Leaving");
 	}
@@ -730,5 +813,21 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 	public void setFinTypeVASProducts(FinTypeVASProducts finTypeVASProducts) {
 		this.finTypeVASProducts = finTypeVASProducts;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public List<JointAccountDetail> getJointAccountDetails() {
+		return jointAccountDetails;
+	}
+
+	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
+		this.jointAccountDetails = jointAccountDetails;
 	}
 }

@@ -145,6 +145,14 @@
 													<extendedcombobox id="referralId" />
 												</hbox>
 											</row>
+											<row>
+											<label value="${c:l('label_VASRecordingDialog_EntityCode.value')}" />
+											<hbox>
+												<space spacing="2px" sclass="mandatory" />
+												<textbox id="entityCode" width="180px" />
+												<label id="entityDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+											</hbox>
+											</row>
 										</rows>
 									</grid>
 									<tabbox width="100%" height="100%">

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+x * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -47,12 +47,14 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -97,6 +99,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -104,17 +107,22 @@ import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
@@ -154,6 +162,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.rits.cloning.Cloner;
 
 /**
  * This is the controller class for the /WEB-INF/pages/configuration/VASRecording/vASRecordingDialog.zul file. <br>
@@ -187,6 +196,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Button viewInfo;
 	protected Button btnSearchSelection;
 	protected Row row_Vasfee;
+	protected Textbox entityCode;
+	protected Label entityDesc;
 
 	private VASRecording vASRecording;
 	private Textbox enquiryType;
@@ -207,13 +218,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tab basicDetailsTab;
 	protected Tab extendedDetailsTab; //NOt required
-	protected Tabpanel extendedFieldTabpanel; //NOt required
 	protected Component checkListChildWindow;
 	private transient ExtendedFieldRenderDialogCtrl extendedFieldRenderDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl;
 	private transient FinanceCheckListReferenceDialogCtrl financeCheckListReferenceDialogCtrl;
+	private transient VehicleDealerService vehicleDealerService;
 	protected String selectMethodName = "onSelectTab";
 	private String moduleType = "";
 
@@ -237,6 +248,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private boolean feeEditable = false;
 	private boolean newRecord = false;
 	private List<VASRecording> vasRecordings;
+	private FinanceDetail financeDetail;
+	private List<JointAccountDetail> jointAccountDetails= new ArrayList<>();
 	private List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
 
 	private AccountEngineExecution engineExecution;
@@ -267,6 +280,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_VASRecordingDialog(Event event) throws Exception {
 		logger.debug("Entring" + event.toString());
 
@@ -319,6 +333,14 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
 
+			if (arguments.containsKey("financeDetail")) {
+				this.setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
+			}
+			
+			if (arguments.containsKey("jointAccountDetails")) {
+				this.setJointAccountDetails((List<JointAccountDetail>) arguments.get("jointAccountDetails"));
+			}
+			
 			// Render the page and display the data.
 			if (!enqiryModule) {
 				doLoadWorkFlow(this.vASRecording.isWorkflow(), this.vASRecording.getWorkflowId(),
@@ -453,6 +475,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.postingAgainst.setDisabled(true);
 		this.primaryLinkRef.setReadonly(true);
 		this.vasReference.setReadonly(true);
+		this.entityCode.setReadonly(true);
 
 		this.feePaymentMode.setDisabled(isReadOnly("VASRecordingDialog_FeePaymentMode"));
 		this.valueDate.setDisabled(isReadOnly("VASRecordingDialog_ValueDate"));
@@ -489,6 +512,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				} else {
 					//this.btnCtrl.setWFBtnStatus_Edit(isFinanceVas());
 					this.btnCancel.setVisible(false);
+					if (getFinanceDetail().getFinScheduleData().getFinanceMain().isNewRecord()) {
+						this.btnDelete.setVisible(true);
+					} else {
+						this.btnDelete.setVisible(false);
+					}
 				}
 			} else {
 				this.btnCtrl.setBtnStatus_Edit();
@@ -496,6 +524,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		}
 
+		this.btnSave.setVisible(true);
 		logger.debug("Leaving ");
 	}
 
@@ -578,6 +607,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.dmaId.setErrorMessage("");
 		this.fulfilOfficerId.setErrorMessage("");
 		this.referralId.setErrorMessage("");
+		this.entityCode.setErrorMessage("");
 
 		logger.debug("Leaving");
 	}
@@ -1232,7 +1262,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			if (isFinanceVas()) {
 
 				// Height Calculation
-				int height = borderLayoutHeight - 120;
+				int height = (borderLayoutHeight - 60);
 				this.window_VASRecordingDialog.setHeight(height + "px");
 				this.window_VASRecordingDialog.setWidth("90%");
 				this.groupboxWf.setVisible(false);
@@ -1349,7 +1379,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.recurringDate.setValue(aVASRecording.getRecurringDate());
 			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getPaidAmt(), getCcyFormat()));
 		}
-
+		//Entity code
+		this.entityCode.setValue(aVASRecording.getEntityCode());
+		this.entityDesc.setValue(aVASRecording.getEntityDesc());
+		
 		// Product Code
 		this.productCode.setValue(aVASRecording.getProductCode());
 		this.productCode.setDescription(aVASRecording.getProductDesc());
@@ -1501,55 +1534,81 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 
 		VASConfiguration vasConfiguration = aVASRecording.getVasConfiguration();
+		
+		ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
+		if(extendedFieldHeader == null){
+			return;
+		}
+		
 		setExtendedFieldRender(aVASRecording.getExtendedFieldRender());
 
+		// Setting the objects list 
+		List<Object> objectList = new ArrayList<>();
+		setObjectData(objectList);
+		
 		//Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
 			fieldValuesMap = aVASRecording.getExtendedFieldRender().getMapValues();
 		}
 
+		List<ExtendedFieldDetail> extendedFieldDetails = extendedFieldHeader.getExtendedFieldDetails();
+		
 		//setting the pre and post validation scripts
 		setPreValidationScript(vasConfiguration.getPreValidation());
 		setPostValidationScript(vasConfiguration.getPostValidation());
-		setExtendedFieldHeader(vasConfiguration.getExtendedFieldHeader());
+		setExtendedFieldHeader(extendedFieldHeader);
 		aVASRecording.getRecordType();
 		aVASRecording.getRecordStatus();
-		if (((isNewRecord() || isFeeEditable()) && isFinanceVas())
-				|| (!isFinanceVas() && aVASRecording.isNewRecord())) {
-			//get pre-validation script if record is new
-			String preValidationScript = vasConfiguration.getPreValidation();
-			if (StringUtils.isNotEmpty(preValidationScript)) {
-				ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
-						fieldValuesMap);
 
-				// Initiation of Field Value Map
-				if (fieldValuesMap == null) {
-					fieldValuesMap = new HashMap<>();
-				}
+		String preValidationScript = vasConfiguration.getPreValidation();
+		if (StringUtils.isNotEmpty(preValidationScript)) {
+			ScriptErrors defaults = getScriptValidationService().setPreValidationDefaults(preValidationScript,
+					fieldValuesMap);
 
-				// Overriding Default values
-				List<ScriptError> defaultList = defaults.getAll();
-				for (int i = 0; i < defaultList.size(); i++) {
-					ScriptError dftKeyValue = defaultList.get(i);
-
+			// Initiation of Field Value Map
+			if (fieldValuesMap == null) {
+				fieldValuesMap = new HashMap<>();
+			}
+			// Overriding Default values
+			List<ScriptError> defaultList = defaults.getAll();
+			for (int i = 0; i < defaultList.size(); i++) {
+				ScriptError dftKeyValue = defaultList.get(i);
+				if (!aVASRecording.isNewRecord()) {
+					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
+					if (!detail.isVisible() || detail.isValFromScript()) {
+						if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
+							fieldValuesMap.remove(dftKeyValue.getProperty());
+						}
+						if (detail.isValFromScript()) {
+							detail.setFieldList(dftKeyValue.getValue());
+						}
+						fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
+					}
+				} else {
 					if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {
 						fieldValuesMap.remove(dftKeyValue.getProperty());
+					}
+					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
+					if (detail.isValFromScript()) {
+						detail.setFieldList(dftKeyValue.getValue());
 					}
 					fieldValuesMap.put(dftKeyValue.getProperty(), dftKeyValue.getValue());
 				}
 			}
 		}
+
 		if (fieldValuesMap != null) {
 			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
 		}
 		try {
-			generator.renderWindow(vasConfiguration.getExtendedFieldHeader(), newRecord);
+			generator.renderWindow(extendedFieldHeader, newRecord);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		logger.debug("Leaving");
 	}
+
 
 	/**
 	 * Method for Rendering Joint account and guaranteer Details Data in finance
@@ -2037,50 +2096,60 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			wve.add(we);
 		}
 
+		// Entity Code
+		try {
+			aVASRecording.setEntityCode(this.entityCode.getValue());
+			aVASRecording.setEntityDesc(this.entityDesc.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Vas Status
-		aVASRecording.setVasStatus(isCancelProcess ? "C" : "N");
+		aVASRecording.setVasStatus(isCancelProcess ? VASConsatnts.STATUS_CANCEL : VASConsatnts.STATUS_NORMAL);
 
-		//Extended field details
+		// Extended field details
 		final ExtendedFieldRender aExetendedFieldRender = getExtendedFieldRender();
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox
 		// Do data level validations here
-		Map<String, Object> map = null;
-		try {
-			boolean isReadOnly = false;
-			if (enqiryModule || isCancelProcess) {
-				isReadOnly = true;
-			} else {
-				isReadOnly = isReadOnly("VASRecordingDialog_ExtendedFields");
+
+		if (aExetendedFieldRender != null) {
+			Map<String, Object> map = null;
+			try {
+				boolean isReadOnly = false;
+				if (enqiryModule || isCancelProcess) {
+					isReadOnly = true;
+				} else {
+					isReadOnly = isReadOnly("VASRecordingDialog_ExtendedFields");
+				}
+
+				map = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), isReadOnly);
+				aExetendedFieldRender.setMapValues(map);
+			} catch (WrongValuesException wves) {
+				WrongValueException[] wvea = wves.getWrongValueExceptions();
+				for (int i = 0; i < wvea.length; i++) {
+					wve.add(wvea[i]);
+				}
 			}
 
-			map = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), isReadOnly);
-			aExetendedFieldRender.setMapValues(map);
-		} catch (WrongValuesException wves) {
-			WrongValueException[] wvea = wves.getWrongValueExceptions();
-			for (int i = 0; i < wvea.length; i++) {
-				wve.add(wvea[i]);
+			// Basic Details Error Detail
+			showErrorDetails(wve, this.basicDetailsTab);
+
+			// Post Validations for the Extended fields
+			if (!enqiryModule && !isCancelProcess
+					&& (!enqiryModule && (!isReadOnly("VASRecordingDialog_FeePaymentMode")))) {
+				if (StringUtils.isNotEmpty(getPostValidationScript())) {
+					ScriptErrors postValidationErrors = getScriptValidationService()
+							.getPostValidationErrors(getPostValidationScript(), map);
+					// Preparing Wrong Value User UI exceptions
+					showErrorDetails(postValidationErrors);
+				}
 			}
-		}
 
-		// Basic Details Error Detail
-		showErrorDetails(wve, this.basicDetailsTab);
-
-		// Post Validations for the Extended fields
-		if (!enqiryModule && !isCancelProcess) {
-			if (StringUtils.isNotEmpty(getPostValidationScript())) {
-				ScriptErrors postValidationErrors = getScriptValidationService()
-						.getPostValidationErrors(getPostValidationScript(), map);
-				// Preparing Wrong Value User UI exceptions
-				showErrorDetails(postValidationErrors);
+			if (aVASRecording.isNew()) {
+				aExetendedFieldRender.setSeqNo(1);
 			}
+			aVASRecording.setExtendedFieldRender(aExetendedFieldRender);
 		}
-
-		if (aVASRecording.isNew()) {
-			aExetendedFieldRender.setSeqNo(1);
-		}
-		aVASRecording.setExtendedFieldRender(aExetendedFieldRender);
-
 		logger.debug("Leaving");
 	}
 
@@ -2091,9 +2160,10 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	public void showErrorDetails(ScriptErrors postValidationErrors) {
 		List<ScriptError> errorList = postValidationErrors.getAll();
-		if (errorList == null || errorList.isEmpty()) {
+		if (CollectionUtils.isEmpty(errorList)) {
 			return;
 		}
+		this.basicDetailsTab.setSelected(true);
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		for (int i = 0; i < errorList.size(); i++) {
 			ScriptError error = errorList.get(i);
@@ -2171,6 +2241,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.dmaId.setConstraint("");
 		this.fulfilOfficerId.setConstraint("");
 		this.referralId.setConstraint("");
+		this.entityCode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -2196,6 +2267,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.referralId.setReadonly(true);
 		this.waivedAmt.setReadonly(true);
 		this.viewInfo.setVisible(false);
+		this.entityCode.setReadonly(true);
 
 		if (isWorkFlowEnabled() && !isCancelProcess) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -2505,7 +2577,11 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				aeEvent.setCcy(collateralSetup.getCollateralCcy());
 				aeEvent.setCustID(collateralSetup.getDepositorId());
 			}
-
+			
+			VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(getVASRecording().getProductCode());
+			amountCodes.setProductCode(vehicleDealer.getProductShortCode());
+			amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
+			
 			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 			getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 			aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
@@ -2639,6 +2715,144 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return false;
 	}
 
+/*********************** Extended fields script execution data setup start********************/
+	/**
+	 * preparing the objects data for pre script execution.
+	 * @param objectList
+	 */
+	private void setObjectData(List<Object> objectList) {
+		if (getFinanceDetail() != null) {
+			FinanceDetail detail = getFinanceDetail();
+			
+			Cloner cloner = new Cloner();
+			FinanceDetail clonedDetail = cloner.deepClone(detail);
+			
+			CustomerDetails customerDetails = clonedDetail.getCustomerDetails();
+			formatCustomerData(customerDetails.getCustomer());
+			
+			List<JointAccountDetail> resultAccountDetails = new ArrayList<>();
+			List<JointAccountDetail> jointAccountDetails = getJointAccountDetails();
+			List<JointAccountDetail> finJointAccountDetails = clonedDetail.getJountAccountDetailList();
+			
+			if (CollectionUtils.isNotEmpty(jointAccountDetails) && CollectionUtils.isEmpty(finJointAccountDetails)) {
+				resultAccountDetails = jointAccountDetails;
+			}
+
+			if (CollectionUtils.isNotEmpty(finJointAccountDetails) && CollectionUtils.isEmpty(jointAccountDetails)) {
+				resultAccountDetails = finJointAccountDetails;
+			}
+
+			if (CollectionUtils.isNotEmpty(finJointAccountDetails) && CollectionUtils.isNotEmpty(jointAccountDetails)) {
+				resultAccountDetails = jointAccountDetails;
+				for (JointAccountDetail finJointAccountDetail : finJointAccountDetails) {
+					boolean exists = false;
+					for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
+						if(finJointAccountDetail.getCustCIF().equals(jointAccountDetail.getCustCIF())){
+							exists = true;
+							break;
+						}
+					}
+					
+					if(!exists){
+						resultAccountDetails.add(finJointAccountDetail);
+					}
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(resultAccountDetails)) {
+				for (JointAccountDetail jointAccountDetail : resultAccountDetails) {
+					if (!isDeleted(jointAccountDetail.getRecordType())) {
+						CustomerDetails details = getCustomerDetailsService().getCustomerDetailsById(jointAccountDetail.getCustID(), false, "_AView");
+						formatCustomerData(details.getCustomer());
+						jointAccountDetail.setCustomerDetails(details);
+					}
+				}
+				clonedDetail.setJountAccountDetailList(resultAccountDetails);
+			}
+			
+			objectList.add(clonedDetail);
+			getScriptValidationService().setObjectList(objectList);
+		} else {
+			
+			VasCustomer vasCustomer = vASRecording.getVasCustomer();
+			CustomerDetails details = new CustomerDetails();
+			if (vasCustomer != null && vasCustomer.getCustomerId() != 0) {
+				details = getCustomerDetailsService().getCustomerDetailsById(vasCustomer.getCustomerId(), false, "_AView");
+				formatCustomerData(details.getCustomer());
+			} else {
+				details.setCustomer(new Customer());
+			}
+
+			FinanceDetail financeDetail = new FinanceDetail();
+			if (CollectionUtils.isNotEmpty(getJointAccountDetails())) {
+				financeDetail.setJountAccountDetailList(getJointAccountDetails());
+			} else {
+				financeDetail.setJountAccountDetailList(new ArrayList<>());
+			}
+
+			financeDetail.setCustomerDetails(details);
+			objectList.add(financeDetail);
+			getScriptValidationService().setObjectList(objectList);
+		}
+	}
+
+	/**
+	 * Checking the whether the record is deleted or nor
+	 * 
+	 * @param recordType
+	 * @return
+	 */
+	private boolean isDeleted(String recordType) {
+		return (PennantConstants.RECORD_TYPE_DEL.equals(recordType)
+				|| PennantConstants.RECORD_TYPE_CAN.equals(recordType));
+	}
+	
+	/**
+	 * Formatting the customer data
+	 * @param customer
+	 */
+	private void formatCustomerData(Customer customer) {
+		Date dob = customer.getCustDOB();
+		if (dob != null) {
+			customer.setCustDOB(DateUtility.getDate(DateUtility.formatDate(dob, DateFormat.SHORT_DATE.getPattern())));
+			customer.setCustomerAge(new BigDecimal(getAge(dob)));
+		}
+	}
+
+	/**
+	 * Calculating the age
+	 * @param dob
+	 * @return
+	 */
+	private int getAge(Date dob) {
+		if (dob == null) {
+			return 0;
+		}
+		int years = 0;
+		Date appDate = DateUtility.getAppDate();
+		if (dob.compareTo(appDate) < 0) {
+			int months = DateUtility.getMonthsBetween(appDate, dob);
+			years = months / 12;
+		}
+		return years;
+	}
+	
+	/**
+	 * Getting the Extendedfield details
+	 * 
+	 * @param fileldName
+	 * @return
+	 */
+	private ExtendedFieldDetail getFieldDetail(String fileldName, List<ExtendedFieldDetail> extendedFieldDetails) {
+		for (ExtendedFieldDetail detail : extendedFieldDetails) {
+			if (detail.getFieldName().equals(fileldName)) {
+				return detail;
+			}
+		}
+		return null;
+	}
+/*********************** Extended fields script execution data setup end********************/
+	
 	@Override
 	protected String getReference() {
 		return this.vasReference.getValue();
@@ -2887,6 +3101,30 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public List<JointAccountDetail> getJointAccountDetails() {
+		return jointAccountDetails;
+	}
+
+	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
+		this.jointAccountDetails = jointAccountDetails;
+	}
+
+	public VehicleDealerService getVehicleDealerService() {
+		return vehicleDealerService;
+	}
+
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
 	}
 
 }

@@ -2207,7 +2207,6 @@
 	<bean id="vehicleDealerDialogCtrl" class="com.pennant.webui.amtmasters.vehicledealer.VehicleDealerDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
-		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<!--============ Vehicle Manufacturer Details ============== -->
@@ -3799,6 +3798,8 @@
 		<property name="eventManager" ref="eventManager" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
 	</bean>
 
 	<bean id="selectVASConfigurationDialogCtrl" class="com.pennant.webui.configuration.vasrecording.SelectVASConfigurationDialogCtrl"
@@ -4910,5 +4911,93 @@
 	<bean id="receiptUploadReportDialogCtrl"
 		class="com.pennant.webui.reports.ReceiptUploadReportDialogCtrl"
 		parent="basisCtrl" scope="prototype">
+	</bean>
+ 
+	<!-- VASProviderAccDetail -->
+	<bean id="vASProviderAccDetailListCtrl" class="com.pennant.webui.systemmasters.vasprovideraccdetail.VASProviderAccDetailListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="vASProviderAccDetailService" ref="vASProviderAccDetailService" />
+	</bean>
+	<bean id="vASProviderAccDetailDialogCtrl" class="com.pennant.webui.systemmasters.vasprovideraccdetail.VASProviderAccDetailDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="vASProviderAccDetailService" ref="vASProviderAccDetailService"/>
+	</bean>
+ 
+	<!-- Insurance Module -->
+	<bean id="importInsuranceDetailCtrl" class="com.pennant.webui.financemanagement.insurance.ImportInsuranceDetailCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="insuranceFileImportService" ref="insuranceFileImportService" />
+	</bean>
+	
+	<bean id="insuranceFileImportService" class="com.pennant.webui.financemanagement.insurance.InsuranceFileImportService">
+		<property name="dataSource" ref="dataSource" />
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+	</bean>
+	 
+	<bean id="insuranceReconciliationListCtrl" class="com.pennant.webui.financemanagement.insurance.InsuranceReconciliationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+	</bean>
+	<bean id="insuranceReconciliationDialogCtrl" class="com.pennant.webui.financemanagement.insurance.InsuranceReconciliationDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
+	</bean>
+	
+	<bean id="insPaymentUploadListCtrl" class="com.pennant.webui.financemanagement.insurance.InsPaymentUploadListCtrl" parent="basisListCtrl" scope="prototype">
+	</bean>
+
+	<bean id="insPaymentUploadDialogCtrl" class="com.pennant.webui.financemanagement.insurance.InsPaymentUploadDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="insuranceFileImportService" ref="insuranceFileImportService" />
+	</bean>
+	
+	<bean id="insuranceSurrenderDialogCtrl" class="com.pennant.webui.financemanagement.insurance.InsuranceSurrenderDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="vASRecordingService" ref="vASRecordingService" />
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+	</bean> 
+	
+	<bean id="insuranceRebookingListCtrl"
+	class="com.pennant.webui.financemanagement.insurance.InsuranceRebookingListCtrl"
+	parent="basisListCtrl" scope="prototype">
+			<property name="vASRecordingService" ref="vASRecordingService" />
+	</bean>
+	<bean id="selectInsuranceRebookingDialogCtrl"
+		class="com.pennant.webui.financemanagement.insurance.SelectInsuranceRebookingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="vASRecordingService" ref="vASRecordingService" />
+	</bean>
+	<bean id="insuranceRebookingDialogCtrl"
+		class="com.pennant.webui.financemanagement.insurance.InsuranceRebookingDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="vASRecordingService" ref="vASRecordingService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="scriptValidationService" ref="scriptValidationService" />
+		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="eventManager" ref="eventManager" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
+	</bean>
+	
+	<bean id="insuranceEnquiryListCtrl" class="com.pennant.webui.financemanagement.insurance.InsuranceEnquiryListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+	
+	<bean id="insuranceEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.insurance.InsuranceEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="vasRecordingService" ref="vASRecordingService" />
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		
 	</bean>
 </beans>

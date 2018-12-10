@@ -292,7 +292,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				this.finType.setValueColumn("ProductCode");
 				this.finType.setDescColumn("ProductDesc");
 				this.finType.setValidateColumns(new String[] { "ProductCode" });
-				this.row_finEvent.setVisible(false);
+				this.row_finEvent.setVisible(true);
 			} else if (this.moduleName.getSelectedItem().getValue().toString()
 					.equals(PennantConstants.WORFLOW_MODULE_FACILITY)) {
 				this.finType.setModuleName("CAFFacilityType");
@@ -469,7 +469,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		fillComboBox(this.screenCode, aFinanceWorkFlow.getScreenCode(), PennantStaticListUtil.getScreenCodes(), "");
 		fillComboBox(this.finEvent, aFinanceWorkFlow.getFinEvent(), sortFinanceEvents(list), "");
 		this.workFlowType.setValue(aFinanceWorkFlow.getWorkFlowType());
-
+	
+		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS)) {
+			fillComboBox(this.finEvent, aFinanceWorkFlow.getFinEvent(), PennantStaticListUtil.getVasEvents(), "");
+		}
+	
 		if (aFinanceWorkFlow.isNewRecord()) {
 			this.finType.setDescription("");
 			this.workFlowType.setDescription("");
@@ -562,7 +566,7 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				aFinanceWorkFlow.setFinEvent(this.finEvent.getItemAtIndex(1).getValue().toString());
 				aFinanceWorkFlow.setCollateralDesc(this.finType.getDescription());
 			} else if (StringUtils.equals(aFinanceWorkFlow.getModuleName(), PennantConstants.WORFLOW_MODULE_VAS)) {
-				aFinanceWorkFlow.setFinEvent(this.finEvent.getItemAtIndex(1).getValue().toString());
+				aFinanceWorkFlow.setFinEvent(this.finEvent.getSelectedItem().getValue().toString());
 				aFinanceWorkFlow.setVasProductDesc(this.finType.getDescription());
 			} else if (StringUtils.equals(aFinanceWorkFlow.getModuleName(),
 					PennantConstants.WORFLOW_MODULE_COMMITMENT)) {

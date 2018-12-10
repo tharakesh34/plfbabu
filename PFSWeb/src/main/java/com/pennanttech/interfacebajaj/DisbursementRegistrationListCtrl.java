@@ -63,6 +63,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Center;
@@ -75,6 +76,7 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -106,6 +108,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -148,6 +151,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Combobox channelTypes;
 	protected Textbox finRef;
 	protected ExtendedCombobox entity;
+	protected ExtendedCombobox vasManufacturer;
+	protected Row row_VasManufacturer;
 
 	protected Listbox sortOperator_DisbType;
 	protected Listbox sortOperator_PartnerBank;
@@ -158,6 +163,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listbox sortOperator_Channel;
 	protected Listbox sortOperator_FinRef;
 	protected Listbox sortOperator_Entity;
+	protected Listbox sortOperator_VasManufacturer;
 
 	protected Listheader listHeader_CheckBox_Name;
 	protected Listcell listCell_Checkbox;
@@ -263,6 +269,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				Operators.STRING);
 		registerField("entityCode", listheader_Disbursement_Entity, SortOrder.NONE, entity, sortOperator_Entity,
 				Operators.STRING);
+		registerField("providerId", vasManufacturer, SortOrder.NONE, sortOperator_VasManufacturer, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		this.disbursementMap.clear();
@@ -352,7 +359,13 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
 		this.partnerBank.setButtonDisabled(true);
-
+		
+		this.vasManufacturer.setMandatoryStyle(false);
+		this.vasManufacturer.setModuleName("VehicleDealer");
+		this.vasManufacturer.setValueColumn("DealerId");
+		this.vasManufacturer.setDescColumn("DealerName");
+		this.vasManufacturer.setValueType(DataType.LONG);
+		this.vasManufacturer.setValidateColumns(new String[] { "DealerId" });
 	}
 
 	/**
@@ -503,7 +516,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("amtToBeReleased");
 		searchObject.addField("paymentType");
 		searchObject.addField("channel");
+		searchObject.addField("providerId");
 		searchObject.addTabelName(this.tableName);
+		
+		//If channel is Insurance then only  we will allow to download Insurance details
+		if (DisbursementConstants.CHANNEL_INSURANCE.equals(this.channelTypes.getSelectedItem().getValue())) {
+			searchObject.addFilterEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
+		} else {
+			//If then channel is not selected  we will allow to download Disbursements and Payments only. Not Insurance details
+			searchObject.addFilterNotEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
+		}
 
 		setFilters(searchObject);
 
@@ -525,8 +547,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			for (FinAdvancePayments finAdvancePayments : searchList) {
 
 				boolean isCovenantCheckNotReq = false;
-				//No need to check If the record coming from Payment Instructions or Disbursement Instructions
-				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())) {
+				//No need to check If the record coming from Payment Instructions or Disbursement Instructions or Insurance payments
+				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel()) || DisbursementConstants.CHANNEL_INSURANCE.equals(finAdvancePayments.getChannel())) {
 					isCovenantCheckNotReq = true;
 				} else {
 					for (String rpymethod : repaymethod) {
@@ -575,6 +597,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	public void onClick$button_Search(Event event) {
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
+		
 		doSetValidations();
 
 		renderDisbursements();
@@ -604,7 +627,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		try {
-			if (!this.finType.isReadonly())
+			if (!this.finType.isReadonly() && !this.row_VasManufacturer.isVisible())
 				this.finType
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbursementList_LoanType.value"),
 								PennantRegularExpressions.REGEX_DESCRIPTION, true));
@@ -654,14 +677,18 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	private void doRemoveValidation() {
 		logger.debug("Entering ");
+		this.finType.setErrorMessage("");
+		Clients.clearWrongValue(this.partnerBank);
+		Clients.clearWrongValue(this.finType);
+		Clients.clearWrongValue(this.toDate);
+		Clients.clearWrongValue(this.entity);
 		this.partnerBank.setConstraint("");
 		this.finType.setConstraint("");
 		this.toDate.setConstraint("");
 		this.entity.setConstraint("");
-
 		logger.debug("Leaving ");
 	}
-
+	
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
@@ -824,11 +851,27 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			}
 
 		}
-
 		logger.debug("Leaving");
-
 	}
 
+	public void onChange$channelTypes(Event event) {
+		this.vasManufacturer.setValue("");
+		this.finType.setErrorMessage("");
+		Clients.clearWrongValue(this.finType);
+		this.finType.setConstraint("");
+		String channelType = this.channelTypes.getSelectedItem().getValue();
+		if (DisbursementConstants.CHANNEL_INSURANCE.equals(channelType)) {
+			this.row_VasManufacturer.setVisible(true);
+			this.finType.setValue("");
+			this.finType.setReadonly(true);
+			this.btnFinType.setDisabled(true);
+		} else {
+			this.row_VasManufacturer.setVisible(false);
+			this.finType.setReadonly(false);
+			this.btnFinType.setDisabled(false);
+		}
+	}
+	
 	public FinCovenantTypeService getFinCovenantTypeService() {
 		return finCovenantTypeService;
 	}

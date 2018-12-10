@@ -58,6 +58,7 @@
 		<menuItem id="menu_Item_FinanceUserAuthorizationLimit"
 				 zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=N" 
 				 rightName="menu_Item_FinanceUserAuthorizationLimit" />
+		<menuItem id="menu_Item_VASProviderAccDetail" zulNavigation="/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailList.zul"  rightName="menuItem_SystemMaster_VASProviderAccDetail"/>
 	</menu>
 
 	<!-- Masters -->
@@ -811,6 +812,15 @@
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
 				rightName="menu_Item_ExternalUpload" />
 		</menu>
+		</menu>
+	<!-- Insurance Module  --> 
+	<menu id="menu_Category_Insurance">
+		<menuItem id="menu_Item_InsuranceUpload" zulNavigation="/WEB-INF/pages/Insurance/ImportInsuranceDetails.zul" rightName="menuItem_Insurance_ImportInsuranceDetails" />
+		<menuItem id="menu_Item_Insurance_ManualReconciliation" zulNavigation="/WEB-INF/pages/Insurance/InsuranceReconciliationList.zul" rightName="menuItem_Insurance_InsuranceDetailsDialog" />
+		<menuItem id="menu_Item_Insurance_InsurancePaymentUpload" zulNavigation="/WEB-INF/pages/Insurance/InsPaymentUploadList.zul" rightName="menuItem_Insurance_InsurancePaymentUpload" />
+		<menuItem id="menu_Item_Insurance_InsuranceRebooking" zulNavigation="/WEB-INF/pages/Insurance/InsuranceRebookingList.zul?module=R" rightName="menuItem_InsuranceMaintananceRebookingDialog_Rebooking" />
+		<menuItem id="menu_Item_Insurance_InsuranceMaintainance" zulNavigation="/WEB-INF/pages/Insurance/InsuranceRebookingList.zul?module=M" rightName="menuItem_InsuranceMaintananceRebookingDialog_Maintainance" />
+		<menuItem id="menu_Item_Insurance_InsuranceSurrenderCancel" zulNavigation="/WEB-INF/pages/Insurance/InsuranceRebookingList.zul?module=C" rightName="menuItem_Insurance_InsuranceSurrenderDialog" />
 	</menu>
 
 	<!-- Enquiry -->
@@ -960,6 +970,10 @@
 				zulNavigation="/WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitList.zul?module=ENQ"
 				rightName="menuItem_Verification_RiskContainmentUnit_Enquiry" /> 
 		</menu>
+		
+		<!-- Insurance Enquiry -->
+		<menuItem id="menu_Item_InsuranceEnquiry" zulNavigation="/WEB-INF/pages/Insurance/InsuranceEnquiryList.zul?module=E&amp;enqiryModule=Y" rightName="menuItem_Insurance_InsuranceEnquiry" />
+	
 	<!-- 	//Sampling Enquiry -->
 		<menuItem id="menu_Item_Sampling_Enquiry"
 				zulNavigation="/WEB-INF/pages/Sampling/SamplingList.zul?enqiryModule=Y" rightName="menuItem_Sampling_Enquiry" /> 
@@ -1174,6 +1188,13 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_LegalDetail_DisbursementReport" />
 		</menu>
+		
+		<menu id="menu_Category_Insurance" rightName="menu_Category_Insurance_Reports">
+			<menuItem id="menu_Item_Insurance_DetailsReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Insurance_DetailsReport" />
+			<menuItem id="menu_Item_Insurance_UploadStatusReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Insurance_UploadStatusReport" />
+			<menuItem id="menu_Item_Insurance_PaymentUploadStatusReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Insurance_PaymentUploadStatusReport" />
+		</menu>
+		
 		<menu id="menu_Category_PastDueReports">
 			<menuItem id="menu_Item_DailyPastdue"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -1781,13 +1802,13 @@
 	<!-- <menuItem id="menu_Item_DeviationTracker" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DeviationTrackerList.zul" 
 		rightName="menuItem_Enquiry_DeviationEnquiry"/> -->
 
-<menu id="menu_Category_AuthorizationLimit">
-	<menu id="menu_Category_FinanceAuthorizationLimit">
-		<!-- <menuItem id="menu_Item_FinanceUserAuthorizationLimit" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=N" rightName="menu_Item_FinanceUserAuthorizationLimit" /> -->
-		<menuItem id="menu_Item_FinanceRoleAuthorizationLimit" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=N" rightName="menu_Item_FinanceRoleAuthorizationLimit1" />
-		<menuItem id="menu_Item_FinanceUserAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=Y" rightName="menuItem_Authorization_FinanceUserAuthorizationLimitHold1"/>
-		<menuItem id="menu_Item_FinanceRoleAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=Y" rightName="menuItem_Authorization_FinanceRoleAuthorizationLimitHold1" />
+	<menu id="menu_Category_AuthorizationLimit">
+		<menu id="menu_Category_FinanceAuthorizationLimit">
+			<!-- <menuItem id="menu_Item_FinanceUserAuthorizationLimit" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=N" rightName="menu_Item_FinanceUserAuthorizationLimit" /> -->
+			<menuItem id="menu_Item_FinanceRoleAuthorizationLimit" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=N" rightName="menu_Item_FinanceRoleAuthorizationLimit1" />
+			<menuItem id="menu_Item_FinanceUserAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=Y" rightName="menuItem_Authorization_FinanceUserAuthorizationLimitHold1"/>
+			<menuItem id="menu_Item_FinanceRoleAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=Y" rightName="menuItem_Authorization_FinanceRoleAuthorizationLimitHold1" />
+		</menu>
 	</menu>
-</menu>
 	<!--//APPEND AFTER THIS// -->
 </ns2:XMLRootMenu>

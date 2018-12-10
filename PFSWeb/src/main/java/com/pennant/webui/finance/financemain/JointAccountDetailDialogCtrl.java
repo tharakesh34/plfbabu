@@ -124,6 +124,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String roleCode = "";
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
+	private FinVasRecordingDialogCtrl finVasRecordingDialogCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
 	protected Groupbox finBasicdetails;
 	private Object mainController;
@@ -456,6 +457,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 		if (fieldVerificationDialogCtrl != null) {
 			fieldVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails, true);
+		}
+		if (getFinVasRecordingDialogCtrl() != null) {
+			getFinVasRecordingDialogCtrl().addCoApplicants(jountAccountDetails);
 		}
 		logger.debug("Leaving");
 	}
@@ -1048,6 +1052,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setCollateralBasicDetailsCtrl(CollateralBasicDetailsCtrl collateralBasicDetailsCtrl) {
 		this.collateralBasicDetailsCtrl = collateralBasicDetailsCtrl;
+	}
+
+	public FinVasRecordingDialogCtrl getFinVasRecordingDialogCtrl() {
+		return finVasRecordingDialogCtrl;
+	}
+
+	public void setFinVasRecordingDialogCtrl(FinVasRecordingDialogCtrl finVasRecordingDialogCtrl) {
+		this.finVasRecordingDialogCtrl = finVasRecordingDialogCtrl;
 	}
 
 }

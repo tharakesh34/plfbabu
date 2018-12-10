@@ -18256,6 +18256,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinVasRecordingDialogCtrl(FinVasRecordingDialogCtrl finVasRecordingDialogCtrl) {
 		this.finVasRecordingDialogCtrl = finVasRecordingDialogCtrl;
+		this.jointAccountDetailDialogCtrl.setFinVasRecordingDialogCtrl(this.finVasRecordingDialogCtrl);
 	}
 
 	public Label getLabel_FinanceMainDialog_CustPayAccId() {

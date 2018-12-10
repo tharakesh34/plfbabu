@@ -76,6 +76,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.configuration.vasrecording.model.VASRecordingListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -191,13 +192,22 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 	protected void doAddFilters() {
 		super.doAddFilters();
-		if ("C".equals(module)) {
-			this.searchObject.addWhereClause(
-					"((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)");
-		} else if ("N".equals(module)) {
-			Filter[] filters = new Filter[2];
+		if (VASConsatnts.STATUS_CANCEL.equals(module)) {
+			
+			StringBuilder sql = new StringBuilder();
+			sql.append(
+					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)) AND ( ProductCtg != '");
+			sql.append(VASConsatnts.VAS_CATEGORY_VASI).append("')");
+			this.searchObject.addWhereClause(sql.toString());
+		} else if (VASConsatnts.STATUS_NORMAL.equals(module)) {
+			Filter[] filters = new Filter[3];
 			filters[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL);
 			filters[1] = new Filter("FinanceProcess", 0, Filter.OP_EQUAL);
+			filters[2] = new Filter("ProductCtg", VASConsatnts.VAS_CATEGORY_VASI, Filter.OP_NOT_EQUAL);
+			this.searchObject.addFilterAnd(filters);
+		} else if("E".equals(module)){
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("ProductCtg", VASConsatnts.VAS_CATEGORY_VASI, Filter.OP_NOT_EQUAL);
 			this.searchObject.addFilterAnd(filters);
 		}
 	}

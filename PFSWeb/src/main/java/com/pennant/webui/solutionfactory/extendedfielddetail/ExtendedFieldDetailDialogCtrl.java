@@ -175,6 +175,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Row rowExtAddtionalFilters;
 	protected Listbox listBoxAddtionalFilters;
 	protected Button btnAddFilters;
+	
+	//Values taken from Scripts
+	protected Row rowValFromScript;
+	protected Checkbox valFromScript;
+	
 	private List<ValueLabel> fieldNames = new ArrayList<>();
 	private List<ValueLabel> extendedParents = new ArrayList<>();
 	private List<ValueLabel> filterList = PennantStaticListUtil.getFilters();
@@ -502,6 +507,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		this.parentTag.setValue(aExtendedFieldDetail.getParentTag());
 		this.allowInRule.setChecked(aExtendedFieldDetail.isAllowInRule());
+		this.valFromScript.setChecked(aExtendedFieldDetail.isValFromScript());
 
 		logger.debug("Leaving");
 	}
@@ -1127,7 +1133,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		aExtendedFieldDetail.setValFromScript(this.valFromScript.isChecked());
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1990,6 +1998,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowfieldMaxValue.setVisible(false);
 			this.rowfieldMultilinetxt.setVisible(false);
 			this.rowExtAddtionalFilters.setVisible(false);
+			this.rowValFromScript.setVisible(false);
+			this.valFromScript.setChecked(false);
 
 		} else {
 
@@ -2007,6 +2017,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowfieldMultilinetxt.setVisible(false);
 			//story #699 Allow Additional filters for extended combobox.
 			this.rowExtAddtionalFilters.setVisible(false);
+			this.valFromScript.setChecked(false);
 
 			doClearMessage();
 
@@ -2019,6 +2030,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.rowfieldMaxValue.setVisible(false);
 			this.rowMandatory.setVisible(true);
 			this.rowUnique.setVisible(false);
+			this.rowValFromScript.setVisible(false);
+			this.fieldLength.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldLength"));
+			this.fieldPrec.setReadonly(isReadOnly("ExtendedFieldDetailDialog_fieldPrec"));
 			this.rowConstraint.setVisible(false);
 			this.label_ExtendedFieldDetailDialog_FieldListInstrLabel.setVisible(false);
 
@@ -2107,6 +2121,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				}
 			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_STATICCOMBO, fieldType)) {
 				this.rowfieldList.setVisible(true);
+				this.rowValFromScript.setVisible(true);
 				Uppercasebox textbox = new Uppercasebox();
 				textbox.setRows(2);
 				textbox.setMultiline(true);

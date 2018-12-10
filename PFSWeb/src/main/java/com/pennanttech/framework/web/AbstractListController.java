@@ -43,6 +43,7 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -349,7 +350,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 		WorkFlowDetails workflow = WorkFlowUtil.getDetailsByType(workflowType);
 		if (workflow == null) {
 			((Tab) getTabbox().getFirstChild().getLastChild()).close();
-			MessageUtil.showError(Labels.getLabel("error.unhandled"));
+			MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 			return;
 		}
 

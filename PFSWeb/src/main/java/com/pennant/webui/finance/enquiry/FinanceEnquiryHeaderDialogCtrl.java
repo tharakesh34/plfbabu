@@ -126,6 +126,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
+import com.pennant.webui.financemanagement.insurance.InsuranceRebookingDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
@@ -192,6 +193,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<ValueLabel> mandateList = PennantStaticListUtil.getMandateTypeList();
 	private FinanceEnquiryListCtrl financeEnquiryListCtrl = null;
 	private VASRecordingDialogCtrl vASRecordingDialogCtrl = null;
+	private InsuranceRebookingDialogCtrl insuranceRebookingDialogCtrl = null;
 	private FinScheduleData finScheduleData;
 	private FinanceEnquiry financeEnquiry;
 	private FinanceSummary financeSummary;
@@ -260,6 +262,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (arguments.containsKey("VASRecordingDialog")) {
 				this.setvASRecordingDialogCtrl((VASRecordingDialogCtrl) arguments.get("VASRecordingDialog"));
 			}
+			if (arguments.containsKey("insuranceRebookingDialog")) {
+				this.setInsuranceRebookingDialogCtrl((InsuranceRebookingDialogCtrl) arguments.get("insuranceRebookingDialog"));
+			}
+
 			// Method for recall Enquiries
 			doFillDialogWindow();
 		} catch (Exception e) {
@@ -1029,4 +1035,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setNotificationLogDetailsService(NotificationLogDetailsService notificationLogDetailsService) {
 		this.notificationLogDetailsService = notificationLogDetailsService;
 	}
+	public InsuranceRebookingDialogCtrl getInsuranceRebookingDialogCtrl() {
+		return insuranceRebookingDialogCtrl;
+	}
+
+	public void setInsuranceRebookingDialogCtrl(InsuranceRebookingDialogCtrl insuranceRebookingDialogCtrl) {
+		this.insuranceRebookingDialogCtrl = insuranceRebookingDialogCtrl;
+	}
+
 }
