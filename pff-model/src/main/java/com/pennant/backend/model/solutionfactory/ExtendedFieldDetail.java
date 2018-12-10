@@ -120,6 +120,7 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	@XmlTransient
 	private String scriptlet;
 	private boolean visible = true;
+	private boolean valFromScript;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -392,5 +393,13 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 
 	public void setFilters(String filters) {
 		this.filters = filters;
+	}
+
+	public boolean isValFromScript() {
+		return valFromScript;
+	}
+
+	public void setValFromScript(boolean valFromScript) {
+		this.valFromScript = valFromScript;
 	}
 }

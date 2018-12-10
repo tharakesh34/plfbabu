@@ -107,7 +107,12 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private boolean postValidationReq;
 	private String preValidation;
 	private String postValidation;
-
+	
+	private Long feeType;
+    private String feeTypeCode;
+    private String feeTypeDesc;
+    private String flpCalculatedOn;
+    private String shortCode;
 	@XmlElement
 	private boolean active;
 	@XmlElement
@@ -153,6 +158,8 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 		excludeFields.add("extendedFieldHeader");
 		excludeFields.add("returnStatus");
 		excludeFields.add("extendedFieldDetailList");
+		excludeFields.add("feeTypeCode");
+		excludeFields.add("feeTypeDesc");
 		return excludeFields;
 	}
 
@@ -319,6 +326,46 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 
 	public void setPostValidationReq(boolean postValidationReq) {
 		this.postValidationReq = postValidationReq;
+	}
+
+	public Long getFeeType() {
+		return feeType;
+	}
+
+	public void setFeeType(Long feeType) {
+		this.feeType = feeType;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
+	public String getFeeTypeDesc() {
+		return feeTypeDesc;
+	}
+
+	public void setFeeTypeDesc(String feeTypeDesc) {
+		this.feeTypeDesc = feeTypeDesc;
+	}
+
+	public String getFlpCalculatedOn() {
+		return flpCalculatedOn;
+	}
+
+	public void setFlpCalculatedOn(String flpCalculatedOn) {
+		this.flpCalculatedOn = flpCalculatedOn;
+	}
+
+	public String getShortCode() {
+		return shortCode;
+	}
+
+	public void setShortCode(String shortCode) {
+		this.shortCode = shortCode;
 	}
 
 	public String getRemarks() {

@@ -129,6 +129,20 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private boolean financeProcess;
 	private long feeAccounting = 0;
 
+	// Insurance Fields
+	private String status;
+	private String entityCode;
+	private String entityDesc;
+	private String oldVasReference;
+	private String remarks;
+	private String reason;
+	private BigDecimal cancelAmt;
+	private boolean cancelAfterFLP;
+	private String finType;
+	private int flpDays;
+	private String serviceReqNumber;
+	private boolean insuranceCancel;
+
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -154,7 +168,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails = null;
-	//API Specific
+	// API Specific
 	@XmlElement
 	private String cif;
 	@XmlElement
@@ -166,6 +180,11 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private BigDecimal paidAmt = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal waivedAmt = BigDecimal.ZERO;
+	private BigDecimal partnerPremiumAmt = BigDecimal.ZERO;
+
+	private long manualAdviseId = Long.MIN_VALUE;
+	private long paymentInsId = Long.MIN_VALUE;
+	private long receivableAdviseId = Long.MIN_VALUE;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -212,6 +231,12 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("cif");
 		excludeFields.add("finReference");
 		excludeFields.add("collateralRef");
+		excludeFields.add("entityDesc");
+		excludeFields.add("finType");
+		excludeFields.add("flpDays");
+		excludeFields.add("insuranceCancel");
+		excludeFields.add("partnerPremiumAmt");
+		excludeFields.add("receivableAdviseId");
 		return excludeFields;
 	}
 
@@ -567,7 +592,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	}
 
 	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> vasRecordingMap) {
-		//feeMap.put(String.valueOf(fee), getFee());
+		// feeMap.put(String.valueOf(fee), getFee());
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				vasRecordingMap.put("vr_" + this.getClass().getDeclaredFields()[i].getName(),
@@ -649,6 +674,134 @@ public class VASRecording extends AbstractWorkflowEntity {
 
 	public void setWaivedAmt(BigDecimal waivedAmt) {
 		this.waivedAmt = waivedAmt;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public int getFlpDays() {
+		return flpDays;
+	}
+
+	public void setFlpDays(int flpDays) {
+		this.flpDays = flpDays;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
+	}
+
+	public boolean isCancelAfterFLP() {
+		return cancelAfterFLP;
+	}
+
+	public void setCancelAfterFLP(boolean cancelAfterFLP) {
+		this.cancelAfterFLP = cancelAfterFLP;
+	}
+
+	public String getOldVasReference() {
+		return oldVasReference;
+	}
+
+	public void setOldVasReference(String oldVasReference) {
+		this.oldVasReference = oldVasReference;
+	}
+
+	public String getServiceReqNumber() {
+		return serviceReqNumber;
+	}
+
+	public void setServiceReqNumber(String serviceReqNumber) {
+		this.serviceReqNumber = serviceReqNumber;
+	}
+
+	public boolean isInsuranceCancel() {
+		return insuranceCancel;
+	}
+
+	public void setInsuranceCancel(boolean insuranceCancel) {
+		this.insuranceCancel = insuranceCancel;
+	}
+
+	public BigDecimal getCancelAmt() {
+		return cancelAmt;
+	}
+
+	public void setCancelAmt(BigDecimal cancelAmt) {
+		this.cancelAmt = cancelAmt;
+	}
+
+	public long getManualAdviseId() {
+		return manualAdviseId;
+	}
+
+	public void setManualAdviseId(long manualAdviseId) {
+		this.manualAdviseId = manualAdviseId;
+	}
+
+	public long getPaymentInsId() {
+		return paymentInsId;
+	}
+
+	public void setPaymentInsId(long paymentInsId) {
+		this.paymentInsId = paymentInsId;
+	}
+
+	public long getReceivableAdviseId() {
+		return receivableAdviseId;
+	}
+
+	public void setReceivableAdviseId(long receivableAdviseId) {
+		this.receivableAdviseId = receivableAdviseId;
+	}
+
+	public BigDecimal getPartnerPremiumAmt() {
+		return partnerPremiumAmt;
+	}
+
+	public void setPartnerPremiumAmt(BigDecimal partnerPremiumAmt) {
+		this.partnerPremiumAmt = partnerPremiumAmt;
 	}
 
 }

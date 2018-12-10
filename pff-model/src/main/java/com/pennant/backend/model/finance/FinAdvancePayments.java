@@ -170,6 +170,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String fileNamePrefix;
 	private String channel;
 	private String entityCode;
+	private long providerId;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -208,6 +209,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("channel");
 		excludeFields.add("entityCode");
 		excludeFields.add("serviceReqNo");
+		excludeFields.add("providerId");
 		return excludeFields;
 	}
 
@@ -673,6 +675,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public long getProviderId() {
+		return providerId;
+	}
+
+	public void setProviderId(long providerId) {
+		this.providerId = providerId;
 	}
 
 }
