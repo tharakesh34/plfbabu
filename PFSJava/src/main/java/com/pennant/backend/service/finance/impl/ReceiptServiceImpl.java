@@ -4641,17 +4641,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public long CheckDedupSP(FinReceiptHeader receiptHeader, String method) {
 		if (StringUtils.equals(method, FinanceConstants.FINSER_EVENT_SCHDRPY)
 				&& (StringUtils.equals(receiptHeader.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-						|| StringUtils.equals(receiptHeader.getReceiptMode(),
-								DisbursementConstants.PAYMENT_TYPE_DD))
+						|| StringUtils.equals(receiptHeader.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD))
 				&& StringUtils.equals(receiptHeader.getReceiptDetails().get(0).getStatus(),
 						RepayConstants.PAYSTATUS_REALIZED)) {
 			long receiptHeaderId = this.finReceiptDetailDAO.getReceiptIdByReceiptDetails(receiptHeader, method);
 
-			if (receiptHeaderId == 0) {
-				return receiptHeaderId;
-			} else {
-				return receiptHeaderId;
-			}
+			return receiptHeaderId;
 
 		} else {
 			return 0;

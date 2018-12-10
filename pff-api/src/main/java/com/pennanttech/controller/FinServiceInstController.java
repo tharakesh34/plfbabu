@@ -1964,18 +1964,20 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// check dedup condition
 		// this check will validate given details with already exit details
-		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)
+		if (finServiceInst.isReceiptUpload()
+				&& StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)
 				&& receiptService.dedupCheckRequest(receiptHeader, purpose)) {
 			long receiptHeaderId = receiptService.CheckDedupSP(receiptHeader, purpose);
 
-			FinanceDetail response = new FinanceDetail();
-
-			this.finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(receiptHeaderId,
-					RepayConstants.PAYSTATUS_REALIZED, receiptHeader.getRealizationDate());
-			this.finReceiptDetailDAO.updateReceiptStatusByReceiptId(receiptHeaderId, RepayConstants.PAYSTATUS_REALIZED);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-
-			return response;
+			if (receiptHeaderId != 0) {
+				FinanceDetail response = new FinanceDetail();
+				this.finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(receiptHeaderId,
+						RepayConstants.PAYSTATUS_REALIZED, receiptHeader.getRealizationDate());
+				this.finReceiptDetailDAO.updateReceiptStatusByReceiptId(receiptHeaderId,
+						RepayConstants.PAYSTATUS_REALIZED);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				return response;
+			}
 
 		}
 
@@ -2092,6 +2094,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				if (closingBal != null) {
+					if(!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeMain.getScheduleMethod())){
 					if (partPayment.compareTo(closingBal) >= 0) {
 						FinanceDetail response = new FinanceDetail();
 						doEmptyResponseObject(response);
@@ -2099,6 +2102,16 @@ public class FinServiceInstController extends SummaryDetailService {
 						valueParm[0] = String.valueOf(closingBal);
 						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
 						return response;
+					}
+					} else {
+						if (partPayment.compareTo(closingBal) > 0) {
+							FinanceDetail response = new FinanceDetail();
+							doEmptyResponseObject(response);
+							String[] valueParm = new String[1];
+							valueParm[0] = String.valueOf(closingBal);
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
+							return response;
+						}
 					}
 				}
 			}
@@ -2614,10 +2627,18 @@ public class FinServiceInstController extends SummaryDetailService {
 					returnMap.put("ReturnText", status.getReturnText());
 				}
 			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-				if (totReceiptAmt.compareTo(remBal) <= 0) {
-					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90332");
-					returnMap.put("ReturnCode", status.getReturnCode());
-					returnMap.put("ReturnText", status.getReturnText());
+				if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeMain.getScheduleMethod())) {
+					if (totReceiptAmt.compareTo(remBal) <= 0) {
+						WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90332");
+						returnMap.put("ReturnCode", status.getReturnCode());
+						returnMap.put("ReturnText", status.getReturnText());
+					}
+				} else {
+					if (totReceiptAmt.compareTo(remBal) < 0) {
+						WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90332");
+						returnMap.put("ReturnCode", status.getReturnCode());
+						returnMap.put("ReturnText", status.getReturnText());
+					}
 				}
 			}
 		}
