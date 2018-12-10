@@ -58,7 +58,7 @@ public interface VASRecordingService {
 
 	VASRecording getVASRecordingByRef(String vasReference, String userRole, boolean isEnquiry);
 
-	VASRecording getVASRecordingByReference(String id);
+	VASRecording getVASRecordingByReference(String vasReference);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -73,5 +73,13 @@ public interface VASRecordingService {
 	VasCustomer getVasCustomerDetails(String primaryLinkRef, String postingAgainst);
 
 	List<VASRecording> getVasRecordingsByPrimaryLinkRef(String primaryLinkRef);
+
+	VASRecording getVASRecordingForInsurance(String vasReference, String nextRoleCode, String event, boolean isEnquiry);
+
+	void updateVasStatus(String status, String vasReference);
+
+	VASRecording getVASRecording(String vasRefrence, String vasStatus);
+
+	void updateVasPaymentId(String reference, long paymentInsId);
 
 }

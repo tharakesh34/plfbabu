@@ -69,4 +69,10 @@ public interface VASRecordingDAO {
 	void deleteByPrimaryLinkRef(String primaryLinkRef, String type);
 
 	List<VASRecording> getVASRecordingsByLinkRef(String primaryLinkRef, String type);
+
+	void updateVasStatus(String status, String vasReference);
+
+	VASRecording getVASRecording(String vasReference, String vasStatus, String type);
+
+	void updateVasStatus(String reference, long paymentInsId);
 }

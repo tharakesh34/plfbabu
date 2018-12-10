@@ -46,9 +46,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -56,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>VehicleDealer table</b>.<br>
  *
  */
-public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
+public class VehicleDealer extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	private long dealerId = Long.MIN_VALUE;
 	private String dealerType;
@@ -91,25 +88,15 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private VehicleDealer befImage;
 	private LoggedInUser userDetails;
 	private boolean active;
-	private String zipCode;
 	private String code;
-	
+	private String zipCode;
 	private String panNumber;
-	private String uidNumber;
 	private String taxNumber;
-	private String fromprovince;
-	private String toprovince;
-	private String fromprovinceName;
-	private String toprovinceName;
-	private String accountNo;
-	private String accountType;
-	private long bankBranchID;
-	private String bankBranchCode;
-	private String bankBranchCodeName;
-	private String bankName;
-	private String branchIFSCCode;
-	private String branchMICRCode;
-	private String branchCity;
+	private String productCtg;
+	private String productCtgDesc;
+	private String shortCode;
+	private String dealerShortCode;
+	private String productShortCode;
 
 	public VehicleDealer() {
 		super();
@@ -131,14 +118,9 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("accountingSetDesc");
 		excludeFields.add("calRuleDesc");
 		excludeFields.add("emiratesDescription");
-		excludeFields.add("fromprovinceName");
-		excludeFields.add("toprovinceName");
-		excludeFields.add("bankBranchCode");
-		excludeFields.add("bankBranchCodeName");
-		excludeFields.add("bankName");
-		excludeFields.add("branchIFSCCode");
-		excludeFields.add("branchMICRCode");
-		excludeFields.add("branchCity");
+		excludeFields.add("productCtgDesc");
+		excludeFields.add("dealerShortCode");
+		excludeFields.add("productShortCode");
 		return excludeFields;
 	}
 
@@ -432,57 +414,12 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.code = code;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> customerMap = new HashMap<String, Object>();
-
-		return getDeclaredFieldValues(customerMap);
-	}
-
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> customerMap) {
-		customerMap = new HashMap<String, Object>();
-		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-			try {
-				if (StringUtils.equals(this.getClass().getDeclaredFields()[i].getName(), "active")) {
-					if (this.active) {
-						customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(), "1");
-					} else {
-						customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(), "0");
-					}
-				} else {
-				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
-				customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(),
-						this.getClass().getDeclaredFields()[i].get(this));
-				}
-			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				// Nothing TO DO
-			}
-		}
-		return customerMap;
-
-	}
-
-	public String getpOBox() {
-		return pOBox;
-	}
-
-	public void setpOBox(String pOBox) {
-		this.pOBox = pOBox;
-	}
-
 	public String getPanNumber() {
 		return panNumber;
 	}
 
 	public void setPanNumber(String panNumber) {
 		this.panNumber = panNumber;
-	}
-
-	public String getUidNumber() {
-		return uidNumber;
-	}
-
-	public void setUidNumber(String uidNumber) {
-		this.uidNumber = uidNumber;
 	}
 
 	public String getTaxNumber() {
@@ -493,112 +430,64 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.taxNumber = taxNumber;
 	}
 
-
-	public String getAccountNo() {
-		return accountNo;
+	public String getProductCtg() {
+		return productCtg;
 	}
 
-	public void setAccountNo(String accountNo) {
-		this.accountNo = accountNo;
+	public void setProductCtg(String productCtg) {
+		this.productCtg = productCtg;
 	}
 
-	public String getAccountType() {
-		return accountType;
+	public String getProductCtgDesc() {
+		return productCtgDesc;
 	}
 
-	public void setAccountType(String accountType) {
-		this.accountType = accountType;
+	public void setProductCtgDesc(String productCtgDesc) {
+		this.productCtgDesc = productCtgDesc;
 	}
 
-
-
-	public String getBankName() {
-		return bankName;
+	public String getShortCode() {
+		return shortCode;
 	}
 
-	public void setBankName(String bankName) {
-		this.bankName = bankName;
+	public void setShortCode(String shortCode) {
+		this.shortCode = shortCode;
 	}
 
-	public String getBranchIFSCCode() {
-		return branchIFSCCode;
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> customerMap = new HashMap<String, Object>();
+
+		return getDeclaredFieldValues(customerMap);
 	}
 
-	public void setBranchIFSCCode(String branchIFSCCode) {
-		this.branchIFSCCode = branchIFSCCode;
+	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> customerMap) {
+		customerMap = new HashMap<String, Object>();
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				customerMap.put("vd_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+		return customerMap;
 	}
 
-	public String getBranchMICRCode() {
-		return branchMICRCode;
+	public String getDealerShortCode() {
+		return dealerShortCode;
 	}
 
-	public void setBranchMICRCode(String branchMICRCode) {
-		this.branchMICRCode = branchMICRCode;
+	public void setDealerShortCode(String dealerShortCode) {
+		this.dealerShortCode = dealerShortCode;
 	}
 
-	public String getBranchCity() {
-		return branchCity;
+	public String getProductShortCode() {
+		return productShortCode;
 	}
 
-	public void setBranchCity(String branchCity) {
-		this.branchCity = branchCity;
+	public void setProductShortCode(String productShortCode) {
+		this.productShortCode = productShortCode;
 	}
 
-	public String getBankBranchCodeName() {
-		return bankBranchCodeName;
-	}
-
-	public void setBankBranchCodeName(String bankBranchCodeName) {
-		this.bankBranchCodeName = bankBranchCodeName;
-	}
-
-	public String getBankBranchCode() {
-		return bankBranchCode;
-	}
-
-	public void setBankBranchCode(String bankBranchCode) {
-		this.bankBranchCode = bankBranchCode;
-	}
-
-	public long getBankBranchID() {
-		return bankBranchID;
-	}
-
-	public void setBankBranchID(long bankBranchID) {
-		this.bankBranchID = bankBranchID;
-	}
-
-	public String getFromprovince() {
-		return fromprovince;
-	}
-
-	public void setFromprovince(String fromprovince) {
-		this.fromprovince = fromprovince;
-	}
-
-	public String getToprovince() {
-		return toprovince;
-	}
-
-	public void setToprovince(String toprovince) {
-		this.toprovince = toprovince;
-	}
-
-	public String getFromprovinceName() {
-		return fromprovinceName;
-	}
-
-	public void setFromprovinceName(String fromprovinceName) {
-		this.fromprovinceName = fromprovinceName;
-	}
-
-	public String getToprovinceName() {
-		return toprovinceName;
-	}
-
-	public void setToprovinceName(String toprovinceName) {
-		this.toprovinceName = toprovinceName;
-	}	
-
-	}
-
+}

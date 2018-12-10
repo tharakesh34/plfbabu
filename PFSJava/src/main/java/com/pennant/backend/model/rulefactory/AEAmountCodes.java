@@ -128,7 +128,10 @@ public class AEAmountCodes {
 	//For Disbursement Instructions used in SUBHEAD
 	private String partnerBankAcType;
 	private String partnerBankAc;
-
+	//For GL code
+	private String productCode;
+	private String dealerCode;
+	
 	// Late Payment Interest Fields
 	private BigDecimal lpi = BigDecimal.ZERO;
 	private BigDecimal lpiDue = BigDecimal.ZERO;
@@ -1218,5 +1221,21 @@ public class AEAmountCodes {
 	public void setInstTds(BigDecimal instTds) {
 		this.instTds = instTds;
 	}
+	public String getProductCode() {
+		return productCode;
+	}
 
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public String getDealerCode() {
+		return dealerCode;
+	}
+
+	public void setDealerCode(String dealerCode) {
+		this.dealerCode = dealerCode;
+	}
+
+	 
 }

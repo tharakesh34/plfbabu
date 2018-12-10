@@ -127,6 +127,7 @@ import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -174,6 +175,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.collateral.impl.FinAssetTypesValidation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -285,6 +287,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private DisbursementPostings disbursementPostings;
 	private InstallmentDueService installmentDueService;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
+	private VehicleDealerService vehicleDealerService;
 
 	// EOD Process Checking
 	private CustomerQueuingDAO customerQueuingDAO;
@@ -1431,6 +1434,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				aeEvent.getAcSetIDList().add(recording.getFeeAccounting());
 				aeEvent.setFinReference(recording.getVasReference());
 
+				//For GL Code
+				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
+				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
+				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
+				
 				aeEvent.setLinkedTranId(0);
 				if (doPostings) {
 					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -3448,4 +3456,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
+
+	public VehicleDealerService getVehicleDealerService() {
+		return vehicleDealerService;
+	}
+
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
+	}
 }

@@ -116,5 +116,11 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	
 	//### Ticket id :124998
 	List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type);
+	//Refund Uploads
+	List<ManualAdvise> getManualAdviseByRefAndFeeCode(String finReference, int adviseType, String feeTypeCode);
+	
+	List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeId);
+
+	void updatePaidAmountOnly(long adviseID, BigDecimal amount);
 
 }

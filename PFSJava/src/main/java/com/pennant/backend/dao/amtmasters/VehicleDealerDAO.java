@@ -71,4 +71,9 @@ public interface VehicleDealerDAO {
 	int getVehicleDealerByCode(String code, String dealerType, long id, String type);
 
 	VehicleDealer getVehicleDealerById(String code, String delarType, String type);
+
+	VehicleDealer getDealerShortCodes(String shortCode);
+
+	VehicleDealer getDealerShortCode(long providerId);
+
 }

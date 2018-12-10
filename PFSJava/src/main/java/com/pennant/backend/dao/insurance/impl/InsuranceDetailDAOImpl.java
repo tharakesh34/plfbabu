@@ -1,0 +1,264 @@
+package com.pennant.backend.dao.insurance.impl;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+
+import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
+import com.pennant.backend.model.insurance.InsuranceDetails;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
+
+public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implements InsuranceDetailDAO {
+	private static Logger logger = LogManager.getLogger(InsuranceDetailDAOImpl.class);
+
+	public InsuranceDetailDAOImpl() {
+		super();
+	}
+
+	@Override
+	public InsuranceDetails getInsurenceDetailsByRef(String reference, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("Select Id ,Reference ,FinReference ,StartDate ,EndDate ,Term ,CoverageAmount ,PolicyNumber ,IssuanceDate ,IssuanceStatus ,PartnerPremium ,");
+		sql.append("PartnerReceivedDate ,AWBNo1 ,AWBNo2 ,AWBNo3 ,DispatchStatus1 ,DispatchStatus2 ,DispatchStatus3 ,ReasonOfRTO1 ,ReasonOfRTO2 ,ReasonOfRTO3");
+		sql.append(",DispatchDateAttempt1 ,DispatchDateAttempt2 ,DispatchDateAttempt3 ,MedicalStatus ,PendencyReasonCategory ,PendencyReason ,InsPendencyResReq");
+		sql.append(",FPR ,PolicyStatus ,FormHandoverDate ,NomineeName ,NomineeRelation ,VASProviderId, ReconStatus, TolaranceAmount, ManualReconRemarks, ManualReconResCategory, LinkedTranId ");
+		if (tableType.contains("View")) {
+			sql.append(",FinType, PostingAgainst, InsurancePremium ");
+		}
+		sql.append(" ,Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId From InsuranceDetails");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where Reference = :Reference");
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InsuranceDetails.class);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	
+	@Override
+	public InsuranceDetails getInsurenceDetailsById(long id, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("Select Id ,Reference ,FinReference ,StartDate ,EndDate ,Term ,CoverageAmount ,PolicyNumber ,IssuanceDate ,IssuanceStatus ,PartnerPremium ,");
+		sql.append("PartnerReceivedDate ,AWBNo1 ,AWBNo2 ,AWBNo3 ,DispatchStatus1 ,DispatchStatus2 ,DispatchStatus3 ,ReasonOfRTO1 ,ReasonOfRTO2 ,ReasonOfRTO3");
+		sql.append(",DispatchDateAttempt1 ,DispatchDateAttempt2 ,DispatchDateAttempt3 ,MedicalStatus ,PendencyReasonCategory ,PendencyReason ,InsPendencyResReq");
+		sql.append(",FPR ,PolicyStatus ,FormHandoverDate ,NomineeName ,NomineeRelation ,VASProviderId, ReconStatus, TolaranceAmount, ManualReconRemarks, ManualReconResCategory,LinkedTranId ");
+		if (tableType.contains("View")) {
+			sql.append(",FinType, PostingAgainst, InsurancePremium ");
+		}
+		sql.append(" ,Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId From InsuranceDetails");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where Id = :Id");
+		logger.debug("selectSql: " + sql.toString());
+
+		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InsuranceDetails.class);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+	
+	@Override
+	public long saveInsuranceDetails(InsuranceDetails insuranceDetail, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into InsuranceDetails");
+		sql.append(tableType);
+		sql.append(" (Id ,Reference ,FinReference ,StartDate ,EndDate ,Term ,CoverageAmount ,PolicyNumber ,IssuanceDate ,IssuanceStatus ,PartnerPremium ,");
+		sql.append("PartnerReceivedDate ,AWBNo1 ,AWBNo2 ,AWBNo3 ,DispatchStatus1 ,DispatchStatus2 ,DispatchStatus3 ,ReasonOfRTO1 ,ReasonOfRTO2 ,ReasonOfRTO3");
+		sql.append(",DispatchDateAttempt1 ,DispatchDateAttempt2 ,DispatchDateAttempt3 ,MedicalStatus ,PendencyReasonCategory ,PendencyReason ,InsPendencyResReq, TolaranceAmount");
+		sql.append(",FPR ,PolicyStatus ,FormHandoverDate ,NomineeName ,NomineeRelation ,VASProviderId ,ReconStatus ,Version ,LastMntBy ,LastMntOn, ManualReconRemarks, ManualReconResCategory, LinkedTranId");
+		sql.append(",RecordStatus ,RoleCode ,NextRoleCode ,TaskId ,NextTaskId ,RecordType ,WorkflowId)");
+		
+		sql.append(" values (:Id ,:Reference ,:FinReference ,:StartDate ,:EndDate ,:Term ,:CoverageAmount ,:PolicyNumber ,:IssuanceDate ,:IssuanceStatus ,:PartnerPremium ");
+		sql.append(",:PartnerReceivedDate ,:AWBNo1 ,:AWBNo2 ,:AWBNo3 ,:DispatchStatus1 ,:DispatchStatus2 ,:DispatchStatus3 ,:ReasonOfRTO1 ,:ReasonOfRTO2 ,:ReasonOfRTO3");
+		sql.append(",:DispatchDateAttempt1 ,:DispatchDateAttempt2 ,:DispatchDateAttempt3 ,:MedicalStatus ,:PendencyReasonCategory ,:PendencyReason ,:InsPendencyResReq, :TolaranceAmount");
+		sql.append(",:FPR ,:PolicyStatus ,:FormHandoverDate ,:NomineeName ,:NomineeRelation ,:VASProviderId ,:ReconStatus ,:Version ,:LastMntBy ,:LastMntOn, :ManualReconRemarks, :ManualReconResCategory, :LinkedTranId");
+		sql.append(",:RecordStatus ,:RoleCode ,:NextRoleCode ,:TaskId ,:NextTaskId ,:RecordType ,:WorkflowId)");		
+
+		// Get the identity sequence number.
+		if (insuranceDetail.getId() <= 0) {
+			insuranceDetail.setId(getNextValue("SeqInsuranceDetails"));
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(insuranceDetail);
+
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return insuranceDetail.getId();
+	}
+
+	@Override
+	public void updateInsuranceDetails(InsuranceDetails insuranceDetail, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update InsuranceDetails");
+		sql.append(tableType);
+		sql.append(" set Id = :Id ,Reference = :Reference ,FinReference = :FinReference ,StartDate = :StartDate ,EndDate = :EndDate ,Term = :Term");
+		sql.append(",CoverageAmount = :CoverageAmount ,PolicyNumber = :PolicyNumber ,IssuanceDate = :IssuanceDate ,IssuanceStatus = :IssuanceStatus");
+		sql.append(",PartnerPremium = :PartnerPremium ,PartnerReceivedDate = :PartnerReceivedDate ,AWBNo1 = :AWBNo1 ,AWBNo2 = :AWBNo2 ,AWBNo3 = :AWBNo3");
+		sql.append(",DispatchStatus1 = :DispatchStatus1 ,DispatchStatus2 = :DispatchStatus2 ,DispatchStatus3 = :DispatchStatus3");
+		sql.append(",ReasonOfRTO1 = :ReasonOfRTO1 ,ReasonOfRTO2 = :ReasonOfRTO2 ,ReasonOfRTO3 = :ReasonOfRTO3 ,DispatchDateAttempt1 = :DispatchDateAttempt1");
+		sql.append(",DispatchDateAttempt2 = :DispatchDateAttempt2 ,DispatchDateAttempt3 = :DispatchDateAttempt3 ,MedicalStatus = :MedicalStatus");
+		sql.append(",PendencyReasonCategory = :PendencyReasonCategory ,PendencyReason = :PendencyReason ,InsPendencyResReq = :InsPendencyResReq, TolaranceAmount = :TolaranceAmount");
+		sql.append(",FPR = :FPR ,PolicyStatus = :PolicyStatus ,FormHandoverDate = :FormHandoverDate ,NomineeName = :NomineeName, ManualReconRemarks = :ManualReconRemarks, ManualReconResCategory = :ManualReconResCategory");
+		sql.append(",LinkedTranId= :LinkedTranId ,NomineeRelation = :NomineeRelation ,VASProviderId = :VASProviderId ,ReconStatus = :ReconStatus ,Version = :Version");
+		sql.append(",LastMntBy = :LastMntBy ,LastMntOn = :LastMntOn ,RecordStatus = :RecordStatus ,RoleCode = :RoleCode ,NextRoleCode = :NextRoleCode");
+		sql.append(",TaskId = :TaskId ,NextTaskId = :NextTaskId ,RecordType = :RecordType ,WorkflowId = :WorkflowId");
+		sql.append(" Where Reference = :Reference");
+				
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(insuranceDetail);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+
+	@Override
+	public boolean isDuplicateKey(long id, String reference, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "Reference = :Reference and id != :id";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("InsuranceDetails", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("InsuranceDetailss_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "InsuranceDetails_Temp", "InsuranceDetails" }, whereClause);
+			break;
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("id", id);
+		paramSource.addValue("Reference", reference);
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
+	@Override
+	public void delete(InsuranceDetails insuranceDetails, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from InsuranceDetails");
+		sql.append(tableType);
+		sql.append(" where ID = :id");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(insuranceDetails);
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public long saveInsurancePayments(InsurancePaymentInstructions paymentInstructions, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into InsurancePaymentInstructions");
+		sql.append(tableType.getSuffix());
+		sql.append(" (Id ,EntityCode ,ProviderId ,PartnerBankId ,PaymentAmount ,PaymentDate, PaymentType ,DataEngineStatusId ,NoOfInsurances ,NoOfPayments ,PaymentCCy");
+		sql.append(" ,NoOfReceivables ,AdjustedReceivables ,TotalPayableAmount ,AdjustedReceivableAmount ,LinkedTranId ,Status ,Version ,Lastmntby ,Lastmnton ,Recordstatus");
+		sql.append(",Rolecode ,Nextrolecode ,Taskid ,Nexttaskid ,Recordtype ,Workflowid)");
+		
+		sql.append(" values (:Id ,:EntityCode ,:ProviderId ,:PartnerBankId ,:PaymentAmount ,:PaymentDate, :PaymentType, :DataEngineStatusId ,:NoOfInsurances ,:NoOfPayments ,:PaymentCCy ");
+		sql.append(" ,:NoOfReceivables ,:AdjustedReceivables ,:TotalPayableAmount ,:AdjustedReceivableAmount ,:LinkedTranId ,:Status ");
+		sql.append(" ,:Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+
+		// Get the identity sequence number.
+		if (paymentInstructions.getId() <= 0) {
+			paymentInstructions.setId(getNextId("SeqPaymentHeader"));
+		}
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstructions);
+
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return paymentInstructions.getId();
+	}
+}

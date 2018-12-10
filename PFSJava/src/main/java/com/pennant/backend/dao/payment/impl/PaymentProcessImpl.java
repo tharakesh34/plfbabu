@@ -12,8 +12,10 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -31,6 +33,8 @@ public class PaymentProcessImpl implements PaymentProcess {
 	private PaymentDetailService paymentDetailService;
 	@Autowired
 	protected PostingsPreparationUtil postingsPreparationUtil;
+	@Autowired
+	protected InsuranceDetailService insuranceDetailService;
 
 	@Override
 	public void process(PaymentInstruction paymentInstruction) {
@@ -73,9 +77,43 @@ public class PaymentProcessImpl implements PaymentProcess {
 		logger.debug(Literal.LEAVING);
 	}
 
+	
+	//Processing the Insurance payments 
+	@Override
+	public void processInsPayments(InsurancePaymentInstructions instruction) {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			String paymentType = instruction.getPaymentType();
+
+			if (StringUtils.equals("E", instruction.getStatus())) {
+				instruction.setStatus(DisbursementConstants.STATUS_PAID);
+			} else if (StringUtils.equals("P", instruction.getStatus())) {
+				instruction.setStatus(DisbursementConstants.STATUS_REALIZED);
+			} else {
+				AEEvent aeEvent = new AEEvent();
+				aeEvent.setLinkedTranId(instruction.getLinkedTranId());
+				List<ReturnDataSet> list = postingsPreparationUtil.postReversalsByLinkedTranID(instruction.getLinkedTranId());
+				aeEvent.setReturnDataSet(list);
+				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
+				instruction.setStatus(DisbursementConstants.STATUS_REJECTED);
+			}
+			// addToCustomerBeneficiary(instruction, financeMain.getCustID()); FIXME to check the benficiary  adding required
+			if (DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_RTGS.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_IFT.equals(paymentType)) {
+			}
+			// update paid or rejected
+			insuranceDetailService.updatePaymentStatus(instruction);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public void addToCustomerBeneficiary(PaymentInstruction instruction, long cusID) {
-		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(instruction.getAccountNo(),
-				instruction.getBankBranchId(), "_View");
+		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(instruction.getAccountNo(), instruction.getBankBranchId(), "_View");
 		if (count == 0) {
 			Beneficiary beneficiary = new Beneficiary();
 			beneficiary.setCustID(cusID);

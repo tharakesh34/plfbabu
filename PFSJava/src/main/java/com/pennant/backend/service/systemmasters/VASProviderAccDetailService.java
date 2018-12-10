@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  VehicleDealerService.java                                                   * 	  
+ * FileName    		:  VASProviderAccDetailService.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  29-09-2011    														*
+ * Creation Date    :  24-09-2018    														*
  *                                                                  						*
- * Modified Date    :  29-09-2011    														*
+ * Modified Date    :  24-09-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
+ * 24-09-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,38 +40,21 @@
  *                                                                                          * 
  ********************************************************************************************
 */
+package com.pennant.backend.service.systemmasters;
 
-package com.pennant.backend.service.amtmasters;
-
-import java.util.List;
-
-import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 
-public interface VehicleDealerService {
+public interface VASProviderAccDetailService {
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	VehicleDealer getVehicleDealerById(long id);
-
-	List<VehicleDealer> getVehicleDealerList(String dealerType);
-
-	VehicleDealer getApprovedVehicleDealerById(long id);
-
+	VASProviderAccDetail getVASProviderAccDetail(long id);
+	VASProviderAccDetail getApprovedVASProviderAccDetail(long id);
 	AuditHeader delete(AuditHeader auditHeader);
-
 	AuditHeader doApprove(AuditHeader auditHeader);
-
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	boolean SearchByName(String dealerName, String dealerType);
-
-	int getVASManufactureCode(String dealerName);
-
-	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
+	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String tableType);
 	
-	VehicleDealer getApprovedVehicleDealerById(String code, String delarType, String type);
-
-	VehicleDealer getDealerShortCodes(String shortCode);
-	
-	VehicleDealer getDealerShortCode(long providerId);
+	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String tableType);
 }

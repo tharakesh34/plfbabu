@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  VehicleDealerService.java                                                   * 	  
+ * FileName    		:  VASProviderAccDetailDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  29-09-2011    														*
+ * Creation Date    :  24-09-2018    														*
  *                                                                  						*
- * Modified Date    :  29-09-2011    														*
+ * Modified Date    :  24-09-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
+ * 24-09-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,38 +40,43 @@
  *                                                                                          * 
  ********************************************************************************************
 */
+package com.pennant.backend.dao.systemmasters;
 
-package com.pennant.backend.service.amtmasters;
+import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
+import com.pennanttech.pff.core.TableType;
 
-import java.util.List;
+public interface VASProviderAccDetailDAO extends BasicCrudDao<VASProviderAccDetail> {
 
-import com.pennant.backend.model.amtmasters.VehicleDealer;
-import com.pennant.backend.model.audit.AuditHeader;
+	/**
+	 * Fetch the Record VASProviderAccDetail by key field
+	 * 
+	 * @param id
+	 *            id of the VASProviderAccDetail.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return VASProviderAccDetail
+	 */
+	VASProviderAccDetail getVASProviderAccDetail(long id, String type);
 
-public interface VehicleDealerService {
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	/**
+	 * Checks whether another record exists with the key attributes in the
+	 * specified table type.
+	 * 
+	 * @param id
+	 *            id of the VASProviderAccDetail.
+	 * @param providerId
+	 *            providerId of the VASProviderAccDetail.
+	 * @param paymentMode
+	 *            paymentMode of the VASProviderAccDetail.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return true if the record exists.
+	 */
 
-	VehicleDealer getVehicleDealerById(long id);
+	boolean isDuplicateKey(long id, long providerId, String entityCode, TableType tableType);
 
-	List<VehicleDealer> getVehicleDealerList(String dealerType);
+	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String type);
 
-	VehicleDealer getApprovedVehicleDealerById(long id);
-
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	boolean SearchByName(String dealerName, String dealerType);
-
-	int getVASManufactureCode(String dealerName);
-
-	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
-	
-	VehicleDealer getApprovedVehicleDealerById(String code, String delarType, String type);
-
-	VehicleDealer getDealerShortCodes(String shortCode);
-	
-	VehicleDealer getDealerShortCode(long providerId);
+	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String type);
 }
