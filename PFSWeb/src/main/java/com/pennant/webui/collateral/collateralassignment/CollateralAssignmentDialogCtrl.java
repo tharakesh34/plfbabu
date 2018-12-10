@@ -35,6 +35,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
@@ -881,7 +882,17 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		// Requested Collateral Adjustment Calculation
 		if (StringUtils.equals(ImplementationConstants.COLLATERAL_ADJ, CollateralConstants.COLLATERAL_REQ_ADJ)) {
 
-			BigDecimal utilizedAmt = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount();
+			BigDecimal utilizedAmt = BigDecimal.ZERO;
+			
+			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+
+			if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
+				utilizedAmt = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue();
+
+			} else {
+				utilizedAmt = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount();
+			}
+
 
 			BigDecimal assignedVal = BigDecimal.ZERO;
 
