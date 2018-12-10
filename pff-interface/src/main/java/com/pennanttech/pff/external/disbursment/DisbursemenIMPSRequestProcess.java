@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -34,7 +35,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		parmMap = new MapSqlParameterSource();
 
 		parmMap.addValue("ID", disbursments);
-		parmMap.addValue("STATUS", "APPROVED");
+		parmMap.addValue("STATUS", DisbursementConstants.STATUS_APPROVED);
 
 		parameterJdbcTemplate.query(sql.toString(), parmMap, new RowCallbackHandler() {
 			MapSqlParameterSource map = null;
@@ -104,15 +105,16 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		try {
-			//IF Status is P then we will update customer payments tables..
-			if ("P".equals(channel)) {
-				sql.append(
-						"UPDATE PAYMENTINSTRUCTIONS  SET STATUS  =  :STATUS WHERE  PAYMENTINSTRUCTIONID = :PAYMENTID");
+			//IF Status is P then we will update customer payments tables.
+			// IF Status is I then we will update Insurance payments table.
+			if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
+				sql.append("UPDATE PAYMENTINSTRUCTIONS SET STATUS =  :STATUS WHERE PAYMENTINSTRUCTIONID = :PAYMENTID");
+			} else if (DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
+				sql.append("UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = :STATUS WHERE ID = :PAYMENTID");
 			} else {
 				sql.append("UPDATE FINADVANCEPAYMENTS  SET STATUS  =  :STATUS WHERE  PAYMENTID = :PAYMENTID");
 			}
-
-			paramMap.addValue("STATUS", "AC");
+			paramMap.addValue("STATUS", DisbursementConstants.STATUS_AWAITCON);
 			paramMap.addValue("PAYMENTID", paymentId);
 
 			return parameterJdbcTemplate.update(sql.toString(), paramMap);
@@ -129,7 +131,7 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		try {
 			sql.append("UPDATE DISBURSEMENT_REQUESTS  SET STATUS  = :STATUS, BATCH_ID  = :BATCH_ID  WHERE ID = :ID");
 
-			paramMap.addValue("STATUS", "AC");
+			paramMap.addValue("STATUS", DisbursementConstants.STATUS_AWAITCON);
 			paramMap.addValue("BATCH_ID", batchId);
 			paramMap.addValue("ID", id);
 

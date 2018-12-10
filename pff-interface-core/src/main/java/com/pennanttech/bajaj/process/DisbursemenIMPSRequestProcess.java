@@ -104,12 +104,15 @@ public class DisbursemenIMPSRequestProcess extends DatabaseDataEngine {
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		try {
-			//IF Status is P then we will update customer payments tables..
+
+			// IF Status is P then we will update customer payments table, 
+			// IF Status is I then we will update Insurance payments table,
 			if ("P".equals(channel)) {
-				sql.append(
-						"UPDATE PAYMENTINSTRUCTIONS  SET STATUS  =  :STATUS WHERE  PAYMENTINSTRUCTIONID = :PAYMENTID");
+				sql.append("UPDATE PAYMENTINSTRUCTIONS SET STATUS = :STATUS WHERE PAYMENTINSTRUCTIONID = :PAYMENTID");
+			} else  if ("I".equals(channel)) {
+				sql.append("UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = :STATUS WHERE ID = :PAYMENTID");
 			} else {
-				sql.append("UPDATE FINADVANCEPAYMENTS  SET STATUS  =  :STATUS WHERE  PAYMENTID = :PAYMENTID");
+				sql.append("UPDATE FINADVANCEPAYMENTS SET STATUS = :STATUS WHERE PAYMENTID = :PAYMENTID");
 			}
 
 			paramMap.addValue("STATUS", "AC");

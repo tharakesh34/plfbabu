@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -369,7 +370,7 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 
 	private void conclude(DataEngineStatus status, List<Long> idList) {
 
-		if (idList == null || idList.isEmpty()) {
+		if (CollectionUtils.isEmpty(idList)) {
 			return;
 		}
 
@@ -383,6 +384,9 @@ public abstract class AbstarctDisbursementRequest extends AbstractInterface impl
 					paramMap);
 			namedJdbcTemplate.update(
 					"UPDATE PAYMENTINSTRUCTIONS SET STATUS = :STATUS where PAYMENTINSTRUCTIONID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))",
+					paramMap);
+			namedJdbcTemplate.update(
+					"UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = :STATUS where ID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))",
 					paramMap);
 			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", paramMap);
 		}

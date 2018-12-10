@@ -14,6 +14,8 @@ import org.zkoss.util.media.Media;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -65,7 +67,7 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 		dataEngine.setValueDate(getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("AC", "AC");
+		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
 		dataEngine.setFilterMap(filterMap);
 
 		dataEngine.importData(configName);
@@ -109,7 +111,7 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 		dataEngine.setValueDate(getValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("AC", "AC");
+		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
 		dataEngine.setFilterMap(filterMap);
 
 		dataEngine.importData(configName);
@@ -143,9 +145,10 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
+			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL = :CHANNEL");
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue("RESP_BATCH_ID", batchId);
+			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_DISBURSEMENT);
 
 			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinAdvancePayments.class);
 			disbursements = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
@@ -174,9 +177,10 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN PAYMENTINSTRUCTIONS PI ON PI.PAYMENTINSTRUCTIONID = DR.DISBURSEMENT_ID");
 			sql.append(" INNER JOIN PAYMENTHEADER PH ON PH.PAYMENTID = PI.PAYMENTID");
-			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
+			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID  AND CHANNEL = :CHANNEL");
 			paramMap = new MapSqlParameterSource();
 			paramMap.addValue("RESP_BATCH_ID", batchId);
+			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_PAYMENT);
 
 			instructionRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PaymentInstruction.class);
 			instructions = namedJdbcTemplate.query(sql.toString(), paramMap, instructionRowMapper);
@@ -192,6 +196,38 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 			logger.error(Literal.EXCEPTION, e);
 		}
 
+		// Insurance payments..
+		List<InsurancePaymentInstructions> insPaymentInstructions = null;
+		RowMapper<InsurancePaymentInstructions> insPaymentInstructionRowMapper = null;
+		try {
+			sql = new StringBuilder();
+			sql.append(" SELECT PI.LINKEDTRANID, PI.ID, VPA.BANKBRANCHID, VPA.ACCOUNTNUMBER, ");
+			sql.append(" AVD.DEALERNAME, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS,");
+			sql.append(" DR.REJECT_REASON REJECTREASON,DR.REALIZATION_DATE REALIZATIONDATE,");
+			sql.append(" DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF FROM DISBURSEMENT_REQUESTS DR");
+			sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
+			sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
+			sql.append(" INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = VPA.BANKBRANCHID");
+			sql.append(" INNER JOIN AMTVEHICLEDEALER AVD ON AVD.DEALERID = VPA.PROVIDERID");
+			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID  AND CHANNEL = :CHANNEL");
+			paramMap = new MapSqlParameterSource();
+			paramMap.addValue("RESP_BATCH_ID", batchId);
+			paramMap.addValue("CHANNEL", DisbursementConstants.CHANNEL_INSURANCE);
+
+			insPaymentInstructionRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(InsurancePaymentInstructions.class);
+			insPaymentInstructions = namedJdbcTemplate.query(sql.toString(), paramMap, insPaymentInstructionRowMapper);
+
+			for (InsurancePaymentInstructions instruction : insPaymentInstructions) {
+				try {
+					paymentProcess.processInsPayments(instruction);
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 }
