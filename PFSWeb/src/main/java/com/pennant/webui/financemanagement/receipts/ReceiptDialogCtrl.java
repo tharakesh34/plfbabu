@@ -8364,21 +8364,32 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * to get the Remaining Balance After Allocation Amount
+	 * Method for Fetching Fee parameter execution on Fee detail calculation
 	 * 
 	 * @return
 	 */
-	public BigDecimal getRemBalAfterAllocationAmt() { //Used in Fees Execution
-		return remBalAfterAllocation.getValue();
-	}
+	public HashMap<String, Object> getFeeParmMap() {
+		HashMap<String, Object> feeMap = new HashMap<String, Object>();
 
-	/**
-	 * to get the Customer Paid Amount
-	 * 
-	 * @return
-	 */
-	public BigDecimal getCustPaidAmt() { //Used in Fees Execution
-		return this.custPaid.getValue();
+		BigDecimal totalPayment = getTotalReceiptAmount(false);
+		feeMap.put("totalPayment", totalPayment);
+		feeMap.put("partialPaymentAmount", this.remBalAfterAllocation.getValue());
+		feeMap.put("totalDueAmount", this.custPaid.getValue());
+		feeMap.put("receiptPurpose", getComboboxValue(this.receiptPurpose));
+		feeMap.put("receiptMode", getComboboxValue(this.receiptMode));
+
+		Date fixedTenorEndDate = DateUtility.addMonths(
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcPeriodEndDate(),
+				getFinanceDetail().getFinScheduleData().getFinanceMain().getFixedRateTenor());
+
+		if (getFinanceDetail().getFinScheduleData().getFinanceMain().getFixedRateTenor() > 0
+				&& fixedTenorEndDate.compareTo(DateUtility.getAppDate()) > 0) {
+			feeMap.put("Finance_Fixed_Tenor", PennantConstants.YES);
+		} else {
+			feeMap.put("Finance_Fixed_Tenor", PennantConstants.NO);
+		}
+
+		return feeMap;
 	}
 
 	public ManualAdviseService getManualAdviseService() {

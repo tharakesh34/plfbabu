@@ -3498,6 +3498,16 @@ UNION ALL
 </createView>
 	</changeSet>
 
+	<changeSet id="62" author="Siva">
+		<sql>
+			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','REPAY','receiptPurpose','Receipt Purpose','nvarchar','100','0','1','','static','');
+			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','REPAY','receiptMode','Receipt	Mode','nvarchar','100','0','1','','static','');
+			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','EARLYPAY','receiptPurpose','Receipt Purpose','nvarchar','100','0','1','','static','');
+			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','EARLYPAY','receiptMode','Receipt	Mode','nvarchar','100','0','1','','static','');
+			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','EARLYSTL','receiptPurpose','Receipt Purpose','nvarchar','100','0','1','','static','');
+			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','EARLYSTL','receiptMode','Receipt	Mode','nvarchar','100','0','1','','static','');
+		</sql>
+	</changeSet>
 
 	
 </databaseChangeLog>
