@@ -46,13 +46,10 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
@@ -71,18 +68,6 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 	public UploadAllocationDetailDAOImpl() {
 		super();
 	}
-	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	
 	/**
 	 * This method insert new Records into UploadHeader or UploadHeader_Temp.
@@ -121,7 +106,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadAlloctionDetail);
 			
 			try {
-				this.namedParameterJdbcTemplate.update(sql.toString(), beanParameters);
+				this.jdbcTemplate.update(sql.toString(), beanParameters);
 			} catch (DataAccessException e) {
 				logger.debug("Exception " + e.getMessage());
 			}
@@ -146,7 +131,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 		paramSource.addValue("UPLOADDETAILID", receiptHeaderId);
 		
 		try {
-			this.namedParameterJdbcTemplate.update(deleteSql.toString(), paramSource);
+			this.jdbcTemplate.update(deleteSql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			logger.debug("Error " + e);
 		}

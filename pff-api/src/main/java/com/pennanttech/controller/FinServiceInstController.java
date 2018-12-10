@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.AccountConstants;
@@ -3521,6 +3522,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		return finReceiptDetailDAO;
 	}
 
+	@Autowired
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
@@ -3531,5 +3533,14 @@ public class FinServiceInstController extends SummaryDetailService {
 	
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
+	}
+	
+	public ReceiptUploadDetailDAO getReceiptUploadDetailDAO() {
+		return receiptUploadDetailDAO;
+	}
+
+	@Autowired
+	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
+		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
 	}
 }

@@ -47,15 +47,12 @@ package com.pennant.backend.dao.finance.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -78,17 +75,6 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		super();
 	}
 	
-	// Spring Named JDBC Template
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
-	/**
-	 * To Set  dataSource
-	 * @param dataSource
-	 */
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 	@Override
 	public long saveReceiptResponseFileHeader(String fileName) {
 		logger.debug(Literal.ENTERING);
@@ -107,7 +93,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("StartTime", DateUtility.getAppDate());
 
 		try {
-			this.namedParameterJdbcTemplate.update(sql.toString(), source);
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -141,7 +127,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		
 		try {
 
-			detailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (DataAccessException e) {
 			logger.error(e);
 			detailsList = new ArrayList<>();
@@ -174,7 +160,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		List<UploadAlloctionDetail> uploadAlloctionDetailsList = new ArrayList<>();
 		
 		try {
-			uploadAlloctionDetailsList = this.namedParameterJdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+			uploadAlloctionDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (DataAccessException e) {
 			logger.error(e);
 			uploadAlloctionDetailsList = new ArrayList<>();
@@ -205,7 +191,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("ID", batchId);
 
 		try {
-			this.namedParameterJdbcTemplate.update(query.toString(), source);
+			this.jdbcTemplate.update(query.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -234,7 +220,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("Id", receiptresponseDetail.getId());
 
 		try {
-			this.namedParameterJdbcTemplate.update(query.toString(), source);
+			this.jdbcTemplate.update(query.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -256,7 +242,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("Id", rootId);
 
 		try {
-			this.namedParameterJdbcTemplate.update(query.toString(), source);
+			this.jdbcTemplate.update(query.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -281,7 +267,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("PICKUPBATCHID", jobid);
 
 		try {
-			this.namedParameterJdbcTemplate.update(query.toString(), source);
+			this.jdbcTemplate.update(query.toString(), source);
 		} catch (DataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

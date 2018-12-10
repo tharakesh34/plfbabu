@@ -2,40 +2,25 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinTypeReceiptModesDAO;
 import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
+import com.pennanttech.pennapps.core.jdbc.BasicDao;
 
-public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
+public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> implements FinTypeReceiptModesDAO {
 	private static Logger logger = Logger.getLogger(FinTypeReceiptModesDAOImpl.class);
-
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public FinTypeReceiptModesDAOImpl() {
 		super();
 	}
-
-	/**
-	 * To Set dataSource
-	 * 
-	 * @param dataSource
-	 */
-
-	public void setDataSource(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
 
 	/**
 	 * This method insert new Records into FinTypeReceiptModes or FinTypeVASProducts_Temp.
@@ -68,7 +53,7 @@ public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeReceiptModes);
-		this.namedParameterJdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 
 	}
@@ -97,7 +82,7 @@ public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeReceiptModes);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -123,7 +108,7 @@ public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
 		logger.debug("updateSql: " + updateSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeReceiptModes);
-		this.namedParameterJdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 
@@ -147,7 +132,7 @@ public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
 		RowMapper<FinTypeReceiptModes> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinTypeReceiptModes.class);
 		logger.debug("Leaving");
-		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**
@@ -179,7 +164,7 @@ public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
 				.newInstance(FinTypeReceiptModes.class);
 
 		try {
-			finTypeReceiptModes = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+			finTypeReceiptModes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
 					typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
@@ -201,7 +186,7 @@ public class FinTypeReceiptModesDAOImpl implements FinTypeReceiptModesDAO {
 		logger.debug("deleteSql: " + deleteSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTypeReceiptModes);
-		this.namedParameterJdbcTemplate.update(deleteSql.toString(), beanParameters);
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
