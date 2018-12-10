@@ -62,6 +62,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
 		if (finScheduleData.getFinanceScheduleDetails().size() > 0) {
+
+			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			if (recalLockTill == null) {
+				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+			}
+
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
@@ -71,8 +77,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 				// Schedule Recalculation Locking Period Applicability
 				if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-					if (DateUtility.compare(curSchd.getSchDate(),
-							finScheduleData.getFinanceMain().getRecalFromDate()) < 0 && (i != sdSize - 1) && i != 0) {
+					if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 						curSchd.setRecalLock(true);
 					} else {
 						curSchd.setRecalLock(false);

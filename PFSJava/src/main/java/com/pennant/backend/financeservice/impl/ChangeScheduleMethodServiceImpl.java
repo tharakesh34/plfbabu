@@ -100,6 +100,12 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 
 		// Schedule Recalculation Locking Period Applicability
 		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
+
+			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			if (recalLockTill == null) {
+				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+			}
+
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			for (int i = 0; i <= sdSize - 1; i++) {
 

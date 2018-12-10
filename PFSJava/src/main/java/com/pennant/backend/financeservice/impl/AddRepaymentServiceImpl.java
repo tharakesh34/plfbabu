@@ -1,6 +1,7 @@
 package com.pennant.backend.financeservice.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,25 +38,31 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 	/**
 	 * Method for do AddRepayment process and generate schedule
 	 * 
-	 * @param finscheduleData
+	 * @param finScheduleData
 	 * @param finServiceInstruction
 	 * @return FinScheduleData
 	 */
-	public FinScheduleData getAddRepaymentDetails(FinScheduleData finscheduleData,
+	public FinScheduleData getAddRepaymentDetails(FinScheduleData finScheduleData,
 			FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
-		BigDecimal oldTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
 		// Schedule Recalculation Locking Period Applicability
 		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-			int sdSize = finscheduleData.getFinanceScheduleDetails().size();
+
+			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			if (recalLockTill == null) {
+				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+			}
+
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
-				curSchd = finscheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), finscheduleData.getFinanceMain().getRecalFromDate()) < 0
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
@@ -64,7 +71,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			}
 		}
 
-		finSchdData = ScheduleCalculator.changeRepay(finscheduleData, finServiceInstruction.getAmount(),
+		finSchdData = ScheduleCalculator.changeRepay(finScheduleData, finServiceInstruction.getAmount(),
 				finServiceInstruction.getSchdMethod());
 
 		BigDecimal newTotalPft = finSchdData.getFinanceMain().getTotalGrossPft();

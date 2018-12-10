@@ -1,6 +1,7 @@
 package com.pennant.backend.financeservice.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,6 +49,12 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 		FinanceScheduleDetail curSchd = null;
+
+		Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+		if (recalLockTill == null) {
+			recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+		}
+
 		for (int i = 0; i <= sdSize - 1; i++) {
 			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
@@ -60,7 +67,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 			// Schedule Recalculation Locking Period Applicability
 			if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-				if (DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {

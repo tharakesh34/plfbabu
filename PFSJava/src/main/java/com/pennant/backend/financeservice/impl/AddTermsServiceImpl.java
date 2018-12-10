@@ -1,6 +1,7 @@
 package com.pennant.backend.financeservice.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,20 +25,26 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
-	public FinScheduleData getAddTermsDetails(FinScheduleData finscheduleData,
+	public FinScheduleData getAddTermsDetails(FinScheduleData finScheduleData,
 			FinServiceInstruction finServiceInstruction) {
 		logger.debug("Entering");
 
-		BigDecimal oldTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
 		// Schedule Recalculation Locking Period Applicability
 		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-			int sdSize = finscheduleData.getFinanceScheduleDetails().size();
+
+			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			if (recalLockTill == null) {
+				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+			}
+
+			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
-				curSchd = finscheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), finscheduleData.getFinanceMain().getRecalFromDate()) < 0
+				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
@@ -46,14 +53,14 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 			}
 		}
 
-		finscheduleData = ScheduleCalculator.addTerm(finscheduleData, finServiceInstruction.getTerms());
+		finScheduleData = ScheduleCalculator.addTerm(finScheduleData, finServiceInstruction.getTerms());
 
-		BigDecimal newTotalPft = finscheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
-		finscheduleData.setPftChg(pftDiff);
-		finscheduleData.getFinanceMain().setScheduleRegenerated(true);
+		finScheduleData.setPftChg(pftDiff);
+		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
 		logger.debug("Leaving");
-		return finscheduleData;
+		return finScheduleData;
 	}
 
 	/**

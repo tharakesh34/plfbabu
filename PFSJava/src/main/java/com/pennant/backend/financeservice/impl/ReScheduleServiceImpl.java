@@ -376,6 +376,11 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
+		Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+		if (recalLockTill == null) {
+			recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+		}
+
 		// Rate Modification for All Modified Schedules
 		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
 			curSchd = scheduleData.getFinanceScheduleDetails().get(i);
@@ -418,7 +423,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 			// Schedule Recalculation Locking Period Applicability
 			if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-				if (DateUtility.compare(curSchd.getSchDate(), finScheduleData.getFinanceMain().getRecalFromDate()) < 0
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != scheduleData.getFinanceScheduleDetails().size() - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
