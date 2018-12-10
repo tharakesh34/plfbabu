@@ -114,4 +114,12 @@ public class AccountEventConstants {
 	// Deposit Details Events
 	public static final String ACCEVENT_CASHTOBANK = "C2B";
 	public static final String ACCEVENT_CHEQUETOBANK = "CHQ2B";
+	public static final String ACCEVENT_INSADJ = "INSADJ";
+	public static final String ACCEVENT_INSPAY = "INSPAY";
+	public static final String ACCEVENT_CANINS = "CANINS";
+
+	// Category Code Constants
+	public static final String EVENTCTG_FINANCE = "F";
+	public static final String EVENTCTG_OVERDRAFT = "O";
+	public static final String EVENTCTG_GOLD = "G";
 }

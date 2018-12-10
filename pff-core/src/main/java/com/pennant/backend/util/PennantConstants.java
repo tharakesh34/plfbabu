@@ -744,6 +744,9 @@ public class PennantConstants {
 	// Sub Category Constants
 	public static final String SUBCATEGORY_DOMESTIC = "DOMESTIC"; // Domestic
 	public static final String SUBCATEGORY_NRI = "NRI"; // NRI
+	public static final String EMPLOYMENTTYPE_SEP = "SEP"; //Domestic
+	public static final String EMPLOYMENTTYPE_SENP = "SENP";
+	public static final String EMPLOYMENTTYPE_SALARIED = "SALARIED"; //Domestic
 
 	// WorkFlow Fields
 	public static final String WORKFLOW_VERSION = "VERSION";
@@ -799,4 +802,17 @@ public class PennantConstants {
 	//active and inactive
 	public static final boolean ACTIVE = true;
 	public static final boolean INACTIVE = false;
+	
+	public static final String AVERAGE = "AVG";
+	public static final String GOOD = "GOOD";
+	public static final String VERYGOOD = "VGOOD";
+	
+	public static final String DSA = "DSA";
+	public static final String PSF = "PSF";
+	public static final String ONLINE = "ONL";
+	public static final String REFERRAL = "REF";
+	public static final String NTB = "NTB";
+	public static final String ASM = "ASM";
+	public static final String KVI = "KVI";
+	public static final String DEFAULT = "DEFAULT";
 }

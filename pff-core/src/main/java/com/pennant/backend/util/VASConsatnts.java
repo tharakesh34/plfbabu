@@ -13,7 +13,19 @@ public class VASConsatnts {
 	public static final String VASAGAINST_VASM = "VASM";
 
 	// Status Details
+	public static final String STATUS_REBOOKING = "R";
+	public static final String STATUS_MAINTAINCE = "M";
 	public static final String STATUS_CANCEL = "C";
+	public static final String STATUS_NORMAL = "N";
+	public static final String STATUS_SURRENDER = "S";
 	public static final String VASAGAINST_PARTNER = "SOPT";
+	
+	// Servicing events
+	public static final String VAS_EVENT_ORIGINATION = "Orgination";
+	public static final String VAS_EVENT_CANCELLATION = "Cancellation";
+	public static final String VAS_EVENT_MAINTENANCE = "Maintenance";
+	public static final String VAS_EVENT_REBOOKING = "Rebooking";
 
+	//For Insurance VASI is the standard category.
+	public static final String VAS_CATEGORY_VASI = "VASI";
 }

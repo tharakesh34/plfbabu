@@ -389,4 +389,8 @@ public class FinanceConstants {
 
 	// Fee Waivers
 	public static final String FINSER_EVENT_FEEWAIVERS = "FeeWaivers";
+	// FLP Calculated Types
+	public static final String FLPCALCULATED_TYPE_ON_ISSUANCEDATE = "I";
+	public static final String FLPCALCULATED_TYPE_ON_VASAPPROVALDATE = "A";
+
 }

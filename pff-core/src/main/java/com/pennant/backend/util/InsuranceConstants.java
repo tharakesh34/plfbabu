@@ -24,4 +24,19 @@ public class InsuranceConstants {
 	public static final String PAYTYPE_DF_DISB = "DFDISB";
 	public static final String PAYTYPE_ADD_DISB = "ADDDISB";
 
+	public static final String RECON_STATUS_AUTO = "A";
+	public static final String RECON_STATUS_MANUAL = "M";
+
+	public static final String ISSUED = "ISSUED";
+	public static final String DECLINE = "DECLINE";
+	public static final String CANCEL = "CANCEL";
+	public static final String REJECT = "REJECT";
+	public static final String PENDING = "PENDING";
+	public static final String DISCREPENT = "DISCREPENT";
+	public static final String ACTIVE = "ACTIVE";
+	public static final String CANCELLED = "CANCELLED";
+	public static final String SURRENDER = "SURRENDER";
+	public static final String CLAIM = "CLAIM";
+	public static final String MATURED = "MATURED";
+
 }

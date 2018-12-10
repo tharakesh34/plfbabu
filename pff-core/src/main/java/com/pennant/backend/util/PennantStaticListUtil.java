@@ -243,6 +243,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> uploadLevels;
 
 	private static ArrayList<ValueLabel> subCategoriesList;
+	private static ArrayList<ValueLabel> insSurrenderActivity;
 
 	private static ArrayList<ValueLabel> statusCodes;
 	private static ArrayList<ValueLabel> sourceInfoList;
@@ -267,7 +268,21 @@ public class PennantStaticListUtil {
 
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
 	private static List<ValueLabel> queryDetailExtRolesList = new ArrayList<>();
+	
+	private static ArrayList<ValueLabel> reconReasonCategoryList;
+	private static ArrayList<ValueLabel> recommendation;
 
+
+	private static ArrayList<ValueLabel> vasEvents;
+	private static ArrayList<ValueLabel> flpCalculatedList;
+	
+	private static ArrayList<ValueLabel> sourcingChannelCategory;
+	private static ArrayList<ValueLabel> loanCategory;
+	private static ArrayList<ValueLabel> surrogateType;
+	private static ArrayList<ValueLabel> endUse;
+	private static ArrayList<ValueLabel> verification;
+	private static Map<String, ValueLabel>	employmentTypeList			= new HashMap<>();
+	private static Map<String, ValueLabel>	addEmploymentList			= new HashMap<>();
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -3508,11 +3523,13 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getChannelTypes() {
 		if (channelTypes == null) {
-			channelTypes = new ArrayList<ValueLabel>(2);
+			channelTypes = new ArrayList<ValueLabel>(3);
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_PAYMENT,
 					Labels.getLabel("label_Disbursement_Payment.label")));
 			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_DISBURSEMENT,
 					Labels.getLabel("label_Disbursement_Disbursement.label")));
+			channelTypes.add(new ValueLabel(DisbursementConstants.CHANNEL_INSURANCE,
+					Labels.getLabel("label_Disbursement_Insurance.label")));
 		}
 		return channelTypes;
 	}
@@ -4309,4 +4326,196 @@ public class PennantStaticListUtil {
 		}
 		queryDetailExtRolesList.addAll(list);
 	}
+	
+	public static ArrayList<ValueLabel> getFlpCalculatedList() {
+		if (flpCalculatedList == null) {
+			flpCalculatedList = new ArrayList<ValueLabel>(2);
+			flpCalculatedList.add(new ValueLabel(FinanceConstants.FLPCALCULATED_TYPE_ON_ISSUANCEDATE, Labels.getLabel("label_VASConfiguration_FLP_IssuanceDate")));
+			flpCalculatedList.add(new ValueLabel(FinanceConstants.FLPCALCULATED_TYPE_ON_VASAPPROVALDATE, Labels.getLabel("label_VASConfiguration_FLP_VASApprovalDate")));
+		}
+		return flpCalculatedList;
+	}
+	
+	public static ArrayList<ValueLabel> getPaymentType() {
+		ArrayList<ValueLabel> paymentTypes = new ArrayList<ValueLabel>(6);
+		paymentTypes.add(
+				new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IMPS, Labels.getLabel("label_PaymentType_IMPS")));
+		paymentTypes.add(
+				new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NEFT, Labels.getLabel("label_PaymentType_NEFT")));
+		paymentTypes.add(
+				new ValueLabel(DisbursementConstants.PAYMENT_TYPE_RTGS, Labels.getLabel("label_PaymentType_RTGS")));
+		paymentTypes.add(
+				new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE, Labels.getLabel("label_PaymentType_CHEQUE")));
+		paymentTypes
+				.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD, Labels.getLabel("label_PaymentType_DD")));
+		paymentTypes.add(
+				new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH, Labels.getLabel("label_PaymentType_CASH")));
+		paymentTypes.add(
+				new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW, Labels.getLabel("label_PaymentType_ESCROW")));
+		return paymentTypes;
+	}
+
+	public static List<ValueLabel> getReconReasonCategory() {
+		if (reconReasonCategoryList == null) {
+			reconReasonCategoryList = new ArrayList<ValueLabel>(6);
+			reconReasonCategoryList.add(new ValueLabel("U", Labels.getLabel("label_ReconReasonCategory_UMedical")));
+			reconReasonCategoryList.add(new ValueLabel("I", Labels.getLabel("label_ReconReasonCategory_IForm")));
+			reconReasonCategoryList.add(new ValueLabel("P", Labels.getLabel("label_ReconReasonCategory_PMismatch")));
+			reconReasonCategoryList.add(new ValueLabel("C", Labels.getLabel("label_ReconReasonCategory_CalcMismatch")));
+			reconReasonCategoryList.add(new ValueLabel("N", Labels.getLabel("label_ReconReasonCategory_NomineeMinor")));
+			reconReasonCategoryList.add(new ValueLabel("K", Labels.getLabel("label_ReconReasonCategory_KycRequired")));
+		}
+		return reconReasonCategoryList;
+	}
+
+	public static ArrayList<ValueLabel> getRecommendation() {
+		if (recommendation == null) {
+			recommendation = new ArrayList<ValueLabel>(3);
+			recommendation.add(
+					new ValueLabel(PennantConstants.AVERAGE, Labels.getLabel("label_BuilderCompany_Average.value")));
+			recommendation
+					.add(new ValueLabel(PennantConstants.GOOD, Labels.getLabel("label_BuilderCompany_Good.value")));
+			recommendation
+					.add(new ValueLabel(PennantConstants.VERYGOOD,
+							Labels.getLabel("label_BuilderCompany_VeryGood.value")));
+		}
+		return recommendation;
+	}
+
+	public static ArrayList<ValueLabel> getVasEvents() {
+		if (vasEvents == null) {
+			vasEvents = new ArrayList<ValueLabel>();
+			vasEvents.add(new ValueLabel(Labels.getLabel("label_VasEvent_Origination"), VASConsatnts.VAS_EVENT_ORIGINATION));
+			vasEvents.add(new ValueLabel(Labels.getLabel("label_VasEvent_Maintenance"), VASConsatnts.VAS_EVENT_MAINTENANCE));
+			vasEvents.add(new ValueLabel(Labels.getLabel("label_VasEvent_Cancellation"), VASConsatnts.VAS_EVENT_CANCELLATION));
+			vasEvents.add(new ValueLabel(Labels.getLabel("label_VasEvent_Rebooking"), VASConsatnts.VAS_EVENT_REBOOKING));
+		}
+		return vasEvents;
+	}
+	public void removeEmploymentTypeList(String employmentType) {
+		if (employmentType == null) {
+			return;
+		}
+		employmentTypeList.remove(employmentType);
+	}
+
+	public void addEmploymentTypeList() {
+
+		addEmploymentList.put(PennantConstants.EMPLOYMENTTYPE_SEP,
+				new ValueLabel(PennantConstants.EMPLOYMENTTYPE_SEP, Labels.getLabel("label_Employmenttype_Sep")));
+		addEmploymentList.put(PennantConstants.EMPLOYMENTTYPE_SENP,
+				new ValueLabel(PennantConstants.EMPLOYMENTTYPE_SENP, Labels.getLabel("label_Employmenttype_Senp")));
+		addEmploymentList.put(PennantConstants.EMPLOYMENTTYPE_SALARIED, new ValueLabel(
+				PennantConstants.EMPLOYMENTTYPE_SALARIED, Labels.getLabel("label_Employmenttype_Salaried")));
+		if (addEmploymentList == null) {
+			return;
+		}
+		employmentTypeList.putAll(addEmploymentList);
+	}
+
+	public static ArrayList<ValueLabel> getSourcingChannelCategory() {
+		if (sourcingChannelCategory == null) {
+			sourcingChannelCategory = new ArrayList<ValueLabel>(7);
+			sourcingChannelCategory
+					.add(new ValueLabel(PennantConstants.DSA, Labels.getLabel("label_FinanceMainDialog_DSA.value")));
+			sourcingChannelCategory.add(new ValueLabel(PennantConstants.DEVELOPER,
+					Labels.getLabel("label_FinanceMainDialog_DEVELOPER.value")));
+			sourcingChannelCategory
+					.add(new ValueLabel(PennantConstants.PSF, Labels.getLabel("label_FinanceMainDialog_PSF.value")));
+			sourcingChannelCategory
+					.add(new ValueLabel(PennantConstants.ASM, Labels.getLabel("label_FinanceMainDialog_ASM.value")));
+			sourcingChannelCategory.add(
+					new ValueLabel(PennantConstants.ONLINE, Labels.getLabel("label_FinanceMainDialog_ONLINE.value")));
+			sourcingChannelCategory.add(new ValueLabel(PennantConstants.REFERRAL,
+					Labels.getLabel("label_FinanceMainDialog_REFERRAL.value")));
+			sourcingChannelCategory
+					.add(new ValueLabel(PennantConstants.NTB, Labels.getLabel("label_FinanceMainDialog_NTB.value")));
+
+		}
+		return sourcingChannelCategory;
+	}
+
+	public static ArrayList<ValueLabel> getLoanCategory() {
+		if (loanCategory == null) {
+			loanCategory = new ArrayList<ValueLabel>(3);
+			loanCategory.add(new ValueLabel("BT", Labels.getLabel("label_FinanceMainDialog_BT.value")));
+			loanCategory.add(new ValueLabel("FP", Labels.getLabel("label_FinanceMainDialog_Fresh/Purchase.value")));
+			loanCategory.add(new ValueLabel("LP", Labels.getLabel("label_FinanceMainDialog_LAP.value")));
+		}
+		return loanCategory;
+	}
+
+	public static ArrayList<ValueLabel> getSurrogateType() {
+		if (surrogateType == null) {
+			surrogateType = new ArrayList<ValueLabel>(8);
+			surrogateType.add(new ValueLabel("ITR", Labels.getLabel("label_FinanceMainDialog_Surrogate-ITR.value")));
+			surrogateType
+					.add(new ValueLabel("BAN", Labels.getLabel("label_FinanceMainDialog_Surrogate-Banking.value")));
+			surrogateType.add(new ValueLabel("LLT", Labels.getLabel("label_FinanceMainDialog_Surrogate-LowLTV.value")));
+			surrogateType
+					.add(new ValueLabel("TUR", Labels.getLabel("label_FinanceMainDialog_Surrogate-Turnover.value")));
+			surrogateType.add(new ValueLabel("SEP", Labels.getLabel("label_FinanceMainDialog_Surrogate-SEP.value")));
+			surrogateType.add(new ValueLabel("REN", Labels.getLabel("label_FinanceMainDialog_Surrogate-Rental.value")));
+			surrogateType.add(new ValueLabel("RSE", Labels.getLabel("label_FinanceMainDialog_Surrogate-RSE.value")));
+		}
+		return surrogateType;
+	}
+
+	public static ArrayList<ValueLabel> getEndUse() {
+		if (endUse == null) {
+			endUse = new ArrayList<ValueLabel>(2);
+			endUse.add(new ValueLabel("BTT", Labels.getLabel("label_FinanceMainDialog_BalanceTransferTopup.value")));
+			endUse.add(new ValueLabel("BEX", Labels.getLabel("label_FinanceMainDialog_BusinessExpansion.value")));
+			endUse.add(new ValueLabel("BUS", Labels.getLabel("label_FinanceMainDialog_BusinessUse.value")));
+			endUse.add(new ValueLabel("EPU", Labels.getLabel("label_FinanceMainDialog_EquipmentPurchase.value")));
+			endUse.add(new ValueLabel("HLR", Labels.getLabel("label_FinanceMainDialog_HLRestructuring.value")));
+			endUse.add(new ValueLabel("HLT", Labels.getLabel("label_FinanceMainDialog_HLTotalLoan.value")));
+			endUse.add(new ValueLabel("HCO", Labels.getLabel("label_FinanceMainDialog_HomeConstruction.value")));
+			endUse.add(new ValueLabel("HRE", Labels.getLabel("label_FinanceMainDialog_HomeRefinance.value")));
+			endUse.add(new ValueLabel("LCO", Labels.getLabel("label_FinanceMainDialog_LoanConsolidation.value")));
+			endUse.add(new ValueLabel("LSU", Labels.getLabel("label_FinanceMainDialog_LoanSubstitution.value")));
+			endUse.add(new ValueLabel("OTH", Labels.getLabel("label_FinanceMainDialog_Other.value")));
+			endUse.add(new ValueLabel("CPN",
+					Labels.getLabel("label_FinanceMainDialog_ConstructionPurchaseOfNewUnits.value")));
+			endUse.add(new ValueLabel("POU", Labels.getLabel("label_FinanceMainDialog_PurchasingOldUnits.value")));
+			endUse.add(new ValueLabel("PRE",
+					Labels.getLabel("label_FinanceMainDialog_PrepareRenovationOfExistingUnits.value")));
+			endUse.add(new ValueLabel("MPH",
+					Labels.getLabel("label_FinanceMainDialog_Mortgage/Property/HomeEquityLoan.value")));
+			endUse.add(new ValueLabel("EDU", Labels.getLabel("label_FinanceMainDialog_Education.value")));
+			endUse.add(new ValueLabel("INV", Labels.getLabel("label_FinanceMainDialog_Investments.value")));
+			endUse.add(new ValueLabel("ORE", Labels.getLabel("label_FinanceMainDialog_OfficeRenovation.value")));
+			endUse.add(new ValueLabel("TRA", Labels.getLabel("label_FinanceMainDialog_Travel.value")));
+			endUse.add(new ValueLabel("WCA", Labels.getLabel("label_FinanceMainDialog_WorkingCapital.value")));
+			endUse.add(new ValueLabel("INS", Labels.getLabel("label_FinanceMainDialog_Insurance.value")));
+			endUse.add(new ValueLabel("PSU", Labels.getLabel("label_FinanceMainDialog_PersonalUse.value")));
+		}
+		return endUse;
+	}
+	public static ArrayList<ValueLabel> getVerification() {
+		if (verification == null) {
+			verification = new ArrayList<ValueLabel>();
+			verification
+					.add(new ValueLabel("BANV", Labels.getLabel("label_FinanceMainDialog_BankingVerification.value")));
+			verification.add(
+					new ValueLabel("ITRV", Labels.getLabel("label_FinanceMainDialog_ITR_FinancialVerification.value")));
+			verification
+					.add(new ValueLabel("FCUV", Labels.getLabel("label_FinanceMainDialog_FCU_DocsVerification.value")));
+			verification.add(
+					new ValueLabel("SSlV", Labels.getLabel("label_FinanceMainDialog_SalarySlipVerification.value")));
+		}
+		return verification;
+	}
+	public static ArrayList<ValueLabel> getActivity() {
+		if (insSurrenderActivity == null) {
+			insSurrenderActivity = new ArrayList<ValueLabel>();
+			insSurrenderActivity.add(new ValueLabel(VASConsatnts.STATUS_SURRENDER,
+					Labels.getLabel("label_InsuranceSurrenderDialog_Surrender.value")));
+			insSurrenderActivity.add(new ValueLabel(VASConsatnts.STATUS_CANCEL,
+					Labels.getLabel("label_InsuranceSurrenderDialog_Cancel.value")));
+
+		}
+		return insSurrenderActivity;
+	}
+	
 }
