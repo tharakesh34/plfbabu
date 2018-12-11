@@ -276,11 +276,16 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Rate Code will be displayed when Referential Rate is selected against the loan
 			String plrRate = statementOfAccount.getPlrRate();
-			statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
+			if(StringUtils.isEmpty(plrRate)){
+				statementOfAccount.setPlrRate("-");
+			}else{
+				statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
+			}
+			
 
 			//Including advance EMI terms
-			//int tenure = statementOfAccount.getTenure();
-			//statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
+			int tenure = statementOfAccount.getTenure();
+			statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
 			
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
@@ -343,7 +348,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Formatting the amounts
 		statementOfAccount
 				.setLoanAmount(PennantApplicationUtil
-						.formateAmount(statementOfAccount.getLoanAmount().add(finMain.getAdvanceEMI()), ccyEditField));
+						.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
 		statementOfAccount.setPreferredCardLimit(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getPreferredCardLimit(), ccyEditField));
 		statementOfAccount.setChargeCollCust(
@@ -1439,7 +1444,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 											soaTranReport = new SOATransactionReport();
 											soaTranReport.setEvent(rHTdsAdjustReversal + finRef);
 											soaTranReport.setTransactionDate(receiptDate);
-											soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
+											soaTranReport.setValueDate(finReceiptHeader.getBounceDate() == null
+													? receiptDate : finReceiptHeader.getBounceDate());
 											soaTranReport.setCreditAmount(BigDecimal.ZERO);
 											soaTranReport.setDebitAmount(totalTdsSchdPayNow);
 											soaTranReport.setPriority(22);
