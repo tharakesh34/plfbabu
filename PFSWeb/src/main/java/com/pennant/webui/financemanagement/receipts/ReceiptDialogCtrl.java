@@ -3613,25 +3613,23 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Receipt Header Details
 		FinReceiptHeader header = getReceiptHeader();
-		if(getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwPartialRpy()){
-			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
-					",FeePayment,");
-		}else{
-			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
-					",FeePayment,EarlyPayment,");
-		}
-		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(),
-				"");
 		boolean isOverDraft = false;
 		if(StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory(), 
 				FinanceConstants.PRODUCT_ODFACILITY)){
 			isOverDraft = true;
 		}
+		
+		String exclTypes = "";
 		if(!isOverDraft){
-			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
+			exclTypes = ",FeePayment,";
 		}else{
-			fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,EarlySettlement,");
+			exclTypes = ",FeePayment,EarlySettlement,";
 		}
+		if(!getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwPartialRpy()){
+			exclTypes = exclTypes.concat("EarlyPayment,");
+		}
+		
+		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), exclTypes);
 		fillComboBox(this.excessAdjustTo, header.getExcessAdjustTo(), PennantStaticListUtil.getExcessAdjustmentTypes(), "");
 		
 		if (financeType.isDeveloperFinance()) {
