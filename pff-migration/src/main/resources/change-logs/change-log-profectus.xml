@@ -2290,6 +2290,12 @@ UNION ALL
 			Insert into SMTPARAMETERS values ('CIBIL_EXPY_DAYS','Cibil expiry days','int','0','30',3,0,'NULL','NULL','Cibil expiry days',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+
+	<changeSet id="134" author="Vinay">
+		<sql>
+			Insert Into Seq_GST_Invoice (FromState, Entity, TransactionType, SeqNo) Select StateCode, EntityCode, 'E' TransactionType, 0 SeqNo From TaxDetail;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
