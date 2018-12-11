@@ -2293,7 +2293,7 @@ UNION ALL
 
 	<changeSet id="134" author="Vinay">
 		<sql>
-			Insert Into Seq_GST_Invoice (FromState, Entity, TransactionType, SeqNo) Select StateCode, EntityCode, 'E' TransactionType, 0 SeqNo From TaxDetail;
+			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'E' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null  and TaxStateCode != ' ';
 		</sql>
 	</changeSet>
 </databaseChangeLog>
