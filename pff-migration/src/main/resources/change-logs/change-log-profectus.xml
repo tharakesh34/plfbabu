@@ -2296,6 +2296,15 @@ UNION ALL
 			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'E' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null  and TaxStateCode != ' ';
 		</sql>
 	</changeSet>
+	
+	<changeSet id="135" author="Vinay">
+	<comment>Adding right for bulk uploads menu</comment>
+		<sql>
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='External_Upload') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_ExternalUpload'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
