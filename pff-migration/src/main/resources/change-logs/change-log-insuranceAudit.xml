@@ -135,5 +135,11 @@
 			<column name="PaymentInsId" type="bigint"/>
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="13" author="Durgaprasad G">
+		<addColumn tableName="AdtVasstructure">
+			<column name="ModeOfPayment" type="char(1)"/>		
+			<column name="AllowFeeType" type="char(1)"/>		
+			<column name="MedicalApplicable" type="boolean"/>		
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

@@ -710,6 +710,7 @@ public class PennantConstants {
 	public static final String NOT_AVAILABLE = "NAV";
 
 	public static final DataEngineStatus BATCH_TYPE_PRESENTMENT_IMPORT = new DataEngineStatus();
+	public static final DataEngineStatus BATCH_TYPE_VASPREMIUM_CALC_IMPORT = new DataEngineStatus();
 	public static final String FILESTATUS_STARTING = "STARTING";
 
 	// GST Tax Constants TaxApplicableFor_PrimaryCustomer

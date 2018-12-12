@@ -44,6 +44,7 @@
 package com.pennant.backend.model.configuration;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -131,11 +132,17 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "extendedFields")
 	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList;
+	
+	private String modeOfPayment = "D";
+	private String allowFeeType = "M";
+	private boolean medicalApplicable = false;
+	
+	private ArrayList<VASPremiumCalcDetails> premiumCalcDetList = new ArrayList<>();
 
 	public boolean isNew() {
 		return isNewRecord();
 	}
-
+	
 	public VASConfiguration() {
 		super();
 	}
@@ -160,6 +167,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 		excludeFields.add("extendedFieldDetailList");
 		excludeFields.add("feeTypeCode");
 		excludeFields.add("feeTypeDesc");
+		excludeFields.add("premiumCalcDetList");
 		return excludeFields;
 	}
 
@@ -482,5 +490,37 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 
 	public void setExtendedFieldDetailList(List<ExtendedFieldDetail> extendedFieldDetailList) {
 		this.extendedFieldDetailList = extendedFieldDetailList;
+	}
+
+	public String getModeOfPayment() {
+		return modeOfPayment;
+	}
+
+	public void setModeOfPayment(String modeOfPayment) {
+		this.modeOfPayment = modeOfPayment;
+	}
+
+	public String getAllowFeeType() {
+		return allowFeeType;
+	}
+
+	public void setAllowFeeType(String allowFeeType) {
+		this.allowFeeType = allowFeeType;
+	}
+
+	public boolean isMedicalApplicable() {
+		return medicalApplicable;
+	}
+
+	public void setMedicalApplicable(boolean medicalApplicable) {
+		this.medicalApplicable = medicalApplicable;
+	}
+
+	public ArrayList<VASPremiumCalcDetails> getPremiumCalcDetList() {
+		return premiumCalcDetList;
+	}
+
+	public void setPremiumCalcDetList(ArrayList<VASPremiumCalcDetails> premiumCalcDetList) {
+		this.premiumCalcDetList = premiumCalcDetList;
 	}
 }

@@ -70,7 +70,7 @@
 											</row>
 										</rows>
 									</grid>
-									<hbox id="hbox_custImages">
+									<hbox>
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
 											<rows id="panelRows" style="overflow: visible !important"></rows>
 										</grid>

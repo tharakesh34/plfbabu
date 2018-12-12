@@ -1259,4 +1259,274 @@
 			WHERE     NOT EXISTS (SELECT 1 FROM VASProviderAccDetail_TEMP WHERE Id = T1.Id)
 		</createView>
 	</changeSet>
+	
+	<changeSet id="30" author="DurgaPrasad G">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+		
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'VASConfigurationDialog_ModeOfPayment', 'VASConfigurationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'VASConfigurationDialog_AllowFeeType', 'VASConfigurationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'VASConfigurationDialog_MedicalApplicable', 'VASConfigurationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+	
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='VASCONFIGURATION_MAKER'),(select RightId from secRights where RightName='VASConfigurationDialog_ModeOfPayment'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='VASCONFIGURATION_MAKER'),(select RightId from secRights where RightName='VASConfigurationDialog_AllowFeeType'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='VASCONFIGURATION_MAKER'),(select RightId from secRights where RightName='VASConfigurationDialog_MedicalApplicable'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+		
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+		</sql>
+	</changeSet>
+	
+	<changeSet id="31" author="DurgaPrasad G">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+		
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'VASConfigurationDialog_btnUplaod', 'VASConfigurationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'VASConfigurationDialog_FileImport', 'VASConfigurationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+	
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='VASCONFIGURATION_MAKER'),(select RightId from secRights where RightName='VASConfigurationDialog_btnUplaod'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='VASCONFIGURATION_MAKER'),(select RightId from secRights where RightName='VASConfigurationDialog_FileImport'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+		
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+		</sql>
+	</changeSet> 
+
+<changeSet id="32" author="Durgaprasad G">
+<comment>New Columns added for Direct Selling Agent </comment>
+  <createView viewName="amtvehicledealer_aview" replaceIfExists="true" > 
+	      SELECT 
+			    t1.dealerid,
+			    t1.dealertype,
+			    t1.dealername,
+			    t1.dealertelephone,
+			    t1.dealerfax,
+			    t1.dealeraddress1,
+			    t1.dealeraddress2,
+			    t1.dealeraddress3,
+			    t1.dealeraddress4,
+			    t1.dealercountry,
+			    t5.countrydesc AS lovdesccountry,
+			    t1.dealerprovince,
+			    t4.cpprovincename AS lovdescprovince,
+			    t1.dealercity,
+			    t3.pccityname AS lovdesccity,
+			    t1.email,
+			    t1.pobox,
+			    t1.zipcode,
+			    t1.active,
+			    t1.emirates,
+			    t1.commisionpaidat,
+			    t1.calculationrule,
+			    t7.rulecodedesc AS calruledesc,
+			    t1.paymentmode,
+			    t1.accountnumber,
+			    t1.accountingsetid,
+			    t8.accountsetcode AS accountingsetcode,
+			    t8.accountsetcodename AS accountingsetdesc,
+			    t9.cpprovincename AS emiratesdescription,
+			    t1.sellertype,
+			    t1.PANNumber,
+			    t1.UIDNumber,
+			    t1.TaxNumber,
+			    t1.AccountNo,
+			    t1.AccountType,
+			    t1.FromProvince,
+				t10.cpprovincename as fromprovinceName,
+			    t1.ToProvince,
+				t11.cpprovincename as toprovinceName,
+			    t1.BankBranchID,
+			    t12.branchcode as bankBranchCode,
+				t12.branchdesc as bankBranchCodeName,
+				t12.IFSC as branchIFSCCode,
+			    t12.MICR as branchMICRCode,
+			    t12.city as branchCity,
+			    t13.bankname as bankName,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.code,
+			     t1.productctg,
+       			 t14.productctgdesc,
+                  t1.shortcode
+			   FROM amtvehicledealer t1
+			     LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity AND t1.dealercity = t3.pccity
+			     LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
+			     LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
+			     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'
+			     LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
+			     LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
+			     LEFT JOIN rmtcountryvsprovince t10 ON t1.FromProvince = t10.cpprovince
+			     LEFT JOIN rmtcountryvsprovince t11 ON t1.ToProvince = t11.cpprovince
+			     LEFT JOIN BankBranches t12 ON t1.BankBranchID = t12.BankBranchID
+			     INNER JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
+			     LEFT JOIN vasproductcategory t14 ON t1.productctg = t14.productctg
+   </createView>
+</changeSet>
+	
+<changeSet id="33" author="Durgaprasad G">
+	<comment>New Columns added for Direct Selling Agent </comment>
+		<createView viewName="amtvehicledealer_view" replaceIfExists="true" > 
+			    Select t1.dealerid,
+			    t1.dealertype,
+			    t1.dealername,
+			    t1.dealertelephone,
+			    t1.dealerfax,
+			    t1.dealeraddress1,
+			    t1.dealeraddress2,
+			    t1.dealeraddress3,
+			    t1.dealeraddress4,
+			    t1.dealercountry,
+			    t5.countrydesc AS lovdesccountry,
+			    t1.dealerprovince,
+			    t4.cpprovincename AS lovdescprovince,
+			    t1.dealercity,
+			    t3.pccityname AS lovdesccity,
+			    t1.email,
+			    t1.pobox,
+			    t1.zipcode,
+			    t1.active,
+			    t1.emirates,
+			    t1.commisionpaidat,
+			    t1.calculationrule,
+			    t7.rulecodedesc AS calruledesc,
+			    t1.paymentmode,
+			    t1.accountnumber,
+			    t1.accountingsetid,
+			    t8.accountsetcode AS accountingsetcode,
+			    t8.accountsetcodename AS accountingsetdesc,
+			    t9.cpprovincename AS emiratesdescription,
+			    t1.sellertype,
+			    t1.PANNumber,
+			    t1.UIDNumber,
+			    t1.TaxNumber,
+			    t1.AccountNo,
+			    t1.AccountType,
+			    t1.FromProvince,
+				t10.cpprovincename as fromprovinceName,
+			    t1.ToProvince,
+				t11.cpprovincename as toprovinceName, 
+			    t1.BankBranchID,
+			    t12.branchcode as bankBranchCode,
+				t12.branchdesc as bankBranchCodeName,
+				t12.IFSC as branchIFSCCode,
+			    t12.MICR as branchMICRCode,
+			    t12.city as branchCity,
+			    t13.bankname as bankName,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.code,
+			     t1.productctg,
+       			 t14.productctgdesc,
+                 t1.shortcode
+			   FROM amtvehicledealer_temp t1
+			     LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity
+			     LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
+			     LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
+			     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'
+			     LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
+			     LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
+			     LEFT JOIN rmtcountryvsprovince t10 ON t1.FromProvince = t10.cpprovince
+			     LEFT JOIN rmtcountryvsprovince t11 ON t1.ToProvince = t11.cpprovince
+			     LEFT JOIN BankBranches t12 ON t1.BankBranchID = t12.BankBranchID
+			     INNER JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
+			      LEFT JOIN vasproductcategory t14 ON t1.productctg = t14.productctg
+			     
+			UNION ALL
+			SELECT 
+			    t1.dealerid,
+			    t1.dealertype,
+			    t1.dealername,
+			    t1.dealertelephone,
+			    t1.dealerfax,
+			    t1.dealeraddress1,
+			    t1.dealeraddress2,
+			    t1.dealeraddress3,
+			    t1.dealeraddress4,
+			    t1.dealercountry,
+			    t5.countrydesc AS lovdesccountry,
+			    t1.dealerprovince,
+			    t4.cpprovincename AS lovdescprovince,
+			    t1.dealercity,
+			    t3.pccityname AS lovdesccity,
+			    t1.email,
+			    t1.pobox,
+			    t1.zipcode,
+			    t1.active,
+			    t1.emirates,
+			    t1.commisionpaidat,
+			    t1.calculationrule,
+			    t7.rulecodedesc AS calruledesc,
+			    t1.paymentmode,
+			    t1.accountnumber,
+			    t1.accountingsetid,
+			    t8.accountsetcode AS accountingsetcode,
+			    t8.accountsetcodename AS accountingsetdesc,
+			    t9.cpprovincename AS emiratesdescription,
+			    t1.sellertype,
+			    t1.PANNumber,
+			    t1.UIDNumber,
+			    t1.TaxNumber,
+			    t1.AccountNo,
+			    t1.AccountType,
+			    t1.FromProvince,
+				t10.cpprovincename as fromprovinceName,
+			    t1.ToProvince,
+				t11.cpprovincename as toprovinceName,
+			    t1.BankBranchID,
+			    t12.branchcode as bankBranchCode,
+				t12.branchdesc as bankBranchCodeName,
+				t12.IFSC as branchIFSCCode,
+			    t12.MICR as branchMICRCode,
+			    t12.city as branchCity,
+			    t13.bankname as bankName,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.code,
+			     t1.productctg,
+       			 t14.productctgdesc,
+                  t1.shortcode
+			   FROM amtvehicledealer t1
+			     LEFT JOIN rmtprovincevscity t3 ON t1.dealercountry = t3.pccountry AND t1.dealerprovince = t3.pcprovince AND t1.dealercity = t3.pccity AND t1.dealercity = t3.pccity
+			     LEFT JOIN rmtcountryvsprovince t4 ON t1.dealercountry = t4.cpcountry AND t1.dealerprovince = t4.cpprovince
+			     LEFT JOIN bmtcountries t5 ON t1.dealercountry = t5.countrycode
+			     LEFT JOIN rules t7 ON t1.calculationrule = t7.rulecode AND t7.ruleevent = 'ADDDBS'
+			     LEFT JOIN rmtaccountingset t8 ON t1.accountingsetid = t8.accountsetid
+			     LEFT JOIN rmtcountryvsprovince t9 ON t1.emirates = t9.cpprovince
+			     LEFT JOIN rmtcountryvsprovince t10 ON t1.FromProvince = t10.cpprovince
+			     LEFT JOIN rmtcountryvsprovince t11 ON t1.ToProvince = t11.cpprovince
+			     LEFT JOIN BankBranches t12 ON t1.BankBranchID = t12.BankBranchID
+			     INNER JOIN BMTBankDetail t13 ON t12.bankcode = t13.bankcode
+			     LEFT JOIN vasproductcategory t14 ON t1.productctg = t14.productctg
+			     
+			 WHERE NOT (EXISTS ( SELECT 1
+			           FROM amtvehicledealer_temp
+			          WHERE amtvehicledealer_temp.dealerid = t1.dealerid))
+			 </createView>
+	</changeSet>
 </databaseChangeLog>

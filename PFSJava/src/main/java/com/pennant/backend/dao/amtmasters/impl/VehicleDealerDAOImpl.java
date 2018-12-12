@@ -111,11 +111,14 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 				"SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
 		selectSql.append(
 				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,ShortCode,");
-		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
+		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,PANNumber,UIDNumber,TaxNumber,FromProvince,ToProvince,AccountNo,AccountType,BankBranchID,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
 		selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
-		selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
+			selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription,");
+			selectSql.append("fromprovinceName,toprovinceName,bankBranchCode,bankBranchCodeName,bankName,branchIFSCCode,branchMICRCode,branchCity");
+		}
 		selectSql.append(" FROM  AMTVehicleDealer");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where DealerType =:DealerType ");
@@ -160,14 +163,14 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		selectSql.append(
 				"SELECT DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
 		selectSql.append(
-				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,ShortCode,");
-		selectSql.append("PanNumber, TaxNumber, ProductCtg,");
-		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,");
+				"DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,Code,ProductCtg,ShortCode,");
+		selectSql.append("CalculationRule,PaymentMode,AccountNumber,AccountingSetId,PANNumber,UIDNumber,TaxNumber,FromProvince,ToProvince,AccountNo,AccountType,BankBranchID,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode,TaskId, NextTaskId, RecordType, WorkflowId,SellerType");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,ProductCtgDesc,");
-			selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription");
+			selectSql.append(",LovDescCountry,LovDescCity,LovDescProvince,");
+			selectSql.append("CalRuleDesc,AccountingSetCode,AccountingSetDesc,EmiratesDescription,ProductCtgDesc,");
+			selectSql.append("fromprovinceName,toprovinceName,bankBranchCode,bankBranchCodeName,bankName,branchIFSCCode,branchMICRCode,branchCity");
 		}
 		selectSql.append(" FROM  AMTVehicleDealer");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -277,18 +280,14 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append("(DealerId,DealerType, DealerName,DealerTelephone,DealerFax,DealerAddress1,DealerAddress2, ");
 		insertSql.append("DealerAddress3,DealerAddress4,DealerCountry,DealerCity,DealerProvince,");
-		insertSql.append(
-				"Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,Code,ShortCode,");
-		insertSql.append("PanNumber, TaxNumber, ProductCtg,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		insertSql.append("Email,POBox,ZipCode,Active,Emirates,CommisionPaidAt,CalculationRule,PaymentMode,AccountNumber,AccountingSetId,Code,ProductCtg,ShortCode,PANNumber,UIDNumber,TaxNumber,fromprovince,toprovince,");
+		insertSql.append("AccountNo,AccountType,BankBranchID ,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		insertSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,SellerType)");
+
 		insertSql.append(" Values(:DealerId,:DealerType, :DealerName,:DealerTelephone,:DealerFax,:DealerAddress1,");
-		insertSql
-				.append(" :DealerAddress2,:DealerAddress3,:DealerAddress4,:DealerCountry,:DealerCity,:DealerProvince,");
-		insertSql.append(
-				" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,:Code,:ShortCode,");
-		insertSql.append(" :PanNumber,:TaxNumber,:ProductCtg,");
-		insertSql.append(" :Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,");
+		insertSql.append(" :DealerAddress2,:DealerAddress3,:DealerAddress4,:DealerCountry,:DealerCity,:DealerProvince,");
+		insertSql.append(" :Email,:POBox,:ZipCode,:Active,:Emirates,:CommisionPaidAt,:CalculationRule,:PaymentMode,:AccountNumber,:AccountingSetId,:Code ,:ProductCtg,:ShortCode,");
+		insertSql.append(" :panNumber,:uidNumber,:taxNumber,:fromprovince,:toprovince,:accountNo,:accountType,:bankBranchID,:Version,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:SellerType)");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -325,11 +324,13 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		updateSql.append(" DealerCountry = :DealerCountry,DealerCity = :DealerCity,DealerProvince = :DealerProvince,");
 		updateSql.append(
 				" Email = :Email,POBox = :POBox,ZipCode = :ZipCode,Active = :Active,Emirates = :Emirates,CommisionPaidAt = :CommisionPaidAt,");
-		updateSql.append("PanNumber = :PanNumber, TaxNumber = :TaxNumber, ProductCtg = :ProductCtg,");
 		updateSql.append(
-				"CalculationRule = :CalculationRule,PaymentMode = :PaymentMode,AccountNumber = :AccountNumber,AccountingSetId = :AccountingSetId,Code = :Code,ShortCode =:ShortCode,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, ");
+				"CalculationRule = :CalculationRule,PaymentMode = :PaymentMode,AccountNumber = :AccountNumber,AccountingSetId = :AccountingSetId,Code = :Code, ProductCtg = :ProductCtg,ShortCode =:ShortCode,");
+
+		updateSql.append(
+				" PANNumber = :panNumber ,UIDNumber = :uidNumber ,TaxNumber =:taxNumber,fromprovince =:fromprovince,toprovince = :toprovince,AccountNo =:accountNo, ");
+		updateSql.append(
+				"AccountType = :accountType,BankBranchID = :bankBranchID,Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,SellerType = :SellerType ");
 		updateSql.append(" Where DealerId =:DealerId");
@@ -353,7 +354,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.debug(" Inside searchname");
 		boolean status = false;
 		try {
-			String searchQuery = "select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName";
+			String searchQuery = "select count(dealerName) from AMTVehicleDealer_View where dealerName=:dealerName and dealerType=:dealerType";
 
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("dealerName", dealerName);

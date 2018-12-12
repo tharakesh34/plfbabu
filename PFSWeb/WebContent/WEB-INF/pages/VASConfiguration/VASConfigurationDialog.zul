@@ -81,6 +81,7 @@
 		<window id="window_VASConfigurationDialog" border="normal"
 			apply="${vASConfigurationDialogCtrl}" width="100%" height="100%"
 			sizable="false">
+			<timer id="timer" delay="500" repeats="true" />
 			<borderlayout id="borderlayoutVASConfiguration">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
@@ -201,6 +202,19 @@
 												</hbox>
 											</row>
 											<row>
+											 	<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="allowFeeType" width="180px" />
+												</hbox>
+												<label
+													value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="modeOfPayment" width="180px"/>
+												</hbox>
+											</row>
+											<row>
 												<label
 													value="${c:l('label_VASConfigurationDialog_RecAgainst.value')}" />
 												<hbox>
@@ -316,6 +330,11 @@
 													<uppercasebox
 														id="shortCode" maxlength="3" width="100px" />
 												</hbox>
+												<label value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
+												<hbox>
+													<space spacing="2px"/>
+													<checkbox id="medicalApplicable"/>
+												</hbox>
 											</row>
 											<row>
 												<label
@@ -329,9 +348,57 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox id="grpBox_FileImport" style="overflow: visible !important">
+								     <div sclass="z-toolbar" style="padding:0">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+												<toolbar align=start style="float:right; border-style: none; padding:0px;">
+													<button id="btnImport" label="${c:l('label_VASConfigurationDialog_Import')}" tooltiptext="${c:l('btnImport_VASConfigurationDialogImport.tooltiptext')}" />
+												</toolbar>
+											</hbox>
+									 </div>
+									<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="450px" />
+											<column />
+											<column width="600px" />
+											<column />
+										</columns>
+										<rows>
+											<row spans="2,1">
+												<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+													style="border:0px">
+													<columns>
+														<column width="190px" />
+														<column />
+													</columns>
+													<rows>
+														<row height="24px">
+															<label value="${c:l('label_VASConfigurationDialog_FileName.value')}" />
+															<hbox>
+																<space spacing="2px" sclass="mandatory" />
+																<textbox id="fileName" width="250px" readonly="true" />
+																<button id="btnUpload" tooltiptext="Browse file." label="Browse" upload="true"
+																	autodisable="btnImport,btnUpload" />
+															</hbox>
+														</row>
+													</rows>
+												</grid>
+												<hbox>
+													<grid style="overflow: visible !important">
+														<columns>
+															<column width="90%" />
+														</columns>
+														<rows>
+															<row id="panelRow" style="overflow: visible !important" />
+														</rows>
+													</grid>
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 							</tabpanel>
-							<tabpanel id="extendedFieldTabpanel"
-								style="overflow:auto" />
+							<tabpanel id="extendedFieldTabpanel" style="overflow:auto" />
 							<tabpanel style="overflow:auto;">
 								<groupbox id="gb_preValidation"
 									sclass="gb-dialog">
