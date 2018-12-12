@@ -126,10 +126,10 @@ public class ImplementationConstants {
 	public static final boolean ALW_SCH_RECAL_LOCK = false;
 
 	// LPP Calculation on RULE FIXED .ONLY FOR FGROUP IT SHOULD BE TRUE
-	public static final boolean ALW_LPP_RULE_FIXED = true;
+	public static final boolean ALW_LPP_RULE_FIXED = false;
 
 	// Auto Cancellation of Loans after "N" Days Allowed.ONLY FOR FGROUP IT SHOULD BE TRUE
-	public static final boolean ALW_LOAN_AUTO_CANCEL = true;
+	public static final boolean ALW_LOAN_AUTO_CANCEL = false;
 
 	// Capitalizing on Lock Period of Schedule Profit Balance
 	// 1. TRUE : Default Capitalize Balance amount when Applicable Capitalization
