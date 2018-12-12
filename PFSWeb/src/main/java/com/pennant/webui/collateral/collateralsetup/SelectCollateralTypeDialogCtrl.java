@@ -278,7 +278,6 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			setCollateralSetupDetails();
 		}
 
-		showDetailView();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -379,6 +378,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(),
 					FinanceConstants.FINSER_EVENT_ORG);
 		}
+		showDetailView();
 	}
 
 	private void showDetailView() {
