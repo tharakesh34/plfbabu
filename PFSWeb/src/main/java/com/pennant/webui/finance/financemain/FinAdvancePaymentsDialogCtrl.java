@@ -1198,6 +1198,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					new PTDecimalValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_AmtToBeReleased.value"),
 							ccyFormatter, true, false));
 		}
+		String payType = getComboboxValue(paymentType);
 		if (!this.paymentType.isDisabled()) {
 			this.paymentType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinAdvancePaymentsDialog_PaymentType.value"), null, true));
@@ -1261,19 +1262,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 								DateUtility.getAppDate(), todate, true));
 			}
 		} else {
-			if (!this.bankBranchID.isReadonly()) {
-				this.bankBranchID.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_FinAdvancePaymentsDialog_BankBranchID.value"), null, true));
-			}
-			if (!this.beneficiaryName.isReadonly()) {
-				this.beneficiaryName.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
-								PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
-			}
-			if (!this.beneficiaryAccNo.isReadonly()) {
-				this.beneficiaryAccNo.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
-								PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+			if(!StringUtils.equals(payType, DisbursementConstants.PAYMENT_TYPE_IST)){
+				if (!this.bankBranchID.isReadonly()) {
+					this.bankBranchID.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FinAdvancePaymentsDialog_BankBranchID.value"), null, true));
+				}
+				if (!this.beneficiaryName.isReadonly()) {
+					this.beneficiaryName.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
+									PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+				}
+				if (!this.beneficiaryAccNo.isReadonly()) {
+					this.beneficiaryAccNo.setConstraint(
+							new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
+									PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+				}
 			}
 		}
 
@@ -1736,7 +1739,30 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 			this.btnGetCustBeneficiary.setVisible(false);
-		} else {
+		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_IST)) {
+			doaddFilter(str);
+			gb_NeftDetails.setVisible(false);
+			gb_ChequeDetails.setVisible(false);
+			this.bankCode.setValue("");
+			this.bankCode.setDescription("");
+			this.liabilityHoldName.setValue("");
+			this.payableLoc.setValue("");
+			this.printingLoc.setValue("");
+			this.valueDate.setText("");
+			this.llReferenceNo.setValue("");
+			
+			this.bankBranchID.setValue("");
+			this.bankBranchID.setDescription("");
+			this.bank.setValue("");
+			this.city.setValue("");
+			this.branch.setValue("");
+			this.beneficiaryAccNo.setValue("");
+			this.beneficiaryName.setValue("");
+			this.bankBranchID.setMandatoryStyle(false);
+			this.phoneNumber.setValue("");
+			this.printLoc.setSclass("");
+			this.btnGetCustBeneficiary.setVisible(false);
+		}else {
 			doaddFilter(str);
 			caption_FinAdvancePaymentsDialog_NeftDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_NeftDetails.setVisible(true);

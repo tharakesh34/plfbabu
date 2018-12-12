@@ -526,6 +526,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			//If then channel is not selected  we will allow to download Disbursements and Payments only. Not Insurance details
 			searchObject.addFilterNotEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
 		}
+		
+		// Internal Settlements Payment Type details not allowed to Download
+		searchObject.addFilterNotEqual("paymentType", DisbursementConstants.PAYMENT_TYPE_IST);
 
 		setFilters(searchObject);
 

@@ -4038,7 +4038,10 @@ public class PennantStaticListUtil {
 			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,
 					Labels.getLabel("label_PaymentType_ESCROW")));
 			/*payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NACH,
-					Labels.getLabel("label_PaymentType_NACH")));*/
+			Labels.getLabel("label_PaymentType_NACH")));*/
+		}else{
+			payments
+				.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST, Labels.getLabel("label_PaymentType_IST")));
 		}
 		return payments;
 	}

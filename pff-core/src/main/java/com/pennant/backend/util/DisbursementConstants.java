@@ -54,6 +54,7 @@ public class DisbursementConstants {
 	public static final String PAYMENT_TYPE_ESCROW = "ESCROW";
 	public static final String PAYMENT_TYPE_NACH = "NACH";
 	public static final String PAYMENT_TYPE_IFT = "IFT";
+	public static final String PAYMENT_TYPE_IST = "IST";
 
 	// Disbursement Status
 	public static final String STATUS_NEW = "NEW";
