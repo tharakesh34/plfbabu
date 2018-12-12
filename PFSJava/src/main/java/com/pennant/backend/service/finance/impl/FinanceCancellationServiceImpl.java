@@ -419,12 +419,12 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader,boolean isValReq) {
+	public AuditHeader doApprove(AuditHeader aAuditHeader, boolean isNotReqEOD) {
 		logger.debug("Entering");
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		if(isValReq){
+		if (isNotReqEOD) {
 			aAuditHeader = businessValidation(aAuditHeader, "doApprove");
 		}
 		if (!aAuditHeader.isNextProcess()) {
@@ -495,12 +495,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		//Cancelling IMD receipts
-		List<Long> receiptIdList = getFinReceiptHeaderDAO().fetchReceiptIdList(finReference);
-		if (receiptIdList != null && receiptIdList.size() > 0) {
-			getFinReceiptHeaderDAO().cancelReceipts(finReference);
-			getFinReceiptDetailDAO().cancelReceiptDetails(receiptIdList);
+		if (isNotReqEOD) {
+			List<Long> receiptIdList = getFinReceiptHeaderDAO().fetchReceiptIdList(finReference);
+			if (receiptIdList != null && receiptIdList.size() > 0) {
+				getFinReceiptHeaderDAO().cancelReceipts(finReference);
+				getFinReceiptDetailDAO().cancelReceiptDetails(receiptIdList);
+			}
 		}
-
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
@@ -530,18 +531,25 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Fee charges deletion
 		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false,
-				"_Temp");
+		if (isNotReqEOD) {
+			getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(), financeDetail.getModuleDefiner(),
+					false, "_Temp");
+		}
 
 		//Disbursement Cancellation
-		processDisbursmentCancellation(financeDetail);
-
+		if (isNotReqEOD) {
+			processDisbursmentCancellation(financeDetail);
+		}
 		// Checklist Details delete
 		//=======================================
-		tempAuditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
+		if (isNotReqEOD) {
+			tempAuditDetailList.addAll(getCheckListDetailService().delete(financeDetail, "_Temp", tranType));
+		}
 
 		// Adding audit as deleted from TEMP table
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
+		if (isNotReqEOD) {
+			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
+		}
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				financeMain.getBefImage(), financeMain));
 		auditHeader.setAuditDetails(tempAuditDetailList);
@@ -593,7 +601,9 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// send Cancel Utilization Request to ACP Interface and save log details
 		//=======================================
 		if (ImplementationConstants.LIMIT_INTERNAL) {
-			getLimitManagement().processLoanCancel(financeDetail, false);
+			if (isNotReqEOD) {
+				getLimitManagement().processLoanCancel(financeDetail, false);
+			}
 		} else {
 			getLimitCheckDetails().doProcessLimits(financeDetail.getFinScheduleData().getFinanceMain(),
 					FinanceConstants.CANCEL_UTILIZATION);
