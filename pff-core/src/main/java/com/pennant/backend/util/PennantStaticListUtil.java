@@ -283,8 +283,6 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> verification;
 	private static Map<String, ValueLabel>	employmentTypeList			= new HashMap<>();
 	private static Map<String, ValueLabel>	addEmploymentList			= new HashMap<>();
-	private static ArrayList<ValueLabel> vasModeOfPaymentsList;
-	private static ArrayList<ValueLabel> vasAllowFeeTypes;
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -4517,30 +4515,9 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_InsuranceSurrenderDialog_Surrender.value")));
 			insSurrenderActivity.add(new ValueLabel(VASConsatnts.STATUS_CANCEL,
 					Labels.getLabel("label_InsuranceSurrenderDialog_Cancel.value")));
+
 		}
 		return insSurrenderActivity;
-	}
-
-	public static List<ValueLabel> getVasModeOfPayments() {
-		if (vasModeOfPaymentsList == null) {
-			vasModeOfPaymentsList = new ArrayList<ValueLabel>();
-			vasModeOfPaymentsList.add(new ValueLabel(VASConsatnts.VAS_PAYMENT_DEDUCTION,
-					Labels.getLabel("label_VASConfiguration_PaymentMode_Deduction.value")));
-			vasModeOfPaymentsList.add(new ValueLabel(VASConsatnts.VAS_PAYMENT_COLLECTION,
-					Labels.getLabel("label_VASConfiguration_PaymentMode_Collection.value")));
-		}
-		return vasModeOfPaymentsList;
-	}
-
-	public static List<ValueLabel> getVasAllowFeeTypes() {
-		if (vasAllowFeeTypes == null) {
-			vasAllowFeeTypes = new ArrayList<ValueLabel>();
-			vasAllowFeeTypes.add(new ValueLabel(VASConsatnts.VAS_ALLOWFEE_AUTO,
-					Labels.getLabel("label_VASConfiguration_AllowFee_Auto.value")));
-			vasAllowFeeTypes.add(new ValueLabel(VASConsatnts.VAS_ALLOWFEE_MANUAL,
-					Labels.getLabel("label_VASConfiguration_AllowFee_Manual.value")));
-		}
-		return vasAllowFeeTypes;
 	}
 	
 }

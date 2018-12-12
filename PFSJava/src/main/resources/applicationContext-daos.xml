@@ -10111,10 +10111,4 @@
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 	</bean>
-	
-	<bean id="vasPremiumCalcExtractService"
-		class="com.pennant.webui.configuration.vasconfiguration.VASPremiumCalcExtractService">
-		<property name="dataSource" ref="dataSource" />
-		<property name="presentmentDetailService" ref="presentmentDetailService" />
-	</bean>
 </beans>
