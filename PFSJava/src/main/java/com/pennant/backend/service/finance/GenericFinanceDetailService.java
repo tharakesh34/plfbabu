@@ -2354,7 +2354,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
 			//Set FinService Instruction Unique ID.
 			for (FinServiceInstruction finServInst : finDetail.getFinServiceInstructions()) {
-				finDetail.getDisbursementDetails().get(i).setInstructionUID(finServInst.getInstructionUID());
+				if (finDetail.getDisbursementDetails().get(i).getInstructionUID() == Long.MIN_VALUE
+						|| finDetail.getDisbursementDetails().get(i).getInstructionUID() == 0) {
+					finDetail.getDisbursementDetails().get(i).setInstructionUID(finServInst.getInstructionUID());
+				}
 			}
 		}
 		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, isWIF);

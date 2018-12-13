@@ -3458,6 +3458,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove", isWIF);
 		long serviceUID = Long.MIN_VALUE;
+		long reference = Long.MIN_VALUE;
+
 		if (!isWIF) {
 			aAuditHeader = processLimitApprove(aAuditHeader, true);
 		}
@@ -3486,8 +3488,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
-		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-			serviceUID = finServInst.getInstructionUID();
+		
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null 
+				|| financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()){
+			FinServiceInstruction finServInst= new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());		
+			finServInst.setFinEvent(financeDetail.getModuleDefiner());
+
+			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+		}
+		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
+				if (reference == Long.MIN_VALUE) {
+					reference = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(reference);
+			}
+			serviceUID = finSerList.getInstructionUID();
 		}
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			financeMain.setFinApprovedDate(curBDay);

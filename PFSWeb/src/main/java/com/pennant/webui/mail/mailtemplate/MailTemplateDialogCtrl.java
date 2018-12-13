@@ -453,11 +453,11 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		if (!aMailTemplate.isNewRecord()
 				&& StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_FIN)
 				|| StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_PROVIDER)) {
-			if (StringUtils.equals(aMailTemplate.getTemplateFor(), NotificationConstants.TEMPLATE_FOR_CN)) {
+			if (StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_FIN)) {
 
 				fillComboBox(this.templateFor, aMailTemplate.getTemplateFor(), listTemplateFor, ",PN,");
 
-			} else if (StringUtils.equals(aMailTemplate.getTemplateFor(), NotificationConstants.TEMPLATE_FOR_PVRN)) {
+			} else if (StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_PROVIDER)) {
 
 				fillComboBox(this.templateFor, aMailTemplate.getTemplateFor(), listTemplateFor, ",SP,DN,AE,CN,");
 			}

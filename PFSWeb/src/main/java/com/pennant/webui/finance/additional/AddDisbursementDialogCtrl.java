@@ -804,7 +804,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// If Schedule instruction not found then add with Zero amount
-				if(!futureRpyInst){
+				if (!futureRpyInst && schDateAfterCurInst != null) {
 					RepayInstruction ri = new RepayInstruction();
 					ri.setRepayDate(schDateAfterCurInst);
 					ri.setRepayAmount(BigDecimal.ZERO);
