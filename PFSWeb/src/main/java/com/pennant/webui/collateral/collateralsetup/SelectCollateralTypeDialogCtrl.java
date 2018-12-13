@@ -275,9 +275,11 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		if (fromLoan) {
 			setLoanCollateralSetupDetails();
 		} else {
-			setCollateralSetupDetails();
+			if (setCollateralSetupDetails()) {
+				return;
+			}
 		}
-
+		showDetailView();
 		logger.debug("Leaving " + event.toString());
 	}
 
@@ -315,12 +317,12 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 				FinanceConstants.FINSER_EVENT_ORG);
 	}
 
-	private void setCollateralSetupDetails() throws InterruptedException {
+	private boolean setCollateralSetupDetails() throws InterruptedException {
 		//Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData();
 		if (customerDetails == null) {
 			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
-			return;
+			return true;
 		}
 
 		// Setting Workflow Details
@@ -378,7 +380,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			collateralSetup = getCollateralSetupService().getProcessEditorDetails(collateralSetup, getRole(),
 					FinanceConstants.FINSER_EVENT_ORG);
 		}
-		showDetailView();
+		return false;
 	}
 
 	private void showDetailView() {
