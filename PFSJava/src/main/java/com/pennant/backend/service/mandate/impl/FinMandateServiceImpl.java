@@ -103,7 +103,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	private FinanceMainDAO financeMainDAO;
 	private BankBranchService bankBranchService;
 
-	@Autowired
+	@Autowired(required = false)
 	private DocumentManagerDAO documentManagerDAO;
 
 	@Autowired(required = false)

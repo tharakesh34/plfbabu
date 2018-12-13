@@ -2714,12 +2714,12 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	}
 
 	@Override
-	public List<CollateralSetup> getCollateralDetails(String finReference) {
+	public List<CollateralSetup> getCollateralDetails(String finReference, boolean isAutoRejection) {
 		List<CollateralSetup> collateralSetupList = getCollateralSetupDAO().getCollateralSetupByFinRef(finReference,
 				"_Tview");
 		if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
 			for (CollateralSetup detail : collateralSetupList) {
-				getCollateralDetails(detail);
+				getCollateralDetails(detail, isAutoRejection);
 			}
 		}
 		return collateralSetupList;
@@ -2731,7 +2731,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	 * @param collateralSetup
 	 * @return
 	 */
-	private CollateralSetup getCollateralDetails(CollateralSetup collateralSetup) {
+	private CollateralSetup getCollateralDetails(CollateralSetup collateralSetup, boolean isAutoRejection) {
 		logger.debug("Entering");
 
 		if (collateralSetup != null) {
@@ -2815,24 +2815,26 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setExtendedFieldRenderList(renderList);
 
 			// Customer Details
-			collateralSetup.setCustomerDetails(getCustomerDetailsService()
-					.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
+			if (!isAutoRejection) {
+				collateralSetup.setCustomerDetails(getCustomerDetailsService()
+						.getCustomerDetailsById(collateralSetup.getDepositorId(), true, "_View"));
 
-			// Document Details
-			List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
-					CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
-			if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
-				collateralSetup.getDocuments().addAll(documentList);
-			} else {
-				collateralSetup.setDocuments(documentList);
-			}
+				// Document Details
+				List<DocumentDetails> documentList = getDocumentDetailsDAO().getDocumentDetailsByRef(collateralRef,
+						CollateralConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
+				if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
+					collateralSetup.getDocuments().addAll(documentList);
+				} else {
+					collateralSetup.setDocuments(documentList);
+				}
 
-			// Agreement Details & Check List Details
-			if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
-					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
-					&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-				collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
-						FinanceConstants.FINSER_EVENT_ORG);//FIXME
+				// Agreement Details & Check List Details
+				if (StringUtils.isNotEmpty(collateralSetup.getRecordType())
+						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_UPD)
+						&& !StringUtils.equals(collateralSetup.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+					collateralSetup = getProcessEditorDetails(collateralSetup, collateralSetup.getRoleCode(),
+							FinanceConstants.FINSER_EVENT_ORG);//FIXME
+				}
 			}
 		}
 		logger.debug("Leaving");

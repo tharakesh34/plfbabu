@@ -181,7 +181,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		StringBuilder sql = new StringBuilder("delete from FinTaxDetail");
 		sql.append(tableType.getSuffix());
 		sql.append(" where finReference = :finReference ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

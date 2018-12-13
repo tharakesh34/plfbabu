@@ -112,7 +112,7 @@ public interface FinanceDetailService {
 
 	AuditHeader doApprove(AuditHeader auditHeader, boolean isWIF) throws InterfaceException, JaxenException;
 
-	AuditHeader doReject(AuditHeader auditHeader, boolean isWIF);
+	AuditHeader doReject(AuditHeader auditHeader, boolean isWIF, boolean isAutoReject);
 
 	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole, String screenCode,
 			String eventCode, String procEdtEvent, boolean extFieldsReq);
@@ -298,4 +298,7 @@ public interface FinanceDetailService {
 	CustomerEligibilityCheck getODLoanCustElgDetail(FinanceDetail detail);
 
 	boolean isholdDisbursementProcess(String finReference);
+
+	void executeAutoFinRejectProcess();
+
 }

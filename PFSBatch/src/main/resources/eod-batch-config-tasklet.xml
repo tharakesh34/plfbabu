@@ -14,7 +14,7 @@
 	<!-- loanCancel -->
 
 	<bean id="loanCancelTaskLet" class="com.pennant.backend.endofday.tasklet.AutoFinanceCancellation">
-		<property name="financeCancellationService" ref="financeCancellationService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 	
 	<!-- prepareCustomerQueue -->

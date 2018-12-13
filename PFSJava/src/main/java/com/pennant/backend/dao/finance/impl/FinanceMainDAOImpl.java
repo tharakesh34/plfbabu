@@ -3420,12 +3420,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 	
 	@Override
-	public Map<String,Date> getUnDisbursedFinanceList() {
+	public Map<String,Date> getUnApprovedFinanceList() {
 		logger.debug("Entering");
 		Map<String, Date> map = new HashMap<String, Date>();
 		
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinStartDate From FinanceMain_View");
-		selectSql.append(" Where FinCurrAssetValue = 0  AND FinIsActive = 1 ");
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT FinReference, FinStartDate From FinanceMain_Temp Where RecordType='NEW' ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {

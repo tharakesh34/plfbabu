@@ -973,30 +973,32 @@ public class ExtendedFieldDetailsService {
 			String tableType) {
 		logger.debug(Literal.ENTERING);
 		List<String> tableNames = new ArrayList<>();
-		for (int i = 0; i < details.size(); i++) {
-			ExtendedFieldRender detail = (ExtendedFieldRender) details.get(i).getModelData();
+		if (details != null) {
+			for (int i = 0; i < details.size(); i++) {
+				ExtendedFieldRender detail = (ExtendedFieldRender) details.get(i).getModelData();
 
-			// Table Name identification
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(module);
-			tableName.append("_");
-			tableName.append(detail.getTypeCode());
-			if (StringUtils.trimToNull(event) != null) {
+				// Table Name identification
+				StringBuilder tableName = new StringBuilder();
+				tableName.append(module);
 				tableName.append("_");
-				tableName.append(PennantStaticListUtil.getFinEventCode(event));
-			}
-			tableName.append("_ED");
+				tableName.append(detail.getTypeCode());
+				if (StringUtils.trimToNull(event) != null) {
+					tableName.append("_");
+					tableName.append(PennantStaticListUtil.getFinEventCode(event));
+				}
+				tableName.append("_ED");
 
-			details.get(i).setExtended(true);
-			detail.setReference(reference);
-			detail.setTableName(tableName.toString());
-			detail.setWorkflowId(0);
+				details.get(i).setExtended(true);
+				detail.setReference(reference);
+				detail.setTableName(tableName.toString());
+				detail.setWorkflowId(0);
 
-			if (tableNames.contains(detail.getTypeCode())) {
-				continue;
+				if (tableNames.contains(detail.getTypeCode())) {
+					continue;
+				}
+				tableNames.add(detail.getTypeCode());
+				extendedFieldRenderDAO.deleteList(reference, tableName.toString(), tableType);
 			}
-			tableNames.add(detail.getTypeCode());
-			extendedFieldRenderDAO.deleteList(reference, tableName.toString(), tableType);
 		}
 
 		logger.debug(Literal.LEAVING);

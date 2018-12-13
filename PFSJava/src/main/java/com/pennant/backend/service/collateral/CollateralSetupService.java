@@ -86,7 +86,7 @@ public interface CollateralSetupService {
 
 	List<AuditDetail> processCollateralSetupList(AuditHeader aAuditHeader, String method);
 
-	List<CollateralSetup> getCollateralDetails(String finReference);
+	List<CollateralSetup> getCollateralDetails(String finReference, boolean isAutoRejection);
 
 	CollateralSetup getCollateralSetupForLegal(String collateralRef);
 

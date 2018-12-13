@@ -3927,4 +3927,11 @@ UNION ALL
 			          WHERE amtvehicledealer_temp.dealerid = t1.dealerid))
 			 </createView>
 	</changeSet>
+
+	<changeSet id="66" author="Siva">
+		<sql>
+			UPDATE SMTPARAMeTERS SET SYSPARMCODE = 'MAX_DAYS_FIN_AUTO_REJECT' WHERE SYSPARMCODE = 'CANCEL_LOAN_FOR_NODISB';
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

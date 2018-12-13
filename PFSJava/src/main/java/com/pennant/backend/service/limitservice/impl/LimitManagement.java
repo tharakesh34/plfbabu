@@ -71,7 +71,11 @@ public class LimitManagement {
 		FinanceMain finMain = finschData.getFinanceMain();
 		FinanceType finType = finschData.getFinanceType();
 		String finCcy = finMain.getFinCcy();
-		String usrlang = finMain.getUserDetails().getLanguage();
+		String usrlang = PennantConstants.default_Language;
+		if (finMain.getUserDetails() == null) {
+			finMain.setUserDetails(new LoggedInUser());
+			usrlang = finMain.getUserDetails().getLanguage();
+		}
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		long custId = customer.getCustID();
 		long groupId = customer.getCustGroupID();

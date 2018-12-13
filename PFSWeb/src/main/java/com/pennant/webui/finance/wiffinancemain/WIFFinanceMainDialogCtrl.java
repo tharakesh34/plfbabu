@@ -4689,7 +4689,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getFinanceDetailService().doReject(auditHeader, true);
+						auditHeader = getFinanceDetailService().doReject(auditHeader, true, false);
 						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}

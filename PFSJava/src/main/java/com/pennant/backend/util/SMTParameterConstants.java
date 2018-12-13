@@ -82,5 +82,5 @@ public class SMTParameterConstants {
 	public static final String ROUND_ADJ_METHOD = "ROUND_ADJ_METHOD";
 	
 	public static final String MAX_ODDAYS_ADDDISB = "MAX_ODDAYS_ADDDISB";//Max od days for add disbursement.
-	public static final String CANCEL_LOAN_FOR_NODISB = "CANCEL_LOAN_FOR_NODISB";//Cancel Loan for not adding disbursement.
+	public static final String MAX_DAYS_FIN_AUTO_REJECT = "MAX_DAYS_FIN_AUTO_REJECT";//Cancel Loan for not adding disbursement.
 }

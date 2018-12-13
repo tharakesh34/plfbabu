@@ -13,6 +13,4 @@ public interface FinanceCancellationService {
 
 	AuditHeader doApprove(AuditHeader aAuditHeader,boolean isValReq);
 
-	void executeLoanCancelProcess();
-
 }

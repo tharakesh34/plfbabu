@@ -666,7 +666,6 @@ public class DMTransactionFetchImpl implements DMTransactionFetch {
 				fm.setAlwBPI(true);
 				fm.setBpiAmount(fsd.getProfitSchd());
 				fm.setBpiTreatment(FinanceConstants.BPI_SCHEDULE);
-				fm.setBpiResetReq(false);
 				fm.setBpiPftDaysBasis(CalculationConstants.IDB_ACT_365FIXED);
 			}
 

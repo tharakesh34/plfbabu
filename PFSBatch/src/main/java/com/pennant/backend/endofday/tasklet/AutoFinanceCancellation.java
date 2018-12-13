@@ -10,12 +10,12 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.service.finance.FinanceCancellationService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 
 public class AutoFinanceCancellation  implements Tasklet  {
 	private Logger				logger	= Logger.getLogger(AutoFinanceCancellation.class);
 
-	private FinanceCancellationService financeCancellationService;
+	private FinanceDetailService financeDetailService;
 	
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
@@ -23,19 +23,19 @@ public class AutoFinanceCancellation  implements Tasklet  {
 		logger.debug("START: Prepare OD Cancellation Loan's On : " + valueDate);
 
 		if (ImplementationConstants.ALW_LOAN_AUTO_CANCEL) {
-			financeCancellationService.executeLoanCancelProcess();
+			financeDetailService.executeAutoFinRejectProcess();
 		}
 
 		logger.debug("COMPLETE: Prepare OD Cancellation Loan's On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
-	
-	public FinanceCancellationService getFinanceCancellationService() {
-		return financeCancellationService;
+
+	public FinanceDetailService getFinanceDetailService() {
+		return financeDetailService;
 	}
 
-	public void setFinanceCancellationService(FinanceCancellationService financeCancellationService) {
-		this.financeCancellationService = financeCancellationService;
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }
