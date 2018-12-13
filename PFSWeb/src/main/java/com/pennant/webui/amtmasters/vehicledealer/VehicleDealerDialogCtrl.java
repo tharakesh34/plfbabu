@@ -346,7 +346,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.row_11.setVisible(true);
 			this.row_12.setVisible(true);
 			this.row_13.setVisible(true);
-			this.dealerFax_dsa.setVisible(false);
+			this.dealerFax_dsa.setSclass("");
 		} else if ("VASM".equals(module)) {
 			this.row_8.setVisible(true);
 			this.vas_panNumber.setVisible(false);
@@ -1242,26 +1242,31 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			}
 		}
 
-		if (!this.panNumber.isReadonly()) {
-			this.panNumber
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_PANNumber.value"),
-							PennantRegularExpressions.REGEX_PANNUMBER, true));
+		if ("VASM".equals(module) || module.equals("DSA")) {
+			if (!this.panNumber.isReadonly()) {
+				this.panNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_PANNumber.value"),
+								PennantRegularExpressions.REGEX_PANNUMBER, true));
+			}
+
+			if (!this.taxNumber.isReadonly()) {
+				this.taxNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_TAXNumber.value"),
+								PennantRegularExpressions.REGEX_GSTIN, true));
+			}
 		}
 
-		if (!this.taxNumber.isReadonly()) {
-			this.taxNumber
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_TAXNumber.value"),
-							PennantRegularExpressions.REGEX_GSTIN, true));
-		}
-		if (!this.accountNo.isReadonly()) {
-			this.accountNo
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_AccountNo.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
-		}
-		if (!this.uidNumber.isReadonly()) {
-			this.uidNumber
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_UIDNumber.value"),
-							PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+		if (module.equals("DSA")) {
+			if (!this.accountNo.isReadonly()) {
+				this.accountNo.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_AccountNo.value"),
+								PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+			}
+			if (!this.uidNumber.isReadonly()) {
+				this.uidNumber.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_UIDNumber.value"),
+								PennantRegularExpressions.REGEX_AADHAR_NUMBER, true));
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
