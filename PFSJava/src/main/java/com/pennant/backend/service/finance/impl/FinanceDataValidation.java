@@ -2630,6 +2630,19 @@ public class FinanceDataValidation {
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90278", null)));
 						}
 					}
+				} else if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IST)) {
+					advPayment.setBankCode("");
+					advPayment.setLiabilityHoldName("");
+					advPayment.setPayableLoc("");
+					advPayment.setPrintingLoc("");
+					advPayment.setValueDate(null);
+					advPayment.setLLReferenceNo("");					
+					advPayment.setBankName("");
+					advPayment.setBranchCode("");
+					advPayment.setBeneficiaryAccNo("");
+					advPayment.setBeneficiaryName("");
+					advPayment.setiFSC(null);
+					advPayment.setPhoneNumber("");
 				}
 			}
 		}

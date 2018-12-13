@@ -308,7 +308,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(
 					finServiceInstruction.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
 					FinanceConstants.FINSER_EVENT_ADDDISB);
-			if (errorDetailList != null) {
+			if (errorDetailList != null && !errorDetailList.isEmpty()) {
 				for (ErrorDetail errorDetails : errorDetailList) {
 					auditDetail.setErrorDetail(errorDetails);
 				}
