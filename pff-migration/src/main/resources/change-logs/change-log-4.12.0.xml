@@ -3508,7 +3508,14 @@ UNION ALL
 			Insert into RBFieldDetails (rbmodule, rbevent, rbfldname ,rbflddesc , rbfldtype, rbfldlen , rbforcalflds,rbforbldflds, rbfldtablename , rbstflds, modulecode) values ('FEES','EARLYSTL','receiptMode','Receipt	Mode','nvarchar','100','0','1','','static','');
 		</sql>
 	</changeSet>
-
+	<changeSet id="63" author="Sai Krishna">
+		<addColumn tableName="DeviationDetails">
+			<column name="DelegatorGrade" type="bigint" defaultValueNumeric="0" />
+		</addColumn>
+		<addColumn tableName="DeviationDetails_Temp">
+			<column name="DelegatorGrade" type="bigint" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
 <changeSet id="63" author="Vinay">
 	<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 		SELECT t1.fintype,
@@ -3684,5 +3691,4 @@ UNION ALL
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 	</createView>
 </changeSet>
-	
 </databaseChangeLog>

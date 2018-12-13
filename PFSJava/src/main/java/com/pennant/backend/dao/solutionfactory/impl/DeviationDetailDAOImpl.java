@@ -211,7 +211,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(
 				" Where DeviationID IN (Select DeviationID from DeviationHeader where Module = :Module and FinType = :FinType) ");
-		selectSql.append("order by DeviationId, DeviatedValue ");
+		selectSql.append("order by DelegatorGrade ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<DeviationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -277,10 +277,12 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (DeviationID, UserRole, DeviatedValue");
 		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		insertSql.append(", DelegatorGrade)");
 		insertSql.append(" Values(:DeviationID, :UserRole, :DeviatedValue");
 		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
+		insertSql.append(", :DelegatorGrade)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -309,7 +311,7 @@ public class DeviationDetailDAOImpl extends BasicDao<DeviationDetail> implements
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update DeviationDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DeviatedValue = :DeviatedValue");
+		updateSql.append(" Set DeviatedValue = :DeviatedValue, DelegatorGrade = :DelegatorGrade");
 		updateSql.append(
 				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where DeviationID =:DeviationID and UserRole=:UserRole ");

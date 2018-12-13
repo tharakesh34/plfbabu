@@ -59,6 +59,7 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 	private long deviationID = Long.MIN_VALUE;
 	private String userRole;
 	private String deviatedValue;
+	private long delegatorGrade;
 	private boolean newRecord = false;
 	private String lovValue;
 	private DeviationDetail befImage;
@@ -116,6 +117,14 @@ public class DeviationDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setDeviatedValue(String deviatedValue) {
 		this.deviatedValue = deviatedValue;
+	}
+
+	public long getDelegatorGrade() {
+		return delegatorGrade;
+	}
+
+	public void setDelegatorGrade(long delegatorGrade) {
+		this.delegatorGrade = delegatorGrade;
 	}
 
 	public boolean isNewRecord() {

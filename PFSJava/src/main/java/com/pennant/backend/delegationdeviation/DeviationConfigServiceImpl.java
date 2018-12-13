@@ -197,6 +197,7 @@ public class DeviationConfigServiceImpl implements DeviationConfigService {
 					BeanUtils.copyProperties(prvDetails, befImage);
 
 					prvDetails.setDeviatedValue(newdeviationDetail.getDeviatedValue());
+					prvDetails.setDelegatorGrade(newdeviationDetail.getDelegatorGrade());
 					prvDetails.setLastMntBy(newdeviationDetail.getLastMntBy());
 					prvDetails.setLastMntOn(newdeviationDetail.getLastMntOn());
 					prvDetails.setRecordType(PennantConstants.RCD_UPD);

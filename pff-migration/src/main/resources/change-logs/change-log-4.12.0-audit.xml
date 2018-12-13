@@ -98,4 +98,9 @@
 		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
 	</addColumn>
 </changeSet>
-	</databaseChangeLog>
+	<changeSet id="7" author="Sai Krishna">
+		<addColumn tableName="AdtDeviationDetails">
+			<column name="DelegatorGrade" type="bigint" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

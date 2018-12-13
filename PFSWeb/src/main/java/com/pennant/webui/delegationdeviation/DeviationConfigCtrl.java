@@ -42,7 +42,9 @@ package com.pennant.webui.delegationdeviation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -95,6 +97,7 @@ public class DeviationConfigCtrl {
 
 	// Objects
 	List<ValueLabel> delgationRoles;
+	Map<String, Long> delegators = new HashMap<>();
 	List<DeviationHeader> deviationHeaderList;
 	@Autowired
 	private transient DeviationConfigService deviationConfigService;
@@ -131,6 +134,14 @@ public class DeviationConfigCtrl {
 		this.delationDeviation = delationDeviation;
 		this.fintype = fintype;
 		delgationRoles = deviationHelper.getRoleAndDesc(delegationRole);
+
+		// Specify the delegator ranking.
+		long rank = 1;
+
+		for (String delegator : delegationRole) {
+			delegators.put(delegator, rank++);
+		}
+
 		fillListheaders(delationDeviation);
 	}
 
@@ -701,6 +712,9 @@ public class DeviationConfigCtrl {
 					DeviationDetail deviationDetail = new DeviationDetail();
 					deviationDetail.setUserRole(roleCode);
 					deviationDetail.setDeviatedValue(value);
+					if (roleCode != null) {
+						deviationDetail.setDelegatorGrade(delegators.getOrDefault(roleCode, (long) 0));
+					}
 					deviationDetails.add(deviationDetail);
 				}
 
