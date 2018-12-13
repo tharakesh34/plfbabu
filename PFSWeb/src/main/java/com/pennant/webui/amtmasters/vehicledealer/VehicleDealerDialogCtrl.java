@@ -176,6 +176,16 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 	private transient boolean validationOn;
 
+	protected Row row_8;
+	protected Row row_9;
+	protected Row row_10;
+	protected Row row_11;
+	protected Row row_12;
+	protected Row row_13;
+	protected Space dealerFax_dsa;
+	protected Space vas_panNumber;
+	protected Space vas_taxNumber;
+
 	// ServiceDAOs / Domain Classes
 	private transient VehicleDealerService vehicleDealerService;
 	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
@@ -328,6 +338,20 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.zipCode.setValueColumn("PinCode");
 		this.zipCode.setDescColumn("AreaName");
 		this.zipCode.setValidateColumns(new String[] { "PinCode" });
+
+		if ("DSA".equals(module)) {
+			this.row_8.setVisible(true);
+			this.row_9.setVisible(true);
+			this.row_10.setVisible(true);
+			this.row_11.setVisible(true);
+			this.row_12.setVisible(true);
+			this.row_13.setVisible(true);
+			this.dealerFax_dsa.setVisible(false);
+		} else if ("VASM".equals(module)) {
+			this.row_8.setVisible(true);
+			this.vas_panNumber.setVisible(false);
+			this.vas_taxNumber.setVisible(false);
+		}
 
 		this.panNumber.setMaxlength(10);
 		this.uidNumber.setMaxlength(12);

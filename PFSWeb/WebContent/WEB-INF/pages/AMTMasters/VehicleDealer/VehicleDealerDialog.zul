@@ -131,9 +131,9 @@
 									value="${c:l('label_VehicleDealerDialog_DealerFax.value')}" />
 								<hbox>
 									<space spacing="2px"
-										sclass="mandatory" />
+										sclass="mandatory" id="dealerFax_dsa"/>
 									<textbox id="dealerFax"
-										width="80px" />
+										width="100px" />
 									<!-- 	<textbox id="faxCountryCode" width="40px" />
 										<label value="-" style="display:inline-block;padding-top:4px;" />
 										<textbox id="faxAreaCode" width="40px" />
@@ -312,16 +312,27 @@
 									<combobox id="sellerType" />
 								</hbox>
 							</row>
-							<row>
+							<row id="row_8" visible="false">
 								<label
 									id="label_VehicleDealerDialog_PANNumber"
 									value="${c:l('label_VehicleDealerDialog_PANNumber.value')}" />
 								<hbox>
-									<space spacing="2px"
+									<space spacing="2px" id="vas_panNumber"
 										sclass="mandatory" />
 									<uppercasebox id="panNumber"
 										width="160px" />
 								</hbox>
+								<label
+									id="label_VehicleDealerDialog_TAXNumber"
+									value="${c:l('label_VehicleDealerDialog_TAXNumber.value')}" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" id="vas_taxNumber"/>
+									<uppercasebox id="taxNumber"
+										width="180px" />
+								</hbox>
+							</row>
+							<row id="row_9" visible="false">
 								<label
 									id="label_VehicleDealerDialog_UIDNumber"
 									value="${c:l('label_VehicleDealerDialog_UIDNumber.value')}" />
@@ -331,17 +342,6 @@
 									<textbox id="uidNumber"
 										width="160px" />
 								</hbox>
-							</row>
-							<row>
-								<label
-									id="label_VehicleDealerDialog_TAXNumber"
-									value="${c:l('label_VehicleDealerDialog_TAXNumber.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<uppercasebox id="taxNumber"
-										width="180px" />
-								</hbox>
 								<label
 									id="label_VehicleDealerDialog_FromProvision"
 									value="${c:l('label_VehicleDealerDialog_FromProvision.value')}" />
@@ -349,7 +349,7 @@
 									<extendedcombobox id="fromProvince" />
 								</hbox>
 							</row>
-							<row>
+							<row id="row_10" visible="false">
 								<label
 									id="label_VehicleDealerDialog_ToProvision"
 									value="${c:l('label_VehicleDealerDialog_ToProvision.value')}" />
@@ -366,7 +366,7 @@
 										width="180px" />
 								</hbox>
 							</row>
-							<row>
+							<row id="row_11" visible="false">
 								<label
 									id="label_VehicleDealerDialog_AccountType"
 									value="${c:l('label_VehicleDealerDialog_AccountType.value')}" />
@@ -382,7 +382,7 @@
 										id="bankBranchCode" />
 								</hbox>
 							</row>
-							<row>
+							<row id="row_12" visible="false">
 								<label
 									id="label_VehicleDealerDialog_BankName"
 									value="${c:l('label_VehicleDealerDialog_BankName.value')}" />
@@ -400,7 +400,7 @@
 										maxlength="20" width="100px" />
 								</hbox>
 							</row>
-							<row>
+							<row id="row_13" visible="false">
 								<label
 									id="label_VehicleDealerDialog_BranchMICRCode"
 									value="${c:l('label_VehicleDealerDialog_BranchMICRCode.value')}" />
