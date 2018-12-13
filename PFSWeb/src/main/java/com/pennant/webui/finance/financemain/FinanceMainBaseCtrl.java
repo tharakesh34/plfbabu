@@ -17159,7 +17159,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		validFinScheduleData = new FinScheduleData();
 		BeanUtils.copyProperties(getFinanceDetail().getFinScheduleData(), validFinScheduleData);
 		getFinanceDetail().setFinScheduleData(validFinScheduleData);
-		doWriteComponentsToBean(validFinScheduleData);
+		
+		//Total Disbursements amount after clicking on verify button while creating a loan
+		BigDecimal utilizedAmt = BigDecimal.ZERO;
+		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		utilizedAmt = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount();
+		this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(utilizedAmt, formatter));
+
+	    doWriteComponentsToBean(validFinScheduleData);
 
 		if (manualSchedule.isChecked()) {
 			if (getManualScheduleDetailDialogCtrl() == null) {
