@@ -57,6 +57,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -133,5 +134,7 @@ public interface SOAReportGenerationDAO {
 	List<FeeWaiverDetail> getFeeWaiverDetail(String finReference);
 
 	List<String> getCustLoanDetails(long custID);
+
+	List<FinanceDisbursement> getFinanceDisbursementByFinRef(String finReference);
 
 }

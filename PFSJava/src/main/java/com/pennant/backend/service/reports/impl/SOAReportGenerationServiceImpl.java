@@ -49,6 +49,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -67,6 +68,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -900,6 +902,34 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			List<FeeWaiverDetail> feeWaiverDetailList = getFeeWaiverDetail(finReference);
 
+			List<FinanceDisbursement> disbursements = soaReportGenerationDAO.getFinanceDisbursementByFinRef(finReference);
+			
+			if (StringUtils.isBlank(finMain.getClosingStatus())
+					|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")
+							&& CollectionUtils.isNotEmpty(disbursements)) {
+				for (FinanceDisbursement financeDisbursement : disbursements) {
+					BigDecimal transactionAmount = BigDecimal.ZERO;
+					
+					if (financeDisbursement.getDisbAmount() != null) {
+						transactionAmount = financeDisbursement.getDisbAmount();
+					}
+					
+					if (DateUtility.compare(financeDisbursement.getDisbDate(), finMain.getFinStartDate()) == 0) {
+						transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
+					}
+					
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(finSchedulePayable);
+					soaTranReport.setTransactionDate(financeDisbursement.getDisbReqDate());
+					soaTranReport.setValueDate(financeDisbursement.getDisbDate());
+					soaTranReport.setCreditAmount(transactionAmount);
+					soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(1);
+					
+					soaTransactionReports.add(soaTranReport);
+				}
+			}	
+			
 			//Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {

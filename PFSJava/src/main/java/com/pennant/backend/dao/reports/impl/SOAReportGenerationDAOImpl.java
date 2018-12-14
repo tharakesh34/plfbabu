@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -1109,5 +1110,32 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		}
 
 		return list;
+	}
+
+	@Override
+	public List<FinanceDisbursement> getFinanceDisbursementByFinRef(String finReference) {
+		logger.debug("Entering");
+		List<FinanceDisbursement> financeDisbursements = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder("Select FinReference, DisbDate, DisbSeq, ");
+		selectSql.append(" DisbAmount, DisbReqDate, DisbDisbursed, DisbIsActive ");
+		selectSql.append(" From FinDisbursementDetails");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceDisbursement.class);
+
+		try {
+			financeDisbursements = this.jdbcTemplate.query(selectSql.toString(), source,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeDisbursements = null;
+		}
+		logger.debug("Leaving");
+		return financeDisbursements;
 	}
 }
