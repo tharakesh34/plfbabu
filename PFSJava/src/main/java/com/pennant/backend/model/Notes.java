@@ -44,6 +44,14 @@
 package com.pennant.backend.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -53,22 +61,44 @@ import com.pennanttech.pennapps.core.model.AbstractEntity;
 /**
  * Model class for the <b>Notes table</b>.<br>
  */
+@XmlType(propOrder = {"reference", "usrLogin","inDate", "remarkType", "alignType", "remarks"})
+@XmlAccessorType(XmlAccessType.NONE)
 public class Notes extends AbstractEntity implements Entity {
 	private static final long serialVersionUID = -8921214349365225047L;
 
 	private long noteId = Long.MIN_VALUE;
 	private String moduleName = "";
+	
+	@XmlElement(name = "finReference")
 	private String reference = "";
+	
+	@XmlElement
 	private String remarkType = "";
+	
+	@XmlElement
 	private String alignType = "";
+	
+	@XmlElement
 	private String remarks = "";
+	
+	@XmlElement
 	private String usrLogin = "";
+	
+	@XmlElement(name = "inputDate")
+	private Date inDate;
+	
 	private String roleCode = "";
 	private String roleDesc = "";
 	private String usrName = "";
 	private String usrFName = "";
 	private String usrMName = "";
 	private String usrLName = "";
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("inDate");
+		return excludeFields;
+	}
 
 	public Notes() {
 		super();
@@ -217,6 +247,14 @@ public class Notes extends AbstractEntity implements Entity {
 
 	public void setUsrName(String usrName) {
 		this.usrName = usrName;
+	}
+
+	public Date getInDate() {
+		return inDate;
+	}
+
+	public void setInDate(Date inDate) {
+		this.inDate = inDate;
 	}
 
 }
