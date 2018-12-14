@@ -486,7 +486,6 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		finScheduleData.getFinanceMain().setResetOrgBal(false);
-		finScheduleData.getFinanceMain().setBpiResetReq(true);
 		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RECEIPT);
 
 		finMain.setEventFromDate(earlyPayOnSchdl);
@@ -578,7 +577,6 @@ public class ScheduleCalculator {
 		// Recalculation of Details after Schedule calculation
 		finScheduleData = afterChangeRepay(finScheduleData);
 
-		finScheduleData.getFinanceMain().setBpiResetReq(false);
 		setFinanceTotals(finScheduleData);
 		setFinScheduleData(finScheduleData);
 		logger.debug("Leaving");
@@ -2967,8 +2965,7 @@ public class ScheduleCalculator {
 		BigDecimal bpiBalance = BigDecimal.ZERO;
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		Date firstRepayDate = null;
-		if (finMain.isBpiResetReq()
-				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
+		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
 				&& StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHD_FIRSTEMI)) {
 			for (int i = 1; i < sdSize; i++) {
 				curSchd = finSchdDetails.get(i);
