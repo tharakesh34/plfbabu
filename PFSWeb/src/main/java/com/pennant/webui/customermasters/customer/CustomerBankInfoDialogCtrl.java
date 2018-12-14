@@ -818,7 +818,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.chqDepositNo.setValue(aCustomerBankInfo.getChqDepositNo());
 		this.chqDepositAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getChqDepositAmt(), finFormatter));
 		this.chqIssueNo.setValue(aCustomerBankInfo.getChqIssueNo());
-		this.chqIssueAmt.setValue(aCustomerBankInfo.getChqIssueAmt());
+		this.chqIssueAmt.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getChqIssueAmt(), finFormatter));
 		this.inwardChqBounceNo.setValue(aCustomerBankInfo.getInwardChqBounceNo());
 		this.outwardChqBounceNo.setValue(aCustomerBankInfo.getOutwardChqBounceNo());
 		this.eodBalMin.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalMin(), finFormatter));
