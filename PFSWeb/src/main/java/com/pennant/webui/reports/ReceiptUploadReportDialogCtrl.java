@@ -72,23 +72,23 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the /WEB-INF/pages/report/CostOfFundsStatusReportDialogCtrl.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/report/CostOfFundsStatusReportDialogCtrl.zul file.
  */
 public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHeader> {
-	private static final long			serialVersionUID	= 3184249234920071313L;
-	private static final Logger			logger				= Logger.getLogger(ReceiptUploadReportDialogCtrl.class);
+	private static final long serialVersionUID = 3184249234920071313L;
+	private static final Logger logger = Logger.getLogger(ReceiptUploadReportDialogCtrl.class);
 
-	
-	protected Window					window_ReceiptUploadReportDialogCtrl;										// autoWired
-	
-	protected Datebox      			    uploadDate;
-	protected ExtendedCombobox			fileName;
-	
-	protected Button					btnFileName;
-	protected Button					btnRefresh;
-	protected Tabbox			        tabbox;
-	
-	protected UploadHeader		        uploadHeader		= null;
+	protected Window window_ReceiptUploadReportDialogCtrl; // autoWired
+
+	protected Datebox uploadDate;
+	protected ExtendedCombobox fileName;
+
+	protected Button btnFileName;
+	protected Button btnRefresh;
+	protected Tabbox tabbox;
+
+	protected UploadHeader uploadHeader = null;
 
 	/**
 	 * default constructor.<br>
@@ -104,7 +104,8 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a
 	 * 
 	 * 
 	 * @param event
@@ -123,9 +124,9 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
-			
-			tabbox = (Tabbox) borderlayoutMain.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+
+			tabbox = (Tabbox) borderlayoutMain.getFellow("center").getFellow("divCenter")
+					.getFellow("tabBoxIndexCenter");
 
 			doSetFieldProperties();
 			doShowDialog();
@@ -136,7 +137,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		}
 
 		logger.debug("Leaving");
-	
+
 	}
 
 	/**
@@ -144,8 +145,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		
-		
+
 		this.fileName.setModuleName("ReceiptUploadHeader");
 		this.fileName.setMandatoryStyle(false);
 		this.fileName.setDisplayStyle(2);
@@ -153,29 +153,29 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		this.fileName.setValidateColumns(new String[] { "FileName" });
 		this.fileName.setMandatoryStyle(true);
 		this.fileName.setFilters(null);
-		
+
 		this.uploadDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
-		
+
 		logger.debug("Leaving");
 	}
-	
-	public void onChange$uploadDate(Event event){
+
+	public void onChange$uploadDate(Event event) {
 		logger.debug(Literal.ENTERING);
-		
-		if(this.uploadDate.getValue()==null){
+
+		if (this.uploadDate.getValue() == null) {
 			this.fileName.setFilters(null);
 			return;
 		}
-		
+
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("TRANSACTIONDATE", new SimpleDateFormat("dd-MMM-yyy").format(this.uploadDate.getValue()), Filter.OP_EQUAL);
-		
+		filter[0] = new Filter("TRANSACTIONDATE", new SimpleDateFormat("dd-MMM-yyy").format(this.uploadDate.getValue()),
+				Filter.OP_EQUAL);
+
 		this.fileName.setFilters(filter);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onClick$btnSearch(Event event) throws IOException {
 		logger.debug(Literal.ENTERING);
 
@@ -195,7 +195,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		doClose();
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onClick$btnClear(Event event) {
 		logger.debug("Entering");
 		clearData();
@@ -220,8 +220,6 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		logger.debug("Leaving" + event.toString());
 	}
 
-
-
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
@@ -240,7 +238,6 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		}
 	}
 
-
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -252,17 +249,16 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		doRemoveValidation();
-		
-		
-		
+
 		try {
-			if (!this.fileName.isReadonly() && (this.fileName.getValue()==null||this.fileName.getValue()=="")) {
-				throw new WrongValueException(this.fileName,Labels.getLabel("FIELD_IS_MAND",new String[]{Labels.getLabel("label_ReceiptUploadReport_Filename.value")}));
+			if (!this.fileName.isReadonly() && (this.fileName.getValue() == null || this.fileName.getValue() == "")) {
+				throw new WrongValueException(this.fileName, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_ReceiptUploadReport_Filename.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -277,7 +273,8 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aReceiptUploadHeader
 	 * @throws Exception
@@ -305,13 +302,13 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 
 		Object dataObject = this.fileName.getObject();
 		if (dataObject instanceof String || dataObject == null) {
-			
+
 		} else if (!(dataObject instanceof String)) {
 			Clients.clearWrongValue(this.fileName);
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Remove Error Messages for Fields
 	 */
