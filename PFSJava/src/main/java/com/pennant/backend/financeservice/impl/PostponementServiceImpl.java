@@ -49,28 +49,6 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		finScheduleData.getFinanceMain().setRecalSchdMethod(scheduleMethod);
 		finScheduleData.getFinanceMain().setPftIntact(serviceInstruction.isPftIntact());
 
-		// Schedule Recalculation Locking Period Applicability
-		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-
-			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
-			if (recalLockTill == null) {
-				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
-			}
-
-			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
-			FinanceScheduleDetail curSchd = null;
-			for (int i = 0; i <= sdSize - 1; i++) {
-
-				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
-						&& (i != sdSize - 1) && i != 0) {
-					curSchd.setRecalLock(true);
-				} else {
-					curSchd.setRecalLock(false);
-				}
-			}
-		}
-
 		finScheduleData = ScheduleCalculator.postpone(finScheduleData);
 
 		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
@@ -121,7 +99,14 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != sdSize - 1) && i != 0) {
-					curSchd.setRecalLock(true);
+					if (DateUtility.compare(curSchd.getSchDate(),
+							finScheduleData.getFinanceMain().getEventFromDate()) >= 0
+							|| DateUtility.compare(curSchd.getSchDate(),
+									finScheduleData.getFinanceMain().getEventToDate()) <= 0) {
+						curSchd.setRecalLock(false);
+					} else {
+						curSchd.setRecalLock(true);
+					}
 				} else {
 					curSchd.setRecalLock(false);
 				}
@@ -172,7 +157,14 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
 						&& (i != sdSize - 1) && i != 0) {
-					curSchd.setRecalLock(true);
+					if (DateUtility.compare(curSchd.getSchDate(),
+							finScheduleData.getFinanceMain().getEventFromDate()) >= 0
+							|| DateUtility.compare(curSchd.getSchDate(),
+									finScheduleData.getFinanceMain().getEventToDate()) <= 0) {
+						curSchd.setRecalLock(false);
+					} else {
+						curSchd.setRecalLock(true);
+					}
 				} else {
 					curSchd.setRecalLock(false);
 				}
