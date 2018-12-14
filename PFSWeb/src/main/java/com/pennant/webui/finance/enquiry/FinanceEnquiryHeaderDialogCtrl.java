@@ -62,12 +62,14 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menubar;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
@@ -159,6 +161,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox custCIF_header; // autoWired
 	protected Label custShrtName; // autoWired
 	protected Label label_window_FinEnqHeaderDialog; // autoWired
+	protected Checkbox reqRePayment; // autoWired
+	protected Row row_ReqRePayment; // autoWired
 
 	protected Label label_FinEnqHeader_Filter; // autoWired
 	protected Space space_menubar; // autoWired
@@ -327,7 +331,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		String path = "";
 		this.grid_BasicDetails.setVisible(true);
 		this.btnPrint.setVisible(false);
-
+		this.row_ReqRePayment.setVisible(false);
+		
 		if ("FINENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinanceEnquiry.value"));
@@ -382,6 +387,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finScheduleData", finScheduleData);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScheduleDetailsEnquiryDialog.zul";
 			this.btnPrint.setVisible(true);
+			this.row_ReqRePayment.setVisible(true);
+			this.reqRePayment.setChecked(true);
 
 		} else if ("DOCENQ".equals(this.enquiryType)) {
 
@@ -825,15 +832,17 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
 
 					// Repayment Details
-					for (FinanceRepayments rpyDetail : finScheduleData.getRepayDetails()) {
-						if (rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())) {
-							ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
-							rpyDetailList.add(rpyDetail);
-							rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
-						} else {
-							ArrayList<FinanceRepayments> rpyDetailList = new ArrayList<FinanceRepayments>();
-							rpyDetailList.add(rpyDetail);
-							rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
+					if(!this.reqRePayment.isChecked()){
+						for (FinanceRepayments rpyDetail : finScheduleData.getRepayDetails()) {
+							if (rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())) {
+								ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
+								rpyDetailList.add(rpyDetail);
+								rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
+							} else {
+								ArrayList<FinanceRepayments> rpyDetailList = new ArrayList<FinanceRepayments>();
+								rpyDetailList.add(rpyDetail);
+								rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
+							}
 						}
 					}
 

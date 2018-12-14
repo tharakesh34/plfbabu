@@ -90,6 +90,12 @@
 												<label id="custShrtName" />
 											</hbox>
 										</row>
+										<row id="row_ReqRePayment" visible="false">
+											<label
+												id="label_FinanceEnquiryDialog_ReqRePayment"
+												value="${c:l('label_FinanceEnquiryDialog_ReqRePayment.value')}" />
+											<checkbox id="reqRePayment" />
+										</row>
 									</rows>
 								</grid>
 							</tabpanel>
