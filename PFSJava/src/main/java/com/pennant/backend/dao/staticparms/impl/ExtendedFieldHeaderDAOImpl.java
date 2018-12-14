@@ -59,6 +59,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -361,6 +362,9 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				}
 				syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				syntax.append(" SeqNo			int NOT NULL, ");
+				if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
+					syntax.append("	InstructionUID		bigint NULL,");
+				}
 				syntax.append("	Version			int NOT NULL,");
 				syntax.append("	LastMntBy 		bigint NULL,");
 				syntax.append("	LastMntOn 		datetime NULL,");
@@ -399,6 +403,9 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				}
 				syntax.append(" Reference 		varchar2(20) NOT NULL, ");
 				syntax.append(" SeqNo 			number(10,0) NOT NULL, ");
+				if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
+					syntax.append("	InstructionUID		number(19,0) NULL,");
+				}
 				syntax.append("	Version 		number(10,0) NOT NULL,");
 				syntax.append("	LastMntBy 		number(19,0) NULL,");
 				syntax.append("	LastMntOn 		date NULL,");
@@ -435,6 +442,9 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				}
 				syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				syntax.append(" SeqNo 			integer NOT NULL, ");
+				if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
+					syntax.append("	InstructionUID		bigint NULL,");
+				}
 				syntax.append("	Version 		integer NOT NULL,");
 				syntax.append("	LastMntBy 		bigint NULL,");
 				syntax.append("	LastMntOn 		timestamp NULL,");
