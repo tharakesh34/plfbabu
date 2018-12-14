@@ -200,9 +200,9 @@ public class RateReviewService extends ServiceHelper {
 
 		// Schedule Recalculation Locking Period Applicability
 		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			Date recalLockTill = finMain.getRecalFromDate();
 			if (recalLockTill == null) {
-				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+				recalLockTill = finMain.getMaturityDate();
 			}
 
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
@@ -210,7 +210,7 @@ public class RateReviewService extends ServiceHelper {
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), finMain.getRecalFromDate()) < 0 && (i != sdSize - 1)
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1)
 						&& i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
