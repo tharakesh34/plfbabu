@@ -375,6 +375,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return returnStatus;
 			}
 		}
+		
+		//set mandate type 
+		mandateDetail.setMandateType(newMandate.getMandateType());
+		
 		logger.debug("Leaving");
 		return returnStatus;
 	}

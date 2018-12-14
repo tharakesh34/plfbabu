@@ -202,7 +202,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		sql = new StringBuilder();
 		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF, MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber,");
 		sql.append(" case when OPENFLAG = 'Y' THEN 'New Open ECS' ELSE 'No Open ECS' END lovValue,");
-		sql.append(" MANDATE_TYPE, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
+		sql.append(" MANDATE_TYPE MandateType, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
 		sql.append(" FROM MANDATE_RESPONSE");
 		sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
 
@@ -506,7 +506,7 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(
-				" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE, STATUS ");
+				" SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE MandateType, STATUS ");
 		sql.append(" From MANDATE_REQUESTS");
 		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
 		source = new MapSqlParameterSource();
@@ -708,10 +708,95 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 
 	protected void processSecondaryMandate(Mandate respMandate) {
 
+		boolean secondaryMandate = checkSecondaryMandate(respMandate.getMandateID());
+		if (secondaryMandate) {
+			makeSecondaryMandateInActive(respMandate.getMandateID());
+			loanMandateSwapping(respMandate.getFinReference(), respMandate.getMandateID(),
+					respMandate.getMandateType());
+
+		}
+
 	}
 
 	protected void processSwappedMandate(Mandate respMandate) {
 
+		boolean swappedMandate = checkSwappedMandate(respMandate.getMandateID());
+		if (swappedMandate) {
+			loanMandateSwapping(respMandate.getFinReference(), respMandate.getMandateID(), respMandate.getMandateType());
+
+		}
+	}
+	
+	private boolean checkSecondaryMandate(long mandateID) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT Count(*) FROM MANDATES");
+		selectSql.append(" WHERE PRIMARYMANDATEID = :PRIMARYMANDATEID AND ACTIVE = :ACTIVE");
+		paramMap.addValue("PRIMARYMANDATEID", mandateID);
+		paramMap.addValue("ACTIVE", 1);
+
+		try {
+			if (namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, Integer.class) > 0) {
+				return true;
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return false;
+	}
+	
+	private boolean checkSwappedMandate(long mandateID) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT SWAPISACTIVE  FROM MANDATES");
+		selectSql.append(" WHERE MANDATEID = :MANDATEID");
+		paramMap.addValue("MANDATEID", mandateID);
+
+		try {
+			return namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, Boolean.class);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	private void loanMandateSwapping(String finReference, long mandateId, String repayMethod) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("Update FinanceMain");
+		sql.append(" Set MandateID =:MandateID ");
+		sql.append(" ,FinRepayMethod =:FinRepayMethod");
+		sql.append(" Where FinReference =:FinReference");
+
+		source.addValue("MandateID", mandateId);
+		source.addValue("FinReference", finReference);
+		source.addValue("FinRepayMethod", repayMethod);
+
+		try {
+			namedJdbcTemplate.update(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+
+		logger.debug("updateSql: " + source.toString());
+
+	}
+	
+	private void makeSecondaryMandateInActive(long mandateID) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE MANDATES SET ACTIVE = :ACTIVE WHERE  PRIMARYMANDATEID = :MANDATEID");
+
+		paramMap.addValue("MANDATEID", mandateID);
+		paramMap.addValue("ACTIVE", 0);
+
+		try {
+			namedJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
 	}
 
 	protected void addCustomParameter(Map<String, Object> parameterMap) {

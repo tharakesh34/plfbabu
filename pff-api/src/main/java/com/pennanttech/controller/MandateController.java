@@ -281,7 +281,7 @@ public class MandateController {
 		WSReturnStatus response = null;
 		try {
 			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
-					mandateDetail.getNewMandateId(), null);
+					mandateDetail.getNewMandateId(), mandateDetail.getMandateType());
 			if (count > 0) {
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {

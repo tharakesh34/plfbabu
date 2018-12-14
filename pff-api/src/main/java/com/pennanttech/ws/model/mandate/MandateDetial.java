@@ -32,6 +32,8 @@ public class MandateDetial {
 
 	@XmlElement
 	private String finReference;
+	
+	private String mandateType;
 
 	public List<Mandate> getMandatesList() {
 		return mandateList;
@@ -71,5 +73,13 @@ public class MandateDetial {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getMandateType() {
+		return mandateType;
+	}
+
+	public void setMandateType(String mandateType) {
+		this.mandateType = mandateType;
 	}
 }
