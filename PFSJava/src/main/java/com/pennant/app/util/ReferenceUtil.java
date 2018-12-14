@@ -126,7 +126,7 @@ public class ReferenceUtil implements Serializable {
 				dateYYJDay = DateUtility.getDateYYJDay();
 				seqNumber = 1;
 			} else {
-				seqNumber = seqNumber + 1;
+				//seqNumber = seqNumber + 1;
 			}
 			boolean status = true;
 
@@ -203,7 +203,7 @@ public class ReferenceUtil implements Serializable {
 				dateYYJDay = DateUtility.getDateYYJDay();
 				seqNumber = 1;
 			} else {
-				seqNumber = seqNumber + 1;
+				//seqNumber = seqNumber + 1;
 			}
 			boolean status = true;
 
@@ -276,7 +276,7 @@ public class ReferenceUtil implements Serializable {
 				dateYYJDay = DateUtility.getDateYYJDay();
 				seqNumber = 1;
 			} else {
-				seqNumber = seqNumber + 1;
+				//seqNumber = seqNumber + 1;
 			}
 			boolean status = true;
 
@@ -428,7 +428,7 @@ public class ReferenceUtil implements Serializable {
 			dateYYJDay = DateUtility.getDateYYJDay();
 			seqNumber = 1;
 		} else {
-			seqNumber = seqNumber + 1;
+			//seqNumber = seqNumber + 1;
 		}
 		boolean status = true;
 
