@@ -49,8 +49,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.Property;
-import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 
 /**
@@ -127,23 +125,27 @@ public final class UpdateAttributeServiceTask {
 
 	public static String getPropertyValue(String parameter, String value, FinanceDetail financeDetail) {
 		if ("LEGAL_TECH_VALUE_CHANGED".equals(parameter)) {
-			BigDecimal unitPrice;
-			BigDecimal legalTechValue;
+			BigDecimal ltv;
+			BigDecimal updatedLtv;
 			boolean ltvChanged = false;
 			Map<String, Object> values;
+			String suffix;
 
-			for (CollateralSetup collateral : financeDetail.getCollaterals()) {
-				for (ExtendedFieldRender render : collateral.getExtendedFieldRenderList()) {
-					values = render.getMapValues();
+			if (financeDetail.getExtendedFieldRender() != null) {
+				values = financeDetail.getExtendedFieldRender().getMapValues();
 
-					if (values.get("UNITPRICE") == null || values.get("FINAL_TECH_VALUE") == null) {
-						continue;
+				for (int i = 1; i < 6; i++) {
+					suffix = String.valueOf(i);
+
+					if (values.get("LTV_".concat(suffix)) == null
+							|| values.get("UPDATED_LTV_".concat(suffix)) == null) {
+						break;
 					}
 
-					unitPrice = (BigDecimal) values.get("UNITPRICE");
-					legalTechValue = (BigDecimal) values.get("FINAL_TECH_VALUE");
+					ltv = (BigDecimal) values.get("LTV_".concat(suffix));
+					updatedLtv = (BigDecimal) values.get("UPDATED_LTV_".concat(suffix));
 
-					if (unitPrice.compareTo(legalTechValue) != 0) {
+					if (ltv.compareTo(updatedLtv) != 0) {
 						ltvChanged = true;
 
 						break;
