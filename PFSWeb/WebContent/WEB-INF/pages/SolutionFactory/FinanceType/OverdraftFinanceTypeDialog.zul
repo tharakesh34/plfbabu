@@ -849,7 +849,7 @@
 										</grid>
 									</groupbox>
 									<groupbox id="gb_ReceiptModes"
-										visible="false">
+										visible="true">
 										<caption
 											label="${c:l('label_gp_FinanceTypeDialog_ReceiptModes')}" />
 										<grid
