@@ -116,7 +116,10 @@
 	<bean id="sapGLTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.SAPGL">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	<bean id="cibilTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.Cibil">
+	<bean id="retailcibilTaskLet" class="com.pennant.backend.endofday.tasklet.RetailCibil">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="corporateCibil" class="com.pennant.backend.endofday.tasklet.CorporateCibil">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	<bean id="gstTaxDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.bajaj.GstTaxDownload">

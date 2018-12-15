@@ -46,7 +46,13 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 
 /**
  * Model class for the <b>FinanceMain table</b>.<br>
@@ -65,6 +71,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private String lovDescFinTypeName;
 	private String lovDescProductCodeName;
 	private String finCcy;
+	private int finCcyNumber;
 	private String scheduleMethod;
 	private String profitDaysBasis;
 	private Date finStartDate;
@@ -117,6 +124,10 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private BigDecimal totalPftPaid;
 	private BigDecimal excessAmount;
 	private BigDecimal excessAmtPaid;
+	private List<FinODDetails> finOdDetails;
+	private List<CollateralSetup> collateralSetupDetails;
+	private List<ChequeDetail> chequeDetail;
+	private List<CustomerDetails> finGuarenters;
 
 	public FinanceEnquiry() {
 
@@ -240,6 +251,14 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public int getFinCcyNumber() {
+		return finCcyNumber;
+	}
+
+	public void setFinCcyNumber(int finCcyNumber) {
+		this.finCcyNumber = finCcyNumber;
 	}
 
 	public String getScheduleMethod() {
@@ -656,6 +675,38 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setExcessAmtPaid(BigDecimal excessAmtPaid) {
 		this.excessAmtPaid = excessAmtPaid;
+	}
+
+	public List<FinODDetails> getFinOdDetails() {
+		return finOdDetails;
+	}
+
+	public void setFinOdDetails(List<FinODDetails> finOdDetails) {
+		this.finOdDetails = finOdDetails;
+	}
+
+	public List<CollateralSetup> getCollateralSetupDetails() {
+		return collateralSetupDetails;
+	}
+
+	public void setCollateralSetupDetails(List<CollateralSetup> collateralSetupDetails) {
+		this.collateralSetupDetails = collateralSetupDetails;
+	}
+
+	public List<ChequeDetail> getChequeDetail() {
+		return chequeDetail;
+	}
+
+	public void setChequeDetail(List<ChequeDetail> chequeDetail) {
+		this.chequeDetail = chequeDetail;
+	}
+
+	public List<CustomerDetails> getFinGuarenters() {
+		return finGuarenters;
+	}
+
+	public void setFinGuarenters(List<CustomerDetails> finGuarenters) {
+		this.finGuarenters = finGuarenters;
 	}
 
 }

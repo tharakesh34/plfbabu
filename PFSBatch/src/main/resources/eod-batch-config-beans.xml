@@ -506,6 +506,7 @@
 	<bean name="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl" />
 
 	<bean id="retailCibilReport" class="com.pennanttech.pff.external.cibil.RetailCibilReport" parent="basicDao" />
+	<bean id="corporateCibilReport" class="com.pennanttech.pff.external.cibil.CorporateCibilReport" parent="basicDao" />
 
 	<!-- AIB -->
 	<bean id="calendarInterfaceService" class="com.pennant.Interface.service.impl.aib.CalendarInterfaceServiceImpl">

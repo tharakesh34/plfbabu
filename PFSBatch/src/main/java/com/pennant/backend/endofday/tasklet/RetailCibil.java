@@ -1,4 +1,4 @@
-package com.pennant.backend.endofday.tasklet.bajaj;
+package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 import java.util.List;
@@ -21,8 +21,8 @@ import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.external.cibil.RetailCibilReport;
 
-public class Cibil implements Tasklet {
-	private Logger logger = Logger.getLogger(Cibil.class);
+public class RetailCibil implements Tasklet {
+	private Logger logger = Logger.getLogger(RetailCibil.class);
 
 	private Date valueDate;
 	private DataSource dataSource;

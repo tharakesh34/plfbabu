@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -30,24 +29,24 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.cibil.CIBILService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.model.cibil.CibilFileInfo;
+import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 import com.pennanttech.service.AmazonS3Bucket;
 
 public class RetailCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);
-	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_EXPORT_STATUS");
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_RETAIL_EXPORT_STATUS");
 
 	private static final String DATE_FORMAT = "ddMMyyyy";
-	private String CBIL_REPORT_PATH;
-	private String CBIL_REPORT_MEMBER_SHORT_NAME;
-	private String CBIL_REPORT_MEMBER_PASSWORD;
-	private String CBIL_REPORT_MEMBER_ID;
-	private String CBIL_REPORT_MEMBER_CODE;
+	private CibilFileInfo fileInfo;
+	private CibilMemberDetail memberDetails;
 
 	private long headerId;
 	private long totalRecords;
@@ -71,15 +70,24 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile));
 		try {
+			fileInfo = new CibilFileInfo();
+			fileInfo.setFileName(cibilFile.getName());
+			fileInfo.setCibilMemberDetail(memberDetails);
+			fileInfo.setTotalRecords(totalRecords);
+			fileInfo.setProcessedRecords(processedRecords);
+			fileInfo.setSuccessCount(successCount);
+			fileInfo.setFailedCount(failedCount);
+			fileInfo.setRemarks(updateRemarks());
 
-			headerId = cibilService.logFileInfo(cibilFile.getName(), CBIL_REPORT_MEMBER_ID,
-					CBIL_REPORT_MEMBER_SHORT_NAME, CBIL_REPORT_MEMBER_PASSWORD, CBIL_REPORT_PATH);
+			cibilService.logFileInfo(fileInfo);
+
+			headerId = fileInfo.getId();
 
 			/* Clear CIBIL_CUSTOMER_EXTRACT table */
 			cibilService.deleteDetails();
 
 			/* Prepare the data and store in CIBIL_CUSTOMER_EXTRACT table */
-			totalRecords = cibilService.extractCustomers();
+			totalRecords = cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_INDIV);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
 
 			new HeaderSegment(writer).write();
@@ -92,9 +100,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
 					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
-
+					
 					try {
-						CustomerDetails customer = cibilService.getCustomerDetails(finreference, customerId);
+						CustomerDetails customer = cibilService.getCustomerDetails(customerId, finreference,
+								PennantConstants.PFF_CUSTCTG_INDIV);
 
 						if (customer == null) {
 							failedCount++;
@@ -120,6 +129,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 						EXTRACT_STATUS.setSuccessRecords(successCount++);
 					} catch (Exception e) {
+						e.printStackTrace();
 						EXTRACT_STATUS.setFailedRecords(failedCount++);
 						cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
 						logger.error(Literal.EXCEPTION, e);
@@ -166,8 +176,15 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		String remarks = updateRemarks();
-		cibilService.updateFileStatus(headerId, EXTRACT_STATUS.getStatus(), totalRecords, processedRecords,
-				successCount, failedCount, remarks);
+		fileInfo.setRemarks(remarks);
+		fileInfo.setRemarks(remarks);
+		fileInfo.setStatus(EXTRACT_STATUS.getStatus());
+		fileInfo.setTotalRecords(totalRecords);
+		fileInfo.setProcessedRecords(processedRecords);
+		fileInfo.setFailedCount(failedCount);
+		fileInfo.setSuccessCount(successCount);
+		fileInfo.setRemarks(remarks);
+		cibilService.updateFileStatus(fileInfo);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -175,8 +192,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	private File createFile() throws Exception {
 		logger.debug("Creating the file");
 		File reportName = null;
-		String reportLocation = CBIL_REPORT_PATH;
-		String memberId = CBIL_REPORT_MEMBER_ID;
+		String reportLocation = memberDetails.getFilePath();
+		String memberId = memberDetails.getMemberId();
 
 		File directory = new File(reportLocation);
 
@@ -204,7 +221,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	 * <li>It is a Required segment.</li>
 	 * <li>It is of a fixed size of 146 bytes.</li>
 	 * <li>It occurs only once per update file.</li>
-	 * <li>All the fields must be provided; otherwise, the entire data input file is rejected.</li>
+	 * <li>All the fields must be provided; otherwise, the entire data input
+	 * file is rejected.</li>
 	 *
 	 */
 	public class HeaderSegment {
@@ -219,11 +237,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			writeValue(builder, "TUDF");
 			writeValue(builder, "12");
-			writeValue(builder, rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
-			writeValue(builder, rightPad(CBIL_REPORT_MEMBER_SHORT_NAME, 16, ""));
+			writeValue(builder, rightPad(memberDetails.getMemberId(), 30, ""));
+			writeValue(builder, rightPad(memberDetails.getMemberShortName(), 16, ""));
 			writeValue(builder, rightPad("", 2, ""));
 			writeValue(builder, DateUtility.getAppDate(DATE_FORMAT));
-			writeValue(builder, rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
+			writeValue(builder, rightPad(memberDetails.getMemberPassword(), 30, ""));
 			writeValue(builder, "L");
 			writeValue(builder, rightPad("0", 5, "0"));
 			writeValue(builder, rightPad("", 48, ""));
@@ -239,7 +257,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PN Segment describes personal consumer information, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 174 bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 174
+	 * bytes.</li>
 	 * <li>It occurs only once per record.</li>
 	 * <li>Tag 06 is reserved for future use.</li>
 	 */
@@ -306,13 +325,15 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	/**
 	 * The PT Segment contains the known phone numbers of the consumer, and:
-	 * <li>This is a Required segment if at least one valid ID segment (with ID Type of 01, 02, 03, 04, or 06) is not
-	 * present.</li>
-	 * <li>It is variable in length and can be of a maximum size of 28 bytes.</li>
+	 * <li>This is a Required segment if at least one valid ID segment (with ID
+	 * Type of 01, 02, 03, 04, or 06) is not present.</li>
+	 * <li>It is variable in length and can be of a maximum size of 28
+	 * bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
-	 * <li>For accounts opened on/after June 1, 2007, at least one valid Telephone (PT) segment or at least one valid
-	 * Identification (ID) segment (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the record is
-	 * rejected.</li>
+	 * <li>For accounts opened on/after June 1, 2007, at least one valid
+	 * Telephone (PT) segment or at least one valid Identification (ID) segment
+	 * (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the
+	 * record is rejected.</li>
 	 *
 	 */
 	public class TelephoneSegment {
@@ -350,7 +371,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The EC Segment contains the email address of the consumer, and:
 	 * <li>This is a When Available segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 81 bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 81
+	 * bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
 	 */
 	public class EmailContactSegment {
@@ -384,10 +406,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PA Segment contains the known address of the consumer, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 259 bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 259
+	 * bytes.</li>
 	 * <li>This can occur maximum of 5 times per record.</li>
 	 * <li>Any extra PA Segments after the 5th one will be rejected.</li>
-	 * <li>At least one valid PA Segment is required. All invalid PA Segments will be rejected.</li>
+	 * <li>At least one valid PA Segment is required. All invalid PA Segments
+	 * will be rejected.</li>
 	 * <li>It can be provided as free format in Address Line Fields 1-5.</li>
 	 *
 	 */
@@ -414,14 +438,22 @@ public class RetailCibilReport extends BasicDao<Object> {
 				writeValue(builder, "PA", "A".concat(StringUtils.leftPad(String.valueOf(i), 2, "0")), "03");
 				writeCustomerAddress(builder, address);
 
-				writeValue(builder, "06", address.getCustAddrProvince(), "02");
+				String province = StringUtils.trimToNull(address.getCustAddrProvince());
+				if (province == null) {
+					province = "99";
+				}
+
+				writeValue(builder, province, province, "02");
+
 				writeValue(builder, "07", address.getCustAddrZIP(), 10, "PA");
 
-				if (address.getCustAddrType() != null) {
-					writeValue(builder, "08", address.getCustAddrType(), "02");
-				} else {
-					writeValue(builder, "08", "04", "02");
+				String addrType = StringUtils.trimToNull(address.getCustAddrType());
+
+				if (addrType == null) {
+					addrType = "04";
 				}
+
+				writeValue(builder, "08", addrType, "02");
 			}
 		}
 	}
@@ -437,10 +469,16 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		public void write() throws Exception {
 			writeValue(builder, "TL", "T001", "04");
-			writeValue(builder, "01", StringUtils.rightPad(CBIL_REPORT_MEMBER_CODE, 10, ""), "10");
-			writeValue(builder, "02", CBIL_REPORT_MEMBER_SHORT_NAME, 16, "TL");
+			writeValue(builder, "01", StringUtils.rightPad(memberDetails.getMemberCode(), 10, ""), "10");
+			writeValue(builder, "02", memberDetails.getMemberShortName(), 16, "TL");
 			writeValue(builder, "03", StringUtils.trimToEmpty(loan.getFinReference()), 25, "TL");
-			writeValue(builder, "04", StringUtils.trimToEmpty(loan.getFinType()), "02");
+
+			String finType = StringUtils.trimToNull(loan.getFinType());
+			if (finType == null) {
+				finType = "00";
+			}
+
+			writeValue(builder, "04", finType, "02");
 			writeValue(builder, "05", StringUtils.trimToEmpty(String.valueOf(loan.getOwnership())), "01");
 			writeValue(builder, "08", DateUtil.format(loan.getFinApprovedDate(), DATE_FORMAT), "08");
 
@@ -466,11 +504,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 				currentBalance = BigDecimal.ZERO;
 			}
 
-			//### PSD --127340 20-06-2018 FOr cancelled loans current balnce and overdue amount should be 0
+			// ### PSD --127340 20-06-2018 FOr cancelled loans current balnce
+			// and overdue amount should be 0
 			if (StringUtils.equals("C", closingstatus)) {
 				currentBalance = BigDecimal.ZERO;
 			}
-			//### PSD --127340 20-06-2018
+			// ### PSD --127340 20-06-2018
 
 			if (currentBalance.compareTo(BigDecimal.ZERO) == 0 && loan.getLatestRpyDate() != null) {
 				writeValue(builder, "10", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
@@ -495,11 +534,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 				amountOverdue = BigDecimal.ZERO;
 			}
 
-			//### PSD --127340 20-06-2018 FOr cancelled loans current balnce and overdue amount should be 0
+			// ### PSD --127340 20-06-2018 FOr cancelled loans current balnce
+			// and overdue amount should be 0
 			if (StringUtils.equals("C", closingstatus)) {
 				amountOverdue = BigDecimal.ZERO;
 			}
-			//### PSD --127340 20-06-2018
+			// ### PSD --127340 20-06-2018
 
 			writeValue(builder, "14", amountOverdue, 9, "TL");
 
@@ -563,7 +603,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 				writeValue(builder, "04", loan.getFinAssetValue(), 9, "TH");
 				writeValue(builder, "07", loan.getCurrentBalance(), 9, "TH");
 				writeValue(builder, "08", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
-				// writeValue(writer, "09", loan.getPaymentAmount(), 0);
 			}
 		}
 	}
@@ -674,12 +713,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	}
 
 	private void initlize() {
-		this.CBIL_REPORT_PATH = SysParamUtil.getValueAsString("CBIL_REPORT_PATH");
-		this.CBIL_REPORT_MEMBER_ID = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_ID");
-		this.CBIL_REPORT_MEMBER_CODE = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_CODE");
-		this.CBIL_REPORT_MEMBER_SHORT_NAME = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_SHORT_NAME");
-		this.CBIL_REPORT_MEMBER_PASSWORD = SysParamUtil.getValueAsString("CBIL_REPORT_MEMBER_PASSWORD");
-
+		memberDetails = cibilService.getMemberDetails(PennantConstants.PFF_CUSTCTG_INDIV);
 		totalRecords = 0;
 		processedRecords = 0;
 		successCount = 0;

@@ -102,6 +102,10 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private String city;
 	private String bankName;
 
+	private Date chequeBounceDate;
+	private String chequeNumber;
+	private String chequeBounceReason;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -127,6 +131,9 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("bankBranchIDName");
 		excludeFields.add("docImage");
 		excludeFields.add("isUpload");
+		excludeFields.add("chequeBounceDate");
+		excludeFields.add("chequeNumber");
+		excludeFields.add("chequeBounceReason");
 		return excludeFields;
 	}
 
@@ -381,4 +388,29 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	public void setUpload(boolean isUpload) {
 		this.isUpload = isUpload;
 	}
+
+	public Date getChequeBounceDate() {
+		return chequeBounceDate;
+	}
+
+	public void setChequeBounceDate(Date chequeBounceDate) {
+		this.chequeBounceDate = chequeBounceDate;
+	}
+
+	public String getChequeNumber() {
+		return chequeNumber;
+	}
+
+	public void setChequeNumber(String chequeNumber) {
+		this.chequeNumber = chequeNumber;
+	}
+
+	public String getChequeBounceReason() {
+		return chequeBounceReason;
+	}
+
+	public void setChequeBounceReason(String chequeBounceReason) {
+		this.chequeBounceReason = chequeBounceReason;
+	}
+
 }

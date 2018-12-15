@@ -13,6 +13,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.MasterDefUtil;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.ApplicationStartup;
@@ -20,7 +22,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/ReloadResources/ReloadResource.zul<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/ReloadResources/ReloadResource.zul<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
@@ -53,6 +56,22 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 		Listcell cell = null;
 		Label label = null;
 
+		/* Master Definitions */
+		item = new Listitem();
+		cell = new Listcell();
+		label = new Label("Master Definitions");
+		label.setParent(cell);
+		cell.setParent(item);
+
+		cell = new Listcell();
+		Button button = new Button();
+		button.setLabel("Reload");
+		button.addForward("onClick", self, "onClick_button_masterDef");
+		button.setParent(cell);
+		cell.setParent(item);
+		listBoxReloadConfig.appendChild(item);
+
+		/* Custom labels */
 		item = new Listitem();
 		cell = new Listcell();
 		label = new Label("Custom labels");
@@ -60,13 +79,14 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 		cell.setParent(item);
 
 		cell = new Listcell();
-		Button button = new Button();
+		button = new Button();
 		button.setLabel("Reload");
 		button.addForward("onClick", self, "onClick_button_labels");
 		button.setParent(cell);
 		cell.setParent(item);
 		listBoxReloadConfig.appendChild(item);
 
+		/* Custom regular expressions */
 		item = new Listitem();
 		cell = new Listcell();
 		label = new Label("Custom regular expressions");
@@ -74,14 +94,19 @@ public class ReloadResourceCtrl extends GFCBaseListCtrl<String> implements Seria
 		cell.setParent(item);
 
 		cell = new Listcell();
-		Button button1 = new Button();
-		button1.setLabel("Reload");
-		button1.addForward("onClick", self, "onClick_button_regex");
-		button1.setParent(cell);
+		button = new Button();
+		button.setLabel("Reload");
+		button.addForward("onClick", self, "onClick_button_regex");
+		button.setParent(cell);
 		cell.setParent(item);
 		listBoxReloadConfig.appendChild(item);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick_button_masterDef(Event event) throws Exception {
+		MasterDefUtil.loadMasterDef();
+		MessageUtil.showMessage("Master Definitions reloaded successfully.");
 	}
 
 	public void onClick_button_labels(Event event) throws Exception {

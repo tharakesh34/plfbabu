@@ -501,12 +501,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		StringBuilder sql = new StringBuilder();
 		paramMap = new MapSqlParameterSource();
 
-		sql.append("SELECT CODE, FINTYPE FROM CIBIL_ACCOUNT_TYPES_MAPPING");
+		sql.append("SELECT CODE, FIN_TYPE FROM CIBIL_ACCOUNT_TYPES_MAPPING");
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
-				parameters.put(rs.getString("FINTYPE"), rs.getString("CODE"));
+				parameters.put(rs.getString("FIN_TYPE"), rs.getString("CODE"));
 			}
 		});
 	}

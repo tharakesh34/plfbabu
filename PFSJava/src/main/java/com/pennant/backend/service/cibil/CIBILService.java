@@ -3,22 +3,28 @@ package com.pennant.backend.service.cibil;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pff.model.cibil.CibilFileInfo;
+import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public interface CIBILService {
-	CustomerDetails getCustomerDetails(String finreference, long customerId);
-
-	long logFileInfo(String fileName, String memberId, String memberName, String memberPwd, String reportPath);
+	CustomerDetails getCustomerDetails(long customerId, String finReference, String bureauType);
 
 	void deleteDetails();
-
-	long extractCustomers() throws Exception;
-
-	void updateFileStatus(long headerid, String status, long totalRecords, long processedRecords, long successCount,
-			long failedCount, String remarks);
 
 	void logFileInfoException(long id, String finReference, String reason);
 
 	DataEngineStatus getLatestExecution();
 
 	EventProperties getEventProperties(String configName, String eventType);
+
+	void logFileInfo(CibilFileInfo fileInfo);
+
+	long extractCustomers(String bureauType) throws Exception;
+
+	void updateFileStatus(CibilFileInfo fileInfo);
+
+	public CibilMemberDetail getMemberDetails(String bureauType);
+
+	long getotalRecords(String pffCustctgCorp);
+
 }

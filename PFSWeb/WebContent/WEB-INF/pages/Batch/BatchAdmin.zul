@@ -170,7 +170,9 @@
 
 											<exePannel id="alm" border="normal" title="${c:l('label_alm')}" imgSrc="/images/icons/send.gif"
 												visible="true" />
-											<exePannel id="cibil" border="normal" title="${c:l('label_cibil')}" imgSrc="/images/icons/send.gif"
+											<exePannel id="retailCibil" border="normal" title="Retail CIBIL" imgSrc="/images/icons/send.gif"
+												visible="true" />
+											<exePannel id="corporateCibil" border="normal" title="Corporate CIBIL" imgSrc="/images/icons/send.gif"
 												visible="true" />
 											<exePannel id="gstTaxDownload" border="normal" title="${c:l('label_gstTaxDownload')}" imgSrc="/images/icons/send.gif"
 												visible="true" />

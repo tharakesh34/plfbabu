@@ -22,6 +22,7 @@ public class FileDownlaod {
 	private long userId;
 	private Date startDate;
 	private Date endDate;
+	private String segmentType;
 
 	public String getName() {
 		return name;
@@ -143,10 +144,10 @@ public class FileDownlaod {
 		this.entityCode = entityCode;
 	}
 
-    public long getUserId() {
+	public long getUserId() {
 		return userId;
 	}
-	
+
 	public void setUserId(long userId) {
 		this.userId = userId;
 	}
@@ -165,6 +166,14 @@ public class FileDownlaod {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getSegmentType() {
+		return segmentType;
+	}
+
+	public void setSegmentType(String segmentType) {
+		this.segmentType = segmentType;
 	}
 
 }

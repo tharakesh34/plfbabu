@@ -99,7 +99,8 @@
 		<!-- <step id="sapGL"> <tasklet ref="sapGLTaskLet" /> <next on="*" to="alm" /> <fail on="FAILED" /> </step> <step id="alm"> 
 			<tasklet ref="almTaskLet" /> <next on="*" to="cibil" /> <fail on="FAILED" /> </step> -->
 
-		<!-- <step id="cibil"> <tasklet ref="cibilTaskLet" /> <next on="*" to="gstTaxDownload" /> <fail on="FAILED" /> </step> -->
+		<!-- <step id="retailcibil"> <tasklet ref="retailcibilTaskLet" /> <next on="*" to="corporatecibilTaskLet" /> <fail on="FAILED" /> </step>-->
+		<!-- <step id="corporatecibil"> <tasklet ref="corporatecibilTaskLet" /> <next on="*" to="gstTaxDownload" /> <fail on="FAILED" /> </step>-->
 		<!-- <step id="gstTaxDownload"> <tasklet ref="gstTaxDownloadTaskLet" /> <next on="*" to="dmLoanDetailsMonthly" /> <fail 
 			on="FAILED" /> </step> <step id="dmLoanDetailsMonthly"> <tasklet ref="DM_LOAN_DETAILS_MONTHLY"/> <next on="*" to="dmLoanBalancesMonthly" 
 			/> <fail on="FAILED" /> </step> -->

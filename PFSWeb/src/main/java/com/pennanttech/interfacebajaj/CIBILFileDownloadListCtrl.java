@@ -50,6 +50,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -66,27 +69,31 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Property;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.cibil.CorporateCibilReport;
 import com.pennanttech.pff.external.cibil.RetailCibilReport;
 import com.pennanttech.service.AmazonS3Bucket;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul
+ * This is the controller class for the
+ * /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul
  * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */
 public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CIBILFileDownloadListCtrl.class);
 
@@ -96,6 +103,8 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	protected Listbox listBoxFileDownload;
 	protected Button btnRefresh;
 	protected Button btnexecute;
+	protected Listbox sortOperatorFileType;
+	protected Combobox fileType;
 
 	private Button downlaod;
 
@@ -103,8 +112,14 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	protected DataEngineConfig dataEngineConfig;
 
 	protected AmazonS3Bucket bucket;
+
 	@Autowired
 	private RetailCibilReport retailCibilReport;
+
+	@Autowired
+	private CorporateCibilReport corporateCibilReport;
+
+	List<Property> properties = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -119,14 +134,18 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		super.pageRightName = "FileDownload";
 		super.tableName = "CIBIL_FILE_INFO_VIEW";
 		super.queueTableName = "CIBIL_FILE_INFO_VIEW";
+
+		properties.add(new Property(PennantConstants.PFF_CUSTCTG_INDIV, PennantConstants.PFF_CUSTCTG_INDIV));
+		properties.add(new Property(PennantConstants.PFF_CUSTCTG_CORP, PennantConstants.PFF_CUSTCTG_CORP));
 	}
 
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
 
-		Filter[] filter = new Filter[1];
+		Filter[] filter = new Filter[2];
 		filter[0] = new Filter("STATUS", "C");
+		filter[1] = new Filter("segment_type", fileType.getSelectedItem().getValue());
 		this.searchObject.addFilters(filter);
 
 	}
@@ -137,9 +156,13 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		// Set the page level components.
 		setPageComponents(window_CIBILFileDownloadList, borderLayout_CIBILFileDownloadList, listBoxFileDownload,
 				pagingFileDownloadList);
+
+		fillList(fileType, properties, PennantConstants.PFF_CUSTCTG_INDIV);
+
 		setItemRender(new FileDownloadListModelItemRenderer());
 
 		registerField("ID", SortOrder.DESC);
+		registerField("segment_type", fileType, null, sortOperatorFileType, Operators.STRING);
 		registerField("File_Name");
 		registerField("CreatedOn EndTime");
 		registerField("Status");
@@ -164,10 +187,19 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		retailCibilReport.generateReport();
-		refresh();
+		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(fileType.getSelectedItem().getValue())) {
+			retailCibilReport.generateReport();
+		} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(fileType.getSelectedItem().getValue())) {
+			corporateCibilReport.generateReport();
+		}
+		
+		search();
 	}
-
+	
+	public void onChange$fileType(Event event) throws Exception {	
+		search();
+	}
+	
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -249,6 +281,8 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		@Override
 		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
 			Listcell lc;
+			lc = new Listcell(fileDownlaod.getSegmentType());
+			lc.setParent(item);
 
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);

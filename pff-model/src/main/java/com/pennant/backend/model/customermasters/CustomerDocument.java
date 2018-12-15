@@ -114,8 +114,8 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	@XmlElement(name = "docPassword")
 	private String pdfPassWord;
 	private String year;
-
 	private String sourceId;
+	private String docType;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -152,6 +152,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("pdfMappingRef");
 		excludeFields.add("custCtgCode");
 		excludeFields.add("year");
+		excludeFields.add("docType");
 		return excludeFields;
 	}
 

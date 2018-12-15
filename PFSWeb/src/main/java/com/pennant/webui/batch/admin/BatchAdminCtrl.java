@@ -103,7 +103,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 	protected ProcessExecution dataMart;
 	protected ProcessExecution trailBalance;
 	protected ProcessExecution sapGL;
-	protected ProcessExecution cibil;
+	protected ProcessExecution retailCibil;
+	protected ProcessExecution corporateCibil;
 	protected ProcessExecution gstTaxDownload;
 	protected ProcessExecution limitsUpdate;
 	protected ProcessExecution limitCustomerGroupsUpdate;
@@ -140,7 +141,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		dataMart,
 		trailBalance,
 		sapGL,
-		cibil,
+		retailCibil,
+		corporateCibil,
 		gstTaxDownload,
 		limitsUpdate,
 		limitCustomerGroupsUpdate,
@@ -578,8 +580,11 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case sapGL:
 				renderDetials(this.sapGL, status);
 				break;
-			case cibil:
-				renderDetials(this.cibil, status);
+			case retailCibil:
+				renderDetials(this.retailCibil, status);
+				break;
+			case corporateCibil:
+				renderDetials(this.corporateCibil, status);
 				break;
 			case gstTaxDownload:
 				renderDetials(this.gstTaxDownload, status);
@@ -659,7 +664,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		clearChilds(dataMart);
 		clearChilds(trailBalance);
 		clearChilds(sapGL);
-		clearChilds(cibil);
+		clearChilds(retailCibil);
 		clearChilds(gstTaxDownload);
 		clearChilds(limitsUpdate);
 		clearChilds(limitCustomerGroupsUpdate);

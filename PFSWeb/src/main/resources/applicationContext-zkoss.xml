@@ -3720,6 +3720,7 @@
 		scope="prototype" />
 
 	<bean id="retailCibilReport" class="com.pennanttech.pff.external.cibil.RetailCibilReport" parent="basicDao" />
+	<bean id="corporateCibilReport" class="com.pennanttech.pff.external.cibil.CorporateCibilReport" parent="basicDao" />
 
 	<!-- MandateStatusUpload -->
 	<bean id="mandateFileUploadListCtrl" class="com.pennant.webui.mandate.mandate.MandateFileUploadListCtrl" parent="basisListCtrl"

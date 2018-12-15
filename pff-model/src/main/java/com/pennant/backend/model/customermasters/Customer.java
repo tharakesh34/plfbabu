@@ -339,7 +339,10 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String applicationNo;
 	private String branchProvince;
-
+	
+	private String legalconstitution;
+	private String businesscategory;
+		
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -381,6 +384,8 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("aadhaarNo");
 		excludeFields.add("customerAge");
 		excludeFields.add("includeIncome");
+		excludeFields.add("legalconstitution");
+		excludeFields.add("businesscategory");
 		return excludeFields;
 	}
 
@@ -1953,4 +1958,27 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		this.branchProvince = branchProvince;
 	}
 
+	public String getLegalconstitution() {
+		return legalconstitution;
+	}
+
+	public void setLegalconstitution(String legalconstitution) {
+		this.legalconstitution = legalconstitution;
+	}
+
+	public String getBusinesscategory() {
+		return businesscategory;
+	}
+
+	public void setBusinesscategory(String businesscategory) {
+		this.businesscategory = businesscategory;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 }
