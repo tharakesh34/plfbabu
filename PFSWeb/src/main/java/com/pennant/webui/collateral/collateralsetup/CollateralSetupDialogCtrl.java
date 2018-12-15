@@ -775,10 +775,12 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 			//CheckList Details Tab Addition
 			appendCheckListDetailTab(aCollateralSetup);
+		}
 
-			// Document Detail Tab Addition
-			appendDocumentDetailTab();
+		// Document Detail Tab Addition
+		appendDocumentDetailTab();
 
+		if (!enqiryModule) {
 			//Recommend & Comments Details Tab Addition
 			appendRecommendDetailTab(true);
 		}
