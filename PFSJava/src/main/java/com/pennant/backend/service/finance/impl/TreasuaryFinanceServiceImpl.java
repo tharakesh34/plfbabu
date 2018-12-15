@@ -257,13 +257,12 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 	private List<AuditDetail> saveOrUpdateDetails(List<FinanceDetail> financeDetails, String tableType,
 			String tranType) {
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		long reference = Long.MIN_VALUE;
 		long serviceUID = Long.MIN_VALUE;
 
 		List<AuditDetail> auditDetail;
 		for (FinanceDetail finDetail : financeDetails) {
 			List<AuditDetail> details = finDetail.getAuditDetailMap().get("DocumentDetails");
-			if (finDetail.getFinScheduleData().getFinServiceInstructions() == null){
+			if (finDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 				FinServiceInstruction finServInst= new FinServiceInstruction();
 				finServInst.setFinReference(finDetail.getFinScheduleData().getFinanceMain().getFinReference());		
 				finServInst.setFinEvent(finDetail.getModuleDefiner());
@@ -272,12 +271,13 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 
 			for (FinServiceInstruction finSerList : finDetail.getFinScheduleData().getFinServiceInstructions()) {
 				if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-					if (reference == Long.MIN_VALUE){
-						reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+					if (serviceUID == Long.MIN_VALUE) {
+						serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 					}
-					finSerList.setInstructionUID(reference);
+					finSerList.setInstructionUID(serviceUID);
+				} else {
+					serviceUID = finSerList.getInstructionUID();
 				}
-				serviceUID = finSerList.getInstructionUID();
 			}
 
 			if (details != null && !details.isEmpty()) {
@@ -288,7 +288,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			}
 			// set Finance Check List audit details to auditDetails
 			if (finDetail.getFinanceCheckList() != null && !finDetail.getFinanceCheckList().isEmpty()) {
-				auditDetail = getCheckListDetailService().saveOrUpdate(finDetail, tableType);
+				auditDetail = getCheckListDetailService().saveOrUpdate(finDetail, tableType, 0);
 				auditDetails.addAll(auditDetail);
 			}
 
@@ -316,7 +316,7 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 		}
 		// set Finance Check List audit details to auditDetails
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetail = getCheckListDetailService().doApprove(financeDetail, tableType);
+			auditDetail = getCheckListDetailService().doApprove(financeDetail, tableType, serviceUID);
 			getCheckListDetailService().delete(financeDetail, "_Temp", tranType);
 			auditDetails.addAll(auditDetail);
 		}
@@ -1477,14 +1477,14 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 				long logKey = getFinLogEntryDetailDAO().save(entryDetail);
 
 				//Save Schedule Details For Future Modifications
-				listSave(oldFinSchdData, "_Log", isWIF, logKey);
+				listSave(oldFinSchdData, "_Log", isWIF, logKey, 0);
 			}
 
 			listDeletion(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), tableType, isWIF);
-			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
+			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0, 0);
 			saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF, tableType);
 		} else {
-			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0);
+			listSave(financeDetail.getFinScheduleData(), tableType, isWIF, 0, 0);
 			saveFeeChargeList(financeDetail.getFinScheduleData(), financeDetail.getModuleDefiner(), isWIF, tableType);
 		}
 

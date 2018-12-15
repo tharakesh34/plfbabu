@@ -227,11 +227,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		long reference = Long.MIN_VALUE;
 		long serviceUID = Long.MIN_VALUE;
 		String finReference = financeMain.getFinReference();
 		
-		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null){
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst= new FinServiceInstruction();
 			finServInst.setFinReference(finReference);		
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
@@ -239,15 +238,16 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 		 
-			for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-				if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-					if (reference == Long.MIN_VALUE){
-						reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
-					}
-					finSerList.setInstructionUID(reference);
+		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
+				finSerList.setInstructionUID(serviceUID);
+			} else {
 				serviceUID = finSerList.getInstructionUID();
 			}
+		}
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
@@ -304,7 +304,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix()));
+			auditDetails
+					.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix(), serviceUID));
 		}
 
 		// Save Document Details
@@ -521,7 +522,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// set Check list details Audit
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, ""));
+			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, "", serviceUID));
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());

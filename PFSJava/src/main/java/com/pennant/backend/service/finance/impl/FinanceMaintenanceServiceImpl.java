@@ -327,25 +327,25 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		long reference = Long.MIN_VALUE;
 		long serviceUID = Long.MIN_VALUE;		
-		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null){
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst= new FinServiceInstruction();
 			finServInst.setFinReference(financeMain.getFinReference());		
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
-
 			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
 			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-				if (reference == Long.MIN_VALUE){
-					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
-				finSerList.setInstructionUID(reference);
+				finSerList.setInstructionUID(serviceUID);
+			} else {
+				serviceUID = finSerList.getInstructionUID();
 			}
-			serviceUID = finSerList.getInstructionUID();
 		}
+
 		//Finance Stage Accounting Process
 		//=======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -428,7 +428,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix()));
+			auditDetails
+					.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType.getSuffix(), serviceUID));
 		}
 
 		// set Guarantor Details Audit
@@ -494,7 +495,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					financeDetail.getExtendedFieldHeader(), tableType.getSuffix());
+					financeDetail.getExtendedFieldHeader(), tableType.getSuffix(), serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -961,7 +962,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// set Check list details Audit
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, ""));
+			auditDetails.addAll(getCheckListDetailService().doApprove(financeDetail, "", serviceUID));
 		}
 
 		// Guarantor Details
@@ -1011,7 +1012,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					financeDetail.getExtendedFieldHeader(), "");
+					financeDetail.getExtendedFieldHeader(), "", serviceUID);
 			auditDetails.addAll(details);
 		}
 

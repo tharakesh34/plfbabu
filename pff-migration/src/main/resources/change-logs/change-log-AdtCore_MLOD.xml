@@ -36,4 +36,9 @@
 		<column name="InstructionUID" type="bigint"/>	
 	</addColumn>
 	</changeSet>
+	<changeSet id="04" author="Irfan">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="InstructionUID" type="bigint"/>
+		</addColumn>
+	</changeSet>
 	</databaseChangeLog>

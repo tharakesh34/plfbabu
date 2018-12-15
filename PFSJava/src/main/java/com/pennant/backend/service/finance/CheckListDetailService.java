@@ -20,9 +20,9 @@ public interface CheckListDetailService {
 
 	List<FinanceCheckListReference> getCheckListByFinRef(final String id, String tableType);
 
-	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType);
+	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType, long instructionUID);
 
-	List<AuditDetail> doApprove(FinanceDetail financeDetail, String recordType);
+	List<AuditDetail> doApprove(FinanceDetail financeDetail, String recordType, long instructionUID);
 
 	List<AuditDetail> delete(FinanceDetail finDetail, String tableType, String auditTranType);
 

@@ -49,6 +49,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal totFeeAmount = BigDecimal.ZERO;
 	private Date bounceDate;
 	private String rcdMaintainSts;
+	private long instructionUID = Long.MIN_VALUE;
 
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
 	private BigDecimal lppAmount = BigDecimal.ZERO;
@@ -565,6 +566,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setExtReference(String extReference) {
 		this.extReference = extReference;
+	}
+
+	public long getInstructionUID() {
+		return instructionUID;
+	}
+
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
 	}
 
 }

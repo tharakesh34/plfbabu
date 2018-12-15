@@ -340,7 +340,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		if (vASRecording.getExtendedFieldRender() != null && vASRecording.getVasConfiguration().getExtendedFieldHeader() != null) {
 			List<AuditDetail> details = vASRecording.getAuditDetailMap().get("ExtendedFieldDetail");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					vASRecording.getVasConfiguration().getExtendedFieldHeader(), tableType);
+					vASRecording.getVasConfiguration().getExtendedFieldHeader(), tableType, 0);
 
 			auditDetails.addAll(details);
 		}
@@ -748,7 +748,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			if (vASRecording.getExtendedFieldRender() != null && vASRecording.getVasConfiguration().getExtendedFieldHeader() != null) {
 				List<AuditDetail> details = vASRecording.getAuditDetailMap().get("ExtendedFieldDetail");
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						vASRecording.getVasConfiguration().getExtendedFieldHeader(), "");
+						vASRecording.getVasConfiguration().getExtendedFieldHeader(), "", 0);
 
 				auditDetails.addAll(details);
 			}

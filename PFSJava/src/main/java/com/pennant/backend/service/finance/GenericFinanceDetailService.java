@@ -2321,7 +2321,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	/**
 	 * Method to save what if inquiry lists
 	 */
-	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF, long logKey) {
+	public void listSave(FinScheduleData finDetail, String tableType, boolean isWIF, long logKey, long instructionUID) {
 		logger.debug("Entering ");
 		HashMap<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
@@ -2352,13 +2352,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
 			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
 			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
-			//Set FinService Instruction Unique ID.
-			for (FinServiceInstruction finServInst : finDetail.getFinServiceInstructions()) {
-				if (finDetail.getDisbursementDetails().get(i).getInstructionUID() == Long.MIN_VALUE
-						|| finDetail.getDisbursementDetails().get(i).getInstructionUID() == 0) {
-					finDetail.getDisbursementDetails().get(i).setInstructionUID(finServInst.getInstructionUID());
-				}
-			}
+			finDetail.getDisbursementDetails().get(i).setInstructionUID(instructionUID);
 		}
 		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, isWIF);
 

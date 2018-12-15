@@ -977,7 +977,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (customerDetails.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					customerDetails.getExtendedFieldHeader(), tableType);
+					customerDetails.getExtendedFieldHeader(), tableType, 0);
 			auditDetails.addAll(details);
 		}
 
@@ -2850,7 +2850,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						customerDetails.getExtendedFieldHeader(), "");
+						customerDetails.getExtendedFieldHeader(), "", 0);
 				auditDetails.addAll(details);
 			}
 			auditDetails.addAll(saveOrUpdateDedupDetails(customerDetails));

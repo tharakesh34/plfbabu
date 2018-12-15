@@ -259,14 +259,14 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+
 		String tableType = "";
-		long reference = Long.MIN_VALUE;
 		long serviceUID = Long.MIN_VALUE;
 		FinanceSuspHead financeSuspHead = (FinanceSuspHead) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeSuspHead.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
 		Date curBDay = DateUtility.getAppDate();
-		if (financeSuspHead.getFinanceDetail().getFinScheduleData().getFinServiceInstructions() == null){
+		if (financeSuspHead.getFinanceDetail().getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst= new FinServiceInstruction();
 			finServInst.setFinReference(finReference);		
 			finServInst.setFinEvent(financeSuspHead.getFinanceDetail().getModuleDefiner());
@@ -276,12 +276,13 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		 
 		for (FinServiceInstruction finSerList : financeSuspHead.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
 			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-				if (reference == Long.MIN_VALUE){
-					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
-				finSerList.setInstructionUID(reference);
+				finSerList.setInstructionUID(serviceUID);
+			} else {
+				serviceUID = finSerList.getInstructionUID();
 			}
-			serviceUID = finSerList.getInstructionUID();
 		}
 
 		//Finance Stage Accounting Process
@@ -357,7 +358,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		if (financeSuspHead.getFinanceDetail().getFinanceCheckList() != null
 				&& !financeSuspHead.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 			auditDetails
-					.addAll(getCheckListDetailService().saveOrUpdate(financeSuspHead.getFinanceDetail(), tableType));
+					.addAll(getCheckListDetailService().saveOrUpdate(financeSuspHead.getFinanceDetail(), tableType,
+							serviceUID));
 		}
 
 		auditHeader.setAuditDetails(auditDetails);
@@ -484,7 +486,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		//=======================================
 		if (financeSuspHead.getFinanceDetail().getFinanceCheckList() != null
 				&& !financeSuspHead.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().doApprove(financeSuspHead.getFinanceDetail(), ""));
+			auditDetails
+					.addAll(getCheckListDetailService().doApprove(financeSuspHead.getFinanceDetail(), "", serviceUID));
 		}
 
 		//Finance Profit Details Updation

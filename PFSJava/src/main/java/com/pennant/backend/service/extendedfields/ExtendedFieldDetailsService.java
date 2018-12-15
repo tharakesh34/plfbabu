@@ -345,7 +345,7 @@ public class ExtendedFieldDetailsService {
 	 * @return
 	 */
 	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils,
-			ExtendedFieldHeader extFldHeader, String type) {
+			ExtendedFieldHeader extFldHeader, String type, long instructionUID) {
 		logger.debug(Literal.ENTERING);
 
 		String tableName = getTableName(extFldHeader.getModuleName(), extFldHeader.getSubModuleName(),
@@ -440,6 +440,10 @@ public class ExtendedFieldDetailsService {
 				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
 				mapValues.put("RecordType", extendedFieldRender.getRecordType());
 				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+				if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, extFldHeader.getModuleName())) {
+					extendedFieldRender.setInstructionUID(instructionUID);
+					mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+				}
 			}
 
 			if (saveRecord) {
@@ -698,7 +702,7 @@ public class ExtendedFieldDetailsService {
 					mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
 					mapValues.put("RecordType", extendedFieldRender.getRecordType());
 					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-					if(StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, event)){
+					if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
 						extendedFieldRender.setInstructionUID(instructionUID);
 						mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
 					}

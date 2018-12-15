@@ -4588,6 +4588,7 @@
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

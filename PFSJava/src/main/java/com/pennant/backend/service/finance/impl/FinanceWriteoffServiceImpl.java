@@ -257,25 +257,25 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		long reference = Long.MIN_VALUE;
 		long serviceUID = Long.MIN_VALUE;		
-		if (header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions() == null){
+		if (header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst= new FinServiceInstruction();
 			finServInst.setFinReference(financeMain.getFinReference());		
 			finServInst.setFinEvent(header.getFinanceDetail().getModuleDefiner());
-
 			header.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction finSerList : header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
 			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-				if (reference == Long.MIN_VALUE){
-					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
-				finSerList.setInstructionUID(reference);
+				finSerList.setInstructionUID(serviceUID);
+			} else {
+				serviceUID = finSerList.getInstructionUID();
 			}
-			serviceUID = finSerList.getInstructionUID();
 		}
+
 		//Finance Stage Accounting Process
 		//=======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -400,7 +400,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (header.getFinanceDetail().getFinanceCheckList() != null
 				&& !header.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 			auditDetails
-					.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(), tableType.getSuffix()));
+					.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(), tableType.getSuffix(),
+							serviceUID));
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -663,7 +664,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//=======================================
 		if (header.getFinanceDetail().getFinanceCheckList() != null
 				&& !header.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().doApprove(header.getFinanceDetail(), ""));
+			auditDetails.addAll(getCheckListDetailService().doApprove(header.getFinanceDetail(), "", serviceUID));
 		}
 
 		//Update Profit Details 

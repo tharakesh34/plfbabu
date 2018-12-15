@@ -407,7 +407,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("ExtendedFieldDetails");
 			if (details != null && details.size() > 0) {
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-						collateralSetup.getCollateralStructure().getExtendedFieldHeader(), tableType);
+						collateralSetup.getCollateralStructure().getExtendedFieldHeader(), tableType, 0);
 				auditDetails.addAll(details);
 			}
 		}
@@ -818,7 +818,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				List<AuditDetail> details = collateralSetup.getAuditDetailMap().get("ExtendedFieldDetails");
 				if (details != null && details.size() > 0) {
 					details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-							collateralSetup.getCollateralStructure().getExtendedFieldHeader(), "");
+							collateralSetup.getCollateralStructure().getExtendedFieldHeader(), "", 0);
 					auditDetails.addAll(details);
 				}
 			}

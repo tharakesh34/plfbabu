@@ -178,9 +178,9 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		}
 		FinanceDetail financeDetail = provision.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		long reference = Long.MIN_VALUE;
+
 		long serviceUID = Long.MIN_VALUE;		
-		if (financeDetail.getFinScheduleData().getFinServiceInstructions() == null){
+		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst= new FinServiceInstruction();
 			finServInst.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());		
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
@@ -189,12 +189,13 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
 			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-				if (reference == Long.MIN_VALUE){
-					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
-				finSerList.setInstructionUID(reference);
+				finSerList.setInstructionUID(serviceUID);
+			} else {
+				serviceUID = finSerList.getInstructionUID();
 			}
-			serviceUID = finSerList.getInstructionUID();
 		}
 
 		if (!provision.isWorkflow()) {
@@ -230,7 +231,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		// set Finance Check List audit details to auditDetails
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType));
+			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(financeDetail, tableType, serviceUID));
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -349,7 +350,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		// set Check list details Audit
 		//=======================================
 		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditHeader.getAuditDetails().addAll(getCheckListDetailService().doApprove(financeDetail, ""));
+			auditHeader.getAuditDetails().addAll(getCheckListDetailService().doApprove(financeDetail, "", serviceUID));
 		}
 
 		// Save Document Details

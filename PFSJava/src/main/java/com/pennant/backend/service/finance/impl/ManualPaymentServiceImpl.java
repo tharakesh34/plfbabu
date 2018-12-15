@@ -374,25 +374,24 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		Date curBDay = DateUtility.getAppDate();
 
 		String actualRepayAcc = financeMain.getRepayAccountId();
-		long reference = Long.MIN_VALUE;
 		long serviceUID = Long.MIN_VALUE;
 		
-		if (repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions() == null){
+		if (repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst= new FinServiceInstruction();
 			finServInst.setFinReference(finReference);		
 			finServInst.setFinEvent(repayData.getFinanceDetail().getModuleDefiner());
-
 			repayData.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction finSerList : repayData.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
 			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
-				if (reference == Long.MIN_VALUE){
-					reference=Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
-				finSerList.setInstructionUID(reference);
+				finSerList.setInstructionUID(serviceUID);
+			} else {
+				serviceUID = finSerList.getInstructionUID();
 			}
-			serviceUID = finSerList.getInstructionUID();
 		}
 		TableType tableType = TableType.MAIN_TAB;
 		if (financeMain.isWorkflow()) {
@@ -517,7 +516,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (repayData.getFinanceDetail().getFinanceCheckList() != null
 				&& !repayData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
 			auditDetails.addAll(
-					getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(), tableType.getSuffix()));
+					getCheckListDetailService().saveOrUpdate(repayData.getFinanceDetail(), tableType.getSuffix(),
+							serviceUID));
 		}
 
 		//Process Updations For Postings
@@ -823,7 +823,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			//=======================================
 			if (repayData.getFinanceDetail().getFinanceCheckList() != null
 					&& !repayData.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().doApprove(repayData.getFinanceDetail(), ""));
+				auditDetails
+						.addAll(getCheckListDetailService().doApprove(repayData.getFinanceDetail(), "", serviceUID));
 			}
 
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());

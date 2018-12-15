@@ -363,7 +363,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				syntax.append(" SeqNo			int NOT NULL, ");
 				if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
-					syntax.append("	InstructionUID		bigint NULL,");
+					syntax.append("	InstructionUID		bigint NOT NULL,");
 				}
 				syntax.append("	Version			int NOT NULL,");
 				syntax.append("	LastMntBy 		bigint NULL,");
@@ -382,7 +382,11 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 					if (i == 3) {
 						syntax.append(" PRIMARY KEY (VerificationId , Reference ,  SeqNo ))");
 					} else {
-						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+						if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
+							syntax.append(" PRIMARY KEY (InstructionUID, Reference ,  SeqNo ))");
+						} else {
+							syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+						}
 					}
 				}
 
@@ -404,7 +408,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				syntax.append(" Reference 		varchar2(20) NOT NULL, ");
 				syntax.append(" SeqNo 			number(10,0) NOT NULL, ");
 				if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
-					syntax.append("	InstructionUID		number(19,0) NULL,");
+					syntax.append("	InstructionUID		number(19,0) NOT NULL,");
 				}
 				syntax.append("	Version 		number(10,0) NOT NULL,");
 				syntax.append("	LastMntBy 		number(19,0) NULL,");
@@ -423,7 +427,11 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 					if (i == 3) {
 						syntax.append(" PRIMARY KEY (VerificationId , Reference ,  SeqNo ))");
 					} else {
-						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+						if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
+							syntax.append(" PRIMARY KEY (InstructionUID, Reference ,  SeqNo ))");
+						} else {
+							syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+						}
 					}
 				}
 			} else if (App.DATABASE == App.Database.POSTGRES) {
@@ -443,7 +451,7 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 				syntax.append(" Reference 		varchar(20) NOT NULL, ");
 				syntax.append(" SeqNo 			integer NOT NULL, ");
 				if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
-					syntax.append("	InstructionUID		bigint NULL,");
+					syntax.append("	InstructionUID		bigint NOT NULL,");
 				}
 				syntax.append("	Version 		integer NOT NULL,");
 				syntax.append("	LastMntBy 		bigint NULL,");
@@ -462,7 +470,11 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 					if (i == 3) {
 						syntax.append(" PRIMARY KEY (VerificationId , Reference ,  SeqNo ))");
 					} else {
-						syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+						if (StringUtils.equals(module, ExtendedFieldConstants.MODULE_LOAN)) {
+							syntax.append(" PRIMARY KEY (InstructionUID, Reference ,  SeqNo ))");
+						} else {
+							syntax.append(" PRIMARY KEY (Reference ,  SeqNo ))");
+						}
 					}
 				}
 			}
