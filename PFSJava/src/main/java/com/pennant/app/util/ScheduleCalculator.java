@@ -626,6 +626,11 @@ public class ScheduleCalculator {
 			finMain.setGrcProfitDaysBasis(finMain.getProfitDaysBasis());
 		}
 
+		if (!finMain.isAllowGrcPeriod()
+				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+			finMain.setBpiResetReq(false);
+		}
+
 		// BPI then add BPI record to the schedule
 		if (finMain.isAlwBPI()) {
 			finScheduleData = addBPISchd(finScheduleData);
@@ -670,6 +675,7 @@ public class ScheduleCalculator {
 		// Reset Schedule Event Start & End Dates
 		finMain.setEventFromDate(finMain.getFinStartDate());
 		finMain.setEventToDate(finMain.getMaturityDate());
+		finMain.setBpiResetReq(true);
 
 		// Insurance calculation
 		insuranceCalculation(finScheduleData);
@@ -1559,10 +1565,7 @@ public class ScheduleCalculator {
 			finScheduleData = setOrgRpyInstructions(finScheduleData, null, BigDecimal.ZERO);
 		}
 
-		if (!(finScheduleData.getFinanceType() != null
-				&& !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finScheduleData.getFinanceType().getFinGrcSchdMthd()))) {
-			finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, reqSchdMethod);
-		}
+		finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, reqSchdMethod);
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 
 		finMain.setScheduleMaintained(true);
@@ -2770,7 +2773,8 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finMain.getScheduleMethod())) {
+		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finMain.getScheduleMethod())
+				|| finMain.isManualSchedule()) {
 			logger.debug("Leaving");
 			return finScheduleData;
 		}
@@ -2965,7 +2969,9 @@ public class ScheduleCalculator {
 		BigDecimal bpiBalance = BigDecimal.ZERO;
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		Date firstRepayDate = null;
-		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
+		if (finMain.isBpiResetReq()
+				&& (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
+						|| StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP))
 				&& StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHD_FIRSTEMI)) {
 			for (int i = 1; i < sdSize; i++) {
 				curSchd = finSchdDetails.get(i);
@@ -2973,9 +2979,18 @@ public class ScheduleCalculator {
 					bpiBalance = curSchd.getProfitCalc();
 				}
 
-				if (curSchd.isRepayOnSchDate() && curSchd.isFrqDate()) {
-					firstRepayDate = curSchd.getSchDate();
-					break;
+				if (finMain.isAllowGrcPeriod()) {
+					if (StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
+						if (curSchd.isPftOnSchDate() && curSchd.isFrqDate()) {
+							firstRepayDate = curSchd.getSchDate();
+							break;
+						}
+					}
+				} else {
+					if (curSchd.isRepayOnSchDate() && curSchd.isFrqDate()) {
+						firstRepayDate = curSchd.getSchDate();
+						break;
+					}
 				}
 			}
 		}
@@ -3005,7 +3020,7 @@ public class ScheduleCalculator {
 
 				if (curSchd.isRepayOnSchDate()) {
 					if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-						if (firstRepayDate != null && DateUtility.compare(firstRepayDate, fromDate) == 0) {
+						if (firstRepayDate != null && DateUtility.compare(firstRepayDate, curSchdDate) == 0) {
 							curSchd.setRepayAmount(instructAmount.add(bpiBalance));
 							bpiBalance = BigDecimal.ZERO;
 						} else {
@@ -3021,7 +3036,12 @@ public class ScheduleCalculator {
 					}
 				} else if (curSchd.isPftOnSchDate()
 						&& StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
-					curSchd.setRepayAmount(instructAmount);
+					if (firstRepayDate != null && DateUtility.compare(firstRepayDate, curSchdDate) == 0) {
+						curSchd.setRepayAmount(instructAmount.add(bpiBalance));
+						bpiBalance = BigDecimal.ZERO;
+					} else {
+						curSchd.setRepayAmount(instructAmount);
+					}
 				}
 
 			} else if (DateUtility.compare(curSchd.getSchDate(), toDate) >= 0) {
@@ -3924,10 +3944,16 @@ public class ScheduleCalculator {
 						curSchd.setRepayAmount(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
 
 					} else {
-						if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
-								&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE)
-								&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)) {
-							curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+
+						if (finMain.isBpiResetReq()) {
+							if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
+									&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE)
+									&& !StringUtils.equals(finMain.getBpiTreatment(),
+											FinanceConstants.BPI_DISBURSMENT)) {
+								curSchd.setProfitSchd(curSchd.getSchdPftPaid());
+							} else {
+								curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
+							}
 						} else {
 							curSchd.setProfitSchd(calProfitToSchd(curSchd, prvSchd));
 						}
@@ -6369,7 +6395,7 @@ public class ScheduleCalculator {
 		}
 
 		finMain.setRecalSchdMethod(schdMethod);
-
+		logger.debug("Leaving");
 		return finScheduleData;
 
 	}
@@ -6411,7 +6437,7 @@ public class ScheduleCalculator {
 			}
 
 		}
-
+		logger.debug("Leaving");
 		return finScheduleData;
 
 	}
