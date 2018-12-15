@@ -1,6 +1,5 @@
 <?page id="ErrorPage" title="pennApps Product Suite"?>
 <?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
-<title>pennApps Product Suite</title>
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window id="window_ErrorDialog" width="450px" closable="false" mode="modal" use="org.zkoss.zul.impl.MessageboxDlg" apply="${errorCtrl}">
