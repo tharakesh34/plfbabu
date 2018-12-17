@@ -116,9 +116,12 @@ public class ImplementationConstants {
 	public static final boolean GROUP_BATCH_BY_BANK = true;
 	public static final boolean ALLOW_BARCODE = false;
 	public static final boolean CIBIL_BUTTON_REQ = false;
+
 	// Deposit Process
-	public static final boolean DEPOSIT_PROC_REQ = true;
+	public static final boolean DEPOSIT_PROC_REQ = false;
+
 	public static final boolean ENTITY_REQ_TRAIL_BAL = false;
+
 	// BPI on Deduct from disbursement is Incomized or Receivable
 	public static final boolean BPI_INCOMIZED_ON_ORG = true;
 
