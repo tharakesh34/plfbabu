@@ -525,7 +525,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
-		if (isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
+		if (!StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)
+				&& isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
 			financeMain.setFinIsActive(false);
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			if (receiptPurpose != null
