@@ -1296,11 +1296,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 					CustomerDetails customerDetails = getCustomerDetailsService()
 							.getCustomerDetailsById(detail.getCustID(), false, "_View");
 					if (sb.length() > 0) {
-						sb.append(", ").append(detail.getLovDescCIFName()).append(". ")
-								.append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
+						sb.append(", ").append(customerDetails.getCustomer().getLovDescCustSalutationCodeName())
+								.append(". ").append(detail.getLovDescCIFName());
 					} else {
-						sb.append(detail.getLovDescCIFName()).append(". ")
-								.append(customerDetails.getCustomer().getLovDescCustSalutationCodeName());
+						sb.append(customerDetails.getCustomer().getLovDescCustSalutationCodeName()).append(". ")
+								.append(detail.getLovDescCIFName());
 					}
 				}
 			}
