@@ -5,6 +5,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="postgresql" />
@@ -19,7 +20,13 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-
+	
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
 	<changeSet id="1" author="Akhilesh.k">
 		<createTable tableName="Cibil_Member_Details">
 			<column name="Code" type="varchar(20)">
@@ -79,12 +86,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="6.1" author="Akhilesh.k">
+	<changeSet id="6.1" author="Akhilesh.k" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="CIBIL_FILE_INFO" columnName="Bureau_Type" />
 		<addNotNullConstraint tableName="CIBIL_CUSTOMER_EXTRACT" columnName="Bureau_Type" />
 	</changeSet>
-
-	<changeSet id="7" author="Akhilesh.k">
+	<changeSet id="6.1" author="Akhilesh.k" dbms="mssql">
+		<addNotNullConstraint tableName="CIBIL_FILE_INFO" columnName="Bureau_Type" columnDataType="varchar(10)"/>
+		<addNotNullConstraint tableName="CIBIL_CUSTOMER_EXTRACT" columnName="Bureau_Type" columnDataType="varchar(10)"/>
+	</changeSet>
+	<changeSet id="7" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="CIBIL_LEGAL_CONST_MAPPING" remarks="Legal Constitution">
 			<column name="Code" type="char(2)">
 				<constraints nullable="false" />
@@ -107,11 +117,39 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="7" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="CIBIL_LEGAL_CONST_MAPPING" remarks="Legal Constitution">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustType" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="7_Post" author="Akhilesh.k" dbms="mssql">
+	<sql>
+		alter table CIBIL_LEGAL_CONST_MAPPING add constraint DF_CIB_LEG_CONS_MAP_VERSION DEFAULT 0 for version;
+	</sql>
+	</changeSet>
 	<changeSet id="7.1" author="Akhilesh.k">
 		<addPrimaryKey columnNames="Code, CustType" constraintName="PK_CB_LC_CD_CT" tableName="CIBIL_LEGAL_CONST_MAPPING" />
 	</changeSet>
 
-	<changeSet id="8" author="Akhilesh.k">
+	<changeSet id="8" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="CIBIL_BUSINESS_CATEGOR_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints nullable="false" />
@@ -134,12 +172,39 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="8" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="CIBIL_BUSINESS_CATEGOR_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Category" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="8_Post" author="Akhilesh.k" dbms="mssql">
+	<sql>
+		alter table CIBIL_BUSINESS_CATEGOR_MAPPING add constraint DF_CIB_BIS_CAT_MAP_VERSION DEFAULT 0 for version;
+	</sql>
+	</changeSet>
 	<changeSet id="8.1" author="Akhilesh.k">
 		<addPrimaryKey columnNames="Code, Category" constraintName="PK_CB_BC_CD_C" tableName="CIBIL_BUSINESS_CATEGOR_MAPPING" />
 	</changeSet>
 
-	<changeSet id="9" author="Akhilesh.k">
+	<changeSet id="9" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="CIBIL_INDUSTRY_TYPE_MAPPING">
 			<column name="Code" type="char(2)">
 				<constraints nullable="false" />
@@ -162,7 +227,34 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="9" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="CIBIL_INDUSTRY_TYPE_MAPPING">
+			<column name="Code" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Industry" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="9_Post" author="Akhilesh.k" dbms="mssql">
+	<sql>
+		alter table CIBIL_INDUSTRY_TYPE_MAPPING add constraint DF_CIB_IND_TYP_MAP_VERSION DEFAULT 0 for version;
+	</sql>
+	</changeSet>
 	<changeSet id="9.1" author="Akhilesh.k">
 		<addPrimaryKey columnNames="Code, Industry" constraintName="PK_CB_IT_CD_CT" tableName="CIBIL_INDUSTRY_TYPE_MAPPING" />
 	</changeSet>
@@ -189,7 +281,7 @@
 			left join cibil_legal_const_mapping lcm on lcm.custtype = c.custtypecode
 			left join cibil_business_categor_mapping bcm on bcm.category = c.custctgcode
 			left join cibil_industry_type_mapping bit on bit.industry = c.custindustry
-			where custctgcode!='RETAIL';
+			where custctgcode!='RETAIL'
 		</createView>
 	</changeSet>
 
@@ -231,10 +323,12 @@
 		<addPrimaryKey tableName="Cibil_Member_Details" columnNames="Member_Type, Member_Id" />
 	</changeSet>
 
-	<changeSet id="15pre" author="Akhilesh.k">
+	<changeSet id="15pre" author="Akhilesh.k" dbms="oracle,postgresql">
 		<dropNotNullConstraint tableName="Cibil_Member_Details" columnName="Previous_Member_Id" />
 	</changeSet>
-
+	<changeSet id="15pre" author="Akhilesh.k" dbms="mssql">
+		<dropNotNullConstraint tableName="Cibil_Member_Details" columnName="Previous_Member_Id" columnDataType="varchar(10)"/>
+	</changeSet>
 	<changeSet id="15" author="Akhilesh.k">
 		<sql>
 			<![CDATA[
@@ -341,11 +435,14 @@
 		<modifyDataType tableName="Cibil_Member_Details" columnName="Member_Id" newDataType="varchar(30)" />
 	</changeSet>
 
-	<changeSet id="17Pre1" author="Akhilesh.k">
+	<changeSet id="17Pre1" author="Akhilesh.k" dbms="oracle,postgresql">
 		<dropNotNullConstraint tableName="Cibil_Member_Details" columnName="Previous_Member_Id" />
 		<addNotNullConstraint tableName="Cibil_Member_Details" columnName="Member_Short_Name" />
 	</changeSet>
-
+	<changeSet id="17Pre1" author="Akhilesh.k" dbms="mssql">
+		<dropNotNullConstraint tableName="Cibil_Member_Details" columnName="Previous_Member_Id" columnDataType="varchar(10)"/>
+		<addNotNullConstraint tableName="Cibil_Member_Details" columnName="Member_Short_Name" columnDataType="varchar(10)"/>
+	</changeSet>
 
 	<changeSet id="17" author="Akhilesh.k">
 		<sql>
@@ -471,7 +568,7 @@
 			left join cibil_legal_const_mapping lcm on lcm.custtype = c.custtypecode
 			left join cibil_business_categor_mapping bcm on bcm.category = c.custctgcode
 			left join cibil_industry_type_mapping bit on bit.industry = c.custindustry
-			where custctgcode!='RETAIL';
+			where custctgcode!='RETAIL'
 		</createView>
 	</changeSet>
 	<changeSet id="22" author="Akhilesh.k">
@@ -483,7 +580,7 @@
 		<renameTable newTableName="cibil_address_types_mapping_tt" oldTableName="cibil_address_types_mapping" />
 		<renameTable newTableName="cibil_address_types_tt" oldTableName="cibil_address_types" />
 	</changeSet>
-	<changeSet id="24" author="Akhilesh.k">
+	<changeSet id="24" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_address_types">
 			<column name="Code" type="Char(2)" />
 			<column name="Segment_Type" type="varchar(10)" />
@@ -500,7 +597,29 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="25" author="Akhilesh.k">
+	<changeSet id="24" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_address_types">
+			<column name="Code" type="Char(2)" />
+			<column name="Segment_Type" type="varchar(10)" />
+			<column name="Description" type="varchar(250)" />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+	<changeSet id="24_Post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_address_types add constraint df_cibil_addr_type_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="25" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_address_types_mapping">
 			<column name="Code" type="Char(2)" />
 			<column name="Segment_Type" type="varchar(10)" />
@@ -516,6 +635,28 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+	<changeSet id="25" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_address_types_mapping">
+			<column name="Code" type="Char(2)" />
+			<column name="Segment_Type" type="varchar(10)" />
+			<column name="Address_Type" type="varchar(8)" />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="25_Post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_address_types_mapping add constraint df_cibil_addr_typ_mpng_version default 0 for version;
+		</sql>
 	</changeSet>
 	<changeSet id="26" author="Akhilesh.k">
 		<sql>
@@ -533,12 +674,21 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="28_Pre" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_address_types alter column Code char(2) not null;
+			alter table cibil_address_types alter column Segment_Type varchar(10) not null;
+			alter table cibil_address_types_mapping alter column Code char(2) not null;
+			alter table cibil_address_types_mapping alter column Segment_Type varchar(10) not null;
+			alter table cibil_address_types_mapping alter column Address_Type varchar(8) not null;
+		</sql>
+	</changeSet>
 	<changeSet id="28" author="Akhilesh.k">
 		<addPrimaryKey tableName="cibil_address_types" columnNames="Code, Segment_Type" />
 		<addPrimaryKey tableName="cibil_address_types_mapping" columnNames="Code, Segment_Type, Address_Type" />
 		<createIndex tableName="cibil_address_types_mapping" indexName="IX_CDTYM_CD_ST">
-			<column name="Code" />
-			<column name="Segment_Type" />
+			<column name="Code"/>
+			<column name="Segment_Type"/>
 		</createIndex>
 	</changeSet>
 	<changeSet id="29_pre" author="Akhilesh.k" dbms="postgresql">
@@ -615,7 +765,7 @@
 		<renameTable newTableName="cibil_account_types_tt" oldTableName="cibil_account_types" />
 		<renameTable newTableName="cibil_account_types_mapping_tt" oldTableName="cibil_account_types_mapping" />
 	</changeSet>
-	<changeSet id="35" author="Akhilesh.k">
+	<changeSet id="35" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_account_types">
 			<column name="Code" type="Char(4)" />
 			<column name="Segment_Type" type="varchar(10)" />
@@ -632,7 +782,29 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	<changeSet id="36" author="Akhilesh.k">
+	<changeSet id="35" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_account_types">
+			<column name="Code" type="Char(4)" />
+			<column name="Segment_Type" type="varchar(10)" />
+			<column name="Description" type="varchar(250)" />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="35_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_account_types add constraint df_cibil_account_types_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="36" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_account_types_mapping">
 			<column name="Code" type="Char(4)" />
 			<column name="Segment_Type" type="varchar(10)" />
@@ -649,7 +821,37 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="36" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_account_types_mapping">
+			<column name="Code" type="Char(4)" />
+			<column name="Segment_Type" type="varchar(10)" />
+			<column name="fin_type" type="varchar(8)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="37_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_account_types_mapping add constraint df_cibil_acc_typ_map_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="37_Pre" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_account_types alter column Code char(2) not null;
+			alter table cibil_account_types alter column Segment_Type varchar(10) not null;
+			alter table cibil_account_types_mapping alter column Code char(2) not null;
+			alter table cibil_account_types_mapping alter column Segment_Type varchar(10) not null;
+			alter table cibil_account_types_mapping alter column fin_type varchar(8) not null;
+		</sql>
+	</changeSet>
 	<changeSet id="37" author="Akhilesh.k">
 		<addPrimaryKey tableName="cibil_account_types" columnNames="Code, Segment_Type" />
 		<addPrimaryKey tableName="cibil_account_types_mapping" columnNames="Code, Segment_Type, fin_type" />
@@ -744,24 +946,24 @@
 					FM.FINSTARTDATE,
 					FM.FINAPPROVEDDATE,
 					PD.LATESTRPYDATE,
-					UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
-					UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
-					UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
-					UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
-					UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
-					UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
-					UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
-					UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
-					UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
-					UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
-					UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
-					UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
-					UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
-					UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
+					${add.schema}UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
+					${add.schema}UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
+					${add.schema}UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
 					PD.CURODDAYS,
 					FM.CLOSINGSTATUS,
 					CU.OWNERSHIP,
-					UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
+					${add.schema}UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
 	       		FROM  FINANCEMAIN FM 
 					INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FINREFERENCE = FM.FINREFERENCE 
 					INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE				
@@ -770,11 +972,11 @@
 					LEFT JOIN (SELECT MA.FINREFERENCE, SUM(COALESCE(MA.ADVISEAMOUNT,0)- COALESCE(MA.PAIDAMOUNT,0)- COALESCE(MA.WAIVEDAMOUNT,0)) BOUNCE_DUE, SUM(MA.PAIDAMOUNT) BOUNCE_PAID FROM MANUALADVISE  MA  WHERE BOUNCEID > 0 GROUP BY MA.FINREFERENCE) MA ON MA.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) LATE_PAYMENT_PENALTY_DUE, SUM(TOTPENALTYPAID) LATE_PAYMENT_PENALTY_PAID FROM FINODDETAILS GROUP BY FINREFERENCE) FO ON FO.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
-					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID;
+					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
 	</createView>
 	</changeSet>
 
-	<changeSet id="44" author="Akhilesh.k">
+	<changeSet id="44" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="CIBIL_REPAY_FREQUENCY_MAPPING">
 			<column name="Code" type="Char(2)" />
 			<column name="Description" type="varchar(250)" />
@@ -791,7 +993,28 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="44" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="CIBIL_REPAY_FREQUENCY_MAPPING">
+			<column name="Code" type="Char(2)" />
+			<column name="Description" type="varchar(250)" />
+			<column name="RepayFrq" type="varchar(8)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="44_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table CIBIL_REPAY_FREQUENCY_MAPPING add constraint df_cibil_rep_fre_map_version default 0 for version;
+		</sql>
+	</changeSet>
 	<changeSet id="45" author="Akhilesh.k">
 		<dropTable tableName="cibil_address_types_mapping_tt" />
 		<dropTable tableName="cibil_address_types_tt" />
@@ -808,7 +1031,7 @@
 		<renameTable newTableName="cibil_collateral_mapping_tt" oldTableName="cibil_collateral_types_mapping" />
 	</changeSet>
 
-	<changeSet id="48" author="Akhilesh.k">
+	<changeSet id="48" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_collateral_types">
 			<column name="Code" type="Char(4)" />
 			<column name="Segment_Type" type="varchar(10)" />
@@ -825,8 +1048,29 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
-	<changeSet id="49" author="Akhilesh.k">
+	<changeSet id="48" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_collateral_types">
+			<column name="Code" type="Char(4)" />
+			<column name="Segment_Type" type="varchar(10)" />
+			<column name="Description" type="varchar(250)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="48_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_collateral_types add constraint df_cibil_clt_typ_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="49" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_collateral_types_mapping">
 			<column name="Code" type="Char(4)" />
 			<column name="Segment_Type" type="varchar(10)" />
@@ -843,7 +1087,37 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="49" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_collateral_types_mapping">
+			<column name="Code" type="Char(4)" />
+			<column name="Segment_Type" type="varchar(10)" />
+			<column name="Collateral_Type" type="varchar(8)" />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="49_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_collateral_types_mapping add constraint df_cbl_clt_typ_map_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="50_Pre" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_collateral_types alter column  Code char(4) not null;
+			alter table cibil_collateral_types alter column  Segment_Type varchar(10) not null;
+			alter table cibil_collateral_types_mapping alter column  code char(4) not null;
+			alter table cibil_collateral_types_mapping alter column  Segment_Type varchar(10) not null;
+			alter table cibil_collateral_types_mapping alter column  Collateral_Type varchar(8) not null;
+		</sql>
+	</changeSet>
 	<changeSet id="50" author="Akhilesh.k">
 		<addPrimaryKey tableName="cibil_collateral_types" columnNames="Code, Segment_Type" />
 		<addPrimaryKey tableName="cibil_collateral_types_mapping" columnNames="Code, Segment_Type, Collateral_Type" />
@@ -890,7 +1164,7 @@
 		<dropTable tableName="cibil_business_categor_mapping" />
 	</changeSet>
 
-	<changeSet id="55" author="Akhilesh.k">
+	<changeSet id="55" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_business_category" remarks="cibil business category mapping">
 			<column name="Code" type="char(2)" />
 			<column name="Segment_Type" type="VARCHAR2(8)" />
@@ -909,15 +1183,45 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	<changeSet id="55" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_business_category" remarks="cibil business category mapping">
+			<column name="Code" type="char(2)" />
+			<column name="Segment_Type" type="VARCHAR2(8)" />
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="55_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_business_category add constraint df_cbl_bus_cat_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="56_Pre" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_business_category alter column  Code char(4) not null;
+			alter table cibil_business_category alter column  Segment_Type varchar(10) not null;
+		</sql>
+	</changeSet>
 	<changeSet id="56" author="Akhilesh.k">
 		<addPrimaryKey tableName="cibil_business_category" columnNames="Code, Segment_Type" />
 	</changeSet>
 
-	<changeSet id="57" author="Akhilesh.k">
+	<changeSet id="57" author="Akhilesh.k" dbms="postgresql,oracle">
 		<createTable tableName="cibil_business_catgry_mapping" remarks="cibil business category mapping">
 			<column name="Code" type="char(2)" />
-			<column name="Segment_Type" type="VARCHAR2(8)" />
-			<column name="Category" type="VARCHAR2(8)" />
+			<column name="Segment_Type" type="VARCHAR(8)" />
+			<column name="Category" type="VARCHAR(8)" />
 			<column name="Version" type="int" defaultValue="0" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -930,9 +1234,43 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="57" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_business_catgry_mapping" remarks="cibil business category mapping">
+			<column name="Code" type="char(2)" />
+			<column name="Segment_Type" type="VARCHAR(8)" />
+			<column name="Category" type="VARCHAR(8)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="57_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_business_catgry_mapping add constraint df_cbl_bus_cat_map_version default 0 for version;
+		</sql>
+	</changeSet>
 	<changeSet id="58_pre" author="Akhilesh.k" dbms="postgresql">
 		<modifyDataType tableName="cibil_business_catgry_mapping" columnName="Category" newDataType="citext" />
+	</changeSet>
+	<changeSet id="58_Pre.1" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_business_catgry_mapping alter column Code char(2) not null;
+			alter table cibil_business_catgry_mapping alter column Segment_Type varchar(8) not null;
+			alter table cibil_business_catgry_mapping alter column Category varchar(8) not null;
+		</sql>
+	</changeSet>
+	<changeSet id="58_Pre.3" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_business_catgry_mapping alter column Segment_Type varchar(10) not null;
+			alter table cibil_business_catgry_mapping alter column code char(4) not null;
+		</sql>
 	</changeSet>
 	<changeSet id="58" author="Akhilesh.k">
 		<addPrimaryKey tableName="cibil_business_catgry_mapping" columnNames="Code, Segment_Type, Category" />
@@ -980,7 +1318,7 @@
 			left join cibil_business_catgry_mapping bcm on bcm.category = c.custctgcode
 			left join cibil_business_category bc on bc.code = bcm.code and bc.Segment_Type=bcm.Segment_Type
 			left join cibil_industry_type_mapping bit on bit.industry = c.custindustry
-			where ce.segment_type ='CORP';
+			where ce.segment_type ='CORP'
 		</createView>
 	</changeSet>
 
@@ -989,7 +1327,7 @@
 		<dropTable tableName="CIBIL_LEGAL_CONST_MAPPING" />
 	</changeSet>
 
-	<changeSet id="62" author="Akhilesh.k">
+	<changeSet id="62" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_legal_constitution" remarks="Legal Constitution">
 			<column name="Code" type="char(2)" />
 			<column name="Segment_Type" type="VARCHAR2(8)" />
@@ -1008,8 +1346,31 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
-	<changeSet id="63" author="Akhilesh.k">
+	<changeSet id="62" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_legal_constitution" remarks="Legal Constitution">
+			<column name="Code" type="char(2)" />
+			<column name="Segment_Type" type="VARCHAR2(8)" />
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="62_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_legal_constitution add constraint df_cbl_legal_const_version default 0 for version;
+		</sql>
+	</changeSet>
+	<changeSet id="63" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_legal_const_mapping" remarks="Legal Constitution Mapping">
 			<column name="Code" type="char(2)" />
 			<column name="Segment_Type" type="varchar(8)" />
@@ -1026,11 +1387,40 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="63" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_legal_const_mapping" remarks="Legal Constitution Mapping">
+			<column name="Code" type="char(2)" />
+			<column name="Segment_Type" type="varchar(8)" />
+			<column name="Cust_Type_Code" type="varchar(8)" />
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="63_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_legal_const_mapping add constraint df_cbl_legal_const_map_version default 0 for version;
+		</sql>
+	</changeSet>
 	<changeSet id="64_pre" author="Akhilesh.k" dbms="postgresql">
 		<modifyDataType tableName="cibil_legal_const_mapping" columnName="Cust_Type_Code" newDataType="citext" />
 	</changeSet>
-
+	<changeSet id="64_Pre.1" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_legal_constitution alter column Code char(4) not null;
+			alter table cibil_legal_constitution alter column Segment_Type varchar(8) not null;
+			alter table cibil_legal_const_mapping alter column Code char(4) not null;
+			alter table cibil_legal_const_mapping alter column Segment_Type varchar(8) not null;
+			alter table cibil_legal_const_mapping alter column Cust_Type_Code varchar(8) not null;
+		</sql>
+	</changeSet>
 	<changeSet id="64" author="Akhilesh.k">
 		<addPrimaryKey columnNames="Code, Segment_Type" constraintName="pk_cb_lc_cd_st" tableName="cibil_legal_constitution" />
 		<addPrimaryKey columnNames="Code, Segment_Type, Cust_Type_Code" constraintName="pk_cb_lcm_cd_st_ct"
@@ -1060,7 +1450,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="66" author="Akhilesh.k">
+	<changeSet id="66" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_industry_type">
 			<column name="Code" type="char(2)" />
 			<column name="Segment_Type" type="varchar(8)" />
@@ -1079,12 +1469,35 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
+	<changeSet id="66" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_industry_type">
+			<column name="Code" type="char(2)" />
+			<column name="Segment_Type" type="varchar(8)" />
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="66_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_industry_type add constraint df_cibil_industry_type_version default 0 for version;
+		</sql>
+	</changeSet>
 	<changeSet id="67_pre" author="Akhilesh.k">
 		<dropTable tableName="cibil_industry_type_mapping" />
 	</changeSet>
 
-	<changeSet id="67" author="Akhilesh.k">
+	<changeSet id="67" author="Akhilesh.k" dbms="oracle,postgresql">
 		<createTable tableName="cibil_industry_type_mapping">
 			<column name="Code" type="char(2)" />
 			<column name="Segment_Type" type="varchar(8)" />
@@ -1101,12 +1514,40 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
-
+	<changeSet id="67" author="Akhilesh.k" dbms="mssql">
+		<createTable tableName="cibil_industry_type_mapping">
+			<column name="Code" type="char(2)" />
+			<column name="Segment_Type" type="varchar(8)" />
+			<column name="Industry" type="varchar(8)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="67_post" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_industry_type_mapping add constraint df_cbl_indstry_typ_map_version default 0 for version;
+		</sql>
+	</changeSet>
 	<changeSet id="68_pre" author="Akhilesh.k" dbms="postgresql">
 		<modifyDataType tableName="cibil_industry_type_mapping" columnName="Industry" newDataType="citext" />
 	</changeSet>
-
+	<changeSet id="68_Pre.2" author="Akhilesh.k" dbms="mssql">
+		<sql>
+			alter table cibil_industry_type alter column Code char(4) not null;
+			alter table cibil_industry_type alter column Segment_Type varchar(8) not null;
+			alter table cibil_industry_type_mapping alter column Code char(4) not null;
+			alter table cibil_industry_type_mapping alter column Segment_Type varchar(8) not null;
+			alter table cibil_industry_type_mapping alter column Industry varchar(8) not null;
+		</sql>
+	</changeSet>
 	<changeSet id="68" author="Akhilesh.k">
 		<addPrimaryKey columnNames="Code, Segment_Type" constraintName="pk_cb_it_cd_st" tableName="cibil_industry_type" />
 		<addPrimaryKey columnNames="Code, Segment_Type, Industry" constraintName="pk_cb_itm_cd_st_in" tableName="cibil_industry_type_mapping" />
@@ -1159,7 +1600,7 @@
 			left join cibil_business_category bc on bc.code = bcm.code and bc.Segment_Type=bcm.Segment_Type
 			left join cibil_industry_type_mapping bitm on bitm.industry = c.custindustry
 			left join cibil_industry_type bit on bit.Code = bitm.Code and bit.Segment_Type=bitm.Segment_Type
-			where ce.segment_type ='CORP';
+			where ce.segment_type ='CORP'
 		</createView>
 	</changeSet>
 
@@ -1190,24 +1631,24 @@
 					FM.FINSTARTDATE,
 					FM.FINAPPROVEDDATE,
 					PD.LATESTRPYDATE,
-					UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
-					UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
-					UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
-					UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
-					UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
-					UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
-					UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
-					UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
-					UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
-					UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
-					UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
-					UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
-					UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
-					UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
+					${add.schema}UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
+					${add.schema}UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
+					${add.schema}UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
 					PD.CURODDAYS,
 					FM.CLOSINGSTATUS,
 					CU.OWNERSHIP,
-					UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
+					${add.schema}UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
 	       		FROM  FINANCEMAIN FM 
 					INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FINREFERENCE = FM.FINREFERENCE 
 					INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE				
@@ -1216,7 +1657,7 @@
 					LEFT JOIN (SELECT MA.FINREFERENCE, SUM(COALESCE(MA.ADVISEAMOUNT,0)- COALESCE(MA.PAIDAMOUNT,0)- COALESCE(MA.WAIVEDAMOUNT,0)) BOUNCE_DUE, SUM(MA.PAIDAMOUNT) BOUNCE_PAID FROM MANUALADVISE  MA  WHERE BOUNCEID > 0 GROUP BY MA.FINREFERENCE) MA ON MA.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) LATE_PAYMENT_PENALTY_DUE, SUM(TOTPENALTYPAID) LATE_PAYMENT_PENALTY_PAID FROM FINODDETAILS GROUP BY FINREFERENCE) FO ON FO.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
-					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID;
+					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
 	</createView>
 	</changeSet>
 
@@ -1261,24 +1702,24 @@
 					FM.FINSTARTDATE,
 					FM.FINAPPROVEDDATE,
 					PD.LATESTRPYDATE,
-					UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
-					UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
-					UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
-					UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
-					UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
-					UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
-					UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
-					UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
-					UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
-					UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
-					UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
-					UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
-					UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
-					UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
+					${add.schema}UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
+					${add.schema}UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
+					${add.schema}UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
 					PD.CURODDAYS,
 					FM.CLOSINGSTATUS,
 					CU.OWNERSHIP,
-					UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
+					${add.schema}UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
 	       		FROM  FINANCEMAIN FM 
 					INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FINREFERENCE = FM.FINREFERENCE 
 					INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE				
@@ -1287,7 +1728,7 @@
 					LEFT JOIN (SELECT MA.FINREFERENCE, SUM(COALESCE(MA.ADVISEAMOUNT,0)- COALESCE(MA.PAIDAMOUNT,0)- COALESCE(MA.WAIVEDAMOUNT,0)) BOUNCE_DUE, SUM(MA.PAIDAMOUNT) BOUNCE_PAID FROM MANUALADVISE  MA  WHERE BOUNCEID > 0 GROUP BY MA.FINREFERENCE) MA ON MA.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) LATE_PAYMENT_PENALTY_DUE, SUM(TOTPENALTYPAID) LATE_PAYMENT_PENALTY_PAID FROM FINODDETAILS GROUP BY FINREFERENCE) FO ON FO.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
-					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID;
+					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
 	</createView>
 	</changeSet>
 
