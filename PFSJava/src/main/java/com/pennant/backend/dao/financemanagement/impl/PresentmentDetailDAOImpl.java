@@ -1079,4 +1079,35 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	}
 
+	/**
+	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI
+	 * Advance
+	 * 
+	 * @param presentmentId
+	 */
+	@Override
+	public List<PresentmentDetail> getExcludeDetails(long presentmentId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT ID");
+		sql.append(" FROM PRESENTMENTDETAILS ");
+		sql.append(" WHERE EXCLUDEREASON NOT IN ('" + RepayConstants.PEXC_EMIINCLUDE + "','"
+				+ RepayConstants.PEXC_EMIINADVANCE + "')  AND PRESENTMENTID=:PRESENTMENTID");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PRESENTMENTID", presentmentId);
+
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }

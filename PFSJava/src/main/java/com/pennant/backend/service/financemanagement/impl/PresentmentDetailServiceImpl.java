@@ -320,6 +320,15 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	private void approvePresentments(long presentmentId, LoggedInUser userDetails, boolean isPDC) throws Exception {
+		
+		//update presentment id as zero
+		List<PresentmentDetail> listPrstitems = getPresentmentDetailDAO().getExcludeDetails(presentmentId);
+		if (listPrstitems != null && !listPrstitems.isEmpty()) {
+			for (PresentmentDetail presentmentDetail : listPrstitems) {
+				updatePresentmentIdAsZero(presentmentDetail.getId());
+			}
+		}
+		
 		processDetails(presentmentId, userDetails, isPDC);
 	}
 

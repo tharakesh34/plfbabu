@@ -100,4 +100,6 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type);
 
+	List<PresentmentDetail> getExcludeDetails(long presentmentId);
+
 }
