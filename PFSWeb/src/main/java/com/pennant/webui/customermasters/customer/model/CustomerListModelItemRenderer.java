@@ -45,6 +45,7 @@ package com.pennant.webui.customermasters.customer.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -81,7 +82,8 @@ public class CustomerListModelItemRenderer implements ListitemRenderer<Customer>
 		lc.setParent(item);
 		lc = new Listcell(customer.getLovDescCustTypeCodeName());
 		lc.setParent(item);
-		lc = new Listcell(customer.getLovDescRequestStage());
+		lc = new Listcell(
+				StringUtils.equals(customer.getLovDescRequestStage(), ",") ? "" : customer.getLovDescRequestStage());
 		lc.setParent(item);
 		lc = new Listcell(customer.getRecordStatus());
 		lc.setParent(item);
