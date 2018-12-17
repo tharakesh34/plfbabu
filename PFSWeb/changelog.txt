@@ -1,4 +1,105 @@
-pff 4.12.1.0  2018-11-20
+pff 4.12.3.1 2018-12-17
+----------------
+-story #1123 Corporate CIBIL Report
+-story #1122 Retail CIBIL Enhancement
+-story #1124 Service Instruction UID changes for Receipts
+
+pff 4.12.2.6 2018-12-15
+----------------
+- PSD#130868 Reject details on enquiry.
+-story #1118 Workflow with Legal Tech Value Change - Legal Tech Value moved from Collateral to Loan Extended Fields
+Note: The extended fields LTV_1[-5] and UPDATED_LTV_1[-5] should be available at loan level.
+-Story # 1119 Repayment Mode Change while Swapping the Mandate
+
+pff 4.12.2.5  2018-12-14
+----------------
+
+-story #1106 Implemented Add Remarks API.
+-PPM #18474 While trying to create a collateral with non banking customer, getting customer not available validation then, click on ok button getting 900 error 
+-PPM # 18759  In OD Loan types IRR Codes field not populated validation even it is mandatory field and also after saved the record IRR Codes not populated has fixed
+-story #987 Sprint 1 changes (FG).
+-bugs #1077 The deviations should be assigned to approval authorities based on the order specified in the deviation and delegation matrix of process editor. [PSD #130673]
+Note: The deviated values should be in ascending order for a deviation from lower approval authority to higher approval authority. The fix will work only for the new configuration. The existing configuration require re-define or data patch
+-PPM # 18849 In collateral enter invalid customer(not existed) customer while click on proceed button getting unhandled exception. 
+
+pff 4.12.2.4   2018-12-13 
+----------------
+-Story # 1058, Insurance Module.
+-PPM #18849 In collateral enter invalid customer(not existed) customer while click on proceed button getting unhandled exception.
+
+pff 4.12.2.3  2018-12-7
+----------------
+-Story # 1058, Insurance Module
+-story #1104  It contains Ledger download Services in the EOD Process.
+-story #1092 Receipt Upload Enhancements
+-story #1103 IRR Calculations for Inflows
+-PSD #12837 Statement of Account changes
+
+
+pff 4.12.2.2 2018-12-6
+----------------
+-story #1100 OD Loan changes for API both create loan and management.
+-story #1101 Added the loan dedup validation in Create finance with non stp time.
+
+pff 4.12.2.1 2018-12-3 
+----------------
+-story #1041 New Product : MCA
+-story #1039 E receipt changes.
+-story #1096 FinServiceInstruction added field INSTRUCTIONUID
+-PSD #128381,128376  of  all Loan References, under customer information only irrespective of Active.
+
+
+
+pff 4.12.1.6 2018-11-27
+----------------
+-story #983 Email and SMS Changes 
+-PPM #18603 label name missing for one of the flag in mandate tab. 
+-PPM # 18607 While click on print button in the Cheque Maintenance and Cheque Detail Enquiry menu's getting unhandled exception.
+-story #390 API Enhancements
+-Story #1076 : Added the New Filed "margin"  in Create Customer API.
+-bugs #1077 The deviations should be assigned to approval authorities based on the order specified in the deviation and delegation matrix of process editor. The deviated values should be in ascending order for a deviation from lower approval authority to higher approval authority.
+-PPM # 18605 Throwing a unhanded exception while giving the same collateral reference twice in the collateral assignment.
+-PPM # 18606 Throwing a validation as "Assignment Reference:  already exists.
+
+pff 4.12.1.5  2018-11-24
+----------------
+-story #1054 Provided support for “Revert Queue” service task in Loan Origination. This will move the record from where the record received in forward direction (Based on Task Log).
+-story #1053 Provided support for “Update Attribute” service task in Loan Origination. This allows updating the attributes within the process and using those attributes at a later stage for conditional flows. E.g., “ltvCompleted=YES” Later the attribute can be accessed as “vo.attributes["ltvCompleted"] == 'YES'”.
+-story #1051 Process Designer: Added support of additional parameters for work-flow service tasks.
+-bugs #1056 The execution of service tasks in Loan Origination and Servicing corrected to consider the conditional service task execution.
+-bugs #1057 Collateral extended details, created from loan, are not editable at an intermediate stage of the workflow. The issue is with loading the workflow again.
+-story #1038 Email id to be made mandatory for all customers.
+-story #1037 For BT cases PDD Received Date should be due+1 immediately.
+-PPM #18569 In Cheque Detail enquiry menu some of the fields are enable mode.
+-PPM #18570  Add View button instead of upload button and enable mode.
+-Story #1073:Added the Legal Required Field in Create Loan API for Non Stp Process .
+
+pff 4.12.1.4 2018-11-22
+----------------
+-Story #1049:Create Loan with Collateral from API.
+-Bug #1050:Issue While Create OD Loan thorough API .
+-Bug #1050:Issue While Create Collateral API in Percentage Values given as Decimal.
+-PPM #18571  Enter data in total amount field,while click on filter button getting unhandled exception.
+
+pff 4.12.1.3 2018-11-22
+----------------
+-story #1042 Process Designer: Provided additional attribute, Constraint, for user action sequence flows.
+-story #1043 Additional constraint for user action sequence flow to display the user actions and validate the same on submission.
+-story #1044 Provision to draw conditional workflows based on ‘higherDeviationApprover’ in Loan Origination.
+-story #1041 New Product : MCA 
+-story #1039 E receipt changes
+
+pff 4.12.1.2  2018-11-21
+----------------
+-story #1040 Banking Information changes on customers.
+-Story #982 SMS and Email Changes. 
+-story #1018 New Inquiries addition.
+-story #1020 DSA Master Changes(Agency Master)  ,3.Communication trigger at the time of code creation.
+-PSD#130055 : State wise accounting for GST 
+-PPM#18578 Payment Instructions Unable to Run (Restart )EOD.(Eod is Failed.).
+-story #1027 Limit Modules Corrections.
+
+pff 4.12.1.1  2018-11-20
 ----------------
 -story #1031 Daily Trial Balance Changes.
 -story #1030 Decision not mandatory for deviations when the user has rights.
