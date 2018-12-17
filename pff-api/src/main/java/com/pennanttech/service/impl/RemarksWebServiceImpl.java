@@ -80,7 +80,7 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 				
 				if(StringUtils.isNotBlank(notes.getUsrLogin()))	{	
 					long userID = securityUserDAO.getUserByName(notes.getUsrLogin());
-					if (userID < 0) {
+					if (userID <= 0) {
 						String[] param = new String[2];
 						param[0] = "User Name";
 						param[1] = String.valueOf(notes.getUsrLogin());

@@ -26,7 +26,6 @@ public class RemarksController {
 		logger.debug(Literal.ENTERING);
 		
 		for (Notes notes : remarks) {
-			
 			if (notes.getUsrLogin().trim().isEmpty())	{
 				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 				notes.setInputBy(userDetails.getUserId());
@@ -45,6 +44,10 @@ public class RemarksController {
 			
 			if (notes.getRemarkType().isEmpty())	{
 				notes.setRemarkType("N");
+			}
+			
+			if (notes.getModuleName().trim().isEmpty())	{
+				notes.setModuleName("FinanceMain");
 			}
 			
 			notesService.saveOrUpdate(notes);
