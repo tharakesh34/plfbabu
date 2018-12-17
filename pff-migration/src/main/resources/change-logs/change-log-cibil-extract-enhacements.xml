@@ -231,7 +231,7 @@
 		<addPrimaryKey tableName="Cibil_Member_Details" columnNames="Member_Type, Member_Id" />
 	</changeSet>
 
-	<changeSet id="15pre" author="">
+	<changeSet id="15pre" author="Akhilesh.k">
 		<dropNotNullConstraint tableName="Cibil_Member_Details" columnName="Previous_Member_Id" />
 	</changeSet>
 
