@@ -536,8 +536,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 			if (getFinanceScheduleDetail().isPftOnSchDate()
 					&& !(getFinanceScheduleDetail().isRepayOnSchDate() || (getFinanceScheduleDetail().isPftOnSchDate()
-							&& getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
-					&& !getFinanceScheduleDetail().isDisbOnSchDate()) {
+							&& getFinanceScheduleDetail().getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 				// if rate change allowed then set the record editable.
 				if (getFinanceScheduleDetail().isRvwOnSchDate() && getFinanceScheduleDetail().getCalculatedRate()
 						.compareTo(prvSchDetail.getCalculatedRate()) == 0) {
