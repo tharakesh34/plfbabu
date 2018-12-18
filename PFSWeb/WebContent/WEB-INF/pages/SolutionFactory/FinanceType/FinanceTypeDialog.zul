@@ -356,6 +356,13 @@
 													<button id="btnAlwElgMthdDetails" image="/images/icons/LOVSearch.png" />
 												</hbox>
 											</row>
+											<row id = "row_AutoRejectionDays">
+												<label id="label_FinanceTypeDialog_AutoRejectionDays" value="${c:l('label_FinanceTypeDialog_AutoRejectionDays.value')}" />
+												<hbox id="hbox_AutoRejectionDays">
+													<space spacing="2px" />
+													<intbox id="autoRejectionDays" width="45px" maxlength="3" style="text-align:right" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

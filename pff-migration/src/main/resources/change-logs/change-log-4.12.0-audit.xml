@@ -103,4 +103,11 @@
 			<column name="DelegatorGrade" type="bigint" defaultValueNumeric="0" />
 		</addColumn>
 	</changeSet>
+	
+<changeSet id="8" author="Ganesh.p">
+<comment>New column added in FinanceTypes for Auto Fin Rejection days</comment>
+	<addColumn tableName="ADTRmtfinancetypes">
+			<column name="AutoRejectionDays" type="Number(3,0)" defaultValue="0"/>
+	</addColumn>
+</changeSet>	
 </databaseChangeLog>

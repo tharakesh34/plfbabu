@@ -231,6 +231,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Hbox hbox_ElgMthdDetails;
 	protected Textbox eligibilityMethod;
 	protected Button btnAlwElgMthdDetails;
+	
+	protected Row									row_AutoRejectionDays;
+	protected Intbox								autoRejectionDays;
 
 	// Grace Period Schedule Details Tab
 	protected Space space_cbfinGrcRateType;
@@ -1623,6 +1626,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.cbAdvEMIMethod, aFinanceType.getAdvEMISchdMthd(),
 				PennantStaticListUtil.getAdvEMIScheduleMethods(), "");
 		doAlwEMICheckBoxChecked(aFinanceType.isAlwAdvEMI());
+
+		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -3465,6 +3470,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		//auto rejection no of days
+		try{
+			aFinanceType.setAutoRejectionDays(this.autoRejectionDays.intValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Fees
 		if (getFinTypeFeesListCtrl() != null) {
 			aFinanceType.setFinTypeFeesList(getFinTypeFeesListCtrl().doSave());
@@ -3828,6 +3840,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finLTVCheck.setConstraint(new StaticListValidator(finLVTCheckList,
 					Labels.getLabel("label_FinanceTypeDialog_FinCollateralLTV.value")));
 		}
+		
+		if (!this.autoRejectionDays.isReadonly()) {
+			this.autoRejectionDays.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -3878,6 +3896,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finLTVCheck.setConstraint("");
 		this.cbAdvEMIMethod.setConstraint("");
 		this.lPPRule.setConstraint("");
+		this.autoRejectionDays.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -4215,6 +4234,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setButtonDisabled(isTrue);
 			this.alwZeroIntAcc.setDisabled(isTrue);
 		}
+		this.autoRejectionDays.setReadonly(isTrue);
 
 		// Grace Details
 		this.cbfinGrcRvwRateApplFor.setDisabled(isTrue);

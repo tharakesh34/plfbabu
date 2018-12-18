@@ -256,6 +256,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	//cheque
 	private boolean chequeCaptureReq;
+	//autorejection No of Days
+	private int autoRejectionDays;
+	
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -2191,4 +2194,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setFinTypeReceiptModesList(List<FinTypeReceiptModes> finTypeReceiptModesList) {
 		this.finTypeReceiptModesList = finTypeReceiptModesList;
 	}
+
+	public int getAutoRejectionDays() {
+		return autoRejectionDays;
+	}
+
+	public void setAutoRejectionDays(int autoRejectionDays) {
+		this.autoRejectionDays = autoRejectionDays;
+	}
+
 }

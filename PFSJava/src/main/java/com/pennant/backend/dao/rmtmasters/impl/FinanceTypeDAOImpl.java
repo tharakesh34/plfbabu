@@ -45,6 +45,7 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -63,6 +64,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceType model</b> class.<br>
@@ -131,7 +133,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds,");
 		selectSql.append(
 				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode, AlwZeroIntAcc,");
-
+		selectSql.append(" AutoRejectionDays, ");
+				
 		if (type.contains("View")) {
 			selectSql.append(
 					" FinCategoryDesc, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName,");
@@ -215,7 +218,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		selectSql.append(
 				" MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,AlwReage,AlwUnPlanEmiHoliday,alwMaxDisbCheckReq,quickDisb,ProductCategory,DeveloperFinance, CostOfFunds, ");
 		selectSql.append(
-				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc");
+				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc,");
+		selectSql.append(" AutoRejectionDays ");
 		if (type.contains("ORGView")) {
 			selectSql.append(
 					" ,DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
@@ -403,7 +407,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		insertSql.append(
 				" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck, PartiallySecured, ");
 		insertSql.append(
-				" alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc)");
+				" alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc, ");
+		insertSql.append(" AutoRejectionDays ) ");
 		insertSql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
 		insertSql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
@@ -449,8 +454,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		insertSql.append(
 				" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck, :PartiallySecured, ");
 		insertSql.append(
-				" :alwAdvEMI, :advEMIMinTerms, :advEMIMaxTerms, :advEMIDftTerms, :advEMISchdMthd, :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc)");
-
+				" :alwAdvEMI, :advEMIMinTerms, :advEMIMaxTerms, :advEMIDftTerms, :advEMISchdMthd, :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
+		insertSql.append(" :AutoRejectionDays ) ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -564,7 +569,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		updateSql.append(" FinLTVCheck = :FinLTVCheck, PartiallySecured = :PartiallySecured,");
 		updateSql.append(
 				" alwAdvEMI = :alwAdvEMI, advEMIMinTerms = :advEMIMinTerms, advEMIMaxTerms = :advEMIMaxTerms, advEMIDftTerms = :advEMIDftTerms, advEMISchdMthd = :advEMISchdMthd, bpiPftDaysBasis = :bpiPftDaysBasis, eligibilityMethods = :eligibilityMethods,");
-		updateSql.append(" alwHybridRate = :alwHybridRate, fixedRateTenor = :fixedRateTenor, ODRuleCode = :ODRuleCode, AlwZeroIntAcc = :AlwZeroIntAcc");
+		updateSql.append(" alwHybridRate = :alwHybridRate, fixedRateTenor = :fixedRateTenor, ODRuleCode = :ODRuleCode, AlwZeroIntAcc = :AlwZeroIntAcc, ");
+		updateSql.append(" AutoRejectionDays = :AutoRejectionDays ");
 		updateSql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
@@ -933,5 +939,19 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		return finTypeDesc;
 
 	}
-
+	
+	/**
+	 * Method for get the AutoRejectionDays for all LoanTypes.
+	 * 
+	 */
+	public List<FinanceType> getAutoRejectionDays() {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append("  SELECT FinType , AutoRejectionDays FROM RMTFinanceTypes Where AutoRejectionDays > 0");
+		logger.debug(Literal.SQL + sql.toString());
+		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		List<FinanceType> finTypes = this.jdbcTemplate.query(sql.toString(), typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return finTypes;
+	}
 }

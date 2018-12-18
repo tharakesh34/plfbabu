@@ -91,4 +91,6 @@ public interface FinanceTypeDAO {
 	FinanceType getFinLtvCheckByFinType(String finType);
 
 	String getAllowedRepayMethods(String finType, String type);
+
+	List<FinanceType> getAutoRejectionDays();
 }

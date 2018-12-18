@@ -308,7 +308,7 @@ public interface FinanceMainDAO {
 
 	int getODLoanCount(String finType, long custID);
 
-	Map<String, Date> getUnApprovedFinanceList();
+	Map<String, Date> getUnApprovedFinanceList(String fintype);
 
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type, String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
 

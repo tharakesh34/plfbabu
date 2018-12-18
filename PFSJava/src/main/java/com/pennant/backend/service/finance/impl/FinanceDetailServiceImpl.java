@@ -6079,33 +6079,40 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 */
 	@Override
 	public void executeAutoFinRejectProcess() {
-		logger.debug("Entering");
-		Map<String, Date> cancelMap = getFinanceMainDAO().getUnApprovedFinanceList();
-		int maxDaysForFinRejection = SysParamUtil.getValueAsInt(SMTParameterConstants.MAX_DAYS_FIN_AUTO_REJECT);
-		if (cancelMap != null) {
-			List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
+		logger.debug(Literal.ENTERING);
 
-			for (String finreference : cancelList) {
-				Date finStartDate = cancelMap.get(finreference);
-				Date effctiveDate = DateUtility.addDays(finStartDate, -maxDaysForFinRejection);
-				if (DateUtility.compare(DateUtility.getAppDate(), effctiveDate) > 0) {
-					FinanceDetail financeDetail = new FinanceDetail();
-					FinanceMain financeMain = new FinanceMain();
-					financeMain.setFinReference(finreference);
-					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-					AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
-					AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null,
-							auditDetail, null, new HashMap<String, ArrayList<ErrorDetail>>());
-					try {
-						doReject(auditHeader, false, true);
-					} catch (Exception e) {
-						logger.error("Finance Reference for Rejection Failed : " + finreference);
+		List<FinanceType> financetypes = getFinanceTypeDAO().getAutoRejectionDays();
+
+		for (FinanceType financeType : financetypes) {
+
+			Map<String, Date> cancelMap = getFinanceMainDAO().getUnApprovedFinanceList(financeType.getFinType());
+			if (cancelMap != null && !cancelMap.isEmpty()) {
+
+				int maxDaysForFinRejection = financeType.getAutoRejectionDays();
+				List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
+
+				for (String finreference : cancelList) {
+					Date finStartDate = cancelMap.get(finreference);
+					Date effctiveDate = DateUtility.addDays(finStartDate, -maxDaysForFinRejection);
+					if (DateUtility.compare(DateUtility.getAppDate(), effctiveDate) > 0) {
+						FinanceDetail financeDetail = new FinanceDetail();
+						FinanceMain financeMain = new FinanceMain();
+						financeMain.setFinReference(finreference);
+						financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+						AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
+						AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null,
+								auditDetail, null, new HashMap<String, ArrayList<ErrorDetail>>());
+						try {
+							doReject(auditHeader, false, true);
+						} catch (Exception e) {
+							logger.error("Finance Reference for Rejection Failed : " + finreference);
+						}
 					}
 				}
 
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doCheckCommodityInventory(FinanceDetail financeDetail) {

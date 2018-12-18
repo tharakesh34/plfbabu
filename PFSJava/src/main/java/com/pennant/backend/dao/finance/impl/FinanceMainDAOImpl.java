@@ -3420,23 +3420,27 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 	
 	@Override
-	public Map<String,Date> getUnApprovedFinanceList() {
-		logger.debug("Entering");
+	public Map<String, Date> getUnApprovedFinanceList(String fintype) {
+		logger.debug(Literal.ENTERING);
 		Map<String, Date> map = new HashMap<String, Date>();
-		
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT FinReference, FinStartDate From FinanceMain_Temp Where RecordType='NEW' ");
+
+		StringBuilder selectSql = new StringBuilder(" SELECT FinReference, FinStartDate From FinanceMain_Temp Where ");
+		selectSql.append(" RecordType= :RecordType  AND  FinType = :FinType ");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("RecordType", "NEW");
+		parameterSource.addValue("FinType", fintype);
 
 		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			SqlRowSet rowSet = this.jdbcTemplate.getJdbcOperations().queryForRowSet(selectSql.toString());
+			SqlRowSet rowSet = this.jdbcTemplate.queryForRowSet(selectSql.toString(), parameterSource);
 			while (rowSet.next()) {
 				map.put(rowSet.getString(1), rowSet.getDate(2));
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return map;
 	}
 
