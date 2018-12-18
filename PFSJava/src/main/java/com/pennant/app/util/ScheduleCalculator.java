@@ -3905,6 +3905,21 @@ public class ScheduleCalculator {
 						} else if (curSchd.getPrincipalSchd()
 								.compareTo(prvClosingBalance.add(curSchd.getDisbAmount())) >= 0) {
 							curSchd.setPrincipalSchd(prvClosingBalance.add(curSchd.getDisbAmount()));
+
+							if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)) {
+
+								calInt = CalculationUtil.calInterest(prvSchDate, curSchDate,
+										curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(),
+										prvSchd.getCalculatedRate());
+
+								calInt = calInt.add(prvSchd.getProfitFraction());
+								if (calInt.compareTo(BigDecimal.ZERO) > 0) {
+									calInt = CalculationUtil.roundAmount(calInt, finMain.getCalRoundingMode(),
+											finMain.getRoundingTarget());
+								}
+								curSchd.setProfitCalc(calInt);
+							}
+
 							curSchd.setProfitSchd(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())
 									.add(curSchd.getProfitCalc()));
 							curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
