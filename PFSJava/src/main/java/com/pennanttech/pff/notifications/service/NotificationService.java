@@ -83,7 +83,6 @@ import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
-import com.pennanttech.pff.external.MailService;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -113,13 +112,9 @@ public class NotificationService {
 	private FinanceReferenceDetailService financeReferenceDetailService;
 	@Autowired
 	private EmailEngine emailEngine;
-
 	@Autowired
 	private SmsEngine smsEngine;
-
-	@Autowired(required = false)
-	private MailService mailService;
-
+	
 	public NotificationService() {
 		super();
 	}
@@ -997,11 +992,7 @@ public class NotificationService {
 
 	private void sendEmailNotification(Notification emailMessage) {
 		try {
-			if (mailService != null) {
-				mailService.sendEmail(emailMessage);
-			} else {
-				emailEngine.sendEmail(emailMessage);
-			}
+			emailEngine.sendEmail(emailMessage);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

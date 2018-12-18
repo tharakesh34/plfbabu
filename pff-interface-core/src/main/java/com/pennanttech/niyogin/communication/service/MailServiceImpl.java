@@ -1,6 +1,8 @@
 package com.pennanttech.niyogin.communication.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,31 +14,24 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pennapps.notification.email.EmailNotificationService;
 import com.pennanttech.pff.InterfaceConstants;
-import com.pennanttech.pff.external.MailService;
 import com.pennanttech.pff.external.service.NiyoginService;
 
-public class MailServiceImpl extends NiyoginService implements MailService {
+public class MailServiceImpl extends NiyoginService implements EmailNotificationService {
 	private static final Logger logger = Logger.getLogger(MailServiceImpl.class);
 
 	private JSONClient client;
 	private String serviceUrl;
-
-	/**
-	 * Method to send the email for the given list of toAddress.
-	 * 
-	 * @param toAddress
-	 * @param templates
-	 * @return
-	 */
+	
+	
 	@Override
-	public void sendEmail(Notification emailMessage) throws InterfaceException {
-		logger.debug(Literal.ENTERING);
-
+	public String sendNotification(Notification emailMessage, String[] to, String[] cc, String[] bcc) {
 		if (emailMessage != null) {
-			send(emailMessage);
+			send(emailMessage, to, cc, bcc);
 		}
-		logger.debug(Literal.LEAVING);
+		
+		return null;
 	}
 
 	/**
@@ -47,21 +42,35 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 	 * @param body
 	 * @return
 	 */
-	private void send(Notification emailMessage) {
+	private void send(Notification emailMessage, String[] to, String[] cc, String[] bcc) {
 		logger.debug(Literal.ENTERING);
 
-		String[] emailId = emailMessage.getAddressesList().toArray(new String[emailMessage.getAddressesList().size()]);
+		List<String> list = new ArrayList<>();
+		
+		for (String email : to) {
+			list.add(email);
+		}
+		
+		for (String email : cc) {
+			list.add(email);
+		}
+		
+		for (String email : bcc) {
+			list.add(email);
+		}
+		
+		
 		String subject = emailMessage.getSubject();
 		String body = new String(emailMessage.getContent());
 
-		if (emailId == null || StringUtils.isEmpty(body)) {
+		if (list.isEmpty() || StringUtils.isEmpty(body)) {
 			return;
 		}
 
 		//FIXME
-		for (String string : emailId) {
+		for (String email : list) {
 			//String.join(",", emailId)
-			Email emailRequest = prepareRequest(string, subject, body);
+			Email emailRequest = prepareRequest(email, subject, body);
 			// logging fields Data
 			String errorCode = null;
 			String errorDesc = null;
@@ -177,4 +186,6 @@ public class MailServiceImpl extends NiyoginService implements MailService {
 		logInterfaceDetails(iLogDetail);
 		logger.debug(Literal.LEAVING);
 	}
+
+	
 }

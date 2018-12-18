@@ -65,7 +65,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
-import com.pennanttech.pff.external.MailService;
 
 /**
  * Service implementation for methods that depends on <b>MailTemplate</b>.<br>
@@ -77,9 +76,6 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	private AuditHeaderDAO auditHeaderDAO;
 	private MailTemplateDAO mailTemplateDAO;
 	private SecurityUserDAO securityUserDAO;
-
-	@Autowired(required = false)
-	private MailService mailService;
 
 	@Autowired
 	private EmailEngine emailEngine;
@@ -455,12 +451,7 @@ public class MailTemplateServiceImpl extends GenericService<MailTemplate> implem
 	public void sendMail(Notification emailMessage) {
 		logger.debug(Literal.ENTERING);
 
-		// bugs #389 Skip the external e-Mail and SMS services if the implementation for the same is not available.
-		if (mailService != null) {
-			mailService.sendEmail(emailMessage);
-		} else {
-			emailEngine.sendEmail(emailMessage);
-		}
+		emailEngine.sendEmail(emailMessage);
 
 		logger.debug(Literal.LEAVING);
 	}
