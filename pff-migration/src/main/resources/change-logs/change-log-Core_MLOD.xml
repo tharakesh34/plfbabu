@@ -56,7 +56,7 @@
 			Update documentdetails_temp set InstructionUID=0 where InstructionUID is null;
 		</sql>
 	</changeSet>
-	<changeSet id="06_Pre" author="Jayant">
+	<changeSet id="06_Pre" author="Jayant"  dbms="postgresql">
          	<sql>
          		select deps_save_and_drop_dependencies('plf','documentdetails_view');
          	</sql>
@@ -116,10 +116,10 @@ UNION ALL
    FROM documentdetails t1
   WHERE NOT (EXISTS ( SELECT 1
            FROM documentdetails_temp
-          WHERE documentdetails_temp.docid = t1.docid));
+          WHERE documentdetails_temp.docid = t1.docid))
 		</createView>
 	</changeSet>
-	<changeSet id="06_Post" author="Jayant">
+	<changeSet id="06_Post" author="Jayant" dbms="postgresql">
          	<sql>
          		select deps_restore_dependencies('plf','documentdetails_view');
          	</sql>
@@ -150,7 +150,7 @@ UNION ALL
     t1.docreceiveddate,
     t1.docreceived,
     t1.InstructionUID
-   FROM documentdetails_temp t1;
+   FROM documentdetails_temp t1
 		</createView>
 	</changeSet>
 	<changeSet id="08" author="Irfan">
@@ -188,7 +188,7 @@ UNION ALL
     t1.InstructionUID
    FROM financechecklistref_temp t1
      JOIN bmtchecklist t2 ON t1.questionid = t2.checklistid
-     JOIN rmtchecklistdetails t3 ON t1.questionid = t3.checklistid AND t1.answer = t3.ansseqno;
+     JOIN rmtchecklistdetails t3 ON t1.questionid = t3.checklistid AND t1.answer = t3.ansseqno
 		</createView>
 	</changeSet>
 	<changeSet id="11" author="Irfan">
@@ -212,7 +212,7 @@ UNION ALL
     t1.InstructionUID
    FROM financechecklistref t1
      JOIN bmtchecklist t2 ON t1.questionid = t2.checklistid
-     JOIN rmtchecklistdetails t3 ON t1.questionid = t3.checklistid AND t1.answer = t3.ansseqno;
+     JOIN rmtchecklistdetails t3 ON t1.questionid = t3.checklistid AND t1.answer = t3.ansseqno
 		</createView>
 	</changeSet>
 	<changeSet id="12" author="Irfan">
@@ -316,7 +316,7 @@ UNION ALL
      LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
   WHERE NOT (EXISTS ( SELECT 1
            FROM findisbursementdetails_temp
-          WHERE findisbursementdetails_temp.finreference = t1.finreference));
+          WHERE findisbursementdetails_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
 	<changeSet id="15" author="Irfan">
@@ -361,7 +361,7 @@ UNION ALL
     t1.insuranceamt,
     t1.InstructionUID
    FROM findisbursementdetails_temp t1
-     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype;
+     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
 		</createView>
 	</changeSet>
 	<changeSet id="16" author="Irfan">
@@ -406,7 +406,7 @@ UNION ALL
     t1.insuranceamt,
     t1.InstructionUID
    FROM findisbursementdetails t1
-     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype;
+     LEFT JOIN amtexpensetype t2 ON t2.expencetypeid = t1.disbexptype
 		</createView>
 	</changeSet>
 	<changeSet id="17" author="Irfan">
@@ -429,34 +429,7 @@ UNION ALL
 			Update REJECTFINDISBURSEMENTDETAILS set InstructionUID=0 where InstructionUID is null;
 		</sql>
 	</changeSet>
-	<changeSet id="21" author="Irfan">
-	<addColumn tableName="LOAN_PO_ORG_ED_Temp">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="22" author="Irfan">
-		<sql>
-			Update LOAN_PO_ORG_ED_Temp set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="23" author="Irfan">
-	<addColumn tableName="LOAN_PO_ORG_ED">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="24" author="Irfan">
-		<sql>
-			Update LOAN_PO_ORG_ED_Temp set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="25" author="Irfan">
-		<sql>
-			Update LOAN_PO_ORG_ED set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="26_Pre" author="Jayant">
+	<changeSet id="26_Pre" author="Jayant"  dbms="postgresql">
          	<sql>
          		select deps_save_and_drop_dependencies('plf','documentdetails_view');
          	</sql>
@@ -518,10 +491,10 @@ UNION ALL
    FROM documentdetails t1
   WHERE NOT (EXISTS ( SELECT 1
            FROM documentdetails_temp
-          WHERE documentdetails_temp.docid = t1.docid));
+          WHERE documentdetails_temp.docid = t1.docid))
 		</createView>
 	</changeSet>
-	<changeSet id="26_Post" author="Jayant">
+	<changeSet id="26_Post" author="Jayant"  dbms="postgresql">
          	<sql>
          		select deps_restore_dependencies('plf','documentdetails_view');
          	</sql>
@@ -553,74 +526,8 @@ UNION ALL
     t1.docreceived,
     t1.docoriginal,
     t1.InstructionUID
-   FROM documentdetails_temp t1;
+   FROM documentdetails_temp t1
 		</createView>
-	</changeSet>
-	<changeSet id="28" author="Irfan">
-	<addColumn tableName="loan_pl_org_ed_Temp">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="29" author="Irfan">
-		<sql>
-			Update loan_pl_org_ed_Temp set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="30" author="Irfan">
-	<addColumn tableName="loan_pl_org_ed">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="31" author="Irfan">
-		<sql>
-			Update loan_pl_org_ed set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="32" author="Irfan">
-	<addColumn tableName="loan_ublprd1_org_ed_Temp">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="33" author="Irfan">
-		<sql>
-			Update loan_ublprd1_org_ed_Temp set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="34" author="Irfan">
-	<addColumn tableName="loan_ublprd1_org_ed">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="35" author="Irfan">
-		<sql>
-			Update loan_ublprd1_org_ed set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="36" author="Irfan">
-	<addColumn tableName="loan_usl_org_ed_Temp">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="37" author="Irfan">
-		<sql>
-			Update loan_usl_org_ed_Temp set InstructionUID=0 where InstructionUID is null;
-		</sql>
-	</changeSet>
-	<changeSet id="38" author="Irfan">
-	<addColumn tableName="loan_usl_org_ed">
-		<column name="InstructionUID" type="bigint" defaultValue="0"/>	
-	</addColumn>
-		</changeSet>
-
-	<changeSet id="39" author="Irfan">
-		<sql>
-			Update loan_usl_org_ed set InstructionUID=0 where InstructionUID is null;
-		</sql>
 	</changeSet>
 	<changeSet id="40" author="Irfan">
 		<addColumn tableName="FinDisbursementDetails_Log">
@@ -696,7 +603,7 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
 UNION ALL
  SELECT t1.receiptid,
     t1.receiptdate,
@@ -750,10 +657,10 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
   WHERE NOT (EXISTS ( SELECT 1
            FROM finreceiptheader_temp
-          WHERE finreceiptheader_temp.receiptid = t1.receiptid));
+          WHERE finreceiptheader_temp.receiptid = t1.receiptid))
 		</createView>
 	</changeSet>
 	<changeSet id="45" author="Irfan">
@@ -813,7 +720,7 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text;
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
 	</createView>
 	</changeSet>
 	<changeSet id="46" author="Irfan">
@@ -873,7 +780,7 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
 UNION ALL
  SELECT t1.receiptid,
     t1.receiptdate,
@@ -948,10 +855,10 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
   WHERE NOT (EXISTS ( SELECT 1
            FROM finreceiptheader_temp
-          WHERE finreceiptheader_temp.receiptid = t1.receiptid));
+          WHERE finreceiptheader_temp.receiptid = t1.receiptid))
 		
 		</createView>
 	</changeSet>
@@ -1012,7 +919,7 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
 UNION ALL
  SELECT t1.receiptid,
     t1.receiptdate,
@@ -1069,10 +976,10 @@ UNION ALL
      JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
      JOIN rmtcurrencies t5 ON t2.finccy = t5.ccycode
      JOIN rmtbranches t6 ON t2.finbranch = t6.branchcode
-     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason::text = t7.rejectcode::text
+     LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode
   WHERE NOT (EXISTS ( SELECT 1
            FROM finreceiptheader_temp
-          WHERE finreceiptheader_temp.receiptid = t1.receiptid));
+          WHERE finreceiptheader_temp.receiptid = t1.receiptid))
 		</createView>
 	</changeSet>
 	<changeSet id="48" author="Irfan">
