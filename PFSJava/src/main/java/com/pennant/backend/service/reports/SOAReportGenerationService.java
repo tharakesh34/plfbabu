@@ -44,6 +44,7 @@
  */
 package com.pennant.backend.service.reports;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +53,8 @@ import com.pennanttech.dataengine.model.EventProperties;
 
 public interface SOAReportGenerationService {
 
-	StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate);
+	StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate)
+			throws IllegalAccessException, InvocationTargetException;
 
 	EventProperties getEventPropertiesList(String configName);
 

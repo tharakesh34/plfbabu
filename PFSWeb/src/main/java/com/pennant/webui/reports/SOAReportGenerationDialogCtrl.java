@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.reports;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -164,7 +165,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnGenereate(Event event) {
+	public void onClick$btnGenereate(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		doSetValidation();
@@ -216,8 +217,11 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param statementOfAccount
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void doWriteComponentsToBean(StatementOfAccount statementOfAccount) {
+	public void doWriteComponentsToBean(StatementOfAccount statementOfAccount)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();

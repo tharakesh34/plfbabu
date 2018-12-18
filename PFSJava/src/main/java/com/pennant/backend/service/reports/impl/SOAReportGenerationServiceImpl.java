@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.reports.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -217,7 +219,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate) {
+	public StatementOfAccount getStatmentofAccountDetails(String finReference, Date startDate, Date endDate)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		long custId = 0;
 		List<ApplicantDetail> applicantDetails = null;
@@ -349,8 +352,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		//Formatting the amounts
 		statementOfAccount
-				.setLoanAmount(PennantApplicationUtil
-						.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
+				.setLoanAmount(PennantApplicationUtil.formateAmount(statementOfAccount.getLoanAmount(), ccyEditField));
 		statementOfAccount.setPreferredCardLimit(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getPreferredCardLimit(), ccyEditField));
 		statementOfAccount.setChargeCollCust(
@@ -612,7 +614,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaSummaryReport.setOverDue(overDue);
 
 				soaSummaryReportsList.add(soaSummaryReport);
-                
+
 				due = totalPrincipalSchd;
 				receipt = totalSchdPriPaid;
 
@@ -646,12 +648,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				List<FinExcessAmount> finExcessAmountsList = getFinExcessAmountsList(finReference);
 
 				// FinODDetails
+
+				BigDecimal totPenaltyAmt = BigDecimal.ZERO;
+				BigDecimal totwaived = BigDecimal.ZERO;
+				BigDecimal totPenaltyPaid = BigDecimal.ZERO;
+				BigDecimal lpiAmt = BigDecimal.ZERO;
+				BigDecimal lpiWaived = BigDecimal.ZERO;
+				BigDecimal lpiPaid = BigDecimal.ZERO;
+
 				if (finODDetailsList != null && !finODDetailsList.isEmpty()) {
-
-					BigDecimal totPenaltyAmt = BigDecimal.ZERO;
-					BigDecimal totwaived = BigDecimal.ZERO;
-					BigDecimal totPenaltyPaid = BigDecimal.ZERO;
-
 					for (FinODDetails finODDetails : finODDetailsList) {
 
 						if (finODDetails.getTotPenaltyAmt() != null) {
@@ -665,21 +670,45 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (finODDetails.getTotPenaltyPaid() != null) {
 							totPenaltyPaid = totPenaltyPaid.add(finODDetails.getTotPenaltyPaid());
 						}
+
+						if (finODDetails.getLPIAmt() != null) {
+							lpiAmt = lpiAmt.add(finODDetails.getLPIAmt());
+						}
+
+						if (finODDetails.getLPIWaived() != null) {
+							lpiWaived = lpiWaived.add(finODDetails.getLPIWaived());
+						}
+						if (finODDetails.getLPIPaid() != null) {
+							lpiPaid = lpiPaid.add(finODDetails.getLPIPaid());
+						}
 					}
-
-					due = totPenaltyAmt.subtract(totwaived);
-					receipt = totPenaltyPaid;
-
-					overDue = due.subtract(receipt);
-
-					soaSummaryReport = new SOASummaryReport();
-					soaSummaryReport.setComponent("Late Payment Penalty");
-					soaSummaryReport.setDue(due);
-					soaSummaryReport.setReceipt(receipt);
-					soaSummaryReport.setOverDue(overDue);
-
-					soaSummaryReportsList.add(soaSummaryReport);
 				}
+
+				due = totPenaltyAmt.subtract(totwaived);
+				receipt = totPenaltyPaid;
+
+				overDue = due.subtract(receipt);
+
+				soaSummaryReport = new SOASummaryReport();
+				soaSummaryReport.setComponent("Late Payment Penalty");
+				soaSummaryReport.setDue(due);
+				soaSummaryReport.setReceipt(receipt);
+				soaSummaryReport.setOverDue(overDue);
+
+				soaSummaryReportsList.add(soaSummaryReport);
+
+				due = lpiAmt.subtract(lpiWaived);
+				receipt = lpiPaid;
+				overDue = due.subtract(receipt);
+
+				soaSummaryReport = new SOASummaryReport();
+				soaSummaryReport.setComponent("Late Payment Interest");
+				soaSummaryReport.setDue(due);
+				soaSummaryReport.setReceipt(receipt);
+				soaSummaryReport.setOverDue(overDue);
+
+				soaSummaryReportsList.add(soaSummaryReport);
+
 
 				BigDecimal bounceDue = BigDecimal.ZERO;
 				BigDecimal bounceRecipt = BigDecimal.ZERO;
@@ -812,9 +841,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
 	public List<SOATransactionReport> getTransactionDetails(String finReference, StatementOfAccount statementOfAccount,
-			FinanceMain finMain) {
+			FinanceMain finMain) throws IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Enetring");
 
@@ -845,7 +876,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
         
 
 		//Receipt Header
-		String rHEventExcess = "Payment Received vide ";
+		String rHEventExcess = "Payment Received vide ";//10
 		String rHTdsAdjust = "TDS Adjustment"; //17
 		String rHPaymentBouncedFor = "Payment Bounced For "; //9
 		String rHTdsAdjustReversal = "TDS Adjustment Reversal "; //18
@@ -1270,7 +1301,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							Date receivedDate = finReceiptDetail.getReceivedDate();
 
 							String favourNumber = finReceiptDetail.getFavourNumber();
-							if (StringUtils.isBlank(receiptModeStatus) || !StringUtils.equals(receiptModeStatus, "C")) {
+							boolean isReceiptCancelled = false;
+							if (StringUtils.isBlank(receiptModeStatus)
+									|| (!StringUtils.equals(receiptModeStatus, "C") || isReceiptCancelled)) {
 								if (!StringUtils.equals("PAYABLE", rpaymentType)) {
 									String status = "";
 									String paymentType = "";
@@ -1334,6 +1367,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 													.concat(finReceiptDetail.getPaymentRef() + finRef);
 										}
 									}
+
 									soaTranReport.setValueDate(receivedDate);
 									soaTranReport.setEvent(rHEventExcess + status);
 									soaTranReport.setCreditAmount(finReceiptDetail.getAmount());
@@ -1344,8 +1378,22 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										soaTranReport.setDebitAmount(BigDecimal.ZERO);
 									}
 									soaTranReport.setPriority(10);
-
 									soaTransactionReports.add(soaTranReport);
+
+									//Cancelled Receipt's Details
+									if (StringUtils.equals(receiptModeStatus, "C") && isReceiptCancelled) {
+										SOATransactionReport cancelReport = new SOATransactionReport();
+										BeanUtils.copyProperties(cancelReport, soaTranReport);
+										cancelReport.setDebitAmount(finReceiptDetail.getAmount());
+										if (StringUtils.equals(rpaymentType, "EXCESS")) {
+											cancelReport.setCreditAmount(finReceiptDetail.getAmount());
+										} else {
+											cancelReport.setCreditAmount(BigDecimal.ZERO);
+										}
+										cancelReport
+												.setEvent(rHEventExcess.replaceAll("Received", "Cancelled") + status);
+										soaTransactionReports.add(cancelReport);
+									}
 								}
 
 								//Receipt Allocation Details  
@@ -1639,7 +1687,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				}
 			}
-			
+
 			//Advance EMI should be shown on transaction as total disbursement, advance emi debit entry.
 			if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
 				for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {

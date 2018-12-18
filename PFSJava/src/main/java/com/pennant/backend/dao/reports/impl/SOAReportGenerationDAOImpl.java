@@ -259,7 +259,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql
-				.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate FROM FinODDetails");
+				.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt FROM FinODDetails");
 		selectSql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
