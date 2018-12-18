@@ -4820,5 +4820,23 @@ UNION ALL
 		</sql>
 </changeSet>
 
+<changeSet id="72" author="aditya">
+<comment>Inserted payment type values into rbfielddetails</comment>
+<sql>
+<![CDATA[
+INSERT INTO rbfielddetails VALUES ('ELGRULE', 'ELGRULE', 'chequeOrDDAvailable', 'CHEQUE or DD Available', 'nchar', 1, 0, 1, '', 'static', '');
+INSERT INTO rbfielddetails VALUES ('ELGRULE', 'ELGRULE', 'neftAvailable', 'NEFT or IMPS or RTGS Available', 'nchar', 1, 0, 1, '', 'static', '');
+
+INSERT INTO rbfielddetails VALUES ('SCORES', 'RSCORE', 'chequeOrDDAvailable', 'CHEQUE or DD Available', 'nchar', 1, 0, 1, '', 'static', '');
+INSERT INTO rbfielddetails VALUES ('SCORES', 'RSCORE', 'neftAvailable', 'NEFT or IMPS or RTGS Available', 'nchar', 1, 0, 1, '', 'static', '');
+
+INSERT INTO rbfielddetails VALUES ('AGRRULE', 'AGRRULE', 'chequeOrDDAvailable', 'CHEQUE or DD Available', 'nchar', 1, 0, 1, '', 'static', '');
+INSERT INTO rbfielddetails VALUES ('AGRRULE', 'AGRRULE', 'neftAvailable', 'NEFT or IMPS or RTGS Available', 'nchar', 0, 1, 1, '', 'static', '');
+
+INSERT INTO rbfielddetails VALUES ('CLRULE', 'CLRULE', 'chequeOrDDAvailable', 'CHEQUE or DD Available', 'nchar', 1, 0, 1, '', 'static', '');
+INSERT INTO rbfielddetails VALUES ('CLRULE', 'CLRULE', 'neftAvailable', 'NEFT or IMPS or RTGS Available', 'nchar', 1, 0, 1, '', 'static', '');
+]]>
+</sql>
+</changeSet>
 	
 </databaseChangeLog>

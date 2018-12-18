@@ -183,6 +183,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date firstDroplineDate;
 	private boolean pftServicingODLimit;
 
+	//Payment type check
+	private boolean chequeOrDDAvailable;
+	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
+
 	// Commercial Workflow Purpose
 	private String approved;
 	private BigDecimal securityDeposit = BigDecimal.ZERO;
@@ -868,6 +872,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("entityCode");
 		excludeFields.add("finBranchContact");
 		excludeFields.add("nextUsrName");
+
+		//Payment type check
+		excludeFields.add("chequeOrDDAvailable");
+		excludeFields.add("neftAvailable");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -3042,6 +3050,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setPftServicingODLimit(boolean pftServicingODLimit) {
 		this.pftServicingODLimit = pftServicingODLimit;
+	}
+
+	public boolean isChequeOrDDAvailable() {
+		return chequeOrDDAvailable;
+	}
+
+	public void setChequeOrDDAvailable(boolean chequeOrDDAvailable) {
+		this.chequeOrDDAvailable = chequeOrDDAvailable;
+	}
+
+	public boolean isNeftAvailable() {
+		return neftAvailable;
+	}
+
+	public void setNeftAvailable(boolean neftAvailable) {
+		this.neftAvailable = neftAvailable;
 	}
 
 	public Date getFirstDroplineDate() {

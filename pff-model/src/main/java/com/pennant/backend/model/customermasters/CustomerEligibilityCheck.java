@@ -105,6 +105,9 @@ public class CustomerEligibilityCheck implements Serializable {
     private int activeLoansOnFinType = 0;
 	private int totalLoansOnFinType = 0;
 	
+	//Payment type check
+	private boolean chequeOrDDAvailable;
+	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
 
 	/*
 	 * private String custCIF; private String custSubSector = ""; private String custCOB = ""; private String
@@ -855,6 +858,22 @@ public class CustomerEligibilityCheck implements Serializable {
 	}
 	public void setTotalLoansOnFinType(int totalLoansOnFinType) {
 		this.totalLoansOnFinType = totalLoansOnFinType;
+	}
+
+	public boolean isChequeOrDDAvailable() {
+		return chequeOrDDAvailable;
+	}
+
+	public void setChequeOrDDAvailable(boolean chequeOrDDAvailable) {
+		this.chequeOrDDAvailable = chequeOrDDAvailable;
+	}
+
+	public boolean isNeftAvailable() {
+		return neftAvailable;
+	}
+
+	public void setNeftAvailable(boolean neftAvailable) {
+		this.neftAvailable = neftAvailable;
 	}
 
 }

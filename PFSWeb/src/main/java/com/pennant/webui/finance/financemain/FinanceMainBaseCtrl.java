@@ -6194,6 +6194,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceMain.setTaskId(this.curTaskId);
 		aFinanceMain.setNextTaskId(this.curNextTaskId);
 		aFinanceMain.setNextUserId(this.curNextUserId);
+		aFinanceMain.setChequeOrDDAvailable(false);
+		aFinanceMain.setNeftAvailable(false);
 		isNew = aFinanceDetail.isNewRecord();
 
 		if (!primaryValidations()) {
@@ -6449,13 +6451,45 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							finPayDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 							finPayDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 							finPayDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+							if (StringUtils.equals(finPayDetail.getPaymentType(),
+									DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+									|| StringUtils.equals(finPayDetail.getPaymentType(),
+											DisbursementConstants.PAYMENT_TYPE_DD)) {
+								aFinanceMain.setChequeOrDDAvailable(true);
+							} else if (StringUtils.equals(finPayDetail.getPaymentType(),
+									DisbursementConstants.PAYMENT_TYPE_RTGS)
+									|| StringUtils.equals(finPayDetail.getPaymentType(),
+											DisbursementConstants.PAYMENT_TYPE_IMPS)
+									|| StringUtils.equals(finPayDetail.getPaymentType(),
+											DisbursementConstants.PAYMENT_TYPE_NEFT)) {
+								aFinanceMain.setNeftAvailable(true);
+							}
 						}
 					}
 				} else {
 					return;
 				}
 			}
+			// If Disbursement tab is not visible
+		} else {
+			if (aFinanceDetail.getAdvancePaymentsList() != null && !aFinanceDetail.getAdvancePaymentsList().isEmpty()) {
+				for (FinAdvancePayments finPayDetail : aFinanceDetail.getAdvancePaymentsList()) {
+					if (StringUtils.equals(finPayDetail.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+							|| StringUtils.equals(finPayDetail.getPaymentType(),
+									DisbursementConstants.PAYMENT_TYPE_DD)) {
+						aFinanceMain.setChequeOrDDAvailable(true);
+					} else if (StringUtils.equals(finPayDetail.getPaymentType(),
+							DisbursementConstants.PAYMENT_TYPE_RTGS)
+							|| StringUtils.equals(finPayDetail.getPaymentType(),
+									DisbursementConstants.PAYMENT_TYPE_IMPS)
+							|| StringUtils.equals(finPayDetail.getPaymentType(),
+									DisbursementConstants.PAYMENT_TYPE_NEFT)) {
+						aFinanceMain.setNeftAvailable(true);
+					}
+				}
+			}
 		}
+
 		//Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
@@ -16148,6 +16182,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (DateUtility.compare(curDisb.getDisbDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
 						detail.getCustomerEligibilityCheck().setDisbOnGrace(true);
 					}
+				}
+			}
+		}
+
+		//Payment type check
+		detail.getCustomerEligibilityCheck().setChequeOrDDAvailable(false);
+		detail.getCustomerEligibilityCheck().setNeftAvailable(false);
+		if (detail.getAdvancePaymentsList() != null && !detail.getAdvancePaymentsList().isEmpty()) {
+			for (FinAdvancePayments finPayDetail : detail.getAdvancePaymentsList()) {
+				if (StringUtils.equals(finPayDetail.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+						|| StringUtils.equals(finPayDetail.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+					detail.getCustomerEligibilityCheck().setChequeOrDDAvailable(true);
+				} else if (StringUtils.equals(finPayDetail.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_RTGS)
+						|| StringUtils.equals(finPayDetail.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_IMPS)
+						|| StringUtils.equals(finPayDetail.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_NEFT)) {
+					detail.getCustomerEligibilityCheck().setNeftAvailable(true);
 				}
 			}
 		}
