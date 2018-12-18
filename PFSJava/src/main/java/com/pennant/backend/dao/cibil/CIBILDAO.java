@@ -57,8 +57,16 @@ public interface CIBILDAO {
 
 	List<ChequeDetail> getChequeBounceStatus(String finReference);
 
-	List<Long> getGuarantorsDetails(String finRefrence);
+	List<Long> getGuarantorsDetails(String finRefrence, boolean isBankCustomer);
 
 	long getotalRecords(String segmentType);
+
+	Customer getExternalCustomer(Long custId);
+
+	List<CustomerAddres> getExternalCustomerAddres(Long custId);
+
+	List<CustomerPhoneNumber> getExternalCustomerPhoneNumbers(Long custId);
+
+	List<CustomerDocument> getExternalCustomerDocuments(Long custId);
 
 }

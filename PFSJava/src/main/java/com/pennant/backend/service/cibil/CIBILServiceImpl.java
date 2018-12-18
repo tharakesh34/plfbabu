@@ -28,7 +28,7 @@ public class CIBILServiceImpl implements CIBILService {
 			customer.setAddressList(cibildao.getCustomerAddres(customerId, segmentType));
 			customer.setCustomerDocumentsList(cibildao.getCustomerDocuments(customerId, segmentType));
 			customer.setCustomerPhoneNumList(cibildao.getCustomerPhoneNumbers(customerId, segmentType));
-			
+
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
 				customer.setCustomerFinance(cibildao.getFinanceSummary(customerId, finreference));
 			} else {
@@ -48,7 +48,7 @@ public class CIBILServiceImpl implements CIBILService {
 
 				List<CustomerDetails> guarenterList = new ArrayList<>();
 				// Bank Customers
-				List<Long> guarenters = cibildao.getGuarantorsDetails(finReference);
+				List<Long> guarenters = cibildao.getGuarantorsDetails(finReference, true);
 				for (Long custId : guarenters) {
 					CustomerDetails guarenter = new CustomerDetails();
 					guarenter.setCustomer(cibildao.getCustomer(custId, segmentType));
@@ -57,9 +57,19 @@ public class CIBILServiceImpl implements CIBILService {
 					guarenter.setCustomerDocumentsList(cibildao.getCustomerDocuments(custId, segmentType));
 					guarenterList.add(guarenter);
 				}
-				finance.setFinGuarenters(guarenterList);
 
 				// Non Banking Customers needs to prepared
+				//guarenters = cibildao.getGuarantorsDetails(finReference, false);
+				for (Long custId : guarenters) {
+					//CustomerDetails guarenter = new CustomerDetails();
+					//guarenter.setCustomer(cibildao.getExternalCustomer(custId));
+					//guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
+					//guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
+					//guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
+					//guarenterList.add(guarenter);
+				}
+
+				finance.setFinGuarenters(guarenterList);
 			}
 
 		} catch (Exception e) {

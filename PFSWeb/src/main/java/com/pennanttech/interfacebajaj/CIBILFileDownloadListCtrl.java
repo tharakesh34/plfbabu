@@ -191,6 +191,9 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 			retailCibilReport.generateReport();
 		} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(fileType.getSelectedItem().getValue())) {
 			corporateCibilReport.generateReport();
+		} else {
+			MessageUtil.showError("File Type cannot be blank.");
+			return;
 		}
 		
 		search();

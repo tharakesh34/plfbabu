@@ -65,28 +65,28 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		StringBuilder sql = new StringBuilder();
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
-			sql.append(" select custShrtName, CustSalutationCode, CustFName, CustMName, CustLName, custDOB");
-			sql.append(", custGenderCode from customers where CUSTID = :CUSTID");
+			sql.append(" select custshrtname, custsalutationcode, custfname, custmname, custlname, custdob");
+			sql.append(" ,custgendercode from customers where custid = :custid");
 		} else {
 			sql.append(" select distinct c.custid, c.custdftbranch, c.custfname, c.custmname");
-			sql.append(", c.custlname, c.custshrtname, c.custtradelicencenum, c.custdob, custcob");
+			sql.append(", c.custlname, c.custshrtname, c.custtradelicencenum, c.custdob, custcob, custgendercode");
 			sql.append(", c.custcrcpr");
-			sql.append(", lcm.code legalconstitution, bcm.code businesscategory, cc.custctgtype lovDescCustCtgType");
+			sql.append(", lcm.code legalconstitution, bcm.code businesscategory, cc.custctgtype lovdesccustctgtype");
 			sql.append(" from customers c ");
 			sql.append(" inner join bmtcustcategories cc on cc.custctgcode = c.custctgcode");
-			sql.append(" left join cibil_legal_const_mapping lcm on lcm.Cust_Type_Code = c.custtypecode");
+			sql.append(" left join cibil_legal_const_mapping lcm on lcm.cust_type_code = c.custtypecode");
 			sql.append(" and lcm.segment_type =:CORP");
-			sql.append(" left join cibil_legal_constitution lc on lc.Code = lcm.Code");
-			sql.append(" and lc.Segment_Type=lcm.Segment_Type");
+			sql.append(" left join cibil_legal_constitution lc on lc.code = lcm.code");
+			sql.append(" and lc.segment_type=lcm.segment_type");
 			sql.append(" left join cibil_business_catgry_mapping bcm on bcm.category = c.custctgcode");
 			sql.append(" and bcm.segment_type =:CORP ");
 			sql.append(" left join cibil_business_category bc on bc.code = bcm.code");
-			sql.append(" and bc.Segment_Type=bcm.Segment_Type");
+			sql.append(" and bc.segment_type=bcm.segment_type");
 			sql.append(" left join cibil_industry_type_mapping bit on bit.industry = c.custindustry");
-			sql.append(" where c.CUSTID = :CUSTID");
+			sql.append(" where c.custid = :custid");
 		}
 
-		paramMap.addValue("CUSTID", customerId);
+		paramMap.addValue("custid", customerId);
 		paramMap.addValue("CORP", "CORP");
 
 		RowMapper<Customer> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
@@ -129,7 +129,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		logger.trace(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		
+
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
 			sql.append(" select cpt.code phonetypecode, cp.phonenumber, phoneareacode, phonetypepriority");
 			sql.append(" from customerphonenumbers cp");
@@ -183,7 +183,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		sql.append(" CustAddrLine1, CustAddrLine2, sm.code CustAddrProvince, CustAddrZIP");
 		sql.append(" from CustomerAddresses ca");
 		sql.append(" left join cibil_address_types_mapping am on am.address_type = ca.custaddrtype");
-		sql.append(" and am.segment_type = :segment_type");		
+		sql.append(" and am.segment_type = :segment_type");
 		sql.append(" left join cibil_address_types cat on cat.code = am.Code and cat.segment_type = am.segment_type");
 		sql.append(" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE ");
 		sql.append(" where CUSTID = :CUSTID");
@@ -203,7 +203,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public FinanceEnquiry getFinanceSummary(long customerId, String finReference) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -224,7 +224,6 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		RowMapper<FinanceEnquiry> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 		return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
-
 
 	@Override
 	public List<FinanceEnquiry> getFinanceSummary(long customerId) {
@@ -588,18 +587,27 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	}
 
 	@Override
-	public List<Long> getGuarantorsDetails(String finRefrence) {
+	public List<Long> getGuarantorsDetails(String finRefrence, boolean isBankCustomers) {
 		logger.trace(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select distinct c.custId from finguarantorsdetails gd");
+		if (isBankCustomers) {
+			sql.append(" select distinct c.custId from finguarantorsdetails gd");
+		} else {
+			sql.append(" select guarantorid c.custId from finguarantorsdetails gd");
+		}
 		sql.append(" inner join Financemain fm on fm.finreference = gd.finreference");
 		sql.append(" inner join customers c on c.custcif = gd.guarantorcif ");
-		sql.append(" where bankCustomer = :bankCustomer");
+		sql.append(" where fm.finreference = :finreference and bankCustomer = :bankCustomer");
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("FinRefrence", finRefrence);
-		parameterSource.addValue("bankCustomer", 1);
+		parameterSource.addValue("finreference", finRefrence);
+
+		if (isBankCustomers) {
+			parameterSource.addValue("bankCustomer", 1);
+		} else {
+			parameterSource.addValue("bankCustomer", 0);
+		}
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -617,12 +625,36 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	@Override
 	public long getotalRecords(String segmentType) {
 		String sql = "select count(distinct custid) from cibil_customer_extract where segment_type = :segment_type";
-		
+
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("segment_type", segmentType);
-				
+
 		return this.jdbcTemplate.queryForObject(sql, paramMap, Long.class);
+	}
+
+	@Override
+	public Customer getExternalCustomer(Long customerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CustomerAddres> getExternalCustomerAddres(Long custId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CustomerPhoneNumber> getExternalCustomerPhoneNumbers(Long custId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CustomerDocument> getExternalCustomerDocuments(Long custId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
