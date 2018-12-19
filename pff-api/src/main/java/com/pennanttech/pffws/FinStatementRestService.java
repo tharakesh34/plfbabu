@@ -1,5 +1,7 @@
 package com.pennanttech.pffws;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -37,6 +39,7 @@ public interface FinStatementRestService {
 
 	@POST
 	@Path("/statementService/getStatementOfAcc")
-	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws ServiceException;
+	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
+			throws ServiceException, IllegalAccessException, InvocationTargetException;
 
 }

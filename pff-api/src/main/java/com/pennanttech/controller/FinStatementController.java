@@ -750,7 +750,7 @@ public class FinStatementController extends SummaryDetailService {
 		}
 	}
 
-	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) {
+	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		StatementOfAccount statementOfAccount = null;

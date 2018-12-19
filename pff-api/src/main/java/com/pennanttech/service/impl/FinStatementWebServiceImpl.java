@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -347,7 +348,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 	}
 
 	@Override
-	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest) throws ServiceException {
+	public StatementOfAccount getStatementOfAcc(FinStatementRequest statementRequest)
+			throws ServiceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Enetring");
 		FinStatementResponse finStatementResponse = validateSOARequest(statementRequest, false);
 		if (finStatementResponse != null) {
