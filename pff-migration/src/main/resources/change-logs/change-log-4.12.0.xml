@@ -4842,5 +4842,327 @@ INSERT INTO rbfielddetails VALUES ('CLRULE', 'CLRULE', 'neftAvailable', 'NEFT or
 <changeSet id="73" author="GAnesh.p">
 	<dropColumn columnName="AutoRejectionDays" tableName="FinODDetails" />
 </changeSet>
+
+<changeSet id="12" author="swami.v">
+<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+	<addColumn tableName="finadvancepayments">
+			<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+           
+  </addColumn>
+</changeSet>
+
+<changeSet id="13" author="swami.v">
+<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+	<addColumn tableName="finadvancepayments_temp">
+			<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+           
+  </addColumn>
+</changeSet>
+
+
+<changeSet id="14" author="swami.v">
+<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+	<addColumn tableName="finadvancepayments_pa">
+			<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+           
+  </addColumn>
+</changeSet>
+
+ 
+ <changeSet id="15" author="swami.v">
+<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab </comment>
+		<createView viewName="finadvancepayments_aview" replaceIfExists="true" > 
+
+ SELECT t1.finreference,
+    t1.paymentid,
+    t1.paymentseq,
+    t1.paymentdetail,
+    t1.amttobereleased,
+    t1.liabilityholdname,
+    t1.transactionref,
+    t1.beneficiaryname,
+    t1.beneficiaryaccno,
+    t1.reenterbeneficiaryaccno,
+    t1.description,
+    t1.paymenttype,
+    t1.llreferenceno,
+    t1.lldate,
+    t1.custcontribution,
+    t1.sellercontribution,
+    t1.remarks,
+    t1.disbdate,
+    t1.disbseq,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.bankcode,
+    t1.payableloc,
+    t1.printingloc,
+    t1.valuedate,
+    t1.bankbranchid,
+    t1.phonecountrycode,
+    t1.phoneareacode,
+    t1.phonenumber,
+    t1.clearingdate,
+    t1.status,
+    t1.active,
+    t1.inputdate,
+    t1.disbccy,
+    t1.poissued,
+    t3.bankcode AS branchbankcode,
+    t31.bankname AS branchbankname,
+    t3.branchcode,
+    t3.branchdesc,
+    t3.ifsc,
+    t3.city,
+    t4.bankname,
+    t1.partnerbankid,
+    t5.partnerbankcode,
+    t5.partnerbankname,
+    t1.linkedtranid,
+    t5.actype AS partnerbankactype,
+    t5.accountno AS partnerbankac
+   FROM finadvancepayments t1
+     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+</createView>
+	</changeSet>
+	
+	
+	<changeSet id="16" author="swami.v">
+<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab </comment>
+		<createView viewName="finadvancepayments_tview" replaceIfExists="true" > 
+
+
+ SELECT t1.finreference,
+    t1.paymentid,
+    t1.paymentseq,
+    t1.paymentdetail,
+    t1.amttobereleased,
+    t1.liabilityholdname,
+    t1.transactionref,
+    t1.beneficiaryname,
+    t1.beneficiaryaccno,
+    t1.reenterbeneficiaryaccno,
+    t1.description,
+    t1.paymenttype,
+    t1.llreferenceno,
+    t1.lldate,
+    t1.custcontribution,
+    t1.sellercontribution,
+    t1.remarks,
+    t1.disbdate,
+    t1.disbseq,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.bankcode,
+    t1.payableloc,
+    t1.printingloc,
+    t1.valuedate,
+    t1.bankbranchid,
+    t1.phonecountrycode,
+    t1.phoneareacode,
+    t1.phonenumber,
+    t1.clearingdate,
+    t1.status,
+    t1.active,
+    t1.inputdate,
+    t1.disbccy,
+    t1.poissued,
+    t3.bankcode AS branchbankcode,
+    t31.bankname AS branchbankname,
+    t3.branchcode,
+    t3.branchdesc,
+    t3.ifsc,
+    t3.city,
+    t4.bankname,
+    t1.partnerbankid,
+    t5.partnerbankcode,
+    t5.partnerbankname,
+    t1.linkedtranid,
+    t5.actype AS partnerbankactype,
+    t5.accountno AS partnerbankac
+   FROM finadvancepayments_temp t1
+     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+
+</createView>
+	</changeSet>
+	
+	
+	<changeSet id="17" author="swami.v">
+<comment>New Column added of "reenterbeneficiaryaccno" for Disbursements  tab </comment>
+		<createView viewName="finadvancepayments_view" replaceIfExists="true" > 
+
+ SELECT t1.finreference,
+    t1.paymentid,
+    t1.paymentseq,
+    t1.paymentdetail,
+    t1.amttobereleased,
+    t1.liabilityholdname,
+    t1.transactionref,
+    t1.beneficiaryname,
+	t1.beneficiaryaccno,
+    t1.reenterbeneficiaryaccno,
+    t1.description,
+    t1.paymenttype,
+    t1.llreferenceno,
+    t1.lldate,
+    t1.custcontribution,
+    t1.sellercontribution,
+    t1.remarks,
+    t1.disbdate,
+    t1.disbseq,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.bankcode,
+    t1.payableloc,
+    t1.printingloc,
+    t1.valuedate,
+    t1.bankbranchid,
+    t1.phonecountrycode,
+    t1.phoneareacode,
+    t1.phonenumber,
+    t1.clearingdate,
+    t1.status,
+    t1.active,
+    t1.inputdate,
+    t1.disbccy,
+    t1.poissued,
+    t3.bankcode AS branchbankcode,
+    t31.bankname AS branchbankname,
+    t3.branchcode,
+    t3.branchdesc,
+    t3.ifsc,
+    t3.city,
+    t4.bankname,
+    t1.partnerbankid,
+    t5.partnerbankcode,
+    t5.partnerbankname,
+    t1.linkedtranid,
+    t5.actype AS partnerbankactype,
+    t5.accountno AS partnerbankac
+   FROM finadvancepayments_temp t1
+     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+UNION ALL
+ SELECT t1.finreference,
+    t1.paymentid,
+    t1.paymentseq,
+    t1.paymentdetail,
+    t1.amttobereleased,
+    t1.liabilityholdname,
+    t1.transactionref,
+    t1.beneficiaryname,
+    t1.beneficiaryaccno,
+    t1.reenterbeneficiaryaccno,
+    t1.description,
+    t1.paymenttype,
+    t1.llreferenceno,
+    t1.lldate,
+    t1.custcontribution,
+    t1.sellercontribution,
+    t1.remarks,
+    t1.disbdate,
+    t1.disbseq,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.bankcode,
+    t1.payableloc,
+    t1.printingloc,
+    t1.valuedate,
+    t1.bankbranchid,
+    t1.phonecountrycode,
+    t1.phoneareacode,
+    t1.phonenumber,
+    t1.clearingdate,
+    t1.status,
+    t1.active,
+    t1.inputdate,
+    t1.disbccy,
+    t1.poissued,
+    t3.bankcode AS branchbankcode,
+    t31.bankname AS branchbankname,
+    t3.branchcode,
+    t3.branchdesc,
+    t3.ifsc,
+    t3.city,
+    t4.bankname,
+    t1.partnerbankid,
+    t5.partnerbankcode,
+    t5.partnerbankname,
+    t1.linkedtranid,
+    t5.actype AS partnerbankactype,
+    t5.accountno AS partnerbankac
+   FROM finadvancepayments t1
+     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM finadvancepayments_temp
+          WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
+
+</createView>
+	</changeSet>
+	
+
+
+
+
+
+<changeSet id="22" author="swami.v">
+<comment> Added secgroups,SECGROUPRIGHTS of new column of "reenterbeneficiaryaccno" added</comment>
+<sql>
+
+
+UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FinAdvancePayments_APPROVER', 'WF Approver for Advance Payments', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinAdvancePayments_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+</sql>
+</changeSet>
 	
 </databaseChangeLog>

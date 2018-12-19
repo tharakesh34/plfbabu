@@ -439,7 +439,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
 		logger.debug("Entering");
 		setFinAdvancePaymentsList(finAdvancePayDetails);
-		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList());
+		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList(),
+				getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
 		logger.debug("Leaving");
 	}
 

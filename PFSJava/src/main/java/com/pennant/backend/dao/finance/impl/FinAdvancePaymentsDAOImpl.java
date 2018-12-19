@@ -126,7 +126,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select PaymentId,FinReference, PaymentSeq,DisbSeq, PaymentDetail,");
-		selectSql.append(" AmtToBeReleased, LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description, ");
+		selectSql.append(" AmtToBeReleased, LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo,reEnterBeneficiaryAccNo, Description, ");
 		selectSql.append(" PaymentType, LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
 		selectSql.append(" BankCode, PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode,");
 		selectSql.append(
@@ -164,7 +164,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select FinReference,PaymentId, PaymentSeq,DisbSeq, PaymentDetail, AmtToBeReleased,");
-		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description,PaymentType,BankCode,  ");
+		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo,reEnterBeneficiaryAccNo, Description,PaymentType,BankCode,  ");
 		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
 		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
 		selectSql.append(
@@ -241,7 +241,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		insertSql.append(" Insert Into FinAdvancePayments");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (PaymentId,FinReference, PaymentSeq ,DisbSeq, PaymentDetail, AmtToBeReleased,");
-		insertSql.append(" LiabilityHoldName, BeneficiaryName, BeneficiaryAccNo,Description, PaymentType, ");
+		insertSql.append(" LiabilityHoldName, BeneficiaryName, BeneficiaryAccNo,reEnterBeneficiaryAccNo,Description, PaymentType, ");
 		insertSql.append("  LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks,BankCode, ");
 		insertSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
 		insertSql.append(
@@ -249,7 +249,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:PaymentId, :FinReference, :PaymentSeq ,:DisbSeq, :PaymentDetail, :AmtToBeReleased,");
-		insertSql.append("  :LiabilityHoldName, :BeneficiaryName,:BeneficiaryAccNo, :Description, :PaymentType, ");
+		insertSql.append("  :LiabilityHoldName, :BeneficiaryName,:BeneficiaryAccNo, :reEnterBeneficiaryAccNo, :Description, :PaymentType, ");
 		insertSql.append(" :LlReferenceNo, :LlDate, :CustContribution,:SellerContribution, :Remarks, :BankCode,");
 		insertSql.append(" :PayableLoc, :PrintingLoc, :ValueDate, :BankBranchID, :PhoneCountryCode, :PhoneAreaCode, ");
 		insertSql.append(
@@ -287,7 +287,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		updateSql.append(" Set PaymentDetail = :PaymentDetail,");
 		updateSql.append(" AmtToBeReleased = :AmtToBeReleased, LiabilityHoldName = :LiabilityHoldName,");
 		updateSql.append(" BeneficiaryName = :BeneficiaryName, DisbSeq =:DisbSeq,");
-		updateSql.append(" BeneficiaryAccNo = :BeneficiaryAccNo, Description = :Description,");
+		updateSql.append(" BeneficiaryAccNo = :BeneficiaryAccNo, reEnterBeneficiaryAccNo = :reEnterBeneficiaryAccNo, Description = :Description,");
 		updateSql.append(" PaymentType = :PaymentType, LlReferenceNo = :LlReferenceNo,");
 		updateSql.append(" LlDate = :LlDate, CustContribution = :CustContribution,");
 		updateSql.append(" SellerContribution = :SellerContribution, Remarks = :Remarks,");
@@ -565,7 +565,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("Select FinReference,PaymentId, PaymentSeq,DisbSeq, PaymentDetail, AmtToBeReleased,");
-		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, Description,PaymentType,BankCode,  ");
+		selectSql.append(" LiabilityHoldName, BeneficiaryName,BeneficiaryAccNo, reEnterBeneficiaryAccNo, Description,PaymentType,BankCode,  ");
 		selectSql.append(" LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks, ");
 		selectSql.append(" PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode, ");
 		selectSql.append(

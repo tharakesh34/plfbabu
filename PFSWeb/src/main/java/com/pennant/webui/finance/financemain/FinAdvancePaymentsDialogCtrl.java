@@ -75,6 +75,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -172,6 +173,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Hbox hbox_custContribution;
 	protected Label label_sellerContribution;
 	protected Hbox hbox_sellerContribution;
+
+	protected Row row_ReEnterBenfAccNo;
+	protected Space space_ReEnterAccNo;
+	protected Textbox reEnterBeneficiaryAccNo;
+	private boolean reEntrBenfAccNo = false;
 
 	protected Label recordType;
 	protected Groupbox gb_statusDetails;
@@ -547,6 +553,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.sellerContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_sellerContribution"));
 		this.partnerBankID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
 
+		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
+		if (ImplementationConstants.DISB_ACCNO_MASKING
+				&& (!isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo") || StringUtils
+						.equals(this.finAdvancePayments.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED))) {
+			this.beneficiaryAccNo.setType("password");
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -702,6 +715,25 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
+		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
+		if (ImplementationConstants.DISB_ACCNO_MASKING
+				&& !isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
+			String dType = this.finAdvancePayments.getPaymentType();
+			if (StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IMPS)
+					|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_NEFT)
+					|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IFT)
+					|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_RTGS)) {
+
+				this.btnSave.setVisible(true);
+				this.row_ReEnterBenfAccNo.setVisible(true);
+				this.space_ReEnterAccNo.setSclass(PennantConstants.mandateSclass);
+				this.reEnterBeneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
+				reEntrBenfAccNo = true;
+				if (ImplementationConstants.DISB_ACCNO_MASKING) {
+					this.beneficiaryAccNo.setType("password");
+				}
+			}
+		}
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);
 		logger.debug("Leaving");
 	}
@@ -781,6 +813,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.branch.setValue(aFinAdvnancePayments.getBranchDesc());
 		this.city.setValue(StringUtils.trimToEmpty(aFinAdvnancePayments.getCity()));
 		this.beneficiaryAccNo.setValue(aFinAdvnancePayments.getBeneficiaryAccNo());
+		this.reEnterBeneficiaryAccNo.setValue(aFinAdvnancePayments.getReEnterBeneficiaryAccNo());
 		this.beneficiaryName.setValue(aFinAdvnancePayments.getBeneficiaryName());
 		this.transactionRef.setValue(aFinAdvnancePayments.getTransactionRef());
 
@@ -962,6 +995,17 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		try {
 			aFinAdvancePayments.setBeneficiaryAccNo(this.beneficiaryAccNo.getValue());
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinAdvancePayments.setReEnterBeneficiaryAccNo(this.reEnterBeneficiaryAccNo.getValue());
+			if (reEntrBenfAccNo
+					&& !StringUtils.equals(this.beneficiaryAccNo.getValue(), this.reEnterBeneficiaryAccNo.getValue())) {
+				throw new WrongValueException(this.reEnterBeneficiaryAccNo, Labels.getLabel("FIELD_NOT_MATCHED",
+						new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
+								Labels.getLabel("label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value") }));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1278,6 +1322,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 									PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 				}
 			}
+		}
+		if (this.row_ReEnterBenfAccNo.isVisible() && !this.reEnterBeneficiaryAccNo.isReadonly()) {
+			this.reEnterBeneficiaryAccNo.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value"),
+					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 
 		logger.debug("Leaving");

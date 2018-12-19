@@ -263,6 +263,17 @@
 											<textbox id="beneficiaryName" />
 										</hbox>
 									</row>
+									<row visible="false" id="row_ReEnterBenfAccNo">
+										<label
+											id="label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo"
+											value="${c:l('label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value')}" />
+										<hbox>
+											<space spacing="2px"
+												sclass="mandatory" id="space_ReEnterAccNo" />
+											<textbox
+												id="reEnterBeneficiaryAccNo" />
+										</hbox>
+									</row>
 									<row>
 										<label id="label_PhoneNumber" value="${c:l('label_FinAdvancePaymentsDialog_PhoneNumber.value')}" />
 										<hbox>
@@ -271,6 +282,7 @@
 										</hbox>
 									</row>
 								</rows>
+								
 							</grid>
 						</groupbox>
 					</div>

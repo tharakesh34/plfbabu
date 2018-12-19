@@ -877,7 +877,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
 		logger.debug("Entering");
-		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails);
+		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails, false);
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		logger.debug("Leaving");
 	}

@@ -64,6 +64,7 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
@@ -195,7 +196,7 @@ public class DisbursementInstCtrl {
 
 	}
 
-	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
+	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails, boolean isMaskingAccNo) {
 		logger.debug("Entering");
 		listbox.getItems().clear();
 		if (finAdvancePayDetails != null && !finAdvancePayDetails.isEmpty()) {
@@ -282,7 +283,11 @@ public class DisbursementInstCtrl {
 					lc.setParent(item);
 					lc = new Listcell(custName);
 					lc.setParent(item);
-					lc = new Listcell(accoountNum);
+					if (ImplementationConstants.DISB_ACCNO_MASKING && !isMaskingAccNo) {
+						lc = new Listcell("**********");
+					} else {
+						lc = new Listcell(accoountNum);
+					}
 					lc.setParent(item);
 
 					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));

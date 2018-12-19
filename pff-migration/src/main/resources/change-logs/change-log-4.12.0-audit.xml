@@ -110,4 +110,12 @@
 			<column name="AutoRejectionDays" type="Number(3,0)" defaultValue="0"/>
 	</addColumn>
 </changeSet>	
+
+<changeSet id="3" author="swami.v">
+<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+	<addColumn tableName="adtfinadvancepayments">
+			<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+           
+  </addColumn>
+</changeSet>
 </databaseChangeLog>

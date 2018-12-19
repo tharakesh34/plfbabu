@@ -91,6 +91,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	@XmlElement(name = "accountNo")
 	private String beneficiaryAccNo;
+	private String reEnterBeneficiaryAccNo;
 	private String description;
 
 	@XmlElement(name = "disbType")
@@ -677,6 +678,15 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.entityCode = entityCode;
 	}
 
+
+	public String getReEnterBeneficiaryAccNo() {
+		return reEnterBeneficiaryAccNo;
+	}
+
+	public void setReEnterBeneficiaryAccNo(String reEnterBeneficiaryAccNo) {
+		this.reEnterBeneficiaryAccNo = reEnterBeneficiaryAccNo;
+	}
+
 	public long getProviderId() {
 		return providerId;
 	}
@@ -684,5 +694,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setProviderId(long providerId) {
 		this.providerId = providerId;
 	}
+
 
 }
