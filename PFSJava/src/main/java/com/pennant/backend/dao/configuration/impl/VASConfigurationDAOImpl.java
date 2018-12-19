@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.configuration.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -51,10 +53,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -119,14 +123,14 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		sql = new StringBuilder(
 				"Select ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting,");
 		sql.append(
-				" RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ProductType, VasFee,");
+				" RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ProductType, VasFee, BatchId,");
 		sql.append(
-				"  AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, FeeType, FLPCalculatedOn, ShortCode,");
+				"  AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, FeeType, FLPCalculatedOn, ShortCode, ModeOfPayment, AllowFeeType, MedicalApplicable,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeAccountingName, AccrualAccountingName, FeeAccountingDesc, AccrualAccountingDesc");
-			sql.append(" ,ProductTypeDesc, ProductCategory, ManufacturerName ,FeeTypeCode, FeeTypeDesc");
+			sql.append(" ,ProductTypeDesc, ProductCategory, ManufacturerName ,FeeTypeCode, FeeTypeDesc, FileName");
 		}
 		sql.append(" From VasStructure");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -207,14 +211,16 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		insertSql.append(
 				" (ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting, RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks, ");
 		insertSql.append("  ProductType, VasFee, AllowFeeToModify, ManufacturerId, PreValidation, PostValidation, ");
-		insertSql.append(" FeeType, FLPCalculatedOn, ShortCode, ");
+		insertSql.append(
+				" FeeType, FLPCalculatedOn, ShortCode, ModeOfPayment, AllowFeeType, MedicalApplicable, BatchId,");
 		insertSql.append(
 				"  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
 				"  Values(:ProductCode, :ProductDesc, :RecAgainst, :FeeAccrued, :FeeAccounting, :AccrualAccounting, :RecurringType, :FreeLockPeriod, :PreValidationReq, :PostValidationReq, :Active, :Remarks, ");
 		insertSql.append(
 				"  :ProductType, :VasFee, :AllowFeeToModify, :ManufacturerId, :PreValidation, :PostValidation, ");
-		insertSql.append(" :FeeType, :FlpCalculatedOn, :ShortCode, ");
+		insertSql.append(
+				" :FeeType, :FlpCalculatedOn, :ShortCode, :ModeOfPayment, :AllowFeeType, :MedicalApplicable, :BatchId,");
 		insertSql.append(
 				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -252,6 +258,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 				"	PreValidationReq = :PreValidationReq, PostValidationReq = :PostValidationReq, Active = :Active, Remarks = :Remarks,");
 		updateSql.append(
 				"  ProductType= :ProductType , VasFee = :VasFee, AllowFeeToModify = :AllowFeeToModify, ManufacturerId= :ManufacturerId, ");
+		updateSql.append(
+				"  ModeOfPayment= :ModeOfPayment , AllowFeeType = :AllowFeeType, MedicalApplicable = :MedicalApplicable, BatchId = :BatchId, ");
 		updateSql.append(
 				"  PreValidation = :PreValidation, PostValidation= :PostValidation, FeeType = :FeeType, FLPCalculatedOn = :FlpCalculatedOn, ShortCode = :ShortCode,");
 		updateSql.append(" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
@@ -332,4 +340,66 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		return count;
 	}
 
+
+	@Override
+	public void savePremiumCalcDetails(List<VASPremiumCalcDetails> premiumCalcDetList, String tableType) {
+		logger.debug("Entering");
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO VASPremiumCalcDetails");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" ( BatchId, ProductCode, ManufacturerId, CustomerAge, Gender,");
+		sql.append("PolicyAge, PremiumPercentage, MinAmount,MaxAmount) ");
+		sql.append("  VALUES(:BatchId, :ProductCode, :ManufacturerId, :CustomerAge, :Gender,");
+		sql.append(" :PolicyAge, :PremiumPercentage, :MinAmount, :MaxAmount) ");
+
+		logger.debug("insertSql: " + sql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(premiumCalcDetList.toArray());
+
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
+	@Override
+	public List<VASPremiumCalcDetails> getPremiumCalcDetails(String productCode, String tableType) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ProductCode", productCode);
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" Select BatchId, ProductCode, ManufacturerId, CustomerAge, Gender,");
+		sql.append(" PolicyAge, PremiumPercentage, MinAmount,MaxAmount");
+		sql.append(" from VASPremiumCalcDetails");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where ProductCode = :ProductCode");
+
+		logger.debug("selectListSql: " + sql.toString());
+		RowMapper<VASPremiumCalcDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VASPremiumCalcDetails.class);
+		logger.debug("Leaving");
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public void deletePremiumCalcDetails(String productCode, String tableType) {
+		logger.debug("Entering");
+
+		StringBuilder deleteSql = new StringBuilder("Delete From VASPremiumCalcDetails");
+		deleteSql.append(StringUtils.trimToEmpty(tableType));
+		deleteSql.append(" Where ProductCode =:ProductCode");
+
+		logger.debug("deleteSql: " + deleteSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ProductCode", productCode);
+		try {
+			this.jdbcTemplate.update(deleteSql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		logger.debug("Leaving");
+	}
 }

@@ -283,6 +283,9 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> verification;
 	private static Map<String, ValueLabel>	employmentTypeList			= new HashMap<>();
 	private static Map<String, ValueLabel>	addEmploymentList			= new HashMap<>();
+	private static ArrayList<ValueLabel> vasModeOfPaymentsList;
+	private static ArrayList<ValueLabel> vasAllowFeeTypes;
+	private static ArrayList<ValueLabel> medicalStatusList;
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -4038,10 +4041,7 @@ public class PennantStaticListUtil {
 			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,
 					Labels.getLabel("label_PaymentType_ESCROW")));
 			/*payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NACH,
-			Labels.getLabel("label_PaymentType_NACH")));*/
-		}else{
-			payments
-				.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST, Labels.getLabel("label_PaymentType_IST")));
+					Labels.getLabel("label_PaymentType_NACH")));*/
 		}
 		return payments;
 	}
@@ -4518,9 +4518,43 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_InsuranceSurrenderDialog_Surrender.value")));
 			insSurrenderActivity.add(new ValueLabel(VASConsatnts.STATUS_CANCEL,
 					Labels.getLabel("label_InsuranceSurrenderDialog_Cancel.value")));
-
 		}
 		return insSurrenderActivity;
+	}
+
+	public static List<ValueLabel> getVasModeOfPayments() {
+		if (vasModeOfPaymentsList == null) {
+			vasModeOfPaymentsList = new ArrayList<ValueLabel>();
+			vasModeOfPaymentsList.add(new ValueLabel(VASConsatnts.VAS_PAYMENT_DEDUCTION,
+					Labels.getLabel("label_VASConfiguration_PaymentMode_Deduction.value")));
+			vasModeOfPaymentsList.add(new ValueLabel(VASConsatnts.VAS_PAYMENT_COLLECTION,
+					Labels.getLabel("label_VASConfiguration_PaymentMode_Collection.value")));
+		}
+		return vasModeOfPaymentsList;
+	}
+
+	public static List<ValueLabel> getVasAllowFeeTypes() {
+		if (vasAllowFeeTypes == null) {
+			vasAllowFeeTypes = new ArrayList<ValueLabel>();
+			vasAllowFeeTypes.add(new ValueLabel(VASConsatnts.VAS_ALLOWFEE_AUTO,
+					Labels.getLabel("label_VASConfiguration_AllowFee_Auto.value")));
+			vasAllowFeeTypes.add(new ValueLabel(VASConsatnts.VAS_ALLOWFEE_MANUAL,
+					Labels.getLabel("label_VASConfiguration_AllowFee_Manual.value")));
+		}
+		return vasAllowFeeTypes;
+	}
+
+	public static List<ValueLabel> getMedicalStatusList() {
+		if (medicalStatusList == null) {
+			medicalStatusList = new ArrayList<ValueLabel>();
+			medicalStatusList.add(new ValueLabel(VASConsatnts.VAS_MEDICALSTATUS_STANDARD,
+					Labels.getLabel("label_VASMedicalStatus_Standard.value")));
+			medicalStatusList.add(new ValueLabel(VASConsatnts.VAS_MEDICALSTATUS_LOADIND,
+					Labels.getLabel("label_VASMedicalStatus_Loading.value")));
+			medicalStatusList.add(new ValueLabel(VASConsatnts.VAS_MEDICALSTATUS_REJECT,
+					Labels.getLabel("label_VASMedicalStatus_Reject.value")));
+		}
+		return medicalStatusList;
 	}
 	
 }

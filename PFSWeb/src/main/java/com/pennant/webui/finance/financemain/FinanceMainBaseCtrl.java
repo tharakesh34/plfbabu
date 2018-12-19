@@ -290,6 +290,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.StageTabConstants;
+import com.pennant.backend.util.VASConsatnts;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -1774,9 +1775,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//Fee Details Tab Addition
-			if (aFinanceDetail.getFinTypeFeesList() != null && !aFinanceDetail.getFinTypeFeesList().isEmpty()) {
-				appendFeeDetailTab(onLoad);
-			}
+			//Merge version 99133 28//11/2018 
+			appendFeeDetailTab(onLoad);
 		}
 
 		//Advance Payment Detail Tab Addition
@@ -6260,7 +6260,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				} else {
 					if (isSchdlRegenerate()) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+						showScheduleGenerateErrorMessage(aFinanceDetail);
 						return;
 					}
 				}
@@ -6289,24 +6289,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					if (this.btnBuildSchedule.isVisible() && !buildEvent
 							&& getManualScheduleDetailDialogCtrl().isDataChanged()) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+						showScheduleGenerateErrorMessage(aFinanceDetail);
 						return;
 					}
 				}
 
 				if (isReadOnly("FinanceMainDialog_NoScheduleGeneration") && isSchdlRegenerate()) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+					showScheduleGenerateErrorMessage(aFinanceDetail);
 					return;
 				}
 
 				if (getManualScheduleDetailDialogCtrl().isSchRebuildReq()) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+					showScheduleGenerateErrorMessage(aFinanceDetail);
 					return;
 				}
 
 			} else {
 				if (isReadOnly("FinanceMainDialog_NoScheduleGeneration") && isSchdlRegenerate()) {
-					MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+					showScheduleGenerateErrorMessage(aFinanceDetail);
 					return;
 				}
 			}
@@ -7211,6 +7211,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Showing the Schedule generation message.
+	 * 
+	 * @param aFinanceDetail
+	 */
+	private void showScheduleGenerateErrorMessage(FinanceDetail aFinanceDetail) {
+		String message = Labels.getLabel("label_Finance_FinDetails_Changed");
+		boolean addVASMessage = false;
+
+		// Vas Recording Details capturing
+		if (finVasRecordingDialogCtrl != null) {
+
+			List<VASRecording> vasRecordingList = finVasRecordingDialogCtrl.getVasRecordings();
+
+			if (CollectionUtils.isNotEmpty(vasRecordingList)) {
+
+				for (VASRecording vasRecording : vasRecordingList) {
+					if (VASConsatnts.VAS_ALLOWFEE_AUTO.equals(vasRecording.getVasConfiguration().getAllowFeeType())) {
+						addVASMessage = true;
+						break;
+					}
+				}
+			}
+			if (addVASMessage) {
+				message = message.concat(Labels.getLabel("label_VASRecording_Schedule_Changed"));
+			}
+		}
+		MessageUtil.showError(message);
 	}
 
 	/*

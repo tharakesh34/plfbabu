@@ -78,4 +78,12 @@
 		<column name="shortcode" type="varchar(3)" />
 	</addColumn>
 </changeSet>
+
+<changeSet id="08" author="Durgaprasad G">
+	<addColumn tableName="AdtVasstructure">
+		<column name="ModeOfPayment" type="char(1)"/>		
+		<column name="AllowFeeType" type="char(1)"/>		
+		<column name="MedicalApplicable" type="boolean"/>		
+	</addColumn>
+</changeSet>
 </databaseChangeLog>

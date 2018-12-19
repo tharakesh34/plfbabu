@@ -43,6 +43,7 @@
 
 package com.pennant.webui.configuration.vasconfiguration;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -57,6 +59,7 @@ import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -64,15 +67,21 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
+import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -80,6 +89,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
@@ -91,6 +101,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
@@ -109,8 +120,15 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.financemanagement.insurance.InsuranceFileImportService;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.dataengine.model.Configuration;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -156,7 +174,20 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected Uppercasebox shortCode;
 	protected Checkbox active;
 	protected Textbox remarks;
+	
+	//New Fields for Insurance
+	protected Combobox modeOfPayment;
+	protected Combobox allowFeeType;
+	protected Checkbox medicalApplicable;
 
+	//File Import
+	protected Groupbox grpBox_FileImport;
+	protected Button btnImport;
+	protected Button btnUpload;
+	protected Textbox txtFileName;
+	protected Rows panelRows;
+	protected Timer timer;
+	
 	protected Tabbox tabBoxIndexCenter;
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
@@ -190,7 +221,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	private transient VASConfigurationService vasConfigurationService;
 
 	private JSONArray variables = new JSONArray();
-	protected Button btnValidate;
 	protected Button btnSimulate;
 	protected Button button_pre_Simulate;
 	protected Button button_post_Simulate;
@@ -200,6 +230,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected boolean preScriptValidated = false;
 	protected boolean postScriptValidated = false;
 	private List<ValueLabel> listFlpCalculatedOn = PennantStaticListUtil.getFlpCalculatedList();
+	
+	private Configuration config = null;
+	private DataEngineStatus VAS_PREMIUM_CALCULATION_UPLOAD = new DataEngineStatus("VAS_PREMIUM_CALCULATION_UPLOAD");
+	private List<VASPremiumCalcDetails> premiumCalcDetList = new ArrayList<>();
+	private String errorMsg = null;
+	private Media media;
+	private boolean isImported;
+	private DataEngineConfig dataEngineConfig;
+	private InsuranceFileImportService insuranceFileImportService;
 
 	/**
 	 * default constructor.<br>
@@ -226,7 +265,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		// Set the page level components.
 		setPageComponents(window_VASConfigurationDialog);
-
 		try {
 			if (arguments.containsKey("enqModule")) {
 				enqModule = (Boolean) arguments.get("enqModule");
@@ -268,11 +306,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			} else {
 				setVASConfigurationListCtrl(null);
 			}
+			
+			config = dataEngineConfig.getConfigurationByName("VAS_PREMIUM_CALCULATION_UPLOAD");
+			doFillPanel(config, VAS_PREMIUM_CALCULATION_UPLOAD);
 
 			// set Field Properties
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(getVASConfiguration());
+			
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -379,20 +421,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-
-		// TODO: Open Comment If, save is working on ZK scripts for validation 
-		/*
-		 * boolean validationReq = true; if (this.userAction.getSelectedItem() != null){ if
-		 * ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel()) ||
-		 * this.userAction.getSelectedItem().getLabel().contains("Reject") ||
-		 * this.userAction.getSelectedItem().getLabel().contains("Resubmit") ||
-		 * this.userAction.getSelectedItem().getLabel().contains("Decline")) { validationReq = false; } }
-		 * 
-		 * if(validationReq){ if ((StringUtils.isNotBlank(this.preValidation.getValue()) ||
-		 * StringUtils.isNotBlank(this.postValidation.getValue())) && validate(event, false, true)) { doSave(); }else
-		 * if(StringUtils.isBlank(this.preValidation.getValue()) ||
-		 * StringUtils.isBlank(this.postValidation.getValue())){ doSave(); } }else{ doSave(); }
-		 */
 
 		// Pre Validation Checking for Validated or not
 		if (StringUtils.isNotEmpty(this.preValidation.getValue().trim()) && !preScriptValidated) {
@@ -614,6 +642,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.cancellationFeeType.setReadonly(isReadOnly("VASConfigurationDialog_CancellationFeeType"));
 		this.flpCalculatedOn.setDisabled(isReadOnly("VASConfigurationDialog_FLPCalculatedOn"));
 		this.shortCode.setReadonly(isReadOnly("VASConfigurationDialog_ShortCode"));
+		
+		this.modeOfPayment.setDisabled(isReadOnly("VASConfigurationDialog_ModeOfPayment"));
+		this.allowFeeType.setDisabled(isReadOnly("VASConfigurationDialog_AllowFeeType"));
+		this.medicalApplicable.setDisabled(isReadOnly("VASConfigurationDialog_MedicalApplicable"));
+		
+		this.btnImport.setDisabled(isReadOnly("VASConfigurationDialog_FileImport"));
+		this.btnUpload.setDisabled(isReadOnly("VASConfigurationDialog_btnUplaod"));
+		this.txtFileName.setReadonly(true);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -651,6 +688,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.vasType.setReadonly(true);
 		this.vasFee.setReadonly(true);
 		this.allowFeeToModify.setDisabled(true);
+		this.modeOfPayment.setDisabled(true);
+		this.allowFeeType.setDisabled(true);
+		this.medicalApplicable.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -937,6 +977,27 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	}
 
 	/**
+	 * 
+	 * @param event
+	 */
+	public void onChange$allowFeeType(ForwardEvent event) {
+		String allowFeeType = this.allowFeeType.getSelectedItem().getValue();
+		this.vasFee.setValue(BigDecimal.ZERO);
+		vasfeeVisibility(allowFeeType);
+	}
+
+	private void vasfeeVisibility(String allowFeeType) {
+		if (VASConsatnts.VAS_ALLOWFEE_AUTO.equals(allowFeeType)) {
+			this.vasFee.setReadonly(true);
+			this.grpBox_FileImport.setVisible(true);
+			this.txtFileName.setValue(getVASConfiguration().getFileName());
+		} else {
+			this.vasFee.setReadonly(isReadOnly("VASConfigurationDialog_VasFee"));
+			this.grpBox_FileImport.setVisible(false);
+		}
+	}
+	
+	/**
 	 * CALL THE RESULT ZUL FILE
 	 * 
 	 * @param jsonArray
@@ -1146,7 +1207,12 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.postValidationTab.setDisabled(!aVASConfiguration.isPostValidationReq());
 		this.preValidationReq.setChecked(aVASConfiguration.isPreValidationReq());
 		this.postValidationReq.setChecked(aVASConfiguration.isPostValidationReq());
-
+		
+		fillComboBox(this.modeOfPayment, aVASConfiguration.getModeOfPayment(), PennantStaticListUtil.getVasModeOfPayments(),"");
+		fillComboBox(this.allowFeeType, aVASConfiguration.getAllowFeeType(), PennantStaticListUtil.getVasAllowFeeTypes(),"");
+		this.medicalApplicable.setChecked(aVASConfiguration.isMedicalApplicable());
+		vasfeeVisibility(aVASConfiguration.getAllowFeeType());
+		
 		if (aVASConfiguration.isNewRecord()) {
 			if (isCopyProcess) {
 				this.feeAccounting.setDescription(aVASConfiguration.getFeeAccountingName());
@@ -1193,6 +1259,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		visibleComponents(aVASConfiguration.getFreeLockPeriod());
 		// Extended Field Details tab
 		appendExtendedFieldsTab();
+		
+		//Premium Calculation File Upload
+		setPremiumCalcDetList(aVASConfiguration.getPremiumCalcDetList());
 
 		this.recordStatus.setValue(aVASConfiguration.getRecordStatus());
 
@@ -1337,6 +1406,28 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		// Mode Of Payment
+		try {
+			aVASConfiguration.setModeOfPayment(this.modeOfPayment.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// Allow Fee Type
+		try {
+			aVASConfiguration.setAllowFeeType(this.allowFeeType.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		//Medical Applicable
+		try {
+			aVASConfiguration.setMedicalApplicable(this.medicalApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		// Pre Validation Required
 		try {
 			aVASConfiguration.setPreValidationReq(this.preValidationReq.isChecked());
@@ -1412,7 +1503,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			extendedFieldHeader.setTabHeading(aVASConfiguration.getProductCode());
 			aVASConfiguration.setExtendedFieldHeader(extendedFieldHeader);
 		}
-
 		logger.debug("Leaving");
 	}
 
@@ -1454,8 +1544,9 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			this.vasType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VASConfigurationDialog_VASType.value"), null, true, true));
 		}
+		
 		//vasFee
-		if (!this.vasFee.isReadonly()) {
+		if (!this.vasFee.isReadonly() && !(VASConsatnts.VAS_ALLOWFEE_AUTO.equals(this.allowFeeType.getSelectedItem().getValue()))) {
 			this.vasFee.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_VASConfigurationDialog_VASFee.value"), getCcyFormat(), true, false));
 		}
@@ -1498,6 +1589,16 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
+	
+		//Allow Fee types
+		if (!this.allowFeeType.isDisabled()) {
+			this.allowFeeType.setConstraint(new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"), PennantStaticListUtil.getVasAllowFeeTypes(), true));
+		}
+		
+		//Allow Mode Of Payments
+		if (!this.modeOfPayment.isDisabled()) {
+			this.modeOfPayment.setConstraint(new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"), PennantStaticListUtil.getVasModeOfPayments(), true));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -1510,6 +1611,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.productCode.setConstraint("");
 		this.productDesc.setConstraint("");
 		this.recAgainst.setConstraint("");
+		this.modeOfPayment.setConstraint("");
+		this.allowFeeType.setConstraint("");
 		this.feeAccounting.setConstraint("");
 		this.accrualAccounting.setConstraint("");
 		this.freeLockPeriod.setConstraint("");
@@ -1668,6 +1771,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.productCode.setValue("");
 		this.productDesc.setValue("");
 		this.recAgainst.setSelectedIndex(0);
+		this.modeOfPayment.setSelectedIndex(0);
+		this.allowFeeType.setSelectedIndex(0);
 		this.feeAccrued.setChecked(false);
 		this.feeAccounting.setValue("");
 		this.feeAccounting.setDescription("");
@@ -1720,6 +1825,22 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aVASConfiguration, validationReq);
+
+		// Premium Calculation Details LIst
+		if (VASConsatnts.VAS_ALLOWFEE_AUTO.equals(this.allowFeeType.getSelectedItem().getValue())) {
+			if (!isImported && CollectionUtils.isEmpty(getPremiumCalcDetList())) {
+				MessageUtil.showError("Please upload or click on Import button to import the premium file data.");
+				return;
+			}
+			aVASConfiguration.setPremiumCalcDetList(getPremiumCalcDetList());
+		} else {
+			aVASConfiguration.setPremiumCalcDetList(new ArrayList<>());
+		}
+
+		//Batch Id
+		if (CollectionUtils.isNotEmpty(aVASConfiguration.getPremiumCalcDetList())) {
+			aVASConfiguration.setBatchId(aVASConfiguration.getPremiumCalcDetList().get(0).getBatchId());
+		}
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
@@ -1835,6 +1956,14 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			aVASConfiguration.setNextTaskId(nextTaskId);
 			aVASConfiguration.setRoleCode(getRole());
 			aVASConfiguration.setNextRoleCode(nextRoleCode);
+
+			//Premium calculation details
+			if (CollectionUtils.isNotEmpty(aVASConfiguration.getPremiumCalcDetList())) {
+				for (VASPremiumCalcDetails premiumCalcDetails : aVASConfiguration.getPremiumCalcDetList()) {
+					premiumCalcDetails.setProductCode(aVASConfiguration.getProductCode());
+					premiumCalcDetails.setManufacturerId(aVASConfiguration.getManufacturerId());
+				}
+			}
 
 			// Set workflow values
 			ExtendedFieldHeader extFldHeader = aVASConfiguration.getExtendedFieldHeader();
@@ -2007,6 +2136,171 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		return null;
 	}
 
+	// File import related changes start//
+
+	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		isImported = false;
+		txtFileName.setText("");
+		errorMsg = null;
+
+		setMedia(event.getMedia());
+		try {
+			String fileName = StringUtils.lowerCase(media.getName());
+			if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+				txtFileName.setText(media.getName());
+			} else {
+				setMedia(null);
+				throw new Exception("Invalid file format.");
+			}
+
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			MessageUtil.showError(e.getMessage());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnImport(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		doSetValidation();
+		doWriteComponentsToBean(new VASConfiguration(), false);
+		
+		doFileValidations();
+		try {
+			if (errorMsg != null) {
+				throw new Exception(errorMsg);
+			}
+			isImported = true;
+			doFileImport();
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			MessageUtil.showError(e.getMessage());
+			return;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doFileImport() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		ProcessData processData = new ProcessData(getUserWorkspace().getUserDetails().getLoginId(),
+				VAS_PREMIUM_CALCULATION_UPLOAD, this.manufacturer.getTextbox().getValue(), this);
+		Thread thread = new Thread(processData);
+		thread.start();
+		Thread.sleep(1000);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public class ProcessData extends Thread {
+		private DataEngineStatus status;
+		private VASConfigurationDialogCtrl dialogCtrl;
+		private long userId;
+		private String manufacturerName;
+
+		public ProcessData(long userId, DataEngineStatus status, String manufacturerName,
+				VASConfigurationDialogCtrl dialogCtrl) {
+			this.status = status;
+			this.dialogCtrl = dialogCtrl;
+			this.userId = userId;
+			this.manufacturerName = manufacturerName;
+		}
+
+		@Override
+		public void run() {
+			try {
+				getInsuranceFileImportService().processVASPremiumCalcUploadFile(userId, status, getMedia(),
+						manufacturerName, dialogCtrl);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				MessageUtil.showError(e.getMessage());
+			}
+		}
+	}
+	private void doFileValidations() {
+		logger.debug(Literal.ENTERING);
+
+		Clients.clearWrongValue(this.txtFileName);
+		this.txtFileName.setErrorMessage("");
+
+		if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
+			throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doFillPanel(Configuration config, DataEngineStatus ds) {
+		ProcessExecution pannel = new ProcessExecution();
+		pannel.setId(config.getName());
+		pannel.setBorder("normal");
+		pannel.setTitle(config.getName());
+		pannel.setWidth("480px");
+		pannel.setProcess(ds);
+		pannel.render();
+
+		Row rows = (Row) panelRows.getLastChild();
+
+		if (rows == null) {
+			Row row = new Row();
+			row.setStyle("overflow: visible !important");
+			Hbox hbox = new Hbox();
+			hbox.setAlign("center");
+			hbox.appendChild(pannel);
+			row.appendChild(hbox);
+			panelRows.appendChild(row);
+		} else {
+			Hbox hbox = null;
+			List<Hbox> item = rows.getChildren();
+			hbox = (Hbox) item.get(0);
+			if (hbox.getChildren().size() == 2) {
+				rows = new Row();
+				rows.setStyle("overflow: visible !important");
+				hbox = new Hbox();
+				hbox.setAlign("center");
+				hbox.appendChild(pannel);
+				rows.appendChild(hbox);
+				panelRows.appendChild(rows);
+			} else {
+				hbox.appendChild(pannel);
+			}
+		}
+	}
+
+
+	public void onTimer$timer(Event event) {
+		List<Row> rows = this.panelRows.getChildren();
+		for (Row row : rows) {
+			List<Hbox> hboxs = row.getChildren();
+			for (Hbox hbox : hboxs) {
+				List<ProcessExecution> list = hbox.getChildren();
+				for (ProcessExecution pe : list) {
+					String status = pe.getProcess().getStatus();
+
+					if (ExecutionStatus.I.name().equals(status)) {
+						this.btnUpload.setDisabled(true);
+						this.btnImport.setDisabled(true);
+					} else {
+						if (isReadOnly("VASConfigurationDialog_FileImport")) {
+							this.btnUpload.setDisabled(true);
+							this.btnImport.setDisabled(true);
+						} else {
+							this.btnUpload.setDisabled(false);
+							this.btnImport.setDisabled(false);
+						}
+					}
+					pe.render();
+				}
+			}
+		}
+	}
+
+	//File import related changes end//
+	
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.vASConfiguration.getId());
@@ -2051,4 +2345,38 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void setFieldNames(List<String> fieldNames) {
 		this.fieldNames = fieldNames;
 	}
+
+	public Media getMedia() {
+		return media;
+	}
+
+	public void setMedia(Media media) {
+		this.media = media;
+	}
+
+
+	public List<VASPremiumCalcDetails> getPremiumCalcDetList() {
+		return premiumCalcDetList;
+	}
+
+	public void setPremiumCalcDetList(List<VASPremiumCalcDetails> premiumCalcDetList) {
+		this.premiumCalcDetList = premiumCalcDetList;
+	}
+
+	public InsuranceFileImportService getInsuranceFileImportService() {
+		return insuranceFileImportService;
+	}
+
+	public void setInsuranceFileImportService(InsuranceFileImportService insuranceFileImportService) {
+		this.insuranceFileImportService = insuranceFileImportService;
+	}
+
+	public DataEngineConfig getDataEngineConfig() {
+		return dataEngineConfig;
+	}
+
+	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
+		this.dataEngineConfig = dataEngineConfig;
+	}
+
 }

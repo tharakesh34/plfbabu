@@ -2,85 +2,117 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns:w="http://www.zkoss.org/2005/zk/client"
-	xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+<zk xmlns:w="http://www.zkoss.org/2005/zk/client" xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute">>
 
 	<style>
-		.CodeMirror-line-numbers { width: 2.2em; color: #aaa;
-		background-color: #eee; text-align: right; padding-right: .3em;
-		font-size: 10pt; font-family: monospace; padding-top: .4em;
-		line-height: normal; }
+		.CodeMirror-line-numbers {
+		width: 2.2em;
+		color: #aaa;
+		background-color: #eee;
+		text-align: right;
+		padding-right: .3em;
+		font-size: 10pt;
+		font-family: monospace;
+		padding-top: .4em;
+		line-height: normal;
+		}
 	</style>
 
 
 	<script type="text/javascript" src="/ptjs/fulljslint.js" />
 	<script type="text/javascript">
-		
-		<![CDATA[ function addPreValidationContent(strContent) {
-		zk.Widget.$(jq('$preValidation'))._editor.replaceSelection(strContent);
-		} function addPostValidationContent(strContent) {
-		zk.Widget.$(jq('$postValidation'))._editor.replaceSelection(strContent);
-		} function validateJs(btn) { try{ var scriptCode; jslint_options
-		= {//json object 'passfail':false, // Stop on first error
-		'white':false, // Strict whitespace (enabled in "good parts")
-		'browser':false, // Assume a browser 'devel':false, // Assume
-		console, alert,... 'widget':false, // Assume Yahoo widget
-		'windows':false, // Assume Windows 'rhino':false, // Assume
-		Rhino 'safe':false, // Safe Subset 'adsafe':false, // ADsafe
-		'debug':false, // Tolerate debugger statements 'evil':false, //
-		Tolerate eval() statements 'laxbreak':false, // Tolerate sloppy
-		linebreaking 'forin':false, // Tolerate unfiltered for in
-		'sub':false, // Tolerate inefficient subscripting 'css':false,
-		// Tolerate CSS workarounds 'cap':false, // Tolerate HTML case
-		'on':false, // Tolerate HTML event handlers 'fragment':false, //
-		Tolerate HTML fragments 'es5':false, // Tolerate ES5 syntax
-		'onevar':false, // Allow one var statement per function (enabled
-		in "good parts") 'undef':false, // Disallow undefined variables
-		(enabled in "good parts") 'nomen':true, // Disallow dangling _
-		in identifiers (enabled in "good parts") 'eqeqeq':false, //
-		Disallow == and != (enabled in "good parts") 'plusplus':true, //
-		Disallow ++ and -- (enabled in "good parts") 'bitwise':true, //
-		Disallow bitwise operators (enabled in "good parts")
-		'regexp':true, // Disallow insecure . and [^...] in /RegExp/
-		(enabled in "good parts") 'newcap':true, // Require Initial Caps
-		for constructors (enabled in "good parts") 'immed':true, //
-		Require parens around immediate invocations (enabled in "good
-		parts") 'strict':false, // Require "use strict"; 'maxerr':10,
-		'indent':4 };
-
-		// Pre Validation Details if(btn == 1 || btn == 2){ scriptCode =
-		zk.Widget.$(jq('$preValidation'))._editor.getCode(); msgWidget =
-		zk.Widget.$(jq('$btnPreValidate')); simWidget =
-		zk.Widget.$(jq('$btnPreSimulate')); }
-
-		// Post validation Details if(btn == 4 || btn == 5){ scriptCode
-		= zk.Widget.$(jq('$postValidation'))._editor.getCode();
-		msgWidget = zk.Widget.$(jq('$btnPostValidate')); simWidget =
-		zk.Widget.$(jq('$btnPostSimulate')); }
-
-		if(btn == 3){ scriptCode =
-		zk.Widget.$(jq('$preValidation'))._editor.getCode(); scriptCode
-		= scriptCode + "\n" +
-		zk.Widget.$(jq('$postValidation'))._editor.getCode(); }
-
-		savWidget = zk.Widget.$(jq('$btnSave')); var data; if(scriptCode
-		!= ""){ JSLINT(scriptCode, jslint_options); data =
-		[JSLINT.errors,JSLINT.data().implieds]; if(btn==1 || btn == 4){
-		zAu.send(new zk.Event(msgWidget, 'onUser',data)); } if(btn==2 ||
-		btn == 5){ zAu.send(new zk.Event(simWidget, 'onUser',data)); } }
-		if(btn==3){ zAu.send(new zk.Event(savWidget, 'onUser',data)); }
-
-		}catch(err){ alert("Error on The Page"+err); } } ]]>
-		
+	<![CDATA[     
+	function addPreValidationContent(strContent) {				
+ 			zk.Widget.$(jq('$preValidation'))._editor.replaceSelection(strContent);
+	}	
+	function addPostValidationContent(strContent) {				
+ 			zk.Widget.$(jq('$postValidation'))._editor.replaceSelection(strContent);
+	}	
+	function validateJs(btn) {
+		try{	
+		var scriptCode;	
+  		jslint_options = {//json object
+				'passfail':false,	// Stop on first error
+				'white':false,		// Strict whitespace (enabled in "good parts")
+				'browser':false,	// Assume a browser
+				'devel':false,		// Assume console, alert,...
+				'widget':false,		// Assume Yahoo widget
+				'windows':false,	// Assume Windows
+				'rhino':false,		// Assume Rhino
+				'safe':false,		// Safe Subset
+				'adsafe':false,		// ADsafe					 
+				'debug':false,		// Tolerate debugger statements
+				'evil':false,		// Tolerate eval() statements
+				'laxbreak':false,	// Tolerate sloppy linebreaking
+				'forin':false,		// Tolerate unfiltered for in
+				'sub':false,		// Tolerate inefficient subscripting
+				'css':false,		// Tolerate CSS workarounds
+				'cap':false,		// Tolerate HTML case
+				'on':false,		    // Tolerate HTML event handlers
+				'fragment':false,	// Tolerate HTML fragments
+				'es5':false,		// Tolerate ES5 syntax					 
+				'onevar':false,		// Allow one var statement per function (enabled in "good parts")
+				'undef':false,		// Disallow undefined variables (enabled in "good parts")
+				'nomen':true,		// Disallow dangling _ in identifiers (enabled in "good parts")
+				'eqeqeq':false,		// Disallow == and != (enabled in "good parts")
+				'plusplus':true,	// Disallow ++ and -- (enabled in "good parts")
+				'bitwise':true,		// Disallow bitwise operators (enabled in "good parts")
+				'regexp':true,		// Disallow insecure . and [^...] in /RegExp/ (enabled in "good parts")
+				'newcap':true,		// Require Initial Caps for constructors (enabled in "good parts")
+				'immed':true,		// Require parens around immediate invocations (enabled in "good parts")
+				'strict':false,		// Require "use strict";
+				'maxerr':10, 
+				'indent':4
+			};
+  		
+  			// Pre Validation Details
+  			if(btn == 1 || btn == 2){
+	  			scriptCode = zk.Widget.$(jq('$preValidation'))._editor.getCode();  
+	  			msgWidget = zk.Widget.$(jq('$btnPreValidate'));
+	  			simWidget = zk.Widget.$(jq('$btnPreSimulate'));
+  			}
+	  		
+	  		// Post validation Details
+	  		if(btn == 4 || btn == 5){
+	  			scriptCode = zk.Widget.$(jq('$postValidation'))._editor.getCode();  
+		  		msgWidget = zk.Widget.$(jq('$btnPostValidate'));
+		  		simWidget = zk.Widget.$(jq('$btnPostSimulate'));
+	  		}
+	  		
+	  		if(btn == 3){
+	  			scriptCode = zk.Widget.$(jq('$preValidation'))._editor.getCode(); 
+	  			scriptCode = scriptCode + "\n" + zk.Widget.$(jq('$postValidation'))._editor.getCode(); 
+	  		}
+	  		
+	  		savWidget = zk.Widget.$(jq('$btnSave'));
+	  		var data;
+	  		if(scriptCode != ""){	
+				JSLINT(scriptCode, jslint_options); 	
+				data = [JSLINT.errors,JSLINT.data().implieds]; 
+				if(btn==1 || btn == 4){
+					zAu.send(new zk.Event(msgWidget, 'onUser',data));  					
+				}
+				if(btn==2 || btn == 5){
+					zAu.send(new zk.Event(simWidget, 'onUser',data));  		
+				}
+	  		}	
+	 		if(btn==3){
+	 			zAu.send(new zk.Event(savWidget, 'onUser',data));  		
+	 		}
+  		
+		}catch(err){
+			alert("Error on The Page"+err);
+		}
+	}
+	]]>
 	</script>
 
 	<window>
 		<window id="window_VASConfigurationDialog" border="normal"
 			apply="${vASConfigurationDialogCtrl}" width="100%" height="100%"
 			sizable="false">
+			<timer id="timer" delay="500" repeats="true" />
 			<borderlayout id="borderlayoutVASConfiguration">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
@@ -156,7 +188,7 @@
 								label="${c:l('Tab_VASConfigurationExtendedPostValidation')}" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
-							<tabpanel style="overflow:auto">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true">
 								<groupbox id="gb_basicDetails">
 									<grid sclass="GridLayoutNoBorder"
 										fixedLayout="true" style="border:0px">
@@ -198,6 +230,19 @@
 													<textbox
 														id="vasCategory" maxlength="50" width="350px"
 														readonly="true" />
+												</hbox>
+											</row>
+											<row>
+											 	<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="allowFeeType" width="180px" />
+												</hbox>
+												<label
+													value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="modeOfPayment" width="180px"/>
 												</hbox>
 											</row>
 											<row>
@@ -316,6 +361,11 @@
 													<uppercasebox
 														id="shortCode" maxlength="3" width="100px" />
 												</hbox>
+												<label value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
+												<hbox>
+													<space spacing="2px"/>
+													<checkbox id="medicalApplicable"/>
+												</hbox>
 											</row>
 											<row>
 												<label
@@ -329,9 +379,55 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox id="grpBox_FileImport" style="overflow: visible !important">
+								     <div sclass="z-toolbar" style="padding:0">
+											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+												<toolbar align="start" sclass="toolbar-start" style="float:left; border-style: none; padding:0px;">
+													<button id="btnImport" label="${c:l('label_VASConfigurationDialog_Import')}" tooltiptext="${c:l('btnImport_VASConfigurationDialogImport.tooltiptext')}" />
+												</toolbar>
+											</hbox>
+									 </div>
+									<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="450px" />
+											<column />
+											<column width="600px" />
+											<column />
+										</columns>
+										<rows>
+											<row spans="2,1">
+												<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+													style="border:0px">
+													<columns>
+														<column width="190px" />
+														<column />
+													</columns>
+													<rows>
+														<row height="24px">
+															<label value="${c:l('label_VASConfigurationDialog_FileName.value')}" />
+															<hbox>
+																<space spacing="2px" sclass="mandatory" />
+																<textbox id="txtFileName" width="250px" readonly="true" />
+																<button id="btnUpload" tooltiptext="Browse file." label="Browse" upload="true"
+																	autodisable="btnImport,btnUpload" />
+															</hbox>
+														</row>
+													</rows>
+												</grid>
+												<hbox>
+													<grid style="overflow: visible !important">
+														<columns>
+															<column width="90%" />
+														</columns>
+														<rows id="panelRows" style="overflow: visible !important"></rows>
+													</grid>
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 							</tabpanel>
-							<tabpanel id="extendedFieldTabpanel"
-								style="overflow:auto" />
+							<tabpanel id="extendedFieldTabpanel" style="overflow:auto" />
 							<tabpanel style="overflow:auto;">
 								<groupbox id="gb_preValidation"
 									sclass="gb-dialog">

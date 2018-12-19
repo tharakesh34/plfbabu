@@ -244,7 +244,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;

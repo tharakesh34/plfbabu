@@ -42,7 +42,10 @@
  */
 package com.pennant.backend.dao.configuration;
 
+import java.util.List;
+
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 
 public interface VASConfigurationDAO {
 	VASConfiguration getVASConfiguration();
@@ -60,4 +63,10 @@ public interface VASConfigurationDAO {
 	boolean isVASTypeExists(String productType);
 
 	int getFeeAccountingCount(long feeAccountId, String type);
+
+	void deletePremiumCalcDetails(String productCode, String tableType);
+
+	void savePremiumCalcDetails(List<VASPremiumCalcDetails> premiumCalcDetList, String tableType);
+
+	List<VASPremiumCalcDetails> getPremiumCalcDetails(String productCode, String tableType);
 }

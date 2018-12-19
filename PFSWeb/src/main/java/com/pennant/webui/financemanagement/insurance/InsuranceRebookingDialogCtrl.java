@@ -76,6 +76,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -103,6 +104,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
@@ -110,6 +112,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -129,7 +132,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.insurance.InsuranceDetailService;
-import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -145,12 +147,14 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.configuration.vasrecording.VASPremiumCalculation;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.AgreementDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRenderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -211,9 +215,24 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected CurrencyBox surrenderAmount;
 	protected CurrencyBox claimAmount;
 
+	protected Combobox modeOfPayment;
+	protected Combobox allowFeeType;
+	protected Checkbox medicalApplicable;
+
+	protected Checkbox termInsuranceLien;
+	protected Textbox providerName;
+	protected Textbox policyNumber;
+	protected Row row_TermInsuranceLien;
+	protected Row row_MedicalStatus;
+	protected Combobox medicalStatus;
+
 	private transient InsuranceRebookingListCtrl insuranceRebookingListCtrl;
 	private VASRecording vASRecording = null;
 	private VASConfiguration vASConfiguration = null;
+	private transient VASPremiumCalculation vasPremiumCalculation;
+
+	private FinanceDetail clonedFinanceDetail = null;
+	private boolean vaildatePremium;
 
 	private transient FinanceDetailService financeDetailService;
 	private transient VASRecordingService vASRecordingService;
@@ -253,7 +272,6 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private ExtendedFieldHeader extendedFieldHeader;
 	private ExtendedFieldRender extendedFieldRender;
 
-	private FinanceReferenceDetailService financeReferenceDetailService;
 	private CustomerEMailDAO customerEMailDAO;
 	private EventManager eventManager;
 
@@ -453,6 +471,15 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.referralId.setReadonly(isReadOnly("InsuranceMaintananceRebookingDialog_ReferralId"));
 		this.waivedAmt.setReadonly(isReadOnly("InsuranceMaintananceRebookingDialog_WaivedAmt"));
 
+		this.termInsuranceLien.setDisabled(isReadOnly("InsuranceMaintananceRebookingDialog_TermInsuranceLien"));
+		this.providerName.setReadonly(isReadOnly("InsuranceMaintananceRebookingDialog_ProviderName"));
+		this.policyNumber.setReadonly(isReadOnly("InsuranceMaintananceRebookingDialog_PolicyNumber"));
+		this.medicalStatus.setDisabled(isReadOnly("InsuranceMaintananceRebookingDialog_MedicalStatus"));
+		this.medicalApplicable.setDisabled(true);
+
+		this.modeOfPayment.setDisabled(true);
+		this.allowFeeType.setDisabled(true);
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -546,6 +573,10 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.referralId.setErrorMessage("");
 		this.entityCode.setErrorMessage("");
 
+		this.providerName.setErrorMessage("");
+		this.policyNumber.setErrorMessage("");
+		this.medicalStatus.setErrorMessage("");
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -598,6 +629,11 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		doSetValidation();
 		// fill the FinanceType object with the components data
 		doWriteComponentsToBean(aVASRecording, true);
+
+		if (!isPremiumValidated()) {
+			MessageUtil.showError("Details are changed please click on premium calulation button.");
+			return;
+		}
 
 		// Finance CheckList Details Saving
 		if (checkListChildWindow != null) {
@@ -1056,6 +1092,21 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.referralId.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_VASRecordingDialog_ReferralId.value"), null, false));
 		}
+		if (!this.providerName.isReadonly()) {
+			this.providerName.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_ProviderName.value"), null,
+							this.termInsuranceLien.isChecked()));
+		}
+		if (!this.policyNumber.isReadonly()) {
+			this.policyNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_PolicyNumber.value"), null,
+							this.termInsuranceLien.isChecked()));
+		}
+		if (!this.medicalStatus.isDisabled()) {
+			this.medicalStatus.setConstraint(
+					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_MedicalStatus.value"),
+							PennantStaticListUtil.getMedicalStatusList(), this.medicalApplicable.isChecked()));
+		}
 	}
 
 	/**
@@ -1103,6 +1154,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.accrualTillDate.setValue(DateUtility.getAppDate());
 			this.recurringDate.setValue(DateUtility.getAppDate());
 			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getFee(), getCcyFormat()));
+			this.medicalApplicable.setChecked(vASConfiguration.isMedicalApplicable());
 		} else {
 			this.dsaId.setDescription(aVASRecording.getDsaId());
 			this.dmaId.setDescription(aVASRecording.getDmaId());
@@ -1112,7 +1164,27 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.accrualTillDate.setValue(aVASRecording.getAccrualTillDate());
 			this.recurringDate.setValue(aVASRecording.getRecurringDate());
 			this.paidAmt.setValue(PennantApplicationUtil.formateAmount(aVASRecording.getPaidAmt(), getCcyFormat()));
+			this.medicalApplicable.setChecked(aVASRecording.isMedicalApplicable());
 		}
+
+		//Medical Applicable
+		setMedicalStatusVisibility(this.medicalApplicable.isChecked());
+
+		//Vas configuration 
+		fillComboBox(this.modeOfPayment, vASConfiguration.getModeOfPayment(),
+				PennantStaticListUtil.getVasModeOfPayments(), "");
+		fillComboBox(this.allowFeeType, vASConfiguration.getAllowFeeType(), PennantStaticListUtil.getVasAllowFeeTypes(),
+				"");
+
+		//Term Insurance Lien Fields
+		this.termInsuranceLien.setChecked(aVASRecording.isTermInsuranceLien());
+		this.providerName.setValue(aVASRecording.getProviderName());
+		this.policyNumber.setValue(aVASRecording.getPolicyNumber());
+		setInsuranceLienVisibility(aVASRecording.isTermInsuranceLien());
+
+		fillComboBox(this.medicalStatus, aVASRecording.getMedicalStatus(), PennantStaticListUtil.getMedicalStatusList(),
+				"");
+
 		// Entity code
 		this.entityCode.setValue(aVASRecording.getEntityCode());
 		this.entityDesc.setValue(aVASRecording.getEntityDesc());
@@ -1306,6 +1378,10 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
+
+		//Enable and disabling the Premium amount Button 
+		setPremiumCalcButton(aVASRecording);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1665,6 +1741,41 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			wve.add(we);
 		}
 		
+		// Term Insurance Lien
+		try {
+			aVASRecording.setTermInsuranceLien(this.termInsuranceLien.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Provider Name
+		try {
+			aVASRecording.setProviderName(this.providerName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Policy Number
+		try {
+			aVASRecording.setPolicyNumber(this.policyNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Medical Status
+		try {
+			aVASRecording.setMedicalStatus(this.medicalStatus.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Medical Applicable
+		try {
+			aVASRecording.setMedicalApplicable(this.medicalApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		// Vas Status
 		aVASRecording.setVasStatus(rebookingProcess ? VASConsatnts.STATUS_REBOOKING : VASConsatnts.STATUS_MAINTAINCE);
 
@@ -1801,6 +1912,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.fulfilOfficerId.setConstraint("");
 		this.referralId.setConstraint("");
 		this.entityCode.setConstraint("");
+		this.providerName.setConstraint("");
+		this.policyNumber.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1844,6 +1957,11 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.waivedAmt.setReadonly(true);
 		this.viewInfo.setVisible(false);
 		this.entityCode.setReadonly(true);
+		this.termInsuranceLien.setDisabled(true);
+		this.providerName.setReadonly(true);
+		this.policyNumber.setReadonly(true);
+		this.medicalStatus.setReadonly(true);
+		this.medicalApplicable.setDisabled(true);
 	}
 
 	/**
@@ -1932,6 +2050,9 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.surrenderAmount.setDisabled(true);
 		this.claimAmount.setDisabled(true);
 		
+		this.providerName.setMaxlength(100);
+		this.policyNumber.setMaxlength(50);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2176,6 +2297,55 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return false;
 	}
 
+	/**
+	 * Method for Allowing the out side the system insurance
+	 * 
+	 * @param event
+	 */
+	public void onCheck$termInsuranceLien(Event event) {
+		logger.debug("Entering");
+		setInsuranceLienVisibility(this.termInsuranceLien.isChecked());
+		logger.debug("Leaving");
+	}
+
+	private void setInsuranceLienVisibility(boolean required) {
+		this.row_TermInsuranceLien.setVisible(required);
+		Clients.clearWrongValue(fee);
+		this.fee.setErrorMessage("");
+		if (required) {
+			this.fee.setValue(BigDecimal.ZERO);
+			this.fee.setReadonly(true);
+		} else {
+			this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee"));
+		}
+	}
+
+	/**
+	 * Method for Medical Status enable and disable
+	 * 
+	 * @param event
+	 */
+	public void onCheck$medicalApplicable(Event event) {
+		logger.debug("Entering");
+		fillComboBox(this.medicalStatus, "", PennantStaticListUtil.getMedicalStatusList(), "");
+		setMedicalStatusVisibility(this.medicalApplicable.isChecked());
+		logger.debug("Leaving");
+	}
+
+	private void setMedicalStatusVisibility(boolean disabled) {
+		Clients.clearWrongValue(medicalStatus);
+		this.medicalStatus.setErrorMessage("");
+		this.medicalStatus.setDisabled(!disabled);
+	}
+
+	/*
+	 * public void onChange$medicalStatus(Event event) { Clients.clearWrongValue(medicalStatus);
+	 * this.medicalStatus.setErrorMessage(""); String medicalStatus = this.medicalStatus.getSelectedItem().getValue();
+	 * if (VASConsatnts.VAS_MEDICALSTATUS_STANDARD.equals(medicalStatus) ||
+	 * VASConsatnts.VAS_MEDICALSTATUS_REJECT.equals(medicalStatus)) { this.fee.setReadonly(true); } else {
+	 * this.fee.setReadonly(isReadOnly("VASRecordingDialog_Fee")); } }
+	 */
+
 	/***********************
 	 * Extended fields script execution data setup start
 	 ********************/
@@ -2193,7 +2363,6 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} else {
 			details.setCustomer(new Customer());
 		}
-
 		FinanceDetail financeDetail = new FinanceDetail();
 
 		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())) {
@@ -2208,10 +2377,20 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 				financeDetail.setJountAccountDetailList(jointAccountDetails);
 			}
+			FinScheduleData finScheduleData = new FinScheduleData();
+			FinanceMain financeMain = getFinanceDetailService().getFinanceMain(getVASRecording().getPrimaryLinkRef(),
+					"_View");
+			finScheduleData.setFinanceMain(financeMain);
+			financeDetail.setFinScheduleData(finScheduleData);
 		} else {
+			FinanceMain financeMain = new FinanceMain();
+			FinScheduleData finScheduleData = new FinScheduleData();
+			finScheduleData.setFinanceMain(financeMain);
+			financeDetail.setFinScheduleData(finScheduleData);
 			financeDetail.setJountAccountDetailList(new ArrayList<>());
 		}
 		financeDetail.setCustomerDetails(details);
+		setClonedFinanceDetail(financeDetail);
 		objectList.add(financeDetail);
 		getScriptValidationService().setObjectList(objectList);
 	}
@@ -2264,9 +2443,181 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return null;
 	}
 
-	/***********************
-	 * Extended fields script execution data setup end
-	 ********************/
+	private boolean isPremiumValidated() {
+
+		if (this.termInsuranceLien.isChecked()) {
+			return true;
+		}
+
+		Component component = generator.getWindow().getFellowIfAny("CALCULATEPREMIUM");
+		if (component != null) {
+			Button premiumCalcButton = (Button) component;
+			if (premiumCalcButton.isDisabled()) {
+				return true;
+			} else {
+				if (this.newRecord) {
+					return isVaildatePremium();
+				} else {
+					String oldCif = null;
+					String newCif = null;
+					Map<String, Object> oldMap = getVASRecording().getBefImage().getExtendedFieldRender()
+							.getMapValues();
+					Map<String, Object> newMap = getVASRecording().getExtendedFieldRender().getMapValues();
+
+					if (oldMap.containsKey("CUSTOMERCIF")) {
+						oldCif = (String) oldMap.get("CUSTOMERCIF");
+					}
+					if (newMap.containsKey("CUSTOMERCIF")) {
+						newCif = (String) newMap.get("CUSTOMERCIF");
+					}
+					if (StringUtils.equals(oldCif, newCif)) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+
+	//Premium calculation button enable and disable
+	private void setPremiumCalcButton(VASRecording aVASRecording) {
+		Component component = generator.getWindow().getFellowIfAny("CALCULATEPREMIUM");
+		if (component != null) {
+			Button premiumCalcButton = (Button) component;
+			if (VASConsatnts.VAS_ALLOWFEE_AUTO.equals(aVASRecording.getVasConfiguration().getAllowFeeType())) {
+				premiumCalcButton.setDisabled(isReadOnly("VASRecordingDialog_ExtendedFields"));
+			} else {
+				premiumCalcButton.setDisabled(true);
+			}
+		}
+	}
+
+	/**
+	 * Premium calculation
+	 */
+	public void onClickExtbtnCALCULATEPREMIUM() {
+		logger.debug(Literal.ENTERING);
+		try {
+			setVaildatePremium(true);
+			String customerCif = null;
+			int insuranceTerms = 0;
+			Component component = null;
+			BigDecimal loanAmt = BigDecimal.ZERO;
+
+			//CustomerCif
+			component = generator.getWindow().getFellowIfAny("ad_CUSTOMERCIF");
+			if (component != null) {
+				Textbox txtCustomerCif = (Textbox) component;
+				customerCif = txtCustomerCif.getValue();
+				if (StringUtils.isEmpty(customerCif)) {
+					MessageUtil.showError(
+							"Please select the Applicant type, If Applicant type is Co-Applicant then please select the Co Applicants CIF. ");
+					return;
+				}
+			}
+
+			//Insurance Terms
+			component = generator.getWindow().getFellowIfAny("ad_INSURANCETERMS");
+			if (component != null) {
+				Intbox intInsuranceTerms = (Intbox) component;
+				insuranceTerms = intInsuranceTerms.getValue();
+				if (insuranceTerms == 0) {
+					MessageUtil.showError("Please enter the insurance terms.");
+					return;
+				}
+			}
+
+			//Finance details Object
+			if (getClonedFinanceDetail() == null) {
+				MessageUtil.showError("Required details are not available for premium calculation.");
+				return;
+			}
+
+			//Loan Amount
+			loanAmt = getClonedFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue();
+			loanAmt = PennantApplicationUtil.formateAmount(loanAmt, getCcyFormat());
+			if (BigDecimal.ZERO.compareTo(loanAmt) > 0) {
+				MessageUtil.showError("Loam Amount should be greater than Zero");
+				return;
+			}
+
+			Customer customer = null;
+			boolean customerExist = false;
+			customer = getClonedFinanceDetail().getCustomerDetails().getCustomer();
+			if (customer.getCustCIF().equals(customerCif)) {
+				customerExist = true;
+			}
+
+			List<JointAccountDetail> accountDetailList = getClonedFinanceDetail().getJountAccountDetailList();
+
+			if (CollectionUtils.isNotEmpty(accountDetailList)) {
+				for (JointAccountDetail jointAccountDetail : accountDetailList) {
+					customer = jointAccountDetail.getCustomerDetails().getCustomer();
+					if (customer.getCustCIF().equals(customerCif)) {
+						customerExist = true;
+						break;
+					}
+				}
+			}
+			if (!customerExist) {
+				MessageUtil.showError("Customer details are not available for the selected CIF.");
+				return;
+			}
+
+			VASPremiumCalcDetails premiumCalcDetails = new VASPremiumCalcDetails();
+			premiumCalcDetails.setCustomerAge(getAge(customer.getCustDOB()));
+			premiumCalcDetails.setGender(customer.getCustGenderCode());
+			premiumCalcDetails.setPolicyAge(insuranceTerms);
+			premiumCalcDetails.setFinAmount(loanAmt);
+			premiumCalcDetails.setProductCode(this.vASRecording.getProductCode());
+			premiumCalcDetails.setFinType(getClonedFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
+
+			VASPremiumCalcDetails newPremiumCalcDetails = getVasPremiumCalculation()
+					.getPrimiumPercentage(premiumCalcDetails);
+
+			//Medical applicable or not checking
+			if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("VAS_MEDICAL_STATUS_CALCULATION_YES_NO"))
+					&& (getVASRecording().isNewRecord()) && (this.vASConfiguration.isMedicalApplicable())) {
+				boolean medicalApplicable = getVasPremiumCalculation().getMedicalStatus(premiumCalcDetails);
+				this.medicalApplicable.setChecked(medicalApplicable);
+				setMedicalStatusVisibility(medicalApplicable);
+			}
+
+			if (newPremiumCalcDetails == null) {
+				MessageUtil.showError("Premium Percentage is not available for the slected input data.");
+				return;
+			}
+
+			if (BigDecimal.ZERO.compareTo(newPremiumCalcDetails.getPremiumPercentage()) > 0) {
+				MessageUtil.showError("Premium Percentage is not available for the slected input data.");
+				return;
+			}
+
+			BigDecimal vasFee = loanAmt.multiply(newPremiumCalcDetails.getPremiumPercentage());
+			vasFee = vasFee.divide(new BigDecimal(100));
+			if (BigDecimal.ZERO.compareTo(vasFee) > 0) {
+				MessageUtil.showError("Premium amount from the Premium calculation is less than zero.");
+				this.fee.setReadonly(false);
+				return;
+			} else {
+				this.fee.setValue(vasFee);
+			}
+
+		} catch (Exception e) {
+			{
+				if (e.getLocalizedMessage() != null) {
+					MessageUtil.showError(e.getLocalizedMessage());
+				} else {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	/*********************** Extended fields script execution data setup end ********************/
 
 	
 	//Primary link reference info
@@ -2575,14 +2926,6 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.extendedFieldRender = extendedFieldRender;
 	}
 
-	public FinanceReferenceDetailService getFinanceReferenceDetailService() {
-		return financeReferenceDetailService;
-	}
-
-	public void setFinanceReferenceDetailService(FinanceReferenceDetailService financeReferenceDetailService) {
-		this.financeReferenceDetailService = financeReferenceDetailService;
-	}
-
 	public CustomerEMailDAO getCustomerEMailDAO() {
 		return customerEMailDAO;
 	}
@@ -2666,4 +3009,27 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.vehicleDealerService = vehicleDealerService;
 	}
 
+	public VASPremiumCalculation getVasPremiumCalculation() {
+		return vasPremiumCalculation;
+	}
+
+	public void setVasPremiumCalculation(VASPremiumCalculation vasPremiumCalculation) {
+		this.vasPremiumCalculation = vasPremiumCalculation;
+	}
+
+	public FinanceDetail getClonedFinanceDetail() {
+		return clonedFinanceDetail;
+	}
+
+	public void setClonedFinanceDetail(FinanceDetail clonedFinanceDetail) {
+		this.clonedFinanceDetail = clonedFinanceDetail;
+	}
+
+	public boolean isVaildatePremium() {
+		return vaildatePremium;
+	}
+
+	public void setVaildatePremium(boolean vaildatePremium) {
+		this.vaildatePremium = vaildatePremium;
+	}
 }

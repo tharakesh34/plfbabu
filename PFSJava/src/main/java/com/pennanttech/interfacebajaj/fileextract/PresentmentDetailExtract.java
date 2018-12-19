@@ -594,14 +594,15 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		sql.append(" INSERT INTO BatchFileHeader");
-		sql.append(" (ID, FileName, StartTime)");
-		sql.append(" VALUES( :ID, :FileName, :StartTime)");
+		sql.append(" (ID, FileName, StartTime, ProcessName)");
+		sql.append(" VALUES( :ID, :FileName, :StartTime, :ProcessName)");
 
 		long batchId = presentmentDetailService.getSeqNumber("SeqBatchFileHeader");
 
 		source.addValue("ID", batchId);
 		source.addValue("FileName", fileName);
 		source.addValue("StartTime", DateUtility.getSysDate());
+		source.addValue("ProcessName", "PRESENTMENT_IMPORT");
 
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);

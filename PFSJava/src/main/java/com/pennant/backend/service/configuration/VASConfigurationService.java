@@ -43,8 +43,11 @@
 
 package com.pennant.backend.service.configuration;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 
 public interface VASConfigurationService {
 
@@ -67,4 +70,6 @@ public interface VASConfigurationService {
 	boolean isVASTypeExists(String productType);
 
 	boolean isWorkflowExists(String productType);
+
+	List<VASPremiumCalcDetails> getPremiumCalcDeatils(VASPremiumCalcDetails premiumCalcDetails);
 }

@@ -135,5 +135,22 @@
 			<column name="PaymentInsId" type="bigint"/>
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="13" author="Durgaprasad G">
+		<addColumn tableName="AdtVasstructure">
+			<column name="ModeOfPayment" type="char(1)"/>		
+			<column name="AllowFeeType" type="char(1)"/>		
+			<column name="MedicalApplicable" type="boolean"/>		
+		</addColumn>
+	</changeSet>
+	  
+  <changeSet id="14" author="Durgaprasad G">
+ 	<comment>Adding columns into VASRecording</comment> 
+  	<addColumn tableName="AdtVasRecording">
+  		<column name="TermInsuranceLien" type="boolean" defaultValue="0"/>
+  		<column name="ProviderName" type="varchar(100)"/>
+  		<column name="PolicyNumber" type="varchar(50)"/>
+  		<column name="MedicalApplicable" type="boolean" defaultValue="0"/>
+  		<column name="MedicalStatus" type="char(1)"/>
+  	</addColumn>
+  </changeSet>
 </databaseChangeLog>

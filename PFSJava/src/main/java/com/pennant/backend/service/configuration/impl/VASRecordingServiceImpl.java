@@ -101,6 +101,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 import com.pennant.backend.model.customermasters.Customer;
@@ -277,6 +278,10 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		getVASRecordingDAO().updateVasStatus(reference, paymentInsId);		
 	}
 	
+	@Override
+	public List<VASPremiumCalcDetails> getPremiumCalcDeatils(VASPremiumCalcDetails premiumCalcDetails) {
+		return getvASConfigurationService().getPremiumCalcDeatils(premiumCalcDetails);
+	}
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
 	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)

@@ -123,7 +123,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		StringBuilder sql = null;
 
 		sql = new StringBuilder(
-				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
+				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, EntityCode,");
+		sql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
 		sql.append(
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
@@ -173,6 +174,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		
 		sql = new StringBuilder(
 				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
+		sql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
 		sql.append(
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
@@ -225,6 +227,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 
 		sql = new StringBuilder(
 				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
+		sql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
 		sql.append(
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
@@ -333,17 +336,21 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		insertSql.append("Insert Into VASRecording");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, ValueDate, AccrualTillDate, RecurringDate,EntityCode,");
+				" (ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode, ValueDate, AccrualTillDate, RecurringDate, EntityCode,");
+		insertSql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
 		insertSql.append(
 				"  DsaId, DmaId, FulfilOfficerId, ReferralId, Status, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt,");
-		insertSql.append("  Remarks  , Reason  , CancelAmt , ServiceReqNumber  , CancelAfterFLP, OldVasReference, ManualAdviseId, ReceivableAdviseId )");
 		insertSql.append(
-				"  Values(:ProductCode, :PostingAgainst, :PrimaryLinkRef, :VasReference, :Fee, :RenewalFee, :FeePaymentMode, :ValueDate, :AccrualTillDate,");
-		insertSql.append("  :RecurringDate, :EntityCode, :DsaId, :DmaId, :FulfilOfficerId, :ReferralId, :Status,");
+				"  Remarks  , Reason  , CancelAmt , ServiceReqNumber  , CancelAfterFLP, OldVasReference, ManualAdviseId, ReceivableAdviseId )");
+		insertSql.append(
+				"  Values(:ProductCode, :PostingAgainst, :PrimaryLinkRef, :VasReference, :Fee, :RenewalFee, :FeePaymentMode, :ValueDate, :AccrualTillDate, :RecurringDate, :EntityCode,");
+		insertSql.append(" :TermInsuranceLien, :ProviderName, :PolicyNumber, :MedicalApplicable, :MedicalStatus,");
+		insertSql.append("   :DsaId, :DmaId, :FulfilOfficerId, :ReferralId, :Status,");
 		insertSql.append(
 				"  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:VasStatus,:FinanceProcess, :PaidAmt, :WaivedAmt");
-		insertSql.append(", :Remarks ,  :Reason ,  :CancelAmt , :ServiceReqNumber , :CancelAfterFLP, :OldVasReference, :ManualAdviseId, :ReceivableAdviseId )");
+		insertSql.append(
+				", :Remarks ,  :Reason ,  :CancelAmt , :ServiceReqNumber , :CancelAfterFLP, :OldVasReference, :ManualAdviseId, :ReceivableAdviseId )");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vASRecording);
@@ -373,6 +380,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(
 				" Set ProductCode = :ProductCode, PostingAgainst = :PostingAgainst, PrimaryLinkRef = :PrimaryLinkRef, Fee = :Fee, RenewalFee = :RenewalFee, FeePaymentMode = :FeePaymentMode, ");
+		updateSql.append(
+				" TermInsuranceLien = :TermInsuranceLien, ProviderName = :ProviderName, PolicyNumber = :PolicyNumber, MedicalApplicable = :MedicalApplicable, MedicalStatus = :MedicalStatus,");
 		updateSql.append(
 				" ValueDate = :ValueDate, AccrualTillDate = :AccrualTillDate, EntityCode = :EntityCode, RecurringDate = :RecurringDate, DsaId = :DsaId, DmaId = :DmaId, FulfilOfficerId = :FulfilOfficerId, ReferralId = :ReferralId,");
 		updateSql.append(

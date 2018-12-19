@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.configuration.VasCustomer;
 
@@ -81,5 +82,7 @@ public interface VASRecordingService {
 	VASRecording getVASRecording(String vasRefrence, String vasStatus);
 
 	void updateVasPaymentId(String reference, long paymentInsId);
+
+	List<VASPremiumCalcDetails> getPremiumCalcDeatils(VASPremiumCalcDetails premiumCalcDetails);
 
 }

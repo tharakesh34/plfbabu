@@ -29,6 +29,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.insurance.InsuranceDetails;
@@ -41,6 +42,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.webui.configuration.vasconfiguration.VASConfigurationDialogCtrl;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineLog;
@@ -187,242 +189,57 @@ public class InsuranceFileImportService {
 					insuranceDetail.setEndDate(endDate);
 				}
 				
-				// Insurance Term
-				if (insuranceDetail.getTerm() == 0) {
-					if (StringUtils.isNotBlank(detailFromFile.getTermF())) {
-						insuranceDetail.setTerm(Integer.valueOf(detailFromFile.getTermF()));
-					}
-				}
-
-				//coverage Amount
-				if ((BigDecimal.ZERO.compareTo(insuranceDetail.getCoverageAmount()) == 0) && (BigDecimal.ZERO.compareTo(detailFromFile.getCoverageAmount()) == -1)) {
-					insuranceDetail.setCoverageAmount(PennantAppUtil.unFormateAmount(detailFromFile.getCoverageAmount(), ccyForamt));
-				}
-				
-				//Policy Number
-				if (StringUtils.trimToNull(insuranceDetail.getPolicyNumber()) == null) {
-					insuranceDetail.setPolicyNumber(detailFromFile.getPolicyNumber());
-				}
-				
-				// Issuance status
-				String issuanceStatus = detailFromFile.getIssuanceStatus();
-				if (InsuranceConstants.PENDING.equals(vasRecording.getStatus())) {
-					if (InsuranceConstants.PENDING.equals(issuanceStatus) || InsuranceConstants.DISCREPENT.equals(issuanceStatus) || InsuranceConstants.DECLINE.equals(issuanceStatus) || InsuranceConstants.REJECT.equals(issuanceStatus)) {
-						insuranceDetail.setIssuanceStatus(issuanceStatus);
-					}
-					
-					if (InsuranceConstants.ISSUED.equals(issuanceStatus) && (StringUtils.trimToNull(detailFromFile.getPolicyNumber()) == null)) {
-						throw new Exception("Policy Number is mandatory if the Issuance status is received as ISSUED. At the Refence :" + vasReference);
-					}
-					
-					if (InsuranceConstants.ISSUED.equals(issuanceStatus)) {
-						insuranceDetail.setIssuanceStatus(InsuranceConstants.ISSUED);
-						vasRecording.setStatus(InsuranceConstants.ACTIVE);
-						updateVas = true;
-					}
-				}
-				if (isExists && InsuranceConstants.CANCEL.equals(issuanceStatus)) {//FIXME to chaitanyaaa
-					if (InsuranceConstants.ISSUED.equals(insuranceDetail.getIssuanceStatus()) && InsuranceConstants.ACTIVE.equals(insuranceDetail.getPolicyStatus())) {
-						insuranceDetail.setIssuanceStatus(InsuranceConstants.CANCEL);
-					}
-				}
-				
-				//Policy Status//GDP
-				if (InsuranceConstants.PENDING.equals(vasRecording.getStatus()) 
-						&& InsuranceConstants.PENDING.equals(detailFromFile.getIssuanceStatus())) {
-					insuranceDetail.setPolicyStatus(InsuranceConstants.ACTIVE);
-					insuranceDetail.setIssuanceStatus(InsuranceConstants.ISSUED);
-				}
-				
-				if (InsuranceConstants.ACTIVE.equals(vasRecording.getStatus()) 
-						&& InsuranceConstants.ISSUED.equals(detailFromFile.getIssuanceStatus()) && InsuranceConstants.CANCELLED.equals(detailFromFile.getIssuanceStatus())) {
-					insuranceDetail.setPolicyStatus(InsuranceConstants.CANCELLED);
-					insuranceDetail.setIssuanceStatus(InsuranceConstants.CANCEL);
-				}
-				
-				if ((InsuranceConstants.ACTIVE.equals(detailFromFile.getPolicyStatus())
-						&& InsuranceConstants.ISSUED.equals(detailFromFile.getIssuanceStatus()))) {
-					insuranceDetail.setPolicyStatus(detailFromFile.getPolicyStatus());
-					insuranceDetail.setIssuanceStatus(InsuranceConstants.ISSUED);
-				}
-				
-				
-				//Partner received date
-				if (insuranceDetail.getPartnerReceivedDate() == null) {
-					if (detailFromFile.getPartnerReceivedDate() == null) {
-						if(InsuranceConstants.ISSUED.equals(insuranceDetail.getIssuanceStatus())){
-							insuranceDetail.setPartnerReceivedDate(insuranceDetail.getIssuanceDate());
-						}
-					} else {
-						if (DateUtility.compare(detailFromFile.getPartnerReceivedDate(), DateUtility.getAppDate()) > 0) {
-							throw new Exception("Partner received date Should not be greater than the Application date. At the Refence :" + vasReference);
-						} else {
-							insuranceDetail.setPartnerReceivedDate(detailFromFile.getPartnerReceivedDate());
-						}
-					}
-				}
-				
-				//Insurance Partner Premium
-				if ((!InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetail.getReconStatus())) && (BigDecimal.ZERO.compareTo(detailFromFile.getPartnerPremium()) < 0) && (StringUtils.trimToNull(detailFromFile.getPolicyNumber()) == null)) {
-					  throw new Exception("Policy Number is mandatory if the Recon Status is N and Partner Premium amount greater than Zero. At the Refence :" + vasReference);
-				} else if ((!InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetail.getReconStatus())) && (BigDecimal.ZERO.compareTo(detailFromFile.getPartnerPremium()) == -1)) {
-					insuranceDetail.setPartnerPremium(PennantAppUtil.unFormateAmount(detailFromFile.getPartnerPremium(), ccyForamt));
-				}
-				
-				//Dispatch Date Attempts
-				Date dispDateAttemt1 = detailFromFile.getDispatchDateAttempt1();
-				Date dispDateAttemt2 = detailFromFile.getDispatchDateAttempt2();
-				Date dispDateAttemt3 = detailFromFile.getDispatchDateAttempt3();
-				
-				if (!DELIVERED.equals(detailFromFile.getDispatchStatusF())) {
-					//Dispatch Date Attempt1
-					if (insuranceDetail.getDispatchDateAttempt1() == null) {
-						insuranceDetail.setDispatchDateAttempt1(dispDateAttemt1);
-					}
-
-					// Dispatch Date Attempt2
-					if (insuranceDetail.getDispatchDateAttempt2() == null) {
-						insuranceDetail.setDispatchDateAttempt2(dispDateAttemt2);
-					}
-
-					// Dispatch Date Attempt3
-					if (dispDateAttemt3 != null) {
-						insuranceDetail.setDispatchDateAttempt3(dispDateAttemt3);
-					}
-				}
-			
-				// AWB No
-				if (StringUtils.trimToNull(detailFromFile.getaWBNoF()) != null) {
-					if (dispDateAttemt1 != null && dispDateAttemt2 != null && dispDateAttemt3 != null) {
-						insuranceDetail.setaWBNo3(detailFromFile.getaWBNoF());
-					}
-
-					if (dispDateAttemt1 != null && dispDateAttemt2 != null && insuranceDetail.getaWBNo2() != null) {
-						insuranceDetail.setaWBNo2(detailFromFile.getaWBNoF());
-					}
-
-					if (dispDateAttemt1 != null && insuranceDetail.getaWBNo1() != null) {
-						insuranceDetail.setaWBNo1(detailFromFile.getaWBNoF());
-					}
-				}
-				
-				// Dispatch Status
-				String dispStatus = detailFromFile.getDispatchStatusF();
-				if (dispDateAttemt1 != null || dispDateAttemt2 != null || dispDateAttemt3 != null) {
-					if (StringUtils.trimToNull(dispStatus) == null) {
-						throw new Exception("Dispatch Status is mandatory. if all Dispatch Date is provided. At the Refence :" + vasReference);
-					}
-				}
-				if (InsuranceConstants.ACTIVE.equals(vasRecording.getStatus()) && InsuranceConstants.ISSUED.equals(insuranceDetail.getIssuanceStatus())) {
-					if (!DELIVERED.equals(dispStatus) && (StringUtils.trimToNull(dispStatus) != null)) {
-						if (StringUtils.trimToNull(insuranceDetail.getDispatchStatus1()) == null) {
-							insuranceDetail.setDispatchStatus1(dispStatus);
-						} else if (StringUtils.trimToNull(insuranceDetail.getDispatchStatus2()) == null) {
-							insuranceDetail.setDispatchStatus2(dispStatus);
-						} else {
-							insuranceDetail.setDispatchStatus3(dispStatus);
-						}
-					}
-				}
-				
-				// Reason of RTO
-				String reasonofRTO = detailFromFile.getReasonOfRTOF();
-				if (RTO.equals(dispStatus)) {
-					if (StringUtils.trimToNull(reasonofRTO) == null) {
-						throw new Exception("Reason of RTO is mandatory if Dispatch Status is RTO. At the Refence :" + vasReference);
-					}
-				}
-				
-				if (StringUtils.trimToNull(reasonofRTO) != null) {
-					if (dispDateAttemt1 != null && dispDateAttemt2 != null && dispDateAttemt3 != null) {
-						insuranceDetail.setReasonOfRTO3(reasonofRTO);
-					}
-
-					if (dispDateAttemt1 != null && dispDateAttemt2 != null
-							&& insuranceDetail.getReasonOfRTO2() != null) {
-						insuranceDetail.setReasonOfRTO2(reasonofRTO);
-					}
-
-					if (dispDateAttemt1 != null && insuranceDetail.getReasonOfRTO1() != null) {
-						insuranceDetail.setReasonOfRTO1(reasonofRTO);
-					}
-				}
-				
-				// Medical Status
-				if (PennantConstants.YES.equals(detailFromFile.getMedicalStatusF())) {
-					insuranceDetail.setMedicalStatus(true);
-				} else if (PennantConstants.NO.equals(detailFromFile.getMedicalStatusF())) {
-					insuranceDetail.setMedicalStatus(false);
-				}
-				
-				//Insurance Pendency  Reason Category
-				String insStatus = insuranceDetail.getIssuanceStatus();
-				String insPendencyCategory = detailFromFile.getPendencyReasonCategory();
-				
-				if (InsuranceConstants.PENDING.equals(insStatus) || InsuranceConstants.DISCREPENT.equals(insStatus) || InsuranceConstants.DECLINE.equals(insStatus)
-						|| InsuranceConstants.REJECT.equals(insStatus) || InsuranceConstants.CANCEL.equals(insStatus)) {
-					insuranceDetail.setPendencyReasonCategory(insPendencyCategory);
-				}
-				
-				//Insurance Pendency Reason
-				if (StringUtils.trimToNull(insPendencyCategory) != null && StringUtils.trimToNull(detailFromFile.getPendencyReason()) != null) {
-					insuranceDetail.setPendencyReason(detailFromFile.getPendencyReason());
-				}
-				
-				//Insurer Pendency Resolution requirement
-				if (StringUtils.trimToNull(insPendencyCategory) != null) {
-					if (PennantConstants.YES.equals(detailFromFile.getPendencyResReqF())) {
-						insuranceDetail.setInsPendencyResReq(true);
-					} else if (PennantConstants.NO.equals(detailFromFile.getPendencyResReqF())) {
-						insuranceDetail.setInsPendencyResReq(false);
-					}
-				}
-				
-				//FPR
-				insuranceDetail.setfPR(detailFromFile.getfPR());
-				
-				//FORM_HANDOVER_DATE
-				if ((insuranceDetail.getFormHandoverDate() == null) && (detailFromFile.getFormHandoverDate() != null)) {
-					insuranceDetail.setFormHandoverDate(detailFromFile.getFormHandoverDate());
-				}
-				
-				//Manual or Auto reconcile process
-				if (!isExists) {
-					BigDecimal policyAmt = PennantAppUtil.unFormateAmount(detailFromFile.getPartnerPremium(), ccyForamt);
-					BigDecimal differenceAmount = vasRecording.getFee().subtract(policyAmt);
-					BigDecimal adjAmount = differenceAmount;
-					
-					if (differenceAmount.compareTo(BigDecimal.ZERO) < 0) {
-						differenceAmount = differenceAmount.negate();
-					}
-					
-					if ((differenceAmount.compareTo(providerAccDetail.getReconciliationAmount()) < 0)) {
-						insuranceDetail.setReconStatus(InsuranceConstants.RECON_STATUS_AUTO);
-						insuranceDetail.setAdjAmount(adjAmount);
-						setWorkFlowDetails(insuranceDetail);
-					} else {
-						insuranceDetail.setReconStatus(InsuranceConstants.RECON_STATUS_MANUAL);
-						setWorkFlowDetails(insuranceDetail);
-					}
-					insuranceDetail.setTolaranceAmount(providerAccDetail.getReconciliationAmount());
-				}
-				
-				//Save/Updating the insurance data
-				insuranceDetail.setvASProviderId(providerId);
-				if (isExists) {
-					getInsuranceDetailService().updateInsuranceDetails(insuranceDetail,TableType.MAIN_TAB.getSuffix());
+				//If medical status is standard/Reject. System should not allow the user to update the loading premium amount. hence, premium and final premium amount will be same
+				String medicalStatus = vasRecording.getMedicalStatus();
+				if (VASConsatnts.VAS_MEDICALSTATUS_REJECT.equals(medicalStatus)
+						|| VASConsatnts.VAS_MEDICALSTATUS_STANDARD.equals(medicalStatus)) {
+					//Data saving
+					insuranceDetail.setReconStatus(InsuranceConstants.RECON_STATUS_AUTO);
+					setWorkFlowDetails(insuranceDetail);
+					getInsuranceDetailService().saveInsuranceDetails(insuranceDetail, TableType.MAIN_TAB.getSuffix());
 				} else {
-					if (InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetail.getReconStatus())) {
-						//Accounting execution
-						long linkedTranId = getInsuranceDetailService().executeInsPartnerAccountingProcess(insuranceDetail, vasRecording);
-						insuranceDetail.setLinkedTranId(linkedTranId);
-						//Data saving
-						getInsuranceDetailService().saveInsuranceDetails(insuranceDetail, TableType.MAIN_TAB.getSuffix());
-					} else if (InsuranceConstants.RECON_STATUS_MANUAL.equals(insuranceDetail.getReconStatus())) {
-						getInsuranceDetailService().saveInsuranceDetails(insuranceDetail, TableType.TEMP_TAB.getSuffix());
+					//Manual or Auto reconcile process
+					if (!isExists) {
+						BigDecimal policyAmt = PennantAppUtil.unFormateAmount(detailFromFile.getPartnerPremium(),
+								ccyForamt);
+						BigDecimal differenceAmount = vasRecording.getFee().subtract(policyAmt);
+						BigDecimal adjAmount = differenceAmount;
+
+						if (differenceAmount.compareTo(BigDecimal.ZERO) < 0) {
+							differenceAmount = differenceAmount.negate();
+						}
+
+						if ((differenceAmount.compareTo(providerAccDetail.getReconciliationAmount()) < 0)) {
+							insuranceDetail.setReconStatus(InsuranceConstants.RECON_STATUS_AUTO);
+							insuranceDetail.setAdjAmount(adjAmount);
+							setWorkFlowDetails(insuranceDetail);
+						} else {
+							insuranceDetail.setReconStatus(InsuranceConstants.RECON_STATUS_MANUAL);
+							setWorkFlowDetails(insuranceDetail);
+						}
+						insuranceDetail.setTolaranceAmount(providerAccDetail.getReconciliationAmount());
+					}
+					
+					//Save/Updating the insurance data
+					insuranceDetail.setvASProviderId(providerId);
+					if (isExists) {
+						getInsuranceDetailService().updateInsuranceDetails(insuranceDetail,
+								TableType.MAIN_TAB.getSuffix());
+					} else {
+						if (InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetail.getReconStatus())) {
+							//Accounting execution
+							long linkedTranId = getInsuranceDetailService()
+									.executeInsPartnerAccountingProcess(insuranceDetail, vasRecording);
+							insuranceDetail.setLinkedTranId(linkedTranId);
+							//Data saving
+							getInsuranceDetailService().saveInsuranceDetails(insuranceDetail,
+									TableType.MAIN_TAB.getSuffix());
+						} else if (InsuranceConstants.RECON_STATUS_MANUAL.equals(insuranceDetail.getReconStatus())) {
+							getInsuranceDetailService().saveInsuranceDetails(insuranceDetail,
+									TableType.TEMP_TAB.getSuffix());
+						}
 					}
 				}
-				
 				//Updating the vas status
 				if (updateVas) {
 					getInsuranceDetailService().updateVasStatus(vasRecording.getStatus(), vasRecording.getVasReference());
@@ -529,6 +346,19 @@ public class InsuranceFileImportService {
 					throw new Exception("Insurace details are not available for the Reference :" + detailFromFile.getReference());
 				}
 				
+				//Term insurance lien
+				if (vasRecording.isTermInsuranceLien()) {
+					throw new Exception(
+							"Term Insurance Lien available for the reference.(Plolicy number :"
+									+ vasRecording.getPolicyNumber() + ")." + detailFromFile.getReference());
+				}
+
+				//Medical Status
+				if (VASConsatnts.VAS_MEDICALSTATUS_REJECT.equals(vasRecording.getMedicalStatus())) {
+					throw new Exception(
+							"Medical Status marked as Reject  for the Reference " + detailFromFile.getReference());
+				}
+
 				if (vasRecording.getPaymentInsId() == 0) {
 					vasRecording.setPaymentInsId(Long.MIN_VALUE);
 				}
@@ -657,6 +487,161 @@ public class InsuranceFileImportService {
 	
 	/*****************Process Manual Advise End**********************************************/
 	
+	/*****************
+	 * Process VASPremium CalcUploadFile Start
+	 * 
+	 * @param manufacturerName
+	 * 
+	 * @throws Exception
+	 **********************************************/
+	public void processVASPremiumCalcUploadFile(long userId, DataEngineStatus status, Media media,
+			String manufacturerName, VASConfigurationDialogCtrl dialogCtrl) throws Exception {
+
+		dialogCtrl.setPremiumCalcDetList(null);
+
+		String configName = status.getName();
+		status.reset();
+		status.setFileName(media.getName());
+		status.setRemarks("Initiated file reading...");
+
+		DataEngineImport dataEngine;
+		dataEngine = new DataEngineImport(getDataSource(), userId, App.DATABASE.name(), true, DateUtility.getAppDate(),
+				status);
+		dataEngine.setMedia(media);
+		dataEngine.importData(configName);
+
+		do {
+			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
+				processPaymentUploadsData(status, manufacturerName, dialogCtrl);
+				break;
+				}
+		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
+
+		logger.info(configName + " file processing completed");
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void processPaymentUploadsData(DataEngineStatus status, String manufacturerName,
+			VASConfigurationDialogCtrl dialogCtrl) {
+		logger.debug(Literal.ENTERING);
+
+		List<VASPremiumCalcDetails> calcDetails = getVASPremiumCalcDetails(status.getId());
+
+		if (CollectionUtils.isEmpty(calcDetails)) {
+			return;
+		}
+
+		String oldRemarks = status.getRemarks();
+		status.setStatus(ExecutionStatus.I.name());
+		status.setRemarks("File Reading completed, Initiated the data validating...");
+		int totalRecords = calcDetails.size();
+		int failureRecords = 0;
+		int sucessRecords = 0;
+
+		VASPremiumCalcDetails premiumCalcDetails = null;
+		List<VASPremiumCalcDetails> calcDetailsList = new ArrayList<>();
+
+		//Processing the data
+		for (VASPremiumCalcDetails detailFromFile : calcDetails) {
+			try {
+				status.setStatus(ExecutionStatus.E.name());
+				if (!StringUtils.equalsIgnoreCase(manufacturerName, detailFromFile.getManufacturerName())) {
+					throw new Exception("Manufacturer Name not matched with the selcted manufacturer.");
+				}
+				premiumCalcDetails = new VASPremiumCalcDetails();
+
+				//Batch Id
+				premiumCalcDetails.setBatchId(detailFromFile.getBatchId());
+
+				//Customer Age
+				try {
+					if (StringUtils.isNumeric(detailFromFile.getCustomerAgeF())) {
+						premiumCalcDetails.setCustomerAge(Integer.valueOf(detailFromFile.getCustomerAgeF()));
+					} else {
+						premiumCalcDetails.setCustomerAge(new BigDecimal(detailFromFile.getCustomerAgeF()).intValue());
+					}
+				} catch (Exception e) {
+					throw new Exception("Customer age should be numeric." + detailFromFile.getCustomerAgeF());
+				}
+
+				//Gender
+				premiumCalcDetails.setGender(detailFromFile.getGender());
+
+				//PolicyAge
+				try {
+					if (StringUtils.isNumeric(detailFromFile.getPolicyAgeF())) {
+						premiumCalcDetails.setPolicyAge(Integer.valueOf(detailFromFile.getPolicyAgeF()));
+					} else {
+						premiumCalcDetails.setPolicyAge(new BigDecimal(detailFromFile.getPolicyAgeF()).intValue());
+					}
+				} catch (Exception e) {
+					throw new Exception("Policy Age In Terms should be numeric." + detailFromFile.getPolicyAgeF());
+				}
+
+
+				//PremiumPercentage
+				try {
+					premiumCalcDetails.setPremiumPercentage(new BigDecimal(detailFromFile.getPremiumPercentageF()));
+				} catch (Exception e) {
+					throw new Exception(
+							"Premium Percentage should be numeric." + detailFromFile.getPremiumPercentageF());
+				}
+
+				//MinAmount
+				try {
+					premiumCalcDetails.setMinAmount(new BigDecimal(detailFromFile.getMinAmountF()));
+				} catch (Exception e) {
+					throw new Exception("Min Amount should be numeric." + detailFromFile.getMinAmountF());
+				}
+
+				//Max Amount
+				try {
+					premiumCalcDetails.setMaxAmount(new BigDecimal(detailFromFile.getMaxAmountF()));
+				} catch (Exception e) {
+					throw new Exception("Max Amount should be numeric." + detailFromFile.getMaxAmountF());
+				}
+
+				calcDetailsList.add(premiumCalcDetails);
+
+				sucessRecords++;
+			} catch (Throwable e) {
+				logger.debug(Literal.EXCEPTION, e);
+				updateLog(status.getId(), detailFromFile.getCustomerAgeF(), "F", e.getMessage());
+				failureRecords++;
+			}
+		}
+
+		if (sucessRecords > 0) {
+			dialogCtrl.setPremiumCalcDetList(calcDetailsList);
+		}
+
+		//Status logging
+		StringBuilder remarks = new StringBuilder();
+		if (totalRecords > 0) {
+			if (failureRecords > 0) {
+				remarks.append("Completed with exceptions, total Records: ");
+				remarks.append(totalRecords);
+				remarks.append(", Success: ");
+				remarks.append(status.getSuccessRecords() - failureRecords);
+				remarks.append(", Failure: ");
+				remarks.append(status.getFailedRecords() + failureRecords);
+				status.setSuccessRecords(status.getSuccessRecords() - failureRecords);
+				status.setFailedRecords(status.getFailedRecords() + failureRecords);
+				status.setRemarks(remarks.toString());
+			} else {
+				status.setRemarks(oldRemarks);
+			}
+			setExceptionLog(status);
+			updateStatus(status);
+			status.setStatus(ExecutionStatus.S.name());
+		}
+		logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/***************** Process VASPremium CalcUploadFile End **********************************************/
+
 	/******************Common Methods********************************/
 
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode) {
@@ -814,6 +799,31 @@ public class InsuranceFileImportService {
 		logger.debug("selectSql: " + sql.toString());
 		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(InsuranceDetails.class);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("BatchId", batchId);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	/*
+	 * Getting the VAS premium calculation File import data
+	 */
+	private List<VASPremiumCalcDetails> getVASPremiumCalcDetails(long batchId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" Select  BatchId, ManufacturerName, CustomerAgeF, Gender,");
+		sql.append(" PolicyAgeF, PremiumPercentageF, MinAmountF,MaxAmountF");
+		sql.append(" From VASPremiumCalcDet_DataEngine Where BatchId = :BatchId");
+		logger.debug("selectSql: " + sql.toString());
+		RowMapper<VASPremiumCalcDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VASPremiumCalcDetails.class);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BatchId", batchId);
 		try {

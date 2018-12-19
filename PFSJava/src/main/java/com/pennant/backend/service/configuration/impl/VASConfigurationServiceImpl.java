@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +60,7 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASConfiguration;
+import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.GenericService;
@@ -209,6 +211,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 		if (vASConfiguration.isNew()) {
 			getVASConfigurationDAO().save(vASConfiguration, tableType);
+			processVASPremiumCalcDetsils(vASConfiguration, tableType);
 		} else {
 			getVASConfigurationDAO().update(vASConfiguration, tableType);
 		}
@@ -321,6 +324,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
 			}
 			vasConfiguration.setExtendedFieldHeader(extFldHeader);
+			vasConfiguration.setPremiumCalcDetList(getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), "_View"));
 		}
 		logger.debug("Leaving");
 		return vasConfiguration;
@@ -348,6 +352,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
 			}
 			vasConfiguration.setExtendedFieldHeader(extFldHeader);
+			vasConfiguration.setPremiumCalcDetList(getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), ""));
 		}
 		logger.debug("Leaving");
 		return vasConfiguration;
@@ -428,11 +433,12 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 				// Table creation in DB for Newly created Configuration Type Details
 				getExtendedFieldHeaderDAO().createTable(extendedFieldHeader.getModuleName(),
 						extendedFieldHeader.getSubModuleName(), extendedFieldHeader.getEvent());
-
+				processVASPremiumCalcDetsils(vASConfiguration, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				extendedFieldHeader.setRecordType("");
 				getExtendedFieldHeaderDAO().update(extendedFieldHeader, "");
+				processVASPremiumCalcDetsils(vASConfiguration, "");
 			}
 			auditDetails.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
 			if (extendedFieldHeader.getExtendedFieldDetails() != null
@@ -495,6 +501,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		//ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
+		processVASPremiumCalcDetsils(vASConfiguration, "_Temp");
 		auditDetailsList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, extendedFieldHeader.getBefImage(),
 				extendedFieldHeader));
 		auditDetailsList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
@@ -738,6 +745,20 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		return auditList;
 	}
 
+	/**
+	 * Processing the Premium calculation file details
+	 * @param vASConfiguration
+	 * @param tableType
+	 */
+	private void processVASPremiumCalcDetsils(VASConfiguration vASConfiguration, String tableType) {
+		logger.debug("Entering");
+		getVASConfigurationDAO().deletePremiumCalcDetails(vASConfiguration.getProductCode(), tableType);
+		if (CollectionUtils.isNotEmpty(vASConfiguration.getPremiumCalcDetList())) {
+			getVASConfigurationDAO().savePremiumCalcDetails(vASConfiguration.getPremiumCalcDetList(), tableType);
+		}
+		logger.debug("Leaving");
+	}
+	
 	/*
 	 * Checking the vas type is used in vas recording or not
 	 */
@@ -756,8 +777,12 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 	@Override
 	public boolean isWorkflowExists(String productType) {
-
 		return getFinanceWorkFlowDAO().isWorkflowExists(productType, PennantConstants.WORFLOW_MODULE_VAS);
+	}
+
+	@Override
+	public List<VASPremiumCalcDetails> getPremiumCalcDeatils(VASPremiumCalcDetails premiumCalcDetails) {
+		return getVASConfigurationDAO().getPremiumCalcDetails(premiumCalcDetails.getProductCode(), "");
 	}
 
 }

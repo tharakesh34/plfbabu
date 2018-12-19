@@ -189,11 +189,56 @@
 												<extendedcombobox id="referralId" />
 											</row>
 											<row>
-												<label value="${c:l('label_InsuranceRebookingDialog_EntityCode.value')}" />
+												<label value="${c:l('label_VASRecordingDialog_EntityCode.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="entityCode" width="180px" />
 													<label id="entityDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+												</hbox>
+											</row>
+											<row>
+											 	<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="allowFeeType" width="180px" />
+												</hbox>
+												<label
+													value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="modeOfPayment" width="180px"/>
+												</hbox>
+											</row>
+											<row>
+											 	<label value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
+												<hbox>
+													<space spacing="2px"/>
+													<checkbox id="termInsuranceLien"/>
+												</hbox>
+												<label value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
+												<hbox>
+													<space spacing="2px"/>
+													<checkbox id="medicalApplicable"/>
+												</hbox>
+											</row>
+											<row id="row_TermInsuranceLien">
+											 	<label value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<textbox id="providerName" width="180px" />
+												</hbox>
+												<label
+													value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<textbox id="policyNumber" width="180px"/>
+												</hbox>
+											</row>
+											<row id="row_MedicalStatus">
+											 	<label value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
+												<hbox>
+													<space spacing="2px" sclass="mandatory" />
+													<combobox id="medicalStatus" width="180px" />
 												</hbox>
 											</row>
 										</rows>

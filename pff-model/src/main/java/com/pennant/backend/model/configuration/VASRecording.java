@@ -143,6 +143,12 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private String serviceReqNumber;
 	private boolean insuranceCancel;
 
+	private boolean termInsuranceLien;
+	private String providerName;
+	private String policyNumber;
+	private boolean medicalApplicable;
+	private String medicalStatus;
+
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -237,6 +243,12 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("insuranceCancel");
 		excludeFields.add("partnerPremiumAmt");
 		excludeFields.add("receivableAdviseId");
+
+		excludeFields.add("termInsuranceLien");
+		excludeFields.add("providerName");
+		excludeFields.add("policyNumber");
+		excludeFields.add("medicalApplicable");
+		excludeFields.add("medicalStatus");
 		return excludeFields;
 	}
 
@@ -802,6 +814,46 @@ public class VASRecording extends AbstractWorkflowEntity {
 
 	public void setPartnerPremiumAmt(BigDecimal partnerPremiumAmt) {
 		this.partnerPremiumAmt = partnerPremiumAmt;
+	}
+
+	public boolean isTermInsuranceLien() {
+		return termInsuranceLien;
+	}
+
+	public void setTermInsuranceLien(boolean termInsuranceLien) {
+		this.termInsuranceLien = termInsuranceLien;
+	}
+
+	public String getProviderName() {
+		return providerName;
+	}
+
+	public void setProviderName(String providerName) {
+		this.providerName = providerName;
+	}
+
+	public String getPolicyNumber() {
+		return policyNumber;
+	}
+
+	public void setPolicyNumber(String policyNumber) {
+		this.policyNumber = policyNumber;
+	}
+
+	public boolean isMedicalApplicable() {
+		return medicalApplicable;
+	}
+
+	public void setMedicalApplicable(boolean medicalApplicable) {
+		this.medicalApplicable = medicalApplicable;
+	}
+
+	public String getMedicalStatus() {
+		return medicalStatus;
+	}
+
+	public void setMedicalStatus(String medicalStatus) {
+		this.medicalStatus = medicalStatus;
 	}
 
 }

@@ -55,6 +55,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.rits.cloning.Cloner;
 
 public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails> implements InsuranceDetailService {
 	private static Logger logger = Logger.getLogger(InsuranceDetailServiceImpl.class);
@@ -463,14 +464,17 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			details.setLinkedTranId(executeInsPaymentsAccountingProcess(details));
 		}
 		
-		if (CollectionUtils.isNotEmpty(details.getVasRecordindList())) {
-			for (VASRecording vasRecording : details.getVasRecordindList()) {
-				details.setPayableAmount(BigDecimal.ZERO);
-				details.setReceivableAmount(BigDecimal.ZERO);
-				details.setPaymentAmount(BigDecimal.ZERO);
-				details.setPartnerPremiumAmt(vasRecording.getPartnerPremiumAmt());
-				vasRecording.setUserDetails(details.getUserDetails());
-				long linkedTranId = executePaymentsAccountingProcess(vasRecording, details);
+		Cloner cloner = new Cloner();
+		InsurancePaymentInstructions newDetails = cloner.deepClone(details);
+
+		if (CollectionUtils.isNotEmpty(newDetails.getVasRecordindList())) {
+			for (VASRecording vasRecording : newDetails.getVasRecordindList()) {
+				newDetails.setPayableAmount(BigDecimal.ZERO);
+				newDetails.setReceivableAmount(BigDecimal.ZERO);
+				newDetails.setPaymentAmount(BigDecimal.ZERO);
+				newDetails.setPartnerPremiumAmt(vasRecording.getPartnerPremiumAmt());
+				vasRecording.setUserDetails(newDetails.getUserDetails());
+				long linkedTranId = executePaymentsAccountingProcess(vasRecording, newDetails);
 				updatePaymentLinkedTranId(vasRecording.getVasReference(), linkedTranId);
 			}
 		}

@@ -3359,4 +3359,1062 @@
 	 	</sql>
 	 </changeSet>
 	
+	<changeSet id="115" author="Durgaprasad G">
+		<addColumn tableName="Vasstructure">
+			<column name="ModeOfPayment" type="char(1)"/>		
+			<column name="AllowFeeType" type="char(1)"/>		
+			<column name="MedicalApplicable" type="boolean"/>		
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="116" author="Durgaprasad G">
+		<addColumn tableName="Vasstructure_Temp">
+			<column name="ModeOfPayment" type="char(1)"/>		
+			<column name="AllowFeeType" type="char(1)"/>		
+			<column name="MedicalApplicable" type="boolean"/>		
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="117" author="Durgaprasad G">
+		<createView viewName="vasstructure_aview" replaceIfExists="true">
+			SELECT t1.productcode,
+		    t1.productdesc,
+		    t1.recagainst,
+		    t1.feeaccrued,
+		    t1.feeaccounting,
+		    t1.accrualaccounting,
+		    t1.recurringtype,
+		    t1.freelockperiod,
+		    t1.active,
+		    t1.prevalidationreq,
+		    t1.postvalidationreq,
+		    t1.remarks,
+		    t1.producttype,
+		    t1.vasfee,
+		    t1.allowfeetomodify,
+		    t1.manufacturerid,
+		    t1.prevalidation,
+		    t1.postvalidation,
+		    t1.feetype,
+		    t1.flpcalculatedon,
+		    t1.shortcode,
+		    t1.ModeOfPayment,
+		    t1.AllowFeeType,
+		    t1.MedicalApplicable,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.accountsetcodename AS feeaccountingname,
+		    t3.accountsetcodename AS accrualaccountingname,
+		    t2.accountsetcode AS feeaccountingdesc,
+		    t3.accountsetcode AS accrualaccountingdesc,
+		    t4.producttypedesc,
+		    t5.dealername AS manufacturername,
+		    t6.productctg,
+		    t6.productctgdesc AS productcategory,
+		    t7.feetypecode,
+		    t7.feetypedesc
+		   FROM vasstructure t1
+		     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+		     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+		     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+		     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+		     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+		     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="119" author="Durgaprasad G">
+		<createView viewName="vasstructure_view" replaceIfExists="true">
+				SELECT t1.productcode,
+			    t1.productdesc,
+			    t1.recagainst,
+			    t1.feeaccrued,
+			    t1.feeaccounting,
+			    t1.accrualaccounting,
+			    t1.recurringtype,
+			    t1.freelockperiod,
+			    t1.active,
+			    t1.prevalidationreq,
+			    t1.postvalidationreq,
+			    t1.remarks,
+			    t1.producttype,
+			    t1.vasfee,
+			    t1.allowfeetomodify,
+			    t1.manufacturerid,
+			    t1.prevalidation,
+			    t1.postvalidation,
+			    t1.feetype,
+			    t1.flpcalculatedon,
+			    t1.shortcode,
+			    t1.ModeOfPayment,
+		        t1.AllowFeeType,
+		        t1.MedicalApplicable,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.accountsetcodename AS feeaccountingname,
+			    t3.accountsetcodename AS accrualaccountingname,
+			    t2.accountsetcode AS feeaccountingdesc,
+			    t3.accountsetcode AS accrualaccountingdesc,
+			    t4.producttypedesc,
+			    t5.dealername AS manufacturername,
+			    t6.productctg,
+			    t6.productctgdesc AS productcategory,
+			    t7.feetypecode,
+			    t7.feetypedesc
+			   FROM vasstructure_temp t1
+			     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+			     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+			     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+			     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+			     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+			     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+			UNION ALL
+			 SELECT t1.productcode,
+			    t1.productdesc,
+			    t1.recagainst,
+			    t1.feeaccrued,
+			    t1.feeaccounting,
+			    t1.accrualaccounting,
+			    t1.recurringtype,
+			    t1.freelockperiod,
+			    t1.active,
+			    t1.prevalidationreq,
+			    t1.postvalidationreq,
+			    t1.remarks,
+			    t1.producttype,
+			    t1.vasfee,
+			    t1.allowfeetomodify,
+			    t1.manufacturerid,
+			    t1.prevalidation,
+			    t1.postvalidation,
+			    t1.feetype,
+			    t1.flpcalculatedon,
+			    t1.shortcode,
+			    t1.ModeOfPayment,
+		    	t1.AllowFeeType,
+		    	t1.MedicalApplicable,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.accountsetcodename AS feeaccountingname,
+			    t3.accountsetcodename AS accrualaccountingname,
+			    t2.accountsetcode AS feeaccountingdesc,
+			    t3.accountsetcode AS accrualaccountingdesc,
+			    t4.producttypedesc,
+			    t5.dealername AS manufacturername,
+			    t6.productctg,
+			    t6.productctgdesc AS productcategory,
+			    t7.feetypecode,
+			    t7.feetypedesc
+			   FROM vasstructure t1
+			     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+			     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+			     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+			     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+			     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+			     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM vasstructure_temp
+			          WHERE vasstructure_temp.productcode = t1.productcode))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="120" author="Durgaprasad G">
+		<sql>
+			Update Vasstructure_Temp set MedicalApplicable = 0;
+			Update Vasstructure set MedicalApplicable = 0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="121" author="Durgaprasad G">
+		<addColumn tableName="BatchFileHeader">
+			<column name="ProcessName" type="varchar(50)"/>
+		</addColumn>
+  </changeSet>
+  
+  <changeSet id="122" author="Durgaprasad G">
+	  <sql>
+	  	Update BatchFileHeader set ProcessName = 'PRESENTMENT_IMPORT';
+	  </sql>
+  </changeSet>
+  
+  <changeSet id="123" author="DurgaPrasad G">
+	   <createTable tableName="VASPremiumCalcDetails">
+	      <column name="ProductCode" type="varchar(8)"/>
+	      <column name="ManufacturerId" type="bigint"/>
+	      <column name="CustomerAge" type="int"/>
+	      <column name="Gender" type="char(1)"/>
+	      <column name="PolicyAge" type="int"/>
+	      <column name="PremiumPercentage" type="decimal(13,9)"/>
+	      <column name="MinAmount" type="decimal(18,0)"/>
+	      <column name="MaxAmount" type="decimal(18,0)"/>
+	   </createTable>
+  </changeSet>
+  
+  <changeSet id="124" author="Durgaprasad G">
+   <createIndex tableName="VASPremiumCalcDetails" indexName="IX_VASPreCalcDet_ProductCode" >
+   		<column name="ProductCode"/>
+   </createIndex>
+  </changeSet>
+  
+   <changeSet id="125" author="DurgaPrasad G">
+	   <createTable tableName="VASPremiumCalcDetails_Temp">
+	      <column name="ProductCode" type="varchar(8)"/>
+	      <column name="ManufacturerId" type="bigint"/>
+	      <column name="CustomerAge" type="int"/>
+	      <column name="Gender" type="char(1)"/>
+	      <column name="PolicyAge" type="int"/>
+	      <column name="PremiumPercentage" type="decimal(13,9)"/>
+	      <column name="MinAmount" type="decimal(18,0)"/>
+	      <column name="MaxAmount" type="decimal(18,0)"/>
+	   </createTable>
+  </changeSet>
+  
+  <changeSet id="126" author="Durgaprasad G">
+   <createIndex tableName="VASPremiumCalcDetails_Temp" indexName="IX_VASPreCalcDet_T_ProductCode" >
+   		<column name="ProductCode"/>
+   </createIndex>
+  </changeSet>
+  
+  <changeSet id="127" author="Durgaprasad G">
+	  <createView viewName="VASPremiumCalcDetails_View" replaceIfExists="true">
+			Select ProductCode, ManufacturerId, CustomerAge, Gender,
+			PolicyAge, PremiumPercentage, MinAmount,MaxAmount From VASPremiumCalcDetails_Temp
+			UNION ALL
+			Select ProductCode, ManufacturerId, CustomerAge, Gender,
+			PolicyAge, PremiumPercentage, MinAmount,MaxAmount From VASPremiumCalcDetails
+			WHERE NOT (EXISTS ( SELECT 1  FROM VASPremiumCalcDetails_Temp
+				  WHERE VASPremiumCalcDetails_Temp.productcode = VASPremiumCalcDetails.productcode))
+	  </createView>
+  </changeSet>
+  
+  <changeSet id="133" author="Durgaprasad G">
+ 	<comment>Adding columns into VASRecording</comment> 
+  	<addColumn tableName="VasRecording">
+  		<column name="TermInsuranceLien" type="boolean" defaultValue="0"/>
+  		<column name="ProviderName" type="varchar(100)"/>
+  		<column name="PolicyNumber" type="varchar(50)"/>
+  		<column name="MedicalApplicable" type="boolean" defaultValue="0"/>
+  		<column name="MedicalStatus" type="char(1)"/>
+  	</addColumn>
+  </changeSet>
+  
+  <changeSet id="134" author="Durgaprasad G">
+ 	<comment>Adding columns into VASRecording</comment> 
+  	<addColumn tableName="VasRecording_Temp">
+  		<column name="TermInsuranceLien" type="boolean" defaultValue="0"/>
+  		<column name="ProviderName" type="varchar(100)"/>
+  		<column name="PolicyNumber" type="varchar(50)"/>
+  		<column name="MedicalApplicable" type="boolean" defaultValue="0"/>
+  		<column name="MedicalStatus" type="char(1)"/>
+  	</addColumn>
+  </changeSet>
+  
+  <changeSet id="135" author="DurgaPrasad G">
+    <createView viewName="vasrecording_view" replaceIfExists="true">
+	    SELECT t1.productcode,
+	    t1.postingagainst,
+	    t1.primarylinkref,
+	    t1.vasreference,
+	    t1.fee,
+	    t1.renewalfee,
+	    t1.feepaymentmode,
+	    t1.valuedate,
+	    t1.accrualtilldate,
+	    t1.recurringdate,
+	    t1.dsaid,
+	    t1.dmaid,
+	    t1.fulfilofficerid,
+	    t1.referralid,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t2.productdesc,
+	    t3.rofficerdesc AS dsaiddesc,
+	    t4.rofficerdesc AS dmaiddesc,
+	    t5.rofficerdesc AS fulfilofficeriddesc,
+	    t6.rofficerdesc AS referraliddesc,
+	    t7.producttype,
+	    t7.producttypedesc,
+	    t8.productctg,
+	    t8.productctgdesc,
+	    t9.dealername AS manufacturerdesc,
+	    t1.vasstatus,
+	    t1.financeprocess,
+	    t2.feeaccounting,
+	    t1.paidamt,
+	    t1.waivedamt,
+	    t1.status,
+	    t1.entitycode,
+	    t1.oldvasreference,
+	    t1.remarks,
+	    t1.reason,
+	    t1.cancelamt,
+	    t1.servicereqnumber,
+	    t1.cancelafterflp,
+	    t2.freelockperiod AS flpdays,
+	    fm.fintype,
+	    t1.manualadviseid,
+	    t1.paymentinsid,
+	    t1.receivableadviseid,
+		t1.TermInsuranceLien,
+		t1.ProviderName,
+		t1.PolicyNumber,
+		t1.MedicalApplicable,
+		t1.MedicalStatus
+	   FROM vasrecording_temp t1
+	     LEFT JOIN vasstructure t2 ON t1.productcode = t2.productcode
+	     LEFT JOIN relationshipofficers t3 ON t1.dsaid = t3.rofficercode
+	     LEFT JOIN relationshipofficers t4 ON t1.dmaid = t4.rofficercode
+	     LEFT JOIN relationshipofficers t5 ON t1.fulfilofficerid = t5.rofficercode
+	     LEFT JOIN relationshipofficers t6 ON t1.referralid = t6.rofficercode
+	     JOIN vasproducttype t7 ON t7.producttype = t2.producttype
+	     JOIN vasproductcategory t8 ON t7.productctg = t8.productctg
+	     LEFT JOIN amtvehicledealer t9 ON t2.manufacturerid = t9.dealerid
+	     LEFT JOIN financemain fm ON t1.primarylinkref = fm.finreference
+	UNION ALL
+	 SELECT t1.productcode,
+	    t1.postingagainst,
+	    t1.primarylinkref,
+	    t1.vasreference,
+	    t1.fee,
+	    t1.renewalfee,
+	    t1.feepaymentmode,
+	    t1.valuedate,
+	    t1.accrualtilldate,
+	    t1.recurringdate,
+	    t1.dsaid,
+	    t1.dmaid,
+	    t1.fulfilofficerid,
+	    t1.referralid,
+	    t1.version,
+	    t1.lastmntby,
+	    t1.lastmnton,
+	    t1.recordstatus,
+	    t1.rolecode,
+	    t1.nextrolecode,
+	    t1.taskid,
+	    t1.nexttaskid,
+	    t1.recordtype,
+	    t1.workflowid,
+	    t2.productdesc,
+	    t3.rofficerdesc AS dsaiddesc,
+	    t4.rofficerdesc AS dmaiddesc,
+	    t5.rofficerdesc AS fulfilofficeriddesc,
+	    t6.rofficerdesc AS referraliddesc,
+	    t7.producttype,
+	    t7.producttypedesc,
+	    t8.productctg,
+	    t8.productctgdesc,
+	    t9.dealername AS manufacturerdesc,
+	    t1.vasstatus,
+	    t1.financeprocess,
+	    t2.feeaccounting,
+	    t1.paidamt,
+	    t1.waivedamt,
+	    t1.status,
+	    t1.entitycode,
+	    t1.oldvasreference,
+	    t1.remarks,
+	    t1.reason,
+	    t1.cancelamt,
+	    t1.servicereqnumber,
+	    t1.cancelafterflp,
+	    t2.freelockperiod AS flpdays,
+	    fm.fintype,
+	    t1.manualadviseid,
+	    t1.paymentinsid,
+	    t1.receivableadviseid,
+	    t1.TermInsuranceLien,
+		t1.ProviderName,
+		t1.PolicyNumber,
+		t1.MedicalApplicable,
+		t1.MedicalStatus
+	   FROM vasrecording t1
+	     LEFT JOIN vasstructure t2 ON t1.productcode = t2.productcode
+	     LEFT JOIN relationshipofficers t3 ON t1.dsaid = t3.rofficercode
+	     LEFT JOIN relationshipofficers t4 ON t1.dmaid = t4.rofficercode
+	     LEFT JOIN relationshipofficers t5 ON t1.fulfilofficerid = t5.rofficercode
+	     LEFT JOIN relationshipofficers t6 ON t1.referralid = t6.rofficercode
+	     JOIN vasproducttype t7 ON t7.producttype = t2.producttype
+	     JOIN vasproductcategory t8 ON t7.productctg = t8.productctg
+	     LEFT JOIN amtvehicledealer t9 ON t2.manufacturerid = t9.dealerid
+	     LEFT JOIN financemain fm ON t1.primarylinkref = fm.finreference
+	  WHERE NOT (EXISTS ( SELECT 1
+	           FROM vasrecording_temp
+	          WHERE vasrecording_temp.vasreference = t1.vasreference))
+    </createView>
+  </changeSet>
+  <changeSet id="136" author="Durgaprasad G">
+	  <createView viewName="vasrecording_tview" replaceIfExists="true">
+		  	SELECT t1.productcode,
+		    t1.postingagainst,
+		    t1.primarylinkref,
+		    t1.vasreference,
+		    t1.fee,
+		    t1.renewalfee,
+		    t1.feepaymentmode,
+		    t1.valuedate,
+		    t1.accrualtilldate,
+		    t1.recurringdate,
+		    t1.dsaid,
+		    t1.dmaid,
+		    t1.fulfilofficerid,
+		    t1.referralid,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.productdesc,
+		    t3.rofficerdesc AS dsaiddesc,
+		    t4.rofficerdesc AS dmaiddesc,
+		    t5.rofficerdesc AS fulfilofficeriddesc,
+		    t6.rofficerdesc AS referraliddesc,
+		    t7.producttype,
+		    t7.producttypedesc,
+		    t8.productctg,
+		    t8.productctgdesc,
+		    t9.dealername AS manufacturerdesc,
+		    t1.vasstatus,
+		    t1.financeprocess,
+		    t2.feeaccounting,
+		    t1.paidamt,
+		    t1.waivedamt,
+		    t1.status,
+		    t1.entitycode,
+		    t1.oldvasreference,
+		    t1.remarks,
+		    t1.reason,
+		    t1.cancelamt,
+		    t1.servicereqnumber,
+		    t1.cancelafterflp,
+		    t2.freelockperiod AS flpdays,
+		    fm.fintype,
+		    t1.manualadviseid,
+		    t1.paymentinsid,
+		    t1.receivableadviseid,
+			t1.TermInsuranceLien,
+			t1.ProviderName,
+			t1.PolicyNumber,
+			t1.MedicalApplicable,
+			t1.MedicalStatus
+		   FROM vasrecording_temp t1
+		     LEFT JOIN vasstructure t2 ON t1.productcode = t2.productcode
+		     LEFT JOIN relationshipofficers t3 ON t1.dsaid = t3.rofficercode
+		     LEFT JOIN relationshipofficers t4 ON t1.dmaid = t4.rofficercode
+		     LEFT JOIN relationshipofficers t5 ON t1.fulfilofficerid = t5.rofficercode
+		     LEFT JOIN relationshipofficers t6 ON t1.referralid = t6.rofficercode
+		     JOIN vasproducttype t7 ON t7.producttype = t2.producttype
+		     JOIN vasproductcategory t8 ON t7.productctg = t8.productctg
+		     LEFT JOIN amtvehicledealer t9 ON t2.manufacturerid = t9.dealerid
+		     LEFT JOIN financemain fm ON t1.primarylinkref = fm.finreference
+	   </createView>
+  </changeSet>
+  
+  <changeSet id="137" author="Durgaprasad G">
+  	<createView viewName="vasrecording_aview" replaceIfExists="true">
+		  	SELECT t1.productcode,
+		    t1.postingagainst,
+		    t1.primarylinkref,
+		    t1.vasreference,
+		    t1.fee,
+		    t1.renewalfee,
+		    t1.feepaymentmode,
+		    t1.valuedate,
+		    t1.accrualtilldate,
+		    t1.recurringdate,
+		    t1.dsaid,
+		    t1.dmaid,
+		    t1.fulfilofficerid,
+		    t1.referralid,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.productdesc,
+		    t3.rofficerdesc AS dsaiddesc,
+		    t4.rofficerdesc AS dmaiddesc,
+		    t5.rofficerdesc AS fulfilofficeriddesc,
+		    t6.rofficerdesc AS referraliddesc,
+		    t7.producttype,
+		    t7.producttypedesc,
+		    t8.productctg,
+		    t8.productctgdesc,
+		    t9.dealername AS manufacturerdesc,
+		    t1.vasstatus,
+		    t1.financeprocess,
+		    t2.feeaccounting,
+		    t1.paidamt,
+		    t1.waivedamt,
+		    t1.status,
+		    t1.entitycode,
+		    t1.oldvasreference,
+		    t1.remarks,
+		    t1.reason,
+		    t1.cancelamt,
+		    t1.servicereqnumber,
+		    t1.cancelafterflp,
+		    t2.freelockperiod AS flpdays,
+		    fm.fintype,
+		    t1.manualadviseid,
+		    t1.paymentinsid,
+		    t1.receivableadviseid,
+		    t1.TermInsuranceLien,
+			t1.ProviderName,
+			t1.PolicyNumber,
+			t1.MedicalApplicable,
+			t1.MedicalStatus
+		   FROM vasrecording t1
+		     LEFT JOIN vasstructure t2 ON t1.productcode = t2.productcode
+		     LEFT JOIN relationshipofficers t3 ON t1.dsaid = t3.rofficercode
+		     LEFT JOIN relationshipofficers t4 ON t1.dmaid = t4.rofficercode
+		     LEFT JOIN relationshipofficers t5 ON t1.fulfilofficerid = t5.rofficercode
+		     LEFT JOIN relationshipofficers t6 ON t1.referralid = t6.rofficercode
+		     JOIN vasproducttype t7 ON t7.producttype = t2.producttype
+		     JOIN vasproductcategory t8 ON t7.productctg = t8.productctg
+		     LEFT JOIN amtvehicledealer t9 ON t2.manufacturerid = t9.dealerid
+		     LEFT JOIN financemain fm ON t1.primarylinkref = fm.finreference
+  	</createView>
+  </changeSet>
+    <changeSet id="140" author="DurgaPrasad G">
+	   <createTable tableName="VASPremiumCalcDet_DataEngine">
+	  	  <column name="BatchId" type="bigint" defaultValue="0" />
+	      <column name="ManufacturerName" type="varchar(100)"/>
+	      <column name="CustomerAgeF" type="varchar(10)"/>
+	      <column name="Gender" type="char(1)"/>
+	      <column name="PolicyAgeF" type="varchar(10)"/>
+	      <column name="PremiumPercentageF" type="varchar(100)"/>
+	      <column name="MinAmountF" type="varchar(100)"/>
+	      <column name="MaxAmountF" type="varchar(100)"/>
+	   </createTable>
+  </changeSet>
+  <changeSet id="141" author="DurgaPrasad G">
+	<addColumn tableName="VASPremiumCalcDetails">
+		<column name="BatchId" type="bigint" defaultValue="0" />
+	</addColumn>
+  </changeSet>
+	<changeSet id="142" author="DurgaPrasad G">
+		<addColumn tableName="VASPremiumCalcDetails_Temp">
+			<column name="BatchId" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+ <changeSet id="143" author="Durgaprasad G">
+	  <createView viewName="VASPremiumCalcDetails_View" replaceIfExists="true">
+			Select BatchId, ProductCode, ManufacturerId, CustomerAge, Gender,
+			PolicyAge, PremiumPercentage, MinAmount,MaxAmount From VASPremiumCalcDetails_Temp
+			UNION ALL
+			Select BatchId,ProductCode, ManufacturerId, CustomerAge, Gender,
+			PolicyAge, PremiumPercentage, MinAmount,MaxAmount From VASPremiumCalcDetails
+			WHERE NOT (EXISTS ( SELECT 1  FROM VASPremiumCalcDetails_Temp
+				  WHERE VASPremiumCalcDetails_Temp.productcode = VASPremiumCalcDetails.productcode))
+	  </createView>
+  </changeSet>
+  
+  <changeSet  id="144" author="Durgaprasad G" >
+	  <sql>
+		  Delete from SMTParameters Where sysparmcode = 'VAS_MEDICAL_STATUS_CALCULATION_YES_NO'; 
+	      Insert into SMTParameters values('VAS_MEDICAL_STATUS_CALCULATION_YES_NO','VAS Medical status calculation Required or not.', 'String',1,'Y','1000',0,null,null,'VAS Medical status calculation Required or not.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null, null,null,null,0); 
+		  
+		  Delete from SMTParameters Where sysparmcode = 'VAS_MEDICAL_STATUS_CALCULATION'; 
+	      Insert into SMTParameters values('VAS_MEDICAL_STATUS_CALCULATION','VAS Medical status calculation values.', 'String',1,'5000000,55,MLAP,ASL,ADSL,Livestock','1000',0,null,null,'VAS Medical status calculation values.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null, null,null,null,0); 
+	 </sql>
+   </changeSet>
+   
+   <changeSet id="145" author="Durgaprasad G">
+		<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
+	
+		
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VASRecordingDialog_TermInsuranceLien','VASRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VASRecordingDialog_ProviderName','VASRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VASRecordingDialog_PolicyNumber','VASRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VASRecordingDialog_MedicalStatus','VASRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VASRecordingDialog_MedicalApplicable','VASRecordingDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='VASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_TermInsuranceLien'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='VASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_ProviderName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='VASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_PolicyNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='VASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_MedicalStatus'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='VASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_MedicalApplicable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="146" author="Durgaprasad G">
+		<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINVASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_TermInsuranceLien'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINVASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_ProviderName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINVASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_PolicyNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINVASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_MedicalStatus'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINVASRECORDING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VASRecordingDialog_MedicalApplicable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		</sql>
+	</changeSet>
+   
+	<changeSet id="147" author="Durga prasad G">
+			<sql>
+				Delete From DATA_ENGINE_COLUMN Where TABLEID = (Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select id from Data_Engine_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD'));
+				Delete From DATA_ENGINE_TABLE Where CONFIGID = (Select Id from Data_Engine_Config Where Name  = 'VAS_PREMIUM_CALCULATION_UPLOAD');
+				Delete From Data_Engine_Config Where Name  = 'VAS_PREMIUM_CALCULATION_UPLOAD';
+				
+				Insert Into Data_Engine_Config Values ((Select max(id)+1 from Data_Engine_Config),'VAS_PREMIUM_CALCULATION_UPLOAD','VAS Premium calculation upload.',12,'Sheet1',null,null,null,0,1,null,null,null,'C', '/opt/PFF/insurance/premiumcalculation','INSURANCE_','.xlsx',0, null,null,null,0,null,1,1);
+				                                        
+				Insert Into DATA_ENGINE_TABLE values ((Select max(id)+1 from DATA_ENGINE_TABLE),(Select id from Data_Engine_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD'),'VASPremiumCalcDet_DataEngine',1,'CustomerAgeF',null,null,null,null,null,null,null,6,0,0);
+				 
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'BatchId',0,'N',null,null,'${FILE_ID}',null,0,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select id from Data_Engine_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'ManufacturerName',0,'N',null,null,null,null,0,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'CustomerAgeF',0,'N',null,null,null,null,1,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'Gender',0,'N',null,null,null,null,2,null,null,null,null,'CHECK:M,F,O');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'PolicyAgeF',0,'N',null,null,null,null,3,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'PremiumPercentageF',0,'N',null,null,null,null,4,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'MinAmountF',0,'N',null,null,null,null,5,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'MaxAmountF',0,'N',null,null,null,null,6,null,null,null,null,'M');
+
+			</sql>
+		</changeSet> 
+		
+		<changeSet id="148" author="Durgaprasad G">
+		<sql>
+		     Insert into EXTENDEDFIELDDETAIL (MODULEID,FIELDNAME,FIELDTYPE,FIELDLENGTH,FIELDPREC,FIELDLABEL,FIELDMANDATORY,FIELDCONSTRAINT,FIELDSEQORDER,FIELDLIST,FIELDDEFAULTVALUE,FIELDMINVALUE,FIELDMAXVALUE,FIELDUNIQUE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,MULTILINE,PARENTTAG,INPUTELEMENT,EDITABLE,EXTENDEDTYPE,ALLOWINRULE,SCRIPTLET,VISIBLE,FILTERS,VALFROMSCRIPT) values ((Select MODULEID  from EXTENDEDFIELDHEADER WHERE MODULENAME = 'VAS' AND SUBMODULENAME = 'VASINS'), 
+			'LOANTYPE','TEXT',50,0,'Loan Type',0,'REGEX_ALPHANUM_SPACE_SPL',17,null,null,0,0,0,1,0,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0,'EXTDETGRPBOX',1,0,0,0,null,1,null,0);
+
+			Insert into EXTENDEDFIELDDETAIL (MODULEID,FIELDNAME,FIELDTYPE,FIELDLENGTH,FIELDPREC,FIELDLABEL,FIELDMANDATORY,FIELDCONSTRAINT,FIELDSEQORDER,FIELDLIST,FIELDDEFAULTVALUE,FIELDMINVALUE,FIELDMAXVALUE,FIELDUNIQUE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,MULTILINE,PARENTTAG,INPUTELEMENT,EDITABLE,EXTENDEDTYPE,ALLOWINRULE,SCRIPTLET,VISIBLE,FILTERS,VALFROMSCRIPT) values ((Select MODULEID  from EXTENDEDFIELDHEADER WHERE MODULENAME = 'VAS' AND SUBMODULENAME = 'VASINS'), 
+			'CALCULATEPREMIUM','BUTTON',0,0,'Premium Calculation',0,null,1,null,null,0,0,0,1,0,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,0,'EXTDETGRPBOX',0,1,0,0,null,1,null,0);
+		</sql>
+		</changeSet>
+		
+		<changeSet id="149" author="Durgaprasad G">
+			<sql>
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+				
+				Insert into SECRIGHTS  values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'InsuranceMaintananceRebookingDialog_TermInsuranceLien','InsuranceMaintananceRebookingDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,' ',' ',null,0);
+				Insert into SECRIGHTS  values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'InsuranceMaintananceRebookingDialog_ProviderName','InsuranceMaintananceRebookingDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,' ',' ',null,0);
+				Insert into SECRIGHTS  values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'InsuranceMaintananceRebookingDialog_PolicyNumber','InsuranceMaintananceRebookingDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,' ',' ',null,0);
+				Insert into SECRIGHTS  values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'InsuranceMaintananceRebookingDialog_MedicalStatus','InsuranceMaintananceRebookingDialog',0,1000,CURRENT_TIMESTAMP,'Approved',null,null,' ',' ',null,0);
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='INSURANCE_REBOOKING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='InsuranceMaintananceRebookingDialog_TermInsuranceLien'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='INSURANCE_REBOOKING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='InsuranceMaintananceRebookingDialog_ProviderName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='INSURANCE_REBOOKING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='InsuranceMaintananceRebookingDialog_PolicyNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='INSURANCE_REBOOKING_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='InsuranceMaintananceRebookingDialog_MedicalStatus'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+			</sql>
+	</changeSet>
+	
+	<changeSet id="150" author="Durgaprasad G">
+		<createView viewName="vasstructure_aview" replaceIfExists="true">
+			SELECT t1.productcode,
+		    t1.productdesc,
+		    t1.recagainst,
+		    t1.feeaccrued,
+		    t1.feeaccounting,
+		    t1.accrualaccounting,
+		    t1.recurringtype,
+		    t1.freelockperiod,
+		    t1.active,
+		    t1.prevalidationreq,
+		    t1.postvalidationreq,
+		    t1.remarks,
+		    t1.producttype,
+		    t1.vasfee,
+		    t1.allowfeetomodify,
+		    t1.manufacturerid,
+		    t1.prevalidation,
+		    t1.postvalidation,
+		    t1.feetype,
+		    t1.flpcalculatedon,
+		    t1.shortcode,
+		    t1.ModeOfPayment,
+		    t1.AllowFeeType,
+		    t1.MedicalApplicable,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.accountsetcodename AS feeaccountingname,
+		    t3.accountsetcodename AS accrualaccountingname,
+		    t2.accountsetcode AS feeaccountingdesc,
+		    t3.accountsetcode AS accrualaccountingdesc,
+		    t4.producttypedesc,
+		    t5.dealername AS manufacturername,
+		    t6.productctg,
+		    t6.productctgdesc AS productcategory,
+		    t7.feetypecode,
+		    t7.feetypedesc,
+            t9.filename
+		   FROM vasstructure t1
+		     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+		     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+		     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+		     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+		     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+		     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+             Left Join VASPremiumCalcDetails t8 ON T8.productcode = t1.productcode
+             left join data_engine_status t9 ON T9.id = T8.batchid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="151" author="Durgaprasad G">
+		<createView viewName="vasstructure_view" replaceIfExists="true">
+				SELECT t1.productcode,
+			    t1.productdesc,
+			    t1.recagainst,
+			    t1.feeaccrued,
+			    t1.feeaccounting,
+			    t1.accrualaccounting,
+			    t1.recurringtype,
+			    t1.freelockperiod,
+			    t1.active,
+			    t1.prevalidationreq,
+			    t1.postvalidationreq,
+			    t1.remarks,
+			    t1.producttype,
+			    t1.vasfee,
+			    t1.allowfeetomodify,
+			    t1.manufacturerid,
+			    t1.prevalidation,
+			    t1.postvalidation,
+			    t1.feetype,
+			    t1.flpcalculatedon,
+			    t1.shortcode,
+			    t1.ModeOfPayment,
+		        t1.AllowFeeType,
+		        t1.MedicalApplicable,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.accountsetcodename AS feeaccountingname,
+			    t3.accountsetcodename AS accrualaccountingname,
+			    t2.accountsetcode AS feeaccountingdesc,
+			    t3.accountsetcode AS accrualaccountingdesc,
+			    t4.producttypedesc,
+			    t5.dealername AS manufacturername,
+			    t6.productctg,
+			    t6.productctgdesc AS productcategory,
+			    t7.feetypecode,
+			    t7.feetypedesc,
+			    t9.filename
+			   FROM vasstructure_temp t1
+			     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+			     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+			     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+			     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+			     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+			     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+			     Left Join VASPremiumCalcDetails_Temp t8 ON T8.productcode = t1.productcode
+             	 left join data_engine_status t9 ON T9.id = T8.batchid
+			UNION ALL
+			 SELECT t1.productcode,
+			    t1.productdesc,
+			    t1.recagainst,
+			    t1.feeaccrued,
+			    t1.feeaccounting,
+			    t1.accrualaccounting,
+			    t1.recurringtype,
+			    t1.freelockperiod,
+			    t1.active,
+			    t1.prevalidationreq,
+			    t1.postvalidationreq,
+			    t1.remarks,
+			    t1.producttype,
+			    t1.vasfee,
+			    t1.allowfeetomodify,
+			    t1.manufacturerid,
+			    t1.prevalidation,
+			    t1.postvalidation,
+			    t1.feetype,
+			    t1.flpcalculatedon,
+			    t1.shortcode,
+			    t1.ModeOfPayment,
+		    	t1.AllowFeeType,
+		    	t1.MedicalApplicable,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.accountsetcodename AS feeaccountingname,
+			    t3.accountsetcodename AS accrualaccountingname,
+			    t2.accountsetcode AS feeaccountingdesc,
+			    t3.accountsetcode AS accrualaccountingdesc,
+			    t4.producttypedesc,
+			    t5.dealername AS manufacturername,
+			    t6.productctg,
+			    t6.productctgdesc AS productcategory,
+			    t7.feetypecode,
+			    t7.feetypedesc,
+			    t9.filename
+			   FROM vasstructure t1
+			     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+			     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+			     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+			     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+			     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+			     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+			     Left Join VASPremiumCalcDetails_Temp t8 ON T8.productcode = t1.productcode
+             	 left join data_engine_status t9 ON T9.id = T8.batchid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM vasstructure_temp
+			          WHERE vasstructure_temp.productcode = t1.productcode))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="152" author="Durgaprasad G">
+		<addColumn tableName="Vasstructure">
+			 <column name="BatchId" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="153" author="Durgaprasad G">
+		<addColumn tableName="Vasstructure_Temp">
+			 <column name="BatchId" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="154" author="Durgaprasad G">
+		<createView viewName="vasstructure_aview" replaceIfExists="true">
+			SELECT t1.productcode,
+		    t1.productdesc,
+		    t1.recagainst,
+		    t1.feeaccrued,
+		    t1.feeaccounting,
+		    t1.accrualaccounting,
+		    t1.recurringtype,
+		    t1.freelockperiod,
+		    t1.active,
+		    t1.prevalidationreq,
+		    t1.postvalidationreq,
+		    t1.remarks,
+		    t1.producttype,
+		    t1.vasfee,
+		    t1.allowfeetomodify,
+		    t1.manufacturerid,
+		    t1.prevalidation,
+		    t1.postvalidation,
+		    t1.feetype,
+		    t1.flpcalculatedon,
+		    t1.shortcode,
+		    t1.ModeOfPayment,
+		    t1.AllowFeeType,
+		    t1.MedicalApplicable,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.accountsetcodename AS feeaccountingname,
+		    t3.accountsetcodename AS accrualaccountingname,
+		    t2.accountsetcode AS feeaccountingdesc,
+		    t3.accountsetcode AS accrualaccountingdesc,
+		    t4.producttypedesc,
+		    t5.dealername AS manufacturername,
+		    t6.productctg,
+		    t6.productctgdesc AS productcategory,
+		    t7.feetypecode,
+		    t7.feetypedesc,
+            t8.filename,
+             t1.batchId
+		   FROM vasstructure t1
+		     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+		     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+		     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+		     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+		     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+		     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+             left join data_engine_status t8 ON T8.id = t1.batchid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="155" author="Durgaprasad G">
+		<createView viewName="vasstructure_view" replaceIfExists="true">
+				SELECT t1.productcode,
+			    t1.productdesc,
+			    t1.recagainst,
+			    t1.feeaccrued,
+			    t1.feeaccounting,
+			    t1.accrualaccounting,
+			    t1.recurringtype,
+			    t1.freelockperiod,
+			    t1.active,
+			    t1.prevalidationreq,
+			    t1.postvalidationreq,
+			    t1.remarks,
+			    t1.producttype,
+			    t1.vasfee,
+			    t1.allowfeetomodify,
+			    t1.manufacturerid,
+			    t1.prevalidation,
+			    t1.postvalidation,
+			    t1.feetype,
+			    t1.flpcalculatedon,
+			    t1.shortcode,
+			    t1.ModeOfPayment,
+		        t1.AllowFeeType,
+		        t1.MedicalApplicable,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.accountsetcodename AS feeaccountingname,
+			    t3.accountsetcodename AS accrualaccountingname,
+			    t2.accountsetcode AS feeaccountingdesc,
+			    t3.accountsetcode AS accrualaccountingdesc,
+			    t4.producttypedesc,
+			    t5.dealername AS manufacturername,
+			    t6.productctg,
+			    t6.productctgdesc AS productcategory,
+			    t7.feetypecode,
+			    t7.feetypedesc,
+			    t8.filename,
+			    t1.batchId
+			   FROM vasstructure_temp t1
+			     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+			     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+			     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+			     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+			     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+			     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+             	 left join data_engine_status t8 ON T8.id = t1.batchid
+			UNION ALL
+			 SELECT t1.productcode,
+			    t1.productdesc,
+			    t1.recagainst,
+			    t1.feeaccrued,
+			    t1.feeaccounting,
+			    t1.accrualaccounting,
+			    t1.recurringtype,
+			    t1.freelockperiod,
+			    t1.active,
+			    t1.prevalidationreq,
+			    t1.postvalidationreq,
+			    t1.remarks,
+			    t1.producttype,
+			    t1.vasfee,
+			    t1.allowfeetomodify,
+			    t1.manufacturerid,
+			    t1.prevalidation,
+			    t1.postvalidation,
+			    t1.feetype,
+			    t1.flpcalculatedon,
+			    t1.shortcode,
+			    t1.ModeOfPayment,
+		    	t1.AllowFeeType,
+		    	t1.MedicalApplicable,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.accountsetcodename AS feeaccountingname,
+			    t3.accountsetcodename AS accrualaccountingname,
+			    t2.accountsetcode AS feeaccountingdesc,
+			    t3.accountsetcode AS accrualaccountingdesc,
+			    t4.producttypedesc,
+			    t5.dealername AS manufacturername,
+			    t6.productctg,
+			    t6.productctgdesc AS productcategory,
+			    t7.feetypecode,
+			    t7.feetypedesc,
+			    t8.filename, 
+			    t1.batchId
+			   FROM vasstructure t1
+			     LEFT JOIN rmtaccountingset t2 ON t1.feeaccounting = t2.accountsetid
+			     LEFT JOIN rmtaccountingset t3 ON t1.accrualaccounting = t3.accountsetid
+			     JOIN vasproducttype t4 ON t1.producttype = t4.producttype
+			     JOIN vasproductcategory t6 ON t6.productctg = t4.productctg
+			     JOIN amtvehicledealer t5 ON t1.manufacturerid = t5.dealerid
+			     LEFT JOIN feetypes t7 ON t1.feetype = t7.feetypeid
+             	 left join data_engine_status t8 ON T8.id = t1.batchid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM vasstructure_temp
+			          WHERE vasstructure_temp.productcode = t1.productcode))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
