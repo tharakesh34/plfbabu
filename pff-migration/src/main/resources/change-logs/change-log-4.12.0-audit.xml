@@ -118,4 +118,10 @@
            
   </addColumn>
 </changeSet>
+<changeSet id="4" author="ganesh.p">
+	<comment> Setting default value </comment>
+	<sql>
+		update ADTRmtfinancetypes set AutoRejectionDays=0 where AutoRejectionDays is null;
+	</sql>
+</changeSet>
 </databaseChangeLog>
