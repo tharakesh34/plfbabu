@@ -5164,5 +5164,13 @@ UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 </sql>
 </changeSet>
+
+<changeSet id="23" author="ganesh.p">
+	<comment> Setting default value </comment>
+	<sql>
+		update RMTFinanceTypes_temp set AutoRejectionDays=0 where AutoRejectionDays is null;
+		update RMTFinanceTypes set AutoRejectionDays=0 where AutoRejectionDays is null;
+	</sql>
+</changeSet>
 	
 </databaseChangeLog>
