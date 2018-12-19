@@ -696,11 +696,6 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
 
-	<bean name="finFeeDetailService" class="com.pennant.backend.service.finance.impl.FinFeeDetailServiceImpl">
-		<property name="branchDAO" ref="branchDAO" />
-		<property name="provinceDAO" ref="provinceDAO" />
-	</bean>
-
 	<bean id="vehicleDealerService" class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl" />
 
 	<bean id="financeReferenceDetailService" class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" />
