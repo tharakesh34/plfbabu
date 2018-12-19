@@ -4838,5 +4838,9 @@ INSERT INTO rbfielddetails VALUES ('CLRULE', 'CLRULE', 'neftAvailable', 'NEFT or
 ]]>
 </sql>
 </changeSet>
+
+<changeSet id="73" author="GAnesh.p">
+	<dropColumn columnName="AutoRejectionDays" tableName="FinODDetails" />
+</changeSet>
 	
 </databaseChangeLog>
