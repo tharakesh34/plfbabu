@@ -88,6 +88,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -115,9 +116,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Textbox documnetName; // autowired
 	protected Checkbox docReceived;
 	protected Checkbox docOriginal;
+	protected Textbox docBarcode;
 	protected Datebox docReceivedDt;
 	protected Space space_documentName;
 	protected Space space_docReceivedDt;
+	protected Space space_docBarcode;
 
 	protected Div finDocumentDiv; // autowired
 
@@ -299,6 +302,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		this.documnetName.setMaxlength(200);
+		this.docBarcode.setMaxlength(10);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -509,7 +513,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.docReceivedDt.setValue(aDocumentDetails.getDocReceivedDate());
 
 		this.docOriginal.setChecked(aDocumentDetails.isDocOriginal());
-
+		this.docBarcode.setValue(aDocumentDetails.getDocBarcode());
+		if (this.docOriginal.isChecked()) {
+			this.docBarcode.setReadonly(false);
+		} else {
+			this.docBarcode.setValue("");
+		}
 		this.documnetName.setReadonly(true);
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setReadonly(false);
@@ -595,6 +604,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		try {
 			aDocumentDetails.setDocOriginal(this.docOriginal.isChecked());
+			if (this.docOriginal.isChecked()) {
+				aDocumentDetails.setDocBarcode(this.docBarcode.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -731,6 +743,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate") }));
 			}
 		}
+		if (this.docOriginal.isChecked()) {
+			this.docBarcode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentBarcode.value"),
+							PennantRegularExpressions.REGEX_BARCODE_NUMBER, true));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -741,6 +759,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.documnetName.setConstraint("");
+		if (this.docOriginal.isChecked()) {
+			this.docBarcode.setConstraint("");
+		}
 		logger.debug("Leaving");
 	}
 
@@ -763,6 +784,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected void doClearMessage() {
 		logger.debug("Entering");
 		this.documnetName.setErrorMessage("");
+		this.docBarcode.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1173,6 +1195,17 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			//this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
 			this.docReceivedDt.setValue(null);
+		}
+	}
+
+	public void onCheck$docOriginal(Event event) throws Exception {
+		if (this.docOriginal.isChecked()) {
+			this.docBarcode.setReadonly(false);
+			this.space_docBarcode.setSclass(PennantConstants.mandateSclass);
+		} else {
+			this.docBarcode.setValue("");
+			this.docBarcode.setReadonly(true);
+			this.space_docBarcode.setSclass("");
 		}
 	}
 

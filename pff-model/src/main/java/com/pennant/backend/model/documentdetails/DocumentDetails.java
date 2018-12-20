@@ -62,6 +62,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private Date docReceivedDate;
 	private boolean docReceived;
 	private boolean docOriginal;
+	private String docBarcode;
 	private String password;
 	private boolean docIsPasswordProtected = false;
 	private long pdfMappingRef = Long.MIN_VALUE;
@@ -427,6 +428,14 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setInstructionUID(long instructionUID) {
 		this.instructionUID = instructionUID;
+	}
+
+	public String getDocBarcode() {
+		return docBarcode;
+	}
+
+	public void setDocBarcode(String docBarcode) {
+		this.docBarcode = docBarcode;
 	}
 
 }

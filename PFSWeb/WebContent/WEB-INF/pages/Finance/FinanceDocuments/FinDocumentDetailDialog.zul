@@ -85,6 +85,11 @@
 									<hbox>
 										<checkbox id="docOriginal" />
 									</hbox>
+									<label id="label_FinDocumentDetailDialog_DocumentBarcode" value="${c:l('label_FinDocumentDetailDialog_DocumentBarcode.value')}" />
+									<hbox>
+										<space spacing="2px" id="space_docBarcode" />
+										<textbox id="docBarcode" readonly="true" width="150px" />
+									</hbox>
 								</row>
 
 								<row id="statusRow">
