@@ -78,6 +78,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -806,13 +807,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			wve.add(we);
 		}
 
-		// Amount
-		try {
-			this.amount.getActualValue();
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
 		// accNumber
 		try {
 			this.accNumber.getValue();
@@ -834,7 +828,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			wve.add(we);
 		}
 
-		// noOfCheques
+		// Amount
 		try {
 			this.amount.getActualValue();
 		} catch (WrongValueException we) {
@@ -849,7 +843,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 			if (wve.isEmpty()) {
 				// validate existing data
-				validateChequeDetails(chequeHeader.getChequeDetailList(), true);
+				wve.addAll(validateChequeDetails(chequeHeader.getChequeDetailList(), true));
 			}
 		}
 		doRemoveValidation();
@@ -904,7 +898,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 			if (wve.isEmpty()) {
 				// validate existing data
-				validateChequeDetails(chequeHeader.getChequeDetailList(), true);
+				wve.addAll(validateChequeDetails(chequeHeader.getChequeDetailList(), true));
 			}
 		}
 		doRemoveValidation();
@@ -1040,7 +1034,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		// Amount Cheque Detail
 		if (!this.amount.isReadonly()) {
 			this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ChequeDetailDialog_AmountCD.value"),
-					ccyEditField, true, false));
+					ccyEditField, (isPDC || (!isPDC && !ImplementationConstants.UDC_ALLOW_ZERO_AMT)), false));
 		}
 		// Account Number
 		if (!this.accNumber.isReadonly()) {
@@ -1463,8 +1457,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	 * @param validate
 	 * @throws ParseException
 	 */
-	private void validateChequeDetails(List<ChequeDetail> chequeDetails, boolean validate) throws ParseException {
+	private ArrayList<WrongValueException> validateChequeDetails(List<ChequeDetail> chequeDetails, boolean validate)
+			throws ParseException {
 		logger.debug(Literal.ENTERING);
+
+		ArrayList<WrongValueException> wve = new ArrayList<>();
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
 
@@ -1481,8 +1478,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
-							throw new WrongValueException(checkSerialNum,
-									Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
+							try {
+								throw new WrongValueException(checkSerialNum,
+										Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
+							} catch (WrongValueException e) {
+								wve.add(e);
+								break;
+							}
 						}
 					}
 				}
@@ -1503,8 +1505,13 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
-							throw new WrongValueException(emiComboBox,
-									Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
+							try {
+								throw new WrongValueException(emiComboBox,
+										Labels.getLabel("ChequeDetailDialog_ChkEMIRef_Exists"));
+							} catch (WrongValueException e) {
+								wve.add(e);
+								break;
+							}
 						}
 					}
 				}
@@ -1533,12 +1540,17 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 								if (fromLoan) {
 									parenttab.setSelected(true);
 								}
-								if (isTDS) {
-									throw new WrongValueException(emiAmount,
-											Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
-								} else {
-									throw new WrongValueException(emiAmount,
-											Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+								try {
+									if (isTDS) {
+										throw new WrongValueException(emiAmount,
+												Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
+									} else {
+										throw new WrongValueException(emiAmount,
+												Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
+									}
+								} catch (WrongValueException e) {
+									wve.add(e);
+									break;
 								}
 							}
 						}
@@ -1547,6 +1559,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+		return wve;
 	}
 
 	public void onFulfill$bankBranch(Event event) {

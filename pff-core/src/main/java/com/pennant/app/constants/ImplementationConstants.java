@@ -6,6 +6,7 @@ public class ImplementationConstants {
 	}
 
 	// IMPLEMENTATION TYPES
+	public static final boolean UDC_ALLOW_ZERO_AMT = true;
 	public static final boolean IMPLEMENTATION_CONVENTIONAL = true;
 	public static final boolean IMPLEMENTATION_ISLAMIC = false;
 
