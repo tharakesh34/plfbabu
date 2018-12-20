@@ -5143,28 +5143,6 @@ UNION ALL
 </createView>
 	</changeSet>
 	
-
-
-
-
-
-<changeSet id="22" author="swami.v">
-<comment> Added secgroups,SECGROUPRIGHTS of new column of "reenterbeneficiaryaccno" added</comment>
-<sql>
-
-
-UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-
-INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FinAdvancePayments_APPROVER', 'WF Approver for Advance Payments', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-
-INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinAdvancePayments_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-
-UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-</sql>
-</changeSet>
-
 <changeSet id="23" author="ganesh.p">
 	<comment> Setting default value </comment>
 	<sql>
@@ -5192,9 +5170,4 @@ UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS
 </sql>
 </changeSet>	
 
-
-
-
-
-	
 </databaseChangeLog>
