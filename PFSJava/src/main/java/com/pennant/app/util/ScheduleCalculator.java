@@ -3519,6 +3519,19 @@ public class ScheduleCalculator {
 				continue;
 			}
 
+			if (StringUtils.equals(finScheduleData.getFinanceMain().getProcMethod(),
+					FinanceConstants.FINSER_EVENT_RECEIPT)) {
+				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0) {
+					dateAllowedChange = curSchd.getSchDate();
+					continue;
+				}
+			} else {
+				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) > 0) {
+					dateAllowedChange = curSchd.getSchDate();
+					continue;
+				}
+			}
+
 			if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
 				dateAllowedChange = curSchd.getSchDate();
 			} else {
