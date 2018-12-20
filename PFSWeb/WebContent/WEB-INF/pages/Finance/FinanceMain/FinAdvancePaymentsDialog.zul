@@ -68,6 +68,24 @@
 											<combobox id="paymentDetail" width="155px" />
 										</hbox>
 									</row>
+										<row>
+										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAmount.value')}" />
+										<hbox>
+											<currencyBox id="disbursementAmount" />
+										</hbox>
+									</row>
+									<row>
+										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementFixedAmount.value')}" />
+										<hbox>
+											<currencyBox id="disbursementFixed"/>
+										</hbox>
+									</row>
+									<row>
+										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementNetAmount.value')}" />
+										<hbox>
+											<currencyBox id="netAmount" />
+										</hbox>
+									</row>
 									<row>
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>

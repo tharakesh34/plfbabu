@@ -145,6 +145,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Datebox llDate;
 	protected CurrencyBox custContribution;
 	protected CurrencyBox sellerContribution;
+	protected CurrencyBox disbursementAmount;
+	protected CurrencyBox disbursementFixed;
+	protected CurrencyBox netAmount;
 	protected Textbox remarks;
 	protected Textbox transactionRef;
 	protected ExtendedCombobox bankCode;
@@ -651,6 +654,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.remarks.setMaxlength(500);
 		this.transactionRef.setReadonly(true);
 
+		this.disbursementAmount.setReadonly(true);
+		this.disbursementAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.disbursementAmount.setScale(ccyFormatter);
+		this.disbursementAmount.setTextBoxWidth(150);
+
+		this.disbursementFixed.setReadonly(true);
+		this.disbursementFixed.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.disbursementFixed.setScale(ccyFormatter);
+		this.disbursementFixed.setTextBoxWidth(150);
+
+		this.netAmount.setReadonly(true);
+		this.netAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.netAmount.setScale(ccyFormatter);
+		this.netAmount.setTextBoxWidth(150);
+
 		this.amtToBeReleased.setMandatory(true);
 		this.amtToBeReleased.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.amtToBeReleased.setScale(ccyFormatter);
@@ -716,21 +734,22 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
-		if (ImplementationConstants.DISB_ACCNO_MASKING
-				&& !isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
-			String dType = this.finAdvancePayments.getPaymentType();
-			if (StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IMPS)
-					|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_NEFT)
-					|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IFT)
-					|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_RTGS)) {
+		if (ImplementationConstants.DISB_ACCNO_MASKING) {
+			if (!isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
+				String dType = this.finAdvancePayments.getPaymentType();
+				if (StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IMPS)
+						|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_NEFT)
+						|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IFT)
+						|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_RTGS)) {
 
-				this.btnSave.setVisible(true);
-				this.row_ReEnterBenfAccNo.setVisible(true);
-				this.space_ReEnterAccNo.setSclass(PennantConstants.mandateSclass);
-				this.reEnterBeneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				reEntrBenfAccNo = true;
-				if (ImplementationConstants.DISB_ACCNO_MASKING) {
-					this.beneficiaryAccNo.setType("password");
+					this.btnSave.setVisible(true);
+					this.row_ReEnterBenfAccNo.setVisible(true);
+					this.space_ReEnterAccNo.setSclass(PennantConstants.mandateSclass);
+					this.reEnterBeneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
+					reEntrBenfAccNo = true;
+					if (ImplementationConstants.DISB_ACCNO_MASKING) {
+						this.beneficiaryAccNo.setType("password");
+					}
 				}
 			}
 		}
@@ -816,6 +835,62 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.reEnterBeneficiaryAccNo.setValue(aFinAdvnancePayments.getReEnterBeneficiaryAccNo());
 		this.beneficiaryName.setValue(aFinAdvnancePayments.getBeneficiaryName());
 		this.transactionRef.setValue(aFinAdvnancePayments.getTransactionRef());
+
+		//Adding 3 fields for Disbursement Tab in loan queue
+		BigDecimal disbAmount = BigDecimal.ZERO;
+		BigDecimal advancePayAmount = BigDecimal.ZERO;
+
+		// Total Disbursed Amount
+		for (FinanceDisbursement curDisb : financeDisbursement) {
+			if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
+				continue;
+			}
+			disbAmount = disbAmount.add(curDisb.getDisbAmount());
+		}
+		if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) {
+			for (FinanceDisbursement curDisb : approvedDisbursments) {
+				if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
+					continue;
+				}
+				disbAmount = disbAmount.add(curDisb.getDisbAmount());
+			}
+		}
+
+		// Total amount released except current Instruction
+		List<FinAdvancePayments> advPayList = null;
+		BigDecimal deductFeeDisb = BigDecimal.ZERO;
+		if (this.moduleType.equals("LOAN")) {
+			advPayList = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
+		} else {
+			advPayList = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
+		}
+
+		disbAmount = disbAmount.subtract(financeMain.getDownPayment());
+		disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
+		disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
+		if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+			disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
+		}
+		disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
+
+		if (advPayList != null && !advPayList.isEmpty()) {
+			for (FinAdvancePayments advPay : advPayList) {
+				if (StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_CANCEL)
+						|| StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
+					continue;
+				}
+				advancePayAmount = advancePayAmount.add(advPay.getAmtToBeReleased());
+			}
+		}
+
+		advancePayAmount = advancePayAmount.subtract(finAdvancePayments.getAmtToBeReleased());
+
+		// Display Parameters for Summary
+		this.disbursementAmount.setValue(formate(disbAmount.subtract(deductFeeDisb)));
+		this.disbursementFixed.setValue(formate(advancePayAmount));
+		this.netAmount.setValue(formate(disbAmount.subtract(advancePayAmount)));
+
+		//String finDisbursement ="";
 
 		this.phoneNumber.setValue(aFinAdvnancePayments.getPhoneNumber());
 		//other 
@@ -1306,20 +1381,20 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 								DateUtility.getAppDate(), todate, true));
 			}
 		} else {
-			if(!StringUtils.equals(payType, DisbursementConstants.PAYMENT_TYPE_IST)){
+			if (!StringUtils.equals(payType, DisbursementConstants.PAYMENT_TYPE_IST)) {
 				if (!this.bankBranchID.isReadonly()) {
 					this.bankBranchID.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_FinAdvancePaymentsDialog_BankBranchID.value"), null, true));
 				}
 				if (!this.beneficiaryName.isReadonly()) {
-					this.beneficiaryName.setConstraint(
-							new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
-									PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+					this.beneficiaryName.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryName.value"),
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 				}
 				if (!this.beneficiaryAccNo.isReadonly()) {
-					this.beneficiaryAccNo.setConstraint(
-							new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
-									PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+					this.beneficiaryAccNo.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
+							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 				}
 			}
 		}
@@ -1799,7 +1874,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.printingLoc.setValue("");
 			this.valueDate.setText("");
 			this.llReferenceNo.setValue("");
-			
+
 			this.bankBranchID.setValue("");
 			this.bankBranchID.setDescription("");
 			this.bank.setValue("");
@@ -1811,7 +1886,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.phoneNumber.setValue("");
 			this.printLoc.setSclass("");
 			this.btnGetCustBeneficiary.setVisible(false);
-		}else {
+		} else {
 			doaddFilter(str);
 			caption_FinAdvancePaymentsDialog_NeftDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_NeftDetails.setVisible(true);
