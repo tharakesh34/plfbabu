@@ -43,4 +43,11 @@
   </addColumn>
 </changeSet>
 
+      <changeSet id="10" author="Rahul">
+      <comment>Added new column of "PartnerBankId" </comment>
+		<addColumn tableName="ADTMandates">
+		  <column name="PartnerBankId" type="bigint" defaultValue="0"/>
+		</addColumn>
+	  </changeSet>
+
 </databaseChangeLog>

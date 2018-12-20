@@ -5322,5 +5322,299 @@ UNION ALL
 	</sql>
 </changeSet>
 
+<changeSet id="80" author="Rahul">
+		<addColumn tableName="Mandates">
+		<column name="PartnerBankId" type="bigint" defaultValue="0"/>
+		</addColumn>
+		</changeSet>
+		
+		<changeSet id="81" author="Rahul">
+		<addColumn tableName="Mandates_Temp">
+		<column name="PartnerBankId" type="bigint" defaultValue="0"/>
+		</addColumn>
+		</changeSet>
+		
+		<changeSet id="82" author="Rahul">
+		<sql>
+		Delete From SecGroupRights Where RightID in (Select RightID from SecRights Where RightName = 'MandateDialog_PartnerBankId');
+		Delete from SecRights Where RightName = 'MandateDialog_PartnerBankId';
+		
+		INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '3', 'MandateDialog_PartnerBankId', 'MandateDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');		
+		INSERT INTO SECGROUPRIGHTS(grprightid, grpid, rightid, accesstype, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MANDATE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MandateDialog_PartnerBankId'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+		</changeSet>
+		
+		<changeSet id="83" author="Rahul">
+		<createView viewName="mandates_view" replaceIfExists="true" >
+        SELECT t1.mandateid,
+		    t1.custid,
+		    t1.mandateref,
+		    t1.mandatetype,
+		    t1.bankbranchid,
+		    t1.accnumber,
+		    t1.accholdername,
+		    t1.jointaccholdername,
+		    t1.acctype,
+		    t1.openmandate,
+		    t1.startdate,
+		    t1.expirydate,
+		    t1.maxlimit,
+		    t1.periodicity,
+		    t1.phonecountrycode,
+		    t1.phoneareacode,
+		    t1.phonenumber,
+		    t1.status,
+		    t1.approvalid,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.reason,
+		    t1.mandateccy,
+		    t2.custcif,
+		    t2.custshrtname,
+		    t3.bankcode,
+		    t3.branchcode,
+		    t3.branchdesc,
+		    t3.micr,
+		    t3.ifsc,
+		    t3.city,
+		    t4.bankname,
+		    t1.inputdate,
+		    t1.active,
+		    0 AS useexisting,
+		    t1.orgreference,
+		    t5.pccityname,
+		    t1.documentname,
+		    t1.documentref,
+		    t1.externalref,
+		    t1.entitycode,
+		    t6.entitydesc,
+		    t1.primarymandateid,
+		    t1.swapisactive,
+		    t1.barcodenumber,
+			t7.partnerBankCode,
+			t7.partnerBankName,
+			t1.partnerbankId
+		FROM mandates_temp t1
+		     JOIN customers t2 ON t1.custid = t2.custid
+		     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+		     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+		     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+		     LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
+			 LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId
+		UNION ALL
+		SELECT t1.mandateid,
+		    t1.custid,
+		    t1.mandateref,
+		    t1.mandatetype,
+		    t1.bankbranchid,
+		    t1.accnumber,
+		    t1.accholdername,
+		    t1.jointaccholdername,
+		    t1.acctype,
+		    t1.openmandate,
+		    t1.startdate,
+		    t1.expirydate,
+		    t1.maxlimit,
+		    t1.periodicity,
+		    t1.phonecountrycode,
+		    t1.phoneareacode,
+		    t1.phonenumber,
+		    t1.status,
+		    t1.approvalid,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.reason,
+		    t1.mandateccy,
+		    t2.custcif,
+		    t2.custshrtname,
+		    t3.bankcode,
+		    t3.branchcode,
+		    t3.branchdesc,
+		    t3.micr,
+		    t3.ifsc,
+		    t3.city,
+		    t4.bankname,
+		    t1.inputdate,
+		    t1.active,
+		    1 AS useexisting,
+		    t1.orgreference,
+		    t5.pccityname,
+		    t1.documentname,
+		    t1.documentref,
+		    t1.externalref,
+		    t1.entitycode,
+		    t6.entitydesc,
+		    t1.primarymandateid,
+		    t1.swapisactive,
+		    t1.barcodenumber,
+			t7.partnerBankCode,
+			t7.partnerBankName,
+			t1.partnerbankId
+		  FROM mandates t1
+		     JOIN customers t2 ON t1.custid = t2.custid
+		     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+		     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+		     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+		     LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
+			 LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM mandates_temp
+		          WHERE mandates_temp.mandateid = t1.mandateid));
+		</createView>
+		</changeSet>
+		
+		<changeSet id="84" author="Rahul">
+		<createView viewName="mandates_tview" replaceIfExists="true" >
+		SELECT t1.mandateid,
+		    t1.custid,
+		    t1.mandateref,
+		    t1.mandatetype,
+		    t1.bankbranchid,
+		    t1.accnumber,
+		    t1.accholdername,
+		    t1.jointaccholdername,
+		    t1.acctype,
+		    t1.openmandate,
+		    t1.startdate,
+		    t1.expirydate,
+		    t1.maxlimit,
+		    t1.periodicity,
+		    t1.phonecountrycode,
+		    t1.phoneareacode,
+		    t1.phonenumber,
+		    t1.status,
+		    t1.approvalid,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.reason,
+		    t1.mandateccy,
+		    t2.custcif,
+		    t2.custshrtname,
+		    t3.bankcode,
+		    t3.branchcode,
+		    t3.branchdesc,
+		    t3.micr,
+		    t3.ifsc,
+		    t3.city,
+		    t4.bankname,
+		    t1.inputdate,
+		    t1.active,
+		    0 AS useexisting,
+		    t1.orgreference,
+		    t5.pccityname,
+		    t1.documentname,
+		    t1.documentref,
+		    t1.externalref,
+		    t1.entitycode,
+		    t6.entitydesc,
+		    t1.primarymandateid,
+		    t1.swapisactive,
+		    t1.barcodenumber,
+			t7.partnerBankCode,
+			t7.partnerBankName,
+			t1.partnerbankId
+		FROM mandates_temp t1
+			JOIN customers t2 ON t1.custid = t2.custid
+			LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+		    LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+			LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+			LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
+			LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId;
+		</createView>
+		</changeSet>
+		
+		<changeSet id="85" author="Rahul">
+		<createView viewName="mandates_aview" replaceIfExists="true" >
+     SELECT t1.mandateid,
+        t1.custid,
+        t1.mandateref,
+        t1.mandatetype,
+        t1.bankbranchid,
+        t1.accnumber,
+        t1.accholdername,
+        t1.jointaccholdername,
+        t1.acctype,
+        t1.openmandate,
+        t1.startdate,
+        t1.expirydate,
+        t1.maxlimit,
+        t1.periodicity,
+        t1.phonecountrycode,
+        t1.phoneareacode,
+        t1.phonenumber,
+        t1.status,
+        t1.approvalid,
+        t1.version,
+        t1.lastmntby,
+        t1.lastmnton,
+        t1.recordstatus,
+        t1.rolecode,
+        t1.nextrolecode,
+        t1.taskid,
+        t1.nexttaskid,
+        t1.recordtype,
+        t1.workflowid,
+        t1.reason,
+        t1.mandateccy,
+        t2.custcif,
+        t2.custshrtname,
+        t3.bankcode,
+        t3.branchcode,
+        t3.branchdesc,
+        t3.micr,
+        t3.ifsc,
+        t3.city,
+        t4.bankname,
+        t1.inputdate,
+        t1.inputdate AS fromdate,
+        t1.inputdate AS todate,
+        t1.active,
+        1 AS useexisting,
+        t1.orgreference,
+        t5.pccityname,
+        t1.documentname,
+        t1.documentref,
+        t1.externalref,
+        t1.entitycode,
+        t6.entitydesc,
+        t1.primarymandateid,
+        t1.swapisactive,
+        t1.barcodenumber,
+        t7.partnerBankCode,
+        t7.partnerBankName,
+        t1.partnerbankId
+     FROM mandates t1
+        JOIN customers t2 ON t1.custid = t2.custid
+        LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+        LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
+        LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
+        LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
+        LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId;
+		</createView>
+		</changeSet>
 
 </databaseChangeLog>
