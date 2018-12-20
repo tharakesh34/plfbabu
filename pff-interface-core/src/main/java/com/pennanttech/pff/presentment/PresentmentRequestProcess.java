@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.util.DateUtil;
@@ -33,78 +34,89 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 	private long processedCount = 0;
 	protected final static Logger logger = LoggerFactory.getLogger(PresentmentRequestProcess.class.getClass());
 	protected NamedParameterJdbcTemplate parameterJdbcTemplate;
+	
+	private List<Long> idExcludeEmiList;
 
 	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList,
-			long presentmentId, boolean isError) {
+			List<Long> idExcludeEmiList,long presentmentId, boolean isError) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.idList = idList;
 		this.presentmentId = presentmentId;
 		this.isError = isError;
+		this.idExcludeEmiList = idExcludeEmiList;
 		parameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	public void processData() {
 		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource parmMap;
-		StringBuilder sql = getSqlQuery();
+		
+		if (idList != null && !idList.isEmpty()) {
+			MapSqlParameterSource parmMap;
+			StringBuilder sql = getSqlQuery();
 
-		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("IdList", idList);
-		parmMap.addValue("EXCLUDEREASON", 0);
+			parmMap = new MapSqlParameterSource();
+			parmMap.addValue("IdList", idList);
+			parmMap.addValue("EXCLUDEREASON", 0);
 
-		parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
-			MapSqlParameterSource map = null;
+			parameterJdbcTemplate.query(sql.toString(), parmMap, new ResultSetExtractor<Long>() {
+				MapSqlParameterSource map = null;
 
-			@Override
-			public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
-				logger.debug(Literal.ENTERING);
-				boolean isBatchFail = false;
-				try {
-					clearTables();
-
-					while (rs.next()) {
-						processedCount++;
-						try {
-							map = mapData(rs);
-							save(map);
-						} catch (Exception e) {
-							logger.error("Exception :", e);
-							throw e;
-						} finally {
-							map = null;
-						}
-					}
-				} catch (Exception e) {
-					logger.error("Exception :", e);
-					isBatchFail = true;
-				} finally {
-
-					if (!isBatchFail) {
-						try {
-							prepareRequestFile();
-						} catch (Exception e) {
-							logger.error(Literal.EXCEPTION, e);
-							isBatchFail = true;
-						}
-					}
-
-					if (isBatchFail) {
+				@Override
+				public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
+					logger.debug(Literal.ENTERING);
+					boolean isBatchFail = false;
+					try {
 						clearTables();
-					} else {
-						copyDataFromTempToMainTables();
 
-						if (isError) {
-							updatePresentmentHeader(presentmentId, 3, processedCount);
-						} else {
-							updatePresentmentHeader(presentmentId, 4, processedCount);
+						while (rs.next()) {
+							processedCount++;
+							try {
+								map = mapData(rs);
+								save(map);
+							} catch (Exception e) {
+								logger.error("Exception :", e);
+								throw e;
+							} finally {
+								map = null;
+							}
 						}
-						updatePresentmentDetails(idList, "A");
+					} catch (Exception e) {
+						logger.error("Exception :", e);
+						isBatchFail = true;
+					} finally {
+
+						if (!isBatchFail) {
+							try {
+								prepareRequestFile();
+							} catch (Exception e) {
+								logger.error(Literal.EXCEPTION, e);
+								isBatchFail = true;
+							}
+						}
+
+						if (isBatchFail) {
+							clearTables();
+						} else {
+							copyDataFromTempToMainTables();
+
+							if (isError) {
+								updatePresentmentHeader(presentmentId, 3, processedCount);
+							} else {
+								updatePresentmentHeader(presentmentId, 4, processedCount);
+							}
+							updatePresentmentDetails(idList, "A", RepayConstants.PEXC_EMIINCLUDE);
+						}
 					}
+					return presentmentId;
 				}
-				return presentmentId;
-			}
-		});
+			});
+		}
+		
+		if(idExcludeEmiList!=null && !idExcludeEmiList.isEmpty()){
+			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
+		}
+			
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -256,7 +268,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updatePresentmentDetails(List<Long> idList, String status) {
+	private void updatePresentmentDetails(List<Long> idList, String status, int excludeReason) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
@@ -271,7 +283,7 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 		source.addValue("IDList", idList);
 		source.addValue("STATUS", status);
 		source.addValue("ErrorDesc", null);
-		source.addValue("EXCLUDEREASON", 0);
+		source.addValue("EXCLUDEREASON", excludeReason);
 
 		try {
 			this.parameterJdbcTemplate.update(sql.toString(), source);

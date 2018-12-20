@@ -18,6 +18,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
@@ -35,7 +36,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 	private long processedCount;
 
 	@Override
-	public void sendReqest(List<Long> idList, long headerId, boolean isError, boolean isPDC) throws Exception {
+	public void sendReqest(List<Long> idList, List<Long> idEMIExcludeList, long headerId, boolean isError, boolean isPDC) throws Exception {
 
 		logger.debug(Literal.ENTERING);
 
@@ -43,58 +44,66 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 		boolean isBatchFail = false;
 		StringBuilder sql = null;
 
-		if (isPDC) {
-			sql = getPDCSqlQuery();
-		} else {
-			sql = getSqlQuery();
-		}
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("IdList", idList);
-		paramMap.addValue("EXCLUDEREASON", 0);
-
-		List<Presentment> presements = namedJdbcTemplate.query(sql.toString(), paramMap, new PresentmentRowMapper());
-
-		// Begin Transaction
-		namedJdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
-		try {
-			successCount = 0;
-			processedCount = 0;
-			for (Presentment presement : presements) {
-				processedCount++;
-				save(presement, "PRESENTMENT_REQ_DETAILS_TEMP");
-				successCount++;
-			}
-			// Commit Transaction
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			isBatchFail = true;
-
-			// Roolback
-		} finally {
-			if (isBatchFail) {
-				clearTables();
+		if (idList != null && !idList.isEmpty()) {
+			if (isPDC) {
+				sql = getPDCSqlQuery();
 			} else {
-				copyDataFromTempToMainTables();
-				if (isError) {
-					updatePresentmentHeader(presentmentId, 3, presentmentId, processedCount);
-				} else {
-					updatePresentmentHeader(presentmentId, 4, presentmentId, processedCount);
+				sql = getSqlQuery();
+			}
+
+			MapSqlParameterSource paramMap = new MapSqlParameterSource();
+			paramMap.addValue("IdList", idList);
+			paramMap.addValue("EXCLUDEREASON", 0);
+
+			List<Presentment> presements = namedJdbcTemplate.query(sql.toString(), paramMap,
+					new PresentmentRowMapper());
+
+			// Begin Transaction
+			namedJdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
+			try {
+				successCount = 0;
+				processedCount = 0;
+				for (Presentment presement : presements) {
+					processedCount++;
+					save(presement, "PRESENTMENT_REQ_DETAILS_TEMP");
+					successCount++;
 				}
-				updatePresentmentDetails(idList, "A");
-			}
+				// Commit Transaction
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+				isBatchFail = true;
 
-			boolean isPresentMentFileDownnloadReq = false;
-			String presentmentReq = (String) getSMTParameter(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD,
-					String.class);
-			if (StringUtils.isNotBlank(presentmentReq)) {
-				isPresentMentFileDownnloadReq = presentmentReq.equalsIgnoreCase("Y");
-			}
+				// Roolback
+			} finally {
+				if (isBatchFail) {
+					clearTables();
+				} else {
+					copyDataFromTempToMainTables();
+					if (isError) {
+						updatePresentmentHeader(presentmentId, 3, presentmentId, processedCount);
+					} else {
+						updatePresentmentHeader(presentmentId, 4, presentmentId, processedCount);
+					}
+					updatePresentmentDetails(idList, "A", RepayConstants.PEXC_EMIINCLUDE);
+				}
 
-			if (isPresentMentFileDownnloadReq && !isBatchFail) {
-				prepareRequestFile(idList);
+				boolean isPresentMentFileDownnloadReq = false;
+				String presentmentReq = (String) getSMTParameter(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD,
+						String.class);
+				if (StringUtils.isNotBlank(presentmentReq)) {
+					isPresentMentFileDownnloadReq = presentmentReq.equalsIgnoreCase("Y");
+				}
+
+				if (isPresentMentFileDownnloadReq && !isBatchFail) {
+					prepareRequestFile(idList);
+				}
 			}
 		}
+		
+		if (idEMIExcludeList != null && !idEMIExcludeList.isEmpty()) {
+			updatePresentmentDetails(idEMIExcludeList, "A", RepayConstants.PEXC_EMIINADVANCE);
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -404,7 +413,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 		return response;
 	}
 
-	private void updatePresentmentDetails(List<Long> idList, String status) {
+	private void updatePresentmentDetails(List<Long> idList, String status, int excludeReason) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
@@ -419,7 +428,7 @@ public class AbstractPresentmentProcess extends AbstractInterface implements Pre
 		source.addValue("IDList", idList);
 		source.addValue("STATUS", status);
 		source.addValue("ErrorDesc", null);
-		source.addValue("EXCLUDEREASON", 0);
+		source.addValue("EXCLUDEREASON", excludeReason);
 
 		try {
 			this.namedJdbcTemplate.update(sql.toString(), source);

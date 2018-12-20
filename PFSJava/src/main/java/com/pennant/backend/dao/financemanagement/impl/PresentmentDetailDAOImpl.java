@@ -802,14 +802,19 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
 		sql.append(
-				" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, schFeeDue, schInsDue, ");
+				" Select T.id, T.presentmentId, T.finReference, T.schDate, T.mandateId, T.schAmtDue, T.schPriDue, T.schPftDue, ");
 		sql.append(
-				" schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, Emino, status, presentmentRef, ecsReturn, receiptID, excludeReason,");
+				" T.schFeeDue, T.schInsDue,T.BOUNCEID,T.schPenaltyDue, T.advanceAmt, T.excessID,T.adviseAmt,T.presentmentAmt, ");
 		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
-		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentId = :PresentmentId");
+				" T.Emino, T.status, T.presentmentRef, T.ecsReturn, T.receiptID, T.excludeReason,T.Version, T.LastMntOn, T.LastMntBy,");
+		sql.append(
+				" T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, PB.ACCOUNTNO, PB.ACTYPE  ");
+		sql.append(" From PRESENTMENTDETAILS T INNER JOIN PRESENTMENTHEADER PH ON PH.ID = T.PRESENTMENTID ");
+		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
+		sql.append(" WHERE T.PresentmentId = :PresentmentId");
 		if (includeData) {
-			sql.append(" AND ExcludeReason = :ExcludeReason AND Status <> :Status ");
+			sql.append(
+					" AND (T.ExcludeReason = :PEXC_EMIINCLUDE or T.ExcludeReason = :PEXC_EMIINADVANCE ) AND T.Status <> :Status ");
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -818,7 +823,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		source = new MapSqlParameterSource();
 		source.addValue("PresentmentId", presentmentId);
 		if (includeData) {
-			source.addValue("ExcludeReason", 0);
+			source.addValue("PEXC_EMIINCLUDE", RepayConstants.PEXC_EMIINCLUDE);
+			source.addValue("PEXC_EMIINADVANCE", RepayConstants.PEXC_EMIINADVANCE);
 			source.addValue("Status", RepayConstants.PEXC_APPROV);
 		}
 

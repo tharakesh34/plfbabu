@@ -839,7 +839,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 			LoggedInUser userDetails = new LoggedInUser();
 			userDetails.setLoginUsrID(CON_USER_ID);
-			presentmentDetailService.processReceipts(presentmentDetail, userDetails);
+			
+			PresentmentDetail prsntDetails = isPresentmentResponseIsExist(presement_Response.getBatchId());
+			presentmentDetailService.processReceipts(prsntDetails);
+			
 			updateSuccessResponse(presement_Response);
 
 		}

@@ -89,6 +89,8 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";
 	public static final String RECEIPTMODE_PRESENTMENT = "PRESENT";
+	
+	public static final String	PAYTYPE_EMIINADV		= "EMIINADV";
 
 	// Allocation Methods
 	public static final String ALLOCATIONTYPE_AUTO = "A";

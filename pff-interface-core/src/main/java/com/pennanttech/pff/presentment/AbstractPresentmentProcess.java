@@ -8,9 +8,9 @@ import com.pennanttech.pff.external.PresentmentRequest;
 public class AbstractPresentmentProcess extends AbstractInterface implements PresentmentRequest {
 
 	@Override
-	public void sendReqest(List<Long> idList, long headerId, boolean isError, boolean isPDC) throws Exception {
+	public void sendReqest(List<Long> idList,List<Long> idExcludeEmiList, long headerId, boolean isError, boolean isPDC) throws Exception {
 		PresentmentRequestProcess process = new PresentmentRequestProcess(dataSource, new Long(1000), getValueDate(),
-				idList, headerId, isError);
+				idList,idExcludeEmiList, headerId, isError);
 		process.processData();
 	}
 }
