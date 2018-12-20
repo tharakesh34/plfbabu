@@ -6855,6 +6855,7 @@
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
 		<property name="mandateCheckDigitDAO" ref="mandateCheckDigitDAO" />
 		<property name="bankBranchDAO" ref="bankBranchDAO" />
+		<property name="partnerBankDAO" ref="partnerBankDAO" />
 	</bean>
 	<!-- Finance Mandate -->
 	<bean id="finMandateService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

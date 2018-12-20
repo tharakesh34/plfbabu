@@ -99,6 +99,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -232,6 +233,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected int accNoLength;
 	private transient BankDetailService bankDetailService;
 	private ExternalDocumentManager externalDocumentManager = null;
+
+	protected ExtendedCombobox partnerBank;
+	protected Row rowPartnerBank;
 
 	/**
 	 * default constructor.<br>
@@ -460,6 +464,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.entityCode.setFilters(filter);
 
+		if (ImplementationConstants.MANDATE_ALW_PARTNER_BANK) {
+			this.rowPartnerBank.setVisible(true);
+			this.partnerBank.setMaxlength(8);
+			this.partnerBank.setDisplayStyle(2);
+			this.partnerBank.setMandatoryStyle(true);
+			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+			Filter[] flt = new Filter[1];
+			flt[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+			this.partnerBank.setFilters(flt);
+		}
+
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -665,6 +683,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.barCodeNumber);
 			readOnlyComponent(true, swapIsActive);
 			readOnlyComponent(true, this.entityCode);
+			if (this.rowPartnerBank.isVisible()) {
+				readOnlyComponent(true, this.partnerBank);
+			}
+
 		} else {
 			readOnlyComponent(true, this.mandateRef);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
@@ -683,6 +705,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.maxLimit.setMandatory(true);
 			readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), swapIsActive);
+			if (this.rowPartnerBank.isVisible()) {
+				readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
+			}
 		}
 		clearMandatedata();
 	}
@@ -715,6 +740,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.regStatus.setValue("");
 		this.amountInWords.setValue("");
 		this.swapIsActive.setChecked(false);
+		if (this.rowPartnerBank.isVisible()) {
+			this.partnerBank.setValue("");
+		}
 	}
 
 	public void onChange$mandateType(Event event) {
@@ -872,6 +900,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.barCodeNumber);
 			readOnlyComponent(true, this.swapIsActive);
 			readOnlyComponent(true, this.entityCode);
+			if (this.rowPartnerBank.isVisible()) {
+				readOnlyComponent(true, this.partnerBank);
+			}
 		}
 
 	}
@@ -958,6 +989,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.umrNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapIsActive);
+		if (this.rowPartnerBank.isVisible()) {
+			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
+		}
 
 		if (!this.mandate.isNew() && StringUtils.isEmpty(this.mandate.getRecordType())
 				|| StringUtils.equals(this.mandate.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
@@ -1040,7 +1074,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.barCodeNumber);
 		readOnlyComponent(true, this.swapIsActive);
 		readOnlyComponent(true, this.entityCode);
-
+		if (this.rowPartnerBank.isVisible()) {
+			readOnlyComponent(true, this.partnerBank);
+		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1182,6 +1218,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (StringUtils.isNotBlank(aMandate.getEntityCode())) {
 			this.entityCode.setValue(StringUtils.trimToEmpty(aMandate.getEntityCode()),
 					StringUtils.trimToEmpty(aMandate.getEntityDesc()));
+		}
+
+		if (this.rowPartnerBank.isVisible()) {
+			if (aMandate.getPartnerBankId() != 0 && aMandate.getPartnerBankId() != Long.MIN_VALUE) {
+				this.partnerBank.setValue(aMandate.getPartnerBankCode());
+				this.partnerBank.setDescription(aMandate.getPartnerBankName());
+				this.partnerBank.setObject(new PartnerBank(aMandate.getPartnerBankId()));
+			}
 		}
 	}
 
@@ -1433,6 +1477,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			if (this.rowPartnerBank.isVisible()) {
+				PartnerBank partBank = (PartnerBank) this.partnerBank.getObject();
+				if (partBank != null && partBank.getPartnerBankId() != 0) {
+					aMandate.setPartnerBankId(partBank.getPartnerBankId());
+				} else {
+					aMandate.setPartnerBankId(0);
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		logger.debug("Leaving");
 		return wve;
 	}
@@ -1567,6 +1625,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		//		if (!this.status.isDisabled()) {
 		//			this.status.setConstraint(new StaticListValidator(statusTypeList, Labels.getLabel("label_MandateDialog_Status.value")));
 		//		}
+
+		if (this.rowPartnerBank.isVisible()) {
+			this.partnerBank.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
+		}
 	}
 
 	/**
@@ -1593,6 +1656,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.barCodeNumber.setConstraint("");
 		this.finReference.setConstraint("");
 		this.entityCode.setConstraint("");
+		if (this.rowPartnerBank.isVisible()) {
+			this.partnerBank.setConstraint("");
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1622,6 +1688,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.barCodeNumber.setErrorMessage("");
 		this.finReference.setErrorMessage("");
 		this.entityCode.setErrorMessage("");
+		if (this.rowPartnerBank.isVisible()) {
+			this.partnerBank.setErrorMessage("");
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1848,6 +1917,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.city.setValue("");
 		this.reason.setValue("");
 		this.documentName.setValue("");
+		if (this.rowPartnerBank.isVisible()) {
+			this.partnerBank.setValue("");
+		}
 		logger.debug("Leaving");
 	}
 

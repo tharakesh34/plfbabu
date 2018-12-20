@@ -15,6 +15,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Entity;
@@ -23,6 +24,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.EntityService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
@@ -32,6 +34,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
@@ -59,6 +62,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private EntityService entityService;
 	private FinanceTypeService financeTypeService;
+	private PartnerBankDAO partnerBankDAO;
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -657,6 +661,18 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				}
 			}
 		}
+		if (mandate.getPartnerBankId() <= 0 && StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
+			PartnerBank partnerBank = partnerBankDAO.getPartnerBankByCode(mandate.getPartnerBankCode(), "");
+			if (partnerBank == null) {
+				String[] valueParm1 = new String[2];
+				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value");
+				valueParm1[1] = mandate.getPartnerBankCode();
+				return getErrorDetails("90224", valueParm1);
+			} else {
+				mandate.setPartnerBankId(partnerBank.getPartnerBankId());
+			}
+		}
+
 		logger.debug("Leaving");
 
 		return returnStatus;
@@ -819,5 +835,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	@Autowired
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 }

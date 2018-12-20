@@ -56,6 +56,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -69,6 +70,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.applicationmaster.MandateCheckDigit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -78,6 +80,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -106,6 +109,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private DocumentManagerDAO documentManagerDAO;
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
+	private PartnerBankDAO partnerBankDAO;
 
 	@Autowired
 	private MandateProcess mandateProcess;
@@ -178,6 +182,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 */
 	public void setMandateCheckDigitDAO(MandateCheckDigitDAO mandateCheckDigitDAO) {
 		this.mandateCheckDigitDAO = mandateCheckDigitDAO;
+	}
+
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 
 	/**
@@ -671,6 +679,22 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90320", null)));
 			}
 
+		}
+
+		if (ImplementationConstants.MANDATE_ALW_PARTNER_BANK) {
+			if (mandate.getPartnerBankId() <= 0) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value") + "Id";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail("90502", valueParm1)));
+			} else {
+				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
+				if (partnerBank == null) {
+					String[] valueParm1 = new String[1];
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90263", valueParm1)));
+
+				}
+			}
 		}
 
 		return auditDetail;

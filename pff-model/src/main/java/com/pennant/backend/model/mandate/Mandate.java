@@ -67,7 +67,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "custCIF", "orgReference", "useExisting", "mandateID", "mandateRef", "mandateType", "bankCode",
 		"branchCode", "iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate",
 		"startDate", "expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber",
-		"status", "active", "totEMIAmount", "barCodeNumber", "amountInWords", "entityCode", "returnStatus" })
+		"status", "active", "totEMIAmount", "barCodeNumber", "amountInWords", "entityCode", "swapIsActive",
+		"partnerBankId", "partnerBankName", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity implements Entity {
@@ -197,6 +198,12 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 	private String entityDesc;
 	private boolean approveMandate;
 
+	@XmlElement
+	private long partnerBankId;
+	@XmlElement
+	private String partnerBankCode;
+	private String partnerBankName;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -257,6 +264,8 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("finReference");
 		excludeFields.add("entityDesc");
 		excludeFields.add("approveMandate");
+		excludeFields.add("partnerBankCode");
+		excludeFields.add("partnerBankName");
 		return excludeFields;
 	}
 
@@ -915,4 +924,27 @@ public class Mandate extends AbstractWorkflowEntity implements Entity {
 		this.approveMandate = approveMandate;
 	}
 
+	public long getPartnerBankId() {
+		return partnerBankId;
+	}
+
+	public void setPartnerBankId(long partnerBankId) {
+		this.partnerBankId = partnerBankId;
+	}
+
+	public String getPartnerBankCode() {
+		return partnerBankCode;
+	}
+
+	public void setPartnerBankCode(String partnerBankCode) {
+		this.partnerBankCode = partnerBankCode;
+	}
+
+	public String getPartnerBankName() {
+		return partnerBankName;
+	}
+
+	public void setPartnerBankName(String partnerBankName) {
+		this.partnerBankName = partnerBankName;
+	}
 }

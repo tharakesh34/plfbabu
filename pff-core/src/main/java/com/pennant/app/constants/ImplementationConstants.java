@@ -149,6 +149,9 @@ public class ImplementationConstants {
 	// Need to rest amount with CAP amount only
 	public static final boolean ALW_LPP_MIN_CAP_AMT = false;
 
+	// Allow Partner Bank in Mandate based on this flag variable
+	public static final boolean MANDATE_ALW_PARTNER_BANK = false;
+
 	//Added  ReEnter Account Number in Disbursement at Loan Approval stage
 	public static final boolean DISB_ACCNO_MASKING = false;
 
