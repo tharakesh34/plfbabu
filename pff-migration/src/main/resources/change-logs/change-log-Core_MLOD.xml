@@ -30,8 +30,14 @@
 		<column name="InstructionUID" type="bigint"/>	
 	</addColumn>
 	</changeSet>
-	<changeSet id="02" author="Irfan">
+	<changeSet id="02" author="Irfan" dbms="oracle,postgresql">
 		<createSequence sequenceName="SeqFinInstructionUID" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
+	</changeSet>
+	<changeSet id="02" author="Irfan" dbms="mssql">
+		<createTable tableName="SeqFinInstructionUID">
+			<column name="SeqNo" type="bigint" autoIncrement="true"/>
+			<column name="Value" type="int"></column>
+		</createTable>
 	</changeSet>
 	<changeSet id="03" author="Irfan">
 		<sql>
