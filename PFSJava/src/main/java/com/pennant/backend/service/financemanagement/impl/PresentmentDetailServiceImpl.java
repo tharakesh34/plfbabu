@@ -471,7 +471,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(presentmentDetail.getAdvanceAmt());
 			receiptDetail.setValueDate(presentmentDetail.getSchDate());
