@@ -5344,7 +5344,7 @@ UNION ALL
 		</sql>
 		</changeSet>
 		
-		<changeSet id="83" author="Rahul">
+		<changeSet id="83.1" author="Rahul">
 		<createView viewName="mandates_view" replaceIfExists="true" >
         SELECT t1.mandateid,
 		    t1.custid,
@@ -5407,7 +5407,7 @@ UNION ALL
 		     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
 		     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
 		     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
-		     LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
+		     LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
 			 LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId
 		UNION ALL
 		SELECT t1.mandateid,
@@ -5471,15 +5471,15 @@ UNION ALL
 		     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
 		     LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
 		     LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
-		     LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
+		     LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
 			 LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId
 		  WHERE NOT (EXISTS ( SELECT 1
 		           FROM mandates_temp
-		          WHERE mandates_temp.mandateid = t1.mandateid));
+		          WHERE mandates_temp.mandateid = t1.mandateid))
 		</createView>
 		</changeSet>
 		
-		<changeSet id="84" author="Rahul">
+		<changeSet id="84.1" author="Rahul">
 		<createView viewName="mandates_tview" replaceIfExists="true" >
 		SELECT t1.mandateid,
 		    t1.custid,
@@ -5542,12 +5542,12 @@ UNION ALL
 			LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
 		    LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
 			LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
-			LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
-			LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId;
+			LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
+			LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId
 		</createView>
 		</changeSet>
 		
-		<changeSet id="85" author="Rahul">
+		<changeSet id="85.1" author="Rahul">
 		<createView viewName="mandates_aview" replaceIfExists="true" >
      SELECT t1.mandateid,
         t1.custid,
@@ -5612,8 +5612,8 @@ UNION ALL
         LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
         LEFT JOIN bmtbankdetail t4 ON t3.bankcode = t4.bankcode
         LEFT JOIN rmtprovincevscity t5 ON t3.city = t5.pccity
-        LEFT JOIN entity t6 ON t1.entitycode::text = t6.entitycode::text
-        LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId;
+        LEFT JOIN entity t6 ON t1.entitycode = t6.entitycode
+        LEFT JOIN PartnerBanks t7 ON t1.partnerBankId = t7.partnerBankId
 		</createView>
 		</changeSet>
 
