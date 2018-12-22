@@ -3126,5 +3126,13 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return new AuditHeader(aCollateralSetup.getCollateralRef(), null, null, null, auditDetail,
 				aCollateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
+    
+	//Collateral details
+	@Override
+	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
+			String type) {
+		// TODO Auto-generated method stub
+		return collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, type);
+	}
 
 }

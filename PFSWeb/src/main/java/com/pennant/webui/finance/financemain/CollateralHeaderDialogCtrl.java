@@ -145,6 +145,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	}
 
 	private String finLTVCheck;
+	private ArrayList<Object> finHeaderList = null;
 
 	public void setRules(Map<String, Object> rules) {
 		this.rules = rules;
@@ -253,6 +254,14 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (arguments.containsKey("finLTVCheck")) {
 				this.finLTVCheck = (String) arguments.get("finLTVCheck");
 			}
+
+			if (arguments.containsKey("enquiry")) {
+				enqiryModule = (boolean) arguments.get("enquiry");
+			}
+
+			if (arguments.containsKey("finHeaderList")) {
+				finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
+			}
 			doCheckRights();
 			doShowDialog();
 
@@ -317,6 +326,11 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				this.listBoxCollateralAssignments.setHeight(150 + "px");
 				this.listBoxAssetTypeHeader.setHeight(150 + "px");
 				this.window_CollateralAssignmentDialog.setHeight(this.borderLayoutHeight - 80 + "px");
+			}
+			
+			if (enqiryModule) {
+				btnNew_CollateralAssignment.setVisible(false);
+				btnNew_AssetType.setVisible(false);
 			}
 
 		} catch (UiException e) {
@@ -789,6 +803,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				map.put("collateralHeaderDialogCtrl", this);
 				map.put("roleCode", this.roleCode);
 				map.put("collateralAssignment", assignment);
+				map.put("enqiryModule", enqiryModule);
 				map.put("finType", finType);
 				map.put("customerId", customerId);
 				map.put("financeDetail", getFinanceDetail());
@@ -813,6 +828,10 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
 			map.put("moduleName", moduleName);
+
+			if (finHeaderList != null) {
+				map.put("finHeaderList", finHeaderList);
+			}
 			if (isNotFinanceProcess) {
 				Executions.createComponents("/WEB-INF/pages/Collateral/CollateralSetup/CollateralBasicDetails.zul",
 						this.finBasicdetails, map);

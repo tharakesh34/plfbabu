@@ -62,6 +62,7 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
+import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -300,5 +301,7 @@ public interface FinanceDetailService {
 	boolean isholdDisbursementProcess(String finReference);
 
 	void executeAutoFinRejectProcess();
+
+	List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type);
 
 }

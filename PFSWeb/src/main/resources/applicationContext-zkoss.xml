@@ -2884,6 +2884,7 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="uploadHeaderService" ref="uploadHeaderService" />
 		<property name="notificationLogDetailsService" ref="notificationLogDetailsService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.FinanceEnquiryDialogCtrl" parent="basisListCtrl"

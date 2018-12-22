@@ -10472,5 +10472,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setHoldDisbursementDAO(HoldDisbursementDAO holdDisbursementDAO) {
 		this.holdDisbursementDAO = holdDisbursementDAO;
 	}
+    
+	//FinAsset details
+	@Override
+	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
+		return getFinAssetTypeDAO().getFinAssetTypesByFinRef(reference, type);
+	}
 
 }

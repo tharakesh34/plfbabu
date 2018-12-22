@@ -48,6 +48,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -91,4 +92,6 @@ public interface CollateralSetupService {
 	CollateralSetup getCollateralSetupForLegal(String collateralRef);
 
 	List<AuditDetail> validateDetails(FinanceDetail financeDetail, String auditTranType, String method);
+
+	List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName, String type);
 }

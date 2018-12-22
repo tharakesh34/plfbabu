@@ -177,6 +177,14 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				setExtendedFieldHeader(assetType.getExtendedFieldHeader());
 				generator.renderWindow(getExtendedFieldHeader(), newRecord);
 			}
+			if (enqiryModule) {
+				btnSave.setVisible(false);
+				btnEdit.setVisible(false);
+				btnDelete.setVisible(false);
+				btnNew.setVisible(false);
+				btnCancel.setVisible(false);
+				btnNotes.setVisible(false);
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}

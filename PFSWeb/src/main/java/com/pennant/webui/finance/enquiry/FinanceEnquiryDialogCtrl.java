@@ -106,6 +106,7 @@ import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -363,6 +364,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<ContractorAssetDetail> assetDetails = null; // over handed per parameters
 	private FinContributorHeader finContributorHeader; // over handed per
 														// parameters
+	private FinanceDetail financeDetail;
 	private AccountInterfaceService accountInterfaceService;
 	private int formatter;
 
@@ -531,6 +533,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			if (event.getTarget().getParent().getParent() != null) {
 				tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
+			}
+			
+			if (arguments.containsKey("financeDetail")) {
+				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
+				setFinanceDetail(financeDetail);
+			} else {
+				setFinanceDetail(null);
 			}
 
 			if (arguments.containsKey("finScheduleData")) {
@@ -1323,6 +1332,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		appendJointGuarantorDetailTab();
+		appendCollateralDetailTab();
 
 		if (getFinScheduleData().getFinanceScheduleDetails() != null) {
 			this.repayGraphTab.setVisible(true);
@@ -1446,6 +1456,27 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	private ArrayList<Object> getFinBasicDetails(FinanceMain finMain) {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(0, finMain.getFinType());
+		arrayList.add(1, finMain.getFinCcy());
+		arrayList.add(2, finMain.getScheduleMethod());
+		arrayList.add(3, finMain.getFinReference());
+		arrayList.add(4, finMain.getProfitDaysBasis());
+		arrayList.add(5, finMain.getGrcPeriodEndDate());
+		arrayList.add(6, finMain.isAllowGrcPeriod());
+		if (StringUtils.isNotEmpty(finMain.getPromotionCode())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, finMain.getFinCategory());
+		arrayList.add(9, finMain.getLovDescCustShrtName());
+		arrayList.add(10, false);
+		arrayList.add(11, "");
+		return arrayList;
+	}
+
 	/**
 	 * Method for Rendering Joint account and Guaranteer Details Data in finance
 	 */
@@ -1461,6 +1492,39 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	private void appendCollateralDetailTab() {
+		logger.debug("Entering");
+		try {
+
+			FinanceMain financeMain = getFinScheduleData().getFinanceMain();
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_COLLATERAL));
+			map.put("enquiry", true);
+			map.put("finHeaderList", getFinBasicDetails(getFinScheduleData().getFinanceMain()));
+			map.put("financeDetail", getFinanceDetail());
+
+			map.put("collateralAssignmentList", getFinanceDetail().getCollateralAssignmentList());
+
+			map.put("isFinanceProcess", true);
+			map.put("assetsReq", true);
+			map.put("assetTypeList", getFinanceDetail().getExtendedFieldRenderList());
+			map.put("finassetTypeList", getFinanceDetail().getFinAssetTypesList());
+
+			map.put("finAssetValue", financeMain.getFinAssetValue());
+			map.put("finType", financeMain.getFinType());
+			map.put("customerId", financeMain.getCustID());
+			map.put("collateralReq", !getFinanceDetail().getCollateralAssignmentList().isEmpty());
+
+			createTab(AssetConstants.UNIQUE_ID_COLLATERAL, true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CollateralHeaderDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_COLLATERAL), map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+
 	}
 
 	private String getTabID(String id) {
@@ -1504,6 +1568,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		String tabName = "";
 		if (StringUtils.equals(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, moduleID)) {
 			tabName = Labels.getLabel("tab_Co-borrower&Gurantors");
+		} else if (StringUtils.equals(AssetConstants.UNIQUE_ID_COLLATERAL, moduleID)) {
+			tabName = Labels.getLabel("tab_Collaterals");
 		}
 		Tab tab = new Tab(tabName);
 		tab.setId(getTabID(moduleID));
@@ -2284,6 +2350,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinScheduleData(FinScheduleData finScheduleData) {
 		this.finScheduleData = finScheduleData;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 
 	public void setFinContributorHeader(FinContributorHeader finContributorHeader) {

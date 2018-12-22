@@ -146,15 +146,17 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					setNewRecord(false);
 				}
 				this.collateralAssignment.setWorkflowId(0);
-				if (arguments.containsKey("roleCode")) {
+				if (arguments.containsKey("roleCode") && !enqiryModule) {
 					setRole((String) arguments.get("roleCode"));
 					getUserWorkspace().allocateRoleAuthorities(getRole(), "CollateralAssignmentDetailDialog");
 				}
 			}
-			doLoadWorkFlow(this.collateralAssignment.isWorkflow(), this.collateralAssignment.getWorkflowId(),
-					this.collateralAssignment.getNextTaskId());
+			if(!enqiryModule){
+				doLoadWorkFlow(this.collateralAssignment.isWorkflow(), this.collateralAssignment.getWorkflowId(),
+						this.collateralAssignment.getNextTaskId());
 
-			doCheckRights();
+				doCheckRights();
+			}
 
 			doSetFieldProperties();
 			doShowDialog(getCollateralAssignment());
@@ -404,15 +406,28 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	public void doShowDialog(CollateralAssignment collateralAssignment) throws InterruptedException {
 		logger.debug("Entering");
 
-		if (isNewRecord()) {
-			this.btnCtrl.setInitNew();
-			this.collateralRef.focus();
+		if (enqiryModule) {
+			doReadOnly();
+		} else {
+			if (isNewRecord()) {
+				this.btnCtrl.setInitNew();
+				this.collateralRef.focus();
+			}
+			doEdit();
 		}
-		doEdit();
 
 		try {
 			doWriteBeanToComponents(collateralAssignment);
 			this.groupboxWf.setVisible(false);
+			if(enqiryModule) {
+				btnDelete.setVisible(false);
+				btnSave.setVisible(false);
+				btnEdit.setVisible(false);
+				btnEditCollateral.setVisible(false);
+				btnNewCollateral.setVisible(false);
+				this.assignValuePerc.setReadonly(true);
+				this.hostReference.setReadonly(true);
+			}
 			this.window_CollateralAssignmentDetailDialog.doModal();
 		} catch (Exception e) {
 			MessageUtil.showError(e);

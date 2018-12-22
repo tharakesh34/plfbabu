@@ -107,6 +107,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.CheckListDetailService;
@@ -183,6 +184,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private ScoringDetailService scoringDetailService;
 	private CheckListDetailService checkListDetailService;
 	private FinCovenantTypeService finCovenantTypeService;
+	private CollateralSetupService collateralSetupService;
 
 	private ManualPaymentService manualPaymentService;
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
@@ -211,8 +213,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
-	@Autowired
-	private CollateralAssignmentDAO collateralAssignmentDAO;
 
 	private NotificationLogDetailsService notificationLogDetailsService;
 
@@ -335,6 +335,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		if ("FINENQ".equals(this.enquiryType)) {
 
+			FinanceDetail financeDetail = new FinanceDetail();
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinanceEnquiry.value"));
 			this.grid_BasicDetails.setVisible(false);
 			if (fromApproved) {
@@ -356,6 +357,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					calculateFeeChargeDetails(feeDetails, summary);
 				}
 			}
+
+			// Collateral Details
+			financeDetail.setCollateralAssignmentList(getCollateralSetupService()
+					.getCollateralAssignmentByFinRef(this.finReference, FinanceConstants.MODULE_NAME,
+							fromApproved ? "_AView" : "_View"));
+			financeDetail.setFinAssetTypesList(
+					getFinanceDetailService().getFinAssetTypesByFinRef(this.finReference, "_TView"));
+			financeDetail.setFinScheduleData(finScheduleData);
 			if (finScheduleData.getFinanceMain() != null) {
 				FinContributorHeader contributorHeader = getFinanceDetailService()
 						.getFinContributorHeaderById(this.finReference);
@@ -371,6 +380,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				map.put("assetDetailList", assetDetails);
 				map.put("finScheduleData", finScheduleData);
+				map.put("financeDetail", financeDetail);
 				map.put("contributorHeader", contributorHeader);
 				map.put("fromApproved", fromApproved);
 				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
@@ -649,7 +659,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				financeDetail.setDocumentDetailsList(documentList);
 			}
-			financeDetail.setCollateralAssignmentList(collateralAssignmentDAO
+			financeDetail.setCollateralAssignmentList(getCollateralSetupService()
 					.getCollateralAssignmentByFinRef(this.finReference, FinanceConstants.MODULE_NAME, "_TView"));
 			map.put("financeDetail", financeDetail);
 			map.put("enqiryModule", true);
@@ -1019,6 +1029,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
 		this.finCovenantTypeService = finCovenantTypeService;
+	}
+
+	public CollateralSetupService getCollateralSetupService() {
+		return collateralSetupService;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 
 	public FinFeeDetailService getFinFeeDetailService() {
