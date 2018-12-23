@@ -3718,6 +3718,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setNextRoleCode("");
 			financeMain.setTaskId("");
 			financeMain.setNextTaskId("");
+			financeMain.setNextUserId(null);
 			financeMain.setWorkflowId(0);
 
 			// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
@@ -5091,6 +5092,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setNextRoleCode("");
 			financeMain.setTaskId("");
 			financeMain.setNextTaskId("");
+			financeMain.setNextUserId(null);
 			financeMain.setWorkflowId(0);
 
 			if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -8593,6 +8595,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setNextRoleCode("");
 		financeMain.setTaskId("");
 		financeMain.setNextTaskId("");
+		financeMain.setNextUserId(null);
 		financeMain.setWorkflowId(0);
 		getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, false);
 
@@ -8633,6 +8636,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				getUserActivityLogDAO().updateFinStatus(financeMain.getFinReference(),
 						PennantConstants.WORFLOW_MODULE_FINANCE);
+
+				financeMain.setNextUserId(null);
 			}
 
 			return;
