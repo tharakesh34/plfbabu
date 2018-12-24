@@ -66,10 +66,14 @@ public class ReceiptReport implements Serializable {
 	private String bankName;
 	private String branchCode;
 	private String branchName;
-	private String overDueEmi = "0";
-	private String addInterest = "0";
+
+	// Allocation Details
+	private String priPaid = "0";
+	private String pftPaid = "0";
+	private String lppAmount = "0";
+	private String lpiAmount = "0";
 	private String bounceCharges = "0";
-	private String terminationAmt = "0";
+	private String feeCharges = "0";
 	private String others = "0";
 	
 	// User Branch Address Details
@@ -241,36 +245,12 @@ public class ReceiptReport implements Serializable {
 		this.branchName = branchName;
 	}
 
-	public String getOverDueEmi() {
-		return overDueEmi;
-	}
-
-	public void setOverDueEmi(String overDueEmi) {
-		this.overDueEmi = overDueEmi;
-	}
-
 	public String getBounceCharges() {
 		return bounceCharges;
 	}
 
 	public void setBounceCharges(String bounceCharges) {
 		this.bounceCharges = bounceCharges;
-	}
-
-	public String getAddInterest() {
-		return addInterest;
-	}
-
-	public void setAddInterest(String addInterest) {
-		this.addInterest = addInterest;
-	}
-
-	public String getTerminationAmt() {
-		return terminationAmt;
-	}
-
-	public void setTerminationAmt(String terminationAmt) {
-		this.terminationAmt = terminationAmt;
 	}
 
 	public String getOthers() {
@@ -376,6 +356,45 @@ public class ReceiptReport implements Serializable {
 	public void setBranchPhone(String branchPhone) {
 		this.branchPhone = branchPhone;
 	}
-	
+
+	public String getPriPaid() {
+		return priPaid;
+	}
+
+	public void setPriPaid(String priPaid) {
+		this.priPaid = priPaid;
+	}
+
+	public String getPftPaid() {
+		return pftPaid;
+	}
+
+	public void setPftPaid(String pftPaid) {
+		this.pftPaid = pftPaid;
+	}
+
+	public String getLppAmount() {
+		return lppAmount;
+	}
+
+	public void setLppAmount(String lppAmount) {
+		this.lppAmount = lppAmount;
+	}
+
+	public String getLpiAmount() {
+		return lpiAmount;
+	}
+
+	public void setLpiAmount(String lpiAmount) {
+		this.lpiAmount = lpiAmount;
+	}
+
+	public String getFeeCharges() {
+		return feeCharges;
+	}
+
+	public void setFeeCharges(String feeCharges) {
+		this.feeCharges = feeCharges;
+	}
 	
 }

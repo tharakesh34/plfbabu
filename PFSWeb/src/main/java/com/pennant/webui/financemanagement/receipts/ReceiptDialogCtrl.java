@@ -8012,7 +8012,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 			receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
 			receipt.setReceiptAmountInWords(NumberToEnglishWords
-					.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
+					.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), "")
+					.toUpperCase());
 			receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
 
 			Date eventFromDate = this.receivedDate.getValue();
@@ -8044,28 +8045,32 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			receipt.setBranchCode(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch());
 			receipt.setBranchName(getFinanceDetail().getFinScheduleData().getFinanceMain().getLovDescFinBranchName());
 			if(getReceiptHeader().getAllocations() != null){
-				BigDecimal pftPaid = BigDecimal.ZERO;
-				BigDecimal priPaid = BigDecimal.ZERO;
-				BigDecimal bouncePaid = BigDecimal.ZERO;
 				BigDecimal othersPaid = BigDecimal.ZERO;
 				for (ReceiptAllocationDetail aloc : getReceiptHeader().getAllocations()) {
+
+					if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_NPFT)
+							|| StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+						continue;
+					}
+
 					if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PFT)){
-						pftPaid = aloc.getPaidAmount();
+						receipt.setPftPaid(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
 					}else if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PRI)){
-						priPaid = aloc.getPaidAmount();
+						receipt.setPriPaid(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
 					}else if(StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)){
-						bouncePaid = aloc.getPaidAmount();
+						receipt.setBounceCharges(
+								PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
+					} else if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
+						receipt.setLppAmount(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
+					} else if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_LPFT)) {
+						receipt.setLpiAmount(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
 					}else{
 						othersPaid = othersPaid.add(aloc.getPaidAmount());
 					}
 				}
-				
-				BigDecimal due  = pftPaid.add(priPaid).subtract(getReceiptData().getAccrued()).subtract(getReceiptData().getFuturePri());
-				receipt.setOverDueEmi(PennantApplicationUtil.amountFormate(due, finFormatter));
-				receipt.setAddInterest(PennantApplicationUtil.amountFormate(getReceiptData().getAccrued(), finFormatter));
-				receipt.setTerminationAmt(PennantApplicationUtil.amountFormate(getReceiptData().getFuturePri(), finFormatter));
-				receipt.setBounceCharges(PennantApplicationUtil.amountFormate(bouncePaid, finFormatter));
 				receipt.setOthers(PennantApplicationUtil.amountFormate(othersPaid, finFormatter));
+				receipt.setFeeCharges(
+						PennantApplicationUtil.amountFormate(getReceiptHeader().getTotFeeAmount(), finFormatter));
 			}
 			receipt.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 			
