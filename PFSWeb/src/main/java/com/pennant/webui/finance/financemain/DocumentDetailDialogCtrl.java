@@ -437,7 +437,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		for (DocumentDetails documentDetail : sortdocumentDetails) {
 			Listitem listitem = new Listitem();
 			Listcell listcell;
-			listcell = new Listcell(getlabelDesc(documentDetail.getDocCategory(), documentTypes));
+			String docdesc = getlabelDesc(documentDetail.getDocCategory(), documentTypes);
+			documentDetail.setLovDescDocCategoryName(docdesc);
+			listcell = new Listcell(
+					documentDetail.getDocCategory() + " - " + documentDetail.getLovDescDocCategoryName());
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);

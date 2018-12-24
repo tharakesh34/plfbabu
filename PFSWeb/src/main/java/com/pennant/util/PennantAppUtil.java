@@ -188,7 +188,7 @@ public class PennantAppUtil {
 		List<DocumentType> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
 			ValueLabel pftRateLabel = new ValueLabel(String.valueOf(appList.get(i).getDocTypeCode()),
-					appList.get(i).getDocTypeCode() + "-" + appList.get(i).getDocTypeDesc());
+					appList.get(i).getDocTypeDesc());
 			documentTypes.add(pftRateLabel);
 		}
 		return documentTypes;
@@ -2289,7 +2289,7 @@ public class PennantAppUtil {
 		ArrayList<ValueLabel> receiptModesList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		JdbcSearchObject<FinTypeReceiptModes> searchObject = new JdbcSearchObject<FinTypeReceiptModes>(FinTypeReceiptModes.class);
-		searchObject.addSort("FinTypeReceiptModes", false);
+		searchObject.addSort("ReceiptMode", false);
 		searchObject.addTabelName("FinTypeReceiptModes");
 		searchObject.addFilterEqual("FinType", finType);
 		searchObject.addField("FinType");

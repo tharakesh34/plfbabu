@@ -46,6 +46,7 @@ package com.pennant.webui.finance.financemain.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -107,7 +108,12 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 			lc = new Listcell("");
 		}
 		lc.setParent(item);
-		lc = new Listcell(financeMain.getLovDescRequestStage());
+		lc = new Listcell(StringUtils.isNotBlank(financeMain.getLovDescRequestStage())
+				? (financeMain.getLovDescRequestStage().endsWith(",")
+						? financeMain.getLovDescRequestStage().substring(0,
+								financeMain.getLovDescRequestStage().length() - 1)
+						: financeMain.getLovDescRequestStage())
+				: "");
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getRecordStatus());
 		lc.setParent(item);

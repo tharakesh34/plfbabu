@@ -43,6 +43,7 @@
 package com.pennant.webui.legal.legaldocument;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
@@ -123,9 +125,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	protected Textbox documentName;
 	protected Button btnUploadDoc;
 	protected Iframe documentPdfView;
-	protected Div documentDiv;
 	protected Div docDiv;
 	protected Groupbox gb_documentVerifyDetails;
+	protected A downloadLink;
 
 	// Approver
 	protected Combobox documentTypeApprove;
@@ -425,6 +427,14 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				amedia = new AMedia(aLegalDocument.getDocumentName(), null, null, aLegalDocument.getDocImage());
 			}
 			documentPdfView.setContent(amedia);
+
+			boolean isContainsDocImg = aLegalDocument.getDocImage() != null ? true : false;
+			this.downloadLink.setDisabled(!isContainsDocImg);
+			this.downloadLink.setVisible(false);
+			if (StringUtils.isNotBlank(aLegalDocument.getDocumentName())) {
+				this.downloadLink.setLabel(aLegalDocument.getDocumentName());
+				this.downloadLink.setVisible(true);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -450,6 +460,44 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		} else {
 			this.documentCategoryLabel.setValue("");
 		}
+	}
+
+	/**
+	 * when the "Download" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$downloadLink(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doDownload(legalDocument.getDocImage(), legalDocument.getUploadDocumentType());
+		logger.debug("Leaving" + event.toString());
+	}
+
+	/**
+	 * To Download the upload Document
+	 */
+	private void doDownload(byte[] docImage, String docType) {
+		logger.debug("Entering");
+		AMedia amedia = null;
+		if (docImage != null) {
+			String docName = "Document";
+			final InputStream data = new ByteArrayInputStream(docImage);
+			if (StringUtils.equals(docType, PennantConstants.DOC_TYPE_PDF)) {
+				amedia = new AMedia(docName, "pdf", "application/pdf", data);
+			} else if (StringUtils.equals(docType, PennantConstants.DOC_TYPE_IMAGE)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
+			} else if (StringUtils.equals(docType, PennantConstants.DOC_TYPE_WORD)
+					|| StringUtils.equals(docType, PennantConstants.DOC_TYPE_MSG)) {
+				amedia = new AMedia(docName, "docx", "application/pdf", data);
+			} else if (StringUtils.equals(docType, PennantConstants.DOC_TYPE_EXCEL)) {
+				amedia = new AMedia(docName, "xlsx", "application/pdf", data);
+			}
+			if (amedia != null) {
+				Filedownload.save(amedia);
+			}
+		}
+		logger.debug("Leaving");
 	}
 
 	/*
@@ -834,6 +882,13 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				document.setUploadDocumentType(docType);
 				document.setDocImage(ddaImageData);
 				textbox.setAttribute("data", document);
+			}
+
+			this.downloadLink.setDisabled(false);
+			this.downloadLink.setVisible(false);
+			if (StringUtils.isNotBlank(fileName)) {
+				this.downloadLink.setLabel(fileName);
+				this.downloadLink.setVisible(true);
 			}
 		} catch (Exception ex) {
 			logger.error("Exception: ", ex);
