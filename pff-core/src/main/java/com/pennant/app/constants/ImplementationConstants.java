@@ -6,7 +6,7 @@ public class ImplementationConstants {
 	}
 
 	// IMPLEMENTATION TYPES
-	public static final boolean UDC_ALLOW_ZERO_AMT = true;
+	public static final boolean UDC_ALLOW_ZERO_AMT = false;
 	public static final boolean IMPLEMENTATION_CONVENTIONAL = true;
 	public static final boolean IMPLEMENTATION_ISLAMIC = false;
 
@@ -30,7 +30,7 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_COVENANT_TYPES = true; // Covenants Allowed or not
 	public static final boolean COLLATERAL_INTERNAL = true; // Which Collateral We are using Internal or Third Party Collaterals
 	public static final boolean ALLOW_VAS = true; // VAS required or not F = Administration/Insurance/Other Fees C = Past due Penalty I = Profit P = Principal
-	public static final String REPAY_HIERARCHY_METHOD = "FCIP"; 
+	public static final String REPAY_HIERARCHY_METHOD = "FCIP";
 
 	public static final String REPAY_INTEREST_HIERARCHY = "LI"; // L = Late pay Profit I = Profit
 	// Calculate PastDue on Day zero
@@ -145,7 +145,7 @@ public class ImplementationConstants {
 	// 2. FULL_ADJ : Full Adjustment(100%)
 	// 3. REQ_ADJ : Requested Adjustment based on Utilization
 	public static final String COLLATERAL_ADJ = "NO_ADJ";
-	
+
 	// In Penalty Calculation , If calculated amount is less than cap amount
 	// Need to rest amount with CAP amount only
 	public static final boolean ALW_LPP_MIN_CAP_AMT = false;
