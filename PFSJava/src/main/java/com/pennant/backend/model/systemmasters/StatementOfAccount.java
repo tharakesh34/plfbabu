@@ -115,6 +115,7 @@ public class StatementOfAccount {
 	private BigDecimal nextRpyPri = BigDecimal.ZERO;
 	private BigDecimal nextRpyPft = BigDecimal.ZERO;
 	private Date nextRpyDate;
+	private boolean advEmiApplicable = false;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////		Customer Details		////////////////////////////////
@@ -1070,6 +1071,14 @@ public class StatementOfAccount {
 
 	public void setCustFinRefDetails(List<String> custFinRefDetails) {
 		this.custFinRefDetails = custFinRefDetails;
+	}
+
+	public boolean isAdvEmiApplicable() {
+		return advEmiApplicable;
+	}
+
+	public void setAdvEmiApplicable(boolean advEmiApplicable) {
+		this.advEmiApplicable = advEmiApplicable;
 	}
 
 }

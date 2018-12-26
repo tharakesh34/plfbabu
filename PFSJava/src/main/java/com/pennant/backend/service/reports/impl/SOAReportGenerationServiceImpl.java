@@ -287,6 +287,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
 			}
 			
+			if (finMain.getAdvEMITerms() > 0) {
+				statementOfAccount.setAdvEmiApplicable(true);
+			}
 
 			//Including advance EMI terms
 			int tenure = statementOfAccount.getTenure();
