@@ -1970,12 +1970,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 						.getFinanceRepaymentsByFinRef(aFinanceMain.getFinReference(), false);
 				if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
 					boolean onlyBPIPayment = true;
-					//check for the BPI payment
-					if (bpiSchedule != null) {
-						for (FinanceRepayments financeRepayments : listFinanceRepayments) {
+					for (FinanceRepayments financeRepayments : listFinanceRepayments) {
+						//check for the BPI payment
+						if (bpiSchedule != null) {
 							if (financeRepayments.getFinSchdDate().compareTo(bpiSchedule.getSchDate()) != 0) {
 								onlyBPIPayment = false;
 							}
+						} else {
+							onlyBPIPayment = false;
 						}
 					}
 					if (!onlyBPIPayment) {
