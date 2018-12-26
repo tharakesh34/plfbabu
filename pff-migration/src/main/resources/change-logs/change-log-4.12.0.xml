@@ -5617,4 +5617,30 @@ UNION ALL
 		</createView>
 		</changeSet>
 
+	<changeSet id="86_pre" author="Siva" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'organizations');
+					select deps_save_and_drop_dependencies ('plf', 'organizations_temp');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="86" author="Siva" dbms="postgresql">
+		<modifyDataType tableName="organizations" columnName="name"
+			newDataType="citext" />
+	</changeSet>
+	<changeSet id="87" author="Siva" dbms="postgresql">
+		<modifyDataType tableName="organizations_temp"
+			columnName="name" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="87_post" author="Siva" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'organizations');
+					select deps_restore_dependencies ('plf', 'organizations_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
