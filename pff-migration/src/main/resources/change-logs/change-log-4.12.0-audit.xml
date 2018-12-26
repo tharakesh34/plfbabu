@@ -80,6 +80,14 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="3" author="swami.v">
+	<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+	<addColumn tableName="adtfinadvancepayments">
+		<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+
+	</addColumn>
+</changeSet>
+
 	<changeSet id="4" author="aditya">
 	<comment>changing data type of batchreference from varchar to bigint</comment>
 	<modifyDataType tableName="adtfintaxuploadheader" columnName="batchreference" newDataType="bigint"/>
@@ -118,11 +126,20 @@
   </addColumn>
 </changeSet>
 
+
       <changeSet id="10" author="Rahul">
       <comment>Added new column of "PartnerBankId" </comment>
 		<addColumn tableName="ADTMandates">
 		  <column name="PartnerBankId" type="bigint" defaultValue="0"/>
 		</addColumn>
 	  </changeSet>
+
+	<changeSet id="3" author="swami.v">
+		<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+		<addColumn tableName="adtfinadvancepayments">
+			<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
