@@ -4326,6 +4326,7 @@ public class PennantStaticListUtil {
 	 *            The master code.
 	 */
 	public void addQueryDetailExtRoles(List<ValueLabel> list) {
+		queryDetailExtRolesList = new ArrayList<>();
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
