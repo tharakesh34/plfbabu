@@ -302,7 +302,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		this.documnetName.setMaxlength(200);
-		this.docBarcode.setMaxlength(10);
+		this.docBarcode.setMaxlength(20);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
