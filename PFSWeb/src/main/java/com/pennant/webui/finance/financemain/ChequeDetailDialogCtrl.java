@@ -1146,7 +1146,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	public void doSave_PDC(FinanceDetail financeDetail, String finReference) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
-		final ChequeHeader aChequeHeader = new ChequeHeader();
+		ChequeHeader aChequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties(getChequeHeader(), aChequeHeader);
 		boolean isNew = false;
 		String rcdStatus = financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
@@ -1214,16 +1214,21 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		aChequeHeader.setNextTaskId(getNextTaskId());
 		aChequeHeader.setRoleCode(getRole());
 		aChequeHeader.setNextRoleCode(getNextRoleCode());
-		for (ChequeDetail chequeDetail : aChequeHeader.getChequeDetailList()) {
-			chequeDetail.setVersion(aChequeHeader.getVersion() + 1);
-			chequeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
-			chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			chequeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-			chequeDetail.setTaskId(getTaskId());
-			chequeDetail.setNextTaskId(getNextTaskId());
-			chequeDetail.setRoleCode(getRole());
-			chequeDetail.setNextRoleCode(getNextRoleCode());
-			chequeDetail.setRecordStatus(rcdStatus);
+		if(aChequeHeader.getChequeDetailList() == null || aChequeHeader.getChequeDetailList().isEmpty()) {
+			aChequeHeader = null;
+		} else {
+
+			for (ChequeDetail chequeDetail : aChequeHeader.getChequeDetailList()) {
+				chequeDetail.setVersion(aChequeHeader.getVersion() + 1);
+				chequeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+				chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				chequeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+				chequeDetail.setTaskId(getTaskId());
+				chequeDetail.setNextTaskId(getNextTaskId());
+				chequeDetail.setRoleCode(getRole());
+				chequeDetail.setNextRoleCode(getNextRoleCode());
+				chequeDetail.setRecordStatus(rcdStatus);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
