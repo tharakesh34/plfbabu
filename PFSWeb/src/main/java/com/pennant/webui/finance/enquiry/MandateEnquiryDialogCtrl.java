@@ -73,6 +73,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
@@ -177,6 +178,9 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	@Autowired
 	private ExternalDocumentManager externalDocumentManager;
+
+	protected ExtendedCombobox partnerBank;
+	protected Label label_PartnerBank;
 
 	/**
 	 * default constructor.<br>
@@ -316,6 +320,18 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+
+		if (ImplementationConstants.MANDATE_ALW_PARTNER_BANK) {
+			this.label_PartnerBank.setVisible(true);
+			this.partnerBank.setVisible(true);
+			this.partnerBank.setMaxlength(8);
+			this.partnerBank.setMandatoryStyle(false);
+			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -412,6 +428,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.finReference);
 		readOnlyComponent(true, this.swapIsActive);
 		readOnlyComponent(true, this.entityCode);
+		readOnlyComponent(true, this.partnerBank);
 
 		logger.debug("Leaving ");
 	}
@@ -491,6 +508,13 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		//Entity
 		this.entityCode.setValue(aMandate.getEntityCode(), aMandate.getEntityDesc());
+
+		if (this.label_PartnerBank.isVisible() && aMandate.getPartnerBankId() != Long.MIN_VALUE
+				&& aMandate.getPartnerBankId() != 0) {
+			this.partnerBank.setAttribute("partnerBankId", aMandate.getPartnerBankId());
+			this.partnerBank.setValue(StringUtils.trimToEmpty(aMandate.getPartnerBankCode()),
+					StringUtils.trimToEmpty(aMandate.getPartnerBankName()));
+		}
 	}
 
 	public void doFillManFinanceExposureDetails(List<FinanceEnquiry> manFinanceExposureDetails) {

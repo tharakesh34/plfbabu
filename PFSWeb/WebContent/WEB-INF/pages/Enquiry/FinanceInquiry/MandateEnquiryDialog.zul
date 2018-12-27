@@ -190,11 +190,19 @@
 									</hbox>
 								</row>
 								<row visible="true">
-									<label id="label_Active" value="${c:l('label_MandateDialog_Active.value')}" />
+									<label id="label_Active"
+										value="${c:l('label_MandateDialog_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<checkbox id="active" checked="true" disabled="true" />
+										<checkbox id="active"
+											checked="true" disabled="true" />
 									</hbox>
+
+									<label id="label_PartnerBank"
+										value="${c:l('label_MandateDialog_PartnerBank.value')}"
+										visible="false" />
+									<extendedcombobox id="partnerBank"
+										visible="false" />
 								</row>
 								<row>
 									<label id="label_ApprovalID" value="${c:l('label_MandateDialog_ApprovalID.value')}" />
