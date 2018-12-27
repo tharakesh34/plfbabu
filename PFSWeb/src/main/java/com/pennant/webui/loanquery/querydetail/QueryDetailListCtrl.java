@@ -148,7 +148,7 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		// Set the page level components.
 		setPageComponents(window_QueryDetailList, borderLayout_QueryDetailList, listBoxQueryDetail,
 				pagingQueryDetailList);
-		setItemRender(new QueryDetailListModelItemRenderer());
+		setItemRender(new QueryDetailListModelItemRenderer("", 0));
 
 		// Register buttons and fields.
 		registerButton(button_QueryDetailList_QueryDetailSearch);
@@ -170,9 +170,11 @@ public class QueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		registerField("usrLogin");
 		registerField("Module", module, SortOrder.NONE, sortOperator_Module, Operators.BOOLEAN);
 		fillComboBox(this.status, "", queryModuleStatusList, "");
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

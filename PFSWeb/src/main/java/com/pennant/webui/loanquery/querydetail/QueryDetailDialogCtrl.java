@@ -986,8 +986,11 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			wve.add(we);
 		}
 		// Raised By
+
 		try {
-			aQueryDetail.setRaisedBy(getUserWorkspace().getUserId());
+			if (aQueryDetail.isNewRecord()) {
+				aQueryDetail.setRaisedBy(getUserWorkspace().getUserId());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -156,7 +156,6 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		// Set the page level components.
 		setPageComponents(window_FinQueryDetailList, borderLayout_FinQueryDetailList, listBoxFinQueryDetail,
 				pagingFinQueryDetailList);
-		setItemRender(new QueryDetailListModelItemRenderer());
 
 		if (arguments.containsKey("financeMain")) {
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
@@ -173,6 +172,7 @@ public class FinQueryDetailListCtrl extends GFCBaseListCtrl<QueryDetail> {
 		if (arguments.containsKey("roleCode")) {
 			this.roleCode = (String) arguments.get("roleCode");
 		}
+		setItemRender(new QueryDetailListModelItemRenderer(roleCode, getUserWorkspace().getLoggedInUser().getUserId()));
 
 		if (arguments.containsKey("finHeaderList")) {
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
