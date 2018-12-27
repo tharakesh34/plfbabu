@@ -27,5 +27,6 @@
  	<include file="change-logs/change-log-insurance_vas_structure.xml"/>
  	<include file="change-logs/change-log-cibil-extract-enhacements.xml"/>
  	<include file="change-logs/change-log-bugs-1135.xml"/>
+ 	<include file="change-logs/change-log-legal.xml"/>
 	
 </databaseChangeLog>

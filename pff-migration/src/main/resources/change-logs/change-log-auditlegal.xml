@@ -335,4 +335,62 @@
 		 	<column name="Module" type="varchar(20)"/>
 		 </addColumn>
 	</changeSet>
+	
+	<changeSet id="16" author="Viswanadh.S">
+	  <addColumn tableName="AdtLegalDocuments">
+	  	<column name="documentHolderProperty" type="varchar(100)"/>
+	  	<column name="documentPropertyAddress" type="varchar(60)"/>
+	  	<column name="documentBriefTracking" type="varchar(60)"/>
+	  	<column name="isDocumentMortgage" type="bit"/>
+	  </addColumn>
+	</changeSet>
+	
+	<changeSet id="17" author="Viswanadh.S">
+	 	<addColumn tableName="AdtLegalPropertyDetails">
+		  	<column name="minorshareInvolved" type="varchar(5)"/>
+		  	<column name="propertyIsGramanatham" type="varchar(5)"/>
+		  	<column name="propertyReleased" type="varchar(5)"/>
+		  	<column name="propOriginalsAvailable" type="varchar(5)"/>
+		  	<column name="propertyIsAgricultural" type="varchar(5)"/>
+		  	<column name="nocObtainedFromLPA" type="varchar(5)"/>
+		  	<column name="anyMortgagePending" type="varchar(5)"/>
+		</addColumn>
+	</changeSet>	
+	<changeSet id="18" author="Viswanadh.S">
+	 	<addColumn tableName="AdtLegalPropertyDetails">
+		  	 <column name="urbanLandCeiling" type="varchar(5)"/>
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="19" author="Viswanadh.S">
+		<sql>
+	 		alter table AdtLegalDocuments drop column isDocumentMortgage cascade;
+	 	</sql>	
+	</changeSet>
+	
+	<changeSet id="20" author="Viswanadh.S">
+	 	<addColumn tableName="AdtLegalDocuments">
+	 		<column name="documentMortgage" type="bit"/>
+	 	</addColumn>
+	 </changeSet>	
+	 
+	 <changeSet id="21" author="Viswanadh.S">
+		<addColumn tableName="AdtLegalECDetails">
+	 		<column name="ecNumber" type="varchar(20)"/>
+	 		<column name="ecFrom" type="datetime"/>
+	 		<column name="ecTo" type="datetime"/>
+	 		<column name="ecType" type="char(1)"/>
+	 	</addColumn>	
+	</changeSet>	
+	
+	<changeSet id="22" author="Viswanadh.S">
+	 	<addColumn tableName="AdtLegalPropertyDetails">
+		  	<column name="northSideEastByWest" type="varchar(75)"/>
+		  	<column name="southSideWestByEast" type="varchar(75)"/>
+		  	<column name="eastSideNorthBySouth" type="varchar(75)"/>
+		  	<column name="westSideSouthByNorth" type="varchar(75)"/>
+		</addColumn>
+	</changeSet>	
+	
 </databaseChangeLog>

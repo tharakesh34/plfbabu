@@ -64,7 +64,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Data access layer implementation for <code>LegalDocument</code> with set of CRUD operations.
+ * Data access layer implementation for <code>LegalDocument</code> with set of
+ * CRUD operations.
  */
 public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements LegalDocumentDAO {
 	private static Logger logger = Logger.getLogger(LegalDocumentDAOImpl.class);
@@ -83,6 +84,8 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		sql.append(
 				" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
 		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType,");
+		
+		sql.append(" documentHolderProperty, documentPropertyAddress, documentBriefTracking, documentMortgage, ");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalDocuments");
@@ -119,6 +122,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		sql.append(
 				" documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
 		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType, ");
+		sql.append(" documentHolderProperty, documentPropertyAddress, documentBriefTracking, documentMortgage, ");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalDocuments");
@@ -153,6 +157,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		sql.append(
 				"documentType, documentCategory, scheduleType, documentName, documentTypeVerify, documentRemarks, documentReference, ");
 		sql.append(" documentTypeApprove, documentAccepted, uploadDocumentType,");
+		sql.append(" documentHolderProperty, documentPropertyAddress, documentBriefTracking, documentMortgage, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
@@ -160,6 +165,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		sql.append(
 				" :documentType, :documentCategory, :scheduleType, :documentName, :documentTypeVerify, :documentRemarks, :documentReference, ");
 		sql.append(" :documentTypeApprove, :documentAccepted, :uploadDocumentType,");
+		sql.append(" :documentHolderProperty, :documentPropertyAddress, :documentBriefTracking, :documentMortgage, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -197,6 +203,11 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 		sql.append(
 				" documentRemarks = :documentRemarks, documentReference = :documentReference, documentTypeApprove = :documentTypeApprove, ");
 		sql.append(" documentAccepted = :documentAccepted, uploadDocumentType = :uploadDocumentType, ");
+
+		sql.append(
+				" documentHolderProperty = :documentHolderProperty, documentPropertyAddress= :documentPropertyAddress, "
+				+ " documentBriefTracking = :documentBriefTracking, documentMortgage = :documentMortgage, ");
+
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

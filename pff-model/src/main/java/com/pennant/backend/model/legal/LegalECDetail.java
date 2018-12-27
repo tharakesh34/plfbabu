@@ -68,6 +68,11 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private LegalECDetail befImage;
 	private LoggedInUser userDetails;
+	
+	private String ecNumber;
+	private Date ecFrom;
+	private Date ecTo;
+	private String ecType;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -181,4 +186,36 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 		this.strECDate = strECDate;
 	}
 
+	public Date getEcFrom() {
+		return ecFrom;
+	}
+
+	public void setEcFrom(Date ecFrom) {
+		this.ecFrom = ecFrom;
+	}
+
+	public Date getEcTo() {
+		return ecTo;
+	}
+
+	public void setEcTo(Date ecTo) {
+		this.ecTo = ecTo;
+	}
+
+	public String getEcNumber() {
+		return ecNumber;
+	}
+
+	public void setEcNumber(String ecNumber) {
+		this.ecNumber = ecNumber;
+	}
+
+	public String getEcType() {
+		return ecType;
+	}
+
+	public void setEcType(String ecType) {
+		this.ecType = ecType;
+	}
+	
 }

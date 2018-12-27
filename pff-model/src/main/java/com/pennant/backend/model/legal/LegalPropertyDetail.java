@@ -93,6 +93,21 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	private LegalPropertyDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	
+	private String urbanLandCeiling;
+	private String minorshareInvolved;
+	private String propertyIsGramanatham;
+	private String propertyReleased;
+	private String propOriginalsAvailable;
+	private String propertyIsAgricultural;
+	private String nocObtainedFromLPA;
+	private String anyMortgagePending;
+	
+	private String northSideEastByWest;
+	private String southSideWestByEast;
+	private String eastSideNorthBySouth;
+	private String westSideSouthByNorth;
+	
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -305,4 +320,99 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 		this.listApplicantNames = listApplicantNames;
 	}
 
+	public String getUrbanLandCeiling() {
+		return urbanLandCeiling;
+	}
+
+	public void setUrbanLandCeiling(String urbanLandCeiling) {
+		this.urbanLandCeiling = urbanLandCeiling;
+	}
+
+	public String getMinorshareInvolved() {
+		return minorshareInvolved;
+	}
+
+	public void setMinorshareInvolved(String minorshareInvolved) {
+		this.minorshareInvolved = minorshareInvolved;
+	}
+
+	public String getPropertyIsGramanatham() {
+		return propertyIsGramanatham;
+	}
+
+	public void setPropertyIsGramanatham(String propertyIsGramanatham) {
+		this.propertyIsGramanatham = propertyIsGramanatham;
+	}
+
+	public String getPropertyReleased() {
+		return propertyReleased;
+	}
+
+	public void setPropertyReleased(String propertyReleased) {
+		this.propertyReleased = propertyReleased;
+	}
+
+	public String getPropOriginalsAvailable() {
+		return propOriginalsAvailable;
+	}
+
+	public void setPropOriginalsAvailable(String propOriginalsAvailable) {
+		this.propOriginalsAvailable = propOriginalsAvailable;
+	}
+
+	public String getPropertyIsAgricultural() {
+		return propertyIsAgricultural;
+	}
+
+	public void setPropertyIsAgricultural(String propertyIsAgricultural) {
+		this.propertyIsAgricultural = propertyIsAgricultural;
+	}
+
+	public String getNocObtainedFromLPA() {
+		return nocObtainedFromLPA;
+	}
+
+	public void setNocObtainedFromLPA(String nocObtainedFromLPA) {
+		this.nocObtainedFromLPA = nocObtainedFromLPA;
+	}
+
+	public String getAnyMortgagePending() {
+		return anyMortgagePending;
+	}
+
+	public void setAnyMortgagePending(String anyMortgagePending) {
+		this.anyMortgagePending = anyMortgagePending;
+	}
+
+	public String getNorthSideEastByWest() {
+		return northSideEastByWest;
+	}
+
+	public void setNorthSideEastByWest(String northSideEastByWest) {
+		this.northSideEastByWest = northSideEastByWest;
+	}
+
+	public String getSouthSideWestByEast() {
+		return southSideWestByEast;
+	}
+
+	public void setSouthSideWestByEast(String southSideWestByEast) {
+		this.southSideWestByEast = southSideWestByEast;
+	}
+
+	public String getEastSideNorthBySouth() {
+		return eastSideNorthBySouth;
+	}
+
+	public void setEastSideNorthBySouth(String eastSideNorthBySouth) {
+		this.eastSideNorthBySouth = eastSideNorthBySouth;
+	}
+
+	public String getWestSideSouthByNorth() {
+		return westSideSouthByNorth;
+	}
+
+	public void setWestSideSouthByNorth(String westSideSouthByNorth) {
+		this.westSideSouthByNorth = westSideSouthByNorth;
+	}
 }

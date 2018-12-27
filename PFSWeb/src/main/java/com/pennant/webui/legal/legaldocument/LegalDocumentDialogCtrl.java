@@ -45,6 +45,7 @@ package com.pennant.webui.legal.legaldocument;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
@@ -76,10 +78,13 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.PennantConstants;
@@ -91,6 +96,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.legal.legaldetail.LegalDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -99,10 +105,12 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Legal/LegalDocument/legalDocumentDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/Legal/LegalDocument/legalDocumentDialog.zul file. <br>
  */
 public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
+	private static final String STRING_COMMA = ",";
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(LegalDocumentDialogCtrl.class);
 
@@ -118,6 +126,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	protected Label documentCategoryLabel;
 	protected Combobox scheduleType;
 	protected Groupbox gb_documentBasicDetails;
+	protected Groupbox gb_documentDetailsTracking;
 
 	// Verifier
 	protected Combobox documentTypeVerify;
@@ -149,6 +158,13 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	private Map<String, String> cetegoryDescMap = new HashMap<>();
 
+	protected Textbox documentHolderProperty;
+	protected Button btnHolderProperty;
+
+	protected Textbox documentPropertyAddress;
+	protected Textbox documentBriefTracking;
+	protected Checkbox isDocumentMortgage;
+
 	@Autowired
 	private SearchProcessor searchProcessor;
 
@@ -174,7 +190,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -244,6 +261,10 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.documentName.setMaxlength(100);
 		this.documentRemarks.setMaxlength(3000);
 
+		if (enquiry) {
+			this.btnHolderProperty.setDisabled(true);
+		}
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -306,7 +327,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -318,7 +340,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -404,7 +427,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		fillComboBox(this.documentTypeApprove, aLegalDocument.getDocumentTypeApprove(), listDocumentTypeApprove, "");
 		fillComboBox(this.documentAccepted, aLegalDocument.getDocumentAccepted(), listDocumentAccepted, "");
 
-		//Document
+		// Document
 		this.documentName.setValue(aLegalDocument.getDocumentName());
 		this.documentName.setAttribute("data", aLegalDocument);
 		AMedia amedia = null;
@@ -437,7 +460,38 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			}
 		}
 
+		this.documentHolderProperty.setValue(getSelectedApplicantNames(aLegalDocument.getDocumentHolderProperty()));
+		this.documentPropertyAddress.setValue(aLegalDocument.getDocumentPropertyAddress());
+		this.documentBriefTracking.setValue(aLegalDocument.getDocumentBriefTracking());
+		this.isDocumentMortgage.setChecked(aLegalDocument.isDocumentMortgage());
+
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String getSelectedApplicantNames(String docHolderIds) {
+		if (docHolderIds != null) {
+			List<ValueLabel> docHolders = getApplicantNames();
+			if (docHolders != null) {
+				Map<String, String> holdersMap = new HashMap<>();
+				for (ValueLabel applicants : docHolders) {
+					holdersMap.put(applicants.getLabel(), applicants.getValue());
+				}
+				List<String> ids = Arrays.asList(docHolderIds.split(STRING_COMMA));
+				if (!ids.isEmpty()) {
+					String holderNames = "";
+					for (String id : ids) {
+						if (holdersMap.get(id) != null) {
+							holderNames = holderNames + holdersMap.get(id) + STRING_COMMA;
+						}
+					}
+					if (holderNames.endsWith(STRING_COMMA)) {
+						holderNames = holderNames.substring(0, holderNames.length() - 1);
+					}
+					return holderNames;
+				}
+			}
+		}
+		return "";
 	}
 
 	public void onChange$documentCategory(Event event) {
@@ -638,6 +692,55 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			wve.add(we);
 		}
 
+		try {
+			List<ValueLabel> docHolders = getApplicantNames();
+			if (docHolders != null) {
+				Map<String, String> holdersMap = new HashMap<>();
+				for (ValueLabel applicants : docHolders) {
+					holdersMap.put(applicants.getValue(), applicants.getLabel());
+				}
+
+				String selectedApplicants = this.documentHolderProperty.getValue();
+				if (selectedApplicants != null) {
+					List<String> selectedApplicantList = Arrays.asList(selectedApplicants.split(STRING_COMMA));
+					String selectedIds = "";
+					for (String selApp : selectedApplicantList) {
+						String id = holdersMap.get(selApp);
+						selectedIds = selectedIds + id + STRING_COMMA;
+					}
+					if (selectedIds != null) {
+						if (selectedIds.endsWith(STRING_COMMA)) {
+							selectedIds = selectedIds.substring(0, selectedIds.length() - 1);
+						}
+						aLegalDocument.setDocumentHolderProperty(selectedIds);
+					}
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aLegalDocument.setDocumentPropertyAddress(this.documentPropertyAddress.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aLegalDocument.setDocumentBriefTracking(this.documentBriefTracking.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			if (this.isDocumentMortgage.isChecked()) {
+				aLegalDocument.setDocumentMortgage(true);
+			} else {
+				aLegalDocument.setDocumentMortgage(false);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -689,6 +792,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				this.gb_documentBasicDetails.setVisible(true);
 				this.gb_documentVerifyDetails.setVisible(true);
 				this.gb_documentApproverDetails.setVisible(true);
+				this.gb_documentDetailsTracking.setVisible(true);
 				doReadOnly();
 			}
 
@@ -762,6 +866,18 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			this.documentAccepted.setConstraint(new PTListValidator(
 					Labels.getLabel("label_LegalDocumentDialog_DocumentAccepted.value"), listDocumentAccepted, true));
 		}
+
+		if (!this.documentPropertyAddress.isReadonly()) {
+			this.documentPropertyAddress.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentPropertyAddress.value"),
+							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
+		}
+		if (!this.documentBriefTracking.isReadonly()) {
+			this.documentBriefTracking.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentBriefTracking.value"),
+							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -783,7 +899,11 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.documentName.setConstraint("");
 		this.documentTypeApprove.setConstraint("");
 		this.documentAccepted.setConstraint("");
-
+		
+		this.documentHolderProperty.setConstraint("");
+		this.documentBriefTracking.setConstraint("");
+		this.documentPropertyAddress.setConstraint("");
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -808,7 +928,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -986,7 +1107,13 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		// Approver
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentTypeApprove"), this.documentTypeApprove);
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentAccepted"), this.documentAccepted);
-
+		
+		// Tracker
+		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentHolderProperty"), this.documentHolderProperty);
+		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentPropertyAddress"), this.documentPropertyAddress);
+		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentBriefTracking"), this.documentBriefTracking);
+		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentMortgage"), this.isDocumentMortgage);
+		
 		// Group boxes visibility based on roles
 		this.gb_documentBasicDetails
 				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentBasicDetails"));
@@ -994,7 +1121,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_gb_documentVerifyDetails"));
 		this.gb_documentApproverDetails
 				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentApproverDetails"));
-
+		this.gb_documentDetailsTracking
+		.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentDetailsTracking"));
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1048,6 +1177,19 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		readOnlyComponent(true, this.documentAccepted);
 		readOnlyComponent(true, this.btnUploadDoc);
 
+		readOnlyComponent(true, this.documentHolderProperty);
+		readOnlyComponent(true, this.documentBriefTracking);
+		readOnlyComponent(true, this.documentPropertyAddress);
+		readOnlyComponent(true, this.isDocumentMortgage);
+		
+		
+		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY"))) {
+			this.gb_documentDetailsTracking.setVisible(true);
+		} else {
+			this.gb_documentDetailsTracking.setVisible(false);
+		}
+
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1068,6 +1210,12 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.documentName.setValue("");
 		this.documentTypeApprove.setSelectedIndex(0);
 		this.documentAccepted.setSelectedIndex(0);
+
+		this.documentHolderProperty.setValue("");
+		this.documentBriefTracking.setValue("");
+		this.documentPropertyAddress.setValue("");
+		this.isDocumentMortgage.setValue("");
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1230,6 +1378,55 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aLegalDocument.getBefImage(), aLegalDocument);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, aLegalDocument.getUserDetails(),
 				getOverideMap());
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onClick$btnHolderProperty(Event event) {
+		logger.debug("Entering  " + event.toString());
+		List<ValueLabel> applicantNames = getApplicantNames();
+		
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_LegalDocumentDialog, applicantNames,
+				this.documentHolderProperty.getValue(), null);
+
+		if (dataObject instanceof String) {
+			this.documentHolderProperty.setValue(dataObject.toString());
+			this.documentHolderProperty.setTooltiptext("");
+		} else {
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			if (details != null) {
+				String tempflagcode = "";
+				List<String> flagKeys = new ArrayList<>(details.keySet());
+				for (int i = 0; i < flagKeys.size(); i++) {
+					if (StringUtils.isEmpty(flagKeys.get(i))) {
+						continue;
+					}
+					if (i == 0) {
+						tempflagcode = flagKeys.get(i);
+					} else {
+						tempflagcode = tempflagcode + STRING_COMMA + flagKeys.get(i);
+					}
+				}
+				this.documentHolderProperty.setValue(tempflagcode);
+			}
+		}
+		logger.debug("Leaving " + event.toString());
+	}
+
+	private List<ValueLabel> getApplicantNames() {
+		List<ValueLabel> applicantNames = new ArrayList<>();
+		LegalDetail detail = getLegalDetailDialogCtrl().getLegalDetail();
+		List<Customer> customerList = detail.getCustomerList();
+		if (customerList != null) {
+			for (Customer customer : customerList) {
+				ValueLabel valueLabel = new ValueLabel();
+				long id = customer.getId();
+				String name = customer.getCustShrtName();
+				valueLabel.setValue(name);
+				valueLabel.setLabel(String.valueOf(id));
+				applicantNames.add(valueLabel);
+			}
+		}
+		return applicantNames;
 	}
 
 	public boolean isNewRecord() {

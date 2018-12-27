@@ -184,6 +184,8 @@ public class PennantRegularExpressions {
 
 	public static final String REGEX_BARCODE_NUMBER = "REGEX_BARCODE_NUMBER";
 	public static final String REGEX_SPECIAL_REGX = "REGEX_SPECIAL_REGX";
+	
+	public static final String REGEX_ALPHA_NUMERIC_DOT_SPACE = "REGEX_ALPHA_NUMERIC_DOT_SPACE";
 
 	public static final String REGEX_LOOK_UP_VALUE = "REGEX_LOOK_UP_VALUE";
 
@@ -257,6 +259,7 @@ public class PennantRegularExpressions {
 			put(REGEX_BARCODE_NUMBER, "[0-9]{9}[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_SPECIAL_REGX,
 					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_]*");
+			put(REGEX_ALPHA_NUMERIC_DOT_SPACE, "[A-Za-z0-9 .]+");
 
 		}
 	};

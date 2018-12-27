@@ -248,7 +248,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	protected Combobox legalDecision;
 	protected Textbox legalRemarks;
 
-	// Legal Documnets
+	// Legal Documents
 	protected Listbox listBoxGenaratedDocuments;
 
 	private LegalDetail legalDetail;
@@ -271,7 +271,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private List<LegalNote> legalNotesList = null;
 	private String method = null;
 	private boolean newApplicants = false;
-
+	
 	private boolean fromLoan = false;
 	private boolean newRecord = false;
 
@@ -611,7 +611,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		}
 		doFillLegalNotesDetails(aLegalDetail.getLegalNotesList());
 
-		// Covents tab
+		// Convents tab
 		if (this.coventsTab.isVisible()) {
 			selectedTab = true;
 		}
@@ -2244,7 +2244,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 */
 	public void doFillECDDetails(List<LegalECDetail> legalECDetailList) {
 		logger.debug(Literal.ENTERING);
-
+		ArrayList<ValueLabel> ecTypesTypesList = PennantStaticListUtil.getEcTypes();
 		this.listBoxLegalECDetail.getItems().clear();
 		setEcdDetailList(legalECDetailList);
 
@@ -2256,6 +2256,19 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc.setParent(item);
 				lc = new Listcell(legalECDetail.getDocument());
 				lc.setParent(item);
+				
+				lc = new Listcell(legalECDetail.getEcNumber());
+				lc.setParent(item);
+				
+				lc = new Listcell(DateUtility.formateDate(legalECDetail.getEcFrom(), PennantConstants.dateFormat));
+				lc.setParent(item);
+				
+				lc = new Listcell(DateUtility.formateDate(legalECDetail.getEcTo(), PennantConstants.dateFormat));
+				lc.setParent(item);
+				
+				lc = new Listcell(PennantStaticListUtil.getlabelDesc(legalECDetail.getEcType(), ecTypesTypesList));
+				lc.setParent(item);
+				
 				lc = new Listcell(legalECDetail.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(legalECDetail.getRecordType()));
@@ -2398,10 +2411,13 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	private String getLoanWorkFlowRoles() {
+		logger.debug(Literal.ENTERING);
+		
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlow(getLegalDetail().getFinType(),
 				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE, "_FTView");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
 		String roles = workFlowDetails.getWorkFlowRoles();
+		logger.debug(Literal.LEAVING);
 		return roles;
 	}
 

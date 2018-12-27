@@ -815,4 +815,9 @@ public class PennantConstants {
 	public static final String ASM = "ASM";
 	public static final String KVI = "KVI";
 	public static final String DEFAULT = "DEFAULT";
+	
+	public static final String ORIGINAL = "O";
+	public static final String PHOTOSTAT = "P";
+	
+	
 }

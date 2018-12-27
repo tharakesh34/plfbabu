@@ -80,8 +80,10 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalId, legalPropertyId, scheduleType, propertySchedule, propertyType, northBy, ");
-		sql.append(" southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, ");
-		sql.append(" propertyOwner, ");
+		sql.append(" southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, propertyOwner, ");
+		sql.append(" urbanLandCeiling, minorshareInvolved, propertyIsGramanatham, propertyReleased, ");
+		sql.append(" propOriginalsAvailable, propertyIsAgricultural, nocObtainedFromLPA, anyMortgagePending, ");
+		sql.append(" northSideEastByWest, southSideWestByEast, eastSideNorthBySouth, westSideSouthByNorth, ");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalPropertyDetails");
@@ -114,6 +116,9 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append(" legalId, legalPropertyId, scheduleType, propertySchedule, propertyType, northBy, ");
 		sql.append(" southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, ");
 		sql.append(" propertyOwner, ");
+		sql.append(" urbanLandCeiling, minorshareInvolved, propertyIsGramanatham, propertyReleased, ");
+		sql.append(" propOriginalsAvailable, propertyIsAgricultural, nocObtainedFromLPA, anyMortgagePending, ");
+		sql.append(" northSideEastByWest, southSideWestByEast, eastSideNorthBySouth, westSideSouthByNorth, ");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalPropertyDetails");
@@ -148,12 +153,18 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append("(legalPropertyId, legalId, scheduleType, propertySchedule, propertyType, northBy, ");
 		sql.append("southBy, eastBy, westBy, measurement, registrationOffice, registrationDistrict, ");
 		sql.append(" propertyOwner, ");
+		sql.append(" urbanLandCeiling, minorshareInvolved, propertyIsGramanatham, propertyReleased, ");
+		sql.append(" propOriginalsAvailable, propertyIsAgricultural, nocObtainedFromLPA, anyMortgagePending, ");
+		sql.append(" northSideEastByWest, southSideWestByEast, eastSideNorthBySouth, westSideSouthByNorth, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalPropertyId, :legalId, :scheduleType, :propertySchedule, :propertyType, :northBy, ");
 		sql.append(" :southBy, :eastBy, :westBy, :measurement, :registrationOffice, :registrationDistrict, ");
 		sql.append(" :propertyOwner, ");
+		sql.append(" :urbanLandCeiling, :minorshareInvolved, :propertyIsGramanatham, :propertyReleased, ");
+		sql.append(" :propOriginalsAvailable, :propertyIsAgricultural, :nocObtainedFromLPA, :anyMortgagePending, ");
+		sql.append(" :northSideEastByWest, :southSideWestByEast, :eastSideNorthBySouth, :westSideSouthByNorth, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -185,6 +196,13 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append(" eastBy = :eastBy, westBy = :westBy, measurement = :measurement, ");
 		sql.append(
 				" registrationOffice = :registrationOffice, registrationDistrict = :registrationDistrict, propertyOwner = :propertyOwner, ");
+		
+		sql.append(" urbanLandCeiling = :urbanLandCeiling, minorshareInvolved = :minorshareInvolved, ");
+		sql.append(" propertyIsGramanatham = :propertyIsGramanatham, propertyReleased = :propertyReleased, ");
+		sql.append(" propOriginalsAvailable = :propOriginalsAvailable, propertyIsAgricultural = :propertyIsAgricultural, ");
+		sql.append(" nocObtainedFromLPA = :nocObtainedFromLPA, anyMortgagePending = :anyMortgagePending, ");
+		sql.append(" northSideEastByWest = :northSideEastByWest, southSideWestByEast = :southSideWestByEast, ");
+		sql.append(" eastSideNorthBySouth = :eastSideNorthBySouth, westSideSouthByNorth = :westSideSouthByNorth, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

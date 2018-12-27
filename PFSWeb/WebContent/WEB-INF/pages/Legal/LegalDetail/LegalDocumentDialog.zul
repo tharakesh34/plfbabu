@@ -9,7 +9,7 @@
 	<window>
 		<window id="window_LegalDocumentDialog" border="normal"
 			apply="${legalDocumentDialogCtrl}" width="100%" height="80%"
-			sizable="false">
+			sizable="auto" >
 
 			<borderlayout id="borderlayoutLegalDocument">
 				<north>
@@ -229,6 +229,47 @@
 								</rows>
 							</grid>
 						</groupbox>
+						
+						<groupbox id="gb_documentDetailsTracking" sclass="gb-dialog">
+							<caption label="${c:l('caption_LegalDocumentDialog_LegalDocumentDetailsTrackign.value')}" />
+							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+								<columns>
+									<column width="15%" />
+									<column width="35%" />
+									<column width="15%" />
+									<column width="35%" />
+								</columns>
+								<rows>
+									<row>
+										<label id="label_DocumentHolderProperty" value="${c:l('label_LegalDocumentDialog_DocumentHolderProperty.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<!-- <listbox id="documentHolderProperty" width="180px" multiple="true" height="100px" rows="4" /> -->
+											<textbox id="documentHolderProperty" width="180px" />
+														<button id="btnHolderProperty" image="/images/icons/LOVSearch.png" />
+										</hbox>
+										<label id="label_DocumentPropertyAddress" value="${c:l('label_LegalDocumentDialog_DocumentPropertyAddress.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory"/>
+											<textbox id="documentPropertyAddress" width="180px" maxlength="60"/>
+										</hbox>
+									</row>
+									<row>
+										<label id="label_DocumentBriefTracking" value="${c:l('label_LegalDocumentDialog_DocumentBriefTracking.value')}" />
+										<hbox>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="documentBriefTracking" width="180px" maxlength="60" />
+										</hbox>
+										<label id="label_DocumentMortgage" value="${c:l('label_LegalDocumentDialog_DocumentMortgage.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="isDocumentMortgage" ></checkbox>
+										</hbox>
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
+						
 						<div id="docDiv" />
 						<iframe id="documentPdfView" width="100%"
 							height="100%" />

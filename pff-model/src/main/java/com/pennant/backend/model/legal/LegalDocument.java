@@ -98,6 +98,12 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentDateStr;
 	private String documentAcceptedName;
 	private String documentTypeApproveName;
+	
+	// --- Document Tracking fields -----//
+	private String documentHolderProperty;
+	private String documentPropertyAddress;
+	private String documentBriefTracking;
+	private boolean documentMortgage = false;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -335,4 +341,37 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 		this.documentTypeApproveName = documentTypeApproveName;
 	}
 
+	public String getDocumentHolderProperty() {
+		return documentHolderProperty;
+	}
+
+	public void setDocumentHolderProperty(String documentHolderProperty) {
+		this.documentHolderProperty = documentHolderProperty;
+	}
+
+	public String getDocumentPropertyAddress() {
+		return documentPropertyAddress;
+	}
+
+	public void setDocumentPropertyAddress(String documentPropertyAddress) {
+		this.documentPropertyAddress = documentPropertyAddress;
+	}
+
+	public String getDocumentBriefTracking() {
+		return documentBriefTracking;
+	}
+
+	public void setDocumentBriefTracking(String documentBriefTracking) {
+		this.documentBriefTracking = documentBriefTracking;
+	}
+
+	public boolean isDocumentMortgage() {
+		return documentMortgage;
+	}
+
+	public void setDocumentMortgage(boolean documentMortgage) {
+		this.documentMortgage = documentMortgage;
+	}
+	
+	
 }

@@ -3493,4 +3493,457 @@
 			 Update legaldetails set module = 'Finance';
 		 </sql>
 	</changeSet>
+	
+	<changeSet id="122" author="Viswanadh.S">
+	 	<addColumn tableName="LegalDocuments">
+		  	<column name="DocumentHolderProperty" type="varchar(100)"/>
+		  	<column name="DocumentPropertyAddress" type="varchar(60)"/>
+		  	<column name="DocumentBriefTracking" type="varchar(60)"/>
+		  	<column name="IsDocumentMortgage" type="bit"/>
+		</addColumn>
+	</changeSet>	
+	<changeSet id="123" author="Viswanadh.S">	
+		<addColumn tableName="LegalDocuments_Temp">
+		  	<column name="DocumentHolderProperty" type="varchar(100)"/>
+		  	<column name="DocumentPropertyAddress" type="varchar(60)"/>
+		  	<column name="DocumentBriefTracking" type="varchar(60)"/>
+		  	<column name="IsDocumentMortgage" type="bit"/>
+		  </addColumn>	
+	</changeSet>
+	
+	<changeSet id="124" author="Viswanadh.S">
+		<createView viewName="LegalDocuments_AView" replaceIfExists="true">
+			SELECT  T1.LegalId, T1.LegalDocumentId, T1.DocumentDate, T1.DocumentDetail, T1.DocumentNo,
+			T1.SurveyNo, T1.DocumentType, T1.DocumentCategory, T1.ScheduleType,T1.DocumentName,
+			T1.DocumentReference, T1.DocumentRemarks, T1.DocumentTypeVerify, T1.DocumentTypeApprove, T1.DocumentAccepted, T1.uploadDocumentType, 
+			T1.documentHolderProperty, T1.documentPropertyAddress, T1.documentBriefTracking, T1.isDocumentMortgage, 
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalDocuments T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="125" author="Viswanadh.S">
+		<createView viewName="LegalDocuments_View" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalDocumentId, T1.DocumentDate, T1.DocumentDetail, T1.DocumentNo,
+						T1.SurveyNo, T1.DocumentType, T1.DocumentCategory, T1.ScheduleType,T1.DocumentName, T1.uploadDocumentType,
+						T1.DocumentReference, T1.DocumentRemarks, T1.DocumentTypeVerify, T1.DocumentTypeApprove, T1.DocumentAccepted, 	
+						T1.DocumentHolderProperty, T1.DocumentPropertyAddress, T1.DocumentBriefTracking, T1.IsDocumentMortgage,	
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalDocuments_Temp T1 
+			UNION ALL
+			SELECT T1.LegalId, T1.LegalDocumentId, T1.DocumentDate, T1.DocumentDetail, T1.DocumentNo,
+						T1.SurveyNo, T1.DocumentType, T1.DocumentCategory, T1.ScheduleType,T1.DocumentName, T1.uploadDocumentType,
+						T1.DocumentReference, T1.DocumentRemarks, T1.DocumentTypeVerify, T1.DocumentTypeApprove, T1.DocumentAccepted, 	
+						T1.DocumentHolderProperty, T1.DocumentPropertyAddress, T1.DocumentBriefTracking, T1.IsDocumentMortgage,	
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalDocuments T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalDocuments_Temp WHERE LegalDocumentId = T1.LegalDocumentId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="126" author="Viswanadh.S">
+	 	<addColumn tableName="LegalPropertyDetails">
+		  	<column name="urbanLandCeiling" type="varchar(5)"/>
+		  	<column name="minorshareInvolved" type="varchar(5)"/>
+		  	<column name="propertyIsGramanatham" type="varchar(5)"/>
+		  	<column name="propertyReleased" type="varchar(5)"/>
+		  	<column name="propOriginalsAvailable" type="varchar(5)"/>
+		  	<column name="propertyIsAgricultural" type="varchar(5)"/>
+		  	<column name="nocObtainedFromLPA" type="varchar(5)"/>
+		  	<column name="anyMortgagePending" type="varchar(5)"/>
+		</addColumn>
+	</changeSet>	
+	<changeSet id="127" author="Viswanadh.S">	
+		<addColumn tableName="LegalPropertyDetails_Temp">
+		  <column name="urbanLandCeiling" type="varchar(5)"/>
+		  	<column name="minorshareInvolved" type="varchar(5)"/>
+		  	<column name="propertyIsGramanatham" type="varchar(5)"/>
+		  	<column name="propertyReleased" type="varchar(5)"/>
+		  	<column name="propOriginalsAvailable" type="varchar(5)"/>
+		  	<column name="propertyIsAgricultural" type="varchar(5)"/>
+		  	<column name="nocObtainedFromLPA" type="varchar(5)"/>
+		  	<column name="anyMortgagePending" type="varchar(5)"/>
+		  </addColumn>	
+	</changeSet>
+	
+	<changeSet id="128" author="Viswanadh.S">
+		<createView viewName="LegalPropertyDetails_AView" replaceIfExists="true">
+			SELECT T1.LegalPropertyId, T1.LegalId, T1.ScheduleType, T1.PropertySchedule, T1.PropertyType, T1.NorthBy,
+			T1.SouthBy, T1.EastBy, T1.WestBy, T1.Measurement, T1.Registrationoffice, T1.RegistrationDistrict, T1.PropertyOwner, 
+			T1.urbanLandCeiling, T1.minorshareInvolved, T1.propertyIsGramanatham, T1.propertyReleased, 
+			T1.propOriginalsAvailable, T1.propertyIsAgricultural, T1.nocObtainedFromLPA, T1.anyMortgagePending,  
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalPropertyDetails T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="129" author="Viswanadh.S">
+		<createView viewName="LegalPropertyDetails_View" replaceIfExists="true">
+			SELECT T1.LegalPropertyId, T1.LegalId, T1.ScheduleType, T1.PropertySchedule, T1.PropertyType, T1.NorthBy,
+			T1.SouthBy, T1.EastBy, T1.WestBy, T1.Measurement, T1.Registrationoffice, T1.RegistrationDistrict, T1.PropertyOwner, 	
+			T1.urbanLandCeiling, T1.minorshareInvolved, T1.propertyIsGramanatham, T1.propertyReleased, 
+			T1.propOriginalsAvailable, T1.propertyIsAgricultural, T1.nocObtainedFromLPA, T1.anyMortgagePending,  	
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalPropertyDetails_Temp T1 
+			UNION ALL
+			SELECT T1.LegalPropertyId, T1.LegalId, T1.ScheduleType, T1.PropertySchedule, T1.PropertyType, T1.NorthBy,
+			T1.SouthBy, T1.EastBy, T1.WestBy, T1.Measurement, T1.Registrationoffice, T1.RegistrationDistrict, T1.PropertyOwner, 	
+			T1.urbanLandCeiling, T1.minorshareInvolved, T1.propertyIsGramanatham, T1.propertyReleased, 
+			T1.propOriginalsAvailable, T1.propertyIsAgricultural, T1.nocObtainedFromLPA, T1.anyMortgagePending, 	
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalPropertyDetails T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalPropertyDetails_TEMP WHERE LegalPropertyId = T1.LegalPropertyId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="130" author="Viswanadh.S">
+		<sql>
+			alter table LegalDocuments drop column isDocumentMortgage cascade;
+			alter table LegalDocuments_Temp drop column isDocumentMortgage cascade;  
+		</sql>
+	</changeSet>
+	
+	<changeSet id="131" author="Viswanadh.S">
+	 	<addColumn tableName="LegalDocuments">
+	 		<column name="documentMortgage" type="bit"/>
+	 	</addColumn>
+	 </changeSet>	
+	 
+	 <changeSet id="132" author="Viswanadh.S">
+	 	<addColumn tableName="LegalDocuments_Temp">
+	 		<column name="documentMortgage" type="bit"/>
+	 	</addColumn>
+	 </changeSet>	
+	 
+	 <changeSet id="133" author="Viswanadh.S">
+		<createView viewName="LegalDocuments_AView" replaceIfExists="true">
+			SELECT  T1.LegalId, T1.LegalDocumentId, T1.DocumentDate, T1.DocumentDetail, T1.DocumentNo,
+			T1.SurveyNo, T1.DocumentType, T1.DocumentCategory, T1.ScheduleType,T1.DocumentName,
+			T1.DocumentReference, T1.DocumentRemarks, T1.DocumentTypeVerify, T1.DocumentTypeApprove, T1.DocumentAccepted, T1.uploadDocumentType, 
+			T1.documentHolderProperty, T1.documentPropertyAddress, T1.documentBriefTracking, T1.documentMortgage, 
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalDocuments T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="134" author="Viswanadh.S">
+		<createView viewName="LegalDocuments_View" replaceIfExists="true">
+			SELECT T1.LegalId, T1.LegalDocumentId, T1.DocumentDate, T1.DocumentDetail, T1.DocumentNo,
+						T1.SurveyNo, T1.DocumentType, T1.DocumentCategory, T1.ScheduleType,T1.DocumentName, T1.uploadDocumentType,
+						T1.DocumentReference, T1.DocumentRemarks, T1.DocumentTypeVerify, T1.DocumentTypeApprove, T1.DocumentAccepted, 	
+						T1.DocumentHolderProperty, T1.DocumentPropertyAddress, T1.DocumentBriefTracking, T1.documentMortgage,	
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalDocuments_Temp T1 
+			UNION ALL
+			SELECT T1.LegalId, T1.LegalDocumentId, T1.DocumentDate, T1.DocumentDetail, T1.DocumentNo,
+						T1.SurveyNo, T1.DocumentType, T1.DocumentCategory, T1.ScheduleType,T1.DocumentName, T1.uploadDocumentType,
+						T1.DocumentReference, T1.DocumentRemarks, T1.DocumentTypeVerify, T1.DocumentTypeApprove, T1.DocumentAccepted, 	
+						T1.DocumentHolderProperty, T1.DocumentPropertyAddress, T1.DocumentBriefTracking, T1.documentMortgage,	
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalDocuments T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalDocuments_Temp WHERE LegalDocumentId = T1.LegalDocumentId)
+		</createView>
+	</changeSet>	
+	
+	<changeSet id="135" author="Viswanadh.S">
+		<addColumn tableName="LegalECDetails">
+	 		<column name="ecNumber" type="varchar(20)"/>
+	 		<column name="ecFrom" type="datetime"/>
+	 		<column name="ecTo" type="datetime"/>
+	 		<column name="ecType" type="char(1)"/>
+	 	</addColumn>	
+	</changeSet>	
+	
+	<changeSet id="136" author="Viswanadh.S">
+		<addColumn tableName="LegalECDetails_Temp">
+	 		<column name="ecNumber" type="varchar(20)"/>
+	 		<column name="ecFrom" type="datetime"/>
+	 		<column name="ecTo" type="datetime"/>
+	 		<column name="ecType" type="char(1)"/>
+	 	</addColumn>	
+	</changeSet>	
+	
+	<changeSet id="137" author="Viswanadh.S">
+		<createView viewName="LegalECDetails_AView" replaceIfExists="true">
+			SELECT T1.legalECId, T1.LegalId, T1.ECDate, T1.document, T1.ecNumber, T1.ecFrom, T1.ecTo, T1.ecType, 
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalECDetails T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="138" author="Viswanadh.S">
+		<createView viewName="LegalECDetails_View" replaceIfExists="true">
+			SELECT T1.legalECId, T1.LegalId, T1.ECDate, T1.document, T1.ecNumber, T1.ecFrom, T1.ecTo, T1.ecType,  
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalECDetails_Temp T1 
+			UNION ALL
+			SELECT T1.legalECId, T1.LegalId, T1.ECDate, T1.document, T1.ecNumber, T1.ecFrom, T1.ecTo, T1.ecType,  	
+						T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalECDetails T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalECDetails_Temp WHERE legalECId = T1.legalECId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="139" author="Viswanadh.S">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+		
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_gb_documentDetailsTracking','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_DocumentHolderProperty','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_DocumentPropertyAddress','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_DocumentBriefTracking','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_DocumentMortgage','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER', 'Legal document detail tracker approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalDocumentDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalDocumentDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_DocumentHolderProperty'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_DocumentPropertyAddress'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_DocumentBriefTracking'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_DocumentMortgage'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_gb_documentBasicDetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_gb_documentDetailsTracking'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_BRANCH_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_AREA_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_REGIONAL_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_HEAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LA_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_PRELIMINARY_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_gb_miscellaneousPropertyDetails','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsUrbanLandCeiling','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsMinorshareInvolved','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsPropertyIsGramanatham','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsPropertyReleased','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsPropertyOriginalsAvailable','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsPropertyIsAgricultural','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsNOCobtainedfromLPA','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_IsAnyMortgagePending','LegalDocumentDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGAL_PROPERTY_MISC_DETAIL_MAKER', 'Legal document detail tracker approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalPropertyDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalPropertyDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsUrbanLandCeiling'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsMinorshareInvolved'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsPropertyIsGramanatham'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsPropertyReleased'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsPropertyOriginalsAvailable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsPropertyIsAgricultural'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsNOCobtainedfromLPA'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_IsAnyMortgagePending'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_gb_documentBasicDetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_gb_miscellaneousPropertyDetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+2 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_BRANCH_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_AREA_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_REGIONAL_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_HEAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LA_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MISC_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_PRELIMINARY_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRights SELECT (select MAX(RIGHTID)+1 FROM SECRIGHTS),3,'LegalECDetailDialog_gb_ecAdditinalDetails','LegalECDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select MAX(RIGHTID)+1 FROM SECRIGHTS),3,'LegalECDetailDialog_EcNumber','LegalECDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select MAX(RIGHTID)+1 FROM SECRIGHTS),3,'LegalECDetailDialog_EcPeriodFrom','LegalECDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select MAX(RIGHTID)+1 FROM SECRIGHTS),3,'LegalECDetailDialog_EcPeriodTo','LegalECDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			INSERT INTO SecRights SELECT (select MAX(RIGHTID)+1 FROM SECRIGHTS),3,'LegalECDetailDialog_EcType','LegalECDetailDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+			
+			INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGAL_EC_OTHER_DETAIL_MAKER', 'WF Maker for LegalECDetail', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalECDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalECDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodFrom'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodTo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodFrom'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodTo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LA_MAKER_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LA_MAKER_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodFrom'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LA_MAKER_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodTo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LA_MAKER_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DI_MODT_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DI_MODT_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodFrom'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DI_MODT_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodTo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DI_MODT_GROUP') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGALNOTE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGALNOTE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodFrom'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGALNOTE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcPeriodTo'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGALNOTE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_EcType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_BRANCH_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_AREA_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_REGIONAL_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_HEAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);		
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_EC_OTHER_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LA_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);				
+		</sql>
+	</changeSet>
+	<changeSet  id="140" author="Viswanadh.S">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_gb_miscellaneousPropertyDetails','LegalPropertyDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MISC_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_gb_miscellaneousPropertyDetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsUrbanLandCeiling' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsMinorshareInvolved' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsPropertyIsGramanatham' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsPropertyReleased' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsPropertyOriginalsAvailable' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsPropertyIsAgricultural' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsNOCobtainedfromLPA' and page = 'LegalDocumentDialog';
+			update SECRIGHTS set page = 'LegalPropertyDetailDialog' where rightname = 'LegalPropertyDetailDialog_IsAnyMortgagePending' and page = 'LegalDocumentDialog';
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);	
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="141" author="Viswanadh.S">
+	 	<addColumn tableName="LegalPropertyDetails">
+		  	<column name="northSideEastByWest" type="varchar(75)"/>
+		  	<column name="southSideWestByEast" type="varchar(75)"/>
+		  	<column name="eastSideNorthBySouth" type="varchar(75)"/>
+		  	<column name="westSideSouthByNorth" type="varchar(75)"/>
+		</addColumn>
+	</changeSet>	
+	<changeSet id="142" author="Viswanadh.S">	
+		<addColumn tableName="LegalPropertyDetails_Temp">
+		  	<column name="northSideEastByWest" type="varchar(75)"/>
+		  	<column name="southSideWestByEast" type="varchar(75)"/>
+		  	<column name="eastSideNorthBySouth" type="varchar(75)"/>
+		  	<column name="westSideSouthByNorth" type="varchar(75)"/>
+		  </addColumn>	
+	</changeSet>
+	
+	<changeSet id="143" author="Viswanadh.S">
+		<createView viewName="LegalPropertyDetails_AView" replaceIfExists="true">
+			SELECT T1.LegalPropertyId, T1.LegalId, T1.ScheduleType, T1.PropertySchedule, T1.PropertyType, T1.NorthBy,
+			T1.SouthBy, T1.EastBy, T1.WestBy, T1.Measurement, T1.Registrationoffice, T1.RegistrationDistrict, T1.PropertyOwner, 
+			T1.urbanLandCeiling, T1.minorshareInvolved, T1.propertyIsGramanatham, T1.propertyReleased, 
+			T1.propOriginalsAvailable, T1.propertyIsAgricultural, T1.nocObtainedFromLPA, T1.anyMortgagePending, 
+			T1.northSideEastByWest, T1.southSideWestByEast, T1.eastSideNorthBySouth, T1.westSideSouthByNorth, 
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalPropertyDetails T1 
+		</createView>
+	</changeSet>
+	
+	<changeSet id="144" author="Viswanadh.S">
+		<createView viewName="LegalPropertyDetails_View" replaceIfExists="true">
+			SELECT T1.LegalPropertyId, T1.LegalId, T1.ScheduleType, T1.PropertySchedule, T1.PropertyType, T1.NorthBy,
+			T1.SouthBy, T1.EastBy, T1.WestBy, T1.Measurement, T1.Registrationoffice, T1.RegistrationDistrict, T1.PropertyOwner, 	
+			T1.urbanLandCeiling, T1.minorshareInvolved, T1.propertyIsGramanatham, T1.propertyReleased, 
+			T1.propOriginalsAvailable, T1.propertyIsAgricultural, T1.nocObtainedFromLPA, T1.anyMortgagePending,  	
+			T1.northSideEastByWest, T1.southSideWestByEast, T1.eastSideNorthBySouth, T1.westSideSouthByNorth,
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalPropertyDetails_Temp T1 
+			UNION ALL
+			SELECT T1.LegalPropertyId, T1.LegalId, T1.ScheduleType, T1.PropertySchedule, T1.PropertyType, T1.NorthBy,
+			T1.SouthBy, T1.EastBy, T1.WestBy, T1.Measurement, T1.Registrationoffice, T1.RegistrationDistrict, T1.PropertyOwner, 	
+			T1.urbanLandCeiling, T1.minorshareInvolved, T1.propertyIsGramanatham, T1.propertyReleased, 
+			T1.propOriginalsAvailable, T1.propertyIsAgricultural, T1.nocObtainedFromLPA, T1.anyMortgagePending,
+			T1.northSideEastByWest, T1.southSideWestByEast, T1.eastSideNorthBySouth, T1.westSideSouthByNorth, 	
+			T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+			FROM    	LegalPropertyDetails T1 
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalPropertyDetails_TEMP WHERE LegalPropertyId = T1.LegalPropertyId)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="145" author="Viswanadh.S">
+		<sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalDocumentDialog_gb_PropertyMeasurementDetails','LegalPropertyDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_NorthSideEastByWest','LegalPropertyDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_SouthSideWestByEast','LegalPropertyDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_EastSideNorthBySouth','LegalPropertyDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalPropertyDetailDialog_WestSideSouthByNorth','LegalPropertyDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER', 'Legal Property Measurement Details Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalPropertyDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_LegalPropertyDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_NorthSideEastByWest'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_SouthSideWestByEast'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_EastSideNorthBySouth'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalPropertyDetailDialog_WestSideSouthByNorth'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalDocumentDialog_gb_PropertyMeasurementDetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+2 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_BRANCH_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_AREA_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_REGIONAL_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_APPROVAL_HEAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='DI_MODT_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LA_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='LEGAL_PRELIMINARY_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+						
+		</sql>
+	</changeSet>
+
+	<changeSet id="146" author="Durgaprasad G">
+		<sql>
+			Update secgroups set grpdesc ='Legal document detail tracker maker' Where grpcode = 'LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER';
+			Update secgroups set grpdesc ='Legal property miscellaneous detail maker' Where grpcode = 'LEGAL_PROPERTY_MISC_DETAIL_MAKER';
+			Update secgroups set grpdesc ='Legal EC other details  maker' Where grpcode = 'LEGAL_EC_OTHER_DETAIL_MAKER';
+			
+			delete from  secrolegroups Where grpid = (Select grpid from secgroups Where grpcode = 'LEGAL_DOCUMENT_DETAIL_TRACKER_MAKER');
+			delete from  secrolegroups Where grpid = (Select grpid from secgroups Where grpcode = 'LEGAL_PROPERTY_MISC_DETAIL_MAKER');
+			delete from  secrolegroups Where grpid = (Select grpid from secgroups Where grpcode = 'LEGAL_PROPERTY_MEASUREMENT_DETAIL_MAKER');
+			delete from  secrolegroups Where grpid = (Select grpid from secgroups Where grpcode = 'LEGAL_EC_OTHER_DETAIL_MAKER');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="147" author="Durgaprasad G">
+		<sql>
+			Update LegalDocuments set DocumentMortgage =0;
+			Update LegalDocuments_Temp set DocumentMortgage =0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="148" author="Durgaprasad G">
+		<sql>
+		 UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+		 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_EC_OTHER_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalECDetailDialog_gb_ecAdditinalDetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		 UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
+		</sql>
+	</changeSet>
+	 
+	 <changeSet id="149" author="DurgaPrasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY';
+			INSERT INTO SMTPARAMETERS VALUES ('LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY', 'Legal details additional fields display Required or Not(Y, N)', 'String', 1, 'Y', 1, 0, NULL, NULL,'Legal details additional fields display Required or Not(Y, N)', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="150" author="DurgaPrasad G">
+		<sql>
+			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY';
+			INSERT INTO SMTPARAMETERS VALUES ('LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY', 'Legal details additional fields display Required or Not(Y, N)', 'String', 1, 'N', 1, 0, NULL, NULL,'Legal details additional fields display Required or Not(Y, N)', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
 	</databaseChangeLog>

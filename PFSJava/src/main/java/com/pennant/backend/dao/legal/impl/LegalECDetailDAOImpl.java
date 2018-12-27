@@ -79,6 +79,7 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalECId, legalId, ecDate, document, ");
+		sql.append(" ecNumber, ecFrom, ecTo, ecType, ");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalECDetails");
@@ -110,6 +111,7 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" legalECId, legalId, ecDate, document, ");
+		sql.append(" ecNumber, ecFrom, ecTo, ecType, ");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From LegalECDetails");
@@ -143,10 +145,12 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		StringBuilder sql = new StringBuilder(" insert into LegalECDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (legalECId, legalId, ecDate, document, ");
+		sql.append(" ecNumber, ecFrom, ecTo, ecType, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :legalECId, :legalId, :ecDate, :document, ");
+		sql.append(" :ecNumber, :ecFrom, :ecTo, :ecType, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -177,6 +181,7 @@ public class LegalECDetailDAOImpl extends SequenceDao<LegalECDetail> implements 
 		StringBuilder sql = new StringBuilder("update LegalECDetails");
 		sql.append(tableType.getSuffix());
 		sql.append("  set legalId = :legalId, ecDate = :ecDate, document = :document, ");
+		sql.append(" ecNumber = :ecNumber, ecFrom = :ecFrom, ecTo = :ecTo, ecType = :ecType, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

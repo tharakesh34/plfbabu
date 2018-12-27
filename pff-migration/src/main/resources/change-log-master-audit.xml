@@ -24,4 +24,5 @@
 	<include file="change-logs/change-log-insurance-masters_audit.xml"/>
 	<include file="change-logs/change-log-insuranceAudit.xml"/>
 	<include file="change-logs/change-log-bugs-audit-1135.xml"/>
+	<include file="change-logs/change-log-auditlegal.xml"/>
 </databaseChangeLog>

@@ -366,6 +366,10 @@
 											<listhead sizable="true">
 												<listheader label="${c:l('listheader_LegalEcDEtails_EcDate.label')}" sort="auto" hflex="min" />
 												<listheader label="${c:l('listheader_LegalEcDEtails_Remarks.label')}" sort="auto" hflex="min" />
+												<listheader label="${c:l('listheader_LegalEcDEtails_ECNumber.label')}" sort="auto" hflex="min" />
+												<listheader label="${c:l('listheader_LegalEcDEtails_ECFrom.label')}" sort="auto" hflex="min" />
+												<listheader label="${c:l('listheader_LegalEcDEtails_ECTo.label')}" sort="auto" hflex="min" />
+												<listheader label="${c:l('listheader_LegalEcDEtails_ECType.label')}" sort="auto" hflex="min" />
 												<listheader label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 												<listheader label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 											</listhead>

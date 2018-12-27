@@ -53,20 +53,26 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.legal.LegalECDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.legal.legaldetail.LegalDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -88,6 +94,13 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	private LegalDetailDialogCtrl legalDetailDialogCtrl;
 	private List<LegalECDetail> legalEcdDetailsList;
 
+	protected Groupbox gb_ecAdditinalDetails;
+	protected Textbox ecNumber;
+	protected Datebox ecFrom;
+	protected Datebox ecTo;
+	protected Combobox ecType;
+	private List<ValueLabel> listEcTypes = PennantStaticListUtil.getEcTypes();
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -108,7 +121,8 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -170,6 +184,9 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		logger.debug(Literal.ENTERING);
 		this.ecDate.setFormat(PennantConstants.dateFormat);
 		this.document.setMaxlength(1000);
+
+		this.ecFrom.setFormat(PennantConstants.dateFormat);
+		this.ecTo.setFormat(PennantConstants.dateFormat);
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
 	}
@@ -186,6 +203,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_LegalECDetailDialog_btnSave"));
 			this.btnCancel.setVisible(false);
 		}
+		this.btnSave.setVisible(true);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -228,7 +246,8 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -240,7 +259,8 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -298,7 +318,11 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 
 		this.ecDate.setValue(aLegalECDetail.getEcDate());
 		this.document.setValue(aLegalECDetail.getDocument());
-
+		this.ecNumber.setValue(aLegalECDetail.getEcNumber());
+		this.ecFrom.setValue(aLegalECDetail.getEcFrom());
+		this.ecTo.setValue(aLegalECDetail.getEcTo());
+		this.ecType.setValue(aLegalECDetail.getEcType());
+		fillComboBox(this.ecType, aLegalECDetail.getEcType(), listEcTypes, "");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -318,9 +342,42 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		// Document
 		try {
 			aLegalECDetail.setDocument(this.document.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aLegalECDetail.setEcNumber(this.ecNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aLegalECDetail.setEcFrom(this.ecFrom.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aLegalECDetail.setEcTo(this.ecTo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try{
+			if (this.gb_ecAdditinalDetails.isVisible() && this.ecTo.getValue().before(this.ecFrom.getValue())) {
+				throw new WrongValueException(this.ecTo, "EC To date should not before EC Start Date.");
+			}
+		}  catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			aLegalECDetail.setEcType(this.ecType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -394,6 +451,28 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalECDetailDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
+
+		if (!this.ecNumber.isReadonly() && this.gb_ecAdditinalDetails.isVisible()) {
+			this.ecNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalECDetailDialog_EcNumber.value"),
+							null, true));
+		}
+
+		if (!this.ecFrom.isDisabled() && this.gb_ecAdditinalDetails.isVisible()) {
+			this.ecFrom.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_LegalECDetailDialog_EcPeriodFrom.value"), true));
+		}
+		
+		if (!this.ecTo.isDisabled() && this.gb_ecAdditinalDetails.isVisible()) {
+			this.ecTo.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_LegalECDetailDialog_EcPeriodTo.value"), true));
+		}
+		
+		if (!this.ecType.isDisabled() && this.gb_ecAdditinalDetails.isVisible()) {
+			this.ecType.setConstraint(
+					new PTListValidator(Labels.getLabel("label_LegalECDetailDialog_EcType.value"), listEcTypes, true));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -401,19 +480,25 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 		this.ecDate.setConstraint("");
 		this.document.setConstraint("");
+		this.ecNumber.setConstraint("");
+		this.ecFrom.setConstraint("");
+		this.ecTo.setConstraint("");
+		this.ecType.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-
+		this.ecFrom.setErrorMessage("");
+		this.ecTo.setErrorMessage("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -478,7 +563,14 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		}
 		readOnlyComponent(isReadOnly("LegalECDetailDialog_EcDate"), this.ecDate);
 		readOnlyComponent(isReadOnly("LegalECDetailDialog_Remarks"), this.document);
-
+		
+		this.gb_ecAdditinalDetails
+		.setVisible(getUserWorkspace().isAllowed("LegalECDetailDialog_gb_ecAdditinalDetails"));
+		readOnlyComponent(isReadOnly("LegalECDetailDialog_EcNumber"), this.ecNumber);
+		readOnlyComponent(isReadOnly("LegalECDetailDialog_EcPeriodFrom"), this.ecFrom);
+		readOnlyComponent(isReadOnly("LegalECDetailDialog_EcPeriodTo"), this.ecTo);
+		readOnlyComponent(isReadOnly("LegalECDetailDialog_EcType"), this.ecType);
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -520,6 +612,17 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		logger.debug(Literal.LEAVING);
 		readOnlyComponent(true, this.ecDate);
 		readOnlyComponent(true, this.document);
+		readOnlyComponent(true, this.ecNumber);
+		readOnlyComponent(true, this.ecFrom);
+		readOnlyComponent(true, this.ecTo);
+		readOnlyComponent(true, this.ecType);
+		
+		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY"))) {
+			this.gb_ecAdditinalDetails.setVisible(true);
+		} else {
+			this.gb_ecAdditinalDetails.setVisible(false);
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -530,6 +633,10 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 		logger.debug("Entering");
 		this.ecDate.setText("");
 		this.document.setValue("");
+		this.ecNumber.setValue("");
+		this.ecFrom.setText("");
+		this.ecTo.setText("");
+		this.ecType.setSelectedIndex(0);
 		logger.debug("Leaving");
 	}
 

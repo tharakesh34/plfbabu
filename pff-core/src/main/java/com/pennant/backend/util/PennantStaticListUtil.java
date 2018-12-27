@@ -4558,4 +4558,13 @@ public class PennantStaticListUtil {
 		return medicalStatusList;
 	}
 	
+	private static ArrayList<ValueLabel> ecTypesList;
+	public static ArrayList<ValueLabel> getEcTypes() {
+		if (ecTypesList == null) {
+			ecTypesList = new ArrayList<ValueLabel>(4);
+			ecTypesList.add(new ValueLabel(PennantConstants.ORIGINAL, Labels.getLabel("label_Legal_DocumentType_Original")));
+			ecTypesList.add(new ValueLabel(PennantConstants.PHOTOSTAT, Labels.getLabel("label_Legal_DocumentType_Photocopy")));
+		}
+		return ecTypesList;
+	}
 }
