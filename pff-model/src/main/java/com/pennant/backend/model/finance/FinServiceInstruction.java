@@ -204,13 +204,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private Map<String, BigDecimal>		manualWaiverMap = new HashMap<>();
 	
 	// Bean validation purpose
-	@SuppressWarnings("unused")
 	private FinServiceInstruction validateAddRateChange = this;
 
 	@XmlElement(name="isUpload")
 	private boolean isReceiptUpload;
 	
-	@SuppressWarnings("unused")
 	private FinServiceInstruction validateChangeRepayment = this;
 
 	@XmlElement
@@ -227,6 +225,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String toBranch;
 
 	private long  instructionUID =  Long.MIN_VALUE;
+	private long linkedTranID = 0;
 	
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
@@ -1023,6 +1022,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 
 	public void setReceiptPurpose(String receiptPurpose) {
 		this.receiptPurpose = receiptPurpose;
+	}
+
+	public long getLinkedTranID() {
+		return linkedTranID;
+	}
+
+	public void setLinkedTranID(long linkedTranID) {
+		this.linkedTranID = linkedTranID;
 	}
 	
 }

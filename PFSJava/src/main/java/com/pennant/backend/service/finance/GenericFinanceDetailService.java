@@ -1695,7 +1695,15 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			aeEvent.setDataMap(dataMap);
 
 			// Prepared Postings execution 
-			getPostingsPreparationUtil().postAccounting(aeEvent);
+			aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+
+			// Update Linked Transaction ID
+			List<FinServiceInstruction> serviceInsts = financeDetail.getFinScheduleData().getFinServiceInstructions();
+			if (serviceInsts != null && !serviceInsts.isEmpty() && aeEvent != null && aeEvent.getLinkedTranId() > 0) {
+				for (FinServiceInstruction inst : serviceInsts) {
+					inst.setLinkedTranID(aeEvent.getLinkedTranId());
+				}
+			}
 
 		} else {
 
@@ -1733,7 +1741,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				aeEvent.setDataMap(dataMap);
 
 				// Prepared Postings execution 
-				getPostingsPreparationUtil().postAccounting(aeEvent);
+				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+
+				// Update Linked Transaction ID
+				if (aeEvent != null && aeEvent.getLinkedTranId() > 0) {
+					inst.setLinkedTranID(aeEvent.getLinkedTranId());
+				}
 			}
 		}
 
