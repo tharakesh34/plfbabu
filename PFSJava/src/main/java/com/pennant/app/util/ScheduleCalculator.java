@@ -4173,7 +4173,13 @@ public class ScheduleCalculator {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
 			if (!finMain.isProtectSchdPft()) {
-				schdInterest = calProfitToSchd(curSchd, prvSchd);
+
+				if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
+						&& finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
+					schdInterest = BigDecimal.ZERO;
+				} else {
+					schdInterest = calProfitToSchd(curSchd, prvSchd);
+				}
 
 				//FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for testing 
 				/*
