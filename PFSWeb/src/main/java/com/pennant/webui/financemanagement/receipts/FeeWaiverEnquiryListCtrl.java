@@ -941,14 +941,8 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					+ moduleDefiner + "' ) ");
 		}
 
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
-			whereClause.append(" AND FinReference IN (Select FinReference from ManualAdvise Where  AdviseType =" + "'"
-					+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE + "' and AdviseAmount-PaidAmount-WaivedAmount >0)");
-			whereClause.append(
-					" OR FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
-		}
-
 		// Filtering added based on user branch and division
+		whereClause.append(" AND FinReference IN (Select FinReference from feewaiverDetails)");
 		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
 		searchObject.addWhereClause(whereClause.toString());
@@ -1089,33 +1083,6 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.addWhereClause("");
 		}
 		this.searchObject.addTabelName("FinanceMain_AView");
-
-		buildedWhereCondition = "";
-
-		if (StringUtils.isNotEmpty(workflowCode)) {
-
-			if (App.DATABASE == Database.ORACLE) {
-				buildedWhereCondition = " (NextRoleCode IS NULL ";
-			} else {
-				// for postgre db sometimes record type is null or empty('')
-				buildedWhereCondition = " ( (NextRoleCode IS NULL or NextRoleCode = '') ";
-			}
-			buildedWhereCondition = buildedWhereCondition
-					.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
-			buildedWhereCondition = buildedWhereCondition
-					.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
-			buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
-			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
-			buildedWhereCondition = buildedWhereCondition
-					.concat("' AND WF.FirstTaskOwner IN (SELECT RoleCd FROM UserOperationRoles_View WHERE ");
-			buildedWhereCondition = buildedWhereCondition.concat(
-					" UsrID= " + getUserWorkspace().getUserDetails().getUserId() + " AND AppCode='" + App.CODE + "')");
-			buildedWhereCondition = buildedWhereCondition
-					.concat(")) OR NextRoleCode IN (SELECT RoleCd FROM UserOperationRoles_View WHERE ");
-			buildedWhereCondition = buildedWhereCondition.concat(
-					" UsrID= " + getUserWorkspace().getUserDetails().getUserId() + " AND AppCode='" + App.CODE + "')");
-
-		}
 
 		Filter[] rcdTypeFilter = new Filter[2];
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
