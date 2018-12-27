@@ -5642,5 +5642,32 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="89" author="swami.v">
+	<comment>Added new column of "LinkedTranID" </comment>
+	<addColumn tableName="finserviceinstruction">
+		<column name="LinkedTranID" type="bigint" />
+	</addColumn>
+</changeSet>
+
+
+	<changeSet id="90" author="swami.v">
+		<comment>Added new column of "LinkedTranID" </comment>
+		<addColumn tableName="finserviceinstruction_temp">
+			<column name="LinkedTranID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+
+
+
+	<changeSet id="91" author="swami.v">
+		<comment>Added new column of "LinkedTranID" </comment>
+		<sql>
+			UPDATE finserviceinstruction SET LinkedTranID = 0;
+			UPDATE finserviceinstruction_temp SET LinkedTranID = 0;
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>
