@@ -504,13 +504,15 @@ public class ScheduleCalculator {
 			List<FinanceScheduleDetail> finSchdlDetailList = finScheduleData.getFinanceScheduleDetails();
 			int size = finScheduleData.getFinanceScheduleDetails().size();
 			Date eventToDate = finMain.getMaturityDate();
-			for (int i = size - 1; i >= 0; i--) {
-				FinanceScheduleDetail schDetail = finSchdlDetailList.get(i);
-				if ((schDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
-					finSchdlDetailList.remove(i);
-				} else {
-					eventToDate = schDetail.getSchDate();
-					break;
+			if(!StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+				for (int i = size - 1; i >= 0; i--) {
+					FinanceScheduleDetail schDetail = finSchdlDetailList.get(i);
+					if ((schDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
+						finSchdlDetailList.remove(i);
+					} else {
+						eventToDate = schDetail.getSchDate();
+						break;
+					}
 				}
 			}
 
