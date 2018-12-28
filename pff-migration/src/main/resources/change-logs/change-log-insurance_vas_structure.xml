@@ -20,7 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
-	<changeSet id="07" author="DurgaprasadG">
+	<changeSet id="07" author="DurgaprasadG" dbms="oracle,postgresql">
 	<sql>
 		<![CDATA[
 			Insert into VASPRODUCTCATEGORY 
@@ -128,7 +128,114 @@
 			]]>
  </sql>
 </changeSet>
-
+<changeSet id="07" author="DurgaprasadG" dbms="mssql">
+	<sql>
+		<![CDATA[
+			Insert into VASPRODUCTCATEGORY 
+			(PRODUCTCTG,PRODUCTCTGDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ACTIVE) values 
+			('INSURANC','Insurance',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,1);
+			
+			Insert into AMTVEHICLEDEALER  values ((Select Max(Dealerid)+1 from AmtVehicledealer),'BAJAJ FINANCE LTD.',5,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'2039574151','2039574151','Regional Office, DNBS, fourth floor.','opp. Mumbai Central Station.','VASM','Byculla, Mumbai – 400 008',null,'IN','MH','BHA','wecare@bajajfinserv.in','411014',null,null,null,null,null,0,'#','400008',1,'5','BLPPG2117B',null,'VASI','GL1',null,null,null,null,null,null);
+			
+			Delete from VASPRODUCTTYPE Where PRODUCTTYPE = 'INSURANC';
+			Insert into VASPRODUCTTYPE 
+			(PRODUCTTYPE,PRODUCTTYPEDESC,PRODUCTCTG,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ACTIVE) values 
+			('INSURANC','Insurance','INSURANC',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,1);
+			
+			Insert into VASSTRUCTURE 
+			(PRODUCTCODE,PRODUCTDESC,RECAGAINST,FEEACCRUED,FEEACCOUNTING,ACCRUALACCOUNTING,RECURRINGTYPE,FREELOCKPERIOD,PREVALIDATIONREQ,POSTVALIDATIONREQ,REMARKS,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,PRODUCTTYPE,VASFEE,ALLOWFEETOMODIFY,MANUFACTURERID,PREVALIDATION,POSTVALIDATION,FEETYPE,FLPCALCULATEDON,SHORTCODE)
+			 values ('VASINS','VAS Insurence','Finance',1,25,21,1,0,1,1,'VAS Insurence configuration.',1,37,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'INSURANC',50000,1,(Select DEALERID from AmtVehicledealer Where DEALERNAME= 'BAJAJ FINANCE LTD.'),' 
+			//Applicant values
+			var customer = fd.getCustomerDetails().getCustomer();
+			
+			var applicantVal = "";
+			applicantVal = applicantVal.concat(customer.getCustCIF()).concat("|").concat(customer.getCustShrtName()).concat("|").concat(customer.getLovDescCustGenderCodeName()).concat("|").concat(customer.getCustDOB()).concat("|").concat(customer.getCustomerAge());
+			defaults.add("HIDDEN_APP_VALUES",applicantVal );
+			 
+			//Co Applicant List values
+			var coAppCifValues = "";
+			var coApplicantValues = "";
+			var jountAcctDetList = fd.getJountAccountDetailList();
+			 
+			for (var i = 0; i < jountAcctDetList.length ; i++) {
+			    if(coAppCifValues.length > 0){
+			      coApplicantValues = coApplicantValues.concat("^^");
+			      coAppCifValues = coAppCifValues.concat(",");
+			     }
+			    var model = jountAcctDetList.get(i);
+			    var customerDetail = model.getCustomerDetails();
+			    var customer = customerDetail.getCustomer();
+			  coApplicantValues = coApplicantValues.concat(customer.getCustCIF()).concat("|").concat(customer.getCustShrtName()).concat("|").concat(customer.getLovDescCustGenderCodeName()).concat("|").concat(customer.getCustDOB()).concat("|").concat(customer.getCustomerAge());
+			    coAppCifValues = coAppCifValues.concat(customer.getCustCIF());
+			}
+			 
+			defaults.add("CUSTCOAPPCIF",coAppCifValues);
+			defaults.add("HIDDEN_CO_APP_VAL",coApplicantValues);
+			
+			defaults.add("AGEN1","0");
+			defaults.add("AGEN2","0");
+			
+			','
+			//If the applicant type is CO-Applicant and CUSTCOAPPCIF is not selcted the add the error
+			if (APPLICANTTYPE=== ''CO-APPLICANT'' ) {
+			      
+			    if (CUSTCOAPPCIF=== ''#'') {
+			       errors.add("CUSTCOAPPCIF",''Please select Co Applicants from the list.'');
+			      }
+			}
+			
+			//Nominee details1
+			if (AGEN1< 18 ) {
+			      
+			    if (APOINTEENAMEN1=== '''') {
+			       errors.add("APOINTEENAMEN1",''Apointee Name1 is mandatory.'');
+			     }
+			     if (APONTEE1RELATION=== '''') {
+			       errors.add("APONTEE1RELATION",''Relation is mandatory.'');
+			     }
+			     if (APPOINTEEN1DOB=== null) {
+			       errors.add("APPOINTEEN1DOB",''DOB is mandatory.'');
+			     }
+			     if (APONTEEN1AGE=== '''') {
+			       errors.add("APONTEEN1AGE",''AGE is mandatory.'');
+			     }
+			     if (APOINTEEN1ADDRESS=== '''') {
+			       errors.add("APOINTEEN1ADDRESS",''Address is mandatory.'');
+			     }
+			    if (APOINTEE1MOBILENUM=== '''') {
+			       errors.add("APOINTEE1MOBILENUM",''Mobile Number is mandatory.'');
+			     }
+			}
+			
+			
+			//Nominee details2
+			if ((DOBN2 !== null) && (AGEN2< 18) ) {
+			      
+			    if (APOINTEENAMEN2=== '''') {
+			       errors.add("APOINTEENAMEN2",''Apointee Name2 is mandatory.'');
+			     }
+			     if (APONTEE2RELATION=== '''') {
+			       errors.add("APONTEE2RELATION",''Relation is mandatory.'');
+			     }
+			     if (APPOINTEEN2DOB=== null) {
+			       errors.add("APPOINTEEN2DOB",''DOB is mandatory.'');
+			     }
+			     if (APONTEEN2AGE=== '''') {
+			       errors.add("APONTEEN2AGE",''AGE is mandatory.'');
+			     }
+			     if (APOINTEEN2ADDRESS=== '''') {
+			       errors.add("APOINTEEN2ADDRESS",''Address is mandatory.'');
+			     }
+			     if (APOINTEE2MOBILENUM=== '''') {
+			       errors.add("APOINTEE2MOBILENUM",''Mobile Number is mandatory.'');
+			     }
+			}
+			
+			',2,'I','VS5');
+			Update SeqAmtVehicledealer set SeqNo = (Select Max(Dealerid)+1 from AmtVehicledealer);
+			]]>
+ </sql>
+</changeSet>
 <changeSet id="08" author="Durgaprasad G">
 	<sql>
 		<![CDATA[
@@ -174,18 +281,17 @@
 					      
 					      
 			Update vasstructure set postvalidation = '
-			      //If the applicant type is CO-Applicant and CUSTCOAPPCIF is not selcted the add the error
-			      if (APPLICANTTYPE=== 'CO-APPLICANT' ) {
+			      if (APPLICANTTYPE=== ''CO-APPLICANT'' ) {
 			            
-			          if (CUSTCOAPPCIF=== '#') {
-			             errors.add("CUSTCOAPPCIF",'Please select Co Applicants from the list.');
+			          if (CUSTCOAPPCIF=== ''#'') {
+			             errors.add("CUSTCOAPPCIF",''Please select Co Applicants from the list.'');
 			            }
 			      }
 			      
 			      //Customer Age validation
 			       if (AGE > 60 ) {
-			           if ( !((LOANTYPE === 'MLAP') || (LOANTYPE === 'ASL') || (LOANTYPE === 'ADSL') || (LOANTYPE ==='Livestock'))) {
-			          errors.add("AGE",'Customer Age should not be greaterthan 60.');
+			           if ( !((LOANTYPE === ''MLAP'') || (LOANTYPE === ''ASL'') || (LOANTYPE === ''ADSL'') || (LOANTYPE ===''Livestock''))) {
+			          errors.add("AGE",''Customer Age should not be greaterthan 60.'');
 			           }
 			        }
 			
@@ -194,22 +300,22 @@
 			      if (AGEN1< 18 ) {
 			            
 			          if (APOINTEENAMEN1=== '') {
-			             errors.add("APOINTEENAMEN1",'Apointee Name1 is mandatory.');
+			             errors.add("APOINTEENAMEN1",''Apointee Name1 is mandatory.'');
 			           }
 			           if (APONTEE1RELATION=== '') {
-			             errors.add("APONTEE1RELATION",'Relation is mandatory.');
+			             errors.add("APONTEE1RELATION",''Relation is mandatory.'');
 			           }
 			           if (APPOINTEEN1DOB=== null) {
-			             errors.add("APPOINTEEN1DOB",'DOB is mandatory.');
+			             errors.add("APPOINTEEN1DOB",''DOB is mandatory.'');
 			           }
 			           if (APONTEEN1AGE=== '') {
-			             errors.add("APONTEEN1AGE",'AGE is mandatory.');
+			             errors.add("APONTEEN1AGE",''AGE is mandatory.'');
 			           }
 			           if (APOINTEEN1ADDRESS=== '') {
-			             errors.add("APOINTEEN1ADDRESS",'Address is mandatory.');
+			             errors.add("APOINTEEN1ADDRESS",''Address is mandatory.'');
 			           }
 			          if (APOINTEE1MOBILENUM=== '') {
-			             errors.add("APOINTEE1MOBILENUM",'Mobile Number is mandatory.');
+			             errors.add("APOINTEE1MOBILENUM",''Mobile Number is mandatory.'');
 			           }
 			      }
 			      
@@ -218,26 +324,27 @@
 			      if ((DOBN2 !== null) && (AGEN2< 18) ) {
 			            
 			          if (APOINTEENAMEN2=== '') {
-			             errors.add("APOINTEENAMEN2",'Apointee Name2 is mandatory.');
+			             errors.add("APOINTEENAMEN2",''Apointee Name2 is mandatory.'');
 			           }
 			           if (APONTEE2RELATION=== '') {
-			             errors.add("APONTEE2RELATION",'Relation is mandatory.');
+			             errors.add("APONTEE2RELATION",''Relation is mandatory.'');
 			           }
 			           if (APPOINTEEN2DOB=== null) {
-			             errors.add("APPOINTEEN2DOB",'DOB is mandatory.');
+			             errors.add("APPOINTEEN2DOB",''DOB is mandatory.'');
 			           }
 			           if (APONTEEN2AGE=== '') {
-			             errors.add("APONTEEN2AGE",'AGE is mandatory.');
+			             errors.add("APONTEEN2AGE",''AGE is mandatory.'');
 			           }
 			           if (APOINTEEN2ADDRESS=== '') {
-			             errors.add("APOINTEEN2ADDRESS",'Address is mandatory.');
+			             errors.add("APOINTEEN2ADDRESS",''Address is mandatory.'');
 			           }
 			           if (APOINTEE2MOBILENUM=== '') {
-			             errors.add("APOINTEE2MOBILENUM",'Mobile Number is mandatory.');
+			             errors.add("APOINTEE2MOBILENUM",''Mobile Number is mandatory.'');
 			           }
 			      }
 			      
 			      ' Where Productcode  = 'VASINS';
+            
 		      ]]>
 	</sql>
 </changeSet>
@@ -358,11 +465,25 @@
 	</createTable>
 </changeSet>
 
-<changeSet id="10" author="Durgaprasad G">
+<changeSet id="10.1" author="Durgaprasad G" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="VAS_VASINS_ED" columnName="REFERENCE" />
 </changeSet>
-<changeSet id="11" author="Durgaprasad G">
+<changeSet id="10.1" author="Durgaprasad G" dbms="mssql">
+		<addNotNullConstraint tableName="VAS_VASINS_ED" columnName="REFERENCE" columnDataType="varchar(20)"/>
+</changeSet>
+<changeSet id="11" author="Durgaprasad G" dbms="oracle,postgresql">
 			<addNotNullConstraint tableName="VAS_VASINS_ED_Temp" columnName="REFERENCE" />
+</changeSet>
+<changeSet id="11" author="Durgaprasad G" dbms="mssql">
+			<addNotNullConstraint tableName="VAS_VASINS_ED_Temp" columnName="REFERENCE" columnDataType="varchar(20)"/>
+</changeSet>
+<changeSet id="12_Pre" author="Durgaprasad G" dbms="oracle,postgresql">
+		<addNotNullConstraint tableName="VAS_VASINS_ED" columnName="SEQNO" />
+		<addNotNullConstraint tableName="VAS_VASINS_ED_Temp" columnName="SEQNO" />
+</changeSet>
+<changeSet id="12_Pre" author="Durgaprasad G" dbms="mssql">
+		<addNotNullConstraint tableName="VAS_VASINS_ED" columnName="SEQNO" columnDataType="varchar(20)"/>
+		<addNotNullConstraint tableName="VAS_VASINS_ED_Temp" columnName="SEQNO" columnDataType="varchar(20)"/>
 </changeSet>
 <changeSet id="12" author="Durgaprasad G">
 			<addPrimaryKey tableName="VAS_VASINS_ED" columnNames="REFERENCE,SEQNO" constraintName="PK_VAS_VASINS_ED"/>
