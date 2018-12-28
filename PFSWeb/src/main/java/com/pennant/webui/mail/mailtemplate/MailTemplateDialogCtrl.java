@@ -302,6 +302,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 		// Empty sent any required attributes
 		// this.emailSubject.setMaxlength(100);
+		this.templateCode.setMaxlength(100);
 		this.smsContent.setMaxlength(SysParamUtil.getValueAsInt("SMS_LEN"));
 
 		if (isWorkFlowEnabled()) {

@@ -65,6 +65,8 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -351,7 +353,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	/*
-	 * Extracting the presentments from Various tables and saving into Presentments PresentmentHeader presentmentHeader
+	 * Extracting the Presentments from Various tables and saving into Presentments PresentmentHeader presentmentHeader
 	 */
 	@Override
 	public String savePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception {
@@ -503,5 +505,23 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
+	}
+
+	/**
+	 * Fetching the Finance and customer details for sending the bounce notification to customer.
+	 */
+	@Override
+	public FinanceDetail getFinanceDetailsByRef(String finReference) {
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData finScheduleData = new FinScheduleData();
+
+		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, "_AView", false);
+		CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(financeMain.getCustID(),
+				"_AView");
+
+		finScheduleData.setFinanceMain(financeMain);
+		financeDetail.setCustomerDetails(customerDetails);
+		financeDetail.setFinScheduleData(finScheduleData);
+		return financeDetail;
 	}
 }

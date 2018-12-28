@@ -7,9 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -30,6 +33,10 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
@@ -43,8 +50,10 @@ import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private static final Logger logger = Logger.getLogger(PresentmentDetailExtract.class);
@@ -61,10 +70,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private static final String REGIX = "[/:\\s]";
 
 	private PresentmentDetailService presentmentDetailService;
+	private NotificationService notificationService;
 
-	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService) {
+	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService,
+			NotificationService notificationService) {
 		super(datsSource);
 		this.presentmentDetailService = presentmentDetailService;
+		this.notificationService = notificationService;
 	}
 
 	@Override
@@ -309,6 +321,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getStatus());
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
+
+									//Sending the Email Notification
+									sendMailNotification(detail);
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
@@ -1234,6 +1249,78 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			presentmentDetail = null;
 		}
 		return presentmentDetail;
+	}
+
+	/**
+	 * Sending the email notification if presentmnent is bounce
+	 * 
+	 * @param presentmentDetail
+	 */
+	protected void sendMailNotification(PresentmentDetail presentmentDetail) {
+		logger.debug(Literal.ENTERING);
+		//Bounce Mail Alert Notification
+		try {
+			Notification notification = new Notification();
+			notification.setKeyReference(presentmentDetail.getFinReference());
+			notification.setModule("LOAN");
+			notification.setSubModule("PRESENTMENT_BOUNCE");
+			notification.setTemplateCode(PennantConstants.PRESENTMENT_BOUNCE_MAIL_NOTIFICATION);
+
+			FinanceDetail financeDetail = this.presentmentDetailService
+					.getFinanceDetailsByRef(presentmentDetail.getFinReference());
+
+			CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+			if (customerDetails == null) {
+				return;
+			}
+
+			// Customer Email
+			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
+			if (CollectionUtils.isEmpty(emailList)) {
+				return;
+			}
+
+			String emailId = null;
+			for (CustomerEMail email : emailList) {
+				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
+					emailId = email.getCustEMail();
+					break;
+				}
+			}
+
+			if (StringUtils.isEmpty(emailId)) {
+				return;
+			}
+
+			List<String> emails = new ArrayList<>();
+			emails.add(emailId);
+			notification.setEmails(emails);
+
+			// Customer Contact Number
+			String mobileNumber = null;
+			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
+				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
+						.getPhoneTypePriority()) {
+					mobileNumber = customerPhoneNumber.getPhoneNumber();
+					break;
+				}
+			}
+
+			List<String> mobileNumberList = new ArrayList<>();
+			mobileNumberList.add(mobileNumber);
+			notification.setMobileNumbers(mobileNumberList);
+
+			presentmentDetail.setFinanceDetail(financeDetail);
+			notificationService.sendNotification(notification, presentmentDetail);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 
 }

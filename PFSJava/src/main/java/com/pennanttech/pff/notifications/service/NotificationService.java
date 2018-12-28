@@ -48,6 +48,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.RepayData;
+import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.loanquery.QueryDetail;
@@ -123,14 +124,14 @@ public class NotificationService {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> data = null;
 
-		QueryDetail queryDetail;
 		if (object instanceof QueryDetail) {
-			queryDetail = (QueryDetail) object;
+			QueryDetail queryDetail = (QueryDetail) object;
 			data = getTemplateData(queryDetail);
+		} else if (object instanceof PresentmentDetail) {
+			PresentmentDetail presentmentDetail = (PresentmentDetail) object;
+			data = getTemplateData(presentmentDetail);
 		}
-
 		Map<String, byte[]> attachements = mailKeyData.getAttachments();
-
 		MailTemplate template = getMailTemplateService().getMailTemplateByCode(mailKeyData.getTemplateCode());
 
 		if (template != null && template.isActive()) {
@@ -157,7 +158,6 @@ public class NotificationService {
 		} else if (template.isSmsTemplate()) {
 			sendSmsNotification(message);
 		}
-
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -564,6 +564,60 @@ public class NotificationService {
 		data.setCustShrtName(detail.getUserDetails().getUserName());
 		return data.getDeclaredFieldValues();
 	}
+
+	/**
+	 * Preparing the template data for Presentemet bounce email processing
+	 * 
+	 * @param presentmentDetail
+	 * @return
+	 */
+	private Map<String, Object> getTemplateData(PresentmentDetail presentmentDetail) {
+
+		MailTemplateData data = new MailTemplateData();
+
+		FinanceDetail financeDetail = presentmentDetail.getFinanceDetail();
+		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
+		List<CustomerEMail> customerEmailList = financeDetail.getCustomerDetails().getCustomerEMailList();
+		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
+		int format = CurrencyUtil.getFormat(main.getFinCcy());
+		
+		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
+		data.setFinReference(main.getFinReference());
+		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
+
+		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
+
+		// Customer Email
+		for (CustomerEMail customerEMail : customerEmailList) {
+			if (priority != customerEMail.getCustEMailPriority()) {
+				continue;
+			}
+			data.setCustEmailId(customerEMail.getCustEMail());
+			break;
+		}
+
+		// Customer Contact Number
+		for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
+			if (priority != customerPhoneNumber.getPhoneTypePriority()) {
+				continue;
+			}
+			data.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
+			break;
+		}
+
+		data.setCustId(main.getCustID());
+		data.setCustCIF(main.getLovDescCustCIF());
+		data.setFinType(main.getFinType());
+		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
+		data.setPriority(main.getPriority());
+ 
+		data.setValueDate(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
+		data.setAmount(PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
+		data.setBounceReason(presentmentDetail.getBounceReason());
+
+		return data.getDeclaredFieldValues();
+	}
+
 	/**
 	 * Method for Data Preparion
 	 * 

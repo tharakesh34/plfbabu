@@ -50,6 +50,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -98,6 +99,8 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private String errorDesc;
 	private String entityCode;
 
+	private FinanceDetail financeDetail;
+
 	public String getMandateStatus() {
 		return mandateStatus;
 	}
@@ -111,6 +114,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("accountNo");
 		excludeFields.add("acType");
 		excludeFields.add("bounceReason");
+		excludeFields.add("financeDetail");
 		return excludeFields;
 	}
 
@@ -450,6 +454,20 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	/**
+	 * @return the financeDetail
+	 */
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	/**
+	 * @param financeDetail the financeDetail to set
+	 */
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 
 }

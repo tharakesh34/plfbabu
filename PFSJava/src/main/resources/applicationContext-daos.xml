@@ -8241,6 +8241,7 @@
 	<bean id="presentmentExtractService" class="com.pennanttech.interfacebajaj.fileextract.PresentmentExtractService">
 		<property name="dataSource" ref="dataSource" />
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<bean id="disbursementProcess" class="com.pennant.backend.service.payorderissue.impl.DisbursementProcessImpl" />

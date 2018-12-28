@@ -134,7 +134,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From Templates");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where TemplateCode =:code");
+		selectSql.append(" Where TemplateCode = :TemplateCode");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mailTemplate);

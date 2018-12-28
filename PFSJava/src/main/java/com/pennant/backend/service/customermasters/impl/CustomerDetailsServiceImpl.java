@@ -750,6 +750,29 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	/**
+	 * Getting the customer Email, phone and address lisat details
+	 * 
+	 * @param id
+	 * @param type
+	 * @return
+	 */
+	@Override
+	public CustomerDetails getCustomerChildDetails(long id, String type) {
+		logger.debug(Literal.ENTERING);
+
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustID(id);
+
+		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
+		customerDetails.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(id, type));
+		customerDetails.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(id, type));
+
+		logger.debug(Literal.LEAVING);
+		return customerDetails;
+	}
+
+	/**
 	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById method.
 	 * 
 	 * @param id

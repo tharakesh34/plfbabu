@@ -44,6 +44,7 @@ package com.pennant.backend.service.financemanagement;
 
 import java.util.List;
 
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -78,5 +79,7 @@ public interface PresentmentDetailService {
 	PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode);
 
 	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
+
+	FinanceDetail getFinanceDetailsByRef(String finReference);
 
 }
