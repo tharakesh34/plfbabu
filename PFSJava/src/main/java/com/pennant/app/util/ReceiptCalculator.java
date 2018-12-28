@@ -465,7 +465,8 @@ public class ReceiptCalculator implements Serializable {
 					.add(curSchd.getFeeSchd() == null ? BigDecimal.ZERO : curSchd.getFeeSchd()));
 
 			// Overdue Principal and Profit
-			if (DateUtility.compare(schdDate, valueDate) <= 0) {
+			if ((DateUtility.compare(schdDate, valueDate) < 0 && StringUtils.equals(finScheduleData.getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) || 
+					(DateUtility.compare(schdDate, valueDate) <= 0 && !StringUtils.equals(finScheduleData.getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT))) {
 				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
 
 				if (!StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY)

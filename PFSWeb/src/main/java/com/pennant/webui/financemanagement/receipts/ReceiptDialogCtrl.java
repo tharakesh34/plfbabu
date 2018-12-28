@@ -1749,7 +1749,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 
 			if (!isOverDraft || !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
-					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd())) {
+					getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod())) {
 				readOnlyComponent(true, this.excessAdjustTo);
 				this.excessAdjustTo.setSelectedIndex(0);
 			}
@@ -2229,9 +2229,13 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								.subtract(detail.getRepayAmount()));
 						break;
 					} else {
-						final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
-						receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd()
-								.add(receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
+						if(!StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
+							final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
+							receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd()
+									.add(receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
+						}else{
+							receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd());
+						}
 					}
 					if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 						detail.setPartialPaidAmt(detail.getPartialPaidAmt().add((PennantApplicationUtil
@@ -2317,7 +2321,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			//  Finance Repay Instruction Changes
 			if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
-				if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd())){
+				if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, aFinanceMain.getScheduleMethod())){
 
 					Date dateValueDate = DateUtility.getAppDate();
 					if(this.receivedDate.getValue() != null){
@@ -2373,7 +2377,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 						if(rpyInst.getRepayDate().compareTo(dateValueDate) == 0){
-							rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
+							//rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
 						}else if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) == 0){
 							rpyInst.setRepayAmount(rpyInst.getRepayAmount().subtract(totPaidAmount));
 							if(rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
@@ -2395,8 +2399,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Finding Last maturity date after recalculation.
 			List<FinanceScheduleDetail> schList = sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
 			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
-			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
-					finScheduleData.getFinanceMain().getScheduleMethod())) {
+			if (!StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)) {
 				for (int i = schList.size()-1; i >= 0; i--) {
 					if(schList.get(i).getClosingBalance().compareTo(BigDecimal.ZERO) > 0){
 						break;
@@ -2998,7 +3001,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					break;
 				}
 			}
-			if (!isPriRcdFound) {
+			if (!isPriRcdFound && this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0) {
 				allocationDetail = new ReceiptAllocationDetail();
 				allocationDetail.setAllocationID(receiptHeader.getAllocations().size() + 1);
 				allocationDetail.setAllocationType(RepayConstants.ALLOCATION_PRI);
@@ -4590,7 +4593,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							closingBal = BigDecimal.ZERO;
 						}
 						FinanceScheduleDetail curSchd = scheduleList.get(i);
-						if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) >= 0) {
+						if ((DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) >= 0 && 
+								!StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) ||
+								(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0 && 
+										StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT))) {
 							closingBal = curSchd.getClosingBalance();
 							continue;
 						}
@@ -7408,8 +7414,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
 
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null
-				&& !StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && receiptValueDate
-						.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+				&& !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod()) 
+				&& !StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) 
+				&& receiptValueDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Date"));
 			return false;
 		}
@@ -7504,7 +7511,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// No excess amount validation on partial Settlement
 		if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			if (remBal.compareTo(BigDecimal.ZERO) <= 0) {
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod()) 
+					&& remBal.compareTo(BigDecimal.ZERO) <= 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
 				return false;
 			} else if (totalDue.subtract(totalPaid.add(totalWaived)).compareTo(BigDecimal.ZERO) > 0) {
@@ -7525,7 +7533,10 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 						isValidPPDate = false;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
+					if ((DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0 && 
+							!StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) ||
+							(DateUtility.compare(receiptValueDate, curSchd.getSchDate()) > 0 && 
+									StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT))) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
