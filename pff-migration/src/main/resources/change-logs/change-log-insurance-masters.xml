@@ -854,38 +854,7 @@
 		</column>
 	</addColumn>
 </changeSet>
-
-<!-- <changeSet id="15" author="saikiran.v">
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_EntityCode"
-		referencedTableName="Entity" referencedColumnNames="ENTITYCODE"
-		baseTableName="VASProviderAccDetail" baseColumnNames="EntityCode" />
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_t_EntityCode"
-		referencedTableName="Entity" referencedColumnNames="ENTITYCODE"
-		baseTableName="VASProviderAccDetail_temp" baseColumnNames="EntityCode" />
-
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_BankName"
-		referencedTableName="BMTBANKDETAIL" referencedColumnNames="BANKCODE"
-		baseTableName="VASProviderAccDetail" baseColumnNames="BankCode" />
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_t_BankName"
-		referencedTableName="BMTBANKDETAIL" referencedColumnNames="BANKCODE"
-		baseTableName="VASProviderAccDetail_temp" baseColumnNames="BankCode" />
-
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_BranchName"
-		referencedTableName="BANKBRANCHES" referencedColumnNames="BANKBRANCHID"
-		baseTableName="VASProviderAccDetail" baseColumnNames="BankBranchID" />
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_t_BranchName"
-		referencedTableName="BANKBRANCHES" referencedColumnNames="BANKBRANCHID"
-		baseTableName="VASProviderAccDetail_temp" baseColumnNames="BankBranchID" />
-
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_prvdrID"
-		referencedTableName="AMTVEHICLEDEALER" referencedColumnNames="DEALERID"
-		baseTableName="VASProviderAccDetail" baseColumnNames="ProviderId" />
-	<addForeignKeyConstraint constraintName="fk_VASPrvdrAccDtl_t_prvdrID"
-		referencedTableName="AMTVEHICLEDEALER" referencedColumnNames="DEALERID"
-		baseTableName="VASProviderAccDetail_temp" baseColumnNames="ProviderId" />
-</changeSet> -->
-
-	<changeSet id="16" author="saikiran.v">
+<changeSet id="16" author="saikiran.v">
 				<createView viewName="VASProviderAccDetail_AView"
 			replaceIfExists="true">
 		SELECT		T1.Id, T1.ProviderId,T5.DEALERNAME AS providerDesc, T1.EntityCode, T2.ENTITYDESC, T1.PaymentMode,T1.BankCode,T3.BANKNAME, T1.BankBranchID, T4.BRANCHDESC, T1.AccountNumber, T1.ReceivableAdjustment, T1.ReconciliationAmount, T1.Active		
