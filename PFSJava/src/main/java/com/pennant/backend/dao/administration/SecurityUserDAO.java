@@ -46,12 +46,9 @@ import java.util.List;
 
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.applicationmaster.Entity;
 
 public interface SecurityUserDAO {
-
-	SecurityUser getSecurityUser();
-
-	SecurityUser getNewSecurityUser();
 
 	SecurityUser getSecurityUserById(long id, String type);
 
@@ -82,4 +79,8 @@ public interface SecurityUserDAO {
 	int getActiveUsersCount();
 
 	long getUserByName(String userName);
+
+	List<Entity> getEntityList(String entity);
+
+	void saveDivBranchDetails(List<SecurityUserDivBranch> securityUserDivBranchList, String type);
 }

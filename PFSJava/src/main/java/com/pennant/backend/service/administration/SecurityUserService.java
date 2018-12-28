@@ -45,17 +45,15 @@ package com.pennant.backend.service.administration;
 
 import java.util.List;
 
+import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
 
 public interface SecurityUserService {
-
-	SecurityUser getSecurityUser();
-
-	SecurityUser getNewSecurityUser();
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
@@ -76,6 +74,9 @@ public interface SecurityUserService {
 	List<AuditDetail> deleteDivBranchs(List<SecurityUserDivBranch> securityUserDivBranchList, String tableType,
 			String auditTranType);
 
+	public List<AuditDetail> deleteReportinManagers(List<ReportingManager> reportingManagers, String tableType,
+			String auditTranType);
+
 	// Security Work flow changes
 	SecurityUser getSecurityUserOperationsById(long id);
 
@@ -84,5 +85,7 @@ public interface SecurityUserService {
 	void validateLicensedUsers() throws LicenseException;
 
 	SecurityUser getSecurityUserByLogin(String userLogin);
+
+	public List<Entity> getEntityList(String entity);
 
 }

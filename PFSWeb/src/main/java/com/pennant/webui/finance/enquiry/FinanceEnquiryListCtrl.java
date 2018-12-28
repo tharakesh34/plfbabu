@@ -94,6 +94,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -177,6 +178,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 
 	private transient boolean approvedList = false; // autowired
 	private transient boolean rejectedList = false;
+
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 
 	// not auto wired variables
@@ -781,9 +783,17 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			this.searchObj.addTabelName("FinOverdueEnquiry_View");
 		} else {
 			if (approvedList) {
-				this.searchObj.addTabelName("FinanceEnquiry_View");
+				if (this.myRecords.isSelected()) {
+					this.searchObj.addTabelName("FinanceEnquiry_View");
+				} else {
+					this.searchObj.addTabelName("FinanceEnquiry_Hierarchy_View");
+				}
 			} else {
-				this.searchObj.addTabelName("FinanceEnquiry_TView");
+				if (this.myRecords.isSelected()) {
+					this.searchObj.addTabelName("FinanceEnquiry_TView");
+				} else {
+					this.searchObj.addTabelName("FinanceEnquiry_Hierarchy_TView");
+				}
 			}
 		}
 
@@ -1161,6 +1171,30 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
+	}
+
+	/**
+	 * When user clicks on "myRecords"
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onCheck$myRecords(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+		doSearch();
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	/**
+	 * When user clicks on "myTeamRecords"
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onCheck$myTeamRecords(Event event) throws Exception {
+		logger.debug(Literal.ENTERING + event.toString());
+		doSearch();
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	// ******************************************************//

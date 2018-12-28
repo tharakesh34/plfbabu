@@ -8752,7 +8752,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			SecurityUserDivBranch branch = (SecurityUserDivBranch) this.finBranch.getObject();
 			if (branch != null) {
-				this.finBranch.setValue(branch.getUserBranch(), branch.getUserBranchDesc());
+				this.finBranch.setValue(branch.getUserBranch(), branch.getBranchDesc());
 				branchSwiftCode = branch.getBranchSwiftBrnCde();
 				getFinanceDetail().getFinScheduleData().getFinanceMain()
 						.setFinBranchProvinceCode(branch.getBranchProvince());

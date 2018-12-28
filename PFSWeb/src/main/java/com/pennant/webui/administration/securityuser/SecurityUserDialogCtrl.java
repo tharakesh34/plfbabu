@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  SecurityUserDialogCtrl.java                                                   * 	  
+ * FileName    		:  SecurityUserDialogCtrl.java                                          * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -49,7 +49,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -67,8 +69,11 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Cell;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Constraint;
@@ -77,6 +82,9 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
@@ -87,21 +95,30 @@ import org.zkoss.zul.Timebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.BusinessVertical;
+import com.pennant.backend.model.applicationmaster.Cluster;
+import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.administration.SecurityUserService;
-import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.service.applicationmaster.ClusterService;
+import com.pennant.backend.service.applicationmaster.ReportingManagerService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
@@ -118,8 +135,14 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.security.UserType;
 import com.pennanttech.pennapps.core.security.user.UserSearch;
+import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
@@ -152,6 +175,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Timebox usrCanSignonTo;
 	protected Checkbox usrCanOverrideLimits;
 	protected Checkbox usrAcExp;
+	protected Datebox usrAcExpDt;
 	protected Checkbox usrAcLocked;
 	protected ExtendedCombobox usrLanguage;
 	protected Combobox usrDftAppId;
@@ -165,17 +189,19 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Label label_PwdStatus;
 	protected Div div_PwdStatusMeter;
 	protected ExtendedCombobox usrDesg;
-
+	protected ExtendedCombobox businessvertical;
 	protected Grid usrDivBranchsGrid;
 	protected Tab secUserDetailsTab;
 	protected Tab secUserDivBranchsTab;
 	protected Rows divBranch_Rows;
 	protected Row licenceMessageRow;
 	protected Label licenceMessage;
+	protected Columns divisionColumns;
+	protected Button btnNewReportingManagerList;
 
 	/* not auto wired variables */
-	private SecurityUser securityUser; // overHanded per parameters
-	private transient SecurityUserListCtrl securityUserListCtrl; // overHanded per parameters
+	private SecurityUser securityUser;
+	private transient SecurityUserListCtrl securityUserListCtrl;
 
 	private transient boolean validationOn;
 
@@ -183,22 +209,31 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	private transient SecurityUserService securityUserService;
 	private transient UserService userService;
 	private transient PagedListService pagedListService;
+	private transient ReportingManagerService reportingManagerService;
 	private transient ChangePasswordModel changePasswordModel = new ChangePasswordModel();
 	private List<ValueLabel> listUsrDftAppId = PennantStaticListUtil.getAppCodes();
 	private List<ValueLabel> authTypesList = PennantStaticListUtil.getAuthnticationTypes();
-	protected Map<String, Object> divBranchs = new HashMap<String, Object>();
-	protected Map<String, HashMap<String, Object>> dynamicDivBranchs = new HashMap<String, HashMap<String, Object>>();
+	protected transient Map<String, Object> divBranchs = new HashMap<>();
+	protected transient Map<String, HashMap<String, Object>> dynamicDivBranchs = new HashMap<>();
 	private SecurityUserDivBranch securityUserDivBranch = new SecurityUserDivBranch();
-	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
+	private List<SecurityUserDivBranch> befImgUsrDivBranchsList = new ArrayList<>();
+	protected Listbox listBoxReportingManager;
+	private List<ReportingManager> reportingManagerDetailList = new ArrayList<>();
+	private ReportingManager reportingManager = new ReportingManager();
 	protected boolean newRecord = false;
-	protected Datebox UsrAcExpDt;
 	private boolean findUser = false;
 
 	@Autowired
-	private UserSearch ldapUserSearch;
+	private transient UserSearch ldapUserSearch;
 
 	@Autowired
-	private UserSearch externalUserSearch;
+	private transient UserSearch externalUserSearch;
+
+	@Autowired
+	private transient ClusterService clusterService;
+
+	@Autowired
+	private transient SearchProcessor searchProcessor;
 
 	/**
 	 * default constructor.<br>
@@ -220,7 +255,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws Exception
 	 */
 	public void onCreate$window_SecurityUserDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_SecurityUserDialog);
@@ -248,7 +283,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			/* set components visible dependent of the users rights */
 
 			doCheckRights();
-
 			if (arguments.containsKey("securityUserListCtrl")) {
 				setSecurityUserListCtrl((SecurityUserListCtrl) arguments.get("securityUserListCtrl"));
 			} else {
@@ -265,7 +299,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			MessageUtil.showError(e);
 			this.window_SecurityUserDialog.onClose();
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -273,7 +307,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		setListusrDftAppId();
 		fillComboBox(authType, "", authTypesList, "");
@@ -319,7 +353,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setValueColumn("DesgCode");
 		this.usrDesg.setDescColumn("DesgDesc");
 		this.usrDesg.setValidateColumns(new String[] { "DesgCode" });
-		this.UsrAcExpDt.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.usrAcExpDt.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.businessvertical.setModuleName("BusinessVertical");
+		this.businessvertical.setValueColumn("Id");
+		this.businessvertical.setValueType(DataType.LONG);
+		this.businessvertical.setDescColumn("Description");
+		this.businessvertical.setValidateColumns(new String[] { "Id", "Code" });
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 			// this.statusRow.setVisible(true);
@@ -327,7 +368,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.groupboxWf.setVisible(false);
 			// this.statusRow.setVisible(false);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -338,14 +379,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnDelete"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_btnSave"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_SecurityUserDialog_RM_btnNew"));
 		this.btnCancel.setVisible(false);
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -355,9 +397,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSave();
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$usrLogin(Event event) throws Exception {
@@ -410,10 +452,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnEdit(Event event) throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		doEdit();
 		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -422,10 +464,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param event
 	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering ");
+	public void onClick$btnHelp(Event event) {
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_SecurityUserDialog);
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -435,9 +477,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doDelete();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -446,9 +488,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param event
 	 */
 	public void onClick$btnCancel(Event event) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		doCancel();
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -468,7 +510,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		doWriteBeanToComponents(this.securityUser.getBefImage());
 		doReadOnly();
@@ -479,7 +521,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		doDisableDivBranchs(true);
 
-		logger.debug("Leaving ");
+		doEditClusterDivisions(true);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -489,7 +533,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 *            SecurityUser
 	 */
 	public void doWriteBeanToComponents(SecurityUser aSecurityUser) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		this.usrLogin.setValue(aSecurityUser.getUsrLogin());
 		this.userStaffID.setValue(aSecurityUser.getUserStaffID());
@@ -504,7 +548,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrCanOverrideLimits.setChecked(aSecurityUser.isUsrCanOverrideLimits());
 		this.usrAcExp.setChecked(aSecurityUser.isUsrAcExp());
 		this.usrAcLocked.setChecked(aSecurityUser.isUsrAcLocked());
-		this.UsrAcExpDt.setValue(aSecurityUser.getUsrAcExpDt());
+		this.usrAcExpDt.setValue(aSecurityUser.getUsrAcExpDt());
 
 		if (securityUser.isNew()) {
 			this.usrDftAppId.setSelectedIndex(0);
@@ -531,8 +575,18 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDesg.setValue(aSecurityUser.getUsrDesg());
 		this.usrDesg.setDescription(aSecurityUser.getLovDescUsrDesg());
 
+		if (aSecurityUser.getBusinessVertical() != null) {
+			this.businessvertical.setValue(aSecurityUser.getBusinessVerticalCode());
+			this.businessvertical.setDescription(aSecurityUser.getBusinessVerticalDesc());
+			BusinessVertical businessVertical = new BusinessVertical();
+			businessVertical.setId(aSecurityUser.getBusinessVertical());
+			this.businessvertical.setObject(businessVertical);
+		}
+
+		doFillReportingManagerDetails(aSecurityUser.getReportingManagersList());
+
 		this.recordStatus.setValue(aSecurityUser.getRecordStatus());
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -573,16 +627,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(SecurityUser aSecurityUser) throws Exception {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> tab1 = new ArrayList<>();
+		List<WrongValueException> tab2 = new ArrayList<>();
 
 		try {
 			aSecurityUser.setUsrLogin(StringUtils.trimToEmpty(this.usrLogin.getValue()));
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
@@ -596,7 +651,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						}
 						aSecurityUser.setUsrPwd(StringUtils.trimToEmpty(this.usrPwd.getValue()));
 					} catch (WrongValueException we) {
-						wve.add(we);
+						tab1.add(we);
 					}
 				}
 
@@ -607,7 +662,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 								new String[] { Labels.getLabel("label_SecurityUserDialog_UsrconfirmPwd.value") }));
 					}
 				} catch (WrongValueException we) {
-					wve.add(we);
+					tab1.add(we);
 				}
 
 				try {
@@ -621,7 +676,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						}
 					}
 				} catch (WrongValueException we) {
-					wve.add(we);
+					tab1.add(we);
 				}
 
 				try {
@@ -629,7 +684,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						this.validate(this.usrPwd, StringUtils.trimToEmpty(this.usrPwd.getValue()));
 					}
 				} catch (WrongValueException we) {
-					wve.add(we);
+					tab1.add(we);
 				}
 
 				if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
@@ -640,50 +695,50 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				aSecurityUser.setUsrPwd(null);
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUserStaffID(this.userStaffID.getValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrFName(StringUtils.trimToEmpty(this.usrFName.getValue()));
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrMName(StringUtils.trimToEmpty(this.usrMName.getValue()));
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrLName(StringUtils.trimToEmpty(this.usrLName.getValue()));
 
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrMobile(this.usrMobile.getValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrEmail(StringUtils.trimToEmpty(this.usrEmail.getValue()));
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrEnabled(this.usrEnabled.isChecked());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
@@ -691,7 +746,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				aSecurityUser.setUsrCanSignonFrom(PennantAppUtil.getTime(this.usrCanSignonFrom.getValue()));
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
@@ -699,14 +754,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				aSecurityUser.setUsrCanSignonTo(PennantAppUtil.getTime(this.usrCanSignonTo.getValue()));
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 		try {
-			if (this.UsrAcExpDt != null) {
-				aSecurityUser.setUsrAcExpDt(this.UsrAcExpDt.getValue());
+			if (this.usrAcExpDt != null) {
+				aSecurityUser.setUsrAcExpDt(this.usrAcExpDt.getValue());
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
@@ -722,7 +777,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
@@ -731,36 +786,36 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 						new String[] { Labels.getLabel("label_SecurityUserDialog_UsrCanSignonFrom.value") }));
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrCanOverrideLimits(this.usrCanOverrideLimits.isChecked());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrAcExp(this.usrAcExp.isChecked());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrAcLocked(this.usrAcLocked.isChecked());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setLovDescUsrLanguage(this.usrLanguage.getDescription());
 			aSecurityUser.setUsrLanguage(this.usrLanguage.getValidatedValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
-			String strUsrDftAppId = (String) this.usrDftAppId.getSelectedItem().getValue();
+			String strUsrDftAppId = this.usrDftAppId.getSelectedItem().getValue();
 			if (StringUtils.isBlank(strUsrDftAppId)) {
 				throw new WrongValueException(this.usrDftAppId, Labels.getLabel("STATIC_INVALID",
 						new String[] { Labels.getLabel("label_SecurityUserDialog_UsrDftAppCode.value") }));
@@ -768,47 +823,81 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			aSecurityUser.setUsrDftAppId(Integer.parseInt(strUsrDftAppId));
 			aSecurityUser.setUsrDftAppCode(App.CODE);
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setLovDescUsrBranchCodeName(this.usrBranchCode.getDescription());
 			aSecurityUser.setUsrBranchCode(this.usrBranchCode.getValidatedValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setLovDescUsrDeptCodeName(this.usrDeptCode.getDescription());
 			aSecurityUser.setUsrDeptCode(this.usrDeptCode.getValidatedValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setUsrIsMultiBranch(this.usrIsMultiBranch.isChecked());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
 		}
 
 		try {
 			aSecurityUser.setLovDescUsrDesg(this.usrDesg.getDescription());
 			aSecurityUser.setUsrDesg(this.usrDesg.getValue());
 		} catch (WrongValueException we) {
-			wve.add(we);
+			tab1.add(we);
+		}
+
+		try {
+			this.businessvertical.getValue();
+			Object object = this.businessvertical.getObject();
+			if (object != null) {
+				aSecurityUser.setBusinessVertical(((BusinessVertical) object).getId());
+			} else {
+				aSecurityUser.setBusinessVertical(null);
+			}
+
+		} catch (WrongValueException we) {
+			tab1.add(we);
+		}
+
+		try {
+			aSecurityUser.setReportingManagersList(this.reportingManagerDetailList);
+
+		} catch (WrongValueException we) {
+			tab1.add(we);
 		}
 
 		if (!findUser && getSecurityUser().isNew() && aSecurityUser.getUsrLogin() != null) {
-			wve.add(new WrongValueException(this.usrLogin, "User not found"));
+			tab1.add(new WrongValueException(this.usrLogin, "User not found"));
 		} else {
 			this.usrLogin.setErrorMessage("");
 			this.usrLogin.setConstraint("");
 		}
 
+		if (this.secUserDivBranchsTab.isVisible()
+				&& (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())) {
+
+			if (CollectionUtils.isEmpty(tab1)) {
+				if (!ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+					doSaveDivBranchDetails(aSecurityUser);
+				} else {
+					doSaveDivBasedClusterDetails(aSecurityUser, tab2);
+				}
+			}
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		if (wve.size() > 0) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
+
+		if (CollectionUtils.isNotEmpty(tab1)) {
+			int size = tab1.size();
+			WrongValueException[] wvea = new WrongValueException[size];
 
 			/* if any Exception Occurs make password and new password Fields empty */
 			this.usrPwd.setValue("");
@@ -816,15 +905,26 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.div_PwdStatusMeter.setStyle("background-color:white");
 			this.label_PwdStatus.setValue("");
 
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+			for (int i = 0; i < size; i++) {
+				wvea[i] = tab1.get(i);
 			}
 
 			secUserDetailsTab.setSelected(true);
 			throw new WrongValuesException(wvea);
+		} else if (CollectionUtils.isNotEmpty(tab2)) {
+			int size = tab2.size();
+			WrongValueException[] wvea = new WrongValueException[size];
+
+			for (int i = 0; i < size; i++) {
+				wvea[i] = tab2.get(i);
+			}
+
+			secUserDivBranchsTab.setSelected(true);
+			throw new WrongValuesException(wvea);
 		}
+
 		aSecurityUser.setRecordStatus(this.recordStatus.getValue());
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -848,10 +948,20 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param aSecurityUser
 	 * @throws Exception
 	 */
-	public void doShowDialog(SecurityUser aSecurityUser) throws Exception {
-		logger.debug("Entering ");
+	public void doShowDialog(SecurityUser aSecurityUser) {
+		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
+
+		// fill the data in divisionBranch tab
+		if (this.secUserDivBranchsTab.isVisible()) {
+			if (!ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+				doFillDivisionBranchTab(aSecurityUser);
+			} else {
+				appendDivisions(getDivisionDetails(aSecurityUser));
+			}
+		}
+
 		if (aSecurityUser.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -871,35 +981,28 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityUser);
-
-			// fill the data in divisionBranch tab
-			if (this.secUserDivBranchsTab.isVisible()) {
-				doFillDivisionBranchTab();
-			}
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			this.window_SecurityUserDialog.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * This method sets all roleApps as ComboItems for ComboBox
 	 */
 	private void setListusrDftAppId() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		for (int i = 0; i < listUsrDftAppId.size(); i++) {
-
 			Comboitem comboitem = new Comboitem();
-			comboitem = new Comboitem();
 			comboitem.setLabel(listUsrDftAppId.get(i).getLabel());
 			comboitem.setValue(listUsrDftAppId.get(i).getValue());
 			this.usrDftAppId.appendChild(comboitem);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -907,8 +1010,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * 
 	 * @throws InterruptedException
 	 */
-	private void doSetValidation() throws InterruptedException {
-		logger.debug("Entering ");
+	private void doSetValidation() {
+		logger.debug(Literal.ENTERING);
 		setValidationOn(true);
 		if (!this.usrLogin.isReadonly()) {
 			this.usrLogin.setConstraint(
@@ -960,14 +1063,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrDftAppId.setConstraint(new StaticListValidator(listUsrDftAppId,
 					Labels.getLabel("label_SecurityUserDialog_UsrDftAppCode.value")));
 		}
-		logger.debug("Leaving ");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		setValidationOn(false);
 		this.usrLogin.setConstraint("");
 		this.authType.setConstraint("");
@@ -983,14 +1087,16 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrCanSignonTo.setConstraint("");
 		this.usrLanguage.setConstraint("");
 		this.usrDftAppId.setConstraint("");
-		logger.debug("Leaving ");
+
+		doRemoveClusterValidation();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set Validations for LOV Fields
 	 */
 	private void doSetLOVValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		this.usrBranchCode.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_SecurityUserDialog_UsrBranchCode.value"), null, true, true));
 		this.usrDeptCode.setConstraint(
@@ -999,19 +1105,19 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrLanguage.value"), null, true, true));
 		this.usrDesg.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_SecurityUserDialog_UsrDesg.value"), null, true, true));
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Remove Validations for LOV Fields
 	 */
 	private void doRemoveLOVValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		this.usrBranchCode.setConstraint("");
 		this.usrDeptCode.setConstraint("");
 		this.usrLanguage.setConstraint("");
 		this.usrDesg.setConstraint("");
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1019,7 +1125,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		this.usrLogin.setErrorMessage("");
 		this.authType.setErrorMessage("");
 		this.usrConfirmPwd.setErrorMessage("");
@@ -1038,7 +1144,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrLanguage.setErrorMessage("");
 		this.usrDftAppId.setErrorMessage("");
 		this.usrDesg.setErrorMessage("");
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -1049,14 +1155,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * 
 	 */
 	@Override
-	public void validate(Component comp, Object value) throws WrongValueException {
-		logger.debug("Entering ");
+	public void validate(Component comp, Object value) {
+		logger.debug(Literal.ENTERING);
 		if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
 			if (changePasswordModel.checkPasswordCriteria(this.usrLogin.getValue(), this.usrPwd.getValue())) {
 				throw new WrongValueException(usrPwd, Labels.getLabel("label_Invalid_Password"));
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// CRUD operations
@@ -1106,7 +1212,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
+
 
 		if (getSecurityUser().isNewRecord()) {
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(true);
@@ -1126,7 +1233,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			}
 
 		} else {
-
 			this.usrDftAppId.setDisabled(false);
 			this.usrEnabled.setDisabled(false);
 			this.usrLogin.setReadonly(true);
@@ -1138,6 +1244,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			licenceMessageRow.setVisible(false);
 			licenceMessage.setValue("");
 		}
+
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
 		this.usrPwd.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
@@ -1159,7 +1266,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrIsMultiBranch.setDisabled(isReadOnly("SecurityUserDialog_usrIsMultiBranch"));
 		this.usrConfirmPwd.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
 		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrDesg"));
-		this.UsrAcExpDt.setDisabled(isReadOnly("SecurityUserDialog_UsrAcExpDt"));
+		this.usrAcExpDt.setDisabled(isReadOnly("SecurityUserDialog_UsrAcExpDt"));
+		this.btnNewReportingManagerList.setDisabled(isReadOnly("button_SecurityUserDialog_RM_btnNew"));
+		this.businessvertical.setReadonly(isReadOnly("SecurityUserDialog_RM_Businessvertical"));
+
+		readOnlyComponent(isReadOnly("button_SecurityUserDialog_RM_btnNew"), this.btnNewReportingManagerList);
+		readOnlyComponent(isReadOnly("button_SecurityUserDialog_RM_btnNew"), this.btnNewReportingManagerList);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1176,15 +1288,21 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
-		doDisableDivBranchs(false);
-		logger.debug("Leaving ");
+
+		if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+			doEditClusterDivisions(false);
+		} else {
+			doDisableDivBranchs(false);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		this.usrLogin.setReadonly(true);
 		this.authType.setDisabled(true);
 		this.usrPwd.setReadonly(true);
@@ -1207,7 +1325,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrDeptCode.setReadonly(true);
 		this.usrIsMultiBranch.setDisabled(true);
 		this.usrDesg.setReadonly(true);
-		this.UsrAcExpDt.setDisabled(true);
+		this.usrAcExpDt.setDisabled(true);
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1218,14 +1337,17 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
-		logger.debug("Leaving ");
+
+		doEditClusterDivisions(true);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		this.usrLogin.setValue("");
 		this.usrPwd.setValue("");
 		this.userStaffID.setValue("");
@@ -1249,7 +1371,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrIsMultiBranch.setChecked(false);
 		this.usrDesg.setValue("");
 		this.usrDesg.setDescription("");
-		logger.debug("Leaving ");
+
+		doClearClusters();
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1258,7 +1382,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		final SecurityUser aSecurityUser = new SecurityUser();
 		BeanUtils.copyProperties(getSecurityUser(), aSecurityUser);
 		boolean isNew = aSecurityUser.isNew();
@@ -1267,10 +1391,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		doSetValidation();
 		// fill the SecurityUser object with the components data
 		doWriteComponentsToBean(aSecurityUser);
-		if (this.secUserDivBranchsTab.isVisible()
-				&& (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())) {
-			doSaveDivBranchDetails(aSecurityUser);
-		}
+
 		/*
 		 * Write the additional validations as per below example get the selected branch object from the listBox Do data
 		 * level validations here
@@ -1323,7 +1444,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1335,7 +1456,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws InterruptedException
 	 */
 	private boolean doProcess(SecurityUser aSecurityUser, String tranType) throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1389,6 +1510,28 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			aSecurityUser.setRoleCode(getRole());
 			aSecurityUser.setNextRoleCode(nextRoleCode);
 
+			// IRRCode details
+			if (aSecurityUser.getReportingManagersList() != null
+					&& !aSecurityUser.getReportingManagersList().isEmpty()) {
+				for (ReportingManager reportingManager : aSecurityUser.getReportingManagersList()) {
+					reportingManager.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+					reportingManager.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					reportingManager.setUserDetails(getUserWorkspace().getLoggedInUser());
+					reportingManager.setRecordStatus(aSecurityUser.getRecordStatus());
+					reportingManager.setWorkflowId(aSecurityUser.getWorkflowId());
+					reportingManager.setTaskId(taskId);
+					reportingManager.setNextTaskId(nextTaskId);
+					reportingManager.setRoleCode(getRole());
+					reportingManager.setNextRoleCode(nextRoleCode);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aSecurityUser.getRecordType())) {
+						if (StringUtils.trimToNull(reportingManager.getRecordType()) == null) {
+							reportingManager.setRecordType(aSecurityUser.getRecordType());
+							reportingManager.setNewRecord(true);
+						}
+					}
+				}
+			}
+
 			auditHeader = getAuditHeader(aSecurityUser, tranType);
 
 			String operationRefs = getServiceOperations(taskId, aSecurityUser);
@@ -1411,7 +1554,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			auditHeader = getAuditHeader(aSecurityUser, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1425,7 +1568,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws InterruptedException
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		SecurityUser aSecurityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
@@ -1437,21 +1580,21 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 
-						auditHeader = getSecurityUserService().delete(auditHeader);
+						auditHeader = securityUserService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getSecurityUserService().saveOrUpdate(auditHeader);
+						auditHeader = securityUserService.saveOrUpdate(auditHeader);
 					}
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getSecurityUserService().doApprove(auditHeader);
+						auditHeader = securityUserService.doApprove(auditHeader);
 
 						if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSecurityUserService().doReject(auditHeader);
+						auditHeader = securityUserService.doReject(auditHeader);
 						if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
@@ -1459,7 +1602,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_SecurityUserDialog, auditHeader);
+						ErrorControl.showErrorControl(this.window_SecurityUserDialog, auditHeader);
 						return processCompleted;
 					}
 				}
@@ -1483,7 +1626,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1497,7 +1640,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param event
 	 */
 	public void onFulfill$usrBranchCode(Event event) {
-		logger.debug("Entering  " + event.toString());
+		logger.debug(Literal.ENTERING);
 		Object dataObject = usrBranchCode.getObject();
 		if (dataObject instanceof String) {
 			this.usrBranchCode.setValue(dataObject.toString());
@@ -1509,7 +1652,21 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				this.usrBranchCode.setDescription(details.getBranchDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$businessvertical(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = businessvertical.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.businessvertical.setValue("");
+			this.businessvertical.setDescription("");
+		} else {
+			BusinessVertical details = (BusinessVertical) dataObject;
+			this.businessvertical.setValue(details.getCode());
+			this.businessvertical.setDescription(details.getDescription());
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1641,15 +1798,15 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param e
 	 */
 	private void showMessage(Exception e) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.window_SecurityUserDialog, auditHeader);
 		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
+			logger.error(Literal.EXCEPTION, exp);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1659,7 +1816,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		final HashMap<String, Serializable> map = new HashMap<String, Serializable>();
 		map.put("notes", getNotes());
 		map.put("control", this);
@@ -1670,7 +1827,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1679,12 +1836,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @return Notes
 	 */
 	private Notes getNotes() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		Notes notes = new Notes();
 		notes.setModuleName("SecurityUsers");
 		notes.setReference(String.valueOf(getSecurityUser().getUsrID()));
 		notes.setVersion(getSecurityUser().getVersion());
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return notes;
 	}
 
@@ -1698,10 +1855,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	/**
 	 * Method for Rendering Division Branch Details
 	 */
-	public void doFillDivisionBranchTab() {
-		logger.debug("Entering");
-		List<SecurityUserDivBranch> userBranchsList = getSecurityUserService()
-				.getSecUserDivBrList(getSecurityUser().getUsrID(), "_View");
+	public void doFillDivisionBranchTab(SecurityUser aSecurityUser) {
+		logger.debug(Literal.ENTERING);
 		List<DivisionDetail> divisions = getDivisionDetails();
 		if (divisions != null && !divisions.isEmpty()) {
 			Row row;
@@ -1744,14 +1899,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 					HashMap<String, Object> tempSecDivBrMap = new HashMap<String, Object>();
 					String branchs = "";
 					String toolTipDesc = "";
-					for (SecurityUserDivBranch securityUserDivBranch : userBranchsList) {
-						if (securityUserDivBranch.getUserDivision().equals(userDivision)) {
-							tempSecDivBrMap.put(securityUserDivBranch.getUserBranch(),
-									securityUserDivBranch.getUserBranchDesc());
-							branchs = branchs.concat(securityUserDivBranch.getUserBranch() + ",");
-							toolTipDesc = toolTipDesc.concat(securityUserDivBranch.getUserBranchDesc() + " , ");
-							securityUserDivBranch.setBefImage(securityUserDivBranch);
-							this.befImgUsrDivBranchsList.add(securityUserDivBranch);
+					for (SecurityUserDivBranch branch : aSecurityUser.getSecurityUserDivBranchList()) {
+						if (branch.getUserDivision().equals(userDivision)) {
+							tempSecDivBrMap.put(branch.getUserBranch(), branch.getBranchDesc());
+							branchs = branchs.concat(branch.getUserBranch() + ",");
+							toolTipDesc = toolTipDesc.concat(branch.getBranchDesc() + " , ");
+							branch.setBefImage(branch);
+							this.befImgUsrDivBranchsList.add(branch);
 						}
 					}
 					if (StringUtils.isNotBlank(branchs) && branchs.endsWith(",")) {
@@ -1770,7 +1924,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.secUserDivBranchsTab.setVisible(false);
 		}
 		setBefImgUsrDivBranchsList(this.befImgUsrDivBranchsList);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1779,12 +1933,91 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @return
 	 */
 	public List<DivisionDetail> getDivisionDetails() {
-		logger.debug("Entering");
-		JdbcSearchObject<DivisionDetail> jdbcSearchObject = new JdbcSearchObject<DivisionDetail>(DivisionDetail.class);
-		jdbcSearchObject.addTabelName("SMTDivisionDetail_AView");
-		List<DivisionDetail> divisions = getPagedListService().getBySearchObject(jdbcSearchObject);
-		logger.debug("Leaving");
-		return divisions;
+		Search search = new Search(DivisionDetail.class);
+		search.addTabelName("SMTDivisionDetail_AView");
+		return searchProcessor.getResults(search);
+	}
+
+	/**
+	 * This method is to Fetch Division Details
+	 * 
+	 * @return
+	 */
+	public List<SecurityUserDivBranch> getDivisionDetails(SecurityUser aSecurityUser) {
+		List<SecurityUserDivBranch> list = aSecurityUser.getSecurityUserDivBranchList();
+		List<DivisionDetail> divisions = getDivisionDetails();
+		if (aSecurityUser.isNew() || aSecurityUser.getSecurityUserDivBranchList().isEmpty()) {
+			for (DivisionDetail division : divisions) {
+				SecurityUserDivBranch branch = new SecurityUserDivBranch();
+				branch.setEntity(division.getEntityCode());
+				branch.setUserDivision(division.getDivisionCode());
+				branch.setDivisionDesc(division.getDivisionCodeDesc());
+				list.add(branch);
+			}
+
+		}
+
+		List<SecurityUserDivBranch> tempList = new ArrayList<>();
+		for (DivisionDetail division : divisions) {
+			boolean added = false;
+			for (SecurityUserDivBranch branch : list) {
+				if (division.getDivisionCode().equals(branch.getUserDivision())) {
+					added = true;
+					continue;
+				}
+			}
+
+			if (!added) {
+				SecurityUserDivBranch divBranch = new SecurityUserDivBranch();
+				divBranch.setUserDivision(division.getDivisionCode());
+				divBranch.setDivisionDesc(division.getDivisionCodeDesc());
+				tempList.add(divBranch);
+			}
+
+		}
+
+		list.addAll(tempList);
+
+		List<SecurityUserDivBranch> filterList = new ArrayList<>();
+		Map<String, SecurityUserDivBranch> map = new HashMap<>();
+		for (SecurityUserDivBranch divBranch : list) {
+			SecurityUserDivBranch division = map.get(divBranch.getUserDivision());
+			if (division == null) {
+				division = divBranch;
+				map.put(divBranch.getUserDivision(), division);
+			}
+
+			if (divBranch.getEntity() != null) {
+				Entity entity = new Entity();
+				entity.setEntityCode(divBranch.getEntity());
+				entity.setEntityDesc(divBranch.getEntityDesc());
+				division.getEntities().put(divBranch.getEntity(), entity);
+			}
+
+			if (divBranch.getCluster() != null) {
+				Cluster cluster = new Cluster();
+				cluster.setId(divBranch.getCluster());
+				cluster.setCode(divBranch.getClusterCode());
+				cluster.setEntity(divBranch.getEntity());
+				cluster.setClusterType(divBranch.getClusterType());
+				division.getClusters().put(divBranch.getClusterCode(), cluster);
+			}
+
+			if (divBranch.getUserBranch() != null) {
+				Branch branch = new Branch();
+				branch.setBranchCode(divBranch.getUserBranch());
+				branch.setEntity(divBranch.getEntity());
+				branch.setBranchDesc(divBranch.getBranchDesc());
+				division.getBranches().put(divBranch.getUserBranch(), branch);
+			}
+
+		}
+
+		for (Entry<String, SecurityUserDivBranch> entry : map.entrySet()) {
+			filterList.add(entry.getValue());
+		}
+
+		return filterList;
 	}
 
 	/**
@@ -1794,7 +2027,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	@SuppressWarnings("unchecked")
 	public void onButtonClick(ForwardEvent event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		Button btn = (Button) event.getOrigin().getTarget();
 		this.divBranchs = dynamicDivBranchs.get(btn.getId());
 
@@ -1811,7 +2044,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				txtbx.setValue(multivalues.replace("[", "").replace("]", "").replace(" ", ""));
 				String toolTipDesc = "";
 				for (String key : details.keySet()) {
-					Object obj = (Object) details.get(key);
+					Object obj = details.get(key);
 					if (obj instanceof String) {
 						//
 					} else {
@@ -1827,7 +2060,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				txtbx.setTooltiptext(toolTipDesc);
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1837,28 +2070,28 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @return
 	 */
 	public void doSaveDivBranchDetails(SecurityUser securityUser) {
-		logger.debug("Entering");
-		SecurityUserDivBranch aSecurityUserDivBranch;
+		logger.debug(Literal.ENTERING);
+		SecurityUserDivBranch division;
 		List<SecurityUserDivBranch> secUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
 		try {
 			for (Component row : divBranch_Rows.getChildren()) {
-				Label division = (Label) row.getFirstChild().getFirstChild();
-				String div = division == null ? "" : division.getValue();
+				Label label = (Label) row.getFirstChild().getFirstChild();
+				String div = label == null ? "" : label.getValue();
 				Textbox branch = (Textbox) row.getFirstChild().getNextSibling().getFirstChild().getNextSibling();
 				String divBranches = branch == null ? "" : branch.getValue();
 				if (StringUtils.isNotBlank(divBranches)) {
-					String[] divBranchs = divBranches.split(",");
-					for (String divBranch : divBranchs) {
-						aSecurityUserDivBranch = new SecurityUserDivBranch();
-						aSecurityUserDivBranch.setUsrID(getSecurityUser().getUsrID());
-						aSecurityUserDivBranch.setUserDivision(div);
-						aSecurityUserDivBranch.setUserBranch(divBranch);
-						aSecurityUserDivBranch.setRecordStatus("");
-						aSecurityUserDivBranch.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-						aSecurityUserDivBranch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						aSecurityUserDivBranch.setUserDetails(getUserWorkspace().getLoggedInUser());
+					String[] branches = divBranches.split(",");
+					for (String divBranch : branches) {
+						division = new SecurityUserDivBranch();
+						division.setUsrID(getSecurityUser().getUsrID());
+						division.setUserDivision(div);
+						division.setUserBranch(divBranch);
+						division.setRecordStatus("");
+						division.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+						division.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						division.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-						secUsrDivBranchsList.add(aSecurityUserDivBranch);
+						secUsrDivBranchsList.add(division);
 					}
 				}
 			}
@@ -1866,18 +2099,238 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				securityUser.setSecurityUserDivBranchList(newDivBranchsProcess(secUsrDivBranchsList));
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			this.befImgUsrDivBranchsList.clear();
 			showMessage(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+	}
+
+	private Component getComponent(Row row, int index) {
+		int i = 0;
+		for (Component component : row.getChildren()) {
+			if (i == index) {
+				return component.getLastChild().getLastChild();
+			}
+			i++;
+		}
+		return null;
+	}
+
+	private String getLabel(Row row, int index) {
+		int i = 0;
+		for (Component component : row.getChildren()) {
+			if (i == index) {
+				return ((Label) component.getFirstChild()).getValue();
+			}
+			i++;
+		}
+		return null;
+	}
+
+	/**
+	 * This method is to save the division branch details
+	 * 
+	 * @param securityUser
+	 * @return
+	 */
+
+	public void doSaveDivBasedClusterDetails(SecurityUser securityUser, List<WrongValueException> wve) {
+		logger.debug(Literal.ENTERING);
+		List<SecurityUserDivBranch> list = new ArrayList<>();
+		try {
+			for (Component component : divBranch_Rows.getChildren()) {
+				setClusterValues(component, list, wve);
+			}
+
+			securityUser.setSecurityUserDivBranchList(list);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			this.befImgUsrDivBranchsList.clear();
+			showMessage(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setClusterValues(Component component, List<SecurityUserDivBranch> list,
+			List<WrongValueException> wve) {
+		long secUserId = getSecurityUser().getUsrID();
+		long userId = getUserWorkspace().getLoggedInUser().getUserId();
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+
+		SecurityUserDivBranch division;
+		boolean entities = false;
+		boolean clusters = false;
+		boolean branches = false;
+
+		Map<String, Object> entitiesMap = null;
+		Map<String, Object> clustersMap = null;
+		Map<String, Object> branchesMap = null;
+
+		Row row = (Row) component;
+		String divisionCode = (String) row.getAttribute("DivisionCode");
+
+		Combobox accessTypeCombobox = (Combobox) getComponent(row, 1);
+
+		Combobox entityCombox = null;
+		ExtendedCombobox parentCluster = null;
+		Combobox clusterTypeCombox = null;
+
+		ExtendedCombobox entitiesExtendedCombox = null;
+		ExtendedCombobox branchesExtendedCombox = null;
+		ExtendedCombobox clustersExtendedCombox = null;
+
+		String accessType = getComboboxValue(accessTypeCombobox);
+
+		if ("#".equals(accessType)) {
+			return;
+		}
+
+		if (PennantConstants.ACCESSTYPE_ENTITY.equals(accessType)) {
+			entitiesExtendedCombox = (ExtendedCombobox) getComponent(row, 3);
+			entities = true;
+			entitiesMap = getSelectedValues(entitiesExtendedCombox);
+		} else if (PennantConstants.ACCESSTYPE_CLUSTER.equals(accessType)) {
+			clustersExtendedCombox = (ExtendedCombobox) getComponent(row, 7);
+			clusters = true;
+			clustersMap = getSelectedValues(clustersExtendedCombox);
+		} else if (PennantConstants.ACCESSTYPE_BRANCH.equals(accessType)) {
+			branchesExtendedCombox = (ExtendedCombobox) getComponent(row, 7);
+			branches = true;
+			branchesMap = getSelectedValues(branchesExtendedCombox);
+		}
+
+		String selectedValues = null;
+
+		if (entities) {
+			entitiesExtendedCombox = (ExtendedCombobox) getComponent(row, 3);
+			if (entitiesExtendedCombox != null) {
+				selectedValues = entitiesExtendedCombox.getValidatedValue();
+				if (StringUtils.isEmpty(selectedValues)) {
+					wve.add(new WrongValueException(entitiesExtendedCombox, getLabel(row, 2) + " cannot be blank."));
+					return;
+				}
+			}
+
+		} else if (clusters) {
+			entityCombox = (Combobox) getComponent(row, 3);
+			String entity = getComboboxValue(entityCombox);
+			if ("#".equals(entity)) {
+				wve.add(new WrongValueException(entityCombox, getLabel(row, 2) + " cannot be blank."));
+				return;
+			}
+
+			clusterTypeCombox = (Combobox) getComponent(row, 5);
+			String clusterType = getComboboxValue(clusterTypeCombox);
+			if ("#".equals(clusterType)) {
+				wve.add(new WrongValueException(clusterTypeCombox, getLabel(row, 4) + " cannot be blank."));
+				return;
+			}
+
+			clustersExtendedCombox = (ExtendedCombobox) getComponent(row, 7);
+
+			if (clustersExtendedCombox != null) {
+				selectedValues = clustersExtendedCombox.getValidatedValue();
+				if (StringUtils.isEmpty(selectedValues)) {
+					wve.add(new WrongValueException(clustersExtendedCombox, getLabel(row, 6) + " cannot be blank."));
+					return;
+				}
+			}
+
+		} else if (branches) {
+			entityCombox = (Combobox) getComponent(row, 3);
+			String entity = getComboboxValue(entityCombox);
+			if ("#".equals(entity)) {
+				wve.add(new WrongValueException(entityCombox, getLabel(row, 2) + " cannot be blank."));
+				return;
+			}
+			parentCluster = (ExtendedCombobox) getComponent(row, 5);
+			if (parentCluster != null) {
+				selectedValues = parentCluster.getValue();
+			}
+			if (StringUtils.isEmpty(selectedValues)) {
+				wve.add(new WrongValueException(parentCluster, getLabel(row, 4) + " cannot be blank."));
+				return;
+			}
+
+			branchesExtendedCombox = (ExtendedCombobox) getComponent(row, 7);
+			if (branchesExtendedCombox != null) {
+				selectedValues = branchesExtendedCombox.getValidatedValue();
+				if (StringUtils.isEmpty(selectedValues)) {
+					wve.add(new WrongValueException(branchesExtendedCombox, getLabel(row, 6) + " cannot be blank."));
+					return;
+				}
+			}
+
+		}
+
+		if (entitiesMap != null) {
+			for (String value : entitiesMap.keySet()) {
+				division = new SecurityUserDivBranch();
+				division.setAccessType(accessType);
+				division.setUsrID(secUserId);
+				division.setUserDivision(divisionCode);
+				division.setEntity(value);
+
+				division.setRecordStatus("");
+				division.setLastMntBy(userId);
+				division.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				division.setUserDetails(loggedInUser);
+
+				list.add(division);
+			}
+		}
+
+		if (clustersMap != null) {
+			for (Entry<String, Object> object : clustersMap.entrySet()) {
+				division = new SecurityUserDivBranch();
+				division.setAccessType(accessType);
+				division.setUsrID(secUserId);
+				division.setUserDivision(divisionCode);
+				division.setCluster(((Cluster) object.getValue()).getId());
+				division.setEntity(getComboboxValue(entityCombox));
+				division.setClusterType(clusterTypeCombox.getValue());
+
+				division.setRecordStatus("");
+				division.setLastMntBy(userId);
+				division.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				division.setUserDetails(loggedInUser);
+
+				list.add(division);
+			}
+		}
+
+		if (branchesMap != null) {
+			for (String value : branchesMap.keySet()) {
+				division = new SecurityUserDivBranch();
+				division.setAccessType(accessType);
+				division.setUsrID(secUserId);
+				division.setUserDivision(divisionCode);
+				division.setUserBranch(value);
+				division.setEntity(getComboboxValue(entityCombox));
+				division.setParentCluster(((Cluster) parentCluster.getObject()).getId());
+
+				division.setRecordStatus("");
+				division.setLastMntBy(userId);
+				division.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				division.setUserDetails(loggedInUser);
+
+				list.add(division);
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getSelectedValues(ExtendedCombobox extendedCombobox) {
+		Object object = extendedCombobox.getAttribute("data");
+		return (Map<String, Object>) object;
 	}
 
 	public boolean isBranchNewRecord(SecurityUserDivBranch aSecurityUserDivBranch) {
 		boolean isNew = false;
-		for (SecurityUserDivBranch securityUserDivBranch : getBefImgUsrDivBranchsList()) {
-			if (!aSecurityUserDivBranch.getUserDivision().equals(securityUserDivBranch.getUserDivision())
-					&& !aSecurityUserDivBranch.getUserBranch().equals(securityUserDivBranch.getUserBranch())) {
+		for (SecurityUserDivBranch userBranch : getBefImgUsrDivBranchsList()) {
+			if (!aSecurityUserDivBranch.getUserDivision().equals(userBranch.getUserDivision())
+					&& !aSecurityUserDivBranch.getUserBranch().equals(userBranch.getUserBranch())) {
 				isNew = true;
 			}
 		}
@@ -1891,7 +2344,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @return
 	 */
 	public List<SecurityUserDivBranch> newDivBranchsProcess(List<SecurityUserDivBranch> selectedUsrDivBranchsList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<SecurityUserDivBranch> newSecUsrDivBranchsList = new ArrayList<SecurityUserDivBranch>();
 		// if(!isNewRecord()){
 		// Below loop is to check deleted branchs from existing branchs
@@ -1927,7 +2380,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				newSecUsrDivBranchsList.add(asecurityUserDivBranch);
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return newSecUsrDivBranchsList;
 	}
 
@@ -1937,7 +2390,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 * @param disable
 	 */
 	public void doDisableDivBranchs(boolean disable) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.divBranch_Rows.getChildren();
 		for (Component component : this.divBranch_Rows.getChildren()) {
 			Row row = (Row) component;
@@ -1948,7 +2401,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void validateBranchs() throws InterruptedException {
@@ -1963,9 +2416,673 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	//Organisation Structure Hierarchy
+
+	private static List<Property> getAccessTypes() {
+		List<Property> list = new ArrayList<>();
+		list.add(new Property(PennantConstants.ACCESSTYPE_ENTITY, Labels.getLabel("label_BrachDiv_Entity")));
+		list.add(new Property(PennantConstants.ACCESSTYPE_CLUSTER, Labels.getLabel("label_BrachDiv_Cluster")));
+		list.add(new Property(PennantConstants.ACCESSTYPE_BRANCH, Labels.getLabel("label_BrachDiv_Branch")));
+		return list;
+	}
+
+	private void appendDivisions(List<SecurityUserDivBranch> list) {
+		int i = 0;
+		for (SecurityUserDivBranch division : list) {
+			Row row = new Row();
+			row.setAttribute("DivisionCode", division.getUserDivision());
+			row.setAttribute("DivisionDes", division.getDivisionDesc());
+
+			Cell labelCell = new Cell();
+			Cell accessTypeCell = new Cell();
+			accessTypeCell.setId("accessTypeCell".concat(String.valueOf(i)));
+
+			row.appendChild(labelCell);
+			row.appendChild(accessTypeCell);
+			labelCell.appendChild(new Label(division.getDivisionDesc()));
+
+			Hbox hbox = new Hbox();
+
+			Space space = new Space();
+			space.setSpacing("2px");
+			hbox.appendChild(space);
+
+			Combobox combobox = new Combobox();
+			combobox.setWidth("100px");
+			combobox.addForward("onChange", self, "onChangeAccessType", row);
+			fillList(combobox, getAccessTypes(), division.getAccessType());
+			hbox.appendChild(combobox);
+
+			accessTypeCell.appendChild(hbox);
+			row.setParent(divBranch_Rows);
+			i++;
+
+			row.setAttribute("division", division);
+
+			if (division.getAccessType() != null) {
+				combobox.setValue(division.getAccessType());
+				onChangeAccessType(row);
+			}
+		}
+	}
+
+	private void setReadOnly(Component component, String rightName, boolean readonly) {
+		if (component != null && component instanceof Combobox) {
+			if (readonly) {
+				((Combobox) component).setDisabled(readonly);
+			} else {
+				((Combobox) component).setDisabled(isReadOnly(rightName));
+			}
+		} else if (component != null && component instanceof ExtendedCombobox) {
+			if (readonly) {
+				((ExtendedCombobox) component).setReadonly(readonly);
+			} else {
+				((ExtendedCombobox) component).setReadonly(isReadOnly(rightName));
+			}
+		}
+	}
+
+	private void doEditClusterDivisions(boolean readonly) {
+		String rightName = "SecurityUserDialog_CH_Div_Branch";
+		for (Component component : divBranch_Rows.getChildren()) {
+			Row row = (Row) component;
+
+			setReadOnly(getComponent(row, 1), rightName, readonly);
+
+			setReadOnly(getComponent(row, 3), rightName, readonly);
+
+			setReadOnly(getComponent(row, 5), rightName, readonly);
+
+			setReadOnly(getComponent(row, 7), rightName, readonly);
+		}
+	}
+
+	/**
+	 * This Method is called when division button is clicked
+	 * 
+	 * @param event
+	 */
+	public void onChangeAccessType(ForwardEvent event) {
+		Row row = (Row) event.getData();
+		onChangeAccessType(row);
+	}
+
+	private void onChangeAccessType(Row row) {
+		Combobox combobox = (Combobox) getComponent(row, 1);
+
+		if (combobox == null) {
+			return;
+		}
+
+		String accessType = combobox.getSelectedItem().getValue();
+
+		List<Component> components = new ArrayList<>();
+
+		int i = 0;
+		for (Component component : row.getChildren()) {
+			if (i <= 1) {
+				i++;
+				continue;
+			}
+			components.add(component);
+		}
+
+		for (Component component : components) {
+			row.removeChild(component);
+		}
+
+		if (PennantConstants.ACCESSTYPE_ENTITY.equals(accessType)) {
+			appendEntities(row);
+		} else if (PennantConstants.ACCESSTYPE_CLUSTER.equals(accessType)) {
+			appendEntity(row);
+			appendClusterType(row);
+			appendClusters(row);
+		} else if (PennantConstants.ACCESSTYPE_BRANCH.equals(accessType)) {
+			appendEntity(row);
+			appendParentCluster(row);
+			appendBranches(row);
+		}
+
+		onChangeEntity(row);
+	}
+
+	public void onChangeEntity(ForwardEvent event) {
+		Row accessRow = (Row) event.getData();
+		onChangeEntity(accessRow);
+	}
+
+	public void onChangeEntity(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+
+		Combobox accessTypeCombo = (Combobox) getComponent(row, 1);
+		Combobox entityCombo = null;
+		ExtendedCombobox cluster = null;
+		Combobox clusterTypeCombobox = null;
+
+		String accessType = null;
+		if (accessTypeCombo != null) {
+			accessType = accessTypeCombo.getSelectedItem().getValue();
+		}
+
+		if (getComponent(row, 3) instanceof Combobox) {
+			entityCombo = (Combobox) getComponent(row, 3);
+		}
+
+		String selectedEntity = null;
+
+		if (entityCombo != null) {
+			selectedEntity = entityCombo.getSelectedItem().getValue();
+		}
+
+		if (getComponent(row, 5) instanceof ExtendedCombobox) {
+			cluster = (ExtendedCombobox) getComponent(row, 5);
+		} else if (getComponent(row, 5) instanceof Combobox) {
+			clusterTypeCombobox = (Combobox) getComponent(row, 5);
+		}
+
+		if (PennantConstants.ACCESSTYPE_BRANCH.equals(accessType)) {
+			if (selectedEntity != null && cluster != null && !"#".equals(selectedEntity)) {
+				doSetClusterFilter(row, cluster, selectedEntity);
+			} else {
+				doSetClusterFilter(row, null, null);
+			}
+		}
+
+		if (selectedEntity != null && clusterTypeCombobox != null) {
+			List<Property> list = new ArrayList<>();
+			List<Cluster> clusterList = clusterService.getClustersByEntity(selectedEntity);
+			for (Cluster item : clusterList) {
+				list.add(new Property(item.getClusterType(), item.getClusterType()));
+			}
+
+			fillList(clusterTypeCombobox, list, division.getClusterType());
+		}
+	}
+
+	private void doSetClusterFilter(Row row, ExtendedCombobox cluster, String entity) {
+		if (cluster == null) {
+			return;
+		}
+
+		cluster.setMaxlength(8);
+		cluster.setMandatoryStyle(true);
+		cluster.setModuleName("Cluster");
+		cluster.setValueColumn("Code");
+		cluster.setDescColumn("Name");
+		cluster.setValidateColumns(new String[] { "Code" });
+		cluster.addForward("onFulfill", self, "onChangeParentCluster", row);
+
+		if (entity == null) {
+			cluster.setValue("");
+			cluster.setFilters(new Filter[] { new Filter("Entity", null, Filter.OP_EQUAL) });
+			return;
+		}
+
+		List<ClusterHierarchy> hierarchyList = clusterService.getClusterHierarcheyList(entity);
+		String lowermostchild = null;
+
+		if (hierarchyList.size() > 0) {
+			lowermostchild = hierarchyList.get(1).getClusterType();
+		}
+
+		if (lowermostchild == null) {
+			cluster.setValue(entity);
+			cluster.setReadonly(true);
+		} else {
+			cluster.setFilters(new Filter[] { new Filter("Entity", entity, Filter.OP_EQUAL),
+					new Filter("ClusterType", lowermostchild, Filter.OP_EQUAL) });
+		}
+	}
+
+	private void doSetBranchFilter(Row row) {
+		Combobox entity = (Combobox) getComponent(row, 3);
+		ExtendedCombobox cluster = (ExtendedCombobox) getComponent(row, 5);
+		ExtendedCombobox branches = (ExtendedCombobox) getComponent(row, 7);
+
+		if (entity == null || branches == null || cluster == null) {
+			return;
+		}
+
+		branches.setModuleName("Branch");
+		branches.setValueColumn("BranchCode");
+		branches.setDescColumn("BranchDesc");
+		branches.setValidateColumns(new String[] { "BranchCode" });
+
+		String selectedEntity = entity.getSelectedItem().getValue();
+		String selectedCluster = cluster.getValue();
+
+		Object object = cluster.getObject();
+		Cluster oCluster = null;
+		if (object != null && object instanceof Cluster) {
+			oCluster = (Cluster) object;
+		}
+
+		Filter[] filters = null;
+		if (StringUtils.equals(selectedEntity, selectedCluster)) {
+			filters = new Filter[1];
+			filters[0] = new Filter("Entity", selectedEntity);
+		} else if (oCluster != null) {
+			filters = new Filter[1];
+			filters[0] = new Filter("Entity", selectedEntity);
+
+			branches.setWhereClause(" cluster in (select id from clusters where parent =" + oCluster.getId() + ")");
+		}
+
+		branches.setFilters(filters);
+	}
+
+	private void appendEntities(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+
+		Cell labelCell = new Cell();
+		labelCell.appendChild(new Label("Entities:"));
+		row.appendChild(labelCell);
+
+		Cell accessCell = new Cell();
+		Hbox hbox = new Hbox();
+		hbox.setParent(accessCell);
+
+		ExtendedCombobox entities = new ExtendedCombobox();
+
+		StringBuilder value = new StringBuilder();
+		for (String entity : division.getEntities().keySet()) {
+			if (value.length() > 0) {
+				value.append(",");
+			}
+			value.append(entity);
+		}
+		entities.setValue(value.toString());
+		entities.setTooltiptext(value.toString());
+		entities.setInputAllowed(false);
+		entities.setParent(accessCell);
+		entities.setParent(hbox);
+		entities.setMultySelection(true);
+		entities.setSelectedValues(division.getEntities());
+		entities.setAttribute("data", division.getEntities());
+
+		hbox.setParent(accessCell);
+		fillEntities(division, entities);
+		row.appendChild(accessCell);
+
+	}
+
+	private void appendEntity(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+		List<Property> list = new ArrayList<>();
+		Cell labelCell = new Cell();
+		labelCell.appendChild(new Label("Entity:"));
+		row.appendChild(labelCell);
+
+		Cell entity = new Cell();
+		Hbox hbox = new Hbox();
+		Space space = new Space();
+		space.setSpacing("2px");
+		space.setSclass(PennantConstants.mandateSclass);
+		hbox.appendChild(space);
+
+		hbox.setParent(entity);
+
+		Combobox accessBox = new Combobox();
+		accessBox.setValue(division.getEntity());
+
+		accessBox.setParent(hbox);
+
+		List<Entity> entityList = securityUserService.getEntityList(division.getEntity());
+
+		for (Entity item : entityList) {
+			list.add(new Property(item.getEntityCode(), item.getEntityDesc()));
+		}
+		fillList(accessBox, list, division.getEntity());
+		row.appendChild(entity);
+		accessBox.addForward("onChange", self, "onChangeEntity", row);
+
+		if (division.getEntity() != null) {
+			onChangeEntity(row);
+		}
+	}
+
+	private void appendClusterType(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+		Cell labelCell = new Cell();
+		labelCell.appendChild(new Label("Cluster Type:"));
+		row.appendChild(labelCell);
+
+		Cell accessCell = new Cell();
+		Hbox hbox = new Hbox();
+		Space space = new Space();
+		space.setSpacing("2px");
+		space.setSclass(PennantConstants.mandateSclass);
+		hbox.appendChild(space);
+		hbox.setParent(accessCell);
+
+		Combobox clusterType = new Combobox();
+		clusterType.setValue(division.getClusterType());
+		clusterType.setParent(hbox);
+		hbox.setParent(accessCell);
+		row.setParent(divBranch_Rows);
+		row.appendChild(accessCell);
+
+		clusterType.addForward("onChange", self, "onChangeClusterType", row);
+		onChangeClusterType(row);
+
+	}
+
+	public void onChangeClusterType(ForwardEvent event) {
+		Row row = (Row) event.getData();
+		onChangeClusterType(row);
+	}
+
+	private void onChangeClusterType(Row row) {
+		Combobox clusterType = (Combobox) getComponent(row, 5);
+
+		ExtendedCombobox clusters = (ExtendedCombobox) getComponent(row, 7);
+
+		if (clusterType != null && clusters != null) {
+			clusters.setFilters(new Filter[] { new Filter("clustertype", clusterType.getSelectedItem().getValue()) });
+		}
+	}
+
+	private void appendClusters(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+		Cell labelCell = new Cell();
+		labelCell.appendChild(new Label("Clusters:"));
+		row.appendChild(labelCell);
+
+		Cell accessCell = new Cell();
+		Hbox hbox = new Hbox();
+		hbox.setParent(accessCell);
+
+		ExtendedCombobox clusters = new ExtendedCombobox();
+
+		StringBuilder value = new StringBuilder();
+		for (Entry<String, Object> cluster : division.getClusters().entrySet()) {
+			String code = ((Cluster) cluster.getValue()).getCode();
+			if (value.length() > 0) {
+				value.append(",");
+			}
+			value.append(code);
+		}
+
+		clusters.setValue(value.toString());
+		clusters.setTooltiptext(value.toString());
+		clusters.setInputAllowed(false);
+		clusters.setParent(hbox);
+		clusters.setMandatoryStyle(true);
+		clusters.setModuleName("Cluster");
+		clusters.setValueColumn("ClusterId");
+		clusters.setValidateColumns(new String[] { "ClusterId" });
+		clusters.setValueType(DataType.LONG);
+		clusters.addForward("onFulfill", self, "onChangeClusters", row);
+
+		clusters.setMultySelection(true);
+		clusters.setSelectedValues(division.getClusters());
+		clusters.setAttribute("data", division.getClusters());
+
+		row.appendChild(accessCell);
+		if (division.getClusterCode() != null) {
+			clusters.setAttribute("clusters", division.getCluster());
+			clusters.setValue(value.toString());
+			onChangeClusters(row);
+		} else {
+			clusters.setValue("");
+		}
+	}
+
+	public void onChangeClusters(ForwardEvent event) {
+		Row row = (Row) event.getData();
+		onChangeClusters(row);
+	}
+
+	private void onChangeClusters(Row accessRow) {
+		ExtendedCombobox clusters = (ExtendedCombobox) getComponent(accessRow, 7);
+
+		if (clusters == null) {
+			return;
+		}
+
+		Object dataObject = clusters.getObject();
+		if (dataObject != null) {
+			Cluster cluster = (Cluster) dataObject;
+			clusters.setValue(cluster.getCode());
+			clusters.setAttribute("clusters", cluster.getId());
+		}
+	}
+
+	private void appendParentCluster(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+
+		Cell labelCell = new Cell();
+		labelCell.appendChild(new Label("Cluster:"));
+		row.appendChild(labelCell);
+
+		Cell accessCell = new Cell();
+		Hbox hbox = new Hbox();
+		hbox.setParent(accessCell);
+
+		ExtendedCombobox cluster = new ExtendedCombobox();
+		row.appendChild(accessCell);
+
+		cluster.setParent(hbox);
+		cluster.setMandatoryStyle(true);
+		//cluster.setInputAllowed(false);
+
+		Cluster cl = new Cluster();
+		if (division.getParentCluster() != null) {
+			cl.setId(division.getParentCluster());
+			cl.setCode(division.getParentClusterCode());
+			cl.setName(division.getParentClusterName());
+			cluster.setObject(cl);
+			onChangeParentCluster(row);
+		}
+
+	}
+
+	private void appendBranches(Row row) {
+		SecurityUserDivBranch division = (SecurityUserDivBranch) row.getAttribute("division");
+		Cell labelCell = new Cell();
+		labelCell.appendChild(new Label("Branches:"));
+		row.appendChild(labelCell);
+
+		Cell accessCell = new Cell();
+		Hbox hbox = new Hbox();
+		hbox.setParent(accessCell);
+
+		ExtendedCombobox branch = new ExtendedCombobox();
+
+		StringBuilder value = new StringBuilder();
+		for (String branchCode : division.getBranches().keySet()) {
+			if (value.length() > 0) {
+				value.append(",");
+			}
+			value.append(branchCode);
+		}
+
+		branch.setMultySelection(true);
+		branch.setTooltiptext(value.toString());
+		branch.setInputAllowed(false);
+		branch.setSelectedValues(division.getBranches());
+		branch.setAttribute("data", division.getBranches());
+
+		branch.setParent(hbox);
+		branch.setValue(value.toString());
+		branch.setMaxlength(50);
+		branch.setMandatoryStyle(true);
+
+		row.appendChild(accessCell);
+	}
+
+	public void onChangeParentCluster(ForwardEvent event) throws Exception {
+		Row row = (Row) event.getData();
+		onChangeParentCluster(row);
+	}
+
+	private void onChangeParentCluster(Row row) {
+		ExtendedCombobox cluster = (ExtendedCombobox) getComponent(row, 5);
+
+		Object object = null;
+		if (cluster != null && cluster.getObject() != null) {
+			object = cluster.getObject();
+		}
+
+		Cluster ocluster = null;
+		if (object != null && object instanceof Cluster) {
+			ocluster = (Cluster) object;
+			cluster.setValue(ocluster.getCode());
+			cluster.setDescription(ocluster.getName());
+			cluster.setObject(ocluster);
+		}
+
+		doSetBranchFilter(row);
+	}
+
+	private void fillEntities(SecurityUserDivBranch division, ExtendedCombobox entities) {
+		logger.debug(Literal.ENTERING);
+		entities.setMandatoryStyle(true);
+		entities.setModuleName("Entity");
+		entities.setValueColumn("EntityCode");
+		entities.setDescColumn("EntityDesc");
+		entities.setValidateColumns(new String[] { "EntityCode" });
+		//entities.setWhereClause(" entitycode in (select entity from rmtBranches)");
+		entities.setWhereClause(" entitycode in (select s.entitycode from smtdivisiondetail s"
+				+ " where divisioncode ="
+				+ "'" + division.getUserDivision() + "'" + ") ");
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void doRemoveClusterValidation(Component component) {
+		if (component != null && component instanceof Combobox) {
+			((Combobox) component).setConstraint("");
+			;
+		} else if (component != null && component instanceof ExtendedCombobox) {
+			((ExtendedCombobox) component).setConstraint("");
+			;
+		}
+	}
+
+	private void doRemoveClusterValidation() {
+		for (Component component : divBranch_Rows.getChildren()) {
+			Row row = (Row) component;
+
+			doRemoveClusterValidation(getComponent(row, 1));
+
+			doRemoveClusterValidation(getComponent(row, 3));
+
+			doRemoveClusterValidation(getComponent(row, 5));
+
+			doRemoveClusterValidation(getComponent(row, 7));
+		}
+	}
+
+	private void doClearClusters(Component component) {
+		if (component != null && component instanceof Combobox) {
+			((Combobox) component).setValue("");
+		} else if (component != null && component instanceof ExtendedCombobox) {
+			((ExtendedCombobox) component).setValue("");
+			;
+		}
+	}
+
+	public void doClearClusters() {
+		for (Component component : divBranch_Rows.getChildren()) {
+			Row row = (Row) component;
+
+			doClearClusters(getComponent(row, 1));
+
+			doClearClusters(getComponent(row, 3));
+
+			doClearClusters(getComponent(row, 5));
+
+			doClearClusters(getComponent(row, 7));
+
+		}
+	}
+
+	public void onReportingManagerItemDoubleClicked(Event event) {
+		logger.debug(Literal.ENTERING);
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxReportingManager.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final ReportingManager areportingManager = (ReportingManager) item.getAttribute("data");
+
+			final HashMap<String, Object> map = new HashMap<>();
+			map.put("reportingManager", areportingManager);
+			map.put("SecurityUserDialogCtrl", this);
+			map.put("roleCode", getRole());
+			map.put("securityUser", securityUser);
+
+			try {
+				Executions.createComponents(
+						"/WEB-INF/pages/ApplicationMaster/UserRepotingManager/ReportingManagerDialog.zul", null, map);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		}
+	}
+
+	public void doFillReportingManagerDetails(List<ReportingManager> reportingManagerDetails) {
+		logger.debug(Literal.ENTERING);
+		this.listBoxReportingManager.getItems().clear();
+		if (reportingManagerDetails != null) {
+			for (ReportingManager rm : reportingManagerDetails) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(StringUtils.trimToEmpty(rm.getBusinessVerticalCode()));
+				lc.setParent(item);
+
+				lc = new Listcell(StringUtils.trimToEmpty(rm.getProduct()));
+				lc.setParent(item);
+
+				lc = new Listcell(StringUtils.trimToEmpty(rm.getFinType()));
+				lc.setParent(item);
+
+				lc = new Listcell(StringUtils.trimToEmpty(rm.getBranch()));
+				lc.setParent(item);
+
+				lc = new Listcell(StringUtils.trimToEmpty(rm.getReportingToUserName()));
+				lc.setParent(item);
+
+				lc = new Listcell(rm.getRecordStatus());
+				lc.setParent(item);
+
+				lc = new Listcell(PennantJavaUtil.getLabel(rm.getRecordType()));
+				lc.setParent(item);
+
+				rm.getId();
+
+				item.setAttribute("data", rm);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onReportingManagerItemDoubleClicked");
+				this.listBoxReportingManager.appendChild(item);
+
+			}
+			setReportingManagerDetailList(reportingManagerDetails);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	//For ReportingManagerList
+
+	public void onClick$btnNewReportingManagerList(Event event) throws Exception {
+
+		ReportingManager areportingManager = new ReportingManager();
+		areportingManager.setWorkflowId(0);
+
+		Map<String, Object> arg = new HashMap<String, Object>();
+		arg.put("reportingManager", areportingManager);
+		arg.put("roleCode", getRole());
+		arg.put("newRecord", "true");
+		arg.put("SecurityUserDialogCtrl", this);
+
+		try {
+			Executions.createComponents(
+					"/WEB-INF/pages/ApplicationMaster/UserRepotingManager/ReportingManagerDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
+		}
+
+	}
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
@@ -1987,10 +3104,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.securityUserService = securityUserService;
 	}
 
-	public SecurityUserService getSecurityUserService() {
-		return this.securityUserService;
-	}
-
 	public void setSecurityUserListCtrl(SecurityUserListCtrl securityUserListCtrl) {
 		this.securityUserListCtrl = securityUserListCtrl;
 	}
@@ -2005,6 +3118,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
+	}
+
+	public ReportingManagerService getReportingManagerService() {
+		return reportingManagerService;
+	}
+
+	public void setReportingManagerService(ReportingManagerService reportingManagerService) {
+		this.reportingManagerService = reportingManagerService;
 	}
 
 	public UserService getUserService() {
@@ -2043,4 +3164,19 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		return externalUserSearch == null ? ldapUserSearch : externalUserSearch;
 	}
 
+	public ReportingManager getReportingManager() {
+		return reportingManager;
+	}
+
+	public void setReportingManager(ReportingManager reportingManager) {
+		this.reportingManager = reportingManager;
+	}
+
+	public List<ReportingManager> getReportingManagerDetailList() {
+		return reportingManagerDetailList;
+	}
+
+	public void setReportingManagerDetailList(List<ReportingManager> reportingManagerDetailList) {
+		this.reportingManagerDetailList = reportingManagerDetailList;
+	}
 }

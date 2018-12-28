@@ -83,6 +83,14 @@
 			<menuItem id="menu_Item_Entity"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/Entity/EntityList.zul"
 				rightName="menuItem_applicationmaster_Entity" />
+				
+			<menuItem id="menu_Item_ClusterHierarchey" zulNavigation="/WEB-INF/pages/ApplicationMaster/ClusterHierarchey/ClusterHierarcheyList.zul"
+	rightName="menuItem_ClusterHierarchey" />
+	<menuItem id="menu_Item_Cluster" zulNavigation="/WEB-INF/pages/ApplicationMaster/Cluster/ClusterList.zul"
+		rightName="menuItem_Cluster" />
+	<menuItem id="menuItem_BusinessVertical" zulNavigation="/WEB-INF/pages/ApplicationMaster/BusinessVertical/BusinessVerticalList.zul"
+		rightName="menuItem_BusinessVertical" />	
+
 			<menuItem id="menu_Item_DivisionDetail"
 				zulNavigation="/WEB-INF/pages/SystemMaster/DivisionDetail/DivisionDetailList.zul"
 				rightName="menuItem_SystemMaster_DivisionDetail" />

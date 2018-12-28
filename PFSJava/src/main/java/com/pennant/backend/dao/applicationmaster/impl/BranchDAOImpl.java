@@ -92,30 +92,31 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		Branch branch = new Branch();
 		branch.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("SELECT  BranchCode, BranchDesc, BranchAddrLine1,");
-		selectSql.append(" BranchAddrLine2, BranchPOBox, BranchCity, BranchProvince, BranchCountry,");
-		selectSql.append(" BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry,");
-		selectSql.append(
-				" BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo,");
-		selectSql.append(" BranchAddrHNbr,BranchFlatNbr,BranchAddrStreet, PinCode,");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox, BranchCity");
+		sql.append(", BranchProvince, BranchCountry, BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry");
+		sql.append(", BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode");
+		sql.append(", MiniBranch, BranchType, ParentBranch, Region, BankRefNo");
+		sql.append(", BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode, Entity, Cluster");
 		if (type.contains("View")) {
-			selectSql.append(" lovDescBranchCityName,lovDescBranchProvinceName,lovDescBranchCountryName,");
-			selectSql.append("lovDescBranchSwiftCountryName,NewBranchDesc,parentBranchDesc, pinAreaDesc,");
+			sql.append(", lovDescBranchCityName, lovDescBranchProvinceName, lovDescBranchCountryName");
+			sql.append(", lovDescBranchSwiftCountryName, NewBranchDesc, parentBranchDesc, pinAreaDesc");
+			sql.append(", entityDesc, clusterCode, clusterName");
 		}
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  RMTBranches");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BranchCode =:BranchCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" FROM  RMTBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BranchCode =:BranchCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
 		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);
 
 		try {
-			branch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			branch = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			branch = null;
 		}
 
@@ -169,19 +170,19 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" (BranchCode, BranchDesc, BranchAddrLine1, BranchAddrLine2, BranchPOBox,");
 		sql.append(" BranchCity, BranchProvince, BranchCountry, BranchFax, BranchTel,");
 		sql.append(" BranchSwiftBankCde, BranchSwiftCountry, BranchSwiftLocCode,");
-		sql.append(
-				" BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,BranchType, ParentBranch, Region, BankRefNo,");
-		sql.append(" BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode, MiniBranch,");
+		sql.append(" BranchType, ParentBranch, Region, BankRefNo, BranchAddrHNbr, BranchFlatNbr,");
+		sql.append(" BranchAddrStreet, PinCode,");
+		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, Entity, Cluster)");
 		sql.append(" values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2,");
 		sql.append(" :BranchPOBox, :BranchCity, :BranchProvince, :BranchCountry, :BranchFax,");
 		sql.append(" :BranchTel, :BranchSwiftBankCde, :BranchSwiftCountry, :BranchSwiftLocCode,");
-		sql.append(
-				" :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive, :NewBranchCode, :MiniBranch, :BranchType, :ParentBranch, :Region, :BankRefNo,");
-		sql.append(" :BranchAddrHNbr, :BranchFlatNbr, :BranchAddrStreet, :PinCode,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :BranchSwiftBrnCde, :BranchSortCode, :BranchIsActive, :NewBranchCode, :MiniBranch,");
+		sql.append(" :BranchType, :ParentBranch, :Region, :BankRefNo, :BranchAddrHNbr, :BranchFlatNbr,");
+		sql.append(" :BranchAddrStreet, :PinCode,");
+		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :Entity, :Cluster)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -211,16 +212,14 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" BranchFax = :BranchFax,  BranchSwiftCountry = :BranchSwiftCountry,");
 		sql.append(" BranchSwiftBankCde = :BranchSwiftBankCde, BranchTel = :BranchTel,");
 		sql.append(" BranchSwiftLocCode = :BranchSwiftLocCode, BranchSortCode = :BranchSortCode,");
-		sql.append(
-				" BranchSwiftBrnCde = :BranchSwiftBrnCde, BranchIsActive = :BranchIsActive, NewBranchCode = :NewBranchCode,");
-		sql.append(
-				" BranchAddrHNbr = :BranchAddrHNbr, BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet,");
-		sql.append(
-				" MiniBranch = :MiniBranch,BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region, BankRefNo = :BankRefNo,");
-		sql.append(" PinCode = :PinCode, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" BranchSwiftBrnCde = :BranchSwiftBrnCde, BranchIsActive = :BranchIsActive,");
+		sql.append(" NewBranchCode = :NewBranchCode, BranchAddrHNbr = :BranchAddrHNbr,");
+		sql.append(" BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet, MiniBranch = :MiniBranch,");
+		sql.append(" BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region,");
+		sql.append(" BankRefNo = :BankRefNo, PinCode = :PinCode, Entity = :Entity, Cluster = :Cluster,");
+		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
+		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
+		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where BranchCode =:BranchCode ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -300,7 +299,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		mapSource.addValue("SysParmCode", phaseName);
 		mapSource.addValue("SysParmValue", phaseValue);
 
-		StringBuilder updateSql = new StringBuilder(" UPDATE SMTparameters SET SysParmValue = :SysParmValue ");
+		StringBuilder updateSql = new StringBuilder("UPDATE SMTparameters SET SysParmValue = :SysParmValue ");
 		updateSql.append(" Where SysParmCode = :SysParmCode  ");
 
 		logger.debug("updateSql: " + updateSql.toString());

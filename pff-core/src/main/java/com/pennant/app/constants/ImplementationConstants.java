@@ -156,4 +156,10 @@ public class ImplementationConstants {
 	//Added  ReEnter Account Number in Disbursement at Loan Approval stage
 	public static final boolean DISB_ACCNO_MASKING = false;
 
+	//The below variable is set for Branch screen in Entity Masters for Masters menu.
+	public static final boolean ALLOW_ORGANISATIONAL_STRUCTURE = true;
+
+	//The below variable is set for Branch Details tab of Users Screen in Administration menu.
+	public static final boolean ALLOW_DIVISION_BASED_CLUSTER = true;
+
 }

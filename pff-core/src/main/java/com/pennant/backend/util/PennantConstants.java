@@ -824,4 +824,7 @@ public class PennantConstants {
 	//Template Notification constants
 	public static final String PRESENTMENT_BOUNCE_MAIL_NOTIFICATION = "PRESENTMENT_BOUNCE_MAIL_NOTIFICATION";
 
+	public static final String ACCESSTYPE_ENTITY = "ENTITY";
+	public static final String ACCESSTYPE_CLUSTER = "CLUSTER";
+	public static final String ACCESSTYPE_BRANCH = "BRANCH";
 }

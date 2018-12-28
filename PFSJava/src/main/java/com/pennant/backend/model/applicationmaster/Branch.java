@@ -87,6 +87,11 @@ public class Branch extends AbstractWorkflowEntity {
 	private String branchAddrHNbr;
 	private String branchFlatNbr;
 	private String branchAddrStreet;
+	private String entity;
+	private String entityDesc;
+	private Long cluster;
+	private String clusterCode;
+	private String clusterName;
 
 	private boolean newRecord;
 	private String lovValue;
@@ -113,6 +118,9 @@ public class Branch extends AbstractWorkflowEntity {
 		excludeFields.add("newBranchDesc");
 		excludeFields.add("parentBranchDesc");
 		excludeFields.add("pinAreaDesc");
+		excludeFields.add("entityDesc");
+		excludeFields.add("clusterCode");
+		excludeFields.add("clusterName");
 		return excludeFields;
 	}
 
@@ -428,4 +436,43 @@ public class Branch extends AbstractWorkflowEntity {
 		this.pinAreaDesc = pinAreaDesc;
 	}
 
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public Long getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(Long cluster) {
+		this.cluster = cluster;
+	}
+
+	public String getClusterCode() {
+		return clusterCode;
+	}
+
+	public void setClusterCode(String clusterCode) {
+		this.clusterCode = clusterCode;
+	}
+
+	public String getClusterName() {
+		return clusterName;
+	}
+
+	public void setClusterName(String clusterName) {
+		this.clusterName = clusterName;
+	}
 }

@@ -82,6 +82,8 @@ public class AbstractListController<T> extends AbstractController<T> {
 	protected Row workFlowFrom;
 	protected Radio fromApproved;
 	protected Radio fromWorkFlow;
+	protected Radio myRecords;
+	protected Radio myTeamRecords;
 
 	protected String tableName;
 	protected String queueTableName;

@@ -578,6 +578,7 @@
 	<bean id="branchDialogCtrl" class="com.pennant.webui.applicationmaster.branch.BranchDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="branchService" ref="branchService" />
+		<property name="clusterService" ref="clusterService" />
 	</bean>
 
 	<!--============ Corporate Relation Code Details ============== -->
@@ -5008,5 +5009,41 @@
 	</bean>
 	<bean id="vasPremiumCalculation" class="com.pennant.webui.configuration.vasrecording.VASPremiumCalculation">
 		<property name="vasRecordingService" ref="vASRecordingService" />
+	</bean>
+
+	<!-- ClusterHierarchey -->
+	<bean id="clusterHierarcheyListCtrl" class="com.pennant.webui.applicationmaster.clusterhierarchey.ClusterHierarcheyListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="clusterHierarchyService" ref="clusterHierarchyService" />
+	</bean>
+	<bean id="clusterHierarcheyDialogCtrl" class="com.pennant.webui.applicationmaster.clusterhierarchey.ClusterHierarcheyDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="clusterHierarchyService" ref="clusterHierarchyService" />
+	</bean>
+
+	<!-- Cluster -->
+	<bean id="clusterListCtrl" class="com.pennant.webui.applicationmaster.cluster.ClusterListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="clusterService" ref="clusterService" />
+	</bean>
+	<bean id="clusterDialogCtrl" class="com.pennant.webui.applicationmaster.cluster.ClusterDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="clusterService" ref="clusterService" />
+	</bean>
+
+	<!-- RepotingManager -->
+	<bean id="reportingManagerDialogCtrl" class="com.pennant.webui.applicationmaster.reportingManager.ReportingManagerDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="reportingManagerService" ref="reportingManagerService" />
+	</bean>
+
+	<!-- BusinessVertical -->
+	<bean id="businessVerticalListCtrl" class="com.pennant.webui.applicationmaster.businessvertical.BusinessVerticalListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="businessVerticalService" ref="businessVerticalService" />
+	</bean>
+	<bean id="businessVerticalDialogCtrl" class="com.pennant.webui.applicationmaster.businessvertical.BusinessVerticalDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="businessVerticalService" ref="businessVerticalService" />
 	</bean>
 </beans>

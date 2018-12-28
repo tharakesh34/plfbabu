@@ -206,6 +206,14 @@
 									<textbox id="bankRefNo" width="180px" />
 								</hbox>
 							</row>
+							
+							<row id="row_org_struct" visible="false" >
+								<label id="label_BranchDialog_Entity" value="${c:l('label_BranchDialog_Entity.value')}" />
+									<extendedcombobox id="entity" />
+								<label id="label_BranchDialog_Cluster" value="${c:l('label_BranchDialog_Cluster.value')}" />
+									<extendedcombobox id="cluster" />
+							</row>
+							
 							<row id="row_NewBranch" visible="false">
 								<label id="label_BranchDialog_NewBranchCode" value="${c:l('label_BranchDialog_NewBranchCode.value')}" />
 								<extendedcombobox id="newBranchCode" />

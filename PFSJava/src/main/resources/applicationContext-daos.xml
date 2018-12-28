@@ -165,7 +165,7 @@
 		</property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
@@ -181,6 +181,9 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="queueAssignmentDAO" ref="queueAssignmentDAO" />
 		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
+		<property name="reportingManagerDAO" ref="reportingManagerDAO"></property>
+		<property name="securityUserAccessService" ref="securityUserAccessService"></property>
+		<property name="securityUserHierarchyService" ref="securityUserHierarchyService"></property>
 	</bean>
 
 	<!--================= Security Password Details ================ -->
@@ -10112,5 +10115,162 @@
 	<bean id="masterDefTempDAO" class="com.pennanttech.pff.backend.dao.MasterDefDAOImpl" parent="basicDao" />
 	<bean id="configurationService" class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl" init-method="init">
 		<property name="masterDefDAO" ref="masterDefTempDAO" />
+	</bean>
+	
+	<!-- Cluster and User Hierarchy Changes-->
+	<bean id="securityUserAccessDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserAccessDAOImpl"
+		parent="secSequenceDao" />
+	<bean id="securityUserHierarchyDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserHierarchyDAOImpl"
+		parent="secSequenceDao" />
+	
+
+	<!-- Cluster -->
+	<bean id="clusterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterDAOImpl" parent="secSequenceDao" />
+	<bean id="clusterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="clusterServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="clusterServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ClusterServiceImpl">
+		<property name="clusterDAO" ref="clusterDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!-- ReportingManager -->
+	<bean id="reportingManagerDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReportingManagerDAOImpl"
+		parent="secSequenceDao" />
+	<bean id="reportingManagerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="reportingManagerServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="reportingManagerServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ReportingManagerServiceImpl">
+		<property name="reportingManagerDAO" ref="reportingManagerDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!-- BusinessVertical -->
+	<bean id="businessVerticalDAO" class="com.pennant.backend.dao.applicationmaster.impl.BusinessVerticalDAOImpl"
+		parent="secSequenceDao" />
+
+	<bean id="businessVerticalService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="businessVerticalServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="businessVerticalServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.BusinessVerticalServiceImpl">
+		<property name="businessVerticalDAO" ref="businessVerticalDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!-- ClusterHierarchy -->
+	<bean id="clusterHierarchyDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterHierarchyDAOImpl"
+		parent="basicDao" />
+	<bean id="clusterHierarchyService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="clusterHierarchyServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="clusterHierarchyServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.ClusterHierarchyServiceImpl">
+		<property name="clusterHierarchyDAO" ref="clusterHierarchyDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<bean id="securityUserAccessService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="securityUserAccessServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="changePassword*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="securityUserAccessServiceTarget" class="com.pennant.backend.service.administration.impl.SecurityUserAccessServiceImpl">
+		<property name="securityUserAccessDAO" ref="securityUserAccessDAO"></property>
+	</bean>
+
+	<bean id="securityUserHierarchyService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="securityUserHierarchyServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="changePassword*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="securityUserHierarchyServiceTarget" class="com.pennant.backend.service.administration.impl.SecurityUserHierarchyServiceImpl">
+		<property name="securityUserHierarchyDAO" ref="securityUserHierarchyDAO"></property>
 	</bean>
 </beans>

@@ -42,7 +42,9 @@
  */
 package com.pennant.backend.model.administration;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -66,6 +68,26 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private String branchSwiftBrnCde;
 	private String branchProvince;
 	private LoggedInUser userDetails;
+	
+
+	//for SecurityUserAccess Table
+	private String entity;
+	private String entityDesc;
+	private String accessType;
+	private Long cluster;
+	private String clusterCode;
+	private String clusterName;
+	private String clusterType;
+	private Long parentCluster;
+	private String parentClusterCode;
+	private String parentClusterName;
+	private String parentClusterType;
+	private String divisionDesc;
+	private String branchDesc;
+
+	private transient Map<String, Object> entities = new HashMap<>();
+	private transient Map<String, Object> clusters = new HashMap<>();
+	private transient Map<String, Object> branches = new HashMap<>();
 
 	public SecurityUserDivBranch() {
 		super();
@@ -85,6 +107,23 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		excludeFields.add("userBranchDesc");
 		excludeFields.add("branchSwiftBrnCde");
 		excludeFields.add("branchProvince");
+		excludeFields.add("entity");
+		excludeFields.add("entityDesc");
+		excludeFields.add("accessType");
+		excludeFields.add("cluster");
+		excludeFields.add("clusterCode");
+		excludeFields.add("clusterName");
+		excludeFields.add("clusterType");
+		excludeFields.add("parentCluster");
+		excludeFields.add("parentClusterCode");
+		excludeFields.add("parentClusterName");
+		excludeFields.add("parentClusterType");
+		excludeFields.add("divisionDesc");
+		excludeFields.add("branchDesc");
+
+		excludeFields.add("entities");
+		excludeFields.add("clusters");
+		excludeFields.add("branches");
 		return excludeFields;
 	}
 
@@ -183,4 +222,133 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	public void setBranchProvince(String branchProvince) {
 		this.branchProvince = branchProvince;
 	}
+
+	public String getEntity() {
+		return entity;
+	}
+
+	public void setEntity(String entity) {
+		this.entity = entity;
+	}
+
+	public String getEntityDesc() {
+		return entityDesc;
+	}
+
+	public void setEntityDesc(String entityDesc) {
+		this.entityDesc = entityDesc;
+	}
+
+	public String getAccessType() {
+		return accessType;
+	}
+
+	public void setAccessType(String accessType) {
+		this.accessType = accessType;
+	}
+
+	public Long getCluster() {
+		return cluster;
+	}
+
+	public void setCluster(Long cluster) {
+		this.cluster = cluster;
+	}
+
+	public String getClusterCode() {
+		return clusterCode;
+	}
+
+	public void setClusterCode(String clusterCode) {
+		this.clusterCode = clusterCode;
+	}
+
+	public String getClusterName() {
+		return clusterName;
+	}
+
+	public void setClusterName(String clusterName) {
+		this.clusterName = clusterName;
+	}
+
+	public String getClusterType() {
+		return clusterType;
+	}
+
+	public void setClusterType(String clusterType) {
+		this.clusterType = clusterType;
+	}
+
+	public Long getParentCluster() {
+		return parentCluster;
+	}
+
+	public void setParentCluster(Long parentCluster) {
+		this.parentCluster = parentCluster;
+	}
+
+	public String getParentClusterCode() {
+		return parentClusterCode;
+	}
+
+	public void setParentClusterCode(String parentClusterCode) {
+		this.parentClusterCode = parentClusterCode;
+	}
+
+	public String getParentClusterName() {
+		return parentClusterName;
+	}
+
+	public void setParentClusterName(String parentClusterName) {
+		this.parentClusterName = parentClusterName;
+	}
+
+	public String getParentClusterType() {
+		return parentClusterType;
+	}
+
+	public void setParentClusterType(String parentClusterType) {
+		this.parentClusterType = parentClusterType;
+	}
+
+	public String getDivisionDesc() {
+		return divisionDesc;
+	}
+
+	public void setDivisionDesc(String divisionDesc) {
+		this.divisionDesc = divisionDesc;
+	}
+
+	public String getBranchDesc() {
+		return branchDesc;
+	}
+
+	public void setBranchDesc(String branchDesc) {
+		this.branchDesc = branchDesc;
+	}
+
+	public Map<String, Object> getEntities() {
+		return entities;
+	}
+
+	public void setEntities(Map<String, Object> entities) {
+		this.entities = entities;
+	}
+
+	public Map<String, Object> getClusters() {
+		return clusters;
+	}
+
+	public void setClusters(Map<String, Object> clusters) {
+		this.clusters = clusters;
+	}
+
+	public Map<String, Object> getBranches() {
+		return branches;
+	}
+
+	public void setBranches(Map<String, Object> branches) {
+		this.branches = branches;
+	}
+	
 }

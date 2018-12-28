@@ -43,11 +43,15 @@
 package com.pennant.backend.model.administration;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -96,16 +100,25 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private String usrDesg;
 	private String lovDescUsrDesg;
 	private String authType;
+	private Long businessVertical;
+	private String businessVerticalCode;
+	private String businessVerticalDesc;
+
 	private String userType = UserType.USER.name();
-	private List<SecurityUserDivBranch> securityUserDivBranchList;
+	private List<SecurityUserDivBranch> securityUserDivBranchList = new ArrayList<>();
 	private List<SecurityUserOperations> securityUserOperationsList;
+	private List<ReportingManager> reportingManagersList;
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("auditDetailMap");
 		excludeFields.add("loginAppId");
 		excludeFields.add("lastLoginOn");
 		excludeFields.add("lastFailLoginOn");
 		excludeFields.add("userType");
+		excludeFields.add("businessVerticalCode");
+		excludeFields.add("businessVerticalDesc");
 		return excludeFields;
 	}
 
@@ -484,6 +497,46 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public void setPwdExpDt(Date pwdExpDt) {
 		this.pwdExpDt = pwdExpDt;
+	}
+
+	public List<ReportingManager> getReportingManagersList() {
+		return reportingManagersList;
+	}
+
+	public void setReportingManagersList(List<ReportingManager> reportingManagersList) {
+		this.reportingManagersList = reportingManagersList;
+	}
+
+	public Long getBusinessVertical() {
+		return businessVertical;
+	}
+
+	public void setBusinessVertical(Long businessVertical) {
+		this.businessVertical = businessVertical;
+	}
+
+	public String getBusinessVerticalCode() {
+		return businessVerticalCode;
+	}
+
+	public void setBusinessVerticalCode(String businessVerticalCode) {
+		this.businessVerticalCode = businessVerticalCode;
+	}
+
+	public String getBusinessVerticalDesc() {
+		return businessVerticalDesc;
+	}
+
+	public void setBusinessVerticalDesc(String businessVerticalDesc) {
+		this.businessVerticalDesc = businessVerticalDesc;
+	}
+
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
 	}
 
 }

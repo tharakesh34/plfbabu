@@ -46,21 +46,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
+import com.pennant.backend.dao.applicationmaster.ReportingManagerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.administration.SecurityUserAccessService;
+import com.pennant.backend.service.administration.SecurityUserHierarchyService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -70,6 +77,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>SecurityUsers</b>.<br>
@@ -79,9 +87,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private SecurityUserDAO securityUsersDAO;
+	private SecurityUserAccessService securityUserAccessService;
+	private SecurityUserHierarchyService securityUserHierarchyService;
 	private SecurityUserPasswordsDAO securityUserPasswordsDAO;
 	private QueueAssignmentDAO queueAssignmentDAO;
 	private SecurityUserOperationsDAO securityUserOperationsDAO;
+	private ReportingManagerDAO reportingManagerDAO;
 
 	private static Logger logger = Logger.getLogger(SecurityUserServiceImpl.class);
 
@@ -104,19 +115,21 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
-		String tableType = "";
+
+		TableType tableType = TableType.MAIN_TAB;
 
 		if (securityUser.isWorkflow()) {
-			tableType = "_Temp";
+			tableType = TableType.TEMP_TAB;
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		} else {
 
@@ -136,26 +149,33 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 
 		if (securityUser.isNewRecord()) {
-			securityUser.setId(getSecurityUserDAO().save(securityUser, tableType));
+			securityUser.setId(securityUsersDAO.save(securityUser, tableType.getSuffix()));
 			if (AuthenticationType.DAO.name().equals(securityUser.getAuthType())) {
 				getSecurityUserPasswordsDAO().save(securityUser);
 			}
 			auditHeader.getAuditDetail().setModelData(securityUser);
 			auditHeader.setAuditReference(String.valueOf(securityUser.getId()));
 		} else {
-			getSecurityUserDAO().update(securityUser, tableType);
+			securityUsersDAO.update(securityUser, tableType.getSuffix());
 		}
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		// set SecUser Division Branch Details Audit
-		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
-			auditDetails.addAll(processingDetailList(auditHeader.getAuditDetails(), tableType, securityUser));
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		List<SecurityUserDivBranch> divBranches = securityUser.getSecurityUserDivBranchList();
+		if (CollectionUtils.isNotEmpty(divBranches)) {
+			auditDetails.addAll(saveUserDivisions(securityUser, tableType.getSuffix(), null));
 		}
+
+		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
+		if (CollectionUtils.isNotEmpty(reportingManagers)) {
+			auditDetails.addAll(processingReportingManangers(securityUser, reportingManagers, tableType));
+		}
+
 		auditHeader.setAuditDetails(auditDetails);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving ");
-		return auditHeader;
 
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
 	}
 
 	/**
@@ -172,14 +192,14 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering ");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		SecurityUser securityUsers = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		getSecurityUserDAO().delete(securityUsers, "");
+		securityUsersDAO.delete(securityUsers, "");
 		auditDetails.addAll(secUserDivBranchDeletion(securityUsers, "", auditHeader.getAuditTranType()));
 		auditHeader.setAuditDetails(auditDetails);
 
@@ -199,8 +219,15 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 */
 
 	public SecurityUser getSecurityUserById(long id) {
-		logger.debug("Entering ");
-		return getSecurityUserDAO().getSecurityUserById(id, "_View");
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser securityUser = securityUsersDAO.getSecurityUserById(id, "_View");
+
+		securityUser.setSecurityUserDivBranchList(securityUsersDAO.getSecUserDivBrList(id, "_View"));
+
+		securityUser.setReportingManagersList(reportingManagerDAO.getReportingManagers(id, "_View"));
+
+		return securityUser;
 	}
 	//	/**
 	//	 * getApprovedSecurityUsersById fetch the details by using SecurityUsersDAO's getSecurityUsersById method .
@@ -211,19 +238,19 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	//
 	//	public SecurityUser getApprovedSecurityUserById(long id) {
 	//		logger.debug("Entering ");
-	//		return getSecurityUserDAO().getSecurityUserById(id,"_AView");
+	//		return securityUsersDAO.getSecurityUserById(id,"_AView");
 	//	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getSecurityUserDAO().delete with
-	 * parameters secUsers,"" b) NEW Add new record in to main table by using getSecurityUserDAO().save with parameters
-	 * secUsers,"" c) EDIT Update record in the main table by using getSecurityUserDAO().update with parameters
-	 * secUsers,"" 3) Delete the record from the workFlow table by using getSecurityUserDAO().delete with parameters
-	 * secUsers,"_Temp" 4) Audit the record in to AuditHeader and AdtSecUsers by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtSecUsers by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * following actions a) DELETE Delete the record from the main table by using securityUsersDAO.delete with
+	 * parameters secUsers,"" b) NEW Add new record in to main table by using securityUsersDAO.save with parameters
+	 * secUsers,"" c) EDIT Update record in the main table by using securityUsersDAO.update with parameters secUsers,""
+	 * 3) Delete the record from the workFlow table by using securityUsersDAO.delete with parameters secUsers,"_Temp" 4)
+	 * Audit the record in to AuditHeader and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5)
+	 * Audit the record in to AuditHeader and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader) based on the
+	 * transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -232,10 +259,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering ");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		SecurityUser securityUser = new SecurityUser();
 		BeanUtils.copyProperties((SecurityUser) auditHeader.getAuditDetail().getModelData(), securityUser);
-
 		String tranType = "";
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -247,7 +273,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		if (securityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(deleteDivBranchs(securityUser.getSecurityUserDivBranchList(), "", tranType));
-			getSecurityUserDAO().delete(securityUser, "");
+			securityUsersDAO.delete(securityUser, "");
 
 		} else {
 			securityUser.setRoleCode("");
@@ -259,21 +285,45 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			if (securityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				securityUser.setRecordType("");
-				getSecurityUserDAO().save(securityUser, "");
+				securityUsersDAO.save(securityUser, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				securityUser.setRecordType("");
-				getSecurityUserDAO().update(securityUser, "");
+				securityUsersDAO.update(securityUser, "");
 			}
 
-			// set the Audit Details & Save / Update Security User DivBranch Details
-			if (securityUser.getSecurityUserDivBranchList() != null
-					&& !securityUser.getSecurityUserDivBranchList().isEmpty()) {
-				auditDetails.addAll(doApproveDivBrDetails(securityUser, "", tranType));
+			List<SecurityUserDivBranch> divBranches = securityUser.getSecurityUserDivBranchList();
+			if (CollectionUtils.isNotEmpty(divBranches)) {
+				securityUsersDAO.deleteBranchs(securityUser, "_temp");
+				auditDetails.addAll(saveUserDivisions(securityUser, "", "doApprove"));
 			}
+
+			List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
+			if (CollectionUtils.isNotEmpty(reportingManagers)) {
+				auditDetails.addAll(processingReportingManangers(securityUser, reportingManagers, TableType.MAIN_TAB));
+
+			}
+
+			refreshUserHierarchy(securityUser);
 		}
 
-		getSecurityUserDAO().delete(securityUser, "_Temp");
+		securityUsersDAO.delete(securityUser, "_Temp");
+
+		List<ReportingManager> reportingManagers = securityUser.getReportingManagersList();
+		if (CollectionUtils.isNotEmpty(reportingManagers)) {
+			ReportingManager reportingManager = new ReportingManager();
+			String[] fields = PennantJavaUtil.getFieldDetails(reportingManager, reportingManager.getExcludeFields());
+
+			for (int i = 0; i < reportingManagers.size(); i++) {
+				ReportingManager customerAddres = reportingManagers.get(i);
+				auditDetails.add(new AuditDetail(tranType, i + 1, fields[0], fields[1], customerAddres.getBefImage(),
+						customerAddres));
+			}
+
+			reportingManagerDAO.deleteByUserId(securityUser.getUsrID(), TableType.TEMP_TAB);
+
+		}
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -294,8 +344,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getSecurityUserDAO().delete with parameters securityUsers,"_Temp" 3) Audit the record in
-	 * to AuditHeader and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using securityUsersDAO.delete with parameters securityUsers,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtSecUsers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -307,14 +357,18 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 		auditHeader = businessValidation(auditHeader, "doReject");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
 		}
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditDetails.addAll(
 				deleteDivBranchs(securityUser.getSecurityUserDivBranchList(), "_Temp", auditHeader.getAuditTranType()));
-		getSecurityUserDAO().delete(securityUser, "_Temp");
+		auditDetails.addAll(deleteReportinManagers(securityUser.getReportingManagersList(), "_Temp",
+				auditHeader.getAuditTranType()));
+		securityUsersDAO.delete(securityUser, "_Temp");
 		auditHeader.setAuditDetails(auditDetails);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -332,18 +386,22 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering ");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		logger.debug(Literal.ENTERING);
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		String auditTranType = auditHeader.getAuditTranType();
 		SecurityUser securityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = securityUser.getUserDetails().getLanguage();
-		List<SecurityUserDivBranch> securityUserDivBranchList = securityUser.getSecurityUserDivBranchList();
-		if (securityUserDivBranchList != null && !securityUserDivBranchList.isEmpty()) {
-			auditDetails = getAuditUserDivBranchs(securityUser, auditTranType, method, usrLanguage, false);
+
+		//for reporting manager
+		List<ReportingManager> reportingmangerlist = securityUser.getReportingManagersList();
+		if (CollectionUtils.isNotEmpty(reportingmangerlist)) {
+			auditDetails = getAuditUserReportingmanagers(securityUser, auditTranType, method, usrLanguage, false);
+			securityUser.getAuditDetailMap().put("reportingManagers", auditDetails);
 		}
+
 		for (AuditDetail detail : auditDetails) {
 			auditHeader.addAuditDetail(detail);
 			auditHeader.setErrorList(detail.getErrorDetails());
@@ -355,8 +413,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getSecurityUserDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
+	 * from securityUsersDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -367,7 +425,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		SecurityUser securityUser = (SecurityUser) auditDetail.getModelData();
-		SecurityUser befSecurityUser = getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "");
+
+		SecurityUser befSecurityUser = securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 
 		if ("changePassword".equals(StringUtils.trimToEmpty(method))) {
 			auditDetail.setBefImage(befSecurityUser);
@@ -377,9 +436,9 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 		SecurityUser tempSecurityUser = null;
 		if (securityUser.isWorkflow()) {
-			tempSecurityUser = getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "_Temp");
+			tempSecurityUser = securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "_Temp");
 		}
-		//SecurityUser aBefSecurityUser= getSecurityUserDAO().getSecurityUserByLogin(securityUser.getUsrLogin(), "");
+		//SecurityUser aBefSecurityUser= securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "");
 		SecurityUser oldSecurityUser = securityUser.getBefImage();
 
 		String[] errParm = new String[4];
@@ -524,7 +583,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			securityUser.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 		}
 
-		getSecurityUserDAO().changePassword(securityUser);
+		securityUsersDAO.changePassword(securityUser);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.trace(Literal.LEAVING);
@@ -543,22 +602,16 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	public SecurityUserDAO getSecurityUserDAO() {
-		return securityUsersDAO;
-	}
-
 	public void setSecurityUserDAO(SecurityUserDAO securityUsersDAO) {
 		this.securityUsersDAO = securityUsersDAO;
 	}
 
-	@Override
-	public SecurityUser getSecurityUser() {
-		return getSecurityUserDAO().getSecurityUser();
+	public void setSecurityUserAccessService(SecurityUserAccessService securityUserAccessService) {
+		this.securityUserAccessService = securityUserAccessService;
 	}
 
-	@Override
-	public SecurityUser getNewSecurityUser() {
-		return getSecurityUserDAO().getNewSecurityUser();
+	public void setSecurityUserHierarchyService(SecurityUserHierarchyService securityUserHierarchyService) {
+		this.securityUserHierarchyService = securityUserHierarchyService;
 	}
 
 	public void setSecurityUserPasswordsDAO(SecurityUserPasswordsDAO securityUserPasswordsDAO) {
@@ -576,7 +629,15 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 */
 	@Override
 	public List<SecurityUserDivBranch> getSecUserDivBrList(long usrID, String type) {
-		return getSecurityUserDAO().getSecUserDivBrList(usrID, type);
+		return securityUsersDAO.getSecUserDivBrList(usrID, type);
+	}
+
+	/**
+	 * This method is to fetch Entity Details for current user
+	 */
+	@Override
+	public List<Entity> getEntityList(String entity) {
+		return securityUsersDAO.getEntityList(entity);
 	}
 
 	/**
@@ -591,7 +652,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			String auditTranType) {
 		logger.debug("Entering ");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		List<SecurityUserDivBranch> securityUserDivBranchList = securityUsers.getSecurityUserDivBranchList();
 
@@ -613,21 +674,46 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (securityUserDivBranchList != null) {
 			for (SecurityUserDivBranch securityUserDivBranch : securityUserDivBranchList) {
-				SecurityUserDivBranch recordExistsTemp = getSecurityUserDAO()
+				SecurityUserDivBranch recordExistsTemp = securityUsersDAO
 						.getSecUserDivBrDetailsById(securityUserDivBranch, "_Temp");
 				if (recordExistsTemp != null) {
-					getSecurityUserDAO().deleteDivBranchDetails(securityUserDivBranch, "_Temp");
+					securityUsersDAO.deleteDivBranchDetails(securityUserDivBranch, "_Temp");
 				}
 
-				SecurityUserDivBranch recordExistsMain = getSecurityUserDAO()
+				SecurityUserDivBranch recordExistsMain = securityUsersDAO
 						.getSecUserDivBrDetailsById(securityUserDivBranch, tableType);
 				if (recordExistsMain != null) {
-					getSecurityUserDAO().deleteDivBranchDetails(securityUserDivBranch, tableType);
+					securityUsersDAO.deleteDivBranchDetails(securityUserDivBranch, tableType);
 				}
 				String[] fields = PennantJavaUtil.getFieldDetails(securityUserDivBranch,
 						securityUserDivBranch.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
 						securityUserDivBranch.getBefImage(), securityUserDivBranch));
+				if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+					securityUserAccessService.deleteDivBranchDetails(securityUserDivBranch);
+				}
+			}
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	@Override
+	public List<AuditDetail> deleteReportinManagers(List<ReportingManager> reportingManagers, String tableType,
+			String auditTranType) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		if (reportingManagers != null) {
+			for (ReportingManager deManager : reportingManagers) {
+				ReportingManager recordExistsTemp = reportingManagerDAO.getReportingManager(deManager.getId(), "_Temp");
+				if (recordExistsTemp != null) {
+					reportingManagerDAO.deleteById(deManager.getId(), TableType.TEMP_TAB);
+				}
+				String[] fields = PennantJavaUtil.getFieldDetails(deManager, deManager.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
+						deManager.getBefImage(), deManager));
 			}
 		}
 
@@ -643,10 +729,10 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		List<SecurityUserDivBranch> securityUserDivBranchList = securityUser.getSecurityUserDivBranchList();
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		List<SecurityUserDivBranch> secUserDivBranchList = getSecurityUserDAO()
-				.getSecUserDivBrList(securityUser.getUsrID(), tableType);
+		List<SecurityUserDivBranch> secUserDivBranchList = securityUsersDAO.getSecUserDivBrList(securityUser.getUsrID(),
+				tableType);
 		if (!secUserDivBranchList.isEmpty()) {
-			getSecurityUserDAO().deleteBranchs(securityUser, tableType);
+			securityUsersDAO.deleteBranchs(securityUser, tableType);
 		}
 
 		for (SecurityUserDivBranch securityUserDivBranch : securityUserDivBranchList) {
@@ -662,12 +748,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			securityUserDivBranch.setNextTaskId("");
 			securityUserDivBranch.setWorkflowId(0);
 
-			SecurityUserDivBranch recordExistMain = getSecurityUserDAO()
-					.getSecUserDivBrDetailsById(securityUserDivBranch, tableType);
+			SecurityUserDivBranch recordExistMain = securityUsersDAO.getSecUserDivBrDetailsById(securityUserDivBranch,
+					tableType);
 			if (recordExistMain == null) {
-				getSecurityUserDAO().saveDivBranchDetails(securityUserDivBranch, tableType);
+				securityUsersDAO.saveDivBranchDetails(securityUserDivBranch, tableType);
 			}
-			getSecurityUserDAO().deleteDivBranchDetails(securityUserDivBranch, "_Temp");
+			securityUsersDAO.deleteDivBranchDetails(securityUserDivBranch, "_Temp");
 
 			String[] fields = PennantJavaUtil.getFieldDetails(securityUserDivBranch,
 					securityUserDivBranch.getExcludeFields());
@@ -760,7 +846,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	public SecurityUser getApprovedSecurityUserById(long id) {
 		logger.debug("Entering ");
 
-		return getSecurityUserDAO().getSecurityUserById(id, "_AView");
+		return securityUsersDAO.getSecurityUserById(id, "_AView");
 	}
 
 	/**
@@ -783,106 +869,39 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> processingDetailList(List<AuditDetail> auditDetails, String type,
-			SecurityUser securityUser) {
-		logger.debug("Entering ");
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
+	private List<AuditDetail> saveUserDivisions(SecurityUser securityUser, String type, String method) {
+		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> list = new ArrayList<AuditDetail>();
+		List<AuditDetail> list = new ArrayList<>();
 
-		for (AuditDetail auditDetail : auditDetails) {
-
-			SecurityUserDivBranch securityUserDivBranch = (SecurityUserDivBranch) auditDetail.getModelData();
-
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-
+		for (SecurityUserDivBranch division : securityUser.getSecurityUserDivBranchList()) {
 			if (StringUtils.isEmpty(type)) {
-				securityUserDivBranch.setVersion(securityUserDivBranch.getVersion() + 1);
-				approveRec = true;
+				division.setVersion(division.getVersion() + 1);
 			} else {
-				securityUserDivBranch.setRoleCode(securityUser.getRoleCode());
-				securityUserDivBranch.setNextRoleCode(securityUser.getNextRoleCode());
-				securityUserDivBranch.setTaskId(securityUser.getTaskId());
-				securityUserDivBranch.setNextTaskId(securityUser.getNextTaskId());
+				division.setRoleCode(securityUser.getRoleCode());
+				division.setNextRoleCode(securityUser.getNextRoleCode());
+				division.setTaskId(securityUser.getTaskId());
+				division.setNextTaskId(securityUser.getNextTaskId());
 			}
 
-			if (StringUtils.isNotEmpty(type)
-					&& securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (securityUserDivBranch.isNewRecord()) {
-				saveRecord = true;
-				if (securityUserDivBranch.getId() == Long.MIN_VALUE) {
-					securityUserDivBranch.setUsrID(securityUser.getUsrID());
-				}
-				if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
+			division.setUsrID(securityUser.getUsrID());
+			division.setRecordType(securityUser.getRecordType());
 
-			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				deleteRecord = true;
-			}
-
-			SecurityUserDivBranch tempDetail = new SecurityUserDivBranch();
-			BeanUtils.copyProperties(securityUserDivBranch, tempDetail);
-
-			if (approveRec) {
-				securityUserDivBranch.setRoleCode("");
-				securityUserDivBranch.setNextRoleCode("");
-				securityUserDivBranch.setTaskId("");
-				securityUserDivBranch.setNextTaskId("");
-				securityUserDivBranch.setRecordType("");
-				securityUserDivBranch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-
-			}
-			SecurityUserDivBranch recordExist = getSecurityUserDAO().getSecUserDivBrDetailsById(securityUserDivBranch,
-					type);
-			if (saveRecord) {
-				if (recordExist == null) {
-					getSecurityUserDAO().saveDivBranchDetails(securityUserDivBranch, type);
-				}
-			}
-
-			if (updateRecord) {
-				if (recordExist != null) {
-					getSecurityUserDAO().updateDivBranchDetails(securityUserDivBranch, type);
-				}
-			}
-
-			if (deleteRecord) {
-				if (recordExist != null) {
-					getSecurityUserDAO().deleteDivBranchDetails(securityUserDivBranch, type);
-				}
-			}
-
-			if (saveRecord || updateRecord || deleteRecord) {
-				if (!securityUserDivBranch.isWorkflow()) {
-					auditDetail.setModelData(securityUserDivBranch);
-				} else {
-					auditDetail.setModelData(tempDetail);
-				}
-				list.add(auditDetail);
-			}
+			division.setRoleCode(securityUser.getRoleCode());
+			division.setNextRoleCode(securityUser.getNextRoleCode());
+			division.setTaskId(securityUser.getTaskId());
+			division.setNextTaskId(securityUser.getNextTaskId());
+			division.setRecordType(securityUser.getRecordType());
+			division.setRecordStatus(securityUser.getRecordStatus());
 		}
 
-		logger.debug("Leaving ");
+		if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+			securityUserAccessService.saveDivisionBranches(securityUser, method);
+		} else {
+			securityUsersDAO.deleteBranchs(securityUser, type);
+			securityUsersDAO.saveDivBranchDetails(securityUser.getSecurityUserDivBranchList(), type);
+		}
+		logger.debug(Literal.LEAVING);
 		return list;
 	}
 
@@ -916,7 +935,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	private SecurityUser getSecurityUserOperationById(long id, String type, boolean getOperations) {
 		logger.debug("Entering ");
-		SecurityUser securityUser = getSecurityUserDAO().getSecurityUserById(id, type);
+		SecurityUser securityUser = securityUsersDAO.getSecurityUserById(id, type);
 		if (securityUser != null && getOperations) {
 			if ("_RView".equals(type)) {
 				type = "_View";
@@ -945,9 +964,214 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 	}
 
+	public List<AuditDetail> doApproveReportingManagerDetails(SecurityUser securityUser, String tableType,
+			String auditTranType) {
+		logger.debug("Entering");
+		List<ReportingManager> reportmanagerList = securityUser.getReportingManagersList();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		List<ReportingManager> list = reportingManagerDAO.getReportingManagers(securityUser.getUsrID(), tableType);
+		if (!list.isEmpty()) {
+			//getSecurityUserDAO().deleteBranchs(securityUser, tableType);
+		}
+
+		for (ReportingManager reportingmanager : reportmanagerList) {
+			if (reportingmanager.getId() == Long.MIN_VALUE) {
+				reportingmanager.setUserId(securityUser.getUsrID());
+			}
+			ReportingManager detail = new ReportingManager();
+			BeanUtils.copyProperties(reportingmanager, detail);
+
+			reportingmanager.setRoleCode("");
+			reportingmanager.setNextRoleCode("");
+			reportingmanager.setTaskId("");
+			reportingmanager.setNextTaskId("");
+			reportingmanager.setWorkflowId(0);
+
+			ReportingManager recordExistMain = reportingManagerDAO.getReportingManager(reportingmanager.getUserId(),
+					tableType);
+			if (recordExistMain == null) {
+				reportingManagerDAO.save(reportingmanager, tableType);
+			}
+			reportingManagerDAO.deleteByUserId(reportingmanager.getUserId(), TableType.TEMP_TAB);
+
+		}
+
+		logger.debug("Leaving");
+		return auditDetails;
+	}
+
+	public List<AuditDetail> getAuditUserReportingmanagers(SecurityUser securityUser, String auditTranType,
+			String method, String language, boolean online) {
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		boolean delete = false;
+
+		for (int i = 0; i < securityUser.getReportingManagersList().size(); i++) {
+			ReportingManager reportingmanager = securityUser.getReportingManagersList().get(i);
+			reportingmanager.setWorkflowId(securityUser.getWorkflowId());
+
+			if (StringUtils.isEmpty(reportingmanager.getRecordType())) {
+				continue;
+			}
+
+			boolean isNewRecord = false;
+
+			if (delete) {
+				reportingmanager.setRecordType(PennantConstants.RECORD_TYPE_MDEL);
+			} else {
+				if (reportingmanager.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					reportingmanager.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					isNewRecord = true;
+				} else if (reportingmanager.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					reportingmanager.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					if (securityUser.isWorkflow()) {
+						isNewRecord = true;
+					}
+
+				} else if (reportingmanager.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					reportingmanager.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				}
+			}
+			if ("saveOrUpdate".equals(method) && (isNewRecord)) {
+
+				reportingmanager.setNewRecord(true);
+
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (reportingmanager.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (reportingmanager.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			reportingmanager.setRecordStatus(securityUser.getRecordStatus());
+			reportingmanager.setUserDetails(securityUser.getUserDetails());
+			reportingmanager.setLastMntOn(securityUser.getLastMntOn());
+			reportingmanager.setLastMntBy(securityUser.getLastMntBy());
+
+			if (StringUtils.isNotEmpty(reportingmanager.getRecordType())) {
+				AuditDetail auditDetail = new AuditDetail(auditTranType, i + 1, reportingmanager.getBefImage(),
+						reportingmanager);
+				auditDetail.setModelData(reportingmanager);
+				auditDetails.add(auditDetail);
+
+			}
+		}
+
+		return auditDetails;
+	}
+
+	private void refreshUserHierarchy(SecurityUser securityUser) {
+		securityUserHierarchyService.refreshUserHierarchy(securityUser);
+	}
+
+	private List<AuditDetail> processingReportingManangers(SecurityUser securityUser, List<AuditDetail> auditDetails,
+			TableType type) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			ReportingManager reportingManager = (ReportingManager) auditDetails.get(i).getModelData();
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+
+			String rcdType = "";
+			String recordStatus = "";
+
+			if (StringUtils.isEmpty(type.getSuffix())) {
+				approveRec = true;
+				reportingManager.setRoleCode("");
+				reportingManager.setNextRoleCode("");
+				reportingManager.setTaskId("");
+				reportingManager.setNextTaskId("");
+			}
+
+			reportingManager.setWorkflowId(0);
+			reportingManager.setUserId(securityUser.getUsrID());
+
+			if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+				deleteRecord = true;
+			} else if (reportingManager.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					reportingManager.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					reportingManager.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					reportingManager.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (StringUtils.trimToEmpty(reportingManager.getRecordType())
+					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (reportingManager.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = StringUtils.trimToEmpty(reportingManager.getRecordType());
+				recordStatus = reportingManager.getRecordStatus();
+				reportingManager.setRecordType("");
+				reportingManager.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				reportingManagerDAO.save(reportingManager, type.getSuffix());
+			}
+
+			if (updateRecord) {
+				reportingManagerDAO.update(reportingManager, type);
+			}
+
+			if (deleteRecord) {
+				reportingManagerDAO.deleteByUserId(reportingManager.getUserId(), type);
+			}
+
+			if (approveRec) {
+				reportingManager.setRecordType(rcdType);
+				reportingManager.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(reportingManager);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+
 	@Override
 	public void validateLicensedUsers() throws LicenseException {
 		License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount());
+	}
+
+	public void setReportingManagerDAO(ReportingManagerDAO reportingManagerDAO) {
+		this.reportingManagerDAO = reportingManagerDAO;
 	}
 
 }

@@ -62,6 +62,7 @@ import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.MMAgreement.MMAgreement;
 import com.pennant.backend.model.accounts.Accounts;
+import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennant.backend.model.administration.SecurityGroupRights;
 import com.pennant.backend.model.administration.SecurityOperation;
@@ -71,6 +72,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityRoleGroups;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
+import com.pennant.backend.model.administration.SecurityUserHierarchy;
 import com.pennant.backend.model.administration.SecurityUserOperationRoles;
 import com.pennant.backend.model.administration.SecurityUserOperations;
 import com.pennant.backend.model.amtmasters.Authorization;
@@ -89,8 +91,11 @@ import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.BusinessVertical;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.applicationmaster.ChequePurpose;
+import com.pennant.backend.model.applicationmaster.Cluster;
+import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
 import com.pennant.backend.model.applicationmaster.CorpRelationCode;
 import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.applicationmaster.CostOfFund;
@@ -435,6 +440,10 @@ public class PennantJavaUtil {
 	private static String excludeFields = "serialVersionUID,newRecord,lovValue,befImage,userDetails,userAction,loginAppCode,loginUsrId,loginGrpCode,loginRoleCd,customerQDE,auditDetailMap,lastMaintainedUser,lastMaintainedOn,";
 
 	private static String masterWF = "MSTGRP1";
+	private static String CLUSTER_HIERARCHY = "CLUSTER_HIERARCHY";
+	private static String CLUSTERS = "CLUSTERS";
+	private static String BUSINESS_VERTICAL = "BUSINESS_VERTICAL";
+
 	private static String custDetailWF = "CUSTOMER_MSTGRP";
 	private static String facilityWF = "FACILITY_TERM_SHEET";
 	//private static String retailWF = "AUTO_FIN_PROCESS";
@@ -1018,7 +1027,7 @@ public class PennantJavaUtil {
 						new String[] { "EntityCode", "EntityDesc" }, new Object[][] { { "Active", 0, 1 } }, 300));
 		ModuleUtil.register("Entity",
 				new ModuleMapping("Entity", Entity.class, new String[] { "Entity", "Entity_AView" }, masterWF,
-						new String[] { "EntityCode", "EntityDesc" }, new Object[][] { { "Active", "0", 1 } }, 300));
+						new String[] { "EntityCode", "EntityDesc" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("MandateCheckDigit",
 				new ModuleMapping("MandateCheckDigit", MandateCheckDigit.class,
@@ -3041,6 +3050,31 @@ public class PennantJavaUtil {
 				new ModuleMapping("DataEngineStatusInsPayUpload", FileBatchStatus.class,
 						new String[] { "DataEngineStatus", "DATAENGINESTATUS_IPUVIEW" }, null,
 						new String[] { "Id", "FileName" }, null, 600));
+		
+		ModuleUtil.register("ClusterHierarchy",
+				new ModuleMapping("ClusterHierarchy", ClusterHierarchy.class,
+						new String[] { "Cluster_Hierarchy", "Cluster_Hierarchy" }, CLUSTER_HIERARCHY,
+						new String[] { "Entity", "ClusterType" }, null, 600));
+
+		ModuleUtil.register("Cluster",
+				new ModuleMapping("Cluster", Cluster.class, new String[] { "Clusters", "Clusters_aview" }, CLUSTERS,
+						new String[] { "Code", "Name", "ClusterType" }, null, 600));
+
+		ModuleUtil.register("BusinessVertical",
+				new ModuleMapping("BusinessVertical", BusinessVertical.class,
+						new String[] { "business_vertical", "business_vertical_AView" }, BUSINESS_VERTICAL,
+						new String[] { "code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
+
+		ModuleUtil.register("ReportingManager",
+				new ModuleMapping("ReportingManager", ReportingManager.class,
+						new String[] { "secusr_reporting_managers", "secuser_reporting_manager_AViw" }, masterWF,
+						new String[] { "id", "usrid" }, null, 600));
+
+		ModuleUtil.register("SecurityUserHierarchy",
+				new ModuleMapping("SecurityUserHierarchy", SecurityUserHierarchy.class,
+						new String[] { "userhierarchy_view", "userhierarchy_view" }, null, new String[] { "UserName",
+								"BusinessVerticalCode", "FinType", "Product", "Branch", "ReportingToUserName" },
+						null, 800));
 
 		registerCustomModules();
 	}

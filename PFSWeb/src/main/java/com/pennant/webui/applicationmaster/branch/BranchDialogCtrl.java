@@ -45,6 +45,7 @@ package com.pennant.webui.applicationmaster.branch;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +56,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -63,11 +65,15 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SessionUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.applicationmaster.Cluster;
+import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
+import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -75,6 +81,7 @@ import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.BranchService;
+import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -86,6 +93,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -134,15 +142,19 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	protected Textbox branchFlatNbr;
 	protected Textbox branchAddrStreet;
 	protected ExtendedCombobox pinCode;
+	protected ExtendedCombobox entity;
+	protected ExtendedCombobox cluster;
+	protected Row row_org_struct;
 
 	// not autoWired Var's
-	private Branch branch; // overHanded per parameter
-	private transient BranchListCtrl branchListCtrl; // overHanded per parameter
+	private Branch branch;
+	private transient BranchListCtrl branchListCtrl;
 
 	private transient boolean validationOn;
 
 	// ServiceDAOs / Domain Classes
 	private transient BranchService branchService;
+	private transient ClusterService clusterService;
 	private transient String sBranchCountry;
 	private transient String sBranchProvince;
 	private transient String sBranchCity;
@@ -185,6 +197,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			} else {
 				this.branchCity.setVisible(true);
 				this.cityName.setVisible(false);
+			}
+
+			if (ImplementationConstants.ALLOW_ORGANISATIONAL_STRUCTURE) {
+				this.row_org_struct.setVisible(true);
 			}
 
 			/* set components visible dependent of the users rights */
@@ -309,6 +325,14 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.pinCode.setValueColumn("PinCode");
 		this.pinCode.setDescColumn("AreaName");
 		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+
+		this.entity.setMaxlength(10);
+		this.entity.setMandatoryStyle(true);
+		this.entity.setModuleName("Entity");
+		this.entity.setValueColumn("EntityCode");
+		this.entity.setDescColumn("EntityDesc");
+		this.entity.addForward(ExtendedCombobox.ON_FUL_FILL, self, "onChangeEntity", null);
+		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -465,6 +489,19 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.parentBranch.setValue(aBranch.getBranchCode(), aBranch.getBranchDesc());
 		}
 
+		this.entity.setValue(aBranch.getEntity());
+		this.cluster.setValue(aBranch.getClusterCode());
+
+		Cluster acluster = new Cluster();
+		if (aBranch.getCluster() != null) {
+			acluster.setId(aBranch.getCluster());
+			this.cluster.setObject(acluster);
+		}else{
+			acluster.setId(null);
+			this.cluster.setValue("");
+		}
+
+
 		if (aBranch.isNewRecord()) {
 			this.branchCity.setDescription("");
 			this.branchProvince.setDescription("");
@@ -473,6 +510,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.newBranchCode.setDescription("");
 			this.parentBranch.setDescription("");
 			this.pinCode.setDescription("");
+			this.entity.setDescription("");
+			this.cluster.setDescription("");
 		} else {
 			this.branchCity.setDescription(aBranch.getLovDescBranchCityName());
 			this.branchProvince.setDescription(aBranch.getLovDescBranchProvinceName());
@@ -480,6 +519,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.branchSwiftCountry.setDescription(aBranch.getLovDescBranchSwiftCountryName());
 			this.newBranchCode.setDescription(aBranch.getNewBranchDesc());
 			this.pinCode.setDescription(aBranch.getPinAreaDesc());
+			this.entity.setDescription(aBranch.getEntityDesc());
+			this.cluster.setDescription(aBranch.getClusterName());
 		}
 		this.recordStatus.setValue(aBranch.getRecordStatus());
 		if (aBranch.isNew() || (aBranch.getRecordType() != null ? aBranch.getRecordType() : "")
@@ -516,10 +557,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		/*
-		 * try { aBranch.setBranchCode(StringUtils.leftPad(this.branchCode.getValue() ,LengthConstants.LEN_BRANCH,'0'));
-		 * }catch (WrongValueException we ) { wve.add(we); }
-		 */
 		try {
 			aBranch.setBranchCode(this.branchCode.getValue());
 		} catch (WrongValueException we) {
@@ -679,13 +716,34 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		if (ImplementationConstants.ALLOW_ORGANISATIONAL_STRUCTURE) {
+			try {
+				aBranch.setEntity(this.entity.getValidatedValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				this.cluster.getValue();
+				
+				Object aObject = (Object) this.cluster.getObject();
+				if (aObject != null && aObject instanceof Cluster) {
+					Cluster acluster = (Cluster) aObject;
+					aBranch.setCluster(acluster.getId());
+				}else{
+					aBranch.setCluster(null);
+				}
+				
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
 
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -897,6 +955,15 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.pinCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BranchDialog_PinCode.value"),
 					PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
+		if (this.row_org_struct.isVisible() && !this.entity.isReadonly()) {
+			this.entity.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BranchDialog_Entity.value"), null, true, true));
+		}
+		if (this.row_org_struct.isVisible() && !this.cluster.isReadonly()) {
+			this.cluster.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BranchDialog_Cluster.value"), null, true, true));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -936,6 +1003,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchFlatNbr.setConstraint("");
 		this.branchAddrStreet.setConstraint("");
 		this.pinCode.setConstraint("");
+		this.entity.setConstraint("");
+		this.cluster.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -974,6 +1043,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchFlatNbr.setErrorMessage("");
 		this.branchAddrStreet.setErrorMessage("");
 		this.pinCode.setErrorMessage("");
+		this.entity.setErrorMessage("");
+		this.cluster.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1039,6 +1110,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.branchProvince.setMandatoryStyle(true);
 			this.pinCode.setMandatoryStyle(true);
 			this.btnCancel.setVisible(true);
+			this.entity.setMandatoryStyle(true);
+			this.cluster.setMandatoryStyle(true);
 		}
 
 		this.branchDesc.setReadonly(isReadOnly("BranchDialog_branchDesc"));
@@ -1069,6 +1142,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchFlatNbr.setReadonly(isReadOnly("BranchDialog_BranchFlatNbr"));
 		this.branchAddrStreet.setReadonly(isReadOnly("BranchDialog_BranchAddrStreet"));
 		this.pinCode.setReadonly(isReadOnly("BranchDialog_PinCode"));
+		this.entity.setReadonly(isReadOnly("BranchDialog_Entity"));
+		this.cluster.setReadonly(isReadOnly("BranchDialog_ClusterType"));
 		if (this.miniBranch.isChecked()) {
 			this.parentBranch.setReadonly(isReadOnly("BranchDialog_ParentBranch"));
 		} else {
@@ -1134,6 +1209,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchFlatNbr.setReadonly(true);
 		this.branchAddrStreet.setReadonly(true);
 		this.pinCode.setReadonly(true);
+		this.entity.setReadonly(true);
+		this.cluster.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1189,6 +1266,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.branchFlatNbr.setValue("");
 		this.branchAddrHNbr.setValue("");
 		this.parentBranch.setDescription("");
+		this.entity.setDescription("");
+		this.cluster.setDescription("");
 		logger.debug("Leaving");
 	}
 
@@ -1644,13 +1723,13 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			readOnlyComponent(true, this.parentBranch);
 			this.parentBranch.setValue("");
 			this.parentBranch.setDescription("");
-
 		}
+
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onFulfill$parentBranch(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Object dataObject = parentBranch.getObject();
 
@@ -1750,6 +1829,54 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		return builder.toString();
 	}
 
+	public void onChangeEntity(ForwardEvent event) {
+		Object selectedEntiy = entity.getObject();
+
+		if (selectedEntiy != null && selectedEntiy instanceof Entity) {
+			doSetClusterFilter((Entity) selectedEntiy);
+		} else {
+			doSetClusterFilter(null);
+		}
+	}
+
+	private void doSetClusterFilter(Entity entity) {
+		this.cluster.setMaxlength(8);
+		this.cluster.setMandatoryStyle(true);
+		this.cluster.setModuleName("Cluster");
+		this.cluster.setValueColumn("Code");
+		this.cluster.setDescColumn("Name");
+		this.cluster.setValidateColumns(new String[] { "Code" });
+
+		if (entity == null) {
+			this.cluster.setValue("");
+			this.cluster.setFilters(new Filter[] { new Filter("Entity", null, Filter.OP_EQUAL) });
+			return;
+		}
+
+		String selectedEntity = entity.getEntityCode();
+		List<ClusterHierarchy> hierarchyList = clusterService.getClusterHierarcheyList(selectedEntity);
+		Iterator<ClusterHierarchy> it = hierarchyList.iterator();
+
+		String lowermostchild = null;
+
+		if (it.hasNext()) {
+			lowermostchild = it.next().getClusterType();
+		}
+
+		if (lowermostchild == null) {
+			this.cluster.setValue("");
+		}
+
+		if (lowermostchild != null) {
+			this.cluster.setFilters(new Filter[] { new Filter("Entity", selectedEntity, Filter.OP_EQUAL),
+					new Filter("ClusterType", lowermostchild, Filter.OP_EQUAL) });
+		} else {
+			this.cluster.setFilters(new Filter[] { new Filter("Entity", null, Filter.OP_EQUAL),
+					new Filter("ClusterType", null, Filter.OP_EQUAL)	});
+
+		}
+	}
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.branch.getBranchCode());
@@ -1789,6 +1916,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 
 	public BranchListCtrl getBranchListCtrl() {
 		return this.branchListCtrl;
+	}
+
+	public void setClusterService(ClusterService clusterService) {
+		this.clusterService = clusterService;
 	}
 
 }

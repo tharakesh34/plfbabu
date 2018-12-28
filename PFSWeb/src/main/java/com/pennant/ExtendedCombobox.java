@@ -42,11 +42,13 @@
  */
 package com.pennant;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -58,50 +60,54 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 
-import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.DataTypeUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 public class ExtendedCombobox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
 	private static final Logger logger = Logger.getLogger(ExtendedCombobox.class);
+	public static final String ON_FUL_FILL = "onFulfill";
 
 	private Space space;
 	private Textbox textbox;
 	private Button button;
 	private Label label;
-	private Hbox hbox;
 
 	private Filter[] filters;
-	private Object object = null;
+	private transient Object object = null;
 	private String selctedValue = null;
 
 	/*** Mandatory Properties **/
-	private String moduleName; //mandatory
-	private int displayStyle = 1; //mandatory 	
-	private String valueColumn; //mandatory
+	private String moduleName;
+	private int displayStyle = 1;
+	private String valueColumn;
 	private DataType valueType = DataType.STRING;
-	private boolean isdisplayError = true; //mandatory
-	private boolean inputAllowed = true; //mandatory
-	private boolean isWindowOpened = false; //mandatory
-	private boolean mandatory = false; //mandatory
+	private boolean isdisplayError = true;
+	private boolean inputAllowed = true;
+	private boolean isWindowOpened = false;
+	private boolean mandatory = false;
 
 	/*** Optional Properties **/
-	private String descColumn; //Optional
-	private String[] validateColumns; //Optional
+	private String descColumn;
+	private String[] validateColumns;
 
-	@SuppressWarnings("rawtypes")
-	private JdbcSearchObject jdbcSearchObject;
-	private transient PagedListService pagedListService;
+	private transient SearchProcessor searchProcessor;
 	private String whereClause = null;
 	private String rateModule = "";
-	private List<?> list = null;
+	private transient List<?> list = null;
+
+	private boolean multySelection;
+	private Map<String, Object> selectedValues = new HashMap<>();
 
 	public List<?> getList() {
 		return list;
@@ -134,7 +140,7 @@ public class ExtendedCombobox extends Hbox {
 		this.appendChild(space);
 
 		//Hbox
-		hbox = new Hbox();
+		Hbox hbox = new Hbox();
 		if (allowSpace) {
 			hbox.setSpacing("2px");
 		}
@@ -167,7 +173,8 @@ public class ExtendedCombobox extends Hbox {
 		} else {
 			label.setVisible(true);
 		}
-		this.label.setStyle("margin-left:10px;display:inline-block;padding-top:6px;");
+		this.label.setStyle("margin-left:10px;display:inline-block;padding-top:6px;white-space: nowrap;");
+		this.setSclass("ellipsis");
 		this.appendChild(label);
 
 	}
@@ -178,7 +185,7 @@ public class ExtendedCombobox extends Hbox {
 	 * @param event
 	 */
 	public void onChangeTextbox(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.setErrorMessage("");
 		this.label.setValue("");
 		this.label.setTooltiptext("");
@@ -193,16 +200,16 @@ public class ExtendedCombobox extends Hbox {
 			try {
 				doWrite();
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				if (StringUtils.isNotEmpty(this.rateModule)) {
-					Events.postEvent("onFulfill", this.getParent().getParent(), this.rateModule);
+					Events.postEvent(ON_FUL_FILL, this.getParent().getParent(), this.rateModule);
 				} else {
-					Events.postEvent("onFulfill", this, null);
+					Events.postEvent(ON_FUL_FILL, this, null);
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void selectFromDefinedList() {
@@ -210,11 +217,11 @@ public class ExtendedCombobox extends Hbox {
 			boolean found = false;
 			this.object = null;
 			String value = this.textbox.getValue();
-			for (Object object : list) {
+			for (Object item : list) {
 				String valueMethod = "get" + getValueColumn();
-				String selctedValue = object.getClass().getMethod(valueMethod).invoke(object).toString();
-				if (value.equalsIgnoreCase(selctedValue)) {
-					this.object = object;
+				String result = invokeMethod(valueMethod);
+				if (value.equalsIgnoreCase(result)) {
+					this.object = item;
 					found = true;
 					break;
 				}
@@ -232,9 +239,9 @@ public class ExtendedCombobox extends Hbox {
 		} catch (WrongValueException e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
-			Events.postEvent("onFulfill", this, null);
+			Events.postEvent(ON_FUL_FILL, this, null);
 		}
 
 	}
@@ -248,57 +255,70 @@ public class ExtendedCombobox extends Hbox {
 		if (this.isWindowOpened) {
 			return;
 		}
-		logger.debug("Entering");
-		this.isWindowOpened = true;
+
+		logger.debug(Literal.ENTERING);
 
 		this.textbox.setErrorMessage("");
 		Clients.clearWrongValue(this.button);
+
+		if (moduleName == null || moduleName.length() == 0) {
+			return;
+		}
+
+		this.isWindowOpened = true;
 		try {
-			if (moduleName != null && moduleName.length() != 0) {
-				Object object = null;
-				if (list == null) {
-					if (filters != null) {
-						if (StringUtils.equals(this.whereClause, "")) {
-							object = ExtendedSearchListBox.show(this, moduleName, filters, this.textbox.getValue());
-						} else {
-							object = ExtendedSearchListBox.show(this, moduleName, textbox.getValue(), filters,
-									whereClause, valueColumn, valueType);
-						}
+
+			Object tempObject = null;
+			ExtendedSearchListBox extended = null;
+			if (list == null) {
+				if (filters != null) {
+					if (StringUtils.equals(this.whereClause, "")) {
+						extended = new ExtendedSearchListBox(this, moduleName, filters, getSearchValue());
 					} else {
-						if (StringUtils.equals(this.whereClause, "")) {
-							object = ExtendedSearchListBox.show(this, moduleName, this.textbox.getValue());
-						} else {
-							object = ExtendedSearchListBox.show(this, moduleName, textbox.getValue(), null, whereClause,
-									valueColumn, valueType);
-						}
+						extended = new ExtendedSearchListBox(this, moduleName, filters, getSearchValue(), whereClause,
+								valueColumn, valueType);
 					}
 				} else {
-					object = ExtendedSearchListBox.show(this, moduleName, list);
-				}
-
-				if (object != null) {
-					this.object = object;
-				}
-
-				if (this.object != null) {
-					if (this.object instanceof String) {
-						doClear();
+					if (StringUtils.equals(this.whereClause, "")) {
+						extended = new ExtendedSearchListBox(this, moduleName, getSearchValue());
 					} else {
-						doWrite();
+						extended = new ExtendedSearchListBox(this, moduleName, getSearchValue(), whereClause,
+								valueColumn, valueType);
 					}
 				}
-
-				Events.sendEvent(Events.ON_CHANGE, textbox, null);
+			} else {
+				tempObject = ExtendedSearchListBox.show(this, moduleName, list);
 			}
 
-			logger.debug("Leaving");
+			if (extended != null) {
+				extended.setMultySelection(isMultySelection());
+				extended.setSelectedValues(selectedValues);
+				extended.createBox();
+				tempObject = extended.getObject();
+			}
+
+			if (tempObject != null) {
+				this.object = tempObject;
+			}
+
+			if (this.object != null) {
+				if (this.object instanceof String) {
+					doClear();
+				} else {
+					doWrite();
+				}
+			}
+
+			Events.sendEvent(Events.ON_CHANGE, textbox, null);
+
+			logger.debug(Literal.LEAVING);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			if (StringUtils.isNotEmpty(this.rateModule)) {
-				Events.postEvent("onFulfill", this.getParent().getParent(), this.rateModule);
+				Events.postEvent(ON_FUL_FILL, this.getParent().getParent(), this.rateModule);
 			} else {
-				Events.postEvent("onFulfill", this, null);
+				Events.postEvent(ON_FUL_FILL, this, null);
 			}
 			this.isWindowOpened = false;
 		}
@@ -310,7 +330,7 @@ public class ExtendedCombobox extends Hbox {
 	 * @param event
 	 */
 	private void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		selctedValue = "";
 		clearErrorMessage();
@@ -321,7 +341,33 @@ public class ExtendedCombobox extends Hbox {
 		this.label.setTooltiptext("");
 		this.textbox.setAttribute("data", null);
 
-		logger.debug("Leaving");
+		if (multySelection) {
+			selectedValues.clear();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String invokeMethod(String methodName) {
+		try {
+			if (multySelection) {
+				StringBuilder value = new StringBuilder();
+				for (String key : selectedValues.keySet()) {
+					if (value.length() > 0) {
+						value.append(",");
+					}
+
+					value.append(key);
+				}
+
+				return value.toString();
+
+			} else {
+				return this.object.getClass().getMethod(methodName).invoke(object).toString();
+			}
+		} catch (Exception e) {
+			throw new AppException(e.getMessage());
+		}
 	}
 
 	/**
@@ -329,51 +375,54 @@ public class ExtendedCombobox extends Hbox {
 	 * 
 	 * @throws Exception
 	 */
-	private void doWrite() throws Exception {
-		logger.debug("Entering");
+	private void doWrite() {
+		logger.debug(Literal.ENTERING);
 		String valueMethod = "get" + getValueColumn();
-		selctedValue = this.object.getClass().getMethod(valueMethod).invoke(object).toString();
+		selctedValue = invokeMethod(valueMethod);
 		this.textbox.setValue(selctedValue);
 		this.textbox.setAttribute("data", object);
+		this.setAttribute("data", object);
 
-		if (getDescColumn() != null && getDescColumn().length() != 0) {
-			String descMethod = "get" + getDescColumn();
-			String desc = this.object.getClass().getMethod(descMethod).invoke(object).toString();
-			if (getDisplayStyle() == 2) {
-				this.textbox.setValue(selctedValue + "-" + desc);
-			} else if (getDisplayStyle() == 3) {
-				this.textbox.setValue(desc);
-				this.label.setValue(selctedValue);
-				this.label.setStyle("valign:center;");
-				this.label.setVisible(false);
-			} else {
-				this.label.setTooltiptext(desc);
-				this.label.setValue(desc);
-			}
+		if (getDescColumn() == null || getDescColumn().length() == 0) {
+			return;
 		}
 
-		logger.debug("Leaving");
+		String descMethod = "get" + getDescColumn();
+		String desc = invokeMethod(descMethod);
+		if (getDisplayStyle() == 2) {
+			this.textbox.setValue(selctedValue + "-" + desc);
+		} else if (getDisplayStyle() == 3) {
+			this.textbox.setValue(desc);
+			this.label.setValue(selctedValue);
+			this.label.setStyle("valign:center;");
+			this.label.setVisible(false);
+		} else {
+			this.label.setTooltiptext(desc);
+			this.label.setValue(desc);
+		}
+		logger.debug(Literal.ENTERING);
 	}
 
 	/**
 	 * Set JdbcSearchobjext Set the properties to the search object from module mapping and the filters
 	 */
-	private void setJdbcSearchObject() {
-		logger.debug("Entering");
-		this.jdbcSearchObject = new JdbcSearchObject<>(ModuleUtil.getModuleClass(moduleName));
-		this.jdbcSearchObject.addTabelName(ModuleUtil.getLovTableName(moduleName));
+	private Search getSearch() {
+		logger.debug(Literal.EXCEPTION);
+		Search search = new Search(ModuleUtil.getModuleClass(moduleName));
+		search.addTabelName(ModuleUtil.getLovTableName(moduleName));
 
 		String[] lovFields = ModuleUtil.getLovFields(moduleName);
 		if (lovFields != null && lovFields.length > 0) {
-			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
-			this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
+			search.addSort(lovFields[0].trim(), false);
+			search.addSort(lovFields[1].trim(), false);
 		}
 
 		if (this.filters != null) {
 			for (int i = 0; i < filters.length; i++) {
-				this.jdbcSearchObject.addFilter(filters[i]);
+				search.addFilter(filters[i]);
 			}
 		}
+
 		if (getValidateColumns() != null) {
 			String[] searchFieldArray = getValidateColumns();
 			Filter[] filter1 = new Filter[searchFieldArray.length];
@@ -390,11 +439,11 @@ public class ExtendedCombobox extends Hbox {
 				filter1[i++] = new Filter(field, fieldValue, Filter.OP_EQUAL);
 			}
 
-			jdbcSearchObject.addFilterOr(filter1);
+			search.addFilterOr(filter1);
 		}
 
 		if (whereClause != null) {
-			this.jdbcSearchObject.addWhereClause(whereClause);
+			search.addWhereClause(whereClause);
 		}
 
 		Object[][] lovFilters = ModuleUtil.getLovFilters(moduleName);
@@ -404,11 +453,13 @@ public class ExtendedCombobox extends Hbox {
 			for (int i = 0; i < lovFilters.length; i++) {
 				filter1 = new Filter((String) lovFilters[i][0], lovFilters[i][2],
 						Integer.parseInt((String) lovFilters[i][1]));
-				this.jdbcSearchObject.addFilter(filter1);
+				search.addFilter(filter1);
 
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
+
+		return search;
 	}
 
 	/**
@@ -416,58 +467,49 @@ public class ExtendedCombobox extends Hbox {
 	 * 
 	 * @param showError
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void validateValue(boolean showError) {
-		if (getValidateColumns() != null && getValidateColumns().length != 0) {
-			this.object = null;
-			setJdbcSearchObject();
-			try {
-				final SearchResult searchResult = getPagedListService().getSRBySearchObject(this.jdbcSearchObject);
-				if (searchResult.getResult().size() <= 0) {
-					if (isIsdisplayError() || showError) {
-						this.textbox.setFocus(true);
-						if (StringUtils.isNotEmpty(this.rateModule)) {
-							Events.postEvent("onFulfill", this.getParent().getParent(), this.rateModule);
-						} else {
-							Events.postEvent("onFulfill", this, null);
-						}
-
-						String value = StringUtils.trimToEmpty(this.textbox.getValue());
-						this.textbox.setConstraint("");
-						this.textbox.setErrorMessage("");
-						this.textbox.setValue("");
-						if (StringUtils.isNotBlank(value)) {
-							throw new WrongValueException(this.button, value + " is not valid.");
-						}
-
-					} else {
-						Events.postEvent("onClick", this.button, Events.ON_CLICK);
-					}
-				} else {
-					this.object = searchResult.getResult().get(0);
-				}
-			} catch (WrongValueException e) {
-				throw e;
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
-				String value = StringUtils.trimToEmpty(this.textbox.getValue());
-				this.textbox.setValue("");
-				throw new WrongValueException(this.button, value + " is not valid.");
-			}
+		this.object = null;
+		if (getValidateColumns() == null || getValidateColumns().length == 0 || isMultySelection()) {
+			return;
 		}
-	}
 
-	/*
-	 *//**
-		 * update the object
-		 * 
-		 * @param showError
-		 *//*
-			 * @SuppressWarnings({ "unchecked", "rawtypes" }) public void setObjectData() { if (getValidateColumns() !=
-			 * null && getValidateColumns().length != 0) { this.object = null; setJdbcSearchObject(); final SearchResult
-			 * searchResult = getPagedListService().getSRBySearchObject(this.jdbcSearchObject); if
-			 * (searchResult.getResult().size() > 0) { this.object = searchResult.getResult().get(0); } } }
-			 */
+		final SearchResult<?> searchResult = getSearchProcessor().getResults(getSearch(), false);
+
+		if (CollectionUtils.isNotEmpty(searchResult.getResult())) {
+			this.object = searchResult.getResult().get(0);
+			return;
+		}
+
+		try {
+			if (isIsdisplayError() || showError) {
+				this.textbox.setFocus(true);
+				if (StringUtils.isNotEmpty(this.rateModule)) {
+					Events.postEvent(ON_FUL_FILL, this.getParent().getParent(), this.rateModule);
+				} else {
+					Events.postEvent(ON_FUL_FILL, this, null);
+				}
+
+				String value = StringUtils.trimToEmpty(this.textbox.getValue());
+				this.textbox.setConstraint("");
+				this.textbox.setErrorMessage("");
+				this.textbox.setValue("");
+				if (StringUtils.isNotBlank(value)) {
+					throw new WrongValueException(this.button, value + " is not valid.");
+				}
+			} else {
+				Events.postEvent("onClick", this.button, Events.ON_CLICK);
+			}
+
+		} catch (WrongValueException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			String value = StringUtils.trimToEmpty(this.textbox.getValue());
+			this.textbox.setValue("");
+			throw new WrongValueException(this.button, value + " is not valid.");
+		}
+
+	}
 
 	public void setModuleName(String moduleName) {
 		this.moduleName = moduleName;
@@ -487,7 +529,7 @@ public class ExtendedCombobox extends Hbox {
 
 	public Filter[] getFilters() {
 		if (filters == null) {
-			return null;
+			return new Filter[] {};
 		}
 
 		return filters.clone();
@@ -506,28 +548,27 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public String getValue() {
-		this.textbox.getValue();//to call the constraint if any
 		if (inputAllowed) {
 			if (StringUtils.isNotBlank(selctedValue)) {
 				return selctedValue;
 			} else {
 				return "";
 			}
-		} else {
-			if (StringUtils.isNotBlank(this.textbox.getValue())) {
-				if (getDisplayStyle() == 2) {
-					return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf("-"));
-				} else if (getDisplayStyle() == 3) {
-					return this.label.getValue();
-				} else {
-					return this.textbox.getValue();
-				}
+		}
+
+		if (StringUtils.isNotBlank(this.textbox.getValue())) {
+			if (getDisplayStyle() == 2) {
+				return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf('-'));
+			} else if (getDisplayStyle() == 3) {
+				return this.label.getValue();
 			} else {
-				if (getDisplayStyle() == 3) {
-					return "0";
-				} else {
-					return "";
-				}
+				return this.textbox.getValue();
+			}
+		} else {
+			if (getDisplayStyle() == 3) {
+				return "0";
+			} else {
+				return "";
 			}
 		}
 	}
@@ -548,7 +589,7 @@ public class ExtendedCombobox extends Hbox {
 				validateValue(true);
 			}
 			if (getDisplayStyle() == 2) {
-				return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf("-"));
+				return this.textbox.getValue().substring(0, this.textbox.getValue().indexOf('-'));
 			} else if (getDisplayStyle() == 3) {
 				return this.label.getValue();
 			} else {
@@ -567,7 +608,7 @@ public class ExtendedCombobox extends Hbox {
 	public String setDescription() {
 		if (getDisplayStyle() == 2) {
 			if (StringUtils.isNotBlank(this.textbox.getValue())) {
-				return this.textbox.getValue().substring(this.textbox.getValue().indexOf("-"));
+				return this.textbox.getValue().substring(this.textbox.getValue().indexOf('-'));
 			} else {
 				return "";
 			}
@@ -624,7 +665,7 @@ public class ExtendedCombobox extends Hbox {
 	public String getDescription() {
 		if (getDisplayStyle() == 2) {
 			if (StringUtils.isNotBlank(this.textbox.getValue())) {
-				return this.textbox.getValue().substring(this.textbox.getValue().indexOf("-"));
+				return this.textbox.getValue().substring(this.textbox.getValue().indexOf('-'));
 			} else {
 				return "";
 			}
@@ -639,24 +680,8 @@ public class ExtendedCombobox extends Hbox {
 		}
 	}
 
-	/**
-	 * Get the Db Object based on the module mapping and the code
-	 * 
-	 * @return
-	 *//*
-		 * @SuppressWarnings({ "unchecked", "rawtypes" }) public Object getDBObject() {
-		 * setModuleMapping(PennantJavaUtil.getModuleMap(moduleName)); JdbcSearchObject jdbcSearchObj = new
-		 * JdbcSearchObject(getModuleMapping().getModuleClass());
-		 * jdbcSearchObj.addTabelName(getModuleMapping().getLovTableName()); Filter filter = new Filter(valueColumn,
-		 * getValue(), Filter.OP_EQUAL); jdbcSearchObj.addFilter(filter); List<Object> objects =
-		 * getPagedListService().getBySearchObject(jdbcSearchObj); if (objects != null && objects.size() > 0) { return
-		 * objects.get(0); } return null;
-		 * 
-		 * }
-		 */
-
 	public Object getObject() {
-		this.textbox.getValue();//to call the constraint if any
+		this.textbox.getValue();
 		return object;
 	}
 
@@ -724,7 +749,6 @@ public class ExtendedCombobox extends Hbox {
 			this.textbox.setTabindex(-1);
 		}
 		if (isReadOnly) {
-			//this.space.setSclass("");
 			this.textbox.setTabindex(-1);
 		}
 	}
@@ -739,10 +763,6 @@ public class ExtendedCombobox extends Hbox {
 
 	public boolean isButtonDisabled() {
 		return this.button.isDisabled();
-	}
-
-	public boolean setVisible(boolean decider) {
-		return super.setVisible(decider);
 	}
 
 	public void setMaxlength(int length) {
@@ -828,7 +848,7 @@ public class ExtendedCombobox extends Hbox {
 
 	public String[] getValidateColumns() {
 		if (validateColumns == null) {
-			return null;
+			return new String[] {};
 		}
 
 		return validateColumns.clone();
@@ -864,11 +884,11 @@ public class ExtendedCombobox extends Hbox {
 		}
 	}
 
-	public PagedListService getPagedListService() {
-		if (this.pagedListService == null) {
-			this.pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+	public SearchProcessor getSearchProcessor() {
+		if (this.searchProcessor == null) {
+			this.searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 		}
-		return pagedListService;
+		return searchProcessor;
 	}
 
 	public String getWhereClause() {
@@ -914,5 +934,30 @@ public class ExtendedCombobox extends Hbox {
 		if (this.validateColumns == null) {
 			this.validateColumns = new String[] { valueColumn }.clone();
 		}
+	}
+	
+	private String getSearchValue() {
+		if (isMultySelection()) {
+			return null;
+		}
+
+		return this.textbox.getValue();
+	}
+	
+	
+	public boolean isMultySelection() {
+		return multySelection;
+	}
+
+	public void setMultySelection(boolean multySelection) {
+		this.multySelection = multySelection;
+	}
+
+	public Map<String, Object> getSelectedValues() {
+		return selectedValues;
+	}
+
+	public void setSelectedValues(Map<String, Object> selectedValues) {
+		this.selectedValues = selectedValues;
 	}
 }
