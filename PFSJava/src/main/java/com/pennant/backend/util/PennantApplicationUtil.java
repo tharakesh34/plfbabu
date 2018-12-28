@@ -29,7 +29,10 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 
 public class PennantApplicationUtil {
 
@@ -424,24 +427,26 @@ public class PennantApplicationUtil {
 	}
 
 	public static String getUserDesc(long userID) {
-		JdbcSearchObject<SecurityUser> searchObject = new JdbcSearchObject<SecurityUser>(SecurityUser.class);
-		searchObject.addFilterEqual("UsrID", userID);
-		searchObject.addField("UsrFName");
-		searchObject.addField("UsrMName");
-		searchObject.addField("UsrLName");
+		Search search = new Search(SecurityUser.class);
 
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<SecurityUser> usersList = pagedListService.getBySearchObject(searchObject);
+		search.addField("UsrFName");
+		search.addField("UsrMName");
+		search.addField("UsrLName");
+		search.addFilterEqual("UsrID", userID);
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		List<SecurityUser> usersList = searchProcessor.getResults(search);
 		SecurityUser securityUser = usersList.get(0);
 		return getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(), securityUser.getUsrLName());
 	}
 
 	public static String getWorkFlowType(long workflowID) {
-		JdbcSearchObject<WorkFlowDetails> searchObject = new JdbcSearchObject<WorkFlowDetails>(WorkFlowDetails.class);
-		searchObject.addFilterEqual("WorkFlowID", workflowID);
-		searchObject.addField("WorkFlowType");
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<WorkFlowDetails> usersList = pagedListService.getBySearchObject(searchObject);
+		Search search = new Search(WorkFlowDetails.class);
+		search.addFilterEqual("WorkFlowID", workflowID);
+		search.addField("WorkFlowType");
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		List<WorkFlowDetails> usersList = searchProcessor.getResults(search);
 		return usersList.get(0).getWorkFlowType();
 	}
 
@@ -607,12 +612,12 @@ public class PennantApplicationUtil {
 
 	public static String getSecRoleCodeDesc(String roleCode) {
 		logger.debug("Entering");
+		Search search = new Search(SecurityRole.class);
+		search.addFilterEqual("RoleCd", roleCode);
+		search.addField("RoleDesc");
 
-		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
-		searchObject.addFilterEqual("RoleCd", roleCode);
-		searchObject.addField("RoleDesc");
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<SecurityRole> securityRolesList = pagedListService.getBySearchObject(searchObject);
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		List<SecurityRole> securityRolesList = searchProcessor.getResults(search);
 
 		logger.debug("Leaving");
 		return securityRolesList.size() > 0 ? securityRolesList.get(0).getRoleDesc() : "";

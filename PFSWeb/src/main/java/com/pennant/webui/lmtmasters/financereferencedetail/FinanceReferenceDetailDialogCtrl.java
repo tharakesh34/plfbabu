@@ -182,6 +182,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	protected Tab tabTatNotification;
 	protected Tab tabFinanceTabs;
 
+	protected int selectedTab;
+
 	/*
 	 * private transient List<FinanceReferenceDetail> oldVar_CheckList; private transient List<FinanceReferenceDetail>
 	 * oldVar_Agreement; private transient List<FinanceReferenceDetail> oldVar_Eligibility; private transient
@@ -1447,62 +1449,77 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	}
 
 	public void onClick$btnNew_FinanceCheckList(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_CHECKLIST;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_CHECKLIST);
 	}
 
 	public void onClick$btnNew_FinanceAgreementLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_AGREEMENT;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_AGREEMENT);
 	}
 
 	public void onClick$btnNew_FinanceEligibilityLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_ELIGIBILITY;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_ELIGIBILITY);
 	}
 
 	public void onClick$btnNew_FinanceScoringGroup(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_RTLSCORE;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_RTLSCORE);
 	}
 
 	public void onClick$btnNew_FinCorpScoringGroup(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_CORPSCORE;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_CORPSCORE);
 	}
 
 	public void onClick$btnNew_FinanceAdvanceAccounting(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_STAGEACC;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_STAGEACC);
 	}
 
 	public void onClick$btnNew_FinanceMailTemplate(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_TEMPLATE;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_TEMPLATE);
 	}
 
 	public void onClick$btnNew_FinanceDedupeLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_FINDEDUP;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_FINDEDUP);
 	}
 
 	public void onClick$btnNew_CustomerDedupeLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_CUSTDEDUP;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_CUSTDEDUP);
 	}
 
 	public void onClick$btnNew_CustBlackListLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_CUSTDEDUP;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_BLACKLIST);
 	}
 
 	public void onClick$btnNew_CustPoliceLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_POLICEDEDUP;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_POLICEDEDUP);
 	}
 
 	public void onClick$btnNew_ReturnChequeLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_RETURNCHQ;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_RETURNCHQ);
 	}
 
 	public void onClick$btnNew_LimitServiceLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_LIMIT;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_LIMIT);
 	}
 
 	public void onClick$btnNew_TatNotificationLink(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_TATNOTIFICATION;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_TATNOTIFICATION);
 	}
 
 	public void onClick$btnNew_FinanceTabs(Event event) throws InterruptedException {
+		selectedTab = FinanceConstants.PROCEDT_FINANCETABS;
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_FINANCETABS);
 	}
 

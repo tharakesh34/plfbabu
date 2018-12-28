@@ -332,6 +332,10 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 			wve.add(we);
 		}
 		try {
+			if ("REC_ON_APPROVAL".equals(this.roleCd.getValue())) {
+				throw new WrongValueException(this.roleCd,
+						"Please select any other value. This value is reserved for System variable");
+			}
 			aSecurityRole.setRoleCd(this.roleCd.getValue());
 
 		} catch (WrongValueException we) {

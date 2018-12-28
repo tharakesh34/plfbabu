@@ -141,6 +141,7 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -149,8 +150,10 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 public class ReceiptServiceImpl extends GenericFinanceDetailService implements ReceiptService {
@@ -181,6 +184,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private FeeDetailService feeDetailService;
 	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	
+	@Autowired
+	private NotificationService notificationService;
+	private long tempWorkflowId;
+
 	public ReceiptServiceImpl() {
 		super();
 	}
@@ -1186,6 +1193,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
 
+		tempWorkflowId = financeMain.getWorkflowId();
+
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
 		financeMain.setNextRoleCode("");
@@ -1520,6 +1529,34 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			getFinReceiptHeaderDAO().updateDepositBranchByReceiptID(receiptHeader.getReceiptID(),
 					receiptHeader.getUserDetails().getBranchCode(), "");
 		}
+
+		// Mail Alert Notification for Customer/Dealer/Provider...etc
+		Notification notification = new Notification();
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
+		notification.setModule(FinanceConstants.FINSER_EVENT_RECEIPT);
+		FinanceDetail financeDetail = rceiptData.getFinanceDetail();
+		String finEvent = StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinanceConstants.FINSER_EVENT_RECEIPT
+				: financeDetail.getModuleDefiner();
+		notification.setSubModule(finEvent);
+		notification.setKeyReference(financeMain.getFinReference());
+		notification.setStage(PennantConstants.REC_ON_APPR);
+		notification.setReceivedBy(financeMain.getLastMntBy());
+		financeMain.setWorkflowId(tempWorkflowId);
+		if (StringUtils.equals(PennantConstants.FINSOURCE_ID_API, rceiptData.getSourceId())) {
+			financeMain.setUserDetails(receiptHeader.getUserDetails());
+			financeMain.setFinSourceID(rceiptData.getSourceId());
+		}
+		try {
+			notificationService.sendNotifications(notification, rceiptData, financeMain.getFinType(),
+					financeDetail.getDocumentDetailsList());
+		} catch (Exception e) {
+			logger.debug(e);
+			e.printStackTrace();
+		}
+		financeMain.setWorkflowId(0);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -4866,6 +4903,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
 		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
+	}
+
+	public long getTempWorkflowId() {
+		return tempWorkflowId;
+	}
+
+	public void setTempWorkflowId(long tempWorkflowId) {
+		this.tempWorkflowId = tempWorkflowId;
 	}
 
 }

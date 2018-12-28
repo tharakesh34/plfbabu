@@ -2388,7 +2388,7 @@ public class FinanceDataValidation {
 		List<FinAdvancePayments> finAdvPayments = financeDetail.getAdvancePaymentsList();
 
 		// if it is stp process disbursement is mandatory
-		if (financeDetail.isStp() && finAdvPayments == null) {
+		if (financeDetail.isStp() && CollectionUtils.isEmpty(finAdvPayments)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "disbursement";
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));

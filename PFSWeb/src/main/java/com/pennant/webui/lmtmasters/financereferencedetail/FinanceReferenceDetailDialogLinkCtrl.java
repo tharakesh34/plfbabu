@@ -43,6 +43,7 @@
 package com.pennant.webui.lmtmasters.financereferencedetail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,6 +207,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	@Autowired
 	private DeviationHelper deviationHelper;
 	private int referenceType = 0;
+	private boolean isChecked_ROA = false;
 
 	/**
 	 * default constructor.<br>
@@ -471,6 +473,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			String[] roles = aFinanceReferenceDetail.getMandInputInStage().split(",");
 			for (int i = 0; i < roles.length; i++) {
 				checkMandInputInStageMap.put(roles[i], roles[i]);
+			}
+			if (Arrays.asList(roles).contains("REC_ON_APPROVAL")) {
+			isChecked_ROA = true;
 			}
 		}
 
@@ -1518,6 +1523,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 
 		listbox.getItems().clear();
 		String[] roles = roleCodes.split(";");
+
 		for (int i = 0; i < roles.length; i++) {
 
 			if (StringUtils.isBlank(roles[i])) {
@@ -1535,6 +1541,22 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 			lc.appendChild(checkbox);
 			lc.setParent(item);
 			listbox.appendChild(item);
+		}
+
+		if ("FINANCE".equals(moduleName) && (getFinanceReferenceDetailDialogCtrl().selectedTab == 6
+				|| getFinanceReferenceDetail().getFinRefType() == 6)) {
+			Listitem it = new Listitem();
+			Listcell lcell;
+			Checkbox cb = new Checkbox();
+			cb.setTabindex(type);
+			cb.setValue(Labels.getLabel("label_FinanceReferenceDetailDialog_REC_ON_APPROVAL.value"));
+			cb.setLabel(Labels.getLabel("label_FinanceReferenceDetailDialog_REC_ON_APPROVAL.value"));
+			cb.setChecked(isChecked_ROA);
+			cb.addEventListener("onCheck", new onCheckBoxCheked());
+			lcell = new Listcell();
+			lcell.appendChild(cb);
+			lcell.setParent(it);
+			listbox.appendChild(it);
 		}
 
 		logger.debug("Leaving");

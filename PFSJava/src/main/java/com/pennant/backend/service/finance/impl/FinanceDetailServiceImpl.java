@@ -238,6 +238,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.LimitConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -261,6 +262,7 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
@@ -271,6 +273,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.ProfectusHunterBreService;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.rits.cloning.Cloner;
 
@@ -370,6 +373,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	@Qualifier("financeDetailPostValidationHook")
 	private PostValidationHook postValidationHook;
+
+	@Autowired
+	private NotificationService notificationService;
+	private long tempWorkflowId;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -3662,6 +3669,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processLimitApprove(aAuditHeader, false);
 		}
 
+		tempWorkflowId = financeMain.getWorkflowId();
+
 		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
@@ -4528,6 +4537,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Finance Main Details
 				// =======================================
 				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
+			}
+
+			// Mail Alert Notification for Customer/Dealer/Provider...etc
+			Notification notification = new Notification();
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
+			notification.setModule("LOAN_ORG");
+			String finEvent = StringUtils.isEmpty(financeDetail.getModuleDefiner()) ? FinanceConstants.FINSER_EVENT_ORG
+					: financeDetail.getModuleDefiner();
+			notification.setSubModule(finEvent);
+			notification.setKeyReference(financeMain.getFinReference());
+			notification.setStage(PennantConstants.REC_ON_APPR);
+			notification.setReceivedBy(financeMain.getLastMntBy());
+			financeMain.setWorkflowId(tempWorkflowId);
+			try {
+				notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
+						financeDetail.getDocumentDetailsList());
+			} catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
+			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
+				financeMain.setWorkflowId(0);
 			}
 
 			// Saving the reasons

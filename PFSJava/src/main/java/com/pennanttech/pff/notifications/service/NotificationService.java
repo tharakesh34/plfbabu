@@ -703,8 +703,12 @@ public class NotificationService {
 		data.setUsrName(secUsrFullName);
 		data.setNextUsrName("");
 		data.setPrevUsrName(secUsrFullName);
-		WorkFlowDetails workFlowDetails = getWorkFlowDetailsService().getWorkFlowDetailsByID(main.getWorkflowId());
-		data.setWorkflowType(workFlowDetails == null ? "" : workFlowDetails.getWorkFlowType());
+
+		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
+			WorkFlowDetails workFlowDetails = getWorkFlowDetailsService().getWorkFlowDetailsByID(main.getWorkflowId());
+			data.setWorkflowType(workFlowDetails == null ? "" : workFlowDetails.getWorkFlowType());
+		}
+
 		data.setNextUsrRoleCode(main.getNextRoleCode());
 		List<SecurityRole> securityNextRoles = getSecurityRoleService().getSecRoleCodeDesc(main.getNextRoleCode());
 		String nextRoleCode = "";
@@ -977,12 +981,13 @@ public class NotificationService {
 		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
-		main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
+		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
+			main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
 
-		// user Details
-		main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
-		main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
-
+			// user Details
+			main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
+			main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
+		}
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
