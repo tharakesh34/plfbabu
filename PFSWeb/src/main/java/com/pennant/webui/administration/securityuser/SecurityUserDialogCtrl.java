@@ -133,7 +133,6 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -2625,10 +2624,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			lowermostchild = hierarchyList.get(1).getClusterType();
 		}
 
-		if (lowermostchild == null) {
-			cluster.setValue(entity);
-			cluster.setReadonly(true);
-		} else {
+		if (lowermostchild != null) {
 			cluster.setFilters(new Filter[] { new Filter("Entity", entity, Filter.OP_EQUAL),
 					new Filter("ClusterType", lowermostchild, Filter.OP_EQUAL) });
 		}
@@ -2665,7 +2661,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			filters = new Filter[1];
 			filters[0] = new Filter("Entity", selectedEntity);
 
-			branches.setWhereClause(" cluster in (select id from clusters where parent =" + oCluster.getId() + ")");
+			branches.setWhereClause(" clusterId in (select id from clusters where parent =" + oCluster.getId() + ")");
 		}
 
 		branches.setFilters(filters);
