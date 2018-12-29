@@ -589,27 +589,30 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 
-		if (!PennantConstants.method_doReject.equals(method)
-				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
-				&& RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
+		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
+			if (!PennantConstants.method_doReject.equals(method)
+					&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
+					&& RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
-			DepositMovements movement = getDepositDetailsDAO()
-					.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
-			if (movement != null) {
-				// Find Amount of Deposited Request
-				BigDecimal reqAmount = BigDecimal.ZERO;
-				for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
-					if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
-						reqAmount = reqAmount.add(rcptDetail.getAmount());
+				DepositMovements movement = getDepositDetailsDAO()
+						.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+				if (movement != null) {
+					// Find Amount of Deposited Request
+					BigDecimal reqAmount = BigDecimal.ZERO;
+					for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+						if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+							reqAmount = reqAmount.add(rcptDetail.getAmount());
+						}
 					}
-				}
-				//getDepositDetailsById
-				DepositDetails depositDetails = getDepositDetailsDAO().getDepositDetailsById(movement.getDepositId(),
-						"");
+					//getDepositDetailsById
+					DepositDetails depositDetails = getDepositDetailsDAO()
+							.getDepositDetailsById(movement.getDepositId(), "");
 
-				//if deposit Details amount is less than Requested amount throw an error
-				if (depositDetails != null && reqAmount.compareTo(depositDetails.getActualAmount()) > 0) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65036", null), usrLanguage));
+					//if deposit Details amount is less than Requested amount throw an error
+					if (depositDetails != null && reqAmount.compareTo(depositDetails.getActualAmount()) > 0) {
+						auditDetail
+								.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65036", null), usrLanguage));
+					}
 				}
 			}
 		}
