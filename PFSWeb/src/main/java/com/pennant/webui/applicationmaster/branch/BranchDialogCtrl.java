@@ -493,8 +493,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		this.cluster.setValue(aBranch.getClusterCode());
 
 		Cluster acluster = new Cluster();
-		if (aBranch.getCluster() != null) {
-			acluster.setId(aBranch.getCluster());
+		if (aBranch.getClusterId() != null) {
+			acluster.setId(aBranch.getClusterId());
 			this.cluster.setObject(acluster);
 		}else{
 			acluster.setId(null);
@@ -728,9 +728,9 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				Object aObject = (Object) this.cluster.getObject();
 				if (aObject != null && aObject instanceof Cluster) {
 					Cluster acluster = (Cluster) aObject;
-					aBranch.setCluster(acluster.getId());
+					aBranch.setClusterId(acluster.getId());
 				}else{
-					aBranch.setCluster(null);
+					aBranch.setClusterId(null);
 				}
 				
 			} catch (WrongValueException we) {

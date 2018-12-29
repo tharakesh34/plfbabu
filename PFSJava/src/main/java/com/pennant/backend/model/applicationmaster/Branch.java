@@ -89,7 +89,7 @@ public class Branch extends AbstractWorkflowEntity {
 	private String branchAddrStreet;
 	private String entity;
 	private String entityDesc;
-	private Long cluster;
+	private Long clusterId;
 	private String clusterCode;
 	private String clusterName;
 
@@ -451,13 +451,13 @@ public class Branch extends AbstractWorkflowEntity {
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
 	}
-
-	public Long getCluster() {
-		return cluster;
+	
+	public Long getClusterId() {
+		return clusterId;
 	}
 
-	public void setCluster(Long cluster) {
-		this.cluster = cluster;
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getClusterCode() {

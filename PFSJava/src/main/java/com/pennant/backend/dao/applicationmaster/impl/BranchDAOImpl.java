@@ -97,7 +97,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(", BranchProvince, BranchCountry, BranchFax, BranchTel, BranchSwiftBankCde, BranchSwiftCountry");
 		sql.append(", BranchSwiftLocCode, BranchSwiftBrnCde, BranchSortCode, BranchIsActive, NewBranchCode");
 		sql.append(", MiniBranch, BranchType, ParentBranch, Region, BankRefNo");
-		sql.append(", BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode, Entity, Cluster");
+		sql.append(", BranchAddrHNbr, BranchFlatNbr, BranchAddrStreet, PinCode, Entity, ClusterId");
 		if (type.contains("View")) {
 			sql.append(", lovDescBranchCityName, lovDescBranchProvinceName, lovDescBranchCountryName");
 			sql.append(", lovDescBranchSwiftCountryName, NewBranchDesc, parentBranchDesc, pinAreaDesc");
@@ -174,7 +174,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" BranchType, ParentBranch, Region, BankRefNo, BranchAddrHNbr, BranchFlatNbr,");
 		sql.append(" BranchAddrStreet, PinCode,");
 		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, Entity, Cluster)");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId, Entity, ClusterId)");
 		sql.append(" values(:BranchCode, :BranchDesc, :BranchAddrLine1, :BranchAddrLine2,");
 		sql.append(" :BranchPOBox, :BranchCity, :BranchProvince, :BranchCountry, :BranchFax,");
 		sql.append(" :BranchTel, :BranchSwiftBankCde, :BranchSwiftCountry, :BranchSwiftLocCode,");
@@ -182,7 +182,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" :BranchType, :ParentBranch, :Region, :BankRefNo, :BranchAddrHNbr, :BranchFlatNbr,");
 		sql.append(" :BranchAddrStreet, :PinCode,");
 		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :Entity, :Cluster)");
+		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :Entity, :ClusterId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -216,7 +216,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		sql.append(" NewBranchCode = :NewBranchCode, BranchAddrHNbr = :BranchAddrHNbr,");
 		sql.append(" BranchFlatNbr = :BranchFlatNbr, BranchAddrStreet = :BranchAddrStreet, MiniBranch = :MiniBranch,");
 		sql.append(" BranchType = :BranchType, ParentBranch = :ParentBranch, Region = :Region,");
-		sql.append(" BankRefNo = :BankRefNo, PinCode = :PinCode, Entity = :Entity, Cluster = :Cluster,");
+		sql.append(" BankRefNo = :BankRefNo, PinCode = :PinCode, Entity = :Entity, ClusterId = :ClusterId,");
 		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

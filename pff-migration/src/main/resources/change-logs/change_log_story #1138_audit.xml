@@ -77,7 +77,7 @@
 			<column name="entity" type="varchar(8)" />
 		</addColumn>
 		<addColumn tableName="adtrmtbranches">
-			<column name="cluster" type="bigint" />
+			<column name="clusterId" type="bigint" />
 		</addColumn>
 	</changeSet>
 

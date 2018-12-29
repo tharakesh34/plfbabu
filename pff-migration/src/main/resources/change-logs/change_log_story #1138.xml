@@ -235,7 +235,7 @@
 		<addUniqueConstraint columnNames="entity, code" tableName="clusters_temp" />
 		<addUniqueConstraint columnNames="entity, parent, name" tableName="clusters_temp" />
 		<addForeignKeyConstraint constraintName="fk_clusters_t_entity_ctype" referencedTableName="cluster_hierarchy"
-			baseColumnNames="entity, clusterType" baseTableName="clusters_temp" referencedColumnNames="entity, clusterType" />
+			baseColumnNames="entity, clusterType" baseTableName="clusters" referencedColumnNames="entity, clusterType" />
 	</changeSet>
 
 	<changeSet id="11" author="Satish.n">
@@ -573,17 +573,17 @@
 			<column name="entity" type="varchar(8)" />
 		</addColumn>
 		<addColumn tableName="RMTBranches">
-			<column name="cluster" type="bigint" />
+			<column name="clusterId" type="bigint" />
 		</addColumn>
 
 		<addColumn tableName="RMTBranches_Temp">
 			<column name="entity" type="varchar(8)" />
 		</addColumn>
 		<addColumn tableName="RMTBranches_Temp">
-			<column name="cluster" type="bigint" />
+			<column name="clusterId" type="bigint" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="23_pre" author="amanullah.m" dbms="postgresql">
 		<modifyDataType tableName="RMTBranches" columnName="entity" newDataType="citext" />
 		<modifyDataType tableName="RMTBranches_Temp" columnName="entity" newDataType="citext" />
@@ -597,10 +597,10 @@
 			baseColumnNames="entity" baseTableName="RMTBranches_Temp" referencedColumnNames="entitycode" />
 
 		<addForeignKeyConstraint constraintName="fk_branches_clusterid" referencedTableName="clusters"
-			baseColumnNames="cluster" baseTableName="RMTBranches" referencedColumnNames="Id" />
+			baseColumnNames="clusterId" baseTableName="RMTBranches" referencedColumnNames="Id" />
 
 		<addForeignKeyConstraint constraintName="fk_branches_temp_clusterid" referencedTableName="clusters"
-			baseColumnNames="cluster" baseTableName="RMTBranches_Temp" referencedColumnNames="Id" />
+			baseColumnNames="clusterId" baseTableName="RMTBranches_Temp" referencedColumnNames="Id" />
 	</changeSet>
 
 	<changeSet id="24" author="amanullah.m">
@@ -650,7 +650,7 @@
 			    t8.areaname pinareadesc,
 			    t1.entity,
 			    t10.entitydesc,
-			    t1.cluster,
+			    t1.clusterId,
 			    t9.code clustercode,
 			    t9.name clustername
 			   FROM rmtbranches_temp t1
@@ -661,7 +661,7 @@
 			     LEFT JOIN rmtbranches t6 ON t1.newbranchcode = t6.branchcode
 			     LEFT JOIN rmtbranches t7 ON t1.parentbranch = t6.branchcode
 			     LEFT JOIN pincodes t8 ON t8.pincode = t1.pincode
-			     LEFT JOIN clusters t9 ON t9.Id = t1.cluster
+			     LEFT JOIN clusters t9 ON t9.Id = t1.clusterId
 			     LEFT JOIN entity t10 ON t10.entitycode = t1.entity
 			UNION ALL
 			 SELECT t1.branchcode,
@@ -709,7 +709,7 @@
 			    t8.areaname pinareadesc,
 			    t1.entity,
 			    t10.entitydesc,
-			    t1.cluster,
+			    t1.clusterId,
 			    t9.code clustercode,
 			    t9.name clustername
 			   FROM rmtbranches t1
@@ -720,7 +720,7 @@
 			     LEFT JOIN rmtbranches t6 ON t1.newbranchcode = t6.branchcode
 			     LEFT JOIN rmtbranches t7 ON t1.parentbranch = t6.branchcode
 			     LEFT JOIN pincodes t8 ON t8.pincode = t1.pincode
-			     LEFT JOIN clusters t9 ON t9.Id = t1.cluster
+			     LEFT JOIN clusters t9 ON t9.Id = t1.clusterId
 			     LEFT JOIN entity t10 ON t10.entitycode = t1.entity
 			  WHERE NOT (EXISTS ( SELECT 1
 			          FROM rmtbranches_temp
@@ -775,7 +775,7 @@
 		    t8.areaname pinareadesc,
 		    t1.entity,
 		    t10.entitydesc,
-		    t1.cluster,
+		    t1.clusterId,
 		    t9.code clustercode,
 		    t9.name clustername
 		   FROM rmtbranches t1
@@ -786,7 +786,7 @@
 		     LEFT JOIN rmtbranches t6 ON t1.newbranchcode = t6.branchcode
 		     LEFT JOIN rmtbranches t7 ON t1.parentbranch = t6.branchcode
 		     LEFT JOIN pincodes t8 ON t8.pincode = t1.pincode
-		     LEFT JOIN clusters t9 ON t9.Id = t1.cluster
+		     LEFT JOIN clusters t9 ON t9.Id = t1.clusterId
 			 LEFT JOIN entity t10 ON t10.entitycode = t1.entity
 		</createView>
 	</changeSet>
@@ -1367,7 +1367,7 @@
 			                        LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
 				  WHERE NOT (EXISTS ( SELECT 1
 						   FROM secusers_temp
-						  WHERE secusers_temp.usrid = t1.usrid));
+						  WHERE secusers_temp.usrid = t1.usrid))
 		</createView>
 	</changeSet>
 
@@ -1484,7 +1484,7 @@
 			                             JOIN business_vertical t7 ON t7.id = t1.businessvertical
 			  WHERE NOT (EXISTS ( SELECT 1
 					   FROM secusers_rtemp
-					  WHERE secusers_rtemp.usrid = t1.usrid));
+					  WHERE secusers_rtemp.usrid = t1.usrid))
 		</createView>
 	</changeSet>
 
