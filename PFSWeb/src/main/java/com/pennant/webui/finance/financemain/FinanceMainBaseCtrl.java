@@ -18866,10 +18866,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//}
 
 				DocumentDetails exstDetails = null;
-				if (existingUploadDocList.size() > 0)
-
+				if (existingUploadDocList.size() > 0){
 					exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition);
-
+				}
+				
 				if (exstDetails != null) {
 
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
@@ -18908,6 +18908,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				details.setNewRecord(true);
 				engine.close();
 				engine = null;
 
