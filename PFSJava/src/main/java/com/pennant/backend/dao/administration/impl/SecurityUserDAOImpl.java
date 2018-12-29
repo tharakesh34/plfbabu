@@ -515,7 +515,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			sql.append(type);
 		} else {
 			sql.append("select t1.usrid, t1.division UserDivision, dd.divisionCodeDesc divisionDesc");
-			sql.append(", t1.branch UserBranch, t2.branchdesc, t1.accessType, t1.Cluster, t1.ClusterType");
+			sql.append(", t1.branch UserBranch, t2.branchdesc, t1.accessType, t1.ClusterId, t1.ClusterType");
 			sql.append(", t4.code ClusterCode, t4.Name ClusterNmae, t1.Entity, t3.EntityDesc");
 			sql.append(
 					", t1.ParentCluster, t1.ParentClusterType, t5.code ParentClusterCode, t5.Name ParentClusterName");
@@ -523,7 +523,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			sql.append(" inner join SMTDivisionDetail dd ON dd.DivisionCode = t1.division");
 			sql.append(" left join rmtbranches t2 ON t1.branch = t2.branchcode");
 			sql.append(" left join entity t3 ON t3.entitycode = t1.entity");
-			sql.append(" left join clusters t4 ON t4.Id = t1.cluster");
+			sql.append(" left join clusters t4 ON t4.Id = t1.clusterId");
 			sql.append(" left join clusters t5 ON t5.Id = t1.parentCluster");
 			sql.append(" left join cluster_Hierarchy t6 ON t6.entity = t1.entity and t6.clusterType = t1.clusterType");
 
@@ -595,7 +595,6 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		StringBuilder sql = new StringBuilder();
 		sql.append("select distinct e.EntityCode, e.EntityDesc");
 		sql.append(" from Entity e");
-		//sql.append(" inner join rmtbranches b on b.entity = e.entitycode");
 		sql.append(" inner join smtdivisiondetail d on d.entitycode = e.entitycode");
 		sql.append(" where e.EntityCode = :entitycode");
 
