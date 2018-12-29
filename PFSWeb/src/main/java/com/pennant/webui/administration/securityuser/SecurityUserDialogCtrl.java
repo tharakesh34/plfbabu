@@ -1994,9 +1994,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				division.getEntities().put(divBranch.getEntity(), entity);
 			}
 
-			if (divBranch.getCluster() != null) {
+			if (divBranch.getClusterId() != null) {
 				Cluster cluster = new Cluster();
-				cluster.setId(divBranch.getCluster());
+				cluster.setId(divBranch.getClusterId());
 				cluster.setCode(divBranch.getClusterCode());
 				cluster.setEntity(divBranch.getEntity());
 				cluster.setClusterType(divBranch.getClusterType());
@@ -2287,7 +2287,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				division.setAccessType(accessType);
 				division.setUsrID(secUserId);
 				division.setUserDivision(divisionCode);
-				division.setCluster(((Cluster) object.getValue()).getId());
+				division.setClusterId(((Cluster) object.getValue()).getId());
 				division.setEntity(getComboboxValue(entityCombox));
 				division.setClusterType(clusterTypeCombox.getValue());
 
@@ -2820,7 +2820,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		row.appendChild(accessCell);
 		if (division.getClusterCode() != null) {
-			clusters.setAttribute("clusters", division.getCluster());
+			clusters.setAttribute("clusters", division.getClusterId());
 			clusters.setValue(value.toString());
 			onChangeClusters(row);
 		} else {

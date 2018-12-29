@@ -74,7 +74,7 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private String entity;
 	private String entityDesc;
 	private String accessType;
-	private Long cluster;
+	private Long clusterId;
 	private String clusterCode;
 	private String clusterName;
 	private String clusterType;
@@ -247,12 +247,12 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		this.accessType = accessType;
 	}
 
-	public Long getCluster() {
-		return cluster;
+	public Long getClusterId() {
+		return clusterId;
 	}
 
-	public void setCluster(Long cluster) {
-		this.cluster = cluster;
+	public void setClusterId(Long cluster) {
+		this.clusterId = cluster;
 	}
 
 	public String getClusterCode() {

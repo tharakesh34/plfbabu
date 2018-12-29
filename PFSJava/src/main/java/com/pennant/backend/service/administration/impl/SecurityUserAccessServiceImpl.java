@@ -90,7 +90,7 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 			access.setDivision(divisionBranch.getUserDivision());
 			access.setAccessType(divisionBranch.getAccessType());
 			access.setEntity(divisionBranch.getEntity());
-			access.setCluster(divisionBranch.getCluster());
+			access.setClusterId(divisionBranch.getClusterId());
 			access.setClusterType(divisionBranch.getClusterType());
 			access.setParentCluster(divisionBranch.getParentCluster());
 
@@ -145,12 +145,12 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 					}
 				}
 			} else if (PennantConstants.ACCESSTYPE_CLUSTER.equals(access.getAccessType())) {
-				String key = access.getEntity() + access.getClusterType()+String.valueOf(access.getCluster());
+				String key = access.getEntity() + access.getClusterType()+String.valueOf(access.getClusterId());
 
 				List<Cluster> clusters = clusterMap.get(key);
 
 				if (clusters == null) {
-					clusters = getClusters(access.getEntity(), access.getClusterType(), access.getCluster());
+					clusters = getClusters(access.getEntity(), access.getClusterType(), access.getClusterId());
 					clusterMap.put(key, clusters);
 				}
 
@@ -170,12 +170,12 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 							continue;
 						}
 
-						if (cluster.getId() == null && branch.getCluster() == null) {
+						if (cluster.getId() == null && branch.getClusterId() == null) {
 							continue;
 						}
 
 						long clusterId = cluster.getId().longValue();
-						long branchClusterId = branch.getCluster().longValue();
+						long branchClusterId = branch.getClusterId().longValue();
 
 						if (clusterId != branchClusterId) {
 							continue;

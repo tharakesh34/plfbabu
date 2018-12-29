@@ -56,7 +56,7 @@ public class SecurityUserAccess extends AbstractWorkflowEntity {
 	private String branch;
 	private String accessType;
 	private String entity;
-	private Long cluster;
+	private Long clusterId;
 	private String clusterType;
 	private Long parentCluster;
 	private String parentClusterType;
@@ -101,12 +101,12 @@ public class SecurityUserAccess extends AbstractWorkflowEntity {
 		this.entity = entity;
 	}
 
-	public Long getCluster() {
-		return cluster;
+	public Long getClusterId() {
+		return clusterId;
 	}
 
-	public void setCluster(Long cluster) {
-		this.cluster = cluster;
+	public void setClusterId(Long clusterId) {
+		this.clusterId = clusterId;
 	}
 
 	public String getClusterType() {

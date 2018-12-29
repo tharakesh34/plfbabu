@@ -79,9 +79,9 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into secUserAccess");
-		sql.append(" (UsrId, Division, Branch, AccessType, Entity, Cluster, ClusterType");
+		sql.append(" (UsrId, Division, Branch, AccessType, Entity, ClusterId, ClusterType");
 		sql.append(", ParentCluster, ParentClusterType)");
-		sql.append("values(:UsrId, :Division, :Branch, :AccessType, :Entity, :Cluster, :ClusterType");
+		sql.append("values(:UsrId, :Division, :Branch, :AccessType, :Entity, :ClusterId, :ClusterType");
 		sql.append(", :ParentCluster, :ParentClusterType)");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -121,7 +121,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 	public List<Branch> getBranches() {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("select branchcode, entity, cluster from rmtbranches");
+		StringBuilder sql = new StringBuilder("select branchcode, entity, clusterId from rmtbranches");
 
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<Branch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Branch.class);

@@ -1588,13 +1588,13 @@
 	</changeSet>
 
 	<changeSet id="55" author="amanullah.m">
-		<createTable tableName="secUserAccess">
+		<createTable tableName="SecUserAccess">
 			<column name="usrId" type="bigint" />
 			<column name="division" type="varchar(8)" />
 			<column name="branch" type="varchar(8)" />
 			<column name="accessType" type="varchar(8)" />
 			<column name="entity" type="varchar(8)" />
-			<column name="cluster" type="bigint" />
+			<column name="clusterId" type="bigint" />
 			<column name="clusterType" type="varchar(8)" />
 			<column name="parentCluster" type="bigint" />
 			<column name="ParentClusterType" type="varchar(8)" />

@@ -489,18 +489,23 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.parentBranch.setValue(aBranch.getBranchCode(), aBranch.getBranchDesc());
 		}
 
-		this.entity.setValue(aBranch.getEntity());
+		if (StringUtils.isNotEmpty(aBranch.getEntity())) {
+			Entity entity = new Entity();
+			entity.setEntityCode(aBranch.getEntity());
+			entity.setEntityDesc(aBranch.getEntityDesc());
+			this.entity.setObject(entity);
+			onChangeEntity();
+		}
+		
+		
 		this.cluster.setValue(aBranch.getClusterCode());
+		this.cluster.setDescription(aBranch.getClusterName());
 
-		Cluster acluster = new Cluster();
 		if (aBranch.getClusterId() != null) {
+			Cluster acluster = new Cluster();
 			acluster.setId(aBranch.getClusterId());
 			this.cluster.setObject(acluster);
-		}else{
-			acluster.setId(null);
-			this.cluster.setValue("");
 		}
-
 
 		if (aBranch.isNewRecord()) {
 			this.branchCity.setDescription("");
@@ -716,6 +721,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		if (ImplementationConstants.ALLOW_ORGANISATIONAL_STRUCTURE) {
 			try {
 				aBranch.setEntity(this.entity.getValidatedValue());
@@ -723,7 +729,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				wve.add(we);
 			}
 			try {
-				this.cluster.getValue();
+				this.cluster.getValidatedValue();
 				
 				Object aObject = (Object) this.cluster.getObject();
 				if (aObject != null && aObject instanceof Cluster) {
@@ -1830,6 +1836,10 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	}
 
 	public void onChangeEntity(ForwardEvent event) {
+		onChangeEntity();
+	}
+	
+	private void onChangeEntity() {
 		Object selectedEntiy = entity.getObject();
 
 		if (selectedEntiy != null && selectedEntiy instanceof Entity) {
@@ -1838,7 +1848,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			doSetClusterFilter(null);
 		}
 	}
-
 	private void doSetClusterFilter(Entity entity) {
 		this.cluster.setMaxlength(8);
 		this.cluster.setMandatoryStyle(true);
