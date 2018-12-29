@@ -5669,5 +5669,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+<changeSet id="92" author="aditya">
+<comment>Updating LinkedTranID to Null</comment>
+<sql>
+<![CDATA[
+ Update FinserviceInstruction set LinkedTranid = 0 WHERE LinkedTranid IS NULL;
+ Update FinserviceInstruction_TEMP set LinkedTranid = 0 WHERE LinkedTranid IS NULL;
+]]>
+</sql>
+</changeSet>
 
 </databaseChangeLog>
