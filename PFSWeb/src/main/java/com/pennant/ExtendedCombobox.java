@@ -219,7 +219,7 @@ public class ExtendedCombobox extends Hbox {
 			String value = this.textbox.getValue();
 			for (Object item : list) {
 				String valueMethod = "get" + getValueColumn();
-				String result = invokeMethod(valueMethod);
+				String result = invokeMethod(valueMethod, item);
 				if (value.equalsIgnoreCase(result)) {
 					this.object = item;
 					found = true;
@@ -348,7 +348,7 @@ public class ExtendedCombobox extends Hbox {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String invokeMethod(String methodName) {
+	private String invokeMethod(String methodName, Object object) {
 		try {
 			if (multySelection) {
 				StringBuilder value = new StringBuilder();
@@ -362,12 +362,14 @@ public class ExtendedCombobox extends Hbox {
 
 				return value.toString();
 
-			} else {
-				return this.object.getClass().getMethod(methodName).invoke(object).toString();
+			} else if (object != null) {
+				return object.getClass().getMethod(methodName).invoke(object).toString();
 			}
 		} catch (Exception e) {
 			throw new AppException(e.getMessage());
 		}
+
+		return null;
 	}
 
 	/**
@@ -377,8 +379,8 @@ public class ExtendedCombobox extends Hbox {
 	 */
 	private void doWrite() {
 		logger.debug(Literal.ENTERING);
-		String valueMethod = "get" + getValueColumn();
-		selctedValue = invokeMethod(valueMethod);
+		String method = "get" + getValueColumn();
+		selctedValue = invokeMethod(method, this.object);
 		this.textbox.setValue(selctedValue);
 		this.textbox.setAttribute("data", object);
 		this.setAttribute("data", object);
@@ -388,7 +390,7 @@ public class ExtendedCombobox extends Hbox {
 		}
 
 		String descMethod = "get" + getDescColumn();
-		String desc = invokeMethod(descMethod);
+		String desc = invokeMethod(descMethod, this.object);
 		if (getDisplayStyle() == 2) {
 			this.textbox.setValue(selctedValue + "-" + desc);
 		} else if (getDisplayStyle() == 3) {
