@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="1" author="Vinay">
+	<changeSet id="1" author="Vinay">
 		<sql>
 			delete from secgrouprights where rightid in (select rightid from secrights where rightname='CollateralSetupDialog_CollateralCcy');
 			
@@ -240,7 +240,7 @@
 				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 								
 			</sql>
-		</changeSet> -->
+		</changeSet>
 		
 	 <changeSet id="11" author="Vinay">
 	 	<addColumn tableName="LEGALAPPLICANTDETAILS">
