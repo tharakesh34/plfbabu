@@ -149,6 +149,32 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		setParent(parent);
 	}
 
+	public ExtendedSearchListBox(Component parent, String moduleCode, String searchValue, Filter[] filters) {
+		super();
+		setModuleMapping(ModuleUtil.getModuleMapping(moduleCode));
+		this.searchString = searchValue;
+		this.filters = filters;
+		setParent(parent);
+	}
+
+	public ExtendedSearchListBox(Component parent, String moduleCode, String searchValue, String whereClause) {
+		super();
+		setModuleMapping(ModuleUtil.getModuleMapping(moduleCode));
+		this.searchString = searchValue;
+		this.whereClause = whereClause;
+		setParent(parent);
+	}
+
+	public ExtendedSearchListBox(Component parent, String moduleCode, String searchValue, Filter[] filters,
+			String whereClause) {
+		super();
+		setModuleMapping(ModuleUtil.getModuleMapping(moduleCode));
+		this.searchString = searchValue;
+		this.filters = filters;
+		this.whereClause = whereClause;
+		setParent(parent);
+	}
+
 	/**
 	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
@@ -184,7 +210,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
 	}
-	
+
 	public ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue,
 			String whereClause, String valueColumn, DataType valueType) {
 		super();
@@ -196,17 +222,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		setParent(parent);
 		this.valueColumn = valueColumn;
 		this.valueType = valueType;
-	}
-
-	private ExtendedSearchListBox(Component parent, String listCode, Filter[] filters, String searchValue,
-			String whereClause) {
-		super();
-		this.filters = filters;
-		this.searchString = searchValue;
-		this.whereClause = whereClause;
-		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
-		setParent(parent);
-		createBox();
 	}
 
 	/**
@@ -223,7 +238,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		this.createBox();
 	}
 
-
 	/**
 	 * The Call method.
 	 * 
@@ -233,7 +247,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 
 	public static Object show(Component parent, String listCode) {
-		return new ExtendedSearchListBox(parent, listCode, null, null).getObject();
+		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode);
+		objetc.createBox();
+		return objetc.getObject();
 	}
 
 	/**
@@ -245,22 +261,28 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 
 	public static Object show(Component parent, String listCode, String searchValue) {
-		return new ExtendedSearchListBox(parent, listCode, null, searchValue).getObject();
+		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue);
+		objetc.createBox();
+		return objetc.getObject();
 	}
 
 	public static Object show(Component parent, String listCode, String searchValue, String whereClause) {
-		return new ExtendedSearchListBox(parent, listCode, null, searchValue, whereClause).getObject();
+		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue, whereClause);
+		objetc.createBox();
+		return objetc.getObject();
+	}
+
+	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters) {
+		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue, filters);
+		objetc.createBox();
+		return objetc.getObject();
 	}
 
 	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters,
 			String whereClause) {
-		return new ExtendedSearchListBox(parent, listCode, filters, searchValue, whereClause).getObject();
-	}
-
-	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters,
-			String whereClause, String valueColumn, DataType valueType) {
-		return new ExtendedSearchListBox(parent, listCode, filters, searchValue, whereClause, valueColumn, valueType)
-				.getObject();
+		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue, filters, whereClause);
+		objetc.createBox();
+		return objetc.getObject();
 	}
 
 	/**
@@ -517,23 +539,23 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 				String fieldMethod = "get" + fieldString[i].substring(0, 1).toUpperCase() + fieldString[i].substring(1);
 
 				if (data.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-					fieldValue = (String)invokeMethod(fieldMethod, data);
+					fieldValue = (String) invokeMethod(fieldMethod, data);
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
-					fieldValue = DateUtility.formatToLongDate((Date)invokeMethod(fieldMethod, data));
+					fieldValue = DateUtility.formatToLongDate((Date) invokeMethod(fieldMethod, data));
 				} else {
-					fieldValue = (String)invokeMethod(fieldMethod, data);
+					fieldValue = (String) invokeMethod(fieldMethod, data);
 				}
 
 				if (!search && i == 0) {
 					fieldValue = PennantApplicationUtil.formatAccountNumber(fieldValue);
 				}
-				
+
 				if (isMultySelection()) {
 					if (StringUtils.equals(fieldString[i], valueColumn) && selectedValues.containsKey(fieldValue)) {
-						if(selectedValues.containsKey(invokeMethod(fieldMethod, data))){
+						if (selectedValues.containsKey(invokeMethod(fieldMethod, data))) {
 							item.setSelected(true);
 						}
-						
+
 					}
 				}
 
@@ -618,9 +640,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		logger.debug("Entering");
 
 		// clear old data
-		if(getListModelList() != null){
-			getListModelList().clear();
-		}
+		getListModelList().clear();
 
 		setJdbcSearchObject(start);
 
@@ -689,7 +709,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 					} else {
 						fieldValue = object.getClass().getMethod(fieldMethod).invoke(object).toString();
 					}
-					
+
 					selectedValues.remove(fieldValue);
 					if (item.isSelected()) {
 						selectedValues.put(fieldValue, object);
@@ -787,13 +807,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		if (moduleMapping != null) {
 			this.fieldString = moduleMapping.getLovFields();
-			String label = Labels.getLabel(moduleMapping.getModuleName());
-
-			if (StringUtils.isEmpty(label)) {
-				this.setTitle("Return Cheques");
-			} else {
-				this.setTitle(label);
-			}
+			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
 		}
 	}
 
@@ -855,7 +869,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 			return new Filter(field, DataTypeUtil.getValueAsObject(value, type), Filter.OP_EQUAL);
 		}
 	}
-	
+
 	private Object invokeMethod(String methodName, Object object) {
 		try {
 			Object result = object.getClass().getMethod(methodName).invoke(object);
