@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="Vinay">
+	<!-- <changeSet id="1" author="Vinay">
 		<sql>
 			delete from adtExtendedFieldDetail where moduleid in (select moduleid from adtExtendedFieldHeader where modulename='COLLATERAL' and submodulename not in ('AHF','GHF') and fieldname='RGSTNVAL');
 			ALTER TABLE adtcollateral_ahf_ed DROP COLUMN RGSTNVAL;
@@ -58,6 +58,13 @@
 				columnName="CityCode" columnDataType="VARCHAR(8)" />
 			<addNotNullConstraint tableName="AdtLEGALAPPLICANTDETAILS" 
 				columnName="PinCode" columnDataType="VARCHAR(8)" />
-	</changeSet>
+	</changeSet> -->
+	
+	<changeSet id="4" author="Vinay">
+	 	<addColumn tableName="ADTLEGALAPPLICANTDETAILS">
+	 		<column name="AddrLine1" type="varchar(50)"/>
+	 		<column name="AddrLine2" type="varchar(50)"/>
+	 	</addColumn>
+	 </changeSet>
 
 	</databaseChangeLog>
