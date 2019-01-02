@@ -604,7 +604,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 			Object object = this.reportingto.getObject();
 			if (object != null) {
 				aReportingManager.setReportingTo(((SecurityUserHierarchy) object).getUserId());
-				aReportingManager.setReportingToUserName(((SecurityUserHierarchy) object).getUserAction());
+				aReportingManager.setReportingToUserName(((SecurityUserHierarchy) object).getUserName());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
