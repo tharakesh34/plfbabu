@@ -101,13 +101,15 @@
 								<listheader id="listheader_ClusterType" label="${c:l('listheader_ClusterType.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_Code" label="${c:l('listheader_Code.label')}" sort="auto"
-									hflex="min" />	
+									hflex="min" />
 								<listheader id="listheader_Parent" label="${c:l('listheader_Parent.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_Name" label="${c:l('listheader_Name.label')}" sort="auto"
+									hflex="min" visible="false"/>			
 							</listhead>
 						</listbox>
 					</div>

@@ -86,6 +86,7 @@ public class ClusterListCtrl extends GFCBaseListCtrl<Cluster> {
 	protected Listheader listheader_Code;
 	protected Listheader listheader_ClusterType;
 	protected Listheader listheader_Parent;
+	protected Listheader listheader_Name;
 	protected Listheader listheader_ParentType;
 
 	// checkRights
@@ -105,6 +106,7 @@ public class ClusterListCtrl extends GFCBaseListCtrl<Cluster> {
 	protected Listbox sortOperator_ClusterType;
 	protected Listbox sortOperator_Parent;
 	protected Listbox sortOperator_ParentType;
+	protected Listbox sortOperator_Name;
 
 	private transient ClusterService clusterService;
 
@@ -147,7 +149,7 @@ public class ClusterListCtrl extends GFCBaseListCtrl<Cluster> {
 		registerField("entity", listheader_Entity, SortOrder.NONE, entity, sortOperator_Entity, Operators.STRING);
 		registerField("clusterType", listheader_ClusterType, SortOrder.NONE, clusterType, sortOperator_ClusterType,Operators.NUMERIC);
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("name");
+		registerField("name",listheader_Name, SortOrder.NONE,name,sortOperator_Name,Operators.STRING);
 		registerField("parent", listheader_Parent, SortOrder.NONE, parent, sortOperator_Parent, Operators.NUMERIC);
 		registerField("parentType");
 
