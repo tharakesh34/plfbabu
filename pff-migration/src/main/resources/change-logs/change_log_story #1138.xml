@@ -235,7 +235,7 @@
 		<addUniqueConstraint columnNames="entity, code" tableName="clusters_temp" />
 		<addUniqueConstraint columnNames="entity, parent, name" tableName="clusters_temp" />
 		<addForeignKeyConstraint constraintName="fk_clusters_t_entity_ctype" referencedTableName="cluster_hierarchy"
-			baseColumnNames="entity, clusterType" baseTableName="clusters" referencedColumnNames="entity, clusterType" />
+			baseColumnNames="entity, clusterType" baseTableName="clusters_Temp" referencedColumnNames="entity, clusterType" />
 	</changeSet>
 
 	<changeSet id="11" author="Satish.n">
@@ -277,7 +277,7 @@
 		<addUniqueConstraint columnNames="entity, code" tableName="clusters" />
 		<addUniqueConstraint columnNames="entity, parent, name" tableName="clusters" />
 		<addForeignKeyConstraint constraintName="fk_clusters_entity_ctype" referencedTableName="cluster_hierarchy"
-			baseColumnNames="entity, clusterType" baseTableName="clusters_temp" referencedColumnNames="entity, clusterType" />
+			baseColumnNames="entity, clusterType" baseTableName="clusters" referencedColumnNames="entity, clusterType" />
 	</changeSet>
 
 	<changeSet id="13" author="Satish.n">
