@@ -52,6 +52,7 @@ package com.pennant.webui.financemanagement.receipts;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
+import javax.sql.DataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -74,6 +76,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -83,6 +87,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Caption;
@@ -233,6 +238,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
+
+import net.sf.jasperreports.engine.JasperRunManager;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
@@ -448,7 +455,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private FinanceMain befImage;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>(); // storing ChartDetail for feature use
 	private transient FeeWaiverHeaderService feeWaiverHeaderService;
-	//private long receiptID = 0;
+	private boolean financeMatured = false;
 
 	/**
 	 * default constructor.<br>
@@ -1749,7 +1756,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else if (StringUtils.equals(recPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 
 			if (!isOverDraft || !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
-					getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod())) {
+					getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd())) {
 				readOnlyComponent(true, this.excessAdjustTo);
 				this.excessAdjustTo.setSelectedIndex(0);
 			}
@@ -2229,13 +2236,9 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								.subtract(detail.getRepayAmount()));
 						break;
 					} else {
-						if(!StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
-							final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
-							receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd()
-									.add(receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
-						}else{
-							receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd());
-						}
+						final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
+						receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd()
+								.add(receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
 					}
 					if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 						detail.setPartialPaidAmt(detail.getPartialPaidAmt().add((PennantApplicationUtil
@@ -2321,7 +2324,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			
 			//  Finance Repay Instruction Changes
 			if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
-				if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, aFinanceMain.getScheduleMethod())){
+				if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
+						getFinanceDetail().getFinScheduleData().getFinanceType().getFinSchdMthd())) {
 
 					Date dateValueDate = DateUtility.getAppDate();
 					if(this.receivedDate.getValue() != null){
@@ -2377,7 +2381,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 						}
 
 						if(rpyInst.getRepayDate().compareTo(dateValueDate) == 0){
-							//rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
+							rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
 						}else if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) == 0){
 							rpyInst.setRepayAmount(rpyInst.getRepayAmount().subtract(totPaidAmount));
 							if(rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){
@@ -2399,7 +2403,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// Finding Last maturity date after recalculation.
 			List<FinanceScheduleDetail> schList = sortSchdDetails(finScheduleData.getFinanceScheduleDetails());
 			Date actualMaturity = finScheduleData.getFinanceMain().getCalMaturity();
-			if (!StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
+					finScheduleData.getFinanceMain().getScheduleMethod())) {
 				for (int i = schList.size()-1; i >= 0; i--) {
 					if(schList.get(i).getClosingBalance().compareTo(BigDecimal.ZERO) > 0){
 						break;
@@ -3001,7 +3006,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					break;
 				}
 			}
-			if (!isPriRcdFound && this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0) {
+			if (!isPriRcdFound) {
 				allocationDetail = new ReceiptAllocationDetail();
 				allocationDetail.setAllocationID(receiptHeader.getAllocations().size() + 1);
 				allocationDetail.setAllocationType(RepayConstants.ALLOCATION_PRI);
@@ -3537,6 +3542,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 								&& !StringUtils.equals(receiptHeader.getReceiptModeStatus(),
 										RepayConstants.PAYSTATUS_CANCEL)) {
 							Events.sendEvent("onClick", this.btnPrint, null);
+							
+							// NOC Document generation on Loan Closure
+							if(isFinanceMatured()){
+								generateNocReport();
+							}
 						}
 					}
 
@@ -3602,6 +3612,51 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	private void generateNocReport() throws Exception {
+		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
+
+		reportArgumentsMap.put("userName", getUserWorkspace().getLoggedInUser().getFullName());
+		reportArgumentsMap.put("reportHeading", "No Objection Certificate");
+		reportArgumentsMap.put("reportGeneratedBy", Labels.getLabel("Reports_footer_ReportGeneratedBy.lable"));
+		reportArgumentsMap.put("appDate", DateUtility.getAppDate());
+		reportArgumentsMap.put("appCcy", SysParamUtil.getValueAsString("APP_DFT_CURR"));
+		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
+		reportArgumentsMap.put("unitParam", "PFF");
+		reportArgumentsMap.put("signimage", PathUtil.getPath(PathUtil.REPORTS_IMAGE_SIGN));
+		reportArgumentsMap.put("productLogo", PathUtil.getPath(PathUtil.REPORTS_IMAGE_PRODUCT));
+		reportArgumentsMap.put("bankName", Labels.getLabel("label_ClientName"));
+		reportArgumentsMap.put("whereCondition", "where FinReference = '" + getReceiptHeader().getReference() + "'");
+		reportArgumentsMap.put("searchCriteria", "Loan Reference is " + getReceiptHeader().getReference());
+
+		byte[] buf = null;
+		Connection con = null;
+		DataSource reportDataSourceObj = null;
+		try {
+			String fileName = "NoObjectionCertificate";
+			String templateName = fileName + ".jasper";
+			String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + templateName;
+
+			reportDataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
+			con = reportDataSourceObj.getConnection();
+			buf = JasperRunManager.runReportToPdf(reportSrc, reportArgumentsMap, con);
+			String reportName = "No Objection Certificate";
+			if (buf != null) {
+				Filedownload.save(new AMedia(reportName, "pdf", "application/pdf", buf));
+			}
+
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.agreementNotFound"));
+		} finally {
+			if (con != null) {
+				con.close();
+			}
+			con = null;
+			reportDataSourceObj = null;
+			buf = null;
+		}
+
 	}
 
 	/**
@@ -4593,10 +4648,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							closingBal = BigDecimal.ZERO;
 						}
 						FinanceScheduleDetail curSchd = scheduleList.get(i);
-						if ((DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) >= 0 && 
-								!StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) ||
-								(DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) > 0 && 
-										StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT))) {
+						if (DateUtility.compare(DateUtility.getAppDate(), curSchd.getSchDate()) >= 0) {
 							closingBal = curSchd.getClosingBalance();
 							continue;
 						}
@@ -7031,8 +7083,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				auditHeader = ErrorControl.showErrorDetails(this.window_ReceiptDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
-				/*FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-				receiptID = receiptData.getReceiptHeader().getReceiptID();*/
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+					setFinanceMatured(
+							!receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
+				}
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
@@ -7414,9 +7469,8 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		String tempReceiptPurpose = getComboboxValue(this.receiptPurpose);
 
 		if (getFinanceDetail().getFinScheduleData().getFinanceMain() != null
-				&& !StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod()) 
-				&& !StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) 
-				&& receiptValueDate.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
+				&& !StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY) && receiptValueDate
+						.compareTo(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinStartDate()) == 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Date"));
 			return false;
 		}
@@ -7511,8 +7565,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// No excess amount validation on partial Settlement
 		if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
-			if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod()) 
-					&& remBal.compareTo(BigDecimal.ZERO) <= 0) {
+			if (remBal.compareTo(BigDecimal.ZERO) <= 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
 				return false;
 			} else if (totalDue.subtract(totalPaid.add(totalWaived)).compareTo(BigDecimal.ZERO) > 0) {
@@ -7533,10 +7586,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 						isValidPPDate = false;
 					}
-					if ((DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0 && 
-							!StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) ||
-							(DateUtility.compare(receiptValueDate, curSchd.getSchDate()) > 0 && 
-									StringUtils.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT))) {
+					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
@@ -8475,6 +8525,14 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	}
 	public void setBranchService(BranchService branchService) {
 		this.branchService = branchService;
+	}
+
+	public boolean isFinanceMatured() {
+		return financeMatured;
+	}
+
+	public void setFinanceMatured(boolean financeMatured) {
+		this.financeMatured = financeMatured;
 	}
 
 }
