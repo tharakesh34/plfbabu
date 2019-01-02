@@ -814,6 +814,14 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="26.1" author="shinde.b">
+		<sql>
+    	<![CDATA[
+	     ALTER TABLE business_vertical ALTER COLUMN id SET NOT NULL;
+	   ]]>
+     </sql>
+	</changeSet>
+
 	<changeSet id="27" author="shinde.b">
 		<addPrimaryKey tableName="business_vertical" columnNames="id" />
 		<addUniqueConstraint tableName="business_vertical" columnNames="code" />
@@ -845,6 +853,15 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
+		<changeSet id="29.1" author="shinde.b">
+		<sql>
+    	<![CDATA[
+	      ALTER TABLE business_vertical_temp ALTER COLUMN id SET NOT NULL;
+	   ]]>
+     </sql>
+	</changeSet>
+	
 
 	<changeSet id="30" author="shinde.b">
 		<addPrimaryKey tableName="business_vertical_temp" columnNames="id" />
@@ -1086,6 +1103,14 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+		<changeSet id="40.1" author="shinde.b">
+		<sql>
+    	<![CDATA[
+	       ALTER TABLE secusr_reporting_managers ALTER COLUMN id SET NOT NULL;
+	   ]]>
+     </sql>
+	</changeSet>
 
 	<changeSet id="41" author="shinde.b" dbms="postgresql">
 		<modifyDataType tableName="secusr_reporting_managers" columnName="product" newDataType="citext" />
@@ -1131,6 +1156,14 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+   
+   <changeSet id="43.1" author="shinde.b">
+		<sql>
+    	<![CDATA[
+	  ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN id SET NOT NULL;
+	   ]]>
+     </sql>
 	</changeSet>
 
 	<changeSet id="44" author="shinde.b" dbms="postgresql">
