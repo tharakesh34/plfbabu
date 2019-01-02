@@ -5679,4 +5679,13 @@ UNION ALL
 </sql>
 </changeSet>
 
+<changeSet id="93" author="Bharath">
+<comment> Added PB_Receiptamount amountcodes for latepay event in Accounting set</comment>
+<sql>
+Insert into BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('LATEPAY',0,'PB_ReceiptAmount','receipt Amount','1',1,1000,to_date('18-MAR-18','DD-MON-RR'),'Approved',null,null,null,null,null,0);
+</sql>
+</changeSet>
+
+
+
 </databaseChangeLog>
