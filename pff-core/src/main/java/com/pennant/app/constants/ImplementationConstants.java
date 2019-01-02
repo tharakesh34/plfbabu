@@ -164,6 +164,6 @@ public class ImplementationConstants {
 
 	// Allow send notification based on this variable when request is coming
 	// through API.
-	public static final boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API = true;
+	public static final boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API = false;
 
 }
