@@ -26,5 +26,6 @@
 	<include file="change-logs/change-log-bugs-audit-1135.xml"/>
 	<include file="change-logs/change-log-auditlegal.xml"/>
 	<include file="change-logs/change_log_story #1138_audit.xml"/>
+	<include file="change-logs/change-log-4.13.0-audit.xml"/>
 	
 </databaseChangeLog>

@@ -29,4 +29,5 @@
  	<include file="change-logs/change-log-bugs-1135.xml"/>
  	<include file="change-logs/change-log-legal.xml"/>
  	<include file="change-logs/change_log_story #1138.xml"/>
+ 	<include file="change-logs/change-log-4.13.0.xml"/>
 </databaseChangeLog>
