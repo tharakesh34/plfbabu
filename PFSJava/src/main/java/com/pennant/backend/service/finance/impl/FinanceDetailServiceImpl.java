@@ -138,8 +138,10 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
@@ -2745,6 +2747,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processLimitSaveOrUpdate(aAuditHeader, false);
 		}
 
+		// E-mail notification for Create Loan API.
+		try {
+			if (ImplementationConstants.SEND_NOTIFICATION_ON_CREATE_LOAN_API
+					&& PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(financeMain.getFinSourceID())
+					&& financeMain.isNewRecord()) {
+				sendMailNotification(financeDetail);
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+
 		// Saving the reasons
 		saveReasonDetails(financeDetail);
 
@@ -2764,6 +2778,68 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 		return auditHeader;
 
+	}
+
+	protected void sendMailNotification(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		try {
+			Notification notification = new Notification();
+			notification.setKeyReference(financeMain.getFinReference());
+			notification.setModule("LOAN");
+			notification.setSubModule(FinanceConstants.FINSER_EVENT_ORG);
+			notification.setTemplateCode(PennantConstants.CREATE_LOAN_API_MAIL_NOTIFICATION);
+
+			CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+			if (customerDetails == null) {
+				return;
+			}
+
+			// Customer E-mails
+			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
+			if (CollectionUtils.isEmpty(emailList)) {
+				return;
+			}
+
+			String emailId = null;
+			for (CustomerEMail email : emailList) {
+				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
+					emailId = email.getCustEMail();
+					break;
+				}
+			}
+
+			if (StringUtils.isEmpty(emailId)) {
+				return;
+			}
+
+			List<String> emails = new ArrayList<>();
+			emails.add(emailId);
+			notification.setEmails(emails);
+
+			// Customer Contact Number
+			String mobileNumber = null;
+			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
+				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
+						.getPhoneTypePriority()) {
+					mobileNumber = customerPhoneNumber.getPhoneNumber();
+					break;
+				}
+			}
+
+			List<String> mobileNumberList = new ArrayList<>();
+			mobileNumberList.add(mobileNumber);
+			notification.setMobileNumbers(mobileNumberList);
+
+			notificationService.sendNotification(notification, financeDetail);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void saveOrUpdateVerifications(List<AuditDetail> auditDetails, FinanceDetail financeDetail,

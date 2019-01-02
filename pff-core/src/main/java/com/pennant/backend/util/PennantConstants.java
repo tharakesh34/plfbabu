@@ -821,8 +821,9 @@ public class PennantConstants {
 	public static final String ORIGINAL = "O";
 	public static final String PHOTOSTAT = "P";
 	
-	//Template Notification constants
+	// Template Notification constants
 	public static final String PRESENTMENT_BOUNCE_MAIL_NOTIFICATION = "PRESENTMENT_BOUNCE_MAIL_NOTIFICATION";
+	public static final String CREATE_LOAN_API_MAIL_NOTIFICATION = "CREATE_LOAN_NSTP_API_TEMP";
 
 	public static final String ACCESSTYPE_ENTITY = "ENTITY";
 	public static final String ACCESSTYPE_CLUSTER = "CLUSTER";

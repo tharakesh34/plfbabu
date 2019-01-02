@@ -162,4 +162,8 @@ public class ImplementationConstants {
 	//The below variable is set for Branch Details tab of Users Screen in Administration menu.
 	public static final boolean ALLOW_DIVISION_BASED_CLUSTER = true;
 
+	// Allow send notification based on this variable when request is coming
+	// through API.
+	public static final boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API = true;
+
 }

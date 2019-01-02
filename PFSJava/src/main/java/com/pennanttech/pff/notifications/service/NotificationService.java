@@ -130,7 +130,11 @@ public class NotificationService {
 		} else if (object instanceof PresentmentDetail) {
 			PresentmentDetail presentmentDetail = (PresentmentDetail) object;
 			data = getTemplateData(presentmentDetail);
+		} else if (object instanceof FinanceDetail) {
+			FinanceDetail financeDetail = (FinanceDetail) object;
+			data = getTemplateData(financeDetail, null);
 		}
+
 		Map<String, byte[]> attachements = mailKeyData.getAttachments();
 		MailTemplate template = getMailTemplateService().getMailTemplateByCode(mailKeyData.getTemplateCode());
 
@@ -155,11 +159,13 @@ public class NotificationService {
 
 		if (template.isEmailTemplate()) {
 			sendEmailNotification(message);
-		} else if (template.isSmsTemplate()) {
+		}
+
+		if (template.isSmsTemplate()) {
 			sendSmsNotification(message);
 		}
-		logger.debug(Literal.LEAVING);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void sendNotifications(String moduleCode, Object object) throws Exception {
