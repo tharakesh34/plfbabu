@@ -139,6 +139,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		amountCodes.setPenaltyPaid(repayQueue.getPenaltyPayNow());
 		amountCodes.setPenaltyWaived(repayQueue.getWaivedAmount());
+	/*	Accounting changes for psd 131871 in equitas of Cash GL entries in postings. */
+		amountCodes.setPaymentType(rpyQueueHeader.getPayType()); 
+	/*	Accounting changes for psd 131871 in equitas of Cash GL entries in postings. */	
 		aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
 		aeEvent.setPostingId(financeMain.getPostingId());
 		aeEvent.setSchdDate(repayQueue.getRpyDate());
