@@ -231,6 +231,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Hbox hbox_ElgMthdDetails;
 	protected Textbox eligibilityMethod;
 	protected Button btnAlwElgMthdDetails;
+	protected Checkbox taxNoMand;
 	
 	protected Row									row_AutoRejectionDays;
 	protected Intbox								autoRejectionDays;
@@ -1185,6 +1186,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.tDSApplicable.setChecked(aFinanceType.isTDSApplicable());
 		this.alwMaxDisbCheckReq.setChecked(aFinanceType.isAlwMaxDisbCheckReq());
 		this.quickDisb.setChecked(aFinanceType.isQuickDisb());
+		this.taxNoMand.setChecked(aFinanceType.isTaxNoMand());
 
 		this.developerFinance.setChecked(aFinanceType.isDeveloperFinance());
 		setDeveloperFinanceFlagDetail();
@@ -2058,6 +2060,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		aFinanceType.setTDSApplicable(this.tDSApplicable.isChecked());
 		aFinanceType.setDroplineOD(this.droplineOD.isChecked());
 		aFinanceType.setFrequencyDays(this.frequencyDays.getValue());
+		aFinanceType.setTaxNoMand(this.taxNoMand.isChecked());
 		try {
 			// to Check frequency code and frequency month
 			if (!"#".equals(this.rollOverFrq.getFrqCodeValue()) && "#".equals(this.rollOverFrq.getFrqMonthValue())) {
@@ -4226,6 +4229,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
 		this.quickDisb.setDisabled(isTrue);
 		this.developerFinance.setDisabled(isTrue);
+		this.taxNoMand.setDisabled(isTrue);
 		readOnlyComponent(isTrue, this.finLTVCheck);
 		readOnlyComponent(isTrue, this.finCollateralCheck);
 		this.cbAdvEMIMethod.setDisabled(isTrue);
@@ -4530,6 +4534,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setValue("0");
 		this.rpyPricingMethod.setDescription("");
 		this.manualSchedule.setChecked(false);
+		this.taxNoMand.setChecked(false);
 		if(isOverdraft){
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");

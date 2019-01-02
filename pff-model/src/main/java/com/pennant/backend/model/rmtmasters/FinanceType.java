@@ -259,6 +259,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//autorejection No of Days
 	private int autoRejectionDays;
 	
+	//Gst detial
+	private boolean taxNoMand;
+
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -2201,6 +2204,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAutoRejectionDays(int autoRejectionDays) {
 		this.autoRejectionDays = autoRejectionDays;
+	}
+
+	public boolean isTaxNoMand() {
+		return this.taxNoMand;
+	}
+
+	public void setTaxNoMand(boolean taxNoMand) {
+		this.taxNoMand = taxNoMand;
 	}
 
 }

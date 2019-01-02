@@ -363,6 +363,13 @@
 													<intbox id="autoRejectionDays" width="45px" maxlength="3" style="text-align:right" />
 												</hbox>
 											</row>
+											<row>
+												<label id="label_FinanceTypeDialog_TaxNoMand" value="${c:l('label_FinanceTypeDialog_TaxNoMand.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="taxNoMand" checked="false" />
+												</hbox>
+ 											</row>
 										</rows>
 									</grid>
 								</groupbox>

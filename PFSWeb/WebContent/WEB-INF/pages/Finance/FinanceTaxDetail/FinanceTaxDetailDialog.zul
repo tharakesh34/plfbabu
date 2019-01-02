@@ -78,7 +78,7 @@
 									</hbox>
 									<label id="label_TaxNumber" value="${c:l('label_FinanceTaxDetailDialog_TaxNumber.value')}" />
 									<hbox>
-										<space spacing="2px" />
+										<space spacing="2px" id="space_taxNumber"/>
 										<uppercasebox id="taxNumber" width="180px" />
 									</hbox>
 								</row>

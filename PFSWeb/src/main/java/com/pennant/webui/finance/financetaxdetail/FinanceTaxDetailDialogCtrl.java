@@ -63,6 +63,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -114,6 +115,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	protected long taxCustId;
 	protected Checkbox taxExempted;
 	protected Textbox taxNumber;
+	protected Space space_taxNumber;
 	protected Textbox addrLine1;
 	protected Textbox addrLine2;
 	protected Textbox addrLine3;
@@ -148,6 +150,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	private String old_country = "";
 	private String old_state = "";
 	private String old_city = "";
+	private boolean isTaxMand = false;
 
 	/**
 	 * default constructor.<br>
@@ -200,6 +203,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				this.financeDetail = (FinanceDetail) (arguments.get("financeDetail"));
 				this.setJointAccountDetailList(financeDetail.getJountAccountDetailList());
 				this.setGurantorsDetailList(financeDetail.getGurantorsDetailList());
+				this.isTaxMand = this.financeDetail.getFinScheduleData().getFinanceType().isTaxNoMand();
 			}
 
 			if (this.financeTaxDetail == null) {
@@ -358,6 +362,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.pinCode.setValidateColumns(new String[] { "PinCode" });
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setTextBoxWidth(143);
+
+		if (isTaxMand) {
+			this.space_taxNumber.setSclass(PennantConstants.mandateSclass);
+		}
 
 		setStatusDetails();
 
@@ -1185,7 +1193,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (!this.taxNumber.isReadonly()) {
 			this.taxNumber.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FinanceTaxDetailDialog_TaxNumber.value"),
-							PennantRegularExpressions.REGEX_GSTIN, false));
+							PennantRegularExpressions.REGEX_GSTIN, isTaxMand));
 		}
 
 		if (!this.addrLine1.isReadonly()) {
