@@ -101,49 +101,25 @@ public class SecurityUserHierarchyServiceImpl extends GenericService<SecurityUse
 			userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			userHierarchyies.add(userHierarchy);
 
-			refreshDownlevel(userHierarchy, reportingManager, userHierarchyies);
-
+			if (securityUser.getUsrID() == reportingManager.getUserId()) {
+				List<SecurityUserHierarchy> downLevelUsers = securityUserHierarchyDAO.getDownLevelUsers(userHierarchy);
+				if (CollectionUtils.isNotEmpty(downLevelUsers)) {
+					for (SecurityUserHierarchy downLevelUser : downLevelUsers) {
+						downLevelUser.setBusinessVertical(reportingManager.getBusinessVertical());
+						downLevelUser.setBranch(reportingManager.getBranch());
+						downLevelUser.setProduct(reportingManager.getProduct());
+						downLevelUser.setFinType(reportingManager.getFinType());
+						downLevelUser.setReportingTo(reportingManager.getReportingTo());
+						downLevelUser.setDepth(downLevelUser.getDepth() + 1);
+						downLevelUser.setLastMntBy(userHierarchy.getLastMntBy());
+						downLevelUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						userHierarchyies.add(downLevelUser);
+					}
+				}
+			}
 		}
 
 		securityUserHierarchyDAO.saveUserHierarchy(userHierarchyies);
-
-	}
-
-	private void refreshDownlevel(SecurityUserHierarchy userHierarchy, ReportingManager reportingManager,
-			List<SecurityUserHierarchy> userHierarchyies) {
-		List<SecurityUserHierarchy> downLevelUsers = securityUserHierarchyDAO.getDownLevelUsers(userHierarchy);
-		List<SecurityUserHierarchy> upLevelUsers = securityUserHierarchyDAO.getUpLevelUsers(userHierarchy);
-
-		if (CollectionUtils.isNotEmpty(downLevelUsers)) {
-			for (SecurityUserHierarchy downLevelUser : downLevelUsers) {
-				downLevelUser.setBusinessVertical(reportingManager.getBusinessVertical());
-				downLevelUser.setBranch(reportingManager.getBranch());
-				downLevelUser.setProduct(reportingManager.getProduct());
-				downLevelUser.setFinType(reportingManager.getFinType());
-				downLevelUser.setReportingTo(reportingManager.getReportingTo());
-				downLevelUser.setDepth(downLevelUser.getDepth() + 1);
-				userHierarchy.setLastMntBy(userHierarchy.getLastMntBy());
-				userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				userHierarchyies.add(downLevelUser);
-
-				refreshDownlevel(downLevelUser, reportingManager, userHierarchyies);
-			}
-		}
-
-		if (CollectionUtils.isNotEmpty(upLevelUsers)) {
-			for (SecurityUserHierarchy upLevelUser : upLevelUsers) {
-				upLevelUser.setUserId(userHierarchy.getUserId());
-				upLevelUser.setBusinessVertical(reportingManager.getBusinessVertical());
-				upLevelUser.setBranch(reportingManager.getBranch());
-				upLevelUser.setProduct(reportingManager.getProduct());
-				upLevelUser.setFinType(reportingManager.getFinType());
-				upLevelUser.setReportingTo(upLevelUser.getReportingTo());
-				upLevelUser.setDepth(upLevelUser.getDepth() + 1);
-				userHierarchy.setLastMntBy(userHierarchy.getLastMntBy());
-				userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				userHierarchyies.add(upLevelUser);
-			}
-		}
 	}
 
 	public void setSecurityUserHierarchyDAO(SecurityUserHierarchyDAO securityUserHierarchyDAO) {
