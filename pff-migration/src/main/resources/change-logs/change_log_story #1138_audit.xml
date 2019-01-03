@@ -155,7 +155,7 @@
 	<changeSet id="5.1" author="shinde.b">
 		<sql>
 	<![CDATA[
-	       ALTER TABLE adtsecusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);
+	       ALTER TABLE plfaudit.adtsecusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);
 	   ]]>
 		</sql>
 	</changeSet>
