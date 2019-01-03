@@ -583,7 +583,7 @@
 			<column name="clusterId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="23_pre" author="amanullah.m" dbms="postgresql">
 		<modifyDataType tableName="RMTBranches" columnName="entity" newDataType="citext" />
 		<modifyDataType tableName="RMTBranches_Temp" columnName="entity" newDataType="citext" />
@@ -816,10 +816,10 @@
 
 	<changeSet id="26.1" author="shinde.b" dbms="mssql">
 		<sql>
-    	<![CDATA[
-	     ALTER TABLE business_vertical ALTER COLUMN id BIGINT NOT NULL;
-	   ]]>
-     </sql>
+	    	<![CDATA[
+		     	ALTER TABLE business_vertical ALTER COLUMN id BIGINT NOT NULL;
+		   ]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="27" author="shinde.b">
@@ -853,15 +853,14 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-		<changeSet id="29.1" author="shinde.b" dbms="mssql">
+
+	<changeSet id="29.1" author="shinde.b" dbms="mssql">
 		<sql>
     	<![CDATA[
 	      ALTER TABLE business_vertical_temp ALTER COLUMN id BIGINT NOT NULL;
 	   ]]>
-     </sql>
+		</sql>
 	</changeSet>
-	
 
 	<changeSet id="30" author="shinde.b">
 		<addPrimaryKey tableName="business_vertical_temp" columnNames="id" />
@@ -1103,18 +1102,29 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
-		<changeSet id="40.1" author="shinde.b" dbms="mssql">
+
+	<changeSet id="40.1" author="shinde.b" dbms="mssql">
 		<sql>
     	<![CDATA[
 	       ALTER TABLE secusr_reporting_managers ALTER COLUMN id BIGINT NOT NULL;
 	   ]]>
-     </sql>
+		</sql>
 	</changeSet>
 
 	<changeSet id="41" author="shinde.b" dbms="postgresql">
 		<modifyDataType tableName="secusr_reporting_managers" columnName="product" newDataType="citext" />
 		<modifyDataType tableName="secusr_reporting_managers" columnName="fintype" newDataType="citext" />
+		<modifyDataType tableName="secusr_reporting_managers" columnName="branch" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="41.1" author="shinde.b">
+		<sql>
+	<![CDATA[
+	       ALTER TABLE secusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);
+	   ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="41.2" author="shinde.b" dbms="postgresql">
 		<modifyDataType tableName="secusr_reporting_managers" columnName="branch" newDataType="citext" />
 	</changeSet>
 
@@ -1157,13 +1167,13 @@
 			</column>
 		</createTable>
 	</changeSet>
-   
-   <changeSet id="43.1" author="shinde.b" dbms="mssql">
+
+	<changeSet id="43.1" author="shinde.b" dbms="mssql">
 		<sql>
     	<![CDATA[
 	  ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN id BIGINT NOT NULL;
 	   ]]>
-     </sql>
+		</sql>
 	</changeSet>
 
 	<changeSet id="44" author="shinde.b" dbms="postgresql">
@@ -1171,37 +1181,42 @@
 		<modifyDataType tableName="secusr_reporting_managers_temp" columnName="fintype" newDataType="citext" />
 		<modifyDataType tableName="secusr_reporting_managers_temp" columnName="branch" newDataType="citext" />
 	</changeSet>
-	
-	 <changeSet id="44.1" author="shinde.b" dbms="mssql">
+
+	<changeSet id="44.1" author="shinde.b" dbms="mssql">
 		<sql>
     	<![CDATA[
-	  ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN usrid BIGINT NOT NULL;
+	  		ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN usrid BIGINT NOT NULL;
 	   ]]>
-     </sql>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44.2" author="shinde.b">
+		<sql>
+	<![CDATA[
+	       ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN branch TYPE VARCHAR(12);
+	   ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44.3" author="shinde.b" dbms="postgresql">
+		<modifyDataType tableName="secusr_reporting_managers_temp" columnName="branch" newDataType="citext" />
 	</changeSet>
 
 	<changeSet id="45" author="shinde.b">
-	<addPrimaryKey tableName="secusr_reporting_managers_temp"
-		columnNames="id, usrid" />
-	<addForeignKeyConstraint constraintName="fk_reportmng_user"
-		referencedTableName="secusers" baseColumnNames="usrid"
-		baseTableName="secusr_reporting_managers_temp" referencedColumnNames="usrid" />
-	<addForeignKeyConstraint constraintName="fk_reportmng_bsnverticalid_t"
-		referencedTableName="business_vertical" baseColumnNames="businessvertical"
-		baseTableName="secusr_reporting_managers_temp" referencedColumnNames="id" />
-	<addForeignKeyConstraint constraintName="fk_reportmng_prdcode_t"
-		referencedTableName="bmtproduct" baseColumnNames="product"
-		baseTableName="secusr_reporting_managers_temp" referencedColumnNames="productcode" />
-	<addForeignKeyConstraint constraintName="fk_reportmng_fintype_t"
-		referencedTableName="rmtfinancetypes" baseColumnNames="fintype"
-		baseTableName="secusr_reporting_managers_temp" referencedColumnNames="fintype" />
-	<addForeignKeyConstraint constraintName="fk_reportmng_branchcode_t"
-		referencedTableName="rmtbranches" baseColumnNames="branch"
-		baseTableName="secusr_reporting_managers_temp" referencedColumnNames="branchcode" />
-	<addForeignKeyConstraint constraintName="fk_reportmng_repotingto_t"
-		referencedTableName="secusers" baseColumnNames="reportingto"
-		baseTableName="secusr_reporting_managers_temp" referencedColumnNames="usrid" />
-</changeSet>
+		<addPrimaryKey tableName="secusr_reporting_managers_temp" columnNames="id, usrid" />
+		<addForeignKeyConstraint constraintName="fk_reportmng_usrid_t" referencedTableName="secusers"
+			baseColumnNames="usrid" baseTableName="secusr_reporting_managers_temp" referencedColumnNames="usrid" />
+		<addForeignKeyConstraint constraintName="fk_reportmng_bsnverticalid_t" referencedTableName="business_vertical"
+			baseColumnNames="businessvertical" baseTableName="secusr_reporting_managers_temp" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_reportmng_prdcode_t" referencedTableName="bmtproduct"
+			baseColumnNames="product" baseTableName="secusr_reporting_managers_temp" referencedColumnNames="productcode" />
+		<addForeignKeyConstraint constraintName="fk_reportmng_fintype_t" referencedTableName="rmtfinancetypes"
+			baseColumnNames="fintype" baseTableName="secusr_reporting_managers_temp" referencedColumnNames="fintype" />
+		<addForeignKeyConstraint constraintName="fk_reportmng_branchcode_t" referencedTableName="rmtbranches"
+			baseColumnNames="branch" baseTableName="secusr_reporting_managers_temp" referencedColumnNames="branchcode" />
+		<addForeignKeyConstraint constraintName="fk_reportmng_repotingto_t" referencedTableName="secusers"
+			baseColumnNames="reportingto" baseTableName="secusr_reporting_managers_temp" referencedColumnNames="usrid" />
+	</changeSet>
 
 	<changeSet id="46" author="shinde.b">
 		<createSequence sequenceName="SeqReportingManager" />

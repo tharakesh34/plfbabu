@@ -151,6 +151,14 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="5.1" author="shinde.b">
+		<sql>
+	<![CDATA[
+	       ALTER TABLE adtsecusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);
+	   ]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="6" author="shinde.b">
 		<addColumn tableName="adtsecusers">
