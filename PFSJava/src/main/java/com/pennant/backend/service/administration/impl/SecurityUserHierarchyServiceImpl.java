@@ -76,44 +76,48 @@ public class SecurityUserHierarchyServiceImpl extends GenericService<SecurityUse
 
 		SecurityUserHierarchy userHierarchy;
 		for (ReportingManager reportingManager : repotingManagers) {
-			userHierarchy = new SecurityUserHierarchy();
-			userHierarchy.setUserId(securityUser.getUsrID());
-			userHierarchy.setBusinessVertical(reportingManager.getBusinessVertical());
-			userHierarchy.setBranch(reportingManager.getBranch());
-			userHierarchy.setProduct(reportingManager.getProduct());
-			userHierarchy.setFinType(reportingManager.getFinType());
-			userHierarchy.setReportingTo(securityUser.getUsrID());
-			userHierarchy.setDepth(depth++);
-			userHierarchy.setLastMntBy(securityUser.getLastMntBy());
-			userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			
+			if (!reportingManager.getRecordType().equals("DELETE")) {
+				userHierarchy = new SecurityUserHierarchy();
+				userHierarchy.setUserId(securityUser.getUsrID());
+				userHierarchy.setBusinessVertical(reportingManager.getBusinessVertical());
+				userHierarchy.setBranch(reportingManager.getBranch());
+				userHierarchy.setProduct(reportingManager.getProduct());
+				userHierarchy.setFinType(reportingManager.getFinType());
+				userHierarchy.setReportingTo(securityUser.getUsrID());
+				userHierarchy.setDepth(depth++);
+				userHierarchy.setLastMntBy(securityUser.getLastMntBy());
+				userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-			userHierarchyies.add(userHierarchy);
+				userHierarchyies.add(userHierarchy);
 
-			userHierarchy = new SecurityUserHierarchy();
-			userHierarchy.setUserId(securityUser.getUsrID());
-			userHierarchy.setBusinessVertical(reportingManager.getBusinessVertical());
-			userHierarchy.setBranch(reportingManager.getBranch());
-			userHierarchy.setProduct(reportingManager.getProduct());
-			userHierarchy.setFinType(reportingManager.getFinType());
-			userHierarchy.setReportingTo(reportingManager.getReportingTo());
-			userHierarchy.setDepth(depth++);
-			userHierarchy.setLastMntBy(securityUser.getLastMntBy());
-			userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			userHierarchyies.add(userHierarchy);
+				userHierarchy = new SecurityUserHierarchy();
+				userHierarchy.setUserId(securityUser.getUsrID());
+				userHierarchy.setBusinessVertical(reportingManager.getBusinessVertical());
+				userHierarchy.setBranch(reportingManager.getBranch());
+				userHierarchy.setProduct(reportingManager.getProduct());
+				userHierarchy.setFinType(reportingManager.getFinType());
+				userHierarchy.setReportingTo(reportingManager.getReportingTo());
+				userHierarchy.setDepth(depth++);
+				userHierarchy.setLastMntBy(securityUser.getLastMntBy());
+				userHierarchy.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				userHierarchyies.add(userHierarchy);
 
-			if (securityUser.getUsrID() == reportingManager.getUserId()) {
-				List<SecurityUserHierarchy> downLevelUsers = securityUserHierarchyDAO.getDownLevelUsers(userHierarchy);
-				if (CollectionUtils.isNotEmpty(downLevelUsers)) {
-					for (SecurityUserHierarchy downLevelUser : downLevelUsers) {
-						downLevelUser.setBusinessVertical(reportingManager.getBusinessVertical());
-						downLevelUser.setBranch(reportingManager.getBranch());
-						downLevelUser.setProduct(reportingManager.getProduct());
-						downLevelUser.setFinType(reportingManager.getFinType());
-						downLevelUser.setReportingTo(reportingManager.getReportingTo());
-						downLevelUser.setDepth(downLevelUser.getDepth() + 1);
-						downLevelUser.setLastMntBy(userHierarchy.getLastMntBy());
-						downLevelUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						userHierarchyies.add(downLevelUser);
+				if (securityUser.getUsrID() == reportingManager.getUserId()) {
+					List<SecurityUserHierarchy> downLevelUsers = securityUserHierarchyDAO
+							.getDownLevelUsers(userHierarchy);
+					if (CollectionUtils.isNotEmpty(downLevelUsers)) {
+						for (SecurityUserHierarchy downLevelUser : downLevelUsers) {
+							downLevelUser.setBusinessVertical(reportingManager.getBusinessVertical());
+							downLevelUser.setBranch(reportingManager.getBranch());
+							downLevelUser.setProduct(reportingManager.getProduct());
+							downLevelUser.setFinType(reportingManager.getFinType());
+							downLevelUser.setReportingTo(reportingManager.getReportingTo());
+							downLevelUser.setDepth(downLevelUser.getDepth() + 1);
+							downLevelUser.setLastMntBy(userHierarchy.getLastMntBy());
+							downLevelUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							userHierarchyies.add(downLevelUser);
+						}
 					}
 				}
 			}
