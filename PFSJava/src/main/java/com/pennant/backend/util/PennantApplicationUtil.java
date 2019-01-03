@@ -733,7 +733,7 @@ public class PennantApplicationUtil {
 			break;
 		default:
 			result.put("TYPE", "");
-			//result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
+			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
 			result.put("MANDATORY", "false");
 			result.put("REGEX", "");
 		}
