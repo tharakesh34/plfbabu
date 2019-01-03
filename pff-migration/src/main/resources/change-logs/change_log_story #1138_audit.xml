@@ -151,21 +151,9 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="5.1" author="shinde.b" dbms="postgresql">
-		<sql>
-	<![CDATA[
-	       ALTER TABLE plfaudit.adtsecusr_reporting_managers ALTER COLUMN branch VARCHAR(12);
-	   ]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="5.2" author="shinde.b" dbms="mssql">
-		<sql>
-	<![CDATA[
-	       ALTER TABLE plfaudit.adtsecusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);
-	   ]]>
-		</sql>
+
+	<changeSet id="5.2" author="shinde.b">
+		<modifyDataType tableName="adtsecusr_reporting_managers" columnName="branch" newDataType="varchar(12)"/>
 	</changeSet>
 
 	<changeSet id="6" author="shinde.b">
@@ -173,6 +161,11 @@
 			<column name="businessvertical" type="bigint">
 				<constraints nullable="true" />
 			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="7" author="shinde.b">
+		<addColumn tableName="adtfinancemain">
+			<column name="businessvertical" type="bigint" />
 		</addColumn>
 	</changeSet>
 </databaseChangeLog>
