@@ -229,13 +229,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 * 
 	 * @param parent
 	 */
-	private ExtendedSearchListBox(Component parent, String listCode, List<?> listData, boolean search) {
+	public ExtendedSearchListBox(Component parent, String listCode, List<?> listData, boolean search) {
 		super();
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
 		setParent(parent);
 		this.listData = listData;
 		this.search = search;
-		this.createBox();
 	}
 
 	/**
@@ -247,9 +246,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 
 	public static Object show(Component parent, String listCode) {
-		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode);
-		objetc.createBox();
-		return objetc.getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode);
+		component.createBox();
+		return component.getObject();
 	}
 
 	/**
@@ -261,28 +260,29 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 
 	public static Object show(Component parent, String listCode, String searchValue) {
-		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue);
-		objetc.createBox();
-		return objetc.getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, searchValue);
+		component.createBox();
+		return component.getObject();
 	}
 
 	public static Object show(Component parent, String listCode, String searchValue, String whereClause) {
-		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue, whereClause);
-		objetc.createBox();
-		return objetc.getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, searchValue, whereClause);
+		component.createBox();
+		return component.getObject();
 	}
 
 	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters) {
-		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue, filters);
-		objetc.createBox();
-		return objetc.getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, searchValue, filters);
+		component.createBox();
+		return component.getObject();
 	}
 
 	public static Object show(Component parent, String listCode, String searchValue, Filter[] filters,
 			String whereClause) {
-		ExtendedSearchListBox objetc = new ExtendedSearchListBox(parent, listCode, searchValue, filters, whereClause);
-		objetc.createBox();
-		return objetc.getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, searchValue, filters,
+				whereClause);
+		component.createBox();
+		return component.getObject();
 	}
 
 	/**
@@ -294,7 +294,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 * @return a BeanObject from the listBox or null.
 	 */
 	public static Object show(Component parent, String listCode, List<?> list) {
-		return new ExtendedSearchListBox(parent, listCode, list, false).getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, list, false);
+		component.createBox();
+		return component.getObject();
 	}
 
 	/**
@@ -307,7 +309,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 
 	public static Object show(Component parent, String listCode, Filter[] filters) {
-		return new ExtendedSearchListBox(parent, listCode, filters).getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, filters);
+		component.createBox();
+		return component.getObject();
 	}
 
 	/**
@@ -320,7 +324,9 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 */
 
 	public static Object show(Component parent, String listCode, Filter[] filters, String searchValue) {
-		return new ExtendedSearchListBox(parent, listCode, filters, searchValue).getObject();
+		ExtendedSearchListBox component = new ExtendedSearchListBox(parent, listCode, filters, searchValue);
+		component.createBox();
+		return component.getObject();
 	}
 
 	/**
