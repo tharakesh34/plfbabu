@@ -550,6 +550,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public String getValue() {
+	this.textbox.getValue();//to call the constraint if any
 		if (inputAllowed) {
 			if (StringUtils.isNotBlank(selctedValue)) {
 				return selctedValue;
