@@ -643,7 +643,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		System.out.println("tes11111t");
+
 		try {
 			aLegalPropertyDetail.setNorthSideEastByWest(this.northSideEastByWest.getValue());
 		} catch (WrongValueException we) {
@@ -815,19 +815,19 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsAnyMortgagePending.value"), yesNoList, true));
 		}
 		
-		if (!this.northSideEastByWest.isDisabled()) {
+		if (!this.northSideEastByWest.isReadonly()) {
 			this.northSideEastByWest.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_NorthSideEastByWest.value"),
 							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
-		if (!this.westSideSouthByNorth.isDisabled()) {
+		if (!this.westSideSouthByNorth.isReadonly()) {
 			this.westSideSouthByNorth.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_WestSideSouthByNorth.value"),
 							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
-		if (!this.eastSideNorthBySouth.isDisabled()) {
+		if (!this.eastSideNorthBySouth.isReadonly()) {
 			this.eastSideNorthBySouth.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_EastSideNorthBySouth.value"),
 					PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
-		if (!this.southSideWestByEast.isDisabled()) {
+		if (!this.southSideWestByEast.isReadonly()) {
 			this.southSideWestByEast.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_SouthSideWestByEast.value"),
 					PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
