@@ -152,7 +152,15 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="5.1" author="shinde.b">
+	<changeSet id="5.1" author="shinde.b" dbms="postgresql">
+		<sql>
+	<![CDATA[
+	       ALTER TABLE plfaudit.adtsecusr_reporting_managers ALTER COLUMN branch VARCHAR(12);
+	   ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="5.2" author="shinde.b" dbms="mssql">
 		<sql>
 	<![CDATA[
 	       ALTER TABLE plfaudit.adtsecusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);

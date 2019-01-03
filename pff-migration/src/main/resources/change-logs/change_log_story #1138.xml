@@ -1117,10 +1117,19 @@
 		<modifyDataType tableName="secusr_reporting_managers" columnName="branch" newDataType="citext" />
 	</changeSet>
 
-	<changeSet id="41.1" author="shinde.b">
+	<changeSet id="41.1" author="shinde.b" dbms="postgresql">
 		<sql>
 	<![CDATA[
 	       ALTER TABLE secusr_reporting_managers ALTER COLUMN branch TYPE VARCHAR(12);
+	   ]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="41.2" author="shinde.b" dbms="mssql">
+		<sql>
+	<![CDATA[
+	       ALTER TABLE secusr_reporting_managers ALTER COLUMN branch VARCHAR(12);
 	   ]]>
 		</sql>
 	</changeSet>
@@ -1190,7 +1199,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="44.2" author="shinde.b">
+	<changeSet id="44.2" author="shinde.b" dbms="postgresql">
 		<sql>
 	<![CDATA[
 	       ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN branch TYPE VARCHAR(12);
@@ -1198,6 +1207,14 @@
 		</sql>
 	</changeSet>
 
+   <changeSet id="44.3" author="shinde.b" dbms="mssql">
+		<sql>
+	<![CDATA[
+	       ALTER TABLE secusr_reporting_managers_temp ALTER COLUMN branch VARCHAR(12);
+	   ]]>
+		</sql>
+	</changeSet>
+  
 	<changeSet id="44.3" author="shinde.b" dbms="postgresql">
 		<modifyDataType tableName="secusr_reporting_managers_temp" columnName="branch" newDataType="citext" />
 	</changeSet>
