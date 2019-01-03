@@ -718,7 +718,7 @@ public class PennantApplicationUtil {
 		switch (custCategory) {
 		case "RETAIL":
 			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL"));
-			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Retl.value");
+			//result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Retl.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL") + "_NUMBER");
@@ -726,14 +726,14 @@ public class PennantApplicationUtil {
 		case "CORP":
 		case "SME":
 			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP"));
-			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
+			//result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP") + "_NUMBER");
 			break;
 		default:
 			result.put("TYPE", "");
-			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
+			//result.put("LABEL", "label_CoreCustomerDialog_PrimaryID.value");
 			result.put("MANDATORY", "false");
 			result.put("REGEX", "");
 		}
@@ -742,10 +742,13 @@ public class PennantApplicationUtil {
 		int maxLength = 100;
 
 		if ("PAN".equals(type)) {
+			result.put("LABEL", "label_CoreCustomerDialog_PAN.value");
 			maxLength = LengthConstants.LEN_PAN;
 		} else if ("AADHAAR".equals(type)) {
+			result.put("LABEL", "label_CoreCustomerDialog_AADHAR.value");
 			maxLength = LengthConstants.LEN_AADHAAR;
 		} else if ("EID".equals(type)) {
+			result.put("LABEL", "label_CoreCustomerDialog_EID.value");
 			maxLength = LengthConstants.LEN_EID;
 		}
 
