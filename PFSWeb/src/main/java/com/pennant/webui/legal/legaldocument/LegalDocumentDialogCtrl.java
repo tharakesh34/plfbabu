@@ -105,8 +105,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Legal/LegalDocument/legalDocumentDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Legal/LegalDocument/legalDocumentDialog.zul file. <br>
  */
 public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
@@ -190,8 +189,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -327,8 +325,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -340,8 +337,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -899,11 +895,11 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.documentName.setConstraint("");
 		this.documentTypeApprove.setConstraint("");
 		this.documentAccepted.setConstraint("");
-		
+
 		this.documentHolderProperty.setConstraint("");
 		this.documentBriefTracking.setConstraint("");
 		this.documentPropertyAddress.setConstraint("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -928,8 +924,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -958,7 +953,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			} else if (media.getName().endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else {
-				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return;
 			}
 
@@ -1107,13 +1102,13 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		// Approver
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentTypeApprove"), this.documentTypeApprove);
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentAccepted"), this.documentAccepted);
-		
+
 		// Tracker
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentHolderProperty"), this.documentHolderProperty);
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentPropertyAddress"), this.documentPropertyAddress);
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentBriefTracking"), this.documentBriefTracking);
 		readOnlyComponent(isReadOnly("LegalDocumentDialog_DocumentMortgage"), this.isDocumentMortgage);
-		
+
 		// Group boxes visibility based on roles
 		this.gb_documentBasicDetails
 				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentBasicDetails"));
@@ -1122,8 +1117,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		this.gb_documentApproverDetails
 				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentApproverDetails"));
 		this.gb_documentDetailsTracking
-		.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentDetailsTracking"));
-		
+				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_documentDetailsTracking"));
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1181,8 +1176,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		readOnlyComponent(true, this.documentBriefTracking);
 		readOnlyComponent(true, this.documentPropertyAddress);
 		readOnlyComponent(true, this.isDocumentMortgage);
-		
-		
+
 		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY"))) {
 			this.gb_documentDetailsTracking.setVisible(true);
 		} else {
@@ -1384,7 +1378,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	public void onClick$btnHolderProperty(Event event) {
 		logger.debug("Entering  " + event.toString());
 		List<ValueLabel> applicantNames = getApplicantNames();
-		
+
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_LegalDocumentDialog, applicantNames,
 				this.documentHolderProperty.getValue(), null);
 

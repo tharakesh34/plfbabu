@@ -2,14 +2,12 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_LegalDocumentDialog" border="normal"
-			apply="${legalDocumentDialogCtrl}" width="100%" height="80%"
-			sizable="auto" >
+		<window id="window_LegalDocumentDialog" border="normal" apply="${legalDocumentDialogCtrl}" width="100%"
+			height="85%" sizable="auto">
 
 			<borderlayout id="borderlayoutLegalDocument">
 				<north>
@@ -18,32 +16,19 @@
 							sclass="hboxRemoveWhiteStrips" width="100%"
 							widths="35%,30%,35%">
 							<!-- COMMON BUTTONS -->
-							<toolbar align="start"
-								sclass="toolbar-start">
-								<button id="btnNew"
-									tooltiptext="${c:l('btnNew.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnEdit"
-									tooltiptext="${c:l('btnEdit.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnDelete"
-									tooltiptext="${c:l('btnDelete.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnSave"
-									tooltiptext="${c:l('btnSave.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnCancel"
-									tooltiptext="${c:l('btnCancel.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
-								<button id="btnNotes" visible="false"
-									tooltiptext="${c:l('btnNotes.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
+							<toolbar align="start" sclass="toolbar-start">
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnNotes" visible="false" tooltiptext="${c:l('btnNotes.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />	
 							</toolbar>
 							<!-- SEARCH AREA -->
 							<toolbar align="center"
@@ -54,14 +39,11 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp"
-									tooltiptext="${c:l('btnHelp.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" visible="false" />
-								<button id="btnClose"
-									tooltiptext="${c:l('btnClose.tooltiptext')}"
-									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-									sclass="z-toolbarbutton" />
+								<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
+									visible="false" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -103,20 +85,18 @@
 										<label id="label_DocumentDetail"
 											value="${c:l('label_LegalDocumentDialog_DocumentDetail.value')}" />
 
-										<textbox id="documentDetail"
-											maxlength="3000" multiline="true" rows="2" width="850px" />
+										<textbox id="documentDetail" maxlength="3000" multiline="true" rows="2"
+											width="850px" />
 
 									</row>
 									<row spans="1,3">
 										<label id="label_SurveyNo"
 											value="${c:l('label_LegalDocumentDialog_SurveyNo.value')}" />
-										<textbox id="surveyNo"
-											maxlength="3000" multiline="true" rows="2" width="850px" />
+										<textbox id="surveyNo" maxlength="3000" multiline="true" rows="2" width="850px" />
 
 									</row>
 									<row id="row2">
-										<label
-											id="label_DocumentTypeMaker"
+										<label id="label_DocumentTypeMaker"
 											value="${c:l('label_LegalDocumentDialog_DocumentTypeMaker.value')}" />
 										<hbox>
 											<space spacing="2px"
@@ -126,8 +106,7 @@
 										</hbox>
 									</row>
 									<row id="row3">
-										<label
-											id="label_DocumentCategory"
+										<label id="label_DocumentCategory"
 											value="${c:l('label_LegalDocumentDialog_DocumentCategory.value')}" />
 										<hbox>
 											<space spacing="2px" />
@@ -160,8 +139,7 @@
 								</columns>
 								<rows>
 									<row id="row4">
-										<label
-											id="label_DocumentTypeVerify"
+										<label id="label_DocumentTypeVerify"
 											value="${c:l('label_LegalDocumentDialog_DocumentTypeVerify.value')}" />
 										<hbox>
 											<space spacing="2px"
@@ -173,20 +151,17 @@
 											value="${c:l('label_LegalDocumentDialog_DocumentUpload.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="documentName"
-												width="250px" maxlength="200" readonly="true" />
-											<button upload="true"
-												label="${c:l('btBrowse_label')}" id="btnUploadDoc"
+											<textbox id="documentName" width="250px" maxlength="200" readonly="true" />
+											<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc"
 												hflex="1" />
 											<a id="downloadLink" />
 										</hbox>
 									</row>
 									<row spans="1,3">
-										<label
-											id="label_DocumentRemarks"
+										<label id="label_DocumentRemarks"
 											value="${c:l('label_LegalDocumentDialog_DocumentRemarks.value')}" />
-										<textbox id="documentRemarks"
-											maxlength="3000" multiline="true" rows="2" width="850px" />
+										<textbox id="documentRemarks" maxlength="3000" multiline="true" rows="2"
+											width="850px" />
 
 									</row>
 								</rows>
@@ -206,8 +181,7 @@
 								</columns>
 								<rows>
 									<row>
-										<label
-											id="label_DocumentTypeApprove"
+										<label id="label_DocumentTypeApprove"
 											value="${c:l('label_LegalDocumentDialog_DocumentTypeApprove.value')}" />
 										<hbox>
 											<space spacing="2px"
@@ -215,9 +189,9 @@
 											<combobox
 												id="documentTypeApprove" width="180px" />
 										</hbox>
-										<label
-											id="label_DocumentAccepted"
+										<label id="label_DocumentAccepted"
 											value="${c:l('label_LegalDocumentDialog_DocumentAccepted.value')}" />
+
 										<hbox>
 											<space spacing="2px"
 												sclass="mandatory" />
@@ -229,7 +203,7 @@
 								</rows>
 							</grid>
 						</groupbox>
-						
+
 						<groupbox id="gb_documentDetailsTracking" sclass="gb-dialog">
 							<caption label="${c:l('caption_LegalDocumentDialog_LegalDocumentDetailsTrackign.value')}" />
 							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
@@ -241,38 +215,41 @@
 								</columns>
 								<rows>
 									<row>
-										<label id="label_DocumentHolderProperty" value="${c:l('label_LegalDocumentDialog_DocumentHolderProperty.value')}" />
+										<label id="label_DocumentHolderProperty"
+											value="${c:l('label_LegalDocumentDialog_DocumentHolderProperty.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<!-- <listbox id="documentHolderProperty" width="180px" multiple="true" height="100px" rows="4" /> -->
 											<textbox id="documentHolderProperty" width="180px" />
-														<button id="btnHolderProperty" image="/images/icons/LOVSearch.png" />
+											<button id="btnHolderProperty" image="/images/icons/LOVSearch.png" />
 										</hbox>
-										<label id="label_DocumentPropertyAddress" value="${c:l('label_LegalDocumentDialog_DocumentPropertyAddress.value')}" />
+										<label id="label_DocumentPropertyAddress"
+											value="${c:l('label_LegalDocumentDialog_DocumentPropertyAddress.value')}" />
 										<hbox>
-											<space spacing="2px" sclass="mandatory"/>
-											<textbox id="documentPropertyAddress" width="180px" maxlength="60"/>
+											<space spacing="2px" sclass="mandatory" />
+											<textbox id="documentPropertyAddress" width="180px" maxlength="60" />
 										</hbox>
 									</row>
 									<row>
-										<label id="label_DocumentBriefTracking" value="${c:l('label_LegalDocumentDialog_DocumentBriefTracking.value')}" />
+										<label id="label_DocumentBriefTracking"
+											value="${c:l('label_LegalDocumentDialog_DocumentBriefTracking.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<textbox id="documentBriefTracking" width="180px" maxlength="60" />
 										</hbox>
-										<label id="label_DocumentMortgage" value="${c:l('label_LegalDocumentDialog_DocumentMortgage.value')}" />
+										<label id="label_DocumentMortgage"
+											value="${c:l('label_LegalDocumentDialog_DocumentMortgage.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<checkbox id="isDocumentMortgage" ></checkbox>
+											<checkbox id="isDocumentMortgage"></checkbox>
 										</hbox>
 									</row>
 								</rows>
 							</grid>
 						</groupbox>
-						
+
 						<div id="docDiv" />
-						<iframe id="documentPdfView" width="100%"
-							height="100%" />
+						<iframe id="documentPdfView" width="100%" height="450px" />
 					</div>
 				</center>
 				<south sclass="south-dialog" visible="false">
@@ -280,8 +257,7 @@
 						<caption label="${c:l('Action')}" />
 						<hbox width="95%">
 							<radiogroup id="userAction" name="action" />
-							<label id="label_RecordStatus"
-								value="${c:l('label_South_RecordStatus.value')}"
+							<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
 								sclass="label-status" />
 							<label id="recordStatus" />
 						</hbox>

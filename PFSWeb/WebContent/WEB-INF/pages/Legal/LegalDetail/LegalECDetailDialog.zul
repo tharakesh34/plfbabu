@@ -8,7 +8,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_LegalECDetailDialog" border="normal"
-			apply="${legalECDetailDialogCtrl}" width="80%" height="70%"
+			apply="${legalECDetailDialogCtrl}" width="100%" height="85%"
 			sizable="false">
 
 			<borderlayout id="borderlayoutLegalECDetail">

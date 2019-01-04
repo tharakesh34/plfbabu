@@ -142,7 +142,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(260);
-		this.extendedFieldTabPanel.setHeight((borderLayoutHeight - 175) + "px");
+		this.extendedFieldTabPanel.setHeight("100%");
 		generator.setCcyFormat(ccyFormat);
 		if (PennantConstants.MODULETYPE_ENQ.equals(moduleType)) {
 			this.btnSave.setVisible(false);
@@ -203,7 +203,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 
 			// Height Calculation
 			int height = borderLayoutHeight - 100;
-			this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
+			//this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

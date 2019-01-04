@@ -415,8 +415,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinCovenantType);
 
-			this.window_FinCovenantTypeDialog.setHeight("35%");
-			this.window_FinCovenantTypeDialog.setWidth("80%");
+			this.window_FinCovenantTypeDialog.setHeight("85%");
+			this.window_FinCovenantTypeDialog.setWidth("100%");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinCovenantTypeDialog.doModal();
 

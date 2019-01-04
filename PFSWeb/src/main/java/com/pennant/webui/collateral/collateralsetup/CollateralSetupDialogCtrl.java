@@ -579,8 +579,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		if (fromLoan || enqiryModule) {
 			this.btnDelete.setVisible(false);
 			this.btnNotes.setVisible(false);
-			this.window_CollateralSetupDialog.setHeight("80%");
-			this.window_CollateralSetupDialog.setWidth("90%");
+			this.window_CollateralSetupDialog.setHeight("85%");
+			this.window_CollateralSetupDialog.setWidth("100%");
 			this.groupboxWf.setVisible(false);
 			this.window_CollateralSetupDialog.doModal();
 		} else if ("E".equals(module)) {

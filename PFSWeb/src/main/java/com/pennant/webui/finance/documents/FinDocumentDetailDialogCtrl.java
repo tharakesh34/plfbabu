@@ -265,8 +265,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "DocumentDetailsDialog");
 			}
 
-			this.finDocumentDiv.setHeight(this.borderLayoutHeight - 260 + "px");// 425px
-			this.finDocumentPdfView.setHeight(this.borderLayoutHeight - 220 + "px");// 425px
+			this.finDocumentDiv.setHeight(this.borderLayoutHeight - 140 + "px");// 425px
+			this.finDocumentPdfView.setHeight(this.borderLayoutHeight - 100 + "px");// 425px
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -696,8 +696,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			//doCheckDocumentOwner();
 			if (isNewDocument()) {
-				this.window_FinDocumentDetailDialog.setHeight("70%");
-				this.window_FinDocumentDetailDialog.setWidth("70%");
+				this.window_FinDocumentDetailDialog.setHeight("85%");
+				this.window_FinDocumentDetailDialog.setWidth("100%");
 				this.groupboxWf.setVisible(false);
 				this.window_FinDocumentDetailDialog.doModal();
 			} else {

@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_ExtendedFieldCaptureDialog" border="none" apply="${extendedFieldCaptureDialogCtrl}" mode="modal"
-			height="80%" width="90%" sizable="false">
+			height="85%" width="100%" sizable="false">
 			<borderlayout id="borderlayoutCoOwnerDetail">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
