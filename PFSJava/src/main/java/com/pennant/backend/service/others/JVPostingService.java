@@ -49,6 +49,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface JVPostingService {
 
@@ -110,5 +111,7 @@ public interface JVPostingService {
 	void deleteIAEntries(long batchReference);
 
 	long getBatchRerbyExpRef(String expReference);
+	
+	List<ErrorDetail> doMiscellaneousValidations(JVPosting posting);
 
 }

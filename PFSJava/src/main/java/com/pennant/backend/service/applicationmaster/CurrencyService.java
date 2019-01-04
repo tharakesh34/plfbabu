@@ -63,5 +63,7 @@ public interface CurrencyService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+	
+	Currency getCurrencyForCode(String code);
 
 }

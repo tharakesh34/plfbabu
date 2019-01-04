@@ -3725,4 +3725,31 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return isdeveloperFinance;
 		
 	}
+
+	@Override
+	public FinanceMain getFinanceDetailsByFinRefence(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		FinanceMain financeMain = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		
+		StringBuilder sql = new StringBuilder("SELECT * From ");
+		sql.append("FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference");
+		sql.append(" ORDER BY FinReference ASC,FinType ASC");
+		logger.debug(Literal.SQL + sql.toString());
+		
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try	{
+			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch(Exception e)	{
+			e.printStackTrace();
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return financeMain;
+	}
 }

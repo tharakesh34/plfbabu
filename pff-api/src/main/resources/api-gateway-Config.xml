@@ -579,4 +579,32 @@
 	<jaxws:endpoint id="remarksSoapService" implementor="#wsRemarksService" address="/remarksSoap"
 		publish="false">
 	</jaxws:endpoint>
+	
+	<!-- Miscellaneous Post API Gateway -->
+	<bean id="wsMiscellaneousService" class="com.pennanttech.service.impl.MiscellaneousWebServiceImpl" />
+	
+	<!-- REST Container -->
+	<jaxrs:server id="miscellaneousRestService" address="/miscellaneousRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsMiscellaneousService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="miscellaneousSoapService" implementor="#wsMiscellaneousService" address="/miscellaneousSoap"
+		publish="false">
+	</jaxws:endpoint>
 </beans>

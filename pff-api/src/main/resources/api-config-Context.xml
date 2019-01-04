@@ -154,4 +154,8 @@
 	
 	<!-- Remarks Controller -->
 	<bean id="remarksController" class="com.pennanttech.controller.RemarksController" autowire="byName" scope="prototype"></bean>
+	
+	<!-- Miscellaneous Controller -->	
+	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController" autowire="byName" scope="prototype">
+	</bean>
 </beans>

@@ -29,6 +29,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -37,6 +43,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>JVPostingEntry table</b>.<br>
  * 
  */
+@XmlType(propOrder = {"txnAmount", "txnCode", "account"})
+@XmlRootElement(name = "postingEntry")
+@XmlAccessorType(XmlAccessType.NONE)
 public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
@@ -50,15 +59,18 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private String base;
 	private String suffix;
 	private String drORcr;
+	@XmlElement
 	private String account;
 	private String accountName;
 	private String txnEntry;
 	private String txnCCy;
 	private String accCCy;
+	@XmlElement
 	private String txnCode;
 	private String txnDesc;
 	private Date postingDate;
 	private Date valueDate;
+	@XmlElement
 	private BigDecimal txnAmount;
 	private String narrLine1;
 	private String narrLine2;
@@ -99,6 +111,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private JVPostingEntry befImage;
 	private LoggedInUser userDetails;
+	private String finSourceID;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -148,6 +161,7 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("debitTxnDesc");
 		excludeFields.add("debitAcType");
 		excludeFields.add("debitAcname");
+		excludeFields.add("finSourceID");
 		return excludeFields;
 	}
 
@@ -593,6 +607,14 @@ public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {
 
 	public void setDebitAcname(String debitAcname) {
 		this.debitAcname = debitAcname;
+	}
+
+	public String getFinSourceID() {
+		return finSourceID;
+	}
+
+	public void setFinSourceID(String finSourceID) {
+		this.finSourceID = finSourceID;
 	}
 
 }

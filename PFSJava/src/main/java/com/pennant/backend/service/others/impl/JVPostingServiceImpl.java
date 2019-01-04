@@ -34,6 +34,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.AccountConstants;
@@ -46,13 +48,21 @@ import com.pennant.backend.dao.expenses.LegalExpensesDAO;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
+import com.pennant.backend.model.applicationmaster.Currency;
+import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.LegalExpenses;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.AccountMappingService;
+import com.pennant.backend.service.applicationmaster.CurrencyService;
+import com.pennant.backend.service.applicationmaster.TransactionCodeService;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -76,6 +86,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
 	private AccountProcessUtil accountProcessUtil;
+	
+	private FinanceMainService financeMainService;
+	private CurrencyService currencyService;
+	private TransactionCodeService transactionCodeService;
+	private AccountMappingService accountMappingService;
 
 	public JVPostingServiceImpl() {
 		super();
@@ -427,10 +442,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						entry.setLinkedTranId(linkedTranId);
 					}
 				}
-				// Update Child Records Status
-				getjVPostingEntryDAO().updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
-				// Updating Header Status
-				getjVPostingDAO().updateBatchPostingStatus(jVPosting, "_Temp");
+				if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
+					// Update Child Records Status
+					getjVPostingEntryDAO().updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
+					// Updating Header Status
+					getjVPostingDAO().updateBatchPostingStatus(jVPosting, "_Temp");
+				}
 				// Regular Approving Process moving total Batch into main table
 				// and remove from Temp Table.
 				approveRecords(auditHeader, jVPosting);
@@ -477,7 +494,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			auditDetails.addAll(details);
 		}
 
-		getjVPostingDAO().delete(jVPosting, "_Temp");
+		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
+			getjVPostingDAO().delete(jVPosting, "_Temp");
+		}
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader
 				.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_Temp", auditHeader.getAuditTranType())));
@@ -994,6 +1013,210 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		getjVPostingEntryDAO().deleteIAEntries(batchReference);
 		logger.debug("Leaving");
 	}
+	
+	public List<ErrorDetail> doMiscellaneousValidations(final JVPosting posting)	{
+		List<ErrorDetail> errorsList = new ArrayList<>();
+		
+		if(StringUtils.isBlank(posting.getBranch()))	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "Branch";
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(StringUtils.isBlank(posting.getReference()))	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "Reference";
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			
+			return errorsList;
+		}
+		
+		FinanceMain financeMain = financeMainService.getFinanceByFinReference(posting.getReference(), "_AView");
+		if(null == financeMain)	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "branch " + posting.getBranch();
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(!(StringUtils.equals(posting.getBranch(), financeMain.getFinBranch())))	{
+			String[] valueParm = new String[1];
+			valueParm[0] = posting.getBranch();
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(StringUtils.isBlank(posting.getBatch()))	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "Batch";
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(StringUtils.length(posting.getBatch()) > 5)	{
+			String[] valueParm = new String[2];
+			valueParm[0] = "batch";
+			valueParm[1] = "5";
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(!(StringUtils.isBlank(posting.getCurrency())))	{
+			Currency currency = currencyService.getCurrencyForCode(posting.getCurrency());
+			if(null == currency)	{
+				String[] valueParm = new String[1];
+				valueParm[0] = "currency " + posting.getCurrency();
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
+				
+				return errorsList;
+			}
+			
+			if(!(StringUtils.equals(posting.getCurrency(), currency.getCcyCode())))	{
+				String[] valueParm = new String[1];
+				valueParm[0] = "for currency " + posting.getCurrency();
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("API004", valueParm)));
+				
+				return errorsList;
+			}
+		}
+		
+		int count = financeMainService.getFinanceCountById(posting.getReference(), false);
+		if (count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = posting.getReference();
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
+			
+			return errorsList;
+		}
+		
+		List<JVPostingEntry> postingEntries = posting.getJVPostingEntrysList();
+		if(CollectionUtils.isEmpty(postingEntries))	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "postingEntry";
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			
+			return errorsList;
+		}
+		
+		BigDecimal txnAmount = null;
+		String txnCode = null;
+		String account = null;
+		for (JVPostingEntry postingEntry : postingEntries) {
+			txnAmount = postingEntry.getTxnAmount();
+			txnCode = postingEntry.getTxnCode();
+			account = postingEntry.getAccount();
+			
+			if(null == txnAmount)	{
+				String[] valueParm = new String[1];
+				valueParm[0] = "transactionAmount";
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30556", valueParm)));
+				
+				return errorsList;
+			}
+			
+			if(txnAmount.compareTo(BigDecimal.ZERO) == 0)	{
+				String[] valueParm = new String[1];
+				valueParm[0] = "transactionAmount";
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
+				
+				return errorsList;
+			}
+			
+			if(StringUtils.isBlank(txnCode))	{
+				String[] valueParm = new String[1];
+				valueParm[0] = "transactionCode";
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				
+				return errorsList;
+			}
+			
+			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+			if(null == transactionCode)	{
+				String[] valueParm = new String[2];
+				valueParm[0] = "transactionCode";
+				valueParm[1] = postingEntry.getTxnCode();
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90295", valueParm)));
+				
+				return errorsList;
+			}
+			
+			if(StringUtils.isBlank(account))	{
+				String[] valueParm = new String[1];
+				valueParm[0] = "account";
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				
+				return errorsList;
+			}
+			
+			AccountMapping accountMapping = accountMappingService.getApprovedAccountMapping(postingEntry.getAccount());
+			if(null == accountMapping)	{
+				String[] valueParm = new String[2];
+				valueParm[0] = "Account";
+				valueParm[1] = postingEntry.getAccount();
+				
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+				
+				return errorsList;
+			}
+		}
+		
+		if(postingEntries.size() % 2 == 0)	{
+			BigDecimal totalDebits = BigDecimal.ZERO;
+			BigDecimal totalCredits = BigDecimal.ZERO;
+			for (JVPostingEntry postingEntry : postingEntries) {
+				TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+				switch(transactionCode.getTranType())	{
+					case "D":
+						totalDebits = totalDebits.add(postingEntry.getTxnAmount());
+						break;
+					case "C":
+						totalCredits = totalCredits.add(postingEntry.getTxnAmount());
+						break;
+				}
+			}
+			
+			if (!(totalDebits.compareTo(totalCredits) == 0))	{
+				String[] valueParm = new String[2];
+				valueParm[0] = "TransactionAmount " + totalCredits.toString();
+				valueParm[1] = totalDebits.toString();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+				
+				return errorsList;
+			}
+		} else	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "Credit and Debit PostingEntry";
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			
+			return errorsList;
+		}
+		
+		
+		
+		return errorsList;
+	}
 
 	/**
 	 * This method gets the max endnum
@@ -1161,6 +1384,26 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
+	}
+	
+	@Autowired
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
+	}
+
+	@Autowired
+	public void setCurrencyService(CurrencyService currencyService) {
+		this.currencyService = currencyService;
+	}
+	
+	@Autowired
+	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
+		this.transactionCodeService = transactionCodeService;
+	}
+
+	@Autowired
+	public void setAccountMappingService(AccountMappingService accountMappingService) {
+		this.accountMappingService = accountMappingService;
 	}
 
 }

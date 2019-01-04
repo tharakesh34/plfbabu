@@ -11,10 +11,10 @@
  */
 
 /**
- ******************************************************************************************** 
  * FILE HEADER *
  ******************************************************************************************** 
  * * FileName : JVPosting.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2013 * * Modified Date :
+ ******************************************************************************************** 
  * 21-06-2013 * * Description : * *
  ******************************************************************************************** 
  * Date Author Version Comments *
@@ -32,6 +32,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -41,12 +46,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>JVPosting table</b>.<br>
  * 
  */
+@XmlRootElement(name = "posting")
+@XmlType(propOrder = {"branch", "batch", "currency", "reference", "JVPostingEntrysList"})
 public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-
+	
+	@XmlElement
 	private String batch;
 	private String filename;
 	private long batchReference;
+	@XmlElement
 	private String currency;
 	private String exchangeRateType;
 	private String RateTypeDescription;
@@ -60,9 +69,12 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private String txnId = "";
 	private Date postingDate;
 	private String finType = "";
+	@XmlElement
 	private String branch = "";
 	private String branchDesc = "";
 	private boolean rePostingModule = false;
+	@XmlElementWrapper(name = "postingEntry")
+	@XmlElement(name = "postingEntry")
 	private List<JVPostingEntry> JVPostingEntrysList = new ArrayList<JVPostingEntry>();
 	private List<JVPostingEntry> postingEntryList = new ArrayList<JVPostingEntry>();
 	private List<JVPostingEntry> deletedJVPostingEntryList = new ArrayList<JVPostingEntry>();
@@ -74,9 +86,11 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private JVPosting befImage;
 	private LoggedInUser userDetails;
 	private String postAgainst;
+	@XmlElement
 	private String reference;
 	private String postingDivision;
 	private String divisionCodeDesc;
+	private String finSourceID;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -99,6 +113,7 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("txnId");
 		excludeFields.add("finType");
 		excludeFields.add("divisionCodeDesc");
+		excludeFields.add("finSourceID");
 		return excludeFields;
 	}
 
@@ -369,6 +384,14 @@ public class JVPosting extends AbstractWorkflowEntity implements Entity {
 
 	public void setDivisionCodeDesc(String divisionCodeDesc) {
 		this.divisionCodeDesc = divisionCodeDesc;
+	}
+
+	public String getFinSourceID() {
+		return finSourceID;
+	}
+
+	public void setFinSourceID(String finSourceID) {
+		this.finSourceID = finSourceID;
 	}
 
 }

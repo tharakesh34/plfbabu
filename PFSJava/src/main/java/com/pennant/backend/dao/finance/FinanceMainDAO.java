@@ -323,4 +323,6 @@ public interface FinanceMainDAO {
 	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
 	
+	FinanceMain getFinanceDetailsByFinRefence(String reference, String type);
+	
 }

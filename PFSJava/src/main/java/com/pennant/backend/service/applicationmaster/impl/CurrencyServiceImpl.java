@@ -363,4 +363,9 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+
+	@Override
+	public Currency getCurrencyForCode(String code) {
+		return currencyDAO.getCurrencyByCode(code);
+	}
 }
