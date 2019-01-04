@@ -166,4 +166,5 @@ public class ImplementationConstants {
 	// through API.
 	public static final boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API = false;
 
+	public static final boolean ALLOW_LEGAL_REQ_CHANGE = true;
 }

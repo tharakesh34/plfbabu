@@ -14148,6 +14148,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		 */
 		if (financeDetail.isLegalInitiator()) {
 			legalRequiredRow.setVisible(true);
+			legalRequired.setDisabled(!ImplementationConstants.ALLOW_LEGAL_REQ_CHANGE);
 		} else {
 			legalRequiredRow.setVisible(false);
 		}
