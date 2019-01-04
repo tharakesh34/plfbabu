@@ -120,7 +120,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Datebox docReceivedDt;
 	protected Space space_documentName;
 	protected Space space_docReceivedDt;
-	protected Space space_docBarcode;
+	//protected Space space_docBarcode;
 
 	protected Div finDocumentDiv; // autowired
 
@@ -514,11 +514,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		this.docOriginal.setChecked(aDocumentDetails.isDocOriginal());
 		this.docBarcode.setValue(aDocumentDetails.getDocBarcode());
-		if (this.docOriginal.isChecked()) {
-			this.docBarcode.setReadonly(false);
-		} else {
-			this.docBarcode.setValue("");
-		}
+		/*
+		 * if (this.docOriginal.isChecked()) { this.docBarcode.setReadonly(false); } else {
+		 * this.docBarcode.setValue(""); }
+		 */
 		this.documnetName.setReadonly(true);
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setReadonly(false);
@@ -602,11 +601,21 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			wve.add(we);
 		}
 
+		/*
+		 * try { aDocumentDetails.setDocOriginal(this.docOriginal.isChecked()); if (this.docOriginal.isChecked()) {
+		 * aDocumentDetails.setDocBarcode(this.docBarcode.getValue()); } } catch (WrongValueException we) { wve.add(we);
+		 * }
+		 */
+
 		try {
 			aDocumentDetails.setDocOriginal(this.docOriginal.isChecked());
-			if (this.docOriginal.isChecked()) {
-				aDocumentDetails.setDocBarcode(this.docBarcode.getValue());
-			}
+
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aDocumentDetails.setDocBarcode(this.docBarcode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -743,10 +752,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate") }));
 			}
 		}
-		if (this.docOriginal.isChecked()) {
+		if (!this.docBarcode.isReadonly()) {
 			this.docBarcode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentBarcode.value"),
-							PennantRegularExpressions.REGEX_BARCODE_NUMBER, true));
+			new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentBarcode.value"),
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
 		logger.debug("Leaving");
@@ -759,9 +768,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		setValidationOn(false);
 		this.documnetName.setConstraint("");
-		if (this.docOriginal.isChecked()) {
-			this.docBarcode.setConstraint("");
-		}
+		this.docBarcode.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1198,17 +1205,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 	}
 
-	public void onCheck$docOriginal(Event event) throws Exception {
-		if (this.docOriginal.isChecked()) {
-			this.docBarcode.setReadonly(false);
-			this.space_docBarcode.setSclass(PennantConstants.mandateSclass);
-		} else {
-			this.docBarcode.setValue("");
-			this.docBarcode.setReadonly(true);
-			this.space_docBarcode.setSclass("");
-		}
-	}
-
+	/*
+	 * public void onCheck$docOriginal(Event event) throws Exception { if (this.docOriginal.isChecked()) {
+	 * this.docBarcode.setReadonly(false); this.space_docBarcode.setSclass(PennantConstants.mandateSclass); } else {
+	 * this.docBarcode.setValue(""); this.docBarcode.setReadonly(true); this.space_docBarcode.setSclass(""); } }
+	 */
 	/**
 	 * Get the Reference value
 	 */
