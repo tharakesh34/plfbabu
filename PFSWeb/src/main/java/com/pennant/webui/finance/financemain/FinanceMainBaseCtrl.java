@@ -355,6 +355,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox finStartDate;
 	protected Textbox promotionProduct;
 	protected Textbox finDivisionName;
+	protected Textbox businessVertical;
 	protected Textbox finType;
 	protected Textbox finReference;
 	protected Space space_finReference;
@@ -4135,6 +4136,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.legalRequired.setChecked(aFinanceMain.isLegalRequired());
 
 		doFillEnquiryList(getFinBasicDetails());
+		
+		// tasks #1152 Business Vertical Tagged with Loan
+		if (aFinanceMain.getBusinessVertical() != null) {
+			this.businessVertical.setValue(aFinanceMain.getBusinessVerticalCode()+" - "+aFinanceMain.getBusinessVerticalDesc());
+			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
+		}else{
+			this.businessVertical.setAttribute("Id", null );
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -12435,6 +12444,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.debug(" Total Exposure for Reference " + aFinanceMain.getFinReference() + "---"
 				+ aFinanceMain.getTotalExposure());
+		
+		// tasks #1152 Business Vertical Tagged with Loan
+		this.businessVertical.getValue();
+		Object object = this.businessVertical.getAttribute("Id");
+		if (object != null) {
+			aFinanceMain.setBusinessVertical(Long.parseLong(object.toString()));
+		} else {
+			aFinanceMain.setBusinessVertical(null);
+		}
 
 		return wve;
 	}

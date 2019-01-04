@@ -77,6 +77,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -1080,6 +1081,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customerDetails.setCustomerDedupList(customerDedupList);
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}
+		
+		//  tasks #1152 Business Vertical Tagged with Loan
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
+		financeMain.setBusinessVertical(user.getBusinessVertical());
+		financeMain.setBusinessVerticalCode(user.getBusinessVerticalCode());
+		financeMain.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
+		
 		showDetailView(financeDetail);
 		return true;
 	}

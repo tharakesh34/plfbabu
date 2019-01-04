@@ -787,12 +787,14 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 					this.searchObj.addTabelName("FinanceEnquiry_View");
 				} else {
 					this.searchObj.addTabelName("FinanceEnquiry_Hierarchy_View");
+					this.searchObj.addFilter(new Filter("Reporting_To", getUserWorkspace().getUserId()));
 				}
 			} else {
 				if (this.myRecords.isSelected()) {
 					this.searchObj.addTabelName("FinanceEnquiry_TView");
 				} else {
 					this.searchObj.addTabelName("FinanceEnquiry_Hierarchy_TView");
+					this.searchObj.addFilter(new Filter("Reporting_To", getUserWorkspace().getUserId()));
 				}
 			}
 		}
@@ -1034,7 +1036,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			}
 		}
 		if (!rejectedList) {
-			searchObj.addWhereClause(getUsrFinAuthenticationQry(false));
+			if (this.myRecords.isSelected()) {
+				searchObj.addWhereClause(getUsrFinAuthenticationQry(false));
+			}
 			if (getUserWorkspace().isAllowed("isUserSpeicfic_Enquiry") && !approvedList) {
 				this.searchObj.removeFiltersOnProperty("FinReference");
 

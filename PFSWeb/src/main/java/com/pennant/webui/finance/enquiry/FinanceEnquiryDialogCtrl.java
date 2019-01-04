@@ -493,6 +493,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean fromApproved;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private boolean chartReportLoaded;
+	// tasks #1152 Business Vertical Tagged with Loan
+	protected Textbox businessVertical;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1425,6 +1427,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		//fill od penality details
 		dofillOdPenalityDetails(getFinScheduleData().getFinODPenaltyRate());
+
+		// tasks #1152 Business Vertical Tagged with Loan
+		if (aFinanceMain.getBusinessVertical() != null) {
+			this.businessVertical.setValue(aFinanceMain.getBusinessVerticalCode()+" - "+aFinanceMain.getBusinessVerticalDesc());
+			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
+		}else{
+			this.businessVertical.setAttribute("Id", null );
+		}
 
 		logger.debug("Leaving");
 	}

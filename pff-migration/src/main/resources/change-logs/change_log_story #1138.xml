@@ -3203,7 +3203,7 @@
 			  T3.CustShrtName LovDescCustShrtName,
 			  T4.BranchDesc LovDescFinBranchName,
 			  T5.CustTypeCtg,
-			  COALESCE(T9.NOINST,0) NOINST
+			  COALESCE(T9.NOINST,0) NOINST,
 			  --T1.PROMOTIONSEQID ,
 			  --T1.PromotionCode,
 			  --T2.FinTypeClassification,
@@ -3215,7 +3215,8 @@
 			  --T1.AlwStrtPrdHday,
 			  --T1.StrtPrdHdays,
 			  --T1.StrtprdCpzMethod,
-			  --T1.FlexiType
+			  --T1.FlexiType,
+			  H.Reporting_To
 			FROM FinanceMain T1
 			inner join USER_HIERARCHY H ON T1.BusinessVertical = COALESCE(H.Business_Vertical, T1.BusinessVertical)
 			and T1.FINCATEGORY = COALESCE(H.Product, T1.FINCATEGORY) 
@@ -3273,7 +3274,7 @@
 			  T3.CustShrtName LovDescCustShrtName,
 			  T4.BranchDesc LovDescFinBranchName,
 			  T5.CustTypeCtg,
-			  COALESCE(T9.NOINST,0) NOINST
+			  COALESCE(T9.NOINST,0) NOINST,
 			--  T1.PROMOTIONSEQID ,
 			--  T1.PromotionCode ,
 			--  T2.FinTypeClassification,
@@ -3284,7 +3285,8 @@
 			--  T1.DropLineCalcOn,
 			--  T1.AlwStrtPrdHday,
 			--  T1.StrtPrdHdays,
-			--  T1.StrtprdCpzMethod
+			--  T1.StrtprdCpzMethod,
+				H.Reporting_To
 			FROM FinanceMain_Temp T1
 			inner join USER_HIERARCHY H ON T1.BusinessVertical = COALESCE(H.Business_Vertical, T1.BusinessVertical)
 			and T1.FINCATEGORY = COALESCE(H.Product, T1.FINCATEGORY) 

@@ -494,6 +494,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			entity.setEntityCode(aBranch.getEntity());
 			entity.setEntityDesc(aBranch.getEntityDesc());
 			this.entity.setObject(entity);
+			this.entity.setValue(aBranch.getEntity());
 			onChangeEntity();
 		}
 		

@@ -172,9 +172,13 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 				" T1.UsrAcExp, T1.UserStaffID, T1.UsrAcLocked,T1.UsrLanguage,T1.UsrDftAppCode,T1.UsrBranchCode,T1.UsrDeptCode,T1.PwdExpDt,");
 		selectSql.append(
 				" T1.UsrToken, T1.UsrIsMultiBranch,T1.UsrInvldLoginTries,T1.UsrAcExpDt,T1.LastMntOn, T1.LastMntBy,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.LastLoginOn,T1.LastFailLoginOn,");
-		selectSql.append(" T2.branchdesc AS lovdescusrbranchcodename");
+		selectSql.append(" T2.branchdesc AS lovdescusrbranchcodename,");
+		selectSql.append(" T1.businessVertical, "); 	// tasks #1152 Business Vertical Tagged with Loan
+		selectSql.append(" T3.code businessVerticalCode, ");
+		selectSql.append(" T3.description businessVerticalDesc");
 		selectSql.append(" FROM SecUsers T1");
-		selectSql.append(" LEFT JOIN rmtbranches T2 ON T1.usrbranchcode = T2.branchcode ");
+		selectSql.append(" LEFT JOIN rmtbranches T2 ON T1.usrbranchcode = T2.branchcode");
+		selectSql.append(" LEFT JOIN business_vertical T3 ON T1.businessVertical = T3.id ");
 		selectSql.append(" where UsrLogin = :usrLogin");
 		//FIXME Satish : Password should not retrieved to avoid this we have commented out the log printing. 
 		//		logger.debug("selectSql: " + selectSql.toString());

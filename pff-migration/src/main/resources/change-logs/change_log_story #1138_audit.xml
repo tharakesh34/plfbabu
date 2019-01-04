@@ -168,4 +168,5 @@
 			<column name="businessvertical" type="bigint" />
 		</addColumn>
 	</changeSet>
+	
 </databaseChangeLog>

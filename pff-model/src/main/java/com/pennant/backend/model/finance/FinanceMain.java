@@ -708,6 +708,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	//### 10-09-2018,Ticket id:124998
 	private String entityDesc;
 	
+	// tasks #1152 Business Vertical Tagged with Loan
+	private Long businessVertical;
+	private String businessVerticalCode;
+	private String businessVerticalDesc;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -876,6 +881,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		//Payment type check
 		excludeFields.add("chequeOrDDAvailable");
 		excludeFields.add("neftAvailable");
+		
+		// tasks #1152 Business Vertical Tagged with Loan
+		excludeFields.add("businessVerticalCode");
+		excludeFields.add("businessVerticalDesc");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -4068,5 +4077,29 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
+	}
+
+	public Long getBusinessVertical() {
+		return businessVertical;
+	}
+
+	public void setBusinessVertical(Long businessVertical) {
+		this.businessVertical = businessVertical;
+	}
+
+	public String getBusinessVerticalCode() {
+		return businessVerticalCode;
+	}
+
+	public void setBusinessVerticalCode(String businessVerticalCode) {
+		this.businessVerticalCode = businessVerticalCode;
+	}
+
+	public String getBusinessVerticalDesc() {
+		return businessVerticalDesc;
+	}
+
+	public void setBusinessVerticalDesc(String businessVerticalDesc) {
+		this.businessVerticalDesc = businessVerticalDesc;
 	}
 }

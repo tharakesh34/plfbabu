@@ -29,19 +29,6 @@
 											<column />
 										</columns>
 										<rows>
-											<row>
-												<label id="label_FinanceMainDialog_FinDivision" value="${c:l('label_FinanceMainDialog_FinDivision.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<textbox id="finDivisionName" width="250px" readonly="true" />
-												</hbox>
-												<label id="label_FinanceMainDialog_PromotionProduct" visible="false"
-													value="${c:l('label_FinanceMainDialog_PromotionProduct.value')}" />
-												<hbox id="hbox_PromotionProduct" visible="false">
-													<space spacing="2px" sclass="mandatory" />
-													<textbox id="promotionProduct" width="250px" readonly="true" />
-												</hbox>
-											</row>
 											<row visible="true">
 												<label id="label_FinanceMainDialog_FinReference" value="${c:l('label_FinanceMainDialog_FinReference.value')}" />
 												<hbox>
@@ -63,13 +50,32 @@
 													<space spacing="2px" />
 													<textbox id="finType" width="250px" readonly="true" />
 												</hbox>
+												<label id="label_FinanceMainDialog_PromotionProduct" visible="false"
+													value="${c:l('label_FinanceMainDialog_PromotionProduct.value')}" />
+												<hbox id="hbox_PromotionProduct" visible="false">
+													<space spacing="2px" sclass="mandatory" />
+													<textbox id="promotionProduct" width="250px" readonly="true" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_FinDivision" value="${c:l('label_FinanceMainDialog_FinDivision.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="finDivisionName" width="250px" readonly="true" />
+												</hbox>
+												<label id="label_FinanceMain Dialog_BusinessVertical"
+													value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+												<hbox>
+													<textbox id="businessVertical" width="250px"
+														readonly="true" />
+												</hbox>
+											</row>
+											<row visible="true">
 												<label id="label_FinanceMainDialog_FinCcy" value="${c:l('label_FinanceMainDialog_FinCcy.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<textbox id="finCcy" width="250px" readonly="true" />
 												</hbox>
-											</row>
-											<row visible="true">
 												<label id="label_FinanceMainDialog_ProfitDaysBasis" value="${c:l('label_FinanceMainDialog_ProfitDaysBasis.value')}" />
 												<hbox>
 													<space spacing="2px" />
