@@ -199,6 +199,7 @@ import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -925,9 +926,11 @@ public class AgreementGeneration implements Serializable {
 				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
 					SourcingDetail sourcingDetail = agreement.new SourcingDetail();
 					FinanceMain financeMain2 = detail.getFinScheduleData().getFinanceMain();
-					sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
+					sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaName()));
+					sourcingDetail.setDsaCode(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
 					sourcingDetail.setDsaNameDesc((StringUtils.trimToEmpty(financeMain2.getDsaCodeDesc())));
 					sourcingDetail.setDmaCodeDesc(StringUtils.trimToEmpty(financeMain2.getDmaCodeDesc()));
+					sourcingDetail.setDmaName(StringUtils.trimToEmpty(financeMain2.getDmaName()));
 					sourcingDetail.setSourceChannel(StringUtils.trimToEmpty(financeMain2.getSalesDepartmentDesc()));
 					sourcingDetail.setSalesManager(StringUtils.trimToEmpty(financeMain2.getReferralId()));
 					sourcingDetail.setSalesManagerDesc(StringUtils.trimToEmpty(financeMain2.getReferralIdDesc()));
@@ -1179,28 +1182,19 @@ public class AgreementGeneration implements Serializable {
 											.getCrdRevElgSummaries()) {
 										if (finCreditRevSubCategory.getSubCategoryCode()
 												.equals(reviewEligibilitySummary.getSubCategoryCode())) {
-											if (subCategory.startsWith("Y0")) {
-												if (finCreditRevSubCategory.isFormat()) {
+											try {
+												if (subCategory.startsWith("Y0")) {
 													reviewEligibilitySummary
 															.setY0Amount(formateAmount(dataMap.get(subCategory), 2));
-												} else {
-													reviewEligibilitySummary.setY0Amount(dataMap.get(subCategory));
-												}
-											} else if (subCategory.startsWith("Y1")) {
-												if (finCreditRevSubCategory.isFormat()) {
+												} else if (subCategory.startsWith("Y1")) {
 													reviewEligibilitySummary
 															.setY1Amount(formateAmount(dataMap.get(subCategory), 2));
-												} else {
-													reviewEligibilitySummary.setY1Amount(dataMap.get(subCategory));
-												}
-
-											} else if (subCategory.startsWith("Y2")) {
-												if (finCreditRevSubCategory.isFormat()) {
+												} else if (subCategory.startsWith("Y2")) {
 													reviewEligibilitySummary
 															.setY2Amount(formateAmount(dataMap.get(subCategory), 2));
-												} else {
-													reviewEligibilitySummary.setY2Amount(dataMap.get(subCategory));
 												}
+											}catch(Exception e){
+												logger.error(Literal.EXCEPTION,e);
 											}
 										}
 									}

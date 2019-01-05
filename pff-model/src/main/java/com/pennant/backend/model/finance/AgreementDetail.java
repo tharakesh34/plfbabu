@@ -7002,10 +7002,12 @@ public class AgreementDetail {
 		private String sourceChannel = "";
 		private String salesPerson = "";
 		private String dsaName = "";
+		private String dsaCode="";
 		private String dsaNameDesc = "";
 		private String salesManager = "";
 		private String salesManagerDesc = "";
 		private String dmaCodeDesc = "";
+		private String dmaName="";
 
 		public SourcingDetail() {
 		}
@@ -7064,6 +7066,22 @@ public class AgreementDetail {
 
 		public void setDsaName(String dsaName) {
 			this.dsaName = dsaName;
+		}
+
+		public String getDsaCode() {
+			return dsaCode;
+		}
+
+		public void setDsaCode(String dsaCode) {
+			this.dsaCode = dsaCode;
+		}
+
+		public String getDmaName() {
+			return dmaName;
+		}
+
+		public void setDmaName(String dmaName) {
+			this.dmaName = dmaName;
 		}
 
 	}
