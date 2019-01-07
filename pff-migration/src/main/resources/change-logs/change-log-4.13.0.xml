@@ -30,5 +30,10 @@
 		</sql>
 	</changeSet>
 	
-	
+	<changeSet id="1" author="Vinay">
+		<sql>
+			update FinanceDeviations set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
+			update FinanceDeviations_Temp set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
+		</sql>
+	</changeSet>
 </databaseChangeLog>
