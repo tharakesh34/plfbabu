@@ -164,11 +164,13 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		super.doAddFilters();
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			this.searchObject.addWhereClause(" ReceiptPurpose = '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT
-					+ "' AND  (RecordType IS NULL   OR RecordType='' )");
+			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
+			whereClause.append("AND ( ");
+			whereClause.append(getUsrFinAuthenticationQry(false));
+			whereClause.append(")");
+			this.searchObject.addWhereClause(whereClause.toString());
 		} else {
-			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT
-					+ "' AND (RecordType IS NULL   OR RecordType='' )");
+			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND (RecordType IS NULL   OR RecordType='' )");
 		}
 	}
 
@@ -356,17 +358,20 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	public void onClick$btnSearchBranch(Event event) {
 		logger.debug("Entering  " + event.toString());
 
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
+		
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptEnquiryList, "Branch",
-					this.finBranch.getValue(), new Filter[] {});
+					this.finBranch.getValue(), filters);
 			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
 		} else {
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Branch");
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Branch", this.finBranch.getValue(), filters);
 			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
 			} else {

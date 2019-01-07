@@ -157,8 +157,11 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		this.searchObject.addWhereClause(
-				" ReceiptModeStatus = '" + RepayConstants.PAYSTATUS_FEES + "' AND RecordType IS NOT NULL ");
+		StringBuilder whereClause = new StringBuilder(" ReceiptModeStatus = '" + RepayConstants.PAYSTATUS_FEES + "' AND RecordType IS NOT NULL ");
+		whereClause.append("AND ( ");
+		whereClause.append(getUsrFinAuthenticationQry(false));
+		whereClause.append(")");
+		this.searchObject.addWhereClause(whereClause.toString());
 	}
 
 	/**
@@ -341,18 +344,21 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 */
 	public void onClick$btnSearchBranch(Event event) {
 		logger.debug("Entering  " + event.toString());
+		
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
 
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FeeReceiptList, "Branch",
-					this.finBranch.getValue(), new Filter[] {});
+					this.finBranch.getValue(), filters);
 			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
 		} else {
-			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "Branch");
+			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "Branch", this.finBranch.getValue(), filters);
 			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
 			} else {
