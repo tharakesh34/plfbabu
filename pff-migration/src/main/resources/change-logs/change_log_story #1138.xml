@@ -1102,11 +1102,6 @@
 			</column>
 		</createTable>
 	</changeSet>
-		
-	<changeSet id="40.1_Pre" author="shinde.b">
-		<dropView viewName="secusr_reporting_managers_aviw"/>
-		<dropView viewName="secusr_reporting_managers_view"/>
-	</changeSet>
 	<changeSet id="40.1" author="shinde.b">
 		<modifyDataType tableName="secusr_reporting_managers" columnName="branch" newDataType="varchar(12)"/>
 	</changeSet>
@@ -1432,7 +1427,7 @@
 				t2.appcode lovdescusrdftappcode,
 				t2.appdescription lovdescusrdftappcodename,
 				t1.usrbranchcode,
-				t4.branchdesc lovdescusrbranchcodename,
+				t4.branchdesADMIN_OFFICERc lovdescusrbranchcodename,
 				t1.usrdeptcode,
 				t3.deptdesc lovdescusrdeptcodename,
 				t1.usrtoken,
@@ -1459,7 +1454,7 @@
 			   FROM secusers_rtemp t1
 				 JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
 				 JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
-				 JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+				 JOIN rmtbraADMIN_OFFICERnches t4 ON t1.usrbranchcode = t4.branchcode
 				 JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
 				 JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
 			                             JOIN business_vertical t7 ON t7.id = t1.businessvertical
