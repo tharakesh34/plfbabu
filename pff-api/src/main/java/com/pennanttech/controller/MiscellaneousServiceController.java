@@ -18,28 +18,75 @@ import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
+import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.fusioncharts.ChartSetElement;
+import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.dashboard.DashBoardRequest;
+import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousServiceController {
 	
 	private final Logger logger = Logger.getLogger(getClass());
+	
 	private FinanceMainService financeMainService;
 	private TransactionCodeService transactionCodeService;
 	private AccountMappingService accountMappingService;
 	private JVPostingService jVPostingService;
+	
+	private DashboardConfigurationService dashboardConfigurationService;
+	private UserService userService;
+	
+	private DashboardConfiguration setPrepareDashboardConfiguration(String dashboardCode)	{
+		
+		DashboardConfiguration dashboardConfiguration = new DashboardConfiguration();
+		dashboardConfiguration.setDashboardCode(dashboardCode);
+		
+		return dashboardConfiguration;
+	}
+	
+	public DashBoardResponse prepareDashboardConfiguration(DashBoardRequest request) {
+		
+		String user = null;
+		
+		if(null == request.getUserLogin())	{
+			LoggedInUser loggedUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()); 
+		}
+		
+		DashBoardResponse response = new DashBoardResponse();
+		
+		DashboardConfiguration config = dashboardConfigurationService.getApprovedDashboardDetailById(request.getUserLogin());
+		
+		if(config!=null){
+		
+		List<ChartSetElement> chartList= dashboardConfigurationService.getDashboardLabelAndValues(config);
+		response.setChartSetElement(chartList);
+		response.setDashboardConfiguration(config);
+		} else {
+		
+			String[] valueParm = new String[1];
+			valueParm[0] = request.getCode();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501",valueParm));
+			return response;
+		}
+				
+		
+		return response;
+	}
 	
 	private void setJVPostingEntryMandatoryFieldsData(JVPostingEntry postingEntry)	{
 		
@@ -56,13 +103,16 @@ public class MiscellaneousServiceController {
 	}
 		
 	private void setJVPostingMandatoryFieldsData(JVPosting posting)	{
+		
 		logger.info(Literal.ENTERING);
+		
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		posting.setUserDetails(userDetails);
 		posting.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		posting.setLastMntBy(userDetails.getUserId());
 		posting.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		posting.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		
 		logger.info(Literal.LEAVING);
 	}
 	
@@ -221,4 +271,9 @@ public class MiscellaneousServiceController {
 		this.jVPostingService = jVPostingService;
 	}
 	
+	public void setDashboardConfigurationService(DashboardConfigurationService dashboardConfigurationService) {
+		this.dashboardConfigurationService = dashboardConfigurationService;
+	}
+
+
 }

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+
 public class ChartSetElement extends ChartUtil implements Serializable {
 
 	private static final long serialVersionUID = 7091233294525883661L;
@@ -25,6 +27,7 @@ public class ChartSetElement extends ChartUtil implements Serializable {
 	private List<String> seriesList;
 	//command design pattern
 	private List<ChartSetElement> innerChrtSetElementsList;
+	private String finSourceId;
 
 	public ChartSetElement() {
 		super();
@@ -196,6 +199,14 @@ public class ChartSetElement extends ChartUtil implements Serializable {
 
 	public String getReference() {
 		return reference == null ? "" : reference;
+	}
+
+	public String getFinSourceId() {
+		return finSourceId;
+	}
+
+	public void setFinSourceId(String finSourceId) {
+		this.finSourceId = finSourceId;
 	}
 
 }

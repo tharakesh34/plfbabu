@@ -15,6 +15,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.MiscellaneousRestService;
 import com.pennanttech.pffws.MiscellaneousSoapService;
+import com.pennanttech.ws.model.dashboard.DashBoardRequest;
+import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, MiscellaneousSoapService {
@@ -23,6 +25,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private MiscellaneousServiceController miscellaneousController;
 	private JVPostingService jVPostingService;
 	
+	// jvposting
 	@Override
 	public WSReturnStatus createFinancePosting(JVPosting posting) throws ServiceException {
 		
@@ -44,6 +47,19 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		return returnStatus;
 	}
 	
+	// dashboard
+	@Override
+	public DashBoardResponse createDashboard(DashBoardRequest request) throws ServiceException {
+		
+		logger.info(Literal.ENTERING);
+		
+		DashBoardResponse chartSetElementsList = miscellaneousController.prepareDashboardConfiguration(request);
+		
+		logger.info(Literal.LEAVING);
+		
+		return null;
+	}
+	
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;
@@ -53,4 +69,5 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	public void setjVPostingService(JVPostingService jVPostingService) {
 		this.jVPostingService = jVPostingService;
 	}
+	
 }

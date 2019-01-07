@@ -595,6 +595,11 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 		logger.debug("Leaving");
 		return rootElementsList;
 	}
+	
+	@Override
+	public List<ChartSetElement> getDashboardLabelAndValues(DashboardConfiguration dashboardConfiguration) {
+		return dashboardConfigurationDAO.getLabelAndValues(dashboardConfiguration);
+	}
 
 	//Getters and Setters 
 	public DashboardConfigurationDAO getDashboardConfigurationDAO() {
@@ -625,4 +630,5 @@ public class DashboardConfigurationServiceImpl extends GenericService<DashboardC
 	public DetailStatisticsDAO getDetailStatisticsDAO() {
 		return detailStatisticsDAO;
 	}
+
 }

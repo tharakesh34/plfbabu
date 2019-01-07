@@ -78,4 +78,6 @@ public interface DashboardConfigurationService {
 			LoggedInUser user, List<SecurityRole> roles);
 
 	DashboardConfiguration getApprovedDashboardDetailById(String id);
+
+	List<ChartSetElement> getDashboardLabelAndValues(DashboardConfiguration dashboardConfiguration);
 }
