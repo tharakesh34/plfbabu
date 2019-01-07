@@ -73,6 +73,8 @@
 			<column name="remarks" type="varchar(4000)"/>
 		</addColumn>
 	</changeSet>
-	
+	<changeSet id="15" author="Vinay">
+		<modifyDataType tableName="adtrmtfinancetypes" columnName="finmaxterm" newDataType="decimal(4,0)"/>
+	</changeSet>
 </databaseChangeLog>
 	

@@ -2305,6 +2305,25 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="74.1.0_pre" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','rmtfinancetypes');
+			select deps_save_and_drop_dependencies('plf','rmtfinancetypes_temp');
+		</sql>
+	</changeSet>
+	
+	<changeSet id="136" author="Vinay">
+		<modifyDataType tableName="rmtfinancetypes" columnName="finmaxterm" newDataType="decimal(4,0)"/>
+		<modifyDataType tableName="rmtfinancetypes_temp" columnName="finmaxterm" newDataType="decimal(4,0)"/>
+	</changeSet>
+	
+	<changeSet id="74.1.0_post" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','rmtfinancetypes');
+			select deps_restore_dependencies('plf','rmtfinancetypes_temp');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
