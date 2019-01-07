@@ -6201,11 +6201,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				int maxDaysForFinRejection = financeType.getAutoRejectionDays();
 				List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
+				Date effctiveDate = DateUtility.addDays(DateUtility.getAppDate(), -(maxDaysForFinRejection-1));
 
 				for (String finreference : cancelList) {
 					Date finStartDate = cancelMap.get(finreference);
-					Date effctiveDate = DateUtility.addDays(finStartDate, -maxDaysForFinRejection);
-					if (DateUtility.compare(DateUtility.getAppDate(), effctiveDate) > 0) {
+					if (((DateUtility.compare(finStartDate, effctiveDate) < 0)
+							|| DateUtility.compare(finStartDate, effctiveDate) == 0)) {
 						FinanceDetail financeDetail = new FinanceDetail();
 						FinanceMain financeMain = new FinanceMain();
 						financeMain.setFinReference(finreference);
