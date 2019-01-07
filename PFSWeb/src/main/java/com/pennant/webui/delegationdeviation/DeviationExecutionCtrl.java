@@ -766,7 +766,7 @@ public class DeviationExecutionCtrl {
 	public void fillDeviationListbox(List<FinanceDeviations> newList, String role, String devModule) {
 		logger.debug(" Entering ");
 
-		removeTheOldDeviation(devModule, role, financeDeviations);
+		removeTheOldDeviation(devModule, financeDeviations);
 		financeDeviations.addAll(newList);
 		if (financeMainBaseCtrl != null && financeMainBaseCtrl.getDeviationDetailDialogCtrl() != null) {
 			financeMainBaseCtrl.getDeviationDetailDialogCtrl().doFillAutoDeviationDetails(financeDeviations);
@@ -779,22 +779,22 @@ public class DeviationExecutionCtrl {
 	 * it will remove the deviation with given role and module
 	 * 
 	 * @param devModule
-	 * @param role
 	 * @param oldList
 	 */
-	private void removeTheOldDeviation(String devModule, String role, List<FinanceDeviations> oldList) {
-		logger.debug(" Entering ");
+	private void removeTheOldDeviation(String devModule, List<FinanceDeviations> oldList) {
+		logger.debug(Literal.ENTERING);
 
 		Iterator<FinanceDeviations> it = oldList.iterator();
+		FinanceDeviations deviation;
+
 		while (it.hasNext()) {
-			FinanceDeviations financeDeviations = (FinanceDeviations) it.next();
-			if (financeDeviations.getModule().equals(devModule) && financeDeviations.getUserRole().equals(role)) {
+			deviation = it.next();
+			if (deviation.getModule().equals(devModule)) {
 				it.remove();
 			}
-
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
