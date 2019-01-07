@@ -6142,6 +6142,13 @@ UNION ALL
 </createView>
 </changeSet>
 
+<changeSet id="97_Pre.1" author="aditya" dbms="postgresql">
+	<sql>
+		select deps_save_and_drop_dependencies('plf','rmtfinancetypes_aview');
+	</sql>
+</changeSet>
+
+
 <changeSet id="97" author="aditya">
 <comment>New column "TaxNoMand" added for Loan Type Details(Loan basic details)</comment>
 <createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
@@ -6362,6 +6369,12 @@ SELECT t1.fintype,
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 </createView>
+</changeSet>
+
+<changeSet id="97_Post.1" author="aditya" dbms="postgresql">
+	<sql>
+		select deps_restore_dependencies('plf','rmtfinancetypes_aview');
+	</sql>
 </changeSet>
 
 <changeSet id="98" author="aditya">
