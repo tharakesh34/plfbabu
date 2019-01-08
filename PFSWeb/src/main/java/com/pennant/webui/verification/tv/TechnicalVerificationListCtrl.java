@@ -202,6 +202,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxTechnicalVerification.getSelectedItem();
 		long id = (long) selectedItem.getAttribute("id");
+		String agentName =(String)selectedItem.getAttribute("AgentName");
 		TechnicalVerification tv = technicalVerificationService.getTechnicalVerification(id, "_View");
 
 		if (tv == null) {
@@ -220,7 +221,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 			if (isWorkFlowEnabled() && tv.getWorkflowId() == 0) {
 				tv.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(tv);
+			doShowDialogPage(tv, agentName);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -234,13 +235,14 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	 * @param fieldinvestigation
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(TechnicalVerification technicalVerification) {
+	private void doShowDialogPage(TechnicalVerification technicalVerification,String agentName) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("technicalVerification", technicalVerification);
 		arg.put("technicalVerificationListCtrl", this);
 		arg.put("enqiryModule", enqiryModule);
+		arg.put("agentName", agentName);
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/Verification/TechnicalVerification/TechnicalVerificationDialog.zul", null, arg);

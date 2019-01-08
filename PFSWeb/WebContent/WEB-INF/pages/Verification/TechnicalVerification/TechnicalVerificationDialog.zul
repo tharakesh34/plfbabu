@@ -145,7 +145,7 @@
 												</hbox>
 												<label id="label_AgentCode" value="${c:l('label_TechnicalVerificationDialog_AgentCode.value')}" />
 												<hbox>
-													<space id="space_AgentCode" spacing="2px" sclass="mandatory" />
+													<space id="space_AgentCode" spacing="2px"/>
 													<uppercasebox id="agentCode" width="155px" />
 												</hbox>
 											</row>

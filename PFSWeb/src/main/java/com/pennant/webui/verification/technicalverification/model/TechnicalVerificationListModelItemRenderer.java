@@ -58,6 +58,7 @@ public class TechnicalVerificationListModelItemRenderer
 		lc.setParent(item);
 
 		item.setAttribute("id", tv.getId());
+		item.setAttribute("AgentName", tv.getAgencyName());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onTechnicalVerificationItemDoubleClicked");
 	}

@@ -154,6 +154,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 	private boolean fromLoanOrg;
 
+	private String agencyName;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -197,6 +199,10 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 			if (arguments.get("enqiryModule") != null) {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
+			}
+			
+			if (arguments.get("agentName") != null) {
+				this.agencyName = (String) arguments.get("agentName");
 			}
 
 			// Store the before image.
@@ -417,7 +423,13 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			}
 		}
 		this.agentCode.setValue(tv.getAgentCode());
-		this.agentName.setValue(tv.getAgentName());
+
+		if (StringUtils.isEmpty(tv.getAgentName())) {
+			this.agentName.setValue(this.agencyName);
+		} else {
+			this.agentName.setValue(tv.getAgentName());
+		}
+
 		this.valuationAmount.setValue(
 				PennantApplicationUtil.formateAmount(tv.getValuationAmount(), PennantConstants.defaultCCYDecPos));
 
@@ -868,7 +880,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		if (!this.agentCode.isReadonly()) {
 			this.agentCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TechnicalVerificationDialog_AgentCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, false));
 		}
 		if (!this.agentName.isReadonly()) {
 			this.agentName.setConstraint(
