@@ -2620,8 +2620,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		List<ClusterHierarchy> hierarchyList = clusterService.getClusterHierarcheyList(entity);
 		String lowermostchild = null;
 
-		if (hierarchyList.size() > 0) {
-			lowermostchild = hierarchyList.get(1).getClusterType();
+		if (hierarchyList.size() == 1 ) {
+			lowermostchild = hierarchyList.get(0).getClusterType();
+		}
+		else if(hierarchyList.size() > 1){
+			lowermostchild = hierarchyList.get(0).getClusterType();
 		}
 
 		if (lowermostchild != null) {
