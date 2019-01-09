@@ -80,4 +80,5 @@ public interface DashboardConfigurationService {
 	DashboardConfiguration getApprovedDashboardDetailById(String id);
 
 	List<ChartSetElement> getDashboardLabelAndValues(DashboardConfiguration dashboardConfiguration);
+
 }

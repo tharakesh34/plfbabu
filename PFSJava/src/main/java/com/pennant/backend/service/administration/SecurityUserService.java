@@ -88,4 +88,6 @@ public interface SecurityUserService {
 
 	public List<Entity> getEntityList(String entity);
 
+	public long getSecuredUserDetails(String username);
+
 }

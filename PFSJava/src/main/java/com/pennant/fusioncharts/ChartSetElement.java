@@ -4,15 +4,24 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.pennanttech.pennapps.core.model.ErrorDetail;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlType(propOrder = { "catogery", "series", "label", "value" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class ChartSetElement extends ChartUtil implements Serializable {
 
 	private static final long serialVersionUID = 7091233294525883661L;
 
+	@XmlElement
 	private String catogery;
+	@XmlElement
 	private String series = "";
+	@XmlElement
 	private String label;
+	@XmlElement
 	private BigDecimal value;
 	private String reference;//It is used for drill down charts to refer parent label 
 	private String displayValue;

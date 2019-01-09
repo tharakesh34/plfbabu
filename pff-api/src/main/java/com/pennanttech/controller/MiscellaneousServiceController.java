@@ -9,9 +9,11 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
+import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
@@ -22,6 +24,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
@@ -30,7 +33,6 @@ import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.fusioncharts.ChartSetElement;
-import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -49,48 +51,131 @@ public class MiscellaneousServiceController {
 	private JVPostingService jVPostingService;
 	
 	private DashboardConfigurationService dashboardConfigurationService;
-	private UserService userService;
+	private SecurityUserService securityUserService;
 	
-	private DashboardConfiguration setPrepareDashboardConfiguration(String dashboardCode)	{
-		
-		DashboardConfiguration dashboardConfiguration = new DashboardConfiguration();
-		dashboardConfiguration.setDashboardCode(dashboardCode);
-		
-		return dashboardConfiguration;
+	private List<ErrorDetail> doDashboardValidations(DashBoardRequest request, boolean usernameProvided) {
+
+		logger.debug(Literal.ENTERING);
+
+		List<ErrorDetail> errorsList = new ArrayList<>();
+		if (usernameProvided) {
+
+			if (StringUtils.isBlank(request.getCode())) {
+				String[] param = new String[1];
+				param[0] = "code";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+
+				return errorsList;
+			}
+
+			DashboardConfiguration configuration = dashboardConfigurationService
+					.getApprovedDashboardDetailById(request.getCode());
+			if (null == configuration) {
+				String[] param = new String[1];
+				param[0] = "dashboardcode: " + request.getCode();
+				errorsList.add(new ErrorDetail("90266", param));
+
+				return errorsList;
+			}
+
+			long userID = securityUserService.getSecuredUserDetails(request.getUserLogin());
+			if (userID <= 0) {
+				String[] param = new String[1];
+				param[0] = "userLogin: " + request.getUserLogin();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", param)));
+
+				return errorsList;
+			}
+		} else {
+			if (StringUtils.isBlank(request.getCode())) {
+				String[] param = new String[1];
+				param[0] = "code";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+
+				return errorsList;
+			}
+
+			DashboardConfiguration configuration = dashboardConfigurationService
+					.getApprovedDashboardDetailById(request.getCode());
+			if (null == configuration) {
+				String[] param = new String[1];
+				param[0] = "dashboardcode: " + request.getCode();
+				errorsList.add(new ErrorDetail("90266", param));
+
+				return errorsList;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+
+		return errorsList;
 	}
-	
+
 	public DashBoardResponse prepareDashboardConfiguration(DashBoardRequest request) {
 		
-		String user = null;
+		logger.debug(Literal.ENTERING);
+
+		DashBoardResponse response = null;
+		DashboardConfiguration config = null;
 		
-		if(null == request.getUserLogin())	{
-			LoggedInUser loggedUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()); 
+		if(StringUtils.isBlank(request.getUserLogin()))	{
+			response = new DashBoardResponse();
+			List<ErrorDetail> validationErrors = doDashboardValidations(request, false);
+			if (CollectionUtils.isEmpty(validationErrors)) {
+				LoggedInUser loggedUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+				request.setUserLogin(loggedUser.getUserName());
+
+				config = dashboardConfigurationService.getApprovedDashboardDetailById(request.getCode());
+				if (config != null) {
+					List<ChartSetElement> chartList = dashboardConfigurationService.getDashboardLabelAndValues(config);
+					response.setChartSetElement(chartList);
+					response.setDashboardConfiguration(config);
+					response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				} else {
+					String[] valueParm = new String[1];
+					valueParm[0] = request.getCode();
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501", valueParm));
+				}
+			} else {
+				for (ErrorDetail errorDetail : validationErrors) {
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+				}
+			}
 		}
-		
-		DashBoardResponse response = new DashBoardResponse();
-		
-		DashboardConfiguration config = dashboardConfigurationService.getApprovedDashboardDetailById(request.getUserLogin());
-		
-		if(config!=null){
-		
-		List<ChartSetElement> chartList= dashboardConfigurationService.getDashboardLabelAndValues(config);
-		response.setChartSetElement(chartList);
-		response.setDashboardConfiguration(config);
-		} else {
-		
-			String[] valueParm = new String[1];
-			valueParm[0] = request.getCode();
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501",valueParm));
-			return response;
+		else	{
+			// user login available in request
+			response = new DashBoardResponse();
+			List<ErrorDetail> validationErrors = doDashboardValidations(request, true);
+			if (CollectionUtils.isEmpty(validationErrors)) {
+				config = dashboardConfigurationService.getApprovedDashboardDetailById(request.getCode());
+				if (config != null) {
+					List<ChartSetElement> charSetElementsList = dashboardConfigurationService
+							.getDashboardLabelAndValues(config);
+					if (!CollectionUtils.isEmpty(charSetElementsList)) {
+						response.setChartSetElement(charSetElementsList);
+						response.setDashboardConfiguration(config);
+						response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+					} else {
+						String[] valueParm = new String[1];
+						valueParm[0] = request.getCode();
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501", valueParm));
+					}
+				}
+			} else {
+				for (ErrorDetail errorDetail : validationErrors) {
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+				}
+			}
 		}
-				
+		logger.debug(Literal.LEAVING);
 		
 		return response;
 	}
 	
 	private void setJVPostingEntryMandatoryFieldsData(JVPostingEntry postingEntry)	{
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		postingEntry.setUserDetails(userDetails);
@@ -99,12 +184,12 @@ public class MiscellaneousServiceController {
 		postingEntry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		postingEntry.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 	}
 		
 	private void setJVPostingMandatoryFieldsData(JVPosting posting)	{
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		posting.setUserDetails(userDetails);
@@ -113,12 +198,12 @@ public class MiscellaneousServiceController {
 		posting.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		posting.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public WSReturnStatus prepareJVPostData(JVPosting jvPosting)	{
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		JVPosting posting = new JVPosting();
@@ -213,14 +298,14 @@ public class MiscellaneousServiceController {
 			// financemain data is not available
 		}
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		
 		return returnStatus;
 	}
 	
 	private AuditHeader prepareAuditHeader(JVPosting aJVPosting, String tranType) {
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJVPosting.getBefImage(), aJVPosting);
 		AuditHeader auditHeader = new AuditHeader(aJVPosting.getReference(), Long.toString(aJVPosting.getBatchReference()), null, null, auditDetail, aJVPosting.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
@@ -228,14 +313,14 @@ public class MiscellaneousServiceController {
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
 		auditHeader.setApiHeader(reqHeaderDetails);
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		
 		return auditHeader;
 	}
 	
 	private WSReturnStatus saveJVPostingData(final JVPosting postReadyData)	{
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		
@@ -250,7 +335,7 @@ public class MiscellaneousServiceController {
 		else
 			returnStatus = APIErrorHandlerService.getSuccessStatus();
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		
 		return returnStatus;
 	}
@@ -275,5 +360,8 @@ public class MiscellaneousServiceController {
 		this.dashboardConfigurationService = dashboardConfigurationService;
 	}
 
+	public void setSecurityUserService(SecurityUserService securityUserService) {
+		this.securityUserService = securityUserService;
+	}
 
 }

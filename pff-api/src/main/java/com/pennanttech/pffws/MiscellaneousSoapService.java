@@ -12,7 +12,7 @@ import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 @WebService
 public interface MiscellaneousSoapService {
 	
-	public WSReturnStatus createFinancePosting(@WebParam(name ="posting") JVPosting posting) throws ServiceException;
+	public WSReturnStatus createPosting(@WebParam(name = "posting") JVPosting posting) throws ServiceException;
 	
 	public DashBoardResponse createDashboard(@WebParam(name = "dashboardRequest") DashBoardRequest dashboardRequest) throws ServiceException;
 

@@ -43,6 +43,11 @@
 
 package com.pennant.backend.model.dashboard;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -51,26 +56,37 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DashboardDetail table</b>.<br>
  *
  */
+@XmlType(propOrder = { "dashboardCode", "dashboardType", "drillDownChart", "dimension",
+		"caption", "multiSeries", "seriesType", "seriesValues" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class DashboardConfiguration extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = 7784852736807398980L;
 
+	@XmlElement
 	private String dashboardCode;
 	private String dashboardDesc;
+	@XmlElement
 	private String dashboardType;
 
 	private String query;
 	private String dataXML;
+	@XmlElement
 	private boolean drillDownChart;
 	private boolean lovDescIsDataAsXml;
 	private String remarks;
+	@XmlElement
 	private String dimension;
+	@XmlElement
 	private String caption;
 	private String subCaption;
 	private boolean adtDataSource;
+	@XmlElement
 	private boolean multiSeries;
 	private ChartsConfig lovDescChartsConfig;
+	@XmlElement
 	private String seriesType;
+	@XmlElement
 	private String seriesValues;
 	private String fieldQuery;
 	private String colorRangeXML;

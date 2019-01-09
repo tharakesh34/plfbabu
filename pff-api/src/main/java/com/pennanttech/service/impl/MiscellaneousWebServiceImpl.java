@@ -27,9 +27,9 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	
 	// jvposting
 	@Override
-	public WSReturnStatus createFinancePosting(JVPosting posting) throws ServiceException {
+	public WSReturnStatus createPosting(JVPosting posting) throws ServiceException {
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		List<ErrorDetail> validationErrors = jVPostingService.doMiscellaneousValidations(posting);
@@ -42,7 +42,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 			}
 		}
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		
 		return returnStatus;
 	}
@@ -51,13 +51,13 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	@Override
 	public DashBoardResponse createDashboard(DashBoardRequest request) throws ServiceException {
 		
-		logger.info(Literal.ENTERING);
+		logger.debug(Literal.ENTERING);
 		
-		DashBoardResponse chartSetElementsList = miscellaneousController.prepareDashboardConfiguration(request);
+		DashBoardResponse dashboardResponse = miscellaneousController.prepareDashboardConfiguration(request);
 		
-		logger.info(Literal.LEAVING);
+		logger.debug(Literal.LEAVING);
 		
-		return null;
+		return dashboardResponse;
 	}
 	
 	@Autowired

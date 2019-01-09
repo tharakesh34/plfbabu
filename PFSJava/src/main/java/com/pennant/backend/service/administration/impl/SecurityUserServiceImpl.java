@@ -1170,6 +1170,13 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		License.validateLicensedUsers(securityUsersDAO.getActiveUsersCount());
 	}
 
+	@Override
+	public long getSecuredUserDetails(String username) {
+		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
+		return securityUsersDAO.getUserByName(username);
+	}
+
 	public void setReportingManagerDAO(ReportingManagerDAO reportingManagerDAO) {
 		this.reportingManagerDAO = reportingManagerDAO;
 	}
