@@ -49,11 +49,14 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.administration.SecurityUserHierarchyDAO;
+import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUserHierarchy;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -74,13 +77,18 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("delete from user_hierarchy where UserId = :UserId");
+		
+		StringBuilder sql1 = new StringBuilder();
+		sql1.append("delete from user_hierarchy where Reporting_To = :UserId");
 
 		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql1.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UserId", userId);
 
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
+		this.jdbcTemplate.update(sql1.toString(), parameterSource);
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -185,15 +193,18 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 	public List<SecurityUserHierarchy> getUpLevelUsers(SecurityUserHierarchy userHierarchy) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("ReportingTo", userHierarchy.getReportingTo());
+		//parameterSource.addValue("ReportingTo", userHierarchy.getReportingTo());
+		parameterSource.addValue("UserId", userHierarchy.getUserId());
 		parameterSource.addValue("Depth", 1);
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" select reporting_to,depth from user_Hierarchy where userid =");
-		sql.append("(select userId from user_hierarchy where userId =:ReportingTo and depth =:Depth)");
-		sql.append(" and depth <> 0");
+//		sql.append(" select reporting_to,depth from user_Hierarchy where userid =");
+//		sql.append("(select userId from user_hierarchy where userId = :ReportingTo and depth = :Depth)");
+//		sql.append(" and depth <> 0");
 
+		sql.append(" select reporting_to from user_hierarchy where userId = :UserId  and depth = :Depth");
+		
 		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<SecurityUserHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
@@ -207,4 +218,68 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
+
+	@Override
+	public void getUpLevelUser(SecurityUserHierarchy userHierarchy) {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("UserId", userHierarchy.getUserId());
+		parameterSource.addValue("Depth", 1);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select reporting_to from user_hierarchy where userid = :UserId  and depth = :Depth");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<SecurityUserHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SecurityUserHierarchy.class);
+
+		try {
+			jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+	}
+
+	@Override
+	public void updateUserHierarchy(SecurityUserHierarchy userHierarchy) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("update user_Hierarchy");
+		sql.append(" set depth = ");
+		sql.append(" (select (max(depth)-1) as depth from user_hierarchy where reporting_to =");
+		sql.append(" (select reporting_to from user_hierarchy where userId = :UserId and reporting_to <> :UserId)) where userId in");
+		sql.append(" (select userId from user_Hierarchy where reporting_to =");
+		sql.append(" (select reporting_to from user_hierarchy where userId = :UserId and reporting_to <> :UserId and depth <> 0)");
+		sql.append(" and userId <> :UserId");
+		sql.append(" and depth <> 0)");
+		sql.append(" and userId <> :UserId");
+		sql.append(" and reporting_to <> :UserId");
+		sql.append(" and depth <> 0");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userHierarchy);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updateUserHierarchy(SecurityUserHierarchy userHierarchy, ReportingManager reportingManager) {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("UserId", userHierarchy.getUserId());
+		parameterSource.addValue("reportingTo", reportingManager.getReportingTo());
+		
+		StringBuilder sql = new StringBuilder("update user_Hierarchy");
+		sql.append(" set depth = depth -1");
+		sql.append(" where UserId = :UserId and reporting_to = :reportingTo");
+		
+		logger.trace(Literal.SQL + sql.toString());
+		//SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userHierarchy);
+
+		//this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), parameterSource);
+	}
+	
 }

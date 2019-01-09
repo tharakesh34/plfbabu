@@ -44,6 +44,7 @@ package com.pennant.backend.dao.administration;
 
 import java.util.List;
 
+import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUserHierarchy;
 
 public interface SecurityUserHierarchyDAO {
@@ -57,5 +58,12 @@ public interface SecurityUserHierarchyDAO {
 	public List<SecurityUserHierarchy> getDownLevelUsers(SecurityUserHierarchy userHierarchy);
 
 	public List<SecurityUserHierarchy> getUpLevelUsers(SecurityUserHierarchy userHierarchy);
+	
+	public void getUpLevelUser(SecurityUserHierarchy userHierarchy);
+	
+	public void updateUserHierarchy(SecurityUserHierarchy userHierarchy);
+
+	public void updateUserHierarchy(SecurityUserHierarchy userHierarchy, ReportingManager reportingTo);
+	
 
 }
