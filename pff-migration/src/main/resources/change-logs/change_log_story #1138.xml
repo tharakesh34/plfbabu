@@ -3294,5 +3294,121 @@
 			LEFT JOIN FinPftDetails T9 ON T1.FinReference = T9.FinReference
 		</createView>
 	</changeSet>
+	<changeSet id="71" author="shinde.b">
+		<createView viewName="secusers_rview" replaceIfExists="true">
+			 SELECT t1.usrid,
+				t1.usrlogin,
+				t1.usrpwd,
+				t1.userstaffid,
+				t1.usrfname,
+				t1.usrmname,
+				t1.usrlname,
+				t1.usrmobile,
+				t1.usremail,
+				t1.usrenabled,
+				t1.usrcansignonfrom,
+				t1.usrcansignonto,
+				t1.usrcanoverridelimits,
+				t1.usracexp,
+				t1.usracexpdt,
+				t1.pwdexpdt,
+				t1.usraclocked,
+				t1.usrlanguage,
+				t5.lngdesc lovdescusrlanguage,
+				t1.usrdftappid,
+				t2.appcode lovdescusrdftappcode,
+				t2.appdescription lovdescusrdftappcodename,
+				t1.usrbranchcode,
+				t4.branchdesADMIN_OFFICERc lovdescusrbranchcodename,
+				t1.usrdeptcode,
+				t3.deptdesc lovdescusrdeptcodename,
+				t1.usrtoken,
+				t1.usrismultibranch,
+				t1.usrinvldlogintries,
+				t1.usrdesg,
+				t6.desgdesc lovdescusrdesg,
+				t1.businessvertical,
+				t7.code businessVerticalCode,
+				t7.Description businessVerticalDesc,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t1.usrdftappcode,
+				t1.authtype,
+				t1.usertype
+			   FROM secusers_rtemp t1
+				 JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+				 JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+				 JOIN rmtbraADMIN_OFFICERnches t4 ON t1.usrbranchcode = t4.branchcode
+				 JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+				 JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+			     LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+			UNION ALL
+			 SELECT t1.usrid,
+				t1.usrlogin,
+				t1.usrpwd,
+				t1.userstaffid,
+				t1.usrfname,
+				t1.usrmname,
+				t1.usrlname,
+				t1.usrmobile,
+				t1.usremail,
+				t1.usrenabled,
+				t1.usrcansignonfrom,
+				t1.usrcansignonto,
+				t1.usrcanoverridelimits,
+				t1.usracexp,
+				t1.usracexpdt,
+				t1.pwdexpdt,
+				t1.usraclocked,
+				t1.usrlanguage,
+				t5.lngdesc lovdescusrlanguage,
+				t1.usrdftappid,
+				t2.appcode lovdescusrdftappcode,
+				t2.appdescription lovdescusrdftappcodename,
+				t1.usrbranchcode,
+				t4.branchdesc lovdescusrbranchcodename,
+				t1.usrdeptcode,
+				t3.deptdesc lovdescusrdeptcodename,
+				t1.usrtoken,
+				t1.usrismultibranch,
+				t1.usrinvldlogintries,
+				t1.usrdesg,
+				t6.desgdesc lovdescusrdesg,
+				t1.businessvertical,
+				t7.code businessVerticalCode,
+				t7.Description businessVerticalDesc,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t1.usrdftappcode,
+				t1.authtype,
+				t1.usertype
+			   FROM secusers t1
+				 JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
+				 JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
+				 JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
+				 JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
+				 JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
+	             LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
+			  WHERE NOT (EXISTS ( SELECT 1
+					   FROM secusers_rtemp
+					  WHERE secusers_rtemp.usrid = t1.usrid))
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>
