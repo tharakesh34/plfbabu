@@ -1427,7 +1427,7 @@
 				t2.appcode lovdescusrdftappcode,
 				t2.appdescription lovdescusrdftappcodename,
 				t1.usrbranchcode,
-				t4.branchdesADMIN_OFFICERc lovdescusrbranchcodename,
+				t4.branchdesc lovdescusrbranchcodename,
 				t1.usrdeptcode,
 				t3.deptdesc lovdescusrdeptcodename,
 				t1.usrtoken,
@@ -1454,7 +1454,7 @@
 			   FROM secusers_rtemp t1
 				 JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
 				 JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
-				 JOIN rmtbraADMIN_OFFICERnches t4 ON t1.usrbranchcode = t4.branchcode
+				 JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
 				 JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
 				 JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
 			                             JOIN business_vertical t7 ON t7.id = t1.businessvertical
@@ -3319,7 +3319,7 @@
 				t2.appcode lovdescusrdftappcode,
 				t2.appdescription lovdescusrdftappcodename,
 				t1.usrbranchcode,
-				t4.branchdesADMIN_OFFICERc lovdescusrbranchcodename,
+				t4.branchdesc lovdescusrbranchcodename,
 				t1.usrdeptcode,
 				t3.deptdesc lovdescusrdeptcodename,
 				t1.usrtoken,
@@ -3346,7 +3346,7 @@
 			   FROM secusers_rtemp t1
 				 JOIN ptapplicationdetails t2 ON t1.usrdftappid = t2.appid
 				 JOIN bmtdepartments t3 ON t1.usrdeptcode = t3.deptcode
-				 JOIN rmtbraADMIN_OFFICERnches t4 ON t1.usrbranchcode = t4.branchcode
+				 JOIN rmtbranches t4 ON t1.usrbranchcode = t4.branchcode
 				 JOIN bmtlanguage t5 ON t1.usrlanguage = t5.lngcode
 				 JOIN bmtdesignations t6 ON t1.usrdesg = t6.desgcode
 			     LEFT JOIN business_vertical t7 ON t7.id = t1.businessvertical
