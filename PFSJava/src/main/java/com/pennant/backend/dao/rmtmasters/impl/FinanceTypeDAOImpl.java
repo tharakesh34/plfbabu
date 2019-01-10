@@ -455,7 +455,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck, :PartiallySecured, ");
 		insertSql.append(
 				" :alwAdvEMI, :advEMIMinTerms, :advEMIMaxTerms, :advEMIDftTerms, :advEMISchdMthd, :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
-		insertSql.append(" :AutoRejectionDays, TaxNoMand ) ");
+		insertSql.append(" :AutoRejectionDays, :TaxNoMand ) ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
