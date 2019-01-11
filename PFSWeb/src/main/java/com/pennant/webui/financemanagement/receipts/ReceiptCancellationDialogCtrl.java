@@ -729,7 +729,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			BounceReason bounceReason = (BounceReason) dataObject;
 			if (bounceReason != null) {
 				HashMap<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
-
+				this.bounceCode.setAttribute("id", bounceReason.getBounceID());
 				if (this.receiptHeader != null) {
 					if (this.receiptHeader.getReceiptDetails() != null
 							&& !this.receiptHeader.getReceiptDetails().isEmpty()) {
