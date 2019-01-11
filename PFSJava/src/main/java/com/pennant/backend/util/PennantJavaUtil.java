@@ -2584,7 +2584,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("BounceReason",
 				new ModuleMapping("BounceReason", BounceReason.class,
 						new String[] { "BounceReasons", "BounceReasons_AView" }, masterWF,
-						new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" },
+						new String[] { "BounceCode", "Lovdesccategory", "Reason" },
 						new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("ProfitCenter", new ModuleMapping("ProfitCenter", ProfitCenter.class,

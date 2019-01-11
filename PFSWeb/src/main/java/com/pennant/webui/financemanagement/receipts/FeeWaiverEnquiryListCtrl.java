@@ -942,7 +942,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Filtering added based on user branch and division
-		whereClause.append(" AND FinReference IN (Select FinReference from feewaiverDetails)");
+		whereClause.append(" AND FinReference IN (Select FinReference from FeeWaiverHeader)");
 		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
 		searchObject.addWhereClause(whereClause.toString());

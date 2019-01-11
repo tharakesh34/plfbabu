@@ -88,12 +88,9 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -103,7 +100,6 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -118,10 +114,8 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -416,11 +410,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
-		this.bounceCode.setValueColumn("BounceID");
-		this.bounceCode.setValueType(DataType.LONG);
+		this.bounceCode.setValueColumn("BounceCode");
+		this.bounceCode.setValueType(DataType.STRING);
 		this.bounceCode.setDescColumn("Reason");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
+		this.bounceCode.setValidateColumns(new String[] { "BounceCode", "Lovdesccategory", "Reason" });
 
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
@@ -613,11 +607,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			bounce.setReceiptID(aReceiptHeader.getReceiptID());
 			try {
 				//if bouncode is empty
-				if (StringUtils.isEmpty(this.bounceCode.getValue())) {
-					this.bounceCode.setValue("0");
-					bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
-				} else {
-					bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
+				if (!StringUtils.isEmpty(this.bounceCode.getValidatedValue())) {
+					bounce.setBounceID((Long) this.bounceCode.getAttribute("id"));
 				}
 
 			} catch (WrongValueException e) {
@@ -855,7 +846,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		}
 		ManualAdvise bounceReason = header.getManualAdvise();
 		if (bounceReason != null) {
-			this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
+			this.bounceCode.setAttribute("id", bounceReason.getBounceID());
+			this.bounceCode.setValue(bounceReason.getBounceCode(), bounceReason.getBounceCodeDesc());
 			this.bounceCharge
 					.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), finFormatter));
 			this.bounceRemarks.setValue(bounceReason.getRemarks());
