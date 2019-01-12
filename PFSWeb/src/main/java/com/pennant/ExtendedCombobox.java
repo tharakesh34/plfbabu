@@ -77,6 +77,7 @@ public class ExtendedCombobox extends Hbox {
 	private static final long serialVersionUID = -4246285143621221275L;
 	private static final Logger logger = Logger.getLogger(ExtendedCombobox.class);
 	public static final String ON_FUL_FILL = "onFulfill";
+	private static final String DATA_NOT_AVAILABLE = "%s is not valid.";
 
 	private Space space;
 	private Textbox textbox;
@@ -107,7 +108,7 @@ public class ExtendedCombobox extends Hbox {
 	private transient List<?> list = null;
 
 	private boolean multySelection;
-	private Map<String, Object> selectedValues = new HashMap<>();
+	private transient Map<String, Object> selectedValues = new HashMap<>();
 
 	public List<?> getList() {
 		return list;
@@ -232,7 +233,7 @@ public class ExtendedCombobox extends Hbox {
 				this.textbox.setValue("");
 				this.label.setValue("");
 				if (StringUtils.isNotBlank(value)) {
-					throw new WrongValueException(this.button, value + " is not valid.");
+					throw new WrongValueException(this.button, String.format(DATA_NOT_AVAILABLE, value));
 				}
 			}
 
@@ -243,7 +244,6 @@ public class ExtendedCombobox extends Hbox {
 		} finally {
 			Events.postEvent(ON_FUL_FILL, this, null);
 		}
-
 	}
 
 	/**
@@ -261,40 +261,19 @@ public class ExtendedCombobox extends Hbox {
 		this.textbox.setErrorMessage("");
 		Clients.clearWrongValue(this.button);
 
-		if (moduleName == null || moduleName.length() == 0) {
-			return;
-		}
-
 		this.isWindowOpened = true;
 		try {
 
-			Object tempObject = null;
-			ExtendedSearchListBox extended = null;
-			if (list == null) {
-				if (filters != null) {
-					if (StringUtils.equals(this.whereClause, "")) {
-						extended = new ExtendedSearchListBox(this, moduleName, filters, getSearchValue());
-					} else {
-						extended = new ExtendedSearchListBox(this, moduleName, filters, getSearchValue(), whereClause,
-								valueColumn, valueType);
-					}
-				} else {
-					if (StringUtils.equals(this.whereClause, "")) {
-						extended = new ExtendedSearchListBox(this, moduleName, getSearchValue());
-					} else {
-						extended = new ExtendedSearchListBox(this, moduleName, getSearchValue(), whereClause,
-								valueColumn, valueType);
-					}
-				}
-			} else {
-				tempObject = ExtendedSearchListBox.show(this, moduleName, list);
+			if (moduleName == null || moduleName.length() == 0) {
+				return;
 			}
 
-			if (extended != null) {
-				extended.setMultySelection(isMultySelection());
-				extended.setSelectedValues(selectedValues);
-				extended.createBox();
-				tempObject = extended.getObject();
+			Object tempObject = null;
+
+			if (list != null) {
+				tempObject = ExtendedSearchListBox.show(this, moduleName, list);
+			} else {
+				tempObject = createExtendedSearchListBox();
 			}
 
 			if (tempObject != null) {
@@ -322,6 +301,31 @@ public class ExtendedCombobox extends Hbox {
 			}
 			this.isWindowOpened = false;
 		}
+	}
+
+	private Object createExtendedSearchListBox() {
+		ExtendedSearchListBox extended = null;
+		if (filters != null) {
+			if (StringUtils.equals(this.whereClause, "")) {
+				extended = new ExtendedSearchListBox(this, moduleName, filters, getSearchValue());
+			} else {
+				extended = new ExtendedSearchListBox(this, moduleName, filters, getSearchValue(), whereClause,
+						valueColumn, valueType);
+			}
+		} else {
+			if (StringUtils.equals(this.whereClause, "")) {
+				extended = new ExtendedSearchListBox(this, moduleName, getSearchValue());
+			} else {
+				extended = new ExtendedSearchListBox(this, moduleName, getSearchValue(), whereClause, valueColumn,
+						valueType);
+			}
+		}
+
+		extended.setMultySelection(isMultySelection());
+		extended.setSelectedValues(selectedValues);
+		extended.createBox();
+		return extended.getObject();
+
 	}
 
 	/**
@@ -425,24 +429,7 @@ public class ExtendedCombobox extends Hbox {
 			}
 		}
 
-		if (getValidateColumns() != null) {
-			String[] searchFieldArray = getValidateColumns();
-			Filter[] filter1 = new Filter[searchFieldArray.length];
-			int i = 0;
-			Object fieldValue;
-
-			for (String field : searchFieldArray) {
-				if (field.equals(getValueColumn())) {
-					fieldValue = DataTypeUtil.getValueAsObject(textbox.getValue(), valueType);
-				} else {
-					fieldValue = textbox.getValue();
-				}
-
-				filter1[i++] = new Filter(field, fieldValue, Filter.OP_EQUAL);
-			}
-
-			search.addFilterOr(filter1);
-		}
+		addSearchFields(search);
 
 		if (whereClause != null) {
 			search.addWhereClause(whereClause);
@@ -462,6 +449,29 @@ public class ExtendedCombobox extends Hbox {
 		logger.debug(Literal.LEAVING);
 
 		return search;
+	}
+
+	private void addSearchFields(Search search) {
+		if (getValidateColumns() != null) {
+			return;
+		}
+
+		String[] searchFieldArray = getValidateColumns();
+		Filter[] filter1 = new Filter[searchFieldArray.length];
+		int i = 0;
+		Object fieldValue;
+
+		for (String field : searchFieldArray) {
+			if (field.equals(getValueColumn())) {
+				fieldValue = DataTypeUtil.getValueAsObject(textbox.getValue(), valueType);
+			} else {
+				fieldValue = textbox.getValue();
+			}
+
+			filter1[i++] = new Filter(field, fieldValue, Filter.OP_EQUAL);
+		}
+
+		search.addFilterOr(filter1);
 	}
 
 	/**
@@ -496,7 +506,7 @@ public class ExtendedCombobox extends Hbox {
 				this.textbox.setErrorMessage("");
 				this.textbox.setValue("");
 				if (StringUtils.isNotBlank(value)) {
-					throw new WrongValueException(this.button, value + " is not valid.");
+					throw new WrongValueException(this.button, String.format(DATA_NOT_AVAILABLE, value));
 				}
 			} else {
 				Events.postEvent("onClick", this.button, Events.ON_CLICK);
@@ -508,7 +518,7 @@ public class ExtendedCombobox extends Hbox {
 			logger.error(Literal.EXCEPTION, e);
 			String value = StringUtils.trimToEmpty(this.textbox.getValue());
 			this.textbox.setValue("");
-			throw new WrongValueException(this.button, value + " is not valid.");
+			throw new WrongValueException(this.button, String.format(DATA_NOT_AVAILABLE, value));
 		}
 
 	}
@@ -550,7 +560,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public String getValue() {
-	this.textbox.getValue();//to call the constraint if any
+		this.textbox.getValue();//to call the constraint if any
 		if (inputAllowed) {
 			if (StringUtils.isNotBlank(selctedValue)) {
 				return selctedValue;
@@ -927,6 +937,20 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	public void setProperties(String moduleName, String valueColumn, String descColumn, boolean mandatory,
+			int displayStyle, int maxlength, int txtbxWidth) {
+		setModuleName(moduleName);
+		setValueColumn(valueColumn);
+		setDescColumn(descColumn);
+		setMandatoryStyle(mandatory);
+		setDisplayStyle(displayStyle);
+		setMaxlength(maxlength);
+		setTextBoxWidth(txtbxWidth);
+		if (this.validateColumns == null) {
+			this.validateColumns = new String[] { valueColumn }.clone();
+		}
+	}
+
+	public void setProperties(String moduleName, String valueColumn, String descColumn, boolean mandatory,
 			int displayStyle, int txtbxWidth) {
 		setModuleName(moduleName);
 		setValueColumn(valueColumn);
@@ -938,7 +962,7 @@ public class ExtendedCombobox extends Hbox {
 			this.validateColumns = new String[] { valueColumn }.clone();
 		}
 	}
-	
+
 	private String getSearchValue() {
 		if (isMultySelection()) {
 			return null;
@@ -946,8 +970,7 @@ public class ExtendedCombobox extends Hbox {
 
 		return this.textbox.getValue();
 	}
-	
-	
+
 	public boolean isMultySelection() {
 		return multySelection;
 	}
