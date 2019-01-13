@@ -452,7 +452,7 @@ public class ExtendedCombobox extends Hbox {
 	}
 
 	private void addSearchFields(Search search) {
-		if (getValidateColumns() != null) {
+		if (getValidateColumns() == null) {
 			return;
 		}
 
