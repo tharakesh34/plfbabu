@@ -6982,13 +6982,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 
 					// Display a warning to the user, if there are any deviations that he need to take decision.
-					if (pendingDecisions.size() > 0) {
-						String errorMessage = "The below deviations require your decision. Would you like to proceed further?";
+					if (!pendingDecisions.isEmpty()) {
+						String errorMessage = "";
+
 						for (String deviation : pendingDecisions) {
 							errorMessage = errorMessage.concat("\n - " + deviation);
 						}
 
-						if (MessageUtil.confirm(errorMessage) == MessageUtil.NO) {
+						if ("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+								|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+								|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+								|| this.userAction.getSelectedItem().getLabel().contains("Decline")
+								|| this.userAction.getSelectedItem().getLabel().contains("Hold")
+								|| this.userAction.getSelectedItem().getLabel().contains("Revert")) {
+							errorMessage = "The below deviations require your decision. Would you like to proceed further?"
+									.concat(errorMessage);
+
+							if (MessageUtil.confirm(errorMessage) == MessageUtil.NO) {
+								return;
+							}
+						} else {
+							errorMessage = "Please mark your decision for the below deviations.".concat(errorMessage);
+
+							MessageUtil.showError(errorMessage);
 							return;
 						}
 					}

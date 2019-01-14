@@ -87,6 +87,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
@@ -389,7 +390,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * @throws Exception
 	 */
 	public void onClick$btnElgRule(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
+
 		if (isWIF) {
 			doCheckWIFFinEligibility(true);
 		} else {
@@ -415,22 +417,24 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 			}
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Click event for eligibility
 	 * 
 	 * @param isSave
-	 * @throws Exception
+	 * @throws ScriptException
 	 */
-	public void doCheckFinEligibility(boolean isSave) throws Exception {
-		logger.debug("Entering");
+	public void doCheckFinEligibility(boolean isSave) throws ScriptException {
+		logger.debug(Literal.ENTERING);
+
+		// Clear eligibility summary status.
 		this.label_ElgRuleSummaryVal.setValue("");
 
+		// Prepare the data for rules.
 		FinanceDetail aFinanceDetail = null;
 
-		// Prepare Data for Rule Executions
 		try {
 			Object object = getFinanceMainDialogCtrl().getClass().getMethod("prepareCustElgDetail", Boolean.class)
 					.invoke(getFinanceMainDialogCtrl(), false);
@@ -438,8 +442,11 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				aFinanceDetail = (FinanceDetail) object;
 			}
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
+
+		// Move the sub rules to the top.
+		// FIXME:
 
 		//FIXME Temporary solution for the demo in order to execute the calculation rules before the other rules 
 		List<FinanceEligibilityDetail> elgRuleList = new ArrayList<FinanceEligibilityDetail>(
@@ -461,7 +468,6 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 			}
 		}
 
-		List<FinanceDeviations> elgDeviations = new ArrayList<FinanceDeviations>();
 		List<FinanceEligibilityDetail> elgRuleList1 = new ArrayList<>();
 		List<FinanceEligibilityDetail> elgRuleList2 = new ArrayList<>();
 
@@ -479,56 +485,61 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		elgRuleList = elgRuleList1;
 		elgRuleList.addAll(elgRuleList2);
 
-		for (FinanceEligibilityDetail financeEligibilityDetail : elgRuleList) {
-			if (financeEligibilityDetail.isExecute()) {
+		List<FinanceDeviations> elgDeviations = new ArrayList<>();
+
+		for (FinanceEligibilityDetail eligibility : eligibilityRuleList) {
+			if (eligibility.isExecute()) {
 				if (!isSave) {
-					financeEligibilityDetail.setUserOverride(false);
+					eligibility.setUserOverride(false);
 				}
 
-				FinanceDeviations deviation = doExecuteAndCheckDeviations(financeEligibilityDetail, aFinanceDetail);
-				if (financeEligibilityDetail.isAllowDeviation()) {
-					if (deviation != null) {
+				FinanceDeviations deviation = doExecuteAndCheckDeviations(eligibility, aFinanceDetail);
+				if (eligibility.isAllowDeviation() && deviation != null) {
+					elgDeviations.add(deviation);
+				}
+			} else {
+				// Consider the existing deviation.
+				for (FinanceDeviations deviation : deviationExecutionCtrl.getFinanceDeviations()) {
+					if (StringUtils.equals(deviation.getModule(), DeviationConstants.TY_ELIGIBILITY) && StringUtils
+							.equals(deviation.getDeviationCode(), String.valueOf(eligibility.getElgRuleCode()))) {
 						elgDeviations.add(deviation);
+
+						break;
 					}
 				}
-
 			}
 
-			if (StringUtils.equals(RuleConstants.ELGRULE_DSRCAL, financeEligibilityDetail.getLovDescElgRuleCode())) {
+			if (StringUtils.equals(RuleConstants.ELGRULE_DSRCAL, eligibility.getLovDescElgRuleCode())) {
 				aFinanceDetail.getCustomerEligibilityCheck()
-						.setDSCR(PennantApplicationUtil.getDSR(financeEligibilityDetail.getRuleResult()));
+						.setDSCR(PennantApplicationUtil.getDSR(eligibility.getRuleResult()));
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
 			}
-			if (StringUtils.equals(RuleConstants.ELGRULE_FOIR, financeEligibilityDetail.getLovDescElgRuleCode())) {
-				if (financeEligibilityDetail.getRuleResult() == null) {
+			if (StringUtils.equals(RuleConstants.ELGRULE_FOIR, eligibility.getLovDescElgRuleCode())) {
+				if (eligibility.getRuleResult() == null) {
 					aFinanceDetail.getCustomerEligibilityCheck().setFoir(BigDecimal.ZERO);
 				} else {
-					aFinanceDetail.getCustomerEligibilityCheck()
-							.setFoir(new BigDecimal(financeEligibilityDetail.getRuleResult().toString()));
+					aFinanceDetail.getCustomerEligibilityCheck().setFoir(new BigDecimal(eligibility.getRuleResult()));
 				}
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
 			}
-			if (StringUtils.equals(RuleConstants.ELGRULE_LTV, financeEligibilityDetail.getLovDescElgRuleCode())) {
-				if (financeEligibilityDetail.getRuleResult() == null) {
+			if (StringUtils.equals(RuleConstants.ELGRULE_LTV, eligibility.getLovDescElgRuleCode())) {
+				if (eligibility.getRuleResult() == null) {
 					aFinanceDetail.getCustomerEligibilityCheck().setLtv(BigDecimal.ZERO);
 				} else {
-					aFinanceDetail.getCustomerEligibilityCheck()
-							.setLtv(new BigDecimal(financeEligibilityDetail.getRuleResult().toString()));
+					aFinanceDetail.getCustomerEligibilityCheck().setLtv(new BigDecimal(eligibility.getRuleResult()));
 				}
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
 			}
 
 			if (StringUtils.contains("FOIRAMT,BTOUTSTD,EBOEU,IIRMAX,LCRMAXEL,LIVSTCK,LOANAMT,LTVAMOUN,LTVLCR",
-					financeEligibilityDetail.getLovDescElgRuleCode())) {
-				getFinanceDetail().getCustomerEligibilityCheck().addExtendedField(
-						"RULE_" + financeEligibilityDetail.getLovDescElgRuleCode(),
-						financeEligibilityDetail.getRuleResult());
+					eligibility.getLovDescElgRuleCode())) {
+				getFinanceDetail().getCustomerEligibilityCheck()
+						.addExtendedField("RULE_" + eligibility.getLovDescElgRuleCode(), eligibility.getRuleResult());
 			}
 
 		}
 
 		deviationExecutionCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);
-		aFinanceDetail = null;
 
 		//Set Eligibility based on deviations and rule result
 		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
@@ -541,7 +552,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		//Set eligibility group status
 		setCustEligibilityGropuStatus();
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

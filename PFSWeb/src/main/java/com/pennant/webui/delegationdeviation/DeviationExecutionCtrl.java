@@ -766,7 +766,7 @@ public class DeviationExecutionCtrl {
 	public void fillDeviationListbox(List<FinanceDeviations> newList, String role, String devModule) {
 		logger.debug(" Entering ");
 
-		removeTheOldDeviation(devModule, financeDeviations);
+		removeTheOldDeviations(devModule, newList, financeDeviations);
 		financeDeviations.addAll(newList);
 		if (financeMainBaseCtrl != null && financeMainBaseCtrl.getDeviationDetailDialogCtrl() != null) {
 			financeMainBaseCtrl.getDeviationDetailDialogCtrl().doFillAutoDeviationDetails(financeDeviations);
@@ -776,21 +776,59 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * it will remove the deviation with given role and module
+	 * It will remove the deviation with given role and module.
 	 * 
 	 * @param devModule
+	 * @param newList
 	 * @param oldList
 	 */
-	private void removeTheOldDeviation(String devModule, List<FinanceDeviations> oldList) {
+	private void removeTheOldDeviations(String devModule, List<FinanceDeviations> newList,
+			List<FinanceDeviations> oldList) {
 		logger.debug(Literal.ENTERING);
 
 		Iterator<FinanceDeviations> it = oldList.iterator();
 		FinanceDeviations deviation;
+		boolean removeDeviation = true;
 
 		while (it.hasNext()) {
 			deviation = it.next();
+			removeDeviation = true;
+
 			if (deviation.getModule().equals(devModule)) {
-				it.remove();
+				for (FinanceDeviations item : newList) {
+					if (StringUtils.equals(deviation.getModule(), item.getModule())
+							&& StringUtils.equals(deviation.getDeviationCode(), item.getDeviationCode())
+							&& StringUtils.equals(deviation.getDeviationValue(), item.getDeviationValue())) {
+						removeDeviation = false;
+						break;
+					}
+				}
+
+				if (removeDeviation) {
+					it.remove();
+				}
+			}
+		}
+
+		it = newList.iterator();
+
+		while (it.hasNext()) {
+			deviation = it.next();
+			removeDeviation = false;
+
+			if (deviation.getModule().equals(devModule)) {
+				for (FinanceDeviations item : oldList) {
+					if (StringUtils.equals(deviation.getModule(), item.getModule())
+							&& StringUtils.equals(deviation.getDeviationCode(), item.getDeviationCode())
+							&& StringUtils.equals(deviation.getDeviationValue(), item.getDeviationValue())) {
+						removeDeviation = true;
+						break;
+					}
+				}
+
+				if (removeDeviation) {
+					it.remove();
+				}
 			}
 		}
 

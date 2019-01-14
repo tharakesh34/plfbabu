@@ -21,7 +21,7 @@
 						</hbox>
 					</div>
 				</north>
-				<center border="none" autoscroll="false">
+				<center border="none" autoscroll="true">
 					<groupbox style="border:none;">
 						<groupbox id="finBasicdetails" zclass="null"></groupbox>
 						<groupbox>

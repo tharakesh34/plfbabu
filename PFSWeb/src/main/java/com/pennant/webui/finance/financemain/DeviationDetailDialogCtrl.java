@@ -195,12 +195,8 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	 */
 	public void doShowDialog() throws Exception {
 		logger.debug("Entering");
+
 		try {
-
-			int height = ((borderLayoutHeight - 240) / 2) - 10;
-			this.listBoxAutoDeviations.setHeight(height + "px");
-			this.listBoxManualDeviations.setHeight(height + "px");
-
 			if (loanEnquiry) {
 				this.finBasicdetails.setVisible(false);
 				this.northdeviationDetailDialog.setVisible(false);
