@@ -286,6 +286,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> vasModeOfPaymentsList;
 	private static ArrayList<ValueLabel> vasAllowFeeTypes;
 	private static ArrayList<ValueLabel> medicalStatusList;
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -293,6 +294,15 @@ public class PennantStaticListUtil {
 	 */
 	public static List<Property> getApplications() {
 		return AppStaticList.getApplications();
+	}
+
+	/**
+	 * Gets the list of sub-rules.
+	 * 
+	 * @return The list of sub-rules.
+	 */
+	public static List<String> getSubrules() {
+		return AppStaticList.getSubrules();
 	}
 
 	/**

@@ -46,7 +46,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -726,34 +725,26 @@ public class DeviationExecutionCtrl {
 	 * 
 	 * @param deviationHeader
 	 * @param object
-	 * @param deviations
+	 * @param deviation
 	 * @return
 	 */
 	private FinanceDeviations processNewDevaitions(DeviationHeader deviationHeader, Object object,
-			FinanceDeviations deviations) {
-
+			FinanceDeviations deviation) {
 		String role = getRoleFromValue(object, deviationHeader);
-		/*
-		 * After Execution will add it to List. here two value to consider 1.Null means No Deviation , 2.Empty Means
-		 * deviation Not Allowed So empty check should not be required until unless all cases have been changed.
-		 */
 
-		if (role != null) {
-
-			deviations.setDelegationRole(role);
-			deviations.setDeviationValue(String.valueOf(object));
-
-			if (isInApprovedList(getApprovedFinanceDeviations(), deviations)) {
-				return null;
-			} else if (isInCurrentDevaitionList(financeDeviations, deviations)) {
-				return null;
-			} else {
-				return deviations;
-			}
-
+		// No deviation available.
+		if (role == null) {
+			return null;
 		}
 
-		return null;
+		deviation.setDelegationRole(role);
+		deviation.setDeviationValue(String.valueOf(object));
+
+		if (isInApprovedList(getApprovedFinanceDeviations(), deviation)) {
+			return null;
+		} else {
+			return deviation;
+		}
 	}
 
 	/**
@@ -836,34 +827,28 @@ public class DeviationExecutionCtrl {
 	}
 
 	/**
-	 * To check given records not already in approved list and not rejected previously
+	 * Check whether the deviation is already available in the approved list of deviations.
 	 * 
 	 * @param list
-	 * @param deviations
-	 * @return
+	 *            The list of deviations.
+	 * @param deviation
+	 *            The deviation to check.
+	 * @return <code>true</code> if the deviation is in approved list of deviations; otherwise <code>false</code>.
 	 */
-	private boolean isInApprovedList(List<FinanceDeviations> list, FinanceDeviations deviations) {
-		logger.debug(" Entering ");
+	private boolean isInApprovedList(List<FinanceDeviations> list, FinanceDeviations deviation) {
+		logger.trace(Literal.ENTERING);
 
-		for (FinanceDeviations financeDeviations : list) {
-			/* Both Modules are different no need to compare */
-			if (!deviations.getModule().equals(financeDeviations.getModule())) {
-				continue;
-			}
-
-			if (StringUtils.equals(deviations.getDeviationCode(), financeDeviations.getDeviationCode())
-					&& StringUtils.equals(deviations.getDeviationValue(), financeDeviations.getDeviationValue())) {
-				if (!PennantConstants.RCD_STATUS_REJECTED
-						.equals(StringUtils.trim(financeDeviations.getApprovalStatus()))) {
-					logger.debug(" Leaving ");
-					return true;
-				}
+		for (FinanceDeviations item : list) {
+			if (StringUtils.equals(deviation.getModule(), item.getModule())
+					&& StringUtils.equals(deviation.getDeviationCode(), item.getDeviationCode())
+					&& StringUtils.equals(deviation.getDeviationValue(), item.getDeviationValue())) {
+				logger.trace(Literal.LEAVING);
+				return true;
 			}
 		}
 
-		logger.debug(" Leaving ");
+		logger.trace(Literal.LEAVING);
 		return false;
-
 	}
 
 	/**

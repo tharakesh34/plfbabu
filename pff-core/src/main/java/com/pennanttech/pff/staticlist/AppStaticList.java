@@ -23,6 +23,7 @@ import com.pennant.backend.model.Property;
  */
 public final class AppStaticList {
 	private static List<Property> applications = initializeApplications();
+	private static List<String> subrules = initializeSubrules();
 
 	/**
 	 * Private constructor to hide the implicit public one.
@@ -54,5 +55,37 @@ public final class AppStaticList {
 	 */
 	public static List<Property> getApplications() {
 		return applications;
+	}
+
+	/**
+	 * Initializes the list of sub-rules.
+	 * 
+	 * @return The list of sub-rules.
+	 */
+	private static List<String> initializeSubrules() {
+		List<String> list = new ArrayList<>();
+		list.add("DSRCAL");
+		list.add("FOIRELG");
+		list.add("LTVELG");
+		list.add("FOIRAMT");
+		list.add("BTOUTSTD");
+		list.add("EBOEU");
+		list.add("IIRMAX");
+		list.add("LCRMAXEL");
+		list.add("LIVSTCK");
+		list.add("LOANAMT");
+		list.add("LTVAMOUN");
+		list.add("LTVLCR");
+
+		return list;
+	}
+
+	/**
+	 * Gets the list of sub-rules.
+	 * 
+	 * @return The list of sub-rules.
+	 */
+	public static List<String> getSubrules() {
+		return subrules;
 	}
 }

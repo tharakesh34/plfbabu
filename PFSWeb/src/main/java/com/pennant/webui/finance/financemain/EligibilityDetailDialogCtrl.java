@@ -83,6 +83,7 @@ import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
@@ -446,48 +447,25 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 
 		// Move the sub rules to the top.
-		// FIXME:
+		List<String> subruleCodes = PennantStaticListUtil.getSubrules();
+		List<FinanceEligibilityDetail> subrules = new ArrayList<>();
+		List<FinanceEligibilityDetail> otherRules = new ArrayList<>();
 
-		//FIXME Temporary solution for the demo in order to execute the calculation rules before the other rules 
-		List<FinanceEligibilityDetail> elgRuleList = new ArrayList<FinanceEligibilityDetail>(
-				eligibilityRuleList.size());
-		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
-			if (StringUtils.equals(RuleConstants.ELGRULE_DSRCAL, financeEligibilityDetail.getLovDescElgRuleCode())
-					|| StringUtils.equals(RuleConstants.ELGRULE_FOIR, financeEligibilityDetail.getLovDescElgRuleCode())
-					|| StringUtils.equals(RuleConstants.ELGRULE_LTV,
-							financeEligibilityDetail.getLovDescElgRuleCode())) {
-				elgRuleList.add(financeEligibilityDetail);
-			}
-		}
-		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
-			if (!StringUtils.equals(RuleConstants.ELGRULE_DSRCAL, financeEligibilityDetail.getLovDescElgRuleCode())
-					&& !StringUtils.equals(RuleConstants.ELGRULE_FOIR, financeEligibilityDetail.getLovDescElgRuleCode())
-					&& !StringUtils.equals(RuleConstants.ELGRULE_LTV,
-							financeEligibilityDetail.getLovDescElgRuleCode())) {
-				elgRuleList.add(financeEligibilityDetail);
-			}
-		}
-
-		List<FinanceEligibilityDetail> elgRuleList1 = new ArrayList<>();
-		List<FinanceEligibilityDetail> elgRuleList2 = new ArrayList<>();
-
-		for (FinanceEligibilityDetail financeEligibilityDetail : elgRuleList) {
-
-			if (StringUtils.contains("FOIRAMT,BTOUTSTD,EBOEU,IIRMAX,LCRMAXEL,LIVSTCK,LOANAMT,LTVAMOUN,LTVLCR",
-					financeEligibilityDetail.getLovDescElgRuleCode())) {
-				elgRuleList1.add(financeEligibilityDetail);
+		for (FinanceEligibilityDetail eligibility : eligibilityRuleList) {
+			if (subruleCodes.contains(eligibility.getLovDescElgRuleCode())) {
+				subrules.add(eligibility);
 			} else {
-				elgRuleList2.add(financeEligibilityDetail);
+				otherRules.add(eligibility);
 			}
-
 		}
 
-		elgRuleList = elgRuleList1;
-		elgRuleList.addAll(elgRuleList2);
+		List<FinanceEligibilityDetail> eligibilityRules = new ArrayList<>(eligibilityRuleList.size());
+		eligibilityRules.addAll(subrules);
+		eligibilityRules.addAll(otherRules);
 
 		List<FinanceDeviations> elgDeviations = new ArrayList<>();
 
-		for (FinanceEligibilityDetail eligibility : eligibilityRuleList) {
+		for (FinanceEligibilityDetail eligibility : eligibilityRules) {
 			if (eligibility.isExecute()) {
 				if (!isSave) {
 					eligibility.setUserOverride(false);

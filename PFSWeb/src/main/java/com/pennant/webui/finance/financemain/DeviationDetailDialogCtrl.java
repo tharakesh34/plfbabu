@@ -398,7 +398,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		Combobox combobox = (Combobox) event.getOrigin().getTarget();
 
 		for (FinanceDeviations item : getFinanceDetail().getFinanceDeviations()) {
-			if (deviation.getDeviationId() == item.getDeviationId()) {
+			if (deviation.getDeviationId() == item.getDeviationId()
+					&& StringUtils.equals(deviation.getDeviationCode(), item.getDeviationCode())
+					&& StringUtils.equals(deviation.getModule(), item.getModule())) {
 				item.setApprovalStatus(combobox.getSelectedItem().getValue());
 				long userId = getUserWorkspace().getLoggedInUser().getUserId();
 				if (StringUtils.isBlank(item.getDelegatedUserId())) {
