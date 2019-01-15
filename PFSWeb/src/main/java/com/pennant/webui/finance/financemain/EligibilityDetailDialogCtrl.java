@@ -491,30 +491,24 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				aFinanceDetail.getCustomerEligibilityCheck()
 						.setDSCR(PennantApplicationUtil.getDSR(eligibility.getRuleResult()));
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
-			}
-			if (StringUtils.equals(RuleConstants.ELGRULE_FOIR, eligibility.getLovDescElgRuleCode())) {
+			} else if (StringUtils.equals(RuleConstants.ELGRULE_FOIR, eligibility.getLovDescElgRuleCode())) {
 				if (eligibility.getRuleResult() == null) {
 					aFinanceDetail.getCustomerEligibilityCheck().setFoir(BigDecimal.ZERO);
 				} else {
 					aFinanceDetail.getCustomerEligibilityCheck().setFoir(new BigDecimal(eligibility.getRuleResult()));
 				}
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
-			}
-			if (StringUtils.equals(RuleConstants.ELGRULE_LTV, eligibility.getLovDescElgRuleCode())) {
+			} else if (StringUtils.equals(RuleConstants.ELGRULE_LTV, eligibility.getLovDescElgRuleCode())) {
 				if (eligibility.getRuleResult() == null) {
 					aFinanceDetail.getCustomerEligibilityCheck().setLtv(BigDecimal.ZERO);
 				} else {
 					aFinanceDetail.getCustomerEligibilityCheck().setLtv(new BigDecimal(eligibility.getRuleResult()));
 				}
 				getFinanceDetail().setCustomerEligibilityCheck(aFinanceDetail.getCustomerEligibilityCheck());
-			}
-
-			if (StringUtils.contains("FOIRAMT,BTOUTSTD,EBOEU,IIRMAX,LCRMAXEL,LIVSTCK,LOANAMT,LTVAMOUN,LTVLCR",
-					eligibility.getLovDescElgRuleCode())) {
+			} else if (subruleCodes.contains(eligibility.getLovDescElgRuleCode())) {
 				getFinanceDetail().getCustomerEligibilityCheck()
 						.addExtendedField("RULE_" + eligibility.getLovDescElgRuleCode(), eligibility.getRuleResult());
 			}
-
 		}
 
 		deviationExecutionCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);

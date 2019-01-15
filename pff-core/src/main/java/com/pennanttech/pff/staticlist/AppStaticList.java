@@ -76,6 +76,8 @@ public final class AppStaticList {
 		list.add("LOANAMT");
 		list.add("LTVAMOUN");
 		list.add("LTVLCR");
+		list.add("NETIIR");
+		list.add("LTVRULE");
 
 		return list;
 	}
