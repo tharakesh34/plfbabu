@@ -167,4 +167,8 @@ public class ImplementationConstants {
 	public static final boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API = false;
 
 	public static final boolean ALLOW_LEGAL_REQ_CHANGE = true;
+
+	// Auto Build Schedule after Loan Start Date has changed 
+	public static final boolean ALW_AUTO_SCHD_BUILD = false;
+
 }

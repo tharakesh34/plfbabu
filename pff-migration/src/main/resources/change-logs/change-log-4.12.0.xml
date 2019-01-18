@@ -6556,4 +6556,89 @@ SELECT t1.fintype,
 </createView>
 </changeSet>
 
+<changeSet id="88" author="swami.v">
+<comment> Added SECRIGHTS,SECGROUPS,SECGROUPRIGHTS </comment>
+<sql>
+UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_AutoScheduleBuild','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FinanceMainDialog_APPROVER', 'WF Approver for Finance Work Flow Definition', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinanceMainDialog_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_AutoScheduleBuild'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+</sql>
+</changeSet>
+
+<changeSet id="92" author="swami.v">
+		<createView viewName="LMTFINREFDETAIL_FINVIEW" replaceIfExists="true">
+
+SELECT t1.finrefdetailid,
+    t1.fintype,
+    t1.finreftype,
+    t1.finrefid,
+    t1.isactive,
+    t1.showinstage,
+    t1.mandinputinstage,
+    t1.allowinputinstage,
+    t1.allowdeviation,
+    t1.allowwaiver,
+    t1.allowpostpone,
+    t1.allowexpire,
+    t1.override,
+    t1.overridevalue,
+    t1.finevent,
+    t1.alerttype,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.fintypedesc AS lovdescfintypedescname,
+    t2.finccy AS lovdescfinccycode,
+    t2.fincategory AS lovdescproductcodename,
+    t3.aggimage AS lovdescaggimage,
+    COALESCE(t3.aggname, t4.eventcode, t7.rulecodedesc, t8.scoregroupname, t9.scoregroupname, t11.TabDescription) AS lovdescnamelov,
+    COALESCE(t3.aggcode, t7.rulecode, t8.scoregroupcode, t9.scoregroupcode, t11.TabCode) AS lovdesccodelov,
+    COALESCE(t3.aggdesc, t4.accountsetcodename, t5.checklistdesc, t7.rulecode, t8.scoregroupcode, t9.scoregroupcode, t10.limitcode, t11.TabCode) AS lovdescrefdesc,
+    t3.aggreportname AS lovdescaggreportname,
+    t3.aggreportpath AS lovdescaggreportpath,
+    t3.agrrule AS lovdescaggrulename,
+    t3.aggtype,
+    t3.moduletype,
+    COALESCE(t3.allowmultiple, 0) AS allowmultiple,
+    COALESCE(t5.remarks, '0') AS lovdescisremarksallowed,
+    COALESCE(t5.checkmincount, 0) AS lovdesccheckmincount,
+    COALESCE(t5.checkmaxcount, 0) AS lovdesccheckmaxcount,
+    COALESCE(t6.sqlrule, t7.sqlrule) AS lovdescelgrulevalue,
+    COALESCE(t6.returntype, t7.returntype) AS lovdescrulereturntype,
+    COALESCE(t8.minscore, t9.minscore, '0') AS lovdescminscore,
+    COALESCE(t8.isoverride::integer, t9.isoverride, 0) AS lovdescisoverride,
+    COALESCE(t8.overridescore, t9.overridescore, '0') AS lovdescoverridescore
+    FROM lmtfinrefdetail t1
+     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+     LEFT JOIN bmtaggrementdef t3 ON t1.finrefid = t3.aggid AND t1.finreftype = 2
+     LEFT JOIN rmtaccountingset t4 ON t1.finrefid = t4.accountsetid AND t1.finreftype = 5
+     LEFT JOIN bmtchecklist t5 ON t1.finrefid = t5.checklistid AND t1.finreftype = 1
+     LEFT JOIN rules t6 ON t6.rulecode = t5.checkrule AND t6.rulemodule = 'CLRULE' AND t6.ruleevent = 'CLRULE'
+     LEFT JOIN rules t7 ON t1.finrefid = t7.ruleid AND t1.finreftype = 3
+     LEFT JOIN rmtscoringgroup t8 ON t1.finrefid = t8.scoregroupid AND t1.finreftype = 4 AND t8.categorytype = 'RETAIL'
+     LEFT JOIN rmtscoringgroup t9 ON t1.finrefid = t9.scoregroupid AND t1.finreftype = 7 AND t9.categorytype = 'CORP'
+     LEFT JOIN limitcodedetail t10 ON t10.limitid = t1.finrefid
+	 LEFT JOIN StageTabDetail t11 ON t1.finrefid = t11.TabId AND t1.finreftype = 15
+
+</createView>
+	</changeSet>
+
+
+
+
 </databaseChangeLog>

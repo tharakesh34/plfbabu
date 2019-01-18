@@ -7952,7 +7952,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	//FinanceMain Details Tab ---> 1. Basic Details
 
 	//On Change Event for Finance Start Date
-	public void onChange$finStartDate(Event event) {
+	public void onChange$finStartDate(Event event) throws ParseException {
 		logger.debug("Entering" + event.toString());
 
 		if (this.finStartDate.getValue() != null) {
@@ -7973,6 +7973,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.finStartDate.setValue(DateUtility.getAppDate());
 		}
+
+		autoBuildSchedule();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -8004,6 +8006,57 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	// Auto Build Schedule after Loan Start Date has changed 
+	private void autoBuildSchedule() throws ParseException {
+		logger.debug(Literal.ENTERING);
+		if (!ImplementationConstants.ALW_AUTO_SCHD_BUILD || isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
+			return;
+		}
+		// Building Schedule Details automatically based on New Start Date
+		Events.sendEvent("onClick", btnBuildSchedule, null);
+
+		// Modification of Cheque Detail Amounts, if EMI modified based on "TDS" tab visible
+		if (chequeDetailDialogCtrl != null) {
+			for (Listitem listItem : chequeDetailDialogCtrl.listBoxChequeDetail.getItems()) {
+				Listcell emiDateLc = (Listcell) listItem.getChildren().get(6);
+				Combobox emiComboBox = (Combobox) emiDateLc.getFirstChild();
+				Date emiDate = DateUtility.parse(emiComboBox.getSelectedItem().getLabel(), PennantConstants.dateFormat);
+				Listcell emiAmountLc = (Listcell) listItem.getChildren().get(7);
+				CurrencyBox emiAmount = (CurrencyBox) emiAmountLc.getFirstChild();
+				List<FinanceScheduleDetail> schdList = getFinanceDetail().getFinScheduleData()
+						.getFinanceScheduleDetails();
+				for (FinanceScheduleDetail finSchdDetail : schdList) {
+					if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
+						BigDecimal repayAmount = schdList.get(1).getRepayAmount();
+						emiAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
+						emiAmount.setScale(2);
+						emiAmount.setValue(PennantAppUtil.formateAmount(repayAmount, 2));
+						break;
+					}
+				}
+
+			}
+			//Modification of Cheque Detail Amounts, if EMI modified 
+		} else if (getFinanceDetail().getChequeHeader() != null
+				&& getFinanceDetail().getChequeHeader().getChequeDetailList() != null) {
+			List<ChequeDetail> chequeDetailList = getFinanceDetail().getChequeHeader().getChequeDetailList();
+			List<FinanceScheduleDetail> schdList = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
+			for (ChequeDetail chequeDetail : chequeDetailList) {
+				 Date emiDate = chequeDetail.getChequeDate();
+				for (FinanceScheduleDetail finSchdDetail : schdList) {
+					if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
+						BigDecimal repayAmount = schdList.get(1).getRepayAmount();
+						chequeDetail.setAmount(repayAmount);
+						break;
+					}
+				}
+			}
+
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 
 	public Date getfinstartDate() {
 		return this.finStartDate.getValue();
