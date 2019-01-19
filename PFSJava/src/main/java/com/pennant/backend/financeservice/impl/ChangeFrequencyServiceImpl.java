@@ -75,8 +75,8 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 						|| StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())) {
 					prvSchdate = curSchd.getSchDate();
 					prvSchd = curSchd;
-					continue;
 				}
+				continue;
 			}
 
 			//Not Review Date
