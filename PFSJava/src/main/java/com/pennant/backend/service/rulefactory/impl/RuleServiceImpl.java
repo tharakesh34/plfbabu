@@ -522,6 +522,11 @@ public class RuleServiceImpl extends GenericService<Rule> implements RuleService
 		return auditDetail;
 	}
 
+	@Override
+	public List<Rule> getEligibilityRules(List<String> ruleCodes) {
+		return ruleDAO.fetchEligibilityRules(ruleCodes);
+	}
+
 	/**
 	 * (non-Javadoc)
 	 * 

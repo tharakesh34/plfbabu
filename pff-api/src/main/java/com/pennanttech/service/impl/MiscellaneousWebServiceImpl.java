@@ -17,6 +17,8 @@ import com.pennanttech.pffws.MiscellaneousRestService;
 import com.pennanttech.pffws.MiscellaneousSoapService;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
+import com.pennanttech.ws.model.eligibility.EligibilityDetail;
+import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, MiscellaneousSoapService {
@@ -60,6 +62,19 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		return dashboardResponse;
 	}
 	
+	@Override
+	public EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail)
+			throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		EligibilityDetailResponse eligibilityResponse = miscellaneousController
+				.prepareEligibilityFieldsdata(eligibilityDetail);
+
+		logger.debug(Literal.LEAVING);
+
+		return eligibilityResponse;
+	}
+
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;

@@ -68,6 +68,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -841,4 +842,24 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	}
 
 	//### 08-05-2018 End Development Iteam 81
+
+	@Override
+	public List<Rule> fetchEligibilityRules(List<String> ruleCodes) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT * FROM rules ");
+		query.append("WHERE active=:Active and rulemodule=:RuleModule AND RuleCode in (:RuleCode)");
+		Map<String, Object> map = new HashMap<>();
+		map.put("Active", 1);
+		map.put("RuleModule", "ELGRULE");
+		map.put("RuleCode", ruleCodes);
+
+		logger.debug(Literal.SQL + query.toString());
+		RowMapper<Rule> ruleMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+
+		logger.debug(Literal.LEAVING);
+		return jdbcTemplate.query(query.toString(), map, ruleMapper);
+	}
+
 }

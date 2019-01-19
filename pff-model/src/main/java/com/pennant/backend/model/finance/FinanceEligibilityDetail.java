@@ -7,6 +7,13 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(propOrder = { "elgRuleCode", "ruleResultType", "ruleResult" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinanceEligibilityDetail implements Serializable {
 
 	private static final long serialVersionUID = 4194235332884338495L;
@@ -14,9 +21,12 @@ public class FinanceEligibilityDetail implements Serializable {
 	private String finReference;
 	private long elgRuleCode;
 	private String elgRuleValue;
+	@XmlElement(name = "elgRuleCode")
 	private String lovDescElgRuleCode;
 	private String lovDescElgRuleCodeDesc;
+	@XmlElement
 	private String ruleResultType;
+	@XmlElement
 	private String ruleResult;
 	private boolean canOverride = false;
 	private int overridePerc;

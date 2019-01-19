@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -12,8 +13,10 @@ import org.apache.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.AccountMapping;
@@ -21,17 +24,24 @@ import com.pennant.backend.model.applicationmaster.TransactionCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
+import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.service.applicationmaster.TransactionCodeService;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.others.JVPostingService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -39,6 +49,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
+import com.pennanttech.ws.model.eligibility.EligibilityDetail;
+import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
+import com.pennanttech.ws.model.eligibility.EligibilityRuleCodeData;
+import com.pennanttech.ws.model.eligibility.FieldData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousServiceController {
@@ -53,6 +67,206 @@ public class MiscellaneousServiceController {
 	private DashboardConfigurationService dashboardConfigurationService;
 	private SecurityUserService securityUserService;
 	
+	private RuleService ruleService;
+	private RuleExecutionUtil ruleExecutionUtil;
+
+	private List<ErrorDetail> doEligibilityValidations(EligibilityDetail eligibilityDetail) {
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		List<EligibilityRuleCodeData> eligibilityRuleCodeData = eligibilityDetail.getEligibilityRuleCodeDatas();
+		List<FieldData> fieldsData = eligibilityDetail.getFieldDatas();
+
+		if (CollectionUtils.isEmpty(eligibilityRuleCodeData)) {
+			String[] param = new String[1];
+			param[0] = "eligibilityRuleCodes ";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		for (EligibilityRuleCodeData ruleCodeData : eligibilityRuleCodeData) {
+			if (StringUtils.isEmpty(ruleCodeData.getElgRuleCode())) {
+				String[] param = new String[1];
+				param[0] = "elgRuleCode ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+				return errorsList;
+			}else{
+				eligibilityDetail.addRuleCode(ruleCodeData.getElgRuleCode());
+			}
+		}
+		
+		if(CollectionUtils.isEmpty(fieldsData))	{
+			String[] param = new String[1];
+			param[0] = "fieldDatas ";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+
+			return errorsList;
+		}
+
+		for (FieldData fieldData : fieldsData) {
+			if (StringUtils.isEmpty(fieldData.getFieldName())) {
+				String[] param = new String[1];
+				param[0] = "fieldName ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+
+				return errorsList;
+			}
+
+			if (fieldData.getFieldValue()==null ||  StringUtils.isBlank(fieldData.getFieldValue().toString())) {
+				String[] param = new String[1];
+				param[0] = "fieldValue ";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+				return errorsList;
+			} else {
+				eligibilityDetail.setFieldData(fieldData.getFieldName(), fieldData.getFieldValue());
+			}
+		}
+
+		return errorsList;
+	}
+
+	public EligibilityDetailResponse prepareEligibilityFieldsdata(EligibilityDetail eligibilityDetail) {
+
+		logger.debug(Literal.ENTERING);
+
+		EligibilityDetailResponse response = null;
+		List<ErrorDetail> eligibilityErrors = doEligibilityValidations(eligibilityDetail);
+		
+		if (CollectionUtils.isEmpty(eligibilityErrors)) {
+			response = new EligibilityDetailResponse();
+			List<Rule> rules = ruleService.getEligibilityRules(eligibilityDetail.getRuleCodes());
+			
+			// FIXME Error of eligibilityDetail.getRuleCodes() size not equal to rules size then error
+			
+			if (CollectionUtils.isEmpty(rules) || eligibilityDetail.getRuleCodes().size() != rules.size()) {
+				List<ErrorDetail> errorsList = new ArrayList<>();
+				String[] param = new String[1];
+				param[0] = "rulecode";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", param)));
+
+				for (ErrorDetail errorDetail : errorsList) {
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+				}
+			}
+			else {
+				List<FinanceEligibilityDetail> eligibilityDetailsList = new ArrayList<>();
+				List<FinanceEligibilityDetail> eligibilityDetailsList1 = new ArrayList<>();
+
+				// Validation;
+				// Convert Rules to FinanceEligibilityDetail;
+				String strCodes = "FOIRAMT,BTOUTSTD,EBOEU,IIRMAX,LCRMAXEL,LIVSTCK,LOANAMT,LTVAMOUN,LTVLCR,"
+						+ RuleConstants.ELGRULE_DSRCAL + "," + RuleConstants.ELGRULE_FOIR + ","
+						+ RuleConstants.ELGRULE_LTV;
+
+				for (Rule rule : rules) {
+					FinanceEligibilityDetail financeEligibilityDetail = new FinanceEligibilityDetail();
+					financeEligibilityDetail.setLovDescElgRuleCode(rule.getRuleCode());
+					financeEligibilityDetail.setElgRuleValue(rule.getSQLRule());
+					financeEligibilityDetail.setRuleResultType(rule.getReturnType());
+
+					if (StringUtils.contains(strCodes, financeEligibilityDetail.getLovDescElgRuleCode())) {
+						eligibilityDetailsList.add(financeEligibilityDetail);
+					} else {
+						eligibilityDetailsList1.add(financeEligibilityDetail);
+					}
+				}
+
+				// Validation;
+
+				eligibilityDetailsList.addAll(eligibilityDetailsList1);
+				List<FinanceEligibilityDetail> responseList = new ArrayList<>();
+
+				// Execute Eligibility
+				for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityDetailsList) {
+					FinanceEligibilityDetail detail = executeRule(financeEligibilityDetail, eligibilityDetail.getMap(),
+							"INR");
+					eligibilityDetail.setFieldData("RULE_" + detail.getLovDescElgRuleCode(), detail.getRuleResult());
+					responseList.add(detail);
+				}
+
+				response.setEligibilityDetails(responseList);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+		}
+		else {
+			response = new EligibilityDetailResponse();
+			for (ErrorDetail errorDetail : eligibilityErrors) {
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	private FinanceEligibilityDetail executeRule(FinanceEligibilityDetail finElgDetail, Map<String, Object> map,
+			String finCcy) {
+
+		RuleReturnType ruleReturnType = null;
+
+		if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.BOOLEAN.value())) {
+			ruleReturnType = RuleReturnType.BOOLEAN;
+		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.DECIMAL.value())) {
+			ruleReturnType = RuleReturnType.DECIMAL;
+		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.STRING.value())) {
+			ruleReturnType = RuleReturnType.STRING;
+		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.INTEGER.value())) {
+			ruleReturnType = RuleReturnType.INTEGER;
+		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.OBJECT.value())) {
+			ruleReturnType = RuleReturnType.OBJECT;
+		}
+
+		Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy,
+				ruleReturnType);
+
+		String resultValue = null;
+		switch (ruleReturnType) {
+		case DECIMAL:
+			if (object != null && object instanceof BigDecimal) {
+				// unFormating object
+				int formatter = CurrencyUtil.getFormat(finCcy);
+				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
+			}
+			finElgDetail.setRuleResult(object.toString());
+			break;
+		case INTEGER:
+			finElgDetail.setRuleResult(object.toString());
+			break;
+
+		case BOOLEAN:
+			boolean tempBoolean = (boolean) object;
+			if (tempBoolean) {
+				resultValue = "1";
+			} else {
+				resultValue = "0";
+			}
+			finElgDetail.setRuleResult(resultValue);
+			break;
+
+		case OBJECT: // FIXME to discuss with Sathish
+			RuleResult ruleResult = (RuleResult) object;
+			Object resultval = ruleResult.getValue();
+			Object resultvalue = ruleResult.getDeviation();
+
+			if (resultval instanceof Double) {
+				BigDecimal tempResult = new BigDecimal(resultval.toString());
+				finElgDetail.setRuleResult(tempResult.toString());
+			} else if (resultval instanceof Integer) {
+				BigDecimal tempResult = new BigDecimal(resultval.toString());
+				finElgDetail.setRuleResult(tempResult.toString());
+			}
+			break;
+
+		default:
+			// do-nothing
+			break;
+		}
+
+		return finElgDetail;
+	}
+
 	private List<ErrorDetail> doDashboardValidations(DashBoardRequest request, boolean usernameProvided) {
 
 		logger.debug(Literal.ENTERING);
@@ -362,6 +576,18 @@ public class MiscellaneousServiceController {
 
 	public void setSecurityUserService(SecurityUserService securityUserService) {
 		this.securityUserService = securityUserService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

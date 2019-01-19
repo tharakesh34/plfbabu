@@ -94,4 +94,6 @@ public interface RuleService {
 	Rule getApprovedRule(String ruleCode, String ruleModule, String ruleEvent);
 
 	List<Rule> getGSTRuleDetails(String ruleModule, String type);
+
+	List<Rule> getEligibilityRules(List<String> ruleCodes);
 }

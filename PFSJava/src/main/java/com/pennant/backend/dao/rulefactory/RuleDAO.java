@@ -105,4 +105,5 @@ public interface RuleDAO {
 	//### 08-05-2018 Development Iteam 81 
 	boolean isFieldAssignedToRule(String fieldName);
 
+	List<Rule> fetchEligibilityRules(List<String> ruleCodes);
 }
