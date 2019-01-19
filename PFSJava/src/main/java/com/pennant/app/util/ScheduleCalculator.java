@@ -3514,24 +3514,17 @@ public class ScheduleCalculator {
 	private Date findAllowedChangeDate(FinScheduleData finScheduleData, String rvwRateApplFor, Date dateAllowedChange) {
 		logger.debug("Entering");
 
+		if (StringUtils.equals(finScheduleData.getFinanceMain().getProcMethod(),
+				FinanceConstants.FINSER_EVENT_RECEIPT)) {
+			logger.debug("Leaving");
+			return finScheduleData.getFinanceMain().getMaturityDate();
+		}
+
 		int size = finScheduleData.getFinanceScheduleDetails().size();
 		for (int i = 0; i < size; i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			if (DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) <= 0) {
 				continue;
-			}
-
-			if (StringUtils.equals(finScheduleData.getFinanceMain().getProcMethod(),
-					FinanceConstants.FINSER_EVENT_RECEIPT)) {
-				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) >= 0) {
-					dateAllowedChange = curSchd.getSchDate();
-					continue;
-				}
-			} else {
-				if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) > 0) {
-					dateAllowedChange = curSchd.getSchDate();
-					continue;
-				}
 			}
 
 			if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
