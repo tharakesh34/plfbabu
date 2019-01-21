@@ -2324,6 +2324,15 @@ UNION ALL
 			select deps_restore_dependencies('plf','rmtfinancetypes_temp');
 		</sql>
 	</changeSet>
+	
+	<changeSet id="137" author="Vinay">
+		<sql>
+	update data_engine_config set parser=12 where id=8;
+	update data_engine_config set parser=3 where id=7;
+	update data_engine_config set fileextension='.xlsx' where id in(7,8);
+	update data_engine_table set recordlength=0 where id=8
+</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
