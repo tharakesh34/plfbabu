@@ -39,5 +39,18 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="2" author="aditya.a">
+	<sql>
+		<![CDATA[
+			update RMTFinanceTypes set TaxNoMand = 0 where TaxNoMand is null;
+			update RMTFinanceTypes_temp set TaxNoMand = 0 where TaxNoMand is null;
+		]]>
+	</sql>
+    </changeSet>
+    <changeSet id="2.1" author="aditya.a">
+	<addNotNullConstraint tableName="ADTRmtfinancetypes" columnName="TaxNoMand"/>
+    </changeSet>
+	
 
 </databaseChangeLog>
