@@ -131,7 +131,6 @@ public class AccrualService extends ServiceHelper {
 		logger.debug(" Entering ");
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();
-		finMain.setRoundingTarget(finEODEvent.getFinType().getRoundingTarget());
 		List<FinanceScheduleDetail> scheduleDetailList = finEODEvent.getFinanceScheduleDetails();
 
 		// Finance Profit Details
