@@ -43,11 +43,8 @@
 package com.pennant.util;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,6 +118,7 @@ import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -232,128 +230,85 @@ public class PennantAppUtil {
 		}
 		return moduleName;
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#getLabelDesc} instead.
+	 */
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getValue().equalsIgnoreCase(value)) {
-				return list.get(i).getLabel();
-			}
-		}
-		return "";
+		return PennantApplicationUtil.getLabelDesc(value, list);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#getValueDesc} instead.
+	 */
 	public static String getValueDesc(String label, List<ValueLabel> list) {
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getLabel().equalsIgnoreCase(label)) {
-				return list.get(i).getValue();
-			}
-		}
-		return "";
+		return PennantApplicationUtil.getValueDesc(label, list);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
+	 */
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
-		if (amount == null) {
-			return BigDecimal.ZERO;
-		}
-		BigInteger bigInteger = amount.multiply(BigDecimal.valueOf(Math.pow(10, dec))).toBigInteger();
-		return new BigDecimal(bigInteger);
+		return PennantApplicationUtil.unFormateAmount(amount, dec);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#formateAmount} instead.
+	 */
 	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
-		BigDecimal returnAmount = BigDecimal.ZERO;
-		if (amount != null) {
-			returnAmount = amount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
-		}
-		return returnAmount;
+		return PennantApplicationUtil.formateAmount(amount, dec);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
+	 */
 	public static String amountFormate(BigDecimal amount, int dec) {
-		BigDecimal returnAmount = BigDecimal.ZERO;
-		if (amount != null) {
-			returnAmount = amount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
-		}
-
-		return formatAmount(returnAmount, dec, false);
+		return PennantApplicationUtil.amountFormate(amount, dec);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#unFormateAmount} instead.
+	 */
 	public static BigDecimal unFormateAmount(String amount, int dec) {
-		if (StringUtils.isEmpty(amount) || StringUtils.isBlank(amount)) {
-			return BigDecimal.ZERO;
-		}
-		BigInteger bigInteger = new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)))
-				.toBigInteger();
-		return new BigDecimal(bigInteger);
+		return PennantApplicationUtil.unFormateAmount(amount, dec);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#formatAmount} instead.
+	 */
 	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
-
-		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
-			DecimalFormat df = new DecimalFormat();
-			StringBuffer sb = new StringBuffer("###,###,###,###");
-			boolean negSign = false;
-
-			if (decPos > 0) {
-				sb.append('.');
-				for (int i = 0; i < decPos; i++) {
-					sb.append('0');
-				}
-
-				if (value.compareTo(BigDecimal.ZERO) == -1) {
-					negSign = true;
-					value = value.multiply(new BigDecimal("-1"));
-				}
-
-				if (negSign) {
-					value = value.multiply(new BigDecimal("-1"));
-				}
-			}
-
-			if (debitCreditSymbol) {
-				String s = sb.toString();
-				sb.append(" 'Cr';").append(s).append(" 'Dr'");
-			}
-
-			df.applyPattern(sb.toString());
-			String returnValue = df.format(value);
-			if (returnValue.startsWith(".")) {
-				returnValue = "0" + returnValue;
-			}
-			return returnValue;
-		} else {
-			String string = "0";
-			if (decPos > 0) {
-				string = "0.";
-				for (int i = 0; i < decPos; i++) {
-					string = string.concat("0");
-				}
-			}
-			return string;
-		}
+		return PennantApplicationUtil.formatAmount(value, decPos, debitCreditSymbol);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#formateLong} instead.
+	 */
 	public static String formateLong(long longValue) {
-		StringBuilder sb = new StringBuilder("###,###,###,###");
-		DecimalFormat df = new DecimalFormat();
-		df.applyPattern(sb.toString());
-		return df.format(longValue);
+		return PennantApplicationUtil.formateLong(longValue);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#formateInt} instead.
+	 */
 	public static String formateInt(int intValue) {
-
-		StringBuilder sb = new StringBuilder("###,###,###,###");
-		DecimalFormat df = new DecimalFormat();
-		df.applyPattern(sb.toString());
-		return df.format(intValue);
+		return PennantApplicationUtil.formateInt(intValue);
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated use {@link PennantApplicationUtil#getPercentageValue} instead.
+	 */
 	public static BigDecimal getPercentageValue(BigDecimal amount, BigDecimal percent) {
-		BigDecimal returnAmount = BigDecimal.ZERO;
-
-		if (amount != null) {
-			returnAmount = (amount.multiply(unFormateAmount(percent, 2).divide(new BigDecimal(100))))
-					.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
-		}
-		return returnAmount;
+		return PennantApplicationUtil.getPercentageValue(amount, percent);
 	}
 
 	public static String formateDate(Date date, String dateFormate) {
@@ -370,15 +325,7 @@ public class PennantAppUtil {
 		return formatedDate;
 	}
 
-	public static Timestamp getTimestamp(Date date) {
-		Timestamp timestamp = null;
-
-		if (date != null) {
-			timestamp = new Timestamp(date.getTime());
-		}
-		return timestamp;
-	}
-
+	
 	public static Time getTime(Date date) {
 		Time time = null;
 		if (date != null) {

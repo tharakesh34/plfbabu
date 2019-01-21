@@ -2,6 +2,7 @@ package com.pennant.backend.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -19,6 +20,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -63,11 +65,20 @@ public class PennantApplicationUtil {
 	}
 
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
-
 		if (amount == null) {
 			return BigDecimal.ZERO;
 		}
+
 		BigInteger bigInteger = amount.multiply(BigDecimal.valueOf(Math.pow(10, dec))).toBigInteger();
+		return new BigDecimal(bigInteger);
+	}
+
+	public static BigDecimal unFormateAmount(String amount, int dec) {
+		if (StringUtils.isEmpty(amount) || StringUtils.isBlank(amount)) {
+			return BigDecimal.ZERO;
+		}
+		BigInteger bigInteger = new BigDecimal(amount.replace(",", "")).multiply(BigDecimal.valueOf(Math.pow(10, dec)))
+				.toBigInteger();
 		return new BigDecimal(bigInteger);
 	}
 
@@ -90,7 +101,6 @@ public class PennantApplicationUtil {
 	}
 
 	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
-
 		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
 			DecimalFormat df = new DecimalFormat();
 
@@ -127,11 +137,18 @@ public class PennantApplicationUtil {
 			}
 
 			df.applyPattern(sb.toString());
-			return df.format(value);
+			String returnValue = df.format(value);
+			if (returnValue.startsWith(".")) {
+				returnValue = "0" + returnValue;
+			}
+			return returnValue;
 		} else {
-			String string = "0.";
-			for (int i = 0; i < decPos; i++) {
-				string = string.concat("0");
+			String string = "0";
+			if (decPos > 0) {
+				string = "0.";
+				for (int i = 0; i < decPos; i++) {
+					string = string.concat("0");
+				}
 			}
 			return string;
 		}
@@ -287,6 +304,16 @@ public class PennantApplicationUtil {
 		java.text.DecimalFormat df = new java.text.DecimalFormat();
 		df.applyPattern(sb.toString());
 		return df.format(intValue);
+	}
+
+	public static BigDecimal getPercentageValue(BigDecimal amount, BigDecimal percent) {
+		BigDecimal returnAmount = BigDecimal.ZERO;
+
+		if (amount != null) {
+			returnAmount = (amount.multiply(unFormateAmount(percent, 2).divide(new BigDecimal(100))))
+					.divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
+		}
+		return returnAmount;
 	}
 
 	public static String formateBoolean(int intValue) {
@@ -757,4 +784,21 @@ public class PennantApplicationUtil {
 		return result;
 	}
 
+	public static String getLabelDesc(String value, List<ValueLabel> list) {
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).getValue().equalsIgnoreCase(value)) {
+				return list.get(i).getLabel();
+			}
+		}
+		return "";
+	}
+
+	public static String getValueDesc(String label, List<ValueLabel> list) {
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).getLabel().equalsIgnoreCase(label)) {
+				return list.get(i).getValue();
+			}
+		}
+		return "";
+	}
 }

@@ -17,16 +17,17 @@ import com.aspose.words.Document;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.PathUtil;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AgreementEngine {
 	private static final Logger logger = Logger.getLogger(AgreementEngine.class);
 	private TemplateEngine templateEngine;
 
 	public AgreementEngine(String assetCode) throws Exception {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		String templatePath = getTemplatePath(assetCode);
 		templateEngine = new TemplateEngine(templatePath, templatePath);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public String getTemplatePath(String assetCode) {
@@ -55,7 +56,7 @@ public class AgreementEngine {
 	}
 
 	private void showDocument(Window window, String reportName, int format, boolean saved) throws Exception {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 		if (saved) {
@@ -86,12 +87,12 @@ public class AgreementEngine {
 		}
 		stream.close();
 		stream = null;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void showDocument(Window window, String reportName, int format, boolean saved, Tabbox tabbox)
 			throws Exception {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 		if (saved) {
@@ -126,7 +127,7 @@ public class AgreementEngine {
 		}
 		stream.close();
 		stream = null;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public byte[] getDocumentInByteArray(String reportName, int format) throws Exception {
