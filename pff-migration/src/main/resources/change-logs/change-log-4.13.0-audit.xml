@@ -43,8 +43,7 @@
 	<changeSet id="2" author="aditya.a">
 	<sql>
 		<![CDATA[
-			update RMTFinanceTypes set TaxNoMand = 0 where TaxNoMand is null;
-			update RMTFinanceTypes_temp set TaxNoMand = 0 where TaxNoMand is null;
+			update ADTRmtfinancetypes set TaxNoMand = 0 where TaxNoMand is null;
 		]]>
 	</sql>
     </changeSet>
