@@ -8,7 +8,7 @@
 		<window id="window_FinQueryDetailList" apply="${finQueryDetailListCtrl}" border="none" width="100%">
 			<borderlayout id="borderLayout_FinQueryDetailList">
 				<north border="none" />
-				<center border="none">
+				<center border="none" autoscroll="true">
 					<groupbox style="border:none;">
 						<groupbox id="finBasicdetails" zclass="null">
 						</groupbox>

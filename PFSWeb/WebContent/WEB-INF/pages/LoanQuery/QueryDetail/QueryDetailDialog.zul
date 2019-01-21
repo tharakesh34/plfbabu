@@ -218,19 +218,12 @@
 														<button width="90px" label="${c:l('label_WorkFlowDialog_WorkFlowUpload.value')}" id="btnUploadDocs"
 															sclass="z-toolbarbutton" />
 													</hbox>
-													<label />
-													<hbox>
-														<space spacing="520px" />
-														<button id="multy_Delete" label="${c:l('label_QueryDetailDialog_Delete.value')}" />
-													</hbox>
 												</row>
 											</rows>
 										</grid>
 										<listbox id="listBoxQueryDetail" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
-											width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
+											width="100%" height="200px" multiple="false" sizedByContent="true" span="true">
 											<listhead sizable="true">
-												<listheader id="listheader_RadioButton" label="${c:l('label_QueryDetailDialog_RadioButton.value')}"
-													sort="auto" hflex="min" visible="false" />
 												<listheader id="listheader_FinReference" label="${c:l('label_QueryDetailDialog_UploadedBy.value')}"
 													sort="auto" hflex="min" />
 												<listheader id="listheader_Id" label="${c:l('label_QueryDetailDialog_FileName.value')}" sort="auto"
@@ -248,9 +241,6 @@
 					</tabbox>
 				</div>
 			</center>
-			<south border="none">
-				<paging id="pagingQueryDetailDialog" />
-			</south>
 		</borderlayout>
 	</window>
 </zk>

@@ -92,20 +92,20 @@
 						<listbox id="listBoxQueryDetail" span="true" fixedLayout="true" style="overflow:auto" emptyMessage="${c:l('listbox.emptyMessage')}"
 							multiple="false">
 							<listhead sizable="false">
-								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" width="14px" />
+								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" />
 								<listheader id="listheader_Id" label="${c:l('listheader_Id.label')}" hflex="min" visible="false" />
-								<listheader id="listheader_RaisedBy" label="${c:l('listheader_UsrRaisedBy.label')}" width="14px" />
-								<listheader id="listheader_RaisedOn" label="${c:l('listheader_RaisedOn.label')}" width="14px" />
-								<listheader id="listheader_QryCtg" label="${c:l('listheader_QryType.label')}" width="18px" />
-								<listheader id="listheader_QryNotes" label="${c:l('listheader_QryNotes.label')}" width="26px" />
-								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" width="14px" />
+								<listheader id="listheader_RaisedBy" label="${c:l('listheader_UsrRaisedBy.label')}" />
+								<listheader id="listheader_RaisedOn" label="${c:l('listheader_RaisedOn.label')}" />
+								<listheader id="listheader_QryCtg" label="${c:l('listheader_QryType.label')}" />
+								<listheader id="listheader_QryNotes" label="${c:l('listheader_QryNotes.label')}" />
+								<listheader id="listheader_Status" label="${c:l('listheader_Status.label')}" />
 							</listhead>
 						</listbox>
 					</div>
 				</center>
 
 				<south border="none">
-					<paging id="pagingQueryDetailList" height="35px" />
+					<paging id="pagingQueryDetailList" />
 				</south>
 
 			</borderlayout>

@@ -47,6 +47,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -182,11 +184,11 @@ public class WorkFlowDetails extends AbstractWorkflowEntity {
 		this.workFlowRoles = workFlowRoles;
 	}
 
-	public String[] getFlowRoles() {
+	public String[] getRoles() {
 		if (workFlowRoles == null) {
-			return null;
+			return ArrayUtils.EMPTY_STRING_ARRAY;
 		}
-		return workFlowRoles.split(",");
+		return workFlowRoles.split("\\;");
 	}
 
 	public String getFirstTaskOwner() {

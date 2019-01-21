@@ -201,7 +201,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private void createBox() {
 		logger.debug("Entering");
 
-		if (staticList == null && getModuleMapping().getLovWidth() != 0) {
+		if (getModuleMapping().getLovWidth() != 0) {
 			this._width = getModuleMapping().getLovWidth();
 		}
 

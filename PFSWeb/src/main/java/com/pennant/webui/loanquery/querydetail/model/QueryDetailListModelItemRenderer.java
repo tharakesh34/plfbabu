@@ -49,8 +49,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.loanquery.QueryDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -75,7 +76,8 @@ public class QueryDetailListModelItemRenderer implements ListitemRenderer<QueryD
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(queryDetail.getRaisedBy() + " - " + queryDetail.getUsrLogin()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(queryDetail.getRaisedOn(), "dd/MM/yyy HH:mm:ss.SSS"));
+		lc = new Listcell(DateUtil.format(queryDetail.getRaisedOn(), DateFormat.LONG_DATE_TIME));
+		lc.setStyle("white-space: nowrap;");
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(queryDetail.getCategoryCode() + " - " + queryDetail.getCategoryDescription()));
 		lc.setParent(item);

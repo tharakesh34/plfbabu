@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -37,8 +39,8 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 
 public class PennantApplicationUtil {
-
 	private static final Logger logger = Logger.getLogger(PennantApplicationUtil.class);
+	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
 
 	public static boolean matches(BigDecimal val1, BigDecimal val2) {
 		if (val1 == null) {
@@ -440,6 +442,27 @@ public class PennantApplicationUtil {
 		}
 	}
 
+	public static List<Property> getRoles(String[] roleCodes) {
+		List<Property> roles = new ArrayList<>();
+
+		Search search = new Search();
+		search.setSearchClass(SecurityRole.class);
+		search.addTabelName("SecRoles");
+		search.addField("RoleCd");
+		search.addField("RoleDesc");
+		search.addFilterIn("RoleCd", Arrays.asList(roleCodes));
+
+		List<SecurityRole> securityRoles = SEARCH_PROCESSOR.getResults(search);
+
+		Property property;
+		for (SecurityRole role : securityRoles) {
+			property = new Property(role.getRoleCd(), role.getRoleDesc());
+			roles.add(property);
+		}
+
+		return roles;
+	}
+
 	public static List<SecurityRole> getRoleCodeDesc(String roleCode) {
 		JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
 		if (roleCode.contains(",")) {
@@ -753,7 +776,7 @@ public class PennantApplicationUtil {
 		case "CORP":
 		case "SME":
 			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP"));
-			//result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
+			result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Corp.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_CORP") + "_NUMBER");
@@ -800,5 +823,9 @@ public class PennantApplicationUtil {
 			}
 		}
 		return "";
+	}
+	
+	public static SearchProcessor getSearchProcessor() {
+		return (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 	}
 }

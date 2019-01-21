@@ -109,6 +109,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private List<SecurityUserOperations> securityUserOperationsList;
 	private List<ReportingManager> reportingManagersList;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+	private String lovDescFirstName;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -119,6 +120,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		excludeFields.add("userType");
 		excludeFields.add("businessVerticalCode");
 		excludeFields.add("businessVerticalDesc");
+		excludeFields.add("lovDescFirstName");
 		return excludeFields;
 	}
 
@@ -539,4 +541,11 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		this.auditDetailMap = auditDetailMap;
 	}
 
+	public String getLovDescFirstName() {
+		return lovDescFirstName;
+	}
+
+	public void setLovDescFirstName(String lovDescFirstName) {
+		this.lovDescFirstName = lovDescFirstName;
+	}
 }
