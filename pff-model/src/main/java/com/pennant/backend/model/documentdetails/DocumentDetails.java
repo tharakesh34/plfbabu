@@ -11,10 +11,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-@XmlType(propOrder = { "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName", "custDocIssuedOn",
+@XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
+		"custDocIssuedOn",
 		"custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
@@ -22,6 +24,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	private long docId = Long.MIN_VALUE;
 	private String docModule;
+	@XmlElement(name = "finReference")
 	private String referenceId = "";
 	private String finEvent = "";
 
@@ -68,6 +71,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private long pdfMappingRef = Long.MIN_VALUE;
 	private String pdfPassWord;
 	private boolean docIsPdfExtRequired = false;
+	private WSReturnStatus returnStatus;
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;
 
@@ -110,6 +114,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("docIsPdfExtRequired");
 		excludeFields.add("docImage");
 		excludeFields.add("doumentType");
+		excludeFields.add("returnStatus");
 		return excludeFields;
 	}
 

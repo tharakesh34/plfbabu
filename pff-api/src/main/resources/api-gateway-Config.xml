@@ -607,4 +607,31 @@
 	<jaxws:endpoint id="miscellaneousSoapService" implementor="#wsMiscellaneousService" address="/miscellaneousSoap"
 		publish="false">
 	</jaxws:endpoint>
+	
+	<!-- Document POST API Gateway -->
+	<bean id="wsDocumentService" class="com.pennanttech.service.impl.DocumentWebServiceImpl" />
+	
+	<!-- Document Rest Container -->
+	<jaxrs:server id="documentRestService" address="/documentRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsDocumentService"/>
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor"/>
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor"/>
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+	
+	<!-- Document Soap Container -->
+	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap"/>
 </beans>

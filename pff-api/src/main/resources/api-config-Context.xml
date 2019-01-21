@@ -158,4 +158,7 @@
 	<!-- Miscellaneous Controller -->	
 	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController" autowire="byName" scope="prototype">
 	</bean>
+	
+	<!-- Document Controller -->
+	<bean id="documentController"  class="com.pennanttech.controller.DocumentController" autowire="byName" scope="prototype"/>
 </beans>

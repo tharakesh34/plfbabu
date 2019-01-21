@@ -328,6 +328,128 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 		return errorDetails;
 	}
 
+	@Override
+	public AuditDetail doDocumentValidation(DocumentDetails detail) {
+
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = new AuditDetail();
+
+		// validate document details
+		DocumentType docType = documentTypeService.getDocumentTypeById(detail.getDocCategory());
+		if (docType == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = detail.getDocCategory();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90401", valueParm)));
+			return auditDetail;
+		}
+
+		//validate Dates
+		if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
+			if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "custDocExpDate: "
+						+ DateUtility.formatDate(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = "custDocIssuedOn: "
+						+ DateUtility.formatDate(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
+				return auditDetail;
+			}
+		}
+
+		//docType is mandatory in XML Level
+		if (StringUtils.isNotBlank(detail.getDoctype())) {
+			if (!(StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_PDF)
+					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOC)
+					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
+					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)
+					|| StringUtils.equals(detail.getDoctype(), "JPG") || StringUtils.equals(detail.getDoctype(), "JPEG")
+					|| StringUtils.equals(detail.getDoctype(), "PNG"))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = detail.getDoctype();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN"));
+				return auditDetail;
+			}
+		}
+
+		//docName is mandatory in XML Level
+		if (StringUtils.isNotBlank(detail.getDocName()) && StringUtils.isNotBlank(detail.getDoctype())) {
+			String docName = detail.getDocName().toLowerCase();
+			boolean isImage = false;
+			if (StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+				isImage = true;
+				if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "document type: " + docName;
+					valueParm[1] = detail.getDoctype();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
+					return auditDetail;
+				}
+			}
+
+			//if docName has no extension.
+			if (!docName.contains(".")) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "docName: " + docName;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN"));
+				return auditDetail;
+
+			} else {
+				// document name is only extension
+				String docNameExtension = docName.substring(docName.lastIndexOf("."));
+				if (StringUtils.equalsIgnoreCase(docName, docNameExtension)) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docName: ";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90407", "", valueParm), "EN"));
+					return auditDetail;
+				}
+			}
+			String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
+			//if doc type and doc Extension are invalid
+			if (!isImage) {
+				if (!StringUtils.equalsIgnoreCase(detail.getDoctype(), docExtension)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "document type: " + docName;
+					valueParm[1] = detail.getDoctype();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
+					return auditDetail;
+				}
+			}
+		}
+
+		// validate finance documents
+		if (!(DocumentCategories.FINANCE.getKey().equals(docType.getCategoryCode())) && docType.isDocIsMandatory()) {
+			if (StringUtils.isBlank(detail.getDocUri())) {
+				if (detail.getDocImage() == null || detail.getDocImage().length <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "docContent";
+					valueParm[1] = "docRefId";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90123", valueParm)));
+					return auditDetail;
+				}
+			}
+			if (detail.getDocImage() != null || StringUtils.isNotBlank(detail.getDocUri())) {
+				if (StringUtils.isBlank(detail.getDocName())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docName";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return auditDetail;
+				}
+			}
+			if (StringUtils.isBlank(detail.getDoctype())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "docFormat";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				return auditDetail;
+			}
+
+		}
+		logger.debug(Literal.LEAVING);
+
+		return auditDetail;
+
+	}
+
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
