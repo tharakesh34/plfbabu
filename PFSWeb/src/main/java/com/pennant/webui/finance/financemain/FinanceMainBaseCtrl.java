@@ -14221,6 +14221,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			legalRequiredRow.setVisible(false);
 		}
+		// Auto Build Schedule after Loan Start Date has changed 
+		if (ImplementationConstants.ALW_AUTO_SCHD_BUILD) {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_AutoScheduleBuild"), this.finStartDate);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
