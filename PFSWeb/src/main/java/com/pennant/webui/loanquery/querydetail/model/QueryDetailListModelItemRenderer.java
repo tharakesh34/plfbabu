@@ -44,7 +44,6 @@ package com.pennant.webui.loanquery.querydetail.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
@@ -60,21 +59,13 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 public class QueryDetailListModelItemRenderer implements ListitemRenderer<QueryDetail>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private String roleCode = "";
-	private long raisedBy = 0;
 
 	public QueryDetailListModelItemRenderer(String rolecd, long userID) {
 		super();
-		roleCode = rolecd;
-		raisedBy = userID;
 	}
 
 	@Override
 	public void render(Listitem item, QueryDetail queryDetail, int count) throws Exception {
-
-		if (!StringUtils.equals(roleCode, queryDetail.getAssignedRole()) && raisedBy != queryDetail.getRaisedBy()) {
-			return;
-		}
 
 		Listcell lc;
 
