@@ -50,6 +50,11 @@
     <changeSet id="2.1" author="aditya.a">
 	<addNotNullConstraint tableName="ADTRmtfinancetypes" columnName="TaxNoMand"/>
     </changeSet>
-	
+    
+	<changeSet id="5" author="vijaykumar.L">
+		<sql>
+			alter table ADTQUERYDETAIL alter column ASSIGNEDROLE varchar(100);
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

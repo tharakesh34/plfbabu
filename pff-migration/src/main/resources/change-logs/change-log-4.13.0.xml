@@ -107,6 +107,12 @@
 	<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TaxNoMand"/>
 	<addNotNullConstraint tableName="RMTFinanceTypes_temp" columnName="TaxNoMand"/>
    </changeSet>
+
+	<changeSet id="5" author="vijaykumar.L">
+		<sql>
+			alter table QUERYDETAIL alter column ASSIGNEDROLE varchar(100);
+			alter table QUERYDETAIL_TEMP alter column ASSIGNEDROLE varchar(100);
+		</sql>
+	</changeSet>
    
-	
 </databaseChangeLog>
