@@ -1023,9 +1023,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			Object object = this.bankBranchCode.getAttribute("BankBranchID");
 			if (object != null) {
 				aVehicleDealer.setBankBranchID(Long.parseLong(object.toString()));
-			} else {
-				aVehicleDealer.setBankBranchID(0);
-			}
+			} 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

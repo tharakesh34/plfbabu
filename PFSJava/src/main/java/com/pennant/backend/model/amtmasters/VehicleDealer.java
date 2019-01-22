@@ -81,7 +81,7 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String calculationRule;
 	private String paymentMode;
 	private String accountNumber;
-	private long accountingSetId;
+	private Long accountingSetId;
 	private String accountingSetCode;
 	private String accountingSetDesc;
 	private String calRuleDesc;
@@ -107,7 +107,7 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String toprovinceName;
 	private String accountNo;
 	private String accountType;
-	private long bankBranchID;
+	private Long bankBranchID;
 	private String bankBranchCode;
 	private String bankBranchCodeName;
 	private String bankName;
@@ -383,11 +383,11 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.calRuleDesc = calRuleDesc;
 	}
 
-	public long getAccountingSetId() {
+	public Long getAccountingSetId() {
 		return accountingSetId;
 	}
 
-	public void setAccountingSetId(long accountingSetId) {
+	public void setAccountingSetId(Long accountingSetId) {
 		this.accountingSetId = accountingSetId;
 	}
 
@@ -590,11 +590,11 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 		this.accountType = accountType;
 	}
 
-	public long getBankBranchID() {
+	public Long getBankBranchID() {
 		return bankBranchID;
 	}
 
-	public void setBankBranchID(long bankBranchID) {
+	public void setBankBranchID(Long bankBranchID) {
 		this.bankBranchID = bankBranchID;
 	}
 
