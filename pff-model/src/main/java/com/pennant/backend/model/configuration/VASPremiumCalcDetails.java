@@ -10,6 +10,7 @@ public class VASPremiumCalcDetails {
 	private int customerAge;
 	private String gender;
 	private int policyAge;
+	private int loanAge;
 	private BigDecimal premiumPercentage;
 	private BigDecimal minAmount;
 	private BigDecimal maxAmount;
@@ -20,6 +21,7 @@ public class VASPremiumCalcDetails {
 	private String maxAmountF;
 	private String customerAgeF;
 	private String policyAgeF;
+	private String loanAgeF;
 
 	public String getProductCode() {
 		return productCode;
@@ -155,6 +157,22 @@ public class VASPremiumCalcDetails {
 
 	public void setPolicyAgeF(String policyAgeF) {
 		this.policyAgeF = policyAgeF;
+	}
+
+	public int getLoanAge() {
+		return loanAge;
+	}
+
+	public void setLoanAge(int loanAge) {
+		this.loanAge = loanAge;
+	}
+
+	public String getLoanAgeF() {
+		return loanAgeF;
+	}
+
+	public void setLoanAgeF(String loanAgeF) {
+		this.loanAgeF = loanAgeF;
 	}
 
 }

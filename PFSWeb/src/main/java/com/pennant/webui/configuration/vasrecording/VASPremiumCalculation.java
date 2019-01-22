@@ -7,44 +7,58 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.extension.feature.CustomVASPremiumCalculation;
 
 public class VASPremiumCalculation {
 	private static final Logger logger = Logger.getLogger(VASPremiumCalculation.class);
 
 	private transient VASRecordingService vasRecordingService;
 
+	@Autowired(required = false)
+	@Qualifier("customVASPremiumCalculation")
+	private CustomVASPremiumCalculation customVASPremiumCalculation;
+
+
 	public VASPremiumCalcDetails getPrimiumPercentage(VASPremiumCalcDetails preDetails) {
 		logger.debug(Literal.ENTERING);
 
 		List<VASPremiumCalcDetails> calcDetails = getVasRecordingService().getPremiumCalcDeatils(preDetails);
-		BigDecimal finAmount = preDetails.getFinAmount();
 
 		if (CollectionUtils.isEmpty(calcDetails)) {
 			return null;
 		}
 		
-		for (VASPremiumCalcDetails details : calcDetails) {
-			if ((details.getCustomerAge() == preDetails.getCustomerAge())
-					&& (StringUtils.equalsIgnoreCase(details.getGender(), preDetails.getGender()))
-					&& (details.getPolicyAge() == preDetails.getPolicyAge())
-					&& (finAmount.compareTo(details.getMinAmount()) > 0
-							&& details.getMaxAmount().compareTo(finAmount) >= 0)) {
-				return details;
-
+		// If Custom VAS Premium Calculation available then go to custom process.
+		if (customVASPremiumCalculation != null) {
+			return customVASPremiumCalculation.calcPrimiumPercentage(calcDetails, preDetails);
+		} else {
+			for (VASPremiumCalcDetails details : calcDetails) {
+				if ((details.getCustomerAge() == preDetails.getCustomerAge())
+						&& (StringUtils.equalsIgnoreCase(details.getGender(), preDetails.getGender()))
+						&& (details.getPolicyAge() == preDetails.getPolicyAge())
+						&& (preDetails.getFinAmount().compareTo(details.getMinAmount()) > 0
+								&& details.getMaxAmount().compareTo(preDetails.getFinAmount()) >= 0)) {
+					return details;
+				}
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/*
-	 * Medical Status
+	/**
+	 * Calculating the medical status.
+	 * 
+	 * @param premiumCalcDetails
+	 * @return
 	 */
 	public boolean getMedicalStatus(VASPremiumCalcDetails premiumCalcDetails) {
 		String values = SysParamUtil.getValueAsString("VAS_MEDICAL_STATUS_CALCULATION");
@@ -70,10 +84,6 @@ public class VASPremiumCalculation {
 			return true;
 		}
 		return false;
-	}
-
-	private int getCcyFormat() {
-		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
 
 	public VASRecordingService getVasRecordingService() {

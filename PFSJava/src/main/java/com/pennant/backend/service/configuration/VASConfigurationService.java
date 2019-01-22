@@ -59,7 +59,7 @@ public interface VASConfigurationService {
 
 	VASConfiguration getVASConfigurationByCode(String productCode);
 
-	VASConfiguration getApprovedVASConfigurationByCode(String productCode);
+	VASConfiguration getApprovedVASConfigurationByCode(String productCode, boolean reqChilds);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

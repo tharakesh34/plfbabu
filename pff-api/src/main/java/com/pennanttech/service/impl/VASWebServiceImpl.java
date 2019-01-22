@@ -58,7 +58,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			// for logging purpose
 			APIErrorHandlerService.logReference(product);
 			// validate VasStructre with given productCode
-			vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(product);
+			vasConfiguration = vASConfigurationService.getApprovedVASConfigurationByCode(product, true);
 			if (vasConfiguration != null && vasConfiguration.isActive()) {
 				if (vasConfiguration.getExtendedFieldHeader() != null) {
 					vasConfiguration.setExtendedFieldDetailList(

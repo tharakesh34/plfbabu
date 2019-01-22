@@ -222,7 +222,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug("Entering");
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, this.roleCode);
-		this.btnNew_VasRecording.setVisible(true);
+		this.btnNew_VasRecording.setVisible(getUserWorkspace().isAllowed("button_FinVasRecordingDialog_btnNew"));
 
 		logger.debug("Leaving");
 	}
@@ -345,7 +345,7 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				VASConfiguration vasConfiguration = recording.getVasConfiguration();
 				if (vasConfiguration == null) {
 					vasConfiguration = getVasConfigurationService()
-							.getApprovedVASConfigurationByCode(recording.getProductCode());
+							.getApprovedVASConfigurationByCode(recording.getProductCode(), true);
 					recording.setVasConfiguration(vasConfiguration);
 				}
 

@@ -134,7 +134,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, ");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Filters, ");
 		selectSql.append(
-				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, Editable, visible, AllowInRule, ValFromScript,");
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, Editable, visible, AllowInRule, ValFromScript, Scriptlet,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -238,7 +238,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		insertSql.append(" FieldMandatory, FieldConstraint, FieldSeqOrder, FieldList, Filters, ");
 		insertSql.append(" FieldDefaultValue, FieldMinValue, FieldMaxValue, FieldUnique, MultiLine,ParentTag,");
 		insertSql.append(
-				" InputElement,Editable, ExtendedType,AllowInRule ,ValFromScript, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, Visible,");
+				" InputElement,Editable, ExtendedType,AllowInRule ,ValFromScript, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, Visible,  Scriptlet,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(" Values(:ModuleId, :FieldName, :FieldType, :FieldLength, :FieldPrec, ");
 		insertSql.append(" :FieldLabel, :FieldMandatory, :FieldConstraint, :FieldSeqOrder, ");
@@ -246,7 +246,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		insertSql.append(
 				" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable,:ExtendedType, :AllowInRule, :ValFromScript, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
-		insertSql.append(" :NextRoleCode, :Visible, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(" :NextRoleCode, :Visible, :Scriptlet, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -285,7 +285,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		updateSql.append(" FieldMandatory = :FieldMandatory, FieldConstraint = :FieldConstraint, ");
 		updateSql.append(" FieldSeqOrder = :FieldSeqOrder, Filters = :Filters,");
 		updateSql.append(" FieldList = :FieldList, FieldDefaultValue = :FieldDefaultValue, ");
-		updateSql.append(" FieldMinValue = :FieldMinValue, FieldMaxValue = :FieldMaxValue,Editable = :Editable, ValFromScript = :ValFromScript, ");
+		updateSql.append(
+				" FieldMinValue = :FieldMinValue, FieldMaxValue = :FieldMaxValue,Editable = :Editable, ValFromScript = :ValFromScript, Scriptlet = :Scriptlet,");
 		updateSql.append(
 				" FieldUnique = :FieldUnique, MultiLine =:MultiLine ,ParentTag =:ParentTag,InputElement =:InputElement,ExtendedType =:ExtendedType, AllowInRule=:AllowInRule,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
@@ -352,7 +353,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, ");
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, visible,");
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript, ");
+		selectSql.append(
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript, Scriptlet, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescModuleName,lovDescSubModuleName , ");
 		}
@@ -380,7 +382,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, ");
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, ");
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, ");
+		selectSql.append(
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, Scriptlet, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From ExtendedFieldDetail");

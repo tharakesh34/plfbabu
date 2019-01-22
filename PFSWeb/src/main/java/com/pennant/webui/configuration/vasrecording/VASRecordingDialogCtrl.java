@@ -3141,18 +3141,17 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 			//Finance details Object
 			if (getClonedFinanceDetail() == null) {
-				MessageUtil.showError("Required details are not available for premium calculation.");
+				MessageUtil.showError("Required details are not available for the premium calculation.");
 				return;
 			}
 
 			//Loan Amount
 			loanAmt = getClonedFinanceDetail().getFinScheduleData().getFinanceMain().getFinAssetValue();
 			loanAmt = PennantApplicationUtil.formateAmount(loanAmt, getCcyFormat());
-			if (BigDecimal.ZERO.compareTo(loanAmt) > 0) {
-				MessageUtil.showError("Loam Amount should be greater than Zero");
+			if (BigDecimal.ZERO.compareTo(loanAmt) >= 0) {
+				MessageUtil.showError("Loan amount should be greater than Zero");
 				return;
 			}
-
 
 			Customer customer = null;
 			boolean customerExist = false;
@@ -3172,43 +3171,47 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					}
 				}
 			}
+
 			if (!customerExist) {
 				MessageUtil.showError("Customer details are not available for the selected CIF.");
 				return;
 			}
 
+			FinanceMain financeMain = getClonedFinanceDetail().getFinScheduleData().getFinanceMain();
+			
 			VASPremiumCalcDetails premiumCalcDetails = new VASPremiumCalcDetails();
 			premiumCalcDetails.setCustomerAge(getAge(customer.getCustDOB()));
 			premiumCalcDetails.setGender(customer.getCustGenderCode());
 			premiumCalcDetails.setPolicyAge(insuranceTerms);
 			premiumCalcDetails.setFinAmount(loanAmt);
 			premiumCalcDetails.setProductCode(this.vASRecording.getProductCode());
-			premiumCalcDetails.setFinType(getClonedFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
+			premiumCalcDetails.setFinType(financeMain.getFinType());
+			premiumCalcDetails.setLoanAge(financeMain.getNumberOfTerms() + financeMain.getGraceTerms());
 
-			VASPremiumCalcDetails newPremiumCalcDetails = getVasPremiumCalculation()
+			VASPremiumCalcDetails newPremiumCalcDetails = this.vasPremiumCalculation
 					.getPrimiumPercentage(premiumCalcDetails);
 
 			//Medical applicable or not checking
 			if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("VAS_MEDICAL_STATUS_CALCULATION_YES_NO"))
 					&& (getVASRecording().isNewRecord()) && (this.vASConfiguration.isMedicalApplicable())) {
-				boolean medicalApplicable = getVasPremiumCalculation().getMedicalStatus(premiumCalcDetails);
+				boolean medicalApplicable = this.vasPremiumCalculation.getMedicalStatus(premiumCalcDetails);
 				this.medicalApplicable.setChecked(medicalApplicable);
 				setMedicalStatusVisibility(medicalApplicable);
 			}
 
 			if (newPremiumCalcDetails == null) {
-				MessageUtil.showError("Premium Percentage is not available for the slected input data.");
+				MessageUtil.showError("Unable to calculate the premium percentage with provided input data.");
 				return;
 			}
 
-			if (BigDecimal.ZERO.compareTo(newPremiumCalcDetails.getPremiumPercentage()) > 0) {
-				MessageUtil.showError("Premium Percentage is not available for the slected input data.");
+			if (BigDecimal.ZERO.compareTo(newPremiumCalcDetails.getPremiumPercentage()) >= 0) {
+				MessageUtil.showError("Premium Percentage is not available for the selected input data.");
 				return;
 			}
 
 			BigDecimal vasFee = loanAmt.multiply(newPremiumCalcDetails.getPremiumPercentage());
 			vasFee = vasFee.divide(new BigDecimal(100));
-			if (BigDecimal.ZERO.compareTo(vasFee) > 0) {
+			if (BigDecimal.ZERO.compareTo(vasFee) >= 0) {
 				MessageUtil.showError("Premium amount from the Premium calculation is less than zero.");
 				this.fee.setReadonly(false);
 				return;
@@ -3501,10 +3504,6 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
-	}
-
-	public VASPremiumCalculation getVasPremiumCalculation() {
-		return vasPremiumCalculation;
 	}
 
 	public void setVasPremiumCalculation(VASPremiumCalculation vasPremiumCalculation) {

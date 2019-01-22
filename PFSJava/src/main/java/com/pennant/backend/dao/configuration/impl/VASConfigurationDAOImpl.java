@@ -349,9 +349,9 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		sql.append(" INSERT INTO VASPremiumCalcDetails");
 		sql.append(StringUtils.trimToEmpty(tableType));
 		sql.append(" ( BatchId, ProductCode, ManufacturerId, CustomerAge, Gender,");
-		sql.append("PolicyAge, PremiumPercentage, MinAmount,MaxAmount) ");
+		sql.append("PolicyAge, PremiumPercentage, MinAmount, MaxAmount, LoanAge) ");
 		sql.append("  VALUES(:BatchId, :ProductCode, :ManufacturerId, :CustomerAge, :Gender,");
-		sql.append(" :PolicyAge, :PremiumPercentage, :MinAmount, :MaxAmount) ");
+		sql.append(" :PolicyAge, :PremiumPercentage, :MinAmount, :MaxAmount, :LoanAge) ");
 
 		logger.debug("insertSql: " + sql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(premiumCalcDetList.toArray());
@@ -370,7 +370,7 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" Select BatchId, ProductCode, ManufacturerId, CustomerAge, Gender,");
-		sql.append(" PolicyAge, PremiumPercentage, MinAmount,MaxAmount");
+		sql.append(" PolicyAge, PremiumPercentage, MinAmount, MaxAmount, LoanAge");
 		sql.append(" from VASPremiumCalcDetails");
 		sql.append(StringUtils.trimToEmpty(tableType));
 		sql.append(" Where ProductCode = :ProductCode");

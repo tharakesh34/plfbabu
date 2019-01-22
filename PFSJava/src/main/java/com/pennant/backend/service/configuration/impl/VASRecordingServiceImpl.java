@@ -119,6 +119,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.insurance.InsuranceDetails;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -412,7 +413,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// VasconfigurationDetails
 			vasRecording.setVasConfiguration(
-					getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode()));
+					getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode(),
+							true));
 
 			//Set CustomerDetails
 			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(),
@@ -541,7 +543,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// VasconfigurationDetails
 			vasRecording.setVasConfiguration(
-					getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode()));
+					getvASConfigurationService().getApprovedVASConfigurationByCode(vasRecording.getProductCode(),
+							true));
 
 			// Set CustomerDetails
 			vasRecording.setVasCustomer(getvASRecordingDAO().getVasCustomerCif(vasRecording.getPrimaryLinkRef(),
@@ -647,7 +650,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	}
 	@Override
 	public VASRecording getVASRecording(String vasRefrence, String vasStatus) {
-		return getVASRecordingDAO().getVASRecordingByReference(vasRefrence, "_AView");
+		return getVASRecordingDAO().getVASRecording(vasRefrence, vasStatus, "_AView");
 	}
 
 	/**
@@ -1790,6 +1793,43 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		VASRecording vASRecording = new VASRecording("");
 		BeanUtils.copyProperties((VASRecording) auditHeader.getAuditDetail().getModelData(), vASRecording);
 
+		// Based on VAS Created Against, details will be captured
+		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
+			if (vASRecording.getPaymentInsId() == 0) {
+				vASRecording.setPaymentInsId(Long.MIN_VALUE);
+			}
+			// Creating the payable Advise
+			createPayableAdvise(vASRecording);
+
+			if (vASRecording.getPaymentInsId() != Long.MIN_VALUE) {
+				// Creating the Receivable Advise against the insurance partner.
+				createReceivableAdvise(vASRecording);
+			}
+		}
+
+		if (vASRecording.getPaymentInsId() != Long.MIN_VALUE) {
+			//Prepare the accounting when payment done to the insurance partner
+			createInsurancePaymentAccounting(auditHeader, vASRecording);
+		}
+
+		//Insurance details for reversalling the reconciliation accounting
+		InsuranceDetails insuranceDetails = getInsuranceDetailDAO()
+				.getInsurenceDetailsByRef(vASRecording.getVasReference(), TableType.MAIN_TAB.getSuffix());
+
+		if (insuranceDetails != null) {
+			if (insuranceDetails.getLinkedTranId() == Long.MIN_VALUE) {
+				insuranceDetails.setLinkedTranId(0);
+			}
+			if (insuranceDetails.getLinkedTranId() != 0) {
+				postingsPreparationUtil.postReversalsByLinkedTranID(insuranceDetails.getLinkedTranId());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return vASRecording;
+	}
+
+	private void createInsurancePaymentAccounting(AuditHeader auditHeader, VASRecording vASRecording) {
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_CANINS);
@@ -1809,16 +1849,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.setCustID(financeMain.getCustID());
-			if (vASRecording.getPaymentInsId() == 0) {
-				vASRecording.setPaymentInsId(Long.MIN_VALUE);
-			}
-			// Creating the payble Advise
-			createPayableAdvise(vASRecording);
-			
-			if (vASRecording.getPaymentInsId() != Long.MIN_VALUE) {
-				// Creating the Receivable Advise
-				createReceivableAdvise(vASRecording);
-			}
 		} else if (StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())) {
 			Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(), "");
 			aeEvent.setBranch(customer.getCustDftBranch());
@@ -1844,10 +1874,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CANINS, AccountEventConstants.ACCEVENT_CANINS);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
-		
-		logger.debug(Literal.LEAVING);
-		
-		return vASRecording;
 	}
 	
 	/**

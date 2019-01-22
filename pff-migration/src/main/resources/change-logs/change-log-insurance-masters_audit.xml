@@ -86,4 +86,10 @@
 		<column name="MedicalApplicable" type="boolean"/>		
 	</addColumn>
 </changeSet>
+	
+	<changeSet id="09" author="Durga Prasad G">
+	 	<sql>
+			Update ADTEXTENDEDFIELDDETAIL set ValFromScript = 0 Where ValFromScript is NULL;
+	 	</sql>
+	</changeSet>
 </databaseChangeLog>

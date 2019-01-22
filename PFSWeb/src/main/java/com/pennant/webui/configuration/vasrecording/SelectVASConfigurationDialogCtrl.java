@@ -377,7 +377,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		if (vasConfiguration == null) {
 			//Fetching the vasConfiguration details
 			vasConfiguration = getVasConfigurationService()
-					.getApprovedVASConfigurationByCode(this.productType.getValue());
+					.getApprovedVASConfigurationByCode(this.productType.getValue(), true);
 		}
 
 		// Vas Customer Details
@@ -627,7 +627,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		if (StringUtils.trimToNull(this.productType.getValue()) != null && !isFinanceProcess) {
 			//Fetching the vasConfiguration details
 			vasConfiguration = getVasConfigurationService()
-					.getApprovedVASConfigurationByCode(this.productType.getValue());
+					.getApprovedVASConfigurationByCode(this.productType.getValue(), true);
 			if (vasConfiguration == null) {
 				this.productType.setValue("", "");
 				this.productType.setObject(null);

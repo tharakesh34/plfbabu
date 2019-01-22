@@ -136,6 +136,20 @@ public class InsuranceFileImportService {
 					throw new Exception("Insurace details are not available for the Reference :" + vasReference);
 				}
 
+				//VAS Configuration
+				VASConfiguration configuration = getInsuranceDetailService()
+						.getVASConfigurationByCode(vasRecording.getProductCode());
+
+				if (configuration == null) {
+					throw new Exception("Configuration details are not available for the Product code :"
+							+ vasRecording.getProductCode() + " for the reference :" + vasReference);
+				}
+
+				if (providerId != configuration.getManufacturerId()) {
+					throw new Exception("Insurance is not related to selected Company Code for the Reference :"
+							+ detailFromFile.getReference());
+				}
+
 				InsuranceDetails existingTempDetails = getInsuranceDetailService().getInsurenceDetailsByRef(vasReference, TableType.TEMP_TAB.getSuffix());
 				
 				if (existingTempDetails != null) {
@@ -546,7 +560,7 @@ public class InsuranceFileImportService {
 			try {
 				status.setStatus(ExecutionStatus.E.name());
 				if (!StringUtils.equalsIgnoreCase(manufacturerName, detailFromFile.getManufacturerName())) {
-					throw new Exception("Manufacturer Name not matched with the selcted manufacturer.");
+					throw new Exception("Manufacturer name not matched with the selected manufacturer.");
 				}
 				premiumCalcDetails = new VASPremiumCalcDetails();
 
@@ -555,33 +569,46 @@ public class InsuranceFileImportService {
 
 				//Customer Age
 				try {
-					if (StringUtils.isNumeric(detailFromFile.getCustomerAgeF())) {
-						premiumCalcDetails.setCustomerAge(Integer.valueOf(detailFromFile.getCustomerAgeF()));
-					} else {
-						premiumCalcDetails.setCustomerAge(new BigDecimal(detailFromFile.getCustomerAgeF()).intValue());
+					if (StringUtils.trimToNull(detailFromFile.getCustomerAgeF()) != null) {
+						if (StringUtils.isNumeric(detailFromFile.getCustomerAgeF())) {
+							premiumCalcDetails.setCustomerAge(Integer.valueOf(detailFromFile.getCustomerAgeF()));
+						} else {
+							premiumCalcDetails
+									.setCustomerAge(new BigDecimal(detailFromFile.getCustomerAgeF()).intValue());
+						}
 					}
 				} catch (Exception e) {
 					throw new Exception("Customer age should be numeric." + detailFromFile.getCustomerAgeF());
 				}
 
 				//Gender
-				premiumCalcDetails.setGender(detailFromFile.getGender());
+				String gender = detailFromFile.getGender();
+				if (StringUtils.trimToNull(gender) != null) {
+					if ("M".equalsIgnoreCase(gender) || "F".equalsIgnoreCase(gender) || "O".equalsIgnoreCase(gender)) {
+						premiumCalcDetails.setGender(detailFromFile.getGender());
+					} else {
+						throw new Exception("Gender should be either M,F,O." + detailFromFile.getGender());
+					}
+				}
 
 				//PolicyAge
 				try {
-					if (StringUtils.isNumeric(detailFromFile.getPolicyAgeF())) {
-						premiumCalcDetails.setPolicyAge(Integer.valueOf(detailFromFile.getPolicyAgeF()));
-					} else {
-						premiumCalcDetails.setPolicyAge(new BigDecimal(detailFromFile.getPolicyAgeF()).intValue());
+					if (StringUtils.trimToNull(detailFromFile.getPolicyAgeF()) != null) {
+						if (StringUtils.isNumeric(detailFromFile.getPolicyAgeF())) {
+							premiumCalcDetails.setPolicyAge(Integer.valueOf(detailFromFile.getPolicyAgeF()));
+						} else {
+							premiumCalcDetails.setPolicyAge(new BigDecimal(detailFromFile.getPolicyAgeF()).intValue());
+						}
 					}
 				} catch (Exception e) {
 					throw new Exception("Policy Age In Terms should be numeric." + detailFromFile.getPolicyAgeF());
 				}
 
-
 				//PremiumPercentage
 				try {
-					premiumCalcDetails.setPremiumPercentage(new BigDecimal(detailFromFile.getPremiumPercentageF()));
+					if (StringUtils.trimToNull(detailFromFile.getPremiumPercentageF()) != null) {
+						premiumCalcDetails.setPremiumPercentage(new BigDecimal(detailFromFile.getPremiumPercentageF()));
+					}
 				} catch (Exception e) {
 					throw new Exception(
 							"Premium Percentage should be numeric." + detailFromFile.getPremiumPercentageF());
@@ -589,16 +616,33 @@ public class InsuranceFileImportService {
 
 				//MinAmount
 				try {
-					premiumCalcDetails.setMinAmount(new BigDecimal(detailFromFile.getMinAmountF()));
+					if (StringUtils.trimToNull(detailFromFile.getMinAmountF()) != null) {
+						premiumCalcDetails.setMinAmount(new BigDecimal(detailFromFile.getMinAmountF()));
+					}
 				} catch (Exception e) {
 					throw new Exception("Min Amount should be numeric." + detailFromFile.getMinAmountF());
 				}
 
 				//Max Amount
 				try {
-					premiumCalcDetails.setMaxAmount(new BigDecimal(detailFromFile.getMaxAmountF()));
+					if (StringUtils.trimToNull(detailFromFile.getMaxAmountF()) != null) {
+						premiumCalcDetails.setMaxAmount(new BigDecimal(detailFromFile.getMaxAmountF()));
+					}
 				} catch (Exception e) {
 					throw new Exception("Max Amount should be numeric." + detailFromFile.getMaxAmountF());
+				}
+
+				//Loan Age
+				try {
+					if (StringUtils.trimToNull(detailFromFile.getLoanAgeF()) != null) {
+						if (StringUtils.isNumeric(detailFromFile.getLoanAgeF())) {
+							premiumCalcDetails.setLoanAge(Integer.valueOf(detailFromFile.getLoanAgeF()));
+						} else {
+							premiumCalcDetails.setLoanAge(new BigDecimal(detailFromFile.getLoanAgeF()).intValue());
+						}
+					}
+				} catch (Exception e) {
+					throw new Exception("Loan Age In Terms should be numeric." + detailFromFile.getLoanAgeF());
 				}
 
 				calcDetailsList.add(premiumCalcDetails);
@@ -819,7 +863,7 @@ public class InsuranceFileImportService {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" Select  BatchId, ManufacturerName, CustomerAgeF, Gender,");
-		sql.append(" PolicyAgeF, PremiumPercentageF, MinAmountF,MaxAmountF");
+		sql.append(" PolicyAgeF, PremiumPercentageF, MinAmountF, MaxAmountF, LoanAgeF");
 		sql.append(" From VASPremiumCalcDet_DataEngine Where BatchId = :BatchId");
 		logger.debug("selectSql: " + sql.toString());
 		RowMapper<VASPremiumCalcDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper

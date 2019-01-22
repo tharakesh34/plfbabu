@@ -1498,4 +1498,11 @@
 			          WHERE amtvehicledealer_temp.dealerid = t1.dealerid))
 			 </createView>
 	</changeSet>
+	
+	<changeSet id="34" author="Durga Prasad G">
+	 	<sql>
+			Update EXTENDEDFIELDDETAIL set ValFromScript = 0 Where ValFromScript is NULL;
+			Update EXTENDEDFIELDDETAIL_TEMP set ValFromScript = 0 Where ValFromScript is NULL;
+	 	</sql>
+	</changeSet>
 </databaseChangeLog>

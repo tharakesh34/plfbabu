@@ -339,7 +339,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * @return VASConfiguration
 	 */
 
-	public VASConfiguration getApprovedVASConfigurationByCode(String productCode) {
+	public VASConfiguration getApprovedVASConfigurationByCode(String productCode, boolean reqChilds) {
 		logger.debug("Entering");
 
 		VASConfiguration vasConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(productCode, "_AView");

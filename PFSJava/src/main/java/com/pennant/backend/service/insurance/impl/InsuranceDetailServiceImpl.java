@@ -149,12 +149,6 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 					.setBefImage(getInsuranceDetailDAO().getInsurenceDetailsById(insuranceDetails.getId(), ""));
 		}
 
-		// Processing Accounting Details
-		if (StringUtils.equals(insuranceDetails.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			long linkedTranId = executeAccountingProcess(insuranceDetails);
-			insuranceDetails.setLinkedTranId(linkedTranId);
-		}
-
 		if (insuranceDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			getInsuranceDetailDAO().delete(insuranceDetails, TableType.MAIN_TAB.getSuffix());
@@ -164,6 +158,12 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			insuranceDetails.setTaskId("");
 			insuranceDetails.setNextTaskId("");
 			insuranceDetails.setWorkflowId(0);
+
+			// Processing Accounting Details
+			if (StringUtils.equals(insuranceDetails.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				long linkedTranId = executeAccountingProcess(insuranceDetails);
+				insuranceDetails.setLinkedTranId(linkedTranId);
+			}
 
 			if (insuranceDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
@@ -443,7 +443,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode) {
-		return getvASConfigurationService().getApprovedVASConfigurationByCode(productCode);
+		return getvASConfigurationService().getApprovedVASConfigurationByCode(productCode, false);
 	}
 	
 	@Override
@@ -460,19 +460,23 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			processMaualAdvisePayments(details);
 		}
 		
+		//Accounting for Total Amount paid to insurance provider.
 		if (details.getPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {
-			details.setLinkedTranId(executeInsPaymentsAccountingProcess(details));
+			Cloner cloner = new Cloner();
+			InsurancePaymentInstructions payToPatner = cloner.deepClone(details);
+			payToPatner.setPayableAmount(BigDecimal.ZERO);
+			payToPatner.setReceivableAmount(BigDecimal.ZERO);
+			details.setLinkedTranId(executeInsPaymentsAccountingProcess(payToPatner));
 		}
 		
+		//Accounting for the individual Insurances payment. 
 		Cloner cloner = new Cloner();
 		InsurancePaymentInstructions newDetails = cloner.deepClone(details);
-
 		if (CollectionUtils.isNotEmpty(newDetails.getVasRecordindList())) {
 			for (VASRecording vasRecording : newDetails.getVasRecordindList()) {
-				newDetails.setPayableAmount(BigDecimal.ZERO);
+				newDetails.setPayableAmount(vasRecording.getPartnerPremiumAmt());
 				newDetails.setReceivableAmount(BigDecimal.ZERO);
 				newDetails.setPaymentAmount(BigDecimal.ZERO);
-				newDetails.setPartnerPremiumAmt(vasRecording.getPartnerPremiumAmt());
 				vasRecording.setUserDetails(newDetails.getUserDetails());
 				long linkedTranId = executePaymentsAccountingProcess(vasRecording, newDetails);
 				updatePaymentLinkedTranId(vasRecording.getVasReference(), linkedTranId);
@@ -551,6 +555,18 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		movement.setMovementAmount(manualAdvise.getBalanceAmt());
 		movement.setPaidAmount(manualAdvise.getBalanceAmt());
 		getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+
+		//Executing Accounting for partner receivables.
+		VASRecording vasRecording = getvASRecordingService().getVASRecordingByReference(manualAdvise.getFinReference());
+		if (vasRecording != null) {
+			InsurancePaymentInstructions instructionsForRecivable = new InsurancePaymentInstructions();
+			instructionsForRecivable.setPayableAmount(BigDecimal.ZERO);
+			instructionsForRecivable.setReceivableAmount(manualAdvise.getBalanceAmt());//Receivable amount
+			instructionsForRecivable.setPaymentAmount(BigDecimal.ZERO);
+			vasRecording.setUserDetails(instructions.getUserDetails());
+
+			executePaymentsAccountingProcess(vasRecording, instructionsForRecivable);
+		}
 	}
 	
 	@Override

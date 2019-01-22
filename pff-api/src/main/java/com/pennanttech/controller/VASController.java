@@ -60,7 +60,7 @@ public class VASController {
 			vasRecording.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			vasRecording.setVersion(1);
 			VASConfiguration vasConfiguration = vASConfigurationService
-					.getApprovedVASConfigurationByCode(vasRecording.getProductCode());
+					.getApprovedVASConfigurationByCode(vasRecording.getProductCode(), true);
 			vasRecording.setVasConfiguration(vasConfiguration);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPaidAmt(vasRecording.getFee().subtract(vasRecording.getWaivedAmt()));

@@ -272,7 +272,6 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return null;

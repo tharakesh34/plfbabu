@@ -41,5 +41,33 @@
 			insert into ErrorDetails (Code, Language, Severity, Message, RecordStatus, WorkflowId, LastMntBy, Version)  values ('CE0002', 'EN', 'E', 'BPI Treatment should be Deduct BPI from Disbursement as the payment day is after 25.', 'Approved', 0, 1000, 1);
 		</sql>
 	</changeSet> 	
+	
+	  <changeSet id="3" author="Durga Prasad G">
+			<sql>
+				Delete From DATA_ENGINE_COLUMN Where TABLEID = (Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select id from Data_Engine_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD'));
+				Delete From DATA_ENGINE_TABLE Where CONFIGID = (Select Id from Data_Engine_Config Where Name  = 'VAS_PREMIUM_CALCULATION_UPLOAD');
+				Delete From Data_Engine_Config Where Name  = 'VAS_PREMIUM_CALCULATION_UPLOAD';
+				
+				Insert Into Data_Engine_Config Values ((Select max(id)+1 from Data_Engine_Config),'VAS_PREMIUM_CALCULATION_UPLOAD','VAS Premium calculation upload.',12,'Sheet1',null,null,null,0,1,null,null,null,'C', '/opt/PFF/insurance/premiumcalculation','INSURANCE_','.xlsx',0, null,null,null,0,null,1,1);
+				                                        
+				Insert Into DATA_ENGINE_TABLE values ((Select max(id)+1 from DATA_ENGINE_TABLE),(Select id from Data_Engine_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD'),'VASPremiumCalcDet_DataEngine',1,'CustomerAgeF',null,null,null,null,null,null,null,5,0,0);
+				 
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'BatchId',0,'N',null,null,'${FILE_ID}',null,0,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select id from Data_Engine_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'ManufacturerName',0,'N',null,null,null,null,0,null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'CustomerAgeF',0,'N',null,null,null,null,1,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'Gender',0,'N',null,null,null,null,2,null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'PolicyAgeF',0,'N',null,null,null,null,3,null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'PremiumPercentageF',0,'N',null,null,null,null,4,null,null,null,null,'M');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'MinAmountF',0,'N',null,null,null,null,5,null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'MaxAmountF',0,'N',null,null,null,null,6,null,null,null,null,'O');
+				Insert into DATA_ENGINE_COLUMN Values ((Select max(id)+1 from DATA_ENGINE_COLUMN),(Select Id from DATA_ENGINE_TABLE Where CONFIGID = (Select Id from DATA_ENGINE_Config Where Name = 'VAS_PREMIUM_CALCULATION_UPLOAD')),'LoanAgeF',0,'N',null,null,null,null,7,null,null,null,null,'M');
+			</sql>
+		</changeSet>
+		
+		<changeSet  id="4" author="Durgaprasad G" >
+		  <sql>
+			Update SMTParameters set sysparmvalue = 'N' Where sysparmcode = 'VAS_MEDICAL_STATUS_CALCULATION_YES_NO'; 		 
+		 </sql>
+	   </changeSet>
 			
 </databaseChangeLog>

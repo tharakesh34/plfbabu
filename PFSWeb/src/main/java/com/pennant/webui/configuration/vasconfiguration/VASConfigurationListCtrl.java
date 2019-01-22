@@ -273,21 +273,33 @@ public class VASConfigurationListCtrl extends GFCBaseListCtrl<VASConfiguration> 
 				vASConfiguration.setExtendedFieldHeader(extendedFieldHeader);
 				for (ExtendedFieldDetail oldDetail : fieldDetails) {
 					ExtendedFieldDetail newDetail = new ExtendedFieldDetail();
+
 					newDetail.setFieldName(oldDetail.getFieldName());
-					newDetail.setFieldLabel(oldDetail.getFieldLabel());
-					newDetail.setFieldSeqOrder(oldDetail.getFieldSeqOrder());
 					newDetail.setFieldType(oldDetail.getFieldType());
-					newDetail.setFieldConstraint(oldDetail.getFieldConstraint());
+					newDetail.setFieldLength(oldDetail.getFieldLength());
 					newDetail.setFieldPrec(oldDetail.getFieldPrec());
+					newDetail.setFieldLabel(oldDetail.getFieldLabel());
+					newDetail.setFieldMandatory(oldDetail.isFieldMandatory());
+					newDetail.setFieldConstraint(oldDetail.getFieldConstraint());
+					newDetail.setFieldSeqOrder(oldDetail.getFieldSeqOrder());
 					newDetail.setFieldList(oldDetail.getFieldList());
 					newDetail.setFieldDefaultValue(oldDetail.getFieldDefaultValue());
 					newDetail.setFieldMinValue(oldDetail.getFieldMinValue());
 					newDetail.setFieldMaxValue(oldDetail.getFieldMaxValue());
-					newDetail.setFieldLength(oldDetail.getFieldLength());
-					newDetail.setFieldMandatory(oldDetail.isFieldMandatory());
 					newDetail.setFieldUnique(oldDetail.isFieldUnique());
+					newDetail.setFilters(oldDetail.getFilters());
+					newDetail.setExtendedType(oldDetail.getExtendedType());
+					newDetail.setMultiLine(oldDetail.getMultiLine());
+					newDetail.setInputElement(oldDetail.isInputElement());
+					newDetail.setParentTag(oldDetail.getParentTag());
+					newDetail.setEditable(oldDetail.isEditable());
+					newDetail.setAllowInRule(oldDetail.isAllowInRule());
+					newDetail.setScriptlet(oldDetail.getScriptlet());
+					newDetail.setValFromScript(oldDetail.isValFromScript());
+
 					newDetail.setVersion(1);
 					newDetail.setRecordType(PennantConstants.RCD_ADD);
+
 					extendedFieldHeader.getExtendedFieldDetails().add(newDetail);
 				}
 			}

@@ -745,7 +745,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.manufacturer.setValueColumn("DealerId");
 		this.manufacturer.setDescColumn("DealerName");
 		this.manufacturer.setValueType(DataType.LONG);
-		// this.manufacturer.setValidateColumns(new String[] { "DealerId" });
+		this.manufacturer.setValidateColumns(new String[] { "DealerId", "DealerName" });
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("DealerType", VASConsatnts.VASAGAINST_VASM, Filter.OP_EQUAL);
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);

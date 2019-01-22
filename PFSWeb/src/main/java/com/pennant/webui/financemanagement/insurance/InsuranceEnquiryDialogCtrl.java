@@ -65,6 +65,7 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Checkbox reconciled;
 	protected CurrencyBox surrenderAmount;
 	protected CurrencyBox claimAmt;
+	protected Textbox bflStatus;
 
 	//Tab2
 	protected Tab insurancePartnerDetailsTab;
@@ -110,6 +111,10 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox podNo2;
 	protected Textbox dispatchStatus2;
 	protected Textbox rsnOfReturn2;
+
+	protected Datebox dispatchDateAttemt1;
+	protected Datebox dispatchDateAttemt2;
+	protected Datebox dispatchDateAttemt3;
 
 	//Tab4
 	protected Tab discrepancyDetailsTab;
@@ -194,6 +199,9 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.partnerReceviedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.discrepancyDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.pendencyReportDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.dispatchDateAttemt1.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.dispatchDateAttemt2.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.dispatchDateAttemt3.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.vasFee.setProperties(false, getCcyFormat());
 		this.insPartnerPremium.setProperties(false, getCcyFormat());
 		this.claimAmt.setProperties(false, getCcyFormat());
@@ -216,30 +224,38 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		
 		// Status Details
 		String key = vasRecording.getVasStatus();
-		switch (key) {
-		case VASConsatnts.STATUS_REBOOKING:
-			this.status.setValue("REBOOKING");
-			break;
-		case VASConsatnts.STATUS_MAINTAINCE:
-			this.status.setValue("MAINTAINCE");
-			break;
-		case VASConsatnts.STATUS_CANCEL:
-			this.status.setValue("CANCEL");
-			break;
-		case VASConsatnts.STATUS_NORMAL:
-			this.status.setValue("ACTIVE");
-			break;
-		case VASConsatnts.STATUS_SURRENDER:
-			this.status.setValue("SURRENDER");
-			break;
-		default:
-			break;
+		if (key != null) {
+			switch (key) {
+			case VASConsatnts.STATUS_REBOOKING:
+				this.status.setValue("REBOOKING");
+				break;
+			case VASConsatnts.STATUS_MAINTAINCE:
+				this.status.setValue("MAINTAINCE");
+				break;
+			case VASConsatnts.STATUS_CANCEL:
+				this.status.setValue("CANCEL");
+				break;
+			case VASConsatnts.STATUS_NORMAL:
+				this.status.setValue("ACTIVE");
+				break;
+			case VASConsatnts.STATUS_SURRENDER:
+				this.status.setValue("SURRENDER");
+				break;
+			default:
+				break;
+			}
+		} else {
+			//Nothing to do
 		}
+
+		// BFL Status
+		this.bflStatus.setValue(vasRecording.getStatus());
+
 		if (InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetails.getReconStatus())) {
 			this.reconciled.setChecked(true);
 		}
 		this.claimAmt.setValue(PennantAppUtil.formateAmount(insuranceDetails.getPartnerPremium(), getCcyFormat()));
-		this.surrenderAmount.setValue(PennantAppUtil.formateAmount(insuranceDetails.getCoverageAmount(), getCcyFormat()));
+		this.surrenderAmount.setValue(PennantAppUtil.formateAmount(getVasRecording().getCancelAmt(), getCcyFormat()));
 
 		// Key Details
 		this.finReference.setValue(vasRecording.getPrimaryLinkRef());
@@ -300,6 +316,9 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.rsnOfReturn.setValue(insuranceDetails.getReasonOfRTO1());
 		this.rsnOfReturn1.setValue(insuranceDetails.getReasonOfRTO2());
 		this.rsnOfReturn2.setValue(insuranceDetails.getReasonOfRTO3());
+		this.dispatchDateAttemt1.setValue(insuranceDetails.getDispatchDateAttempt1());
+		this.dispatchDateAttemt2.setValue(insuranceDetails.getDispatchDateAttempt2());
+		this.dispatchDateAttemt3.setValue(insuranceDetails.getDispatchDateAttempt3());
 
 		//Discrepancy Details
 		this.discrepancyDate.setValue(null);
