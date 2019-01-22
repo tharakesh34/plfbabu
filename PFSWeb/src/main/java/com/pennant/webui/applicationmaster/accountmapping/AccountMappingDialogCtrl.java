@@ -264,6 +264,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 				int count = 0;
 				AccountMapping accountMapping = null;
 				String hostAccount = null;
+				List<String> glCodeList = new ArrayList<>();
 
 				for (TransactionEntry transactionEntry : transactionEntries) {
 					if (StringUtils.equals("BANK", transactionEntry.getAccountType())) { // FIXME Hard-Code should be remove
@@ -277,9 +278,12 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					String glCode = (String) ruleExecutionUtil.executeRule(rule == null ? "" : rule.getSQLRule(),
 							executeMap, null, RuleReturnType.CALCSTRING);
 
-					if (StringUtils.isBlank(glCode)) {
+					if (StringUtils.isBlank(glCode) || glCodeList.contains(glCode)) {
 						continue;
 					}
+
+					//Fix for remove duplicate glcodes
+					glCodeList.add(glCode);
 
 					accountMapping = this.accountMappingService.getAccountMapping(glCode);
 					String profitCenterDesc = null;
