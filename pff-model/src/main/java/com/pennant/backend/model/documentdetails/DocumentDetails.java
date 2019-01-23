@@ -443,4 +443,12 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		this.docBarcode = docBarcode;
 	}
 
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
 }
