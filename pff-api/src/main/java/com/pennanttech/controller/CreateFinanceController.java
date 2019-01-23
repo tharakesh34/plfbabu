@@ -1,5 +1,6 @@
 package com.pennanttech.controller;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,8 +10,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,12 +21,14 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -47,6 +52,7 @@ import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -65,6 +71,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -85,11 +92,14 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
+import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.collateral.CollateralStructureService;
@@ -104,6 +114,7 @@ import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -114,6 +125,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.util.AgreementEngine;
+import com.pennant.util.AgreementGeneration;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
@@ -122,6 +135,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -162,8 +176,13 @@ public class CreateFinanceController extends SummaryDetailService {
 	private CollateralStructureService collateralStructureService;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private DedupParmService dedupParmService;
+	private AgreementDefinitionService agreementDefinitionService;
+	@Autowired
+	private NotificationsService notificationsService;
+	@Autowired
+	private NotificationService notificationService;
+	private AgreementGeneration agreementGeneration;
 
-	
 	/**
 	 * Method for process create finance request
 	 * 
@@ -374,6 +393,15 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// save the finance details into main table
 			if (stp && !financeMain.isQuickDisb()) {
+				WSReturnStatus returnStatus=prepareAgrrementDetails(auditHeader);
+				if (returnStatus != null && StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+					FinanceDetail response = new FinanceDetail();
+					String[] valueParm = new String[1];
+					valueParm[0] = "Loan Aggrement template ";
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
+					return response;
+				}
 				auditHeader = financeDetailService.doApprove(auditHeader, false);
 			} else if (financeMain.isQuickDisb() || !stp) {
 				String usrAction = null;
@@ -465,6 +493,280 @@ public class CreateFinanceController extends SummaryDetailService {
 		return null;
 	}
 
+	private WSReturnStatus prepareAgrrementDetails(AuditHeader auditHeader) {
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+
+		List<Notifications> notifications = new ArrayList<>(1);
+		List<FinanceReferenceDetail> aggrementList = new ArrayList<>(1);
+		AgreementDefinition agreementDefinition = null;
+		boolean isTemplateError = false;
+		String templateValidateMsg = "";
+		String accMsg = "";
+		Set<String> allagrDataset = new HashSet<>();
+		Map<String, AgreementDefinition> agrdefMap = new HashMap<>();
+		Map<String, FinanceReferenceDetail> finRefMap = new HashMap<>();
+		DocumentDetails documentDetails = null;
+		List<DocumentDetails> agenDocList = new ArrayList<DocumentDetails>();
+
+		String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
+		List<Long> finRefIds = financeReferenceDetailDAO.getRefIdListByRefType(
+				financeDetail.getFinScheduleData().getFinanceMain().getFinType(), FinanceConstants.FINSER_EVENT_ORG,
+				PennantConstants.REC_ON_APPR, FinanceConstants.PROCEDT_TEMPLATE);
+		if (!CollectionUtils.isEmpty(finRefIds)) {
+			notifications = notificationsService.getApprovedNotificationsByRuleIdList(finRefIds);
+			List<String> docCatogires = new ArrayList<>();
+			String[] docTypes = null;
+			for (Notifications mailNotification : notifications) {
+				docTypes = notificationService.getAttchmentRuleResult(mailNotification.getRuleAttachment(),
+						financeDetail);
+				for (String docType : docTypes) {
+					docCatogires.add(docType);
+				}
+			}
+			List<FinanceReferenceDetail> finRefDetails = financeReferenceDetailDAO
+					.getFinanceProcessEditorDetails(finType, FinanceConstants.FINSER_EVENT_ORG, "_FINVIEW");
+
+			for (FinanceReferenceDetail financeReferenceDetail : finRefDetails) {
+				if (FinanceConstants.PROCEDT_AGREEMENT == financeReferenceDetail.getFinRefType()) {
+					aggrementList.add(financeReferenceDetail);
+				}
+			}
+			for (FinanceReferenceDetail financeReferenceDetail : aggrementList) {
+				long id = financeReferenceDetail.getFinRefId();
+				agreementDefinition = getAgreementDefinitionService().getAgreementDefinitionById(id);
+				for (String docType : docCatogires) {
+
+					if (StringUtils.equals(agreementDefinition.getDocType(), docType)) {
+						try {
+							templateValidateMsg = validateTemplate(financeReferenceDetail); // If
+
+							if ("Y".equals(templateValidateMsg)) {
+								if (!isTemplateError) {
+									allagrDataset.add(agreementDefinition.getAggImage());
+									agrdefMap.put(agreementDefinition.getAggReportName(), agreementDefinition);
+									finRefMap.put(agreementDefinition.getAggReportName(), financeReferenceDetail);
+								}
+							} else {
+								accMsg = accMsg + "  " + templateValidateMsg;
+								isTemplateError = true;
+								continue;
+							}
+
+						} catch (Exception e) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Loan Aggrement template ";
+							return APIErrorHandlerService.getFailedStatus("API004",valueParm);
+						}
+					}
+				}
+			}
+			if (!agrdefMap.isEmpty()) {
+				AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail,
+						allagrDataset.toString(), SessionUserDetails.getLogiedInUser());
+				for (String tempName : agrdefMap.keySet()) {
+
+					AgreementDefinition aggdef = agrdefMap.get(tempName);
+					try {
+						documentDetails = autoGenerateAgreement(finRefMap.get(tempName), financeDetail, aggdef,
+								financeDetail.getDocumentDetailsList(), agrData);
+						if(documentDetails.getReturnStatus()!=null && StringUtils.isNotBlank(documentDetails.getReturnStatus().getReturnCode())){
+							return documentDetails.getReturnStatus();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					agenDocList.add(documentDetails);
+
+				}
+				if (financeDetail.getDocumentDetailsList() == null) {
+					financeDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
+				}
+				financeDetail.getDocumentDetailsList().addAll(agenDocList);
+				agrdefMap = null;
+				finRefMap = null;
+				allagrDataset = null;
+
+			}
+		}
+		return null;
+	}
+	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
+			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
+			AgreementDetail detail) throws Exception {
+		logger.debug(Literal.ENTERING);
+		DocumentDetails details = new DocumentDetails();
+
+		try {
+			if (financeDetail != null && financeDetail.getFinScheduleData() != null
+					&& financeDetail.getFinScheduleData().getFinanceMain() != null) {
+				FinanceMain lmain = financeDetail.getFinScheduleData().getFinanceMain();
+				String finReference = lmain.getFinReference();
+				String aggName = StringUtils.trimToEmpty(frefdata.getLovDescNamelov());
+				String reportName = "";
+				String aggPath = "", templateName = "";
+				if (StringUtils.trimToEmpty(frefdata.getLovDescAggReportName()).contains("/")) {
+					String aggRptName = StringUtils.trimToEmpty(frefdata.getLovDescAggReportName());
+					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
+				} else {
+					templateName = frefdata.getLovDescAggReportName();
+				}
+				AgreementEngine engine = new AgreementEngine(aggPath);
+				engine.setTemplate(templateName);
+				engine.loadTemplate();
+				engine.mergeFields(detail);
+				getAgreementGeneration().setExtendedMasterDescription(financeDetail, engine);
+				getAgreementGeneration().setFeeDetails(financeDetail, engine);
+
+				//if (agreementDefinition.isAutoDownload()) {
+				if (StringUtils.equals(agreementDefinition.getAggtype(), PennantConstants.DOC_TYPE_PDF)) {
+					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
+					//engine.showDocument(this.window_documentDetailDialog, reportName, SaveFormat.PDF);
+				} else {
+					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
+					//engine.showDocument(this.window_documentDetailDialog, reportName, SaveFormat.DOCX);
+				}
+				//}
+
+				DocumentDetails exstDetails = null;
+				if (existingUploadDocList.size() > 0){
+					exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition,financeDetail);
+				}
+				
+				if (exstDetails != null) {
+					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
+						exstDetails.setDocImage(engine.getDocumentInByteArray(
+								templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+					} else {
+						exstDetails.setDocImage(engine.getDocumentInByteArray(
+								templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+					}
+
+					//since it is an existing document record has to be store in document manager
+					exstDetails.setDocRefId(Long.MIN_VALUE);
+					return exstDetails;
+				}
+
+				details.setDocCategory(agreementDefinition.getDocType());
+				if (PennantConstants.WORFLOW_MODULE_FINANCE.equals(agreementDefinition.getModuleName())) {
+					details.setDocModule("Finance");
+				} else {
+					details.setDocModule(agreementDefinition.getModuleName());
+				}
+				details.setReferenceId(finReference);
+				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
+					details.setDocImage(engine.getDocumentInByteArray(
+							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+				} else {
+					details.setDocImage(engine.getDocumentInByteArray(
+							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+				}
+				details.setDoctype(agreementDefinition.getAggtype());
+				details.setDocName(reportName.substring(15));
+				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setVersion(1);
+				details.setFinEvent(frefdata.getFinEvent());
+				details.setCategoryCode(agreementDefinition.getModuleName());
+				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
+				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				details.setNewRecord(true);
+				engine.close();
+				engine = null;
+
+			}
+		} catch (Exception e) {
+			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
+					|| e.getMessage().equals("Template site does not exist.")
+					|| e.getMessage().equals("Template does not exist."))) {
+				
+				String[] valueParm = new String[1];
+				valueParm[0] = "Loan Aggrement template ";
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004",valueParm));
+				return details;
+				
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Loan Aggrement template ";
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004",valueParm));
+				return details;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return details;
+
+	}
+
+	private DocumentDetails getExistDocDetails(List<DocumentDetails> exstDoclst,
+			AgreementDefinition agreementDefinition, FinanceDetail financeDetail) {
+
+		for (DocumentDetails docDetails : financeDetail.getDocumentDetailsList()) {
+			if (agreementDefinition.getDocType().equalsIgnoreCase(docDetails.getDocCategory())) {
+				// ### 25-08-2018 Ticket ID : 637
+				if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(docDetails.getRecordType())) {
+					for (DocumentDetails existDocDetails : exstDoclst) {
+						if (existDocDetails.getDocCategory().equalsIgnoreCase(agreementDefinition.getDocType())
+								&& "ADD".equalsIgnoreCase(existDocDetails.getRecordType())) {
+							exstDoclst.remove(existDocDetails);
+							return null;
+						}
+					}
+					return null;
+				}
+
+				// ###25-08-2018 - Ticket ID : 638 & 639
+				// Document category template exists in this case user should
+				// not upload same document category to document list
+				// when document type is "WORD" then record replace with
+				// Agreement
+				if (agreementDefinition.getAggtype().equalsIgnoreCase(PennantConstants.DOC_TYPE_WORD)) {
+					if (!(agreementDefinition.getAggReportName()).equalsIgnoreCase(docDetails.getDocName())) {
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SUBMITTED)
+								|| docDetails.getRecordStatus()
+										.equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)) {
+							docDetails.setDocName(agreementDefinition.getAggReportName());
+							docDetails.setDoctype(agreementDefinition.getAggtype());
+							return docDetails;
+						}
+						if (docDetails.getRecordStatus().isEmpty()) {
+							exstDoclst.remove(docDetails);
+							return null;
+						}
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+							docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							return null;
+						}
+					}
+					return docDetails;
+				}
+				// when document type is "PDF" then record replace with
+				// Agreement
+				if (agreementDefinition.getAggtype().equalsIgnoreCase(PennantConstants.DOC_TYPE_PDF)) {
+					if (!(agreementDefinition.getAggName() + "." + agreementDefinition.getAggtype())
+							.equalsIgnoreCase(docDetails.getDocName())) {
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SUBMITTED)
+								|| docDetails.getRecordStatus()
+										.equalsIgnoreCase(PennantConstants.RCD_STATUS_RESUBMITTED)) {
+							docDetails.setDocName(agreementDefinition.getAggName() + "."
+									+ agreementDefinition.getAggtype().toLowerCase());
+							docDetails.setDoctype(PennantConstants.DOC_TYPE_PDF);
+							return docDetails;
+						}
+						if (docDetails.getRecordStatus().isEmpty()) {
+							exstDoclst.remove(docDetails);
+							return null;
+						}
+						if (docDetails.getRecordStatus().equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+							docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							return null;
+						}
+					}
+					return docDetails;
+				}
+			}
+		}
+		return null;
+	}
 	private List<FinanceDedup> prepareFinanceDedup(String userRole, FinanceDetail aFinanceDetail) {
 		//Data Preparation for Rule Executions
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
@@ -1619,7 +1921,12 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			//auditHeader.setApiHeader(reqHeaderDetails);
-
+			WSReturnStatus returnStatus=prepareAgrrementDetails(auditHeader);
+			if (returnStatus != null && StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Loan Aggrement template ";
+				return APIErrorHandlerService.getFailedStatus("API004", valueParm);
+			}
 			auditHeader = financeDetailService.doApprove(auditHeader, false);
 
 			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
@@ -2414,7 +2721,26 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 		return errorDetails;
 	}
+	private String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
+		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
+		String templateName = "";
+		String msg = "Y";
+		logger.debug("Template Path:" + templatePath);
+		if (StringUtils.trimToEmpty(frefdata.getLovDescAggReportName()).contains("/")) {
+			String aggRptName = StringUtils.trimToEmpty(frefdata.getLovDescAggReportName());
+			templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
+		} else {
+			templateName = frefdata.getLovDescAggReportName();
 
+		}
+		File templateDirectory = new File(templatePath, templateName);
+		if (!templateDirectory.exists()) {
+			msg = templateName;
+		}
+		return msg;
+	}
+	
+	
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -2559,4 +2885,21 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
 	}
+
+	public AgreementDefinitionService getAgreementDefinitionService() {
+		return agreementDefinitionService;
+	}
+
+	public void setAgreementDefinitionService(AgreementDefinitionService agreementDefinitionService) {
+		this.agreementDefinitionService = agreementDefinitionService;
+	}
+
+	public AgreementGeneration getAgreementGeneration() {
+		return agreementGeneration;
+	}
+
+	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
+		this.agreementGeneration = agreementGeneration;
+	}
+
 }

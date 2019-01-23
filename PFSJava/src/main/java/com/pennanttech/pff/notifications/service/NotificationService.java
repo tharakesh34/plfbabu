@@ -1203,6 +1203,11 @@ public class NotificationService {
 		}
 	}
 
+	public String[] getAttchmentRuleResult(String attachmentRule,FinanceDetail financeDetail){
+		String[] documentCodes = getAttachmentCode(attachmentRule,getTemplateData(financeDetail, null));
+		return documentCodes;
+		
+	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

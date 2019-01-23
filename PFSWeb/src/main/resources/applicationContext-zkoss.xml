@@ -1793,14 +1793,7 @@
 		<property name="ddaControllerService" ref="ddaControllerService" />
 	</bean>
 
-	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
-		<property name="notesService" ref="notesService" />
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="mMAgreementService" ref="mMAgreementService" />
-		<property name="securityUserService" ref="securityUserService" />
-		<property name="activityLogService" ref="activityLogService" />
-	</bean>
-
+	
 	<!--============ Indicative Term Sheet Detail ============== -->
 
 	<bean id="indicativeTermDetailDialogCtrl" class="com.pennant.webui.finance.wiffinancemain.IndicativeTermDetailDialogCtrl"

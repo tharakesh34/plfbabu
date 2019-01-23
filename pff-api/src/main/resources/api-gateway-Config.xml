@@ -633,5 +633,5 @@
 	</jaxrs:server>
 	
 	<!-- Document Soap Container -->
-	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap"/>
+	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap" publish="false"/>
 </beans>

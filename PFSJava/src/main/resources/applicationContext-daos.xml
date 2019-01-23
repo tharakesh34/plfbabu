@@ -10273,4 +10273,13 @@
 	<bean name="securityUserHierarchyServiceTarget" class="com.pennant.backend.service.administration.impl.SecurityUserHierarchyServiceImpl">
 		<property name="securityUserHierarchyDAO" ref="securityUserHierarchyDAO"></property>
 	</bean>
+	
+	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
+		<property name="notesService" ref="notesService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="mMAgreementService" ref="mMAgreementService" />
+		<property name="securityUserService" ref="securityUserService" />
+		<property name="activityLogService" ref="activityLogService" />
+	</bean>
+	
 </beans>
