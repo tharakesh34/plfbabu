@@ -4470,9 +4470,16 @@
 	  </createView>
   </changeSet>
   
-  <changeSet id="161" author="DurgaPrasad G">
+  <changeSet id="161" author="DurgaPrasad G" dbms="oracle,postgresql">
  	 <addDefaultValue columnName="LoanAge" tableName="VASPremiumCalcDetails"  defaultValue="0"/>
   	 <addDefaultValue columnName="LoanAge" tableName="VASPremiumCalcDetails_Temp" defaultValue="0"/>
+  </changeSet>
+  
+  <changeSet id="161" author="DurgaPrasad G" dbms="MSSQL">
+ 	 <sql>
+	  ALTER TABLE VASPremiumCalcDetails ADD CONSTRAINT VASPRECALDET_LOANAGE DEFAULT '0' FOR LoanAge;
+	  ALTER TABLE VASPremiumCalcDetails_TEMP ADD CONSTRAINT VASPRECALDET_LOANAGE_TEMP DEFAULT '0' FOR LoanAge;
+	 </sql>
   </changeSet>
   
   <changeSet id="162" author="DurgaPrasad G">
