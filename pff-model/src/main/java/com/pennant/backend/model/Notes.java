@@ -55,7 +55,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 /**
@@ -239,7 +238,7 @@ public class Notes extends AbstractEntity implements Entity {
 
 	public String getUsrName() {
 		if (StringUtils.isBlank(this.usrName)) {
-			return PennantApplicationUtil.getFullName(this.usrFName, this.usrMName, this.usrLName);
+			return getFullName(this.usrFName, this.usrMName, this.usrLName);
 		} else {
 			return usrName;
 		}
@@ -256,5 +255,26 @@ public class Notes extends AbstractEntity implements Entity {
 	public void setInDate(Date inDate) {
 		this.inDate = inDate;
 	}
-
+	
+	public String getFullName(String firstName, String middleName, String lastName) {
+		String fullName = "", delimiter = " ";
+		if (!StringUtils.isBlank(firstName)) {
+			fullName = firstName.trim();
+		}
+		if (!StringUtils.isBlank(middleName)) {
+			if (StringUtils.isEmpty(fullName)) {
+				fullName = middleName.trim();
+			} else {
+				fullName = fullName + delimiter + middleName.trim();
+			}
+		}
+		if (!StringUtils.isBlank(lastName)) {
+			if (StringUtils.isEmpty(fullName)) {
+				fullName = lastName.trim();
+			} else {
+				fullName = fullName + delimiter + lastName.trim();
+			}
+		}
+		return fullName;
+	}
 }
