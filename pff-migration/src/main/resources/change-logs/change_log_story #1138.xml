@@ -724,7 +724,7 @@
 			     LEFT JOIN entity t10 ON t10.entitycode = t1.entity
 			  WHERE NOT (EXISTS ( SELECT 1
 			          FROM rmtbranches_temp
-			          WHERE rmtbranches_temp.branchcode = t1.branchcode));
+			          WHERE rmtbranches_temp.branchcode = t1.branchcode))
 		</createView>
 	</changeSet>
 
