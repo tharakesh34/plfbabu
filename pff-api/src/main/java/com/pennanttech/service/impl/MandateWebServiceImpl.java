@@ -14,6 +14,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -63,7 +64,8 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private EntityService entityService;
 	private FinanceTypeService financeTypeService;
 	private PartnerBankDAO partnerBankDAO;
-
+	private FinanceMainDAO financeMainDAO;
+	
 	/**
 	 * Method for create Mandate in PLF system.
 	 * 
@@ -429,14 +431,28 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
 		 * "finReference"; return getErrorDetails("90502", valueParm); }
 		 */
+		boolean alwmandate=ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG;
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
+			if(!alwmandate) {
 			int count = financeMainService.getFinanceCountById(mandate.getOrgReference(), false);
 			if (count <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = mandate.getOrgReference();
 				return getErrorDetails("90201", valueParm);
 			}
-			List<String> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID());
+			} else {
+				FinanceMain finMain = financeMainDAO.getFinanceMainParms(mandate.getOrgReference());
+				if (finMain == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getOrgReference();
+					return getErrorDetails("90201", valueParm);
+				}
+			}
+			String type = "";
+			if(alwmandate) {
+			 type="_View";
+			}
+			List<String> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(),type);
 			boolean validFinrefernce = true;
 			for (String finReference : finRefList) {
 				if (StringUtils.equals(finReference, mandate.getOrgReference())) {
@@ -453,7 +469,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 
 			List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
-					.getFinScheduleDetails(mandate.getOrgReference(), "", false);
+					.getFinScheduleDetails(mandate.getOrgReference(), type, false);
 			BigDecimal repayAmt = BigDecimal.ZERO;
 			if (financeScheduleDetails != null) {
 				for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -752,8 +768,14 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return response;
 			}
 			if (mandate.isSwapIsActive()) {
-				FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
-				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finMain.getFinType());
+				//FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
+				String tableType="";
+				if(ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG){
+					tableType = "_View";
+				}
+				
+				String finType=financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(),tableType);
+				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
 				if (StringUtils.isNotBlank(allowedRepayModes)) {
 					boolean isTypeFound = false;
 					String[] types = allowedRepayModes.split(PennantConstants.DELIMITER_COMMA);
@@ -841,4 +863,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
+	
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

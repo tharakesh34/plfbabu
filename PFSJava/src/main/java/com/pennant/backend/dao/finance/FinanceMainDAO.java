@@ -223,7 +223,7 @@ public interface FinanceMainDAO {
 
 	int getFinanceCountById(String finReference, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateID, String repayMethod);
+	int loanMandateSwapping(String finReference, long newMandateID, String repayMethod,String type);
 
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
 
@@ -324,5 +324,9 @@ public interface FinanceMainDAO {
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
 	
 	FinanceMain getFinanceDetailsByFinRefence(String reference, String type);
+	
+	List<String> getFinanceMainbyCustId(long custId,String type);
+
+	String getFinanceTypeFinReference(String reference, String type);
 	
 }

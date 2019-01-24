@@ -12,12 +12,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -45,6 +47,9 @@ public class MandateController {
 	private BankBranchService bankBranchService;
 	private CustomerDetailsService customerDetailsService;
 	private FinanceMainService financeMainService;
+	private FinanceMainDAO financeMainDAO;
+
+	
 
 	/**
 	 * Method for create Mandate in PLF system.
@@ -281,7 +286,7 @@ public class MandateController {
 		WSReturnStatus response = null;
 		try {
 			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
-					mandateDetail.getNewMandateId(), mandateDetail.getMandateType());
+					mandateDetail.getNewMandateId(), mandateDetail.getMandateType(),"");
 			if (count > 0) {
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {
@@ -326,9 +331,23 @@ public class MandateController {
 			} else {
 				response = (Mandate) auditHeader.getAuditDetail().getModelData();
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				
 				if (mandate.isSwapIsActive()) {
+					String type="";
+					int count = 0;
+
+					count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "", false);
+					if(count>0) {
+						type ="";
+					} else if(ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG){
+						 count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "_Temp", false);
+						 if(count>0) {
+							 type="_Temp";
+						 }
+					}
+					
 					financeMainService.loanMandateSwapping(response.getOrgReference(), response.getMandateID(),
-							mandate.getMandateType());
+							mandate.getMandateType(),type);
 				}
 				doEmptyResponseObject(response);
 			}
@@ -472,6 +491,9 @@ public class MandateController {
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
+	}
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

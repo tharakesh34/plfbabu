@@ -2382,7 +2382,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * 
 	 */
 	@Override
-	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod) {
+	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod,String type) {
 		logger.debug("Entering");
 
 		int recordCount = 0;
@@ -2392,12 +2392,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		financeMain.setFinRepayMethod(repayMethod);
 
 		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(StringUtils.trimToEmpty(type));
+
 		updateSql.append(" Set MandateID =:MandateID ");
 		if (StringUtils.isNotBlank(repayMethod)) {
 			updateSql.append(" ,FinRepayMethod =:FinRepayMethod");
 		}
 		updateSql.append(" Where FinReference =:FinReference");
-
+		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
@@ -3751,5 +3753,64 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.LEAVING);
 		
 		return financeMain;
+	}
+
+	@Override
+	public List<String> getFinanceMainbyCustId(long custId, String type) {
+
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setCustID(custId);
+		financeMain.setFinIsActive(true);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference ");
+		selectSql.append(" From FinanceMain");
+		if (StringUtils.isNotBlank(type)) {
+			selectSql.append(type);
+		}
+		selectSql.append(" Where CustID =:CustID AND FinIsActive = :FinIsActive");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		List<String> finReferencesList = new ArrayList<String>();
+		try {
+			finReferencesList = this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error("Exception: ", dae);
+			return Collections.emptyList();
+		}
+		logger.debug("Leaving");
+		return finReferencesList;
+
+	}
+
+	@Override
+	public String getFinanceTypeFinReference(String finReference, String type) {
+
+		logger.debug("Entering");
+
+		String financeType = null;
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("SELECT FinType From ");
+		sql.append("FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			financeType = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeType = null;
+		}
+
+		logger.debug("Leaving");
+		return financeType;
+	
 	}
 }

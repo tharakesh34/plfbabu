@@ -55,7 +55,7 @@ public interface FinanceMainService {
 
 	int getFinanceCountById(String finReference, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateId, String repayMethod);
+	int loanMandateSwapping(String finReference, long newMandateId, String repayMethod, String type);
 
 	int getFinanceCountById(String finReference, boolean isWIF);
 
@@ -69,11 +69,13 @@ public interface FinanceMainService {
 
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
 
-	List<String> getFinanceMainbyCustId(long custID);
+	List<String> getFinanceMainbyCustId(long custID,String type);
 
 	FinanceMain getFinanceMainByFinRef(String finRefernce);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 	
 	FinanceMain getFinanceByFinReference(String reference, String type);
+
+	String getFinanceTypeFinReference(String reference, String type);
 }
