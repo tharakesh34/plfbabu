@@ -261,19 +261,15 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(chequeDetail);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
+		// Check for the concurrency not required as the work-flow will be driven either by finance main (LOS) 
+		// or cheque header (LMS).
 		logger.debug(Literal.LEAVING);
 	}
 
