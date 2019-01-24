@@ -2327,11 +2327,18 @@ UNION ALL
 	
 	<changeSet id="137" author="Vinay">
 		<sql>
-	update data_engine_config set parser=12 where id=8;
-	update data_engine_config set parser=3 where id=7;
-	update data_engine_config set fileextension='.xlsx' where id in(7,8);
-	update data_engine_table set recordlength=0 where id=8
-</sql>
+			update data_engine_config set parser=12 where id=8;
+			update data_engine_config set parser=3 where id=7;
+			update data_engine_config set fileextension='.xlsx' where id in(7,8);
+			update data_engine_table set recordlength=0 where id=8
+		</sql>
+	</changeSet>
+	
+	<changeSet id="138" author="Vinay">
+		<sql>
+			delete from SMTPARAMETERS  where sysparmcode='CIBIL_EXPY_DAYS';
+			Insert into SMTPARAMETERS values ('CIBIL_EXPY_DAYS','Cibil expiry days','int','0','30',3,0,'NULL','NULL','Cibil expiry days',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
 	</changeSet>
 </databaseChangeLog>
 	
