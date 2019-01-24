@@ -422,6 +422,8 @@ public class MiscellaneousServiceController {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		JVPosting posting = new JVPosting();
 		JVPostingEntry postingEntry = null;
+		List<JVPostingEntry> creditEntryList = new ArrayList<>();
+		List<JVPostingEntry> debitEntryList = new ArrayList<>();
 		List<JVPostingEntry> postingEntryList = new ArrayList<>();
 		
 		FinanceMain financeMainData = financeMainService.getFinanceByFinReference(jvPosting.getReference(), "_AView");
@@ -463,43 +465,57 @@ public class MiscellaneousServiceController {
 				TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(entry.getTxnCode());
 				if ( null != transactionCode )	{
 					AccountMapping accountMapping = accountMappingService.getApprovedAccountMapping(entry.getAccount());
+
+					postingEntry.setRecordType(PennantConstants.RCD_ADD);
+					postingEntry.setFinReference(entry.getFinReference());
+					postingEntry.setAccountName(accountMapping.getAccountTypeDesc());
+					postingEntry.setTxnEntry(transactionCode.getTranType());
+					postingEntry.setAcType(accountMapping.getAccountType());
+					postingEntry.setAccCCy(financeMainData.getFinCcy());
+					postingEntry.setTxnCCy(financeMainData.getFinCcy());
+
 					if ( null != accountMapping)	{
 						switch (transactionCode.getTranType())	{
-							case "C":
-								postingEntry.setAccountName(accountMapping.getAccountTypeDesc());
-								postingEntry.setAccCCy(financeMainData.getFinCcy());
-								postingEntry.setTxnCCy(financeMainData.getFinCcy());
-								postingEntry.setTxnEntry(transactionCode.getTranType());
-								postingEntry.setAcType(accountMapping.getAccountType());
-								postingEntry.setTxnAmount(entry.getTxnAmount());
-								postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
-								postingEntry.setTxnCode(entry.getTxnCode());
-								postingEntry.setAccount(entry.getAccount());
-								posting.setCreditsCount(jvPosting.getCreditsCount()+1);
-								postingEntry.setRecordType(PennantConstants.RCD_ADD);
-								totalCredits = totalCredits.add(entry.getTxnAmount());
-								break;
-						
-							case "D":
-								postingEntry.setAccountName(accountMapping.getAccountTypeDesc());
-								postingEntry.setAccCCy(financeMainData.getFinCcy());
-								postingEntry.setTxnCCy(financeMainData.getFinCcy());
-								postingEntry.setTxnEntry(transactionCode.getTranType());
-								postingEntry.setAcType(entry.getAccount());
-								postingEntry.setTxnAmount(entry.getTxnAmount());
-								postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
-								postingEntry.setTxnCode(entry.getTxnCode());
-								postingEntry.setDebitTxnCode(entry.getTxnCode());
-								postingEntry.setDebitAccount(entry.getAccount());
-								posting.setDebitCount(jvPosting.getDebitCount()+1);
-								postingEntry.setRecordType(PennantConstants.RCD_ADD);
-								totalDebits = totalDebits.add(entry.getTxnAmount());
-								break;
+						case "C":
+							postingEntry.setTxnAmount(entry.getTxnAmount());
+							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
+							postingEntry.setTxnCode(entry.getTxnCode());
+							postingEntry.setAccount(entry.getAccount());
+							posting.setCreditsCount(jvPosting.getCreditsCount()+1);
+							totalCredits = totalCredits.add(entry.getTxnAmount());
+							
+							setJVPostingEntryMandatoryFieldsData(postingEntry);
+							creditEntryList.add(postingEntry);
+							break;
+					
+						case "D":
+							postingEntry.setTxnAmount(entry.getTxnAmount());
+							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
+							postingEntry.setTxnCode(entry.getTxnCode());
+							postingEntry.setDebitTxnCode(entry.getTxnCode());
+							postingEntry.setDebitAccount(entry.getAccount());
+							posting.setDebitCount(jvPosting.getDebitCount()+1);
+							totalDebits = totalDebits.add(entry.getTxnAmount());
+							
+							setJVPostingEntryMandatoryFieldsData(postingEntry);
+							debitEntryList.add(postingEntry);
+							break;
 						}
 					}
 				}
-				setJVPostingEntryMandatoryFieldsData(postingEntry);
-				postingEntryList.add(postingEntry);
+			}
+			
+			// reorganize all JVPostingEntries in order [C,D]
+			for (int i = 0, j = i; i <= creditEntryList.size() && j <= debitEntryList.size(); i++, j++) {
+				if(i < creditEntryList.size() && creditEntryList.get(i) != null)	{
+					if (!postingEntryList.contains(creditEntryList.get(i)))
+						postingEntryList.add(creditEntryList.get(i));
+				}
+				
+				if(j < debitEntryList.size() && debitEntryList.get(j) != null)	{
+					if(!postingEntryList.contains(debitEntryList.get(j)))
+						postingEntryList.add(debitEntryList.get(j));
+				}
 			}
 			posting.setJVPostingEntrysList(postingEntryList);
 			posting.setTotCreditsByBatchCcy(totalCredits);
@@ -510,6 +526,10 @@ public class MiscellaneousServiceController {
 		}
 		else	{
 			// financemain data is not available
+			String[] valueParm = new String[1];
+			valueParm[0] = "reference: " + jvPosting.getReference();
+			
+			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 		
 		logger.debug(Literal.LEAVING);

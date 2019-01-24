@@ -16,7 +16,7 @@ import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 public interface MiscellaneousRestService {
 	
 	@POST
-	@Path("/miscellaneous/createPosting")
+	@Path("/miscellaneous/AddFinanceJVPostings")
 	public WSReturnStatus createPosting(JVPosting posting) throws ServiceException;
 	
 	@POST

@@ -1181,37 +1181,29 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 		}
 		
-		if(postingEntries.size() % 2 == 0)	{
-			BigDecimal totalDebits = BigDecimal.ZERO;
-			BigDecimal totalCredits = BigDecimal.ZERO;
-			for (JVPostingEntry postingEntry : postingEntries) {
-				TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
-				switch(transactionCode.getTranType())	{
-					case "D":
-						totalDebits = totalDebits.add(postingEntry.getTxnAmount());
-						break;
-					case "C":
-						totalCredits = totalCredits.add(postingEntry.getTxnAmount());
-						break;
-				}
+		BigDecimal totalDebits = BigDecimal.ZERO;
+		BigDecimal totalCredits = BigDecimal.ZERO;
+		for (JVPostingEntry postingEntry : postingEntries) {
+			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+			switch (transactionCode.getTranType()) {
+			case "D":
+				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
+				break;
+			case "C":
+				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
+				break;
 			}
-			
-			if (!(totalDebits.compareTo(totalCredits) == 0))	{
-				String[] valueParm = new String[2];
-				valueParm[0] = "TransactionAmount " + totalCredits.toString();
-				valueParm[1] = totalDebits.toString();
-				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
-				
-				return errorsList;
-			}
-		} else	{
-			String[] valueParm = new String[1];
-			valueParm[0] = "Credit and Debit PostingEntry";
-			
-			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			
+		}
+
+		if (!(totalDebits.compareTo(totalCredits) == 0)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "TransactionAmount " + totalCredits.toString();
+			valueParm[1] = totalDebits.toString();
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+
 			return errorsList;
 		}
+		
 		
 		
 		
