@@ -116,7 +116,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private Map<String, String> checkMap = new HashMap<String, String>();
 	private ModuleMapping moduleMapping = null;
 	private List<ValueLabel> staticList = null;
-	private static boolean searchRequired = true;
+	private boolean searchRequired = true;
 	private Filter[] filters;
 	private String whereClause = null;
 
@@ -163,6 +163,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		super();
 		this.filters = filters;
 		this.selectedValues = selectedValues;
+		searchRequired = true;
 		this.staticList = null;
 		this.whereClause = whereClause;
 		setModuleMapping(PennantJavaUtil.getModuleMap(listCode));
@@ -201,7 +202,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private void createBox() {
 		logger.debug("Entering");
 
-		if (getModuleMapping().getLovWidth() != 0) {
+		if (getModuleMapping() != null && getModuleMapping().getLovWidth() != 0) {
 			this._width = getModuleMapping().getLovWidth();
 		}
 
