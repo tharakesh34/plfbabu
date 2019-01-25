@@ -17,7 +17,6 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 
 	private long id = Long.MIN_VALUE;
 	private long batchId = Long.MIN_VALUE;
-	private long paymentLinkedTranId = Long.MIN_VALUE;
 	private long vASProviderId;
 	private String reference;
 	private String finReference;
@@ -649,14 +648,6 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setBatchId(long batchId) {
 		this.batchId = batchId;
-	}
-
-	public long getPaymentLinkedTranId() {
-		return paymentLinkedTranId;
-	}
-
-	public void setPaymentLinkedTranId(long paymentLinkedTranId) {
-		this.paymentLinkedTranId = paymentLinkedTranId;
 	}
 
 	public String getTermF() {
