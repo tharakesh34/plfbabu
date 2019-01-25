@@ -1218,11 +1218,10 @@ public class PennantStaticListUtil {
 		return interestRateTypes;
 	}
 
-	public static ArrayList<ValueLabel> getIncomeExpense() {
-
+	public static List<ValueLabel> getIncomeExpense() {
 		if (incomeExpense == null) {
-			incomeExpense = new ArrayList<ValueLabel>(2);
-			incomeExpense.add(new ValueLabel(PennantConstants.INCOME, "INCOME"));
+			incomeExpense = new ArrayList<>(2);
+			incomeExpense.add(new ValueLabel(PennantConstants.INCOME, "Income"));
 			incomeExpense.add(new ValueLabel(PennantConstants.EXPENSE, "Expense"));
 		}
 		return incomeExpense;
