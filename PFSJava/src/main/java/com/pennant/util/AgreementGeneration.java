@@ -86,6 +86,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.RateUtil;
+import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
@@ -258,6 +259,8 @@ public class AgreementGeneration implements Serializable {
 	private CollateralSetupFetchingService collateralSetupFetchingService;
 	@Autowired
 	private FinTypeFeesService finTypeFeesService;
+	@Autowired
+	private DocumentManagerDAO documentManagerDAO;
 
 	private List<DocumentType> documentTypeList;
 
@@ -2235,6 +2238,8 @@ public class AgreementGeneration implements Serializable {
 			document.setReceiveDate(DateUtility.formatToLongDate(customerDocument.getCustDocRcvdOn()));
 			document.setDocType("CUSTOMER");
 			document.setUserName(StringUtils.stripToEmpty(document.getUserName()));
+			document.setFileType(StringUtils.trimToEmpty(customerDocument.getCustDocType()));
+			document.setDocImage(documentManagerDAO.getById(customerDocument.getDocRefId()).getDocImage());
 			agreement.getDocuments().add(document);
 		});
 	}
@@ -2294,6 +2299,9 @@ public class AgreementGeneration implements Serializable {
 				document.setReceiveDate(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 				document.setDocType("LOAN");
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
+				document.setFileType(StringUtils.trimToEmpty(documentDetail.getDoctype()));
+				document.setDocImage(documentManagerDAO.getById(documentDetail.getDocRefId()).getDocImage());
+
 				agreement.getDocuments().add(document);
 			}
 		});

@@ -5977,8 +5977,11 @@ public class AgreementDetail {
 		private String receiveDate = "";
 		private String docType = "";
 		private String userName = "";
+		private String fileType = "";
+		private byte[] docImage;
 
 		public Document() {
+			super();
 		}
 
 		public String getCusDocName() {
@@ -6011,6 +6014,22 @@ public class AgreementDetail {
 
 		public void setUserName(String userName) {
 			this.userName = userName;
+		}
+
+		public String getFileType() {
+			return fileType;
+		}
+
+		public void setFileType(String fileType) {
+			this.fileType = fileType;
+		}
+
+		public byte[] getDocImage() {
+			return docImage;
+		}
+
+		public void setDocImage(byte[] docImage) {
+			this.docImage = docImage;
 		}
 	}
 

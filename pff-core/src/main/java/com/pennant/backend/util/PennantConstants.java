@@ -233,6 +233,7 @@ public class PennantConstants {
 
 	// Document Types
 	public static final String DOC_TYPE_IMAGE = "IMG";
+	public static final String DOC_TYPE_JPG = "JPG";
 	public static final String DOC_TYPE_PDF = "PDF";
 	public static final String DOC_TYPE_WORD = "WORD";
 	public static final String DOC_TYPE_MSG = "MSG";

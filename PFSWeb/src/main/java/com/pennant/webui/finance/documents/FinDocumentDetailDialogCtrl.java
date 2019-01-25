@@ -425,8 +425,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			String docName = documnetName.getValue();
 			if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
 				amedia = new AMedia(docName, "pdf", "application/pdf", data);
-			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
-				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)
+					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_JPG)) {
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
