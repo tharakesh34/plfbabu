@@ -999,7 +999,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" From ExtendedFieldDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(
-				" Where ModuleId =:ModuleId and ExtendedType =:ExtendedType order by ParentTag DESC ,FieldSeqOrder ASC");
+				" Where ModuleId =:ModuleId and ExtendedType =:ExtendedType order by FieldSeqOrder ASC");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);

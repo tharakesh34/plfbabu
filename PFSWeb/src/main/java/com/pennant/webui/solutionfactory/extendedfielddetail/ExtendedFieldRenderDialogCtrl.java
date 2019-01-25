@@ -314,43 +314,44 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	private void prepareListHeaders() {
 		logger.debug("Entering");
 
+		Listheader listHeader = new Listheader("Seq No");
+		listHeader.setId("lh_SeqNo");
+		listHeader.setHflex("min");
+		listHeader.setParent(listHead);
+
 		if (getExtendedFieldHeader() != null && !getExtendedFieldHeader().getExtendedFieldDetails().isEmpty()) {
 			List<ExtendedFieldDetail> list = getExtendedFieldHeader().getExtendedFieldDetails();
+			int columnNo = 0;
 
-			for (int i = 0; i < list.size(); i++) {
-
-				ExtendedFieldDetail fieldDetail = list.get(i);
-				if (i == 0) {
-					Listheader listHeader = new Listheader("Seq No");
-					listHeader.setId("lh_SeqNo");
-					listHeader.setHflex("min");
-					listHeader.setParent(listHead);
+			for (ExtendedFieldDetail fieldDetail : list) {
+				if (!fieldDetail.isInputElement()) {
+					continue;
 				}
 
-				Listheader listHeader = new Listheader(fieldDetail.getFieldLabel());
+				listHeader = new Listheader(fieldDetail.getFieldLabel());
 				listHeader.setId("lh_" + fieldDetail.getFieldName());
 				if (isRightAlign(fieldDetail.getFieldType())) {
 					listHeader.setStyle("text-align:right");
 				}
 				listHeader.setHflex("min");
 				listHeader.setParent(listHead);
+				columnNo++;
 
-				if ((i + 1) == 6 || (i == (list.size() - 1))) {
-
-					listHeader = new Listheader(Labels.getLabel("label.RecordStatus"));
-					listHeader.setHflex("min");
-					listHeader.setId("lh_status");
-					listHeader.setParent(listHead);
-
-					listHeader = new Listheader(Labels.getLabel("label.RecordType"));
-					listHeader.setHflex("min");
-					listHeader.setId("lh_operation");
-					listHeader.setParent(listHead);
-
+				if (columnNo == 6) {
 					break;
 				}
 			}
 		}
+
+		listHeader = new Listheader(Labels.getLabel("label.RecordStatus"));
+		listHeader.setId("lh_status");
+		listHeader.setHflex("min");
+		listHeader.setParent(listHead);
+
+		listHeader = new Listheader(Labels.getLabel("label.RecordType"));
+		listHeader.setId("lh_operation");
+		listHeader.setHflex("min");
+		listHeader.setParent(listHead);
 
 		logger.debug("Leaving");
 	}
