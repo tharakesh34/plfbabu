@@ -66,5 +66,10 @@
 	 		<column name="AddrLine2" type="varchar(50)"/>
 	 	</addColumn>
 	 </changeSet>
+	<changeSet id="5" author="Vinay">
+	 	<addColumn tableName="ADTLEGALAPPLICANTDETAILS">
+	 		<column name="RelationshipTitle" type="varchar(50)"/>
+	 	</addColumn>
+	 </changeSet>
 
 	</databaseChangeLog>

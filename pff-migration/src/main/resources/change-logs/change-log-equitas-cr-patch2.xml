@@ -383,4 +383,145 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 	 	</sql>
 	 </changeSet>
+	 
+	 <changeSet id="16" author="Vinay">
+	 	<addColumn tableName="LEGALAPPLICANTDETAILS">
+	 		<column name="RelationshipTitle" type="varchar(50)"/>
+	 	</addColumn>
+	 </changeSet>
+	 <changeSet id="17" author="Vinay">
+	 	<addColumn tableName="LEGALAPPLICANTDETAILS_TEMP">
+	 		<column name="relationshipTitle" type="varchar(50)"/>
+	 	</addColumn>
+	 </changeSet>
+	 <changeSet id="18" author="Vinay">
+	 	<createView viewName="legalapplicantdetails_aview" replaceIfExists="true">
+	 		 SELECT t1.legalapplicantid,
+    t1.legalid,
+    t1.title,
+    t1.propertyownersname,
+    t1.age,
+    t1.relationshiptype,
+    t1.idtype,
+    t1.idno,
+    t1.remarks,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.doctypedesc AS idtypename,
+    t1.customerid,
+    t1.relationshipname,
+    t1.country,
+    t1.statecode,
+    t1.citycode,
+    t1.pincode,
+    t1.AddrLine1,
+    t1.AddrLine2,
+    t1.relationshipTitle
+   FROM legalapplicantdetails t1
+     LEFT JOIN bmtdocumenttypes t2 ON t1.idtype = t2.doctypecode
+     LEFT JOIN bmtcountries t4 ON t1.country = t4.countrycode
+     LEFT JOIN rmtcountryvsprovince t5 ON t1.statecode = t5.cpprovince AND t1.country = t5.cpcountry
+     LEFT JOIN rmtprovincevscity t6 ON t1.citycode = t6.pccity AND t1.statecode = t6.pcprovince AND t1.country = t6.pccountry
+     LEFT JOIN pincodes t7 ON t1.pincode = t7.pincode AND t1.citycode = t7.city
+	 	</createView>
+	 </changeSet>
+	 <changeSet id="19" author="Vinay">
+	 	<createView viewName="legalapplicantdetails_view" replaceIfExists="true">
+	 		 SELECT t1.legalapplicantid,
+    t1.legalid,
+    t1.title,
+    t1.propertyownersname,
+    t1.age,
+    t1.relationshiptype,
+    t1.idtype,
+    t1.idno,
+    t1.remarks,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.doctypedesc AS idtypename,
+    t1.customerid,
+    t1.relationshipname,
+    t1.country,
+    t1.statecode,
+    t1.citycode,
+    t1.pincode,
+    t1.AddrLine1,
+    t1.AddrLine2,
+    t1.relationshipTitle
+   FROM legalapplicantdetails_temp t1
+     LEFT JOIN bmtdocumenttypes t2 ON t1.idtype = t2.doctypecode
+     LEFT JOIN bmtcountries t4 ON t1.country = t4.countrycode
+     LEFT JOIN rmtcountryvsprovince t5 ON t1.statecode = t5.cpprovince AND t1.country = t5.cpcountry
+     LEFT JOIN rmtprovincevscity t6 ON t1.citycode = t6.pccity AND t1.statecode = t6.pcprovince AND t1.country = t6.pccountry
+     LEFT JOIN pincodes t7 ON t1.pincode = t7.pincode AND t1.citycode = t7.city
+UNION ALL
+ SELECT t1.legalapplicantid,
+    t1.legalid,
+    t1.title,
+    t1.propertyownersname,
+    t1.age,
+    t1.relationshiptype,
+    t1.idtype,
+    t1.idno,
+    t1.remarks,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.doctypedesc AS idtypename,
+    t1.customerid,
+    t1.relationshipname,
+    t1.country,
+    t1.statecode,
+    t1.citycode,
+    t1.pincode,
+    t1.AddrLine1,
+    t1.AddrLine2,
+    t1.relationshipTitle
+   FROM legalapplicantdetails t1
+     LEFT JOIN bmtdocumenttypes t2 ON t1.idtype = t2.doctypecode
+     LEFT JOIN bmtcountries t4 ON t1.country = t4.countrycode
+     LEFT JOIN rmtcountryvsprovince t5 ON t1.statecode = t5.cpprovince AND t1.country = t5.cpcountry
+     LEFT JOIN rmtprovincevscity t6 ON t1.citycode = t6.pccity AND t1.statecode = t6.pcprovince AND t1.country = t6.pccountry
+     LEFT JOIN pincodes t7 ON t1.pincode = t7.pincode AND t1.citycode = t7.city
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM legalapplicantdetails_temp
+          WHERE legalapplicantdetails_temp.legalapplicantid = t1.legalapplicantid))
+	 	</createView>
+	 </changeSet>
+	 <changeSet id="20" author="Vinay">
+	 	<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'LegalApplicantDetailDialog_RelationshipTitle','LegalApplicantDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+
+	 		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LEGAL_APPLICANT_DETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='LegalApplicantDetailDialog_RelationshipTitle'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	 	</sql>
+	 </changeSet>
 	</databaseChangeLog>
