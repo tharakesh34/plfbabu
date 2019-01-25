@@ -80,6 +80,7 @@ public class MailTemplate extends AbstractWorkflowEntity {
 	private String lovValue;
 	private MailTemplate befImage;
 	private LoggedInUser userDetails;
+	private String event;
 
 	private String emailMessage = "";
 	private String smsMessage = "";
@@ -340,5 +341,13 @@ public class MailTemplate extends AbstractWorkflowEntity {
 
 	public void setAttchments(Map<String, byte[]> attchments) {
 		this.attchments = attchments;
+	}
+
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
 	}
 }

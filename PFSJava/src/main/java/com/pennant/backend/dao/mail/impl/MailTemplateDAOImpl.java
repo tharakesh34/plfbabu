@@ -87,7 +87,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 
 		mailTemplate.setId(id);
 
-		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, ");
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, Event, ");
 		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
 		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
 		selectSql.append(
@@ -127,7 +127,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 
 		mailTemplate.setTemplateCode(code);
 
-		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, ");
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode,Event, ");
 		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
 		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
 		selectSql.append(
@@ -209,13 +209,14 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into Templates");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (TemplateId,  TemplateFor, Module, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, ");
+		insertSql.append(
+				" (TemplateId,  TemplateFor, Module, Event, TemplateCode, TemplateDesc, SmsTemplate, SmsContent, ");
 		insertSql.append(
 				" EmailTemplate, EmailContent, EmailFormat, EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
 		insertSql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:TemplateId, :TemplateFor, :Module, :TemplateCode, :TemplateDesc, :SmsTemplate, :SmsContent, ");
+				" Values(:TemplateId, :TemplateFor, :Module, :Event, :TemplateCode, :TemplateDesc, :SmsTemplate, :SmsContent, ");
 		insertSql.append(
 				" :EmailTemplate, :EmailContent, :EmailFormat, :EmailSubject, :EmailSendTo, :TurnAroundTime, :Repeat, :Active,");
 		insertSql.append(
@@ -246,7 +247,8 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update Templates");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set TemplateFor=:TemplateFor, Module=:Module, TemplateCode = :TemplateCode, ");
+		updateSql
+				.append(" Set TemplateFor=:TemplateFor, Module=:Module, Event =:Event, TemplateCode = :TemplateCode, ");
 		updateSql.append(" TemplateDesc = :TemplateDesc, SmsTemplate = :SmsTemplate, SmsContent = :SmsContent, ");
 		updateSql.append(" EmailTemplate = :EmailTemplate, EmailContent = :EmailContent, EmailFormat = :EmailFormat, ");
 		updateSql.append(" EmailSubject = :EmailSubject, EmailSendTo= :EmailSendTo,TurnAroundTime=:TurnAroundTime, ");
@@ -276,7 +278,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 	public List<MailTemplate> getMailTemplates() {
 		List<MailTemplate> mailTemplateList = new ArrayList<MailTemplate>();
 		MailTemplate mailTemplate = new MailTemplate();
-		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, TemplateCode, ");
+		StringBuilder selectSql = new StringBuilder(" Select TemplateId, TemplateFor, Module, Event, TemplateCode, ");
 		selectSql.append(" TemplateDesc, SmsTemplate, SmsContent, EmailTemplate, EmailContent, EmailFormat, ");
 		selectSql.append(" EmailSubject, EmailSendTo, TurnAroundTime, Repeat, Active, ");
 		selectSql.append(

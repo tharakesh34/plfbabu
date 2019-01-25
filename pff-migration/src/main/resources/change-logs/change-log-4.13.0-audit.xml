@@ -56,5 +56,19 @@
 			alter table ADTQUERYDETAIL alter column ASSIGNEDROLE varchar(100);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="6" author="Kranthi">
+		<comment>New column added for Template Details, EXISTING DATA SHOULD BE VERIFY BASED ON CLIENT TO CLIENT</comment>
+		<addColumn tableName="AdtTemplates">
+			<column name="Event" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="7" author="Kranthi">
+		<comment>New column added for Notifications</comment>
+		<addColumn tableName="AdtNotifications">
+			<column name="RuleEvent" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

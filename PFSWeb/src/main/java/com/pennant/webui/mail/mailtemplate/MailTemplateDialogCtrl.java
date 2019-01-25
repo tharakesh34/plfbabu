@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  MailTemplateDialogCtrl.java                                                   * 	  
+ * FileName    		:  MailTemplateDialogCtrl.java                                          * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -76,10 +76,8 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -155,6 +153,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	protected Row row_SMSContent; // autowired
 	protected Row row_EmailFormat; // autowired
 	protected Row row_EmailSendTo; // autowired
+	protected Row row_TemplateEvent; // autowired
 	protected MailTemplate aMailTemplate;
 	protected Textbox lovDescUserNames; // autowired
 	protected Button btnUserIds; // autowired
@@ -176,7 +175,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private List<ValueLabel> listEmailFormat = PennantStaticListUtil.getTemplateFormat(); // autowired
 	private List<ValueLabel> listTemplateFor = PennantStaticListUtil.getTemplateForList();
 	private List<ValueLabel> mailTeplateModulesList = PennantStaticListUtil.getMailModulesList();
-	private List<FinServicingEvent> loanOrgModuleList = PennantStaticListUtil.getFinServiceEvents(true);
+	private List<ValueLabel> templateEvents = PennantStaticListUtil.getTemplateEvents();
 	private HashMap<String, String> filedValues = new HashMap<String, String>();
 	private HashMap<String, String> filedDesc = new HashMap<String, String>();
 
@@ -443,13 +442,11 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		fillComboBox(this.emailFormat, aMailTemplate.getEmailFormat(), listEmailFormat, "");
 
 		fillComboBox(this.templateModule, aMailTemplate.getModule(), mailTeplateModulesList, "");
-		/*
-		 * List<ValueLabel> list =
-		 * PennantStaticListUtil.getValueLabels(loanOrgModuleList);
-		 * fillComboBox(this.templateEvent, aMailTemplate.getEvent()== null?
-		 * NotificationConstants.MAIL_MODULE_FIN : aMailTemplate.getEvent(),
-		 * list,"");
-		 */
+
+		if (StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_FIN)) {
+			this.row_TemplateEvent.setVisible(true);
+		}
+		fillComboBox(this.templateEvent, aMailTemplate.getEvent(), templateEvents, "");
 
 		if (!aMailTemplate.isNewRecord()
 				&& StringUtils.equals(aMailTemplate.getModule(), NotificationConstants.MAIL_MODULE_FIN)
@@ -485,8 +482,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 								new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
 						this.divHtmlArtifact.appendChild(new Html(
 								new String(aMailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET)));
-						doFillTemplateFields(aMailTemplate.getModule(), this.templateData);
-						doFillTemplateFields(aMailTemplate.getModule(), this.templateData1);
+						doFillTemplateFields(aMailTemplate.getModule(), this.templateData, aMailTemplate.getEvent());
+						doFillTemplateFields(aMailTemplate.getModule(), this.templateData1, aMailTemplate.getEvent());
 
 					} else if (NotificationConstants.TEMPLATE_FORMAT_PLAIN.equals(type)) {
 						this.plainText.setValue(
@@ -495,9 +492,6 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				} catch (Exception e) {
 					logger.error("Exception:", e);
 				}
-			} else if (aMailTemplate.getModule() == null) {
-				doFillTemplateFields(AccountConstants.TRANACC_FIN, this.templateData);
-				doFillTemplateFields(AccountConstants.TRANACC_FIN, this.templateData1);
 			}
 		}
 
@@ -561,6 +555,23 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				} else {
 					aMailTemplate.setModule(this.templateModule.getSelectedItem().getValue().toString());
 				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Template Event
+		try {
+			if (this.row_TemplateEvent.isVisible()) {
+				if (!this.templateEvent.isDisabled()
+						&& "#".equals(this.templateEvent.getSelectedItem().getValue().toString())) {
+					throw new WrongValueException(this.templateModule, Labels.getLabel("CHECK_NO_EMPTY",
+							new String[] { Labels.getLabel("label_MailTemplateDialog_templateEvent.value") }));
+				} else {
+					aMailTemplate.setEvent(this.templateEvent.getSelectedItem().getValue().toString());
+				}
+			} else {
+				aMailTemplate.setEvent(aMailTemplate.getModule());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -815,6 +826,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.templateDesc.setConstraint("");
 		this.emailFormat.setConstraint("");
 		this.templateFor.setConstraint("");
+		this.templateEvent.setConstraint("");
 		this.templateModule.setConstraint("");
 		// this.emailSubject.setConstraint("");
 		logger.debug("Leaving");
@@ -843,6 +855,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.emailFormat.setErrorMessage("");
 		this.templateFor.setErrorMessage("");
 		this.templateModule.setErrorMessage("");
+		this.templateEvent.setErrorMessage("");
 		Clients.clearWrongValue(this.Space_emailSubject);
 		Clients.clearWrongValue(this.Space_htmlArtifact);
 
@@ -961,6 +974,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.emailFormat.setDisabled(isReadOnly("MailTemplateDialog_emailFormat"));
 		this.templateFor.setDisabled(isReadOnly("MailTemplateDialog_templateFor"));
 		this.templateModule.setDisabled(isReadOnly("MailTemplateDialog_templateModule"));
+		this.templateEvent.setDisabled(isReadOnly("MailTemplateDialog_templateModule"));
 
 		this.emailSubject.setReadonly(isReadOnly("MailTemplateDialog_emailSubject"));
 		if (this.emailSubject.isReadonly()) {
@@ -1222,34 +1236,40 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
-
 	public void onChange$templateModule(Event event) {
 		logger.debug("Entering " + event);
+		this.row_TemplateEvent.setVisible(false);
 
+		String eventValue = templateModule.getSelectedItem().getValue().toString();
+		if (eventValue.equals(NotificationConstants.MAIL_MODULE_FIN)) {
+			this.row_TemplateEvent.setVisible(true);
+		} else {
+			this.templateEvent.setSelectedIndex(0);
+		}
 		if (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
 				NotificationConstants.MAIL_MODULE_FIN)) {
-			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(),
-					listTemplateFor,
+			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(), listTemplateFor,
 					",PN,");
 
 		} else if (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
 				NotificationConstants.MAIL_MODULE_PROVIDER)) {
-			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(),
-					listTemplateFor,
+			fillComboBox(this.templateFor, this.templateModule.getSelectedItem().getValue().toString(), listTemplateFor,
 					",SP,DN,AE,CN,");
 		}
 
-		if (this.templateModule.getSelectedItem().getValue() != null && (
-				StringUtils.equals(this.templateModule.getSelectedItem()
-				.getValue().toString(),NotificationConstants.MAIL_MODULE_CAF)
-				|| StringUtils.equals(this.templateModule.getSelectedItem()
-						.getValue().toString(),NotificationConstants.MAIL_MODULE_FIN)
-				|| StringUtils.equals(this.templateModule.getSelectedItem()
-						.getValue().toString(),NotificationConstants.MAIL_MODULE_CREDIT)
-				|| StringUtils.equals(this.templateModule.getSelectedItem()
-						.getValue().toString(), NotificationConstants.MAIL_MODULE_PROVIDER))) {
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData);
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1);
+		if (this.templateModule.getSelectedItem().getValue() != null
+				&& (StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
+						NotificationConstants.MAIL_MODULE_CAF)
+						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
+								NotificationConstants.MAIL_MODULE_FIN)
+						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
+								NotificationConstants.MAIL_MODULE_CREDIT)
+						|| StringUtils.equals(this.templateModule.getSelectedItem().getValue().toString(),
+								NotificationConstants.MAIL_MODULE_PROVIDER))) {
+			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData,
+					this.templateEvent.getSelectedItem().getValue());
+			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), this.templateData1,
+					this.templateEvent.getSelectedItem().getValue().toString());
 		}
 
 		this.emailSubject.setValue("");
@@ -1258,30 +1278,30 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		logger.debug("Leaving " + event);
 	}
 
-	/*
-	 * public void onChange$templateEvent(Event event) {
-	 * logger.debug("Entering " + event);
-	 * 
-	 * if (this.templateEvent.getSelectedItem().getValue() != null &&
-	 * (this.templateEvent.getSelectedItem().getValue().toString()
-	 * .equals(NotificationConstants.MAIL_MODULE_CAF) ||
-	 * this.templateEvent.getSelectedItem().getValue().toString()
-	 * .equals(NotificationConstants.MAIL_MODULE_FIN) ||
-	 * this.templateModule.getSelectedItem()
-	 * .getValue().toString().equals(NotificationConstants.MAIL_MODULE_CREDIT)))
-	 * { doFillTemplateFields(this.templateEvent.getSelectedItem().getValue().
-	 * toString(), this.templateEvent.getSelectedItem().getValue().toString(),
-	 * this.templateData);
-	 * doFillTemplateFields(this.templateEvent.getSelectedItem().getValue().
-	 * toString(), this.templateEvent.getSelectedItem().getValue().toString(),
-	 * this.templateData1);
-	 * 
-	 * } this.emailSubject.setValue(""); this.htmlArtifact.setValue("");
-	 * logger.debug("Leaving " + event); }
-	 */
+	// Template Event
+	public void onChange$templateEvent(Event event) {
+		logger.debug("Entering " + event);
+		this.templateData.getItems().clear();
+		this.templateData1.getItems().clear();
+
+		if (StringUtils.isNotEmpty(this.templateEvent.getSelectedItem().getValue())
+				&& !StringUtils.equals(this.templateEvent.getSelectedItem().getValue(), PennantConstants.List_Select)) {
+
+			// Subject Line Parameters
+			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), templateData,
+					this.templateEvent.getSelectedItem().getValue());
+
+			// Mail Body Parameters
+			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), templateData1,
+					this.templateEvent.getSelectedItem().getValue());
+
+			this.emailSubject.setValue("");
+			this.htmlArtifact.setValue("");
+			logger.debug("Leaving " + event);
+		}
+	}
 
 	// WorkFlow Components
-
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -1388,8 +1408,9 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 				this.templateData1.setVisible(false);
 			}
 
-			doFillTemplateFields(getMailTemplate().getModule(), this.templateData);
-			doFillTemplateFields(getMailTemplate().getModule(), this.templateData1);
+			doFillTemplateFields(getMailTemplate().getModule(), this.templateData, getMailTemplate().getEvent());
+			doFillTemplateFields(getMailTemplate().getModule(), this.templateData1, getMailTemplate().getEvent());
+
 		}
 		logger.debug("Leaving");
 	}
@@ -1448,28 +1469,36 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	 * 
 	 * }
 	 */
-
-	private void doFillTemplateFields(String module, Listbox templateData) {
+	private void doFillTemplateFields(String module, Listbox templateData, String event) {
 		logger.debug("Entering");
 		templateData.getItems().clear();
-		// this.templateData.getItems().clear();
 		List<TemplateFields> templateFieldsList = new ArrayList<TemplateFields>();
 		JdbcSearchObject<TemplateFields> searchObj = new JdbcSearchObject<TemplateFields>(TemplateFields.class);
 		searchObj.addTabelName("TemplateFields");
-		searchObj.addFilterEqual("Module", module);
-		// searchObj.addFilterEqual("Event", event);
+
+		Filter[] filters = new Filter[2];
+		filters[0] = new Filter("Module", module, Filter.OP_EQUAL);
+
+		if (StringUtils.equals(NotificationConstants.MAIL_MODULE_FIN, module)) {
+			filters[1] = new Filter("Event", event, Filter.OP_EQUAL);
+		} else {
+			filters[1] = new Filter("Event", module, Filter.OP_EQUAL);
+		}
+
+		searchObj.addFilters(filters);
 		templateFieldsList = getPagedListService().getBySearchObject(searchObj);
 
 		String lcLabel = "";
 		if (templateFieldsList.size() == 0) {
 			templateData.setVisible(false);
 			return;
+		} else {
+			templateData.setVisible(true);
 		}
 
 		for (int i = 0; i < templateFieldsList.size(); i++) {
 			Listitem item = new Listitem();
 			String value = templateFieldsList.get(i).getField().trim();
-
 			lcLabel = "${vo." + value + "}";
 			if ("D".equals(templateFieldsList.get(i).getFieldFormat())) {
 				lcLabel = "${vo." + value + "?date}";
@@ -1490,7 +1519,9 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			lc.setParent(item);
 			templateData.appendChild(item);
 		}
+
 		logger.debug("Leaving");
+
 	}
 
 	public void onClick$btnSimulate(Event event) throws Exception {
@@ -1545,7 +1576,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		argsMap.put("fieldsMap", fieldsMap);
 		argsMap.put("mailContent", mailContent);
 		argsMap.put("module", getMailTemplate().getModule());
-		// argsMap.put("event", getMailTemplate().getEvent());
+		argsMap.put("event", getMailTemplate().getEvent());
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Mail/MailTemplate/TemplatePreview.zul", null, argsMap);

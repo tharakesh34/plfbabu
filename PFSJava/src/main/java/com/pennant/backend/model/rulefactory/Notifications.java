@@ -58,6 +58,7 @@ public class Notifications extends AbstractWorkflowEntity implements Entity {
 	private long ruleId = Long.MIN_VALUE;
 	private String ruleCode;
 	private String ruleModule;
+	private String ruleEvent;
 	private String templateType;
 	private String ruleCodeDesc;
 	private String ruleTemplate;
@@ -242,5 +243,13 @@ public class Notifications extends AbstractWorkflowEntity implements Entity {
 
 	public void setRuleAttachmentFields(String ruleAttachmentFields) {
 		this.ruleAttachmentFields = ruleAttachmentFields;
+	}
+
+	public String getRuleEvent() {
+		return ruleEvent;
+	}
+
+	public void setRuleEvent(String ruleEvent) {
+		this.ruleEvent = ruleEvent;
 	}
 }

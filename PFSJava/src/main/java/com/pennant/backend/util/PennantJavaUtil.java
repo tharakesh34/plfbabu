@@ -315,6 +315,7 @@ import com.pennant.backend.model.lmtmasters.ProcessEditorDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
+import com.pennant.backend.model.mail.TemplateFields;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.masters.Locality;
@@ -3075,6 +3076,12 @@ public class PennantJavaUtil {
 						new String[] { "userhierarchy_view", "userhierarchy_view" }, null, new String[] { "UserName",
 								"BusinessVerticalCode", "FinType", "Product", "Branch", "ReportingToUserName" },
 						null, 800));
+		// TemplateFields
+
+		ModuleUtil.register("TemplateFields",
+				new ModuleMapping("TemplateFields", TemplateFields.class,
+						new String[] { "TemplateFields", "TemplateFields" }, masterWF,
+						new String[] { "module", "event" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
 		registerCustomModules();
 	}

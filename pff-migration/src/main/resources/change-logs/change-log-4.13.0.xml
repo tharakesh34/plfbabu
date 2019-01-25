@@ -29,7 +29,7 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+	 
 	<changeSet id="1" author="Vinay">
 		<sql>
 			update FinanceDeviations set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
@@ -114,5 +114,349 @@
 			alter table QUERYDETAIL_TEMP alter column ASSIGNEDROLE varchar(100);
 		</sql>
 	</changeSet>
+
+	<changeSet id="6" author="Kranthi">
+		<comment>New column added for Template Fields</comment>
+		<addColumn tableName="Templatefields">
+			<column name="Event" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
    
+   	<changeSet id="7" author="Kranthi">
+		<comment>New column added for Template Fields, Data updations</comment>
+		<sql>
+			update templatefields set Event = 'Origination' where Module = 'FIN';
+			update templatefields set Event = Module where Module != 'FIN';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="Kranthi">
+		<comment>New column added for Template Details, EXISTING DATA SHOULD BE VERIFY BASED ON CLIENT TO CLIENT</comment>
+		<addColumn tableName="Templates">
+			<column name="Event" type="varchar(50)" />
+		</addColumn>
+		<addColumn tableName="Templates_Temp">
+			<column name="Event" type="varchar(50)" />
+		</addColumn>
+	</changeSet> 
+	
+	<changeSet id="9" author="Kranthi">
+		<comment>New column added for Template Details</comment>
+		<createView viewName="templates_view" replaceIfExists="true">
+			 SELECT t1.templateid,
+				    t1.templatecode,
+				    t1.module,
+				    t1.Event,
+				    t1.templatedesc,
+				    t1.smstemplate,
+				    t1.smscontent,
+				    t1.emailtemplate,
+				    t1.emailcontent,
+				    t1.emailformat,
+				    t1.emailsubject,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.emailsendto,
+				    t1.templatefor,
+				    t1.turnaroundtime,
+				    t1.repeat
+				   FROM templates_temp t1
+				UNION ALL
+				 SELECT t1.templateid,
+				    t1.templatecode,
+				    t1.module,
+				    t1.Event,
+				    t1.templatedesc,
+				    t1.smstemplate,
+				    t1.smscontent,
+				    t1.emailtemplate,
+				    t1.emailcontent,
+				    t1.emailformat,
+				    t1.emailsubject,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.emailsendto,
+				    t1.templatefor,
+				    t1.turnaroundtime,
+				    t1.repeat
+				   FROM templates t1
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM templates_temp
+				          WHERE templates_temp.templateid = t1.templateid))
+		</createView>
+	</changeSet>
+	<changeSet id="10" author="Kranthi">
+		<comment>New column added for Template Details</comment>
+		<createView viewName="templates_aview" replaceIfExists="true">
+			SELECT t1.templateid,
+				    t1.templatecode,
+				    t1.module,
+				    t1.Event,
+				    t1.templatedesc,
+				    t1.smstemplate,
+				    t1.smscontent,
+				    t1.emailtemplate,
+				    t1.emailcontent,
+				    t1.emailformat,
+				    t1.emailsubject,
+				    t1.active,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.emailsendto,
+				    t1.templatefor,
+				    t1.turnaroundtime,
+				    t1.repeat
+				   FROM templates t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="11" author="Kranthi">
+		<comment>New column added for Notifications, EXISTING DATA SHOULD BE VERIFY BASED ON CLIENT TO CLIENT</comment>
+		<addColumn tableName="Notifications">
+			<column name="RuleEvent" type="varchar(50)" />
+		</addColumn>
+		<addColumn tableName="Notifications_Temp">
+			<column name="RuleEvent" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="12" author="Kranthi">
+		<comment>New column added for Template Details</comment>
+		<createView viewName="notifications_view" replaceIfExists="true">
+			 SELECT t1.ruleid,
+				    t1.rulecode,
+				    t1.rulemodule,
+				    t1.ruleEvent,
+				    t1.rulecodedesc,
+				    t1.templatetype,
+				    t1.ruletemplate,
+				    t1.actualblocktemplate,
+				    t1.rulereciepent,
+				    t1.actualblockreciepent,
+				    t1.ruleattachment,
+				    t1.actualblockatachment,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.templatetypefields,
+				    t1.rulereciepentfields,
+				    t1.ruleattachmentfields
+				   FROM notifications_temp t1
+				UNION ALL
+				 SELECT t1.ruleid,
+				    t1.rulecode,
+				    t1.rulemodule,
+				    t1.ruleEvent,
+				    t1.rulecodedesc,
+				    t1.templatetype,
+				    t1.ruletemplate,
+				    t1.actualblocktemplate,
+				    t1.rulereciepent,
+				    t1.actualblockreciepent,
+				    t1.ruleattachment,
+				    t1.actualblockatachment,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.templatetypefields,
+				    t1.rulereciepentfields,
+				    t1.ruleattachmentfields
+				   FROM notifications t1
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM notifications_temp
+				          WHERE rulecode = t1.rulecode))
+		</createView>
+	</changeSet>
+	<changeSet id="13" author="Kranthi">
+		<comment>New column added for Template Details</comment>
+		<createView viewName="notifications_aview" replaceIfExists="true">
+			 SELECT ruleid,
+				    rulecode,
+				    rulemodule,
+				    ruleEvent,
+				    rulecodedesc,
+				    templatetype,
+				    ruletemplate,
+				    actualblocktemplate,
+				    rulereciepent,
+				    actualblockreciepent,
+				    ruleattachment,
+				    actualblockatachment,
+				    version,
+				    lastmntby,
+				    lastmnton,
+				    recordstatus,
+				    rolecode,
+				    nextrolecode,
+				    taskid,
+				    nexttaskid,
+				    recordtype,
+				    workflowid,
+				    templatetypefields,
+				    rulereciepentfields,
+				    ruleattachmentfields
+				   FROM notifications
+		</createView>
+	</changeSet>
+		
+	<changeSet id="14" author="Kranthi">
+		<dropPrimaryKey tableName="TemplateFields" constraintName="pk_templatefields" />
+	</changeSet>
+	<changeSet id="15" author="Kranthi">
+		<addPrimaryKey tableName="TemplateFields" constraintName="pk_templatefields"
+			columnNames="module, field, event" />
+	</changeSet>
+	
+	<changeSet id="16" author="Kranthi">
+		<sql>
+						
+			DELETE FROM TemplateFields WHERE Module = 'FIN';
+			
+			INSERT INTO TemplateFields VALUES(	'FIN','custRO1','Source','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custShrtName','Customer Name','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrCountry','custAddrCountry','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finAmount','Finance Amount','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','nextRepayDate','NextRepayDate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','numberOfTerms','numberOfTerms','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','repayProfitRate','repayProfitRate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finRepaymentAmount','finRepaymentAmount','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','repayFrq','RepayFrq','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finStartDate','FinStartDate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrStreet','custAddrStreet','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrCity','custAddrCity','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrProvince','custAddrProvince','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrHNbr','custAddrHNbr','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrLine1','custAddrLine1','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrLine2','custAddrLine2','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','firstRepay','FirstRepay','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','curReducingRate','CurReducingRate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrFlatNo','custAddrFlatNo','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finReference','Loan Reference Number','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custCoreBank','Cust Core Bank ID','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finCurrAssetValue','FinCurrent Asset Value','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finAssetValue','Fin Asset Value','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','repaymentFrequency','Repayment Frequency','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','firstDueDate','First Due Date Frequency','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','maturityDate','Maturity Date','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','graceBaseRate','Grace BaseRate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','graceSpecialRate','Grace SpecialRate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','repayBaseRate','Repay BaseRate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','repaySpecialRate','Repay SpecialRate','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','repayMargin','Repay Margin','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranch','Fin Branch','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finCcy','FinCcy','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finDivision','FinDivision','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','accountsOfficerDesc','Accounts Officer Desc','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','dsaCode','DSA Code','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','dsaDesc','DSA Desc','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','DMACodeDesc','DMA CodeDesc','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','totalProfit','Total Profit','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','lastRepay','Last Repay','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrDistrict','custAddrDistrict','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custAddrPincode','custAddrPincode','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custMobileNumber','Customer Mobile Number','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custEmailId','Customer Email Id','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custFlatNbr','CustFlatNbr','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custPOBox','CustPOBox','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrFlatNo','Loan branch Address Flat','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrStreet','Loan branch Address Street','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrCountry','Loan branch Address Country','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrCity','Loan branch Address City','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrProvince','Loan branch Address State','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrDistrict','Loan branch Address District','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrPincode','Loan branch Address Pincode','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchPhone','Loan branch Address Phone','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrLine1','Loan branch Address Line1','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrLine2','Loan branch Address Line2','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrHNbr','Loan branch Address House','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custCIF','Customer CIF','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','appDate','Application Date','A','Origination'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userName','User Name','A','Origination'	);
+			
+			INSERT INTO TemplateFields VALUES(	'FIN','bounceReason','Bounce Reason','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','cancellationReason','Cancellation Reason','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrLine1','User branch Address Line1','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrLine2','User branch Address Line2','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrHNbr','User branch Address House','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrFlatNo','User branch Address Flat','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrStreet','User branch Address Street','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrCountry','User branch Address Country','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrProvince','User branch Address State','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrFlatNo','Loan branch Address Flat','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrStreet','Loan branch Address Street','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrCountry','Loan branch Address Country','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrCity','Loan branch Address City','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrProvince','Loan branch Address State','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrDistrict','Loan branch Address District','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrPincode','Loan branch Address Pincode','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchPhone','Loan branch Address Phone','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custShrtName','Customer Name','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','bounceDate','Bounce Date','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrCity','User branch Address City','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','valueDate','Receipt Value Date','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranch','Fin Branch','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finCcy','FinCcy','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','receiptAmount','Receipt Amount','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrDistrict','User branch Address District','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrPincode','User branch Address Pincode','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchPhone','User branch Address Phone','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrLine1','Loan branch Address Line1','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrLine2','Loan branch Address Line2','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrHNbr','Loan branch Address House','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','amount','Receipt Mode Amount','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custCIF','Customer CIF','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','appDate','Application Date','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userName','User Name','A','Receipts'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','receiptPurpose','Receipt Purpose','A','Receipts'	);
+			
+			INSERT INTO TemplateFields VALUES(	'FIN','custShrtName','Customer Name','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranch','Fin Branch','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finCcy','FinCcy','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','amount','Current Disbursement Amount','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','valueDate','Current Disbursement Date','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custCIF','Customer CIF','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','appDate','Application Date','A','AddDisbursement'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userName','User Name','A','AddDisbursement'	);
+		</sql>
+	</changeSet>
 </databaseChangeLog>

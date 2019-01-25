@@ -92,7 +92,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" Select RuleId, RuleCode, RuleModule,TemplateType, RuleCodeDesc,RuleTemplate, ActualBlockTemplate,");
+				" Select RuleId, RuleCode, RuleModule, RuleEvent,TemplateType, RuleCodeDesc,RuleTemplate, ActualBlockTemplate,");
 		selectSql.append("  RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -133,7 +133,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" Select RuleId, RuleCode, RuleModule,TemplateType, RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
+				" Select RuleId, RuleCode, RuleModule, RuleEvent, TemplateType, RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
 		selectSql.append(" RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -219,13 +219,13 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		StringBuilder insertSql = new StringBuilder("Insert Into Notifications");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (RuleId, RuleCode, RuleModule, TemplateType,RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
+				" (RuleId, RuleCode, RuleModule,RuleEvent,  TemplateType,RuleCodeDesc, RuleTemplate, ActualBlockTemplate,");
 		insertSql.append(" RuleReciepent, ActualBlockReciepent, RuleAttachment, ActualBlockAtachment,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		insertSql.append(" RecordType, WorkflowId,");
 		insertSql.append(" TemplateTypeFields, RuleReciepentFields, RuleAttachmentFields)");
 		insertSql.append(
-				" Values(:RuleId, :RuleCode, :RuleModule, :TemplateType, :RuleCodeDesc, :RuleTemplate, :ActualBlockTemplate,");
+				" Values(:RuleId, :RuleCode, :RuleModule,:RuleEvent, :TemplateType, :RuleCodeDesc, :RuleTemplate, :ActualBlockTemplate,");
 		insertSql.append(" :RuleReciepent, :ActualBlockReciepent, :RuleAttachment, :ActualBlockAtachment,");
 		insertSql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
@@ -262,7 +262,7 @@ public class NotificationsDAOImpl extends SequenceDao<Notifications> implements 
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(" Set RuleId=:RuleId,");
 		updateSql.append(
-				" RuleModule = :RuleModule,TemplateType=:TemplateType, RuleCodeDesc = :RuleCodeDesc , RuleTemplate = :RuleTemplate, ActualBlockTemplate = :ActualBlockTemplate,");
+				" RuleModule = :RuleModule,RuleEvent=:RuleEvent, TemplateType=:TemplateType, RuleCodeDesc = :RuleCodeDesc , RuleTemplate = :RuleTemplate, ActualBlockTemplate = :ActualBlockTemplate,");
 		updateSql.append(
 				" RuleReciepent = :RuleReciepent , ActualBlockReciepent = :ActualBlockReciepent, RuleAttachment = :RuleAttachment, ActualBlockAtachment = :ActualBlockAtachment, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");

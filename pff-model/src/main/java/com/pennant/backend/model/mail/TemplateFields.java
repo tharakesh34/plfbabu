@@ -7,6 +7,7 @@ public class TemplateFields implements Serializable {
 	private static final long serialVersionUID = 5970895533633063298L;
 
 	private String module;
+	private String event;
 	private String field;
 	private String fieldDesc;
 	private String fieldFormat;
@@ -49,6 +50,14 @@ public class TemplateFields implements Serializable {
 
 	public void setField(String field) {
 		this.field = field;
+	}
+
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
 	}
 
 }

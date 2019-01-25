@@ -77,28 +77,35 @@
 									<column width="35%" />
 								</columns>
 								<rows>
-									<row id="row0">
+									<row>
 										<label id="label_RuleCode" value="${c:l('label_NotificationsDialog_RuleCode.value')}" />
 										<hlayout id="hlayout_RuleCode">
 											<space id="space_RuleCode" spacing="2px" sclass="mandatory" />
 											<textbox id="ruleCode" maxlength="8" width="150px" />
 										</hlayout>
-										<label id="label_RuleModule" value="${c:l('label_NotificationsDialog_RuleModule.value')}" />
-										<hlayout id="hlayout_RuleModule">
-											<space id="space_RuleModule" spacing="2px" sclass="mandatory" />
-											<combobox id="ruleModule" width="150px" />
-										</hlayout>
-									</row>
-									<row id="row1">
 										<label id="label_RuleCodeDesc" value="${c:l('label_NotificationsDialog_RuleCodeDesc.value')}" />
 										<hlayout id="hlayout_RuleCodeDesc">
 											<space id="space_RuleCodeDesc" spacing="2px" sclass="mandatory" />
 											<textbox id="ruleCodeDesc" maxlength="50" width="150px" />
 										</hlayout>
+									</row>
+									<row>
+										<label id="label_RuleModule" value="${c:l('label_NotificationsDialog_RuleModule.value')}" />
+										<hlayout id="hlayout_RuleModule">
+											<space id="space_RuleModule" spacing="2px" sclass="mandatory" />
+											<combobox id="ruleModule" width="150px" />
+										</hlayout>
 										<label id="label_TemplateType" value="${c:l('label_NotificationsDialog_TemplateType.value')}" />
 										<hlayout id="hlayout_TemplateType">
 											<space id="space_TemplateType" spacing="2px" sclass="mandatory" />
 											<combobox id="templateType" width="150px" />
+										</hlayout>
+									</row>
+									<row id="row_ruleEvent" visible="false">
+										<label id="label_RuleEvent" value="${c:l('label_NotificationsDialog_RuleEvent.value')}" />
+										<hlayout id="hlayout_RuleEvent">
+											<space id="space_RuleEvent" spacing="2px" sclass="mandatory" />
+											<combobox id="ruleEvent" width="150px" />
 										</hlayout>
 									</row>
 								</rows>

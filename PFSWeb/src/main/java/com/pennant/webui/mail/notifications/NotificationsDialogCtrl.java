@@ -59,6 +59,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
@@ -101,7 +102,9 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	protected Textbox ruleCode;
 	protected Textbox ruleCodeDesc;
 	protected Combobox ruleModule;
+	protected Combobox ruleEvent;
 	protected Combobox templateType;
+	protected Row row_ruleEvent;
 
 	protected Tab tab_ruleTemplate;
 	protected Tab tab_ruleReciepent;
@@ -130,6 +133,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	private transient NotificationsService notificationsService;
 
 	private List<ValueLabel> listRuleModule = new ArrayList<ValueLabel>();
+	private List<ValueLabel> listRuleEvent = new ArrayList<ValueLabel>();
 	private List<ValueLabel> listTemplateTypes = new ArrayList<ValueLabel>();
 
 	/**
@@ -304,10 +308,16 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 */
 	public void onChange$ruleModule(Event event) {
 		logger.debug("Entering");
+
+		this.row_ruleEvent.setVisible(false);
+		this.ruleEvent.setSelectedIndex(0);
 		if (StringUtils.equals(this.ruleModule.getSelectedItem().getValue().toString(),
 				NotificationConstants.MAIL_MODULE_FIN)) {
 			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(),
 					listTemplateTypes, ",PN,");
+
+			this.row_ruleEvent.setVisible(true);
+			fillComboBox(this.ruleEvent, "", listRuleEvent, "");
 
 		} else if (StringUtils.equals(this.ruleModule.getSelectedItem().getValue().toString(),
 				NotificationConstants.MAIL_MODULE_PROVIDER)) {
@@ -315,6 +325,23 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 					listTemplateTypes, ",SP,DN,AE,CN,");
 		}
 		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
+				this.ruleEvent.getSelectedItem().getValue().toString(),
+				this.templateType.getSelectedItem().getValue().toString());
+
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the Template Type
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onChange$ruleEvent(Event event) {
+		logger.debug("Entering");
+
+		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
+				this.ruleEvent.getSelectedItem().getValue().toString(),
 				this.templateType.getSelectedItem().getValue().toString());
 
 		logger.debug("Leaving");
@@ -330,6 +357,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		logger.debug("Entering");
 
 		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
+				this.ruleEvent.getSelectedItem().getValue().toString(),
 				this.templateType.getSelectedItem().getValue().toString());
 
 		logger.debug("Leaving");
@@ -448,14 +476,21 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.recordStatus.setValue(aNotifications.getRecordStatus());
 
 		this.listRuleModule = PennantStaticListUtil.getMailModulesList();
+		this.listRuleEvent = PennantStaticListUtil.getTemplateEvents();
 		this.listTemplateTypes = PennantStaticListUtil.getTemplateForList();
-
 		
 		fillComboBox(this.ruleModule, aNotifications.getRuleModule(), listRuleModule, "");
+		fillComboBox(this.ruleEvent, aNotifications.getRuleEvent(), listRuleEvent, "");
 		fillComboBox(this.templateType, aNotifications.getTemplateType(), listTemplateTypes, "");
 
-		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
-				this.templateType.getSelectedItem().getValue().toString());
+		if (StringUtils.equals(aNotifications.getRuleModule(), NotificationConstants.MAIL_MODULE_FIN)) {
+			this.row_ruleEvent.setVisible(true);
+		}
+
+		if (StringUtils.isNotBlank(aNotifications.getRuleModule())) {
+			doSetTemplateList(aNotifications.getRuleModule(), aNotifications.getRuleEvent(),
+					aNotifications.getTemplateType());
+		}
 
 		logger.debug("Leaving");
 	}
@@ -468,25 +503,19 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 	 * @param String
 	 *            templateType
 	 */
-	private void doSetTemplateList(String moduelCode, String templateType) {
+	private void doSetTemplateList(String moduelCode, String event, String templateType) {
 		logger.debug("Entering");
 
 		this.tab_ruleReciepent.setDisabled(true);
 		if (!StringUtils.trimToEmpty(moduelCode).equals(PennantConstants.List_Select)
+				&& (!StringUtils.trimToEmpty(event).equals(PennantConstants.List_Select)
+						|| !StringUtils.equals(NotificationConstants.MAIL_MODULE_FIN, moduelCode))
 				&& !StringUtils.trimToEmpty(templateType).equals(PennantConstants.List_Select)) {
 			switch (templateType) {
 			case NotificationConstants.TEMPLATE_FOR_AE:
-				this.tab_ruleReciepent.setDisabled(false);
-				break;
 			case NotificationConstants.TEMPLATE_FOR_QP:
-				this.tab_ruleReciepent.setDisabled(false);
-				break;
 			case NotificationConstants.TEMPLATE_FOR_GE:
-				this.tab_ruleReciepent.setDisabled(false);
-				break;
 			case NotificationConstants.TEMPLATE_FOR_PO:
-				this.tab_ruleReciepent.setDisabled(false);
-				break;
 			case NotificationConstants.TEMPLATE_FOR_TAT:
 				this.tab_ruleReciepent.setDisabled(false);
 				break;
@@ -537,6 +566,17 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		// Module
 		try {
 			aNotifications.setRuleModule(this.ruleModule.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Module
+		try {
+			if (StringUtils.equals(NotificationConstants.MAIL_MODULE_FIN, aNotifications.getRuleModule())) {
+				aNotifications.setRuleEvent(this.ruleEvent.getSelectedItem().getValue().toString());
+			} else {
+				aNotifications.setRuleEvent(aNotifications.getRuleModule());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -696,6 +736,12 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 					Labels.getLabel("label_NotificationsDialog_RuleModule.value")));
 		}
 
+		// Event
+		if (this.row_ruleEvent.isVisible() && !this.ruleEvent.isDisabled()) {
+			this.ruleEvent.setConstraint(new StaticListValidator(listRuleEvent,
+					Labels.getLabel("label_NotificationsDialog_RuleEvent.value")));
+		}
+
 		// Template Type
 		if (!this.templateType.isDisabled()) {
 			this.templateType.setConstraint(new StaticListValidator(listTemplateTypes,
@@ -714,6 +760,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleCode.setConstraint("");
 		this.ruleCodeDesc.setConstraint("");
 		this.ruleModule.setConstraint("");
+		this.ruleEvent.setConstraint("");
 		this.templateType.setConstraint("");
 
 		logger.debug("Leaving");
@@ -741,6 +788,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleCode.setErrorMessage("");
 		this.ruleCodeDesc.setErrorMessage("");
 		this.ruleModule.setErrorMessage("");
+		this.ruleEvent.setErrorMessage("");
 		this.templateType.setErrorMessage("");
 
 		logger.debug("Leaving");
@@ -799,6 +847,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			this.ruleCode.setReadonly(false);
 			this.ruleCodeDesc.setReadonly(false);
 			this.ruleModule.setDisabled(false);
+			this.ruleEvent.setDisabled(false);
 			this.templateType.setDisabled(false);
 			this.btnCancel.setVisible(false);
 
@@ -809,6 +858,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			this.ruleCode.setReadonly(true);
 			this.ruleCodeDesc.setReadonly(true);
 			this.ruleModule.setDisabled(true);
+			this.ruleEvent.setDisabled(true);
 			this.templateType.setDisabled(true);
 			this.btnCancel.setVisible(true);
 
@@ -865,6 +915,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleCode.setReadonly(true);
 		this.ruleCodeDesc.setReadonly(true);
 		this.ruleModule.setReadonly(true);
+		this.ruleEvent.setReadonly(true);
 		this.templateType.setReadonly(true);
 
 		this.ruleTemplate.setTreeTabVisible(false);
@@ -898,6 +949,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleCode.setValue("");
 		this.ruleCodeDesc.setValue("");
 		this.ruleModule.setSelectedIndex(0);
+		this.ruleEvent.setSelectedIndex(0);
 		this.templateType.setSelectedIndex(0);
 
 		logger.debug("Leaving");
@@ -1202,6 +1254,10 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 
 		// Rule Building
 		String ruleModuleValue = this.ruleModule.getSelectedItem().getValue();
+		String ruleEventValue = this.ruleEvent.getSelectedItem().getValue();
+		if (!StringUtils.equals(ruleModuleValue, NotificationConstants.MAIL_MODULE_FIN)) {
+			ruleEventValue = ruleModuleValue;
+		}
 		String templateTypeValue = this.templateType.getSelectedItem().getValue();
 		int noOfRowsVisible = this.grid_basicDetail.getRows().getVisibleItemCount();
 
@@ -1218,9 +1274,10 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 			jsRuleReturnTypeList = new ArrayList<JSRuleReturnType>();
 			JSRuleReturnType jsRuleReturnType = new JSRuleReturnType();
 
-			ArrayList<ValueLabel> templatesList = PennantAppUtil.getTemplatesList(ruleModuleValue, templateTypeValue);
+			ArrayList<ValueLabel> templatesList = PennantAppUtil.getTemplatesList(ruleModuleValue, ruleEventValue,
+					templateTypeValue);
 
-			if (templatesList != null && !templatesList.isEmpty()) {
+			if (templatesList != null) {
 				jsRuleReturnType.setComponentType(RuleConstants.COMPONENTTYPE_COMBOBOX);
 				jsRuleReturnType.setListOfData(templatesList);
 			} else {

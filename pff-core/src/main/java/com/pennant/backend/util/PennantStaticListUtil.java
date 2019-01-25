@@ -286,6 +286,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> vasModeOfPaymentsList;
 	private static ArrayList<ValueLabel> vasAllowFeeTypes;
 	private static ArrayList<ValueLabel> medicalStatusList;
+	private static ArrayList<ValueLabel> templateEvents;
 
 	/**
 	 * Gets the list of applications.
@@ -2248,6 +2249,20 @@ public class PennantStaticListUtil {
 
 		}
 		return events;
+	}
+
+	public static ArrayList<ValueLabel> getTemplateEvents() {
+
+		if (templateEvents == null) {
+			templateEvents = new ArrayList<ValueLabel>(3);
+			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ORG,
+					Labels.getLabel("label_FinSerEvent_Origination")));
+			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ADDDISB,
+					Labels.getLabel("label_FinSerEvent_AddDisbursement")));
+			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RECEIPT,
+					Labels.getLabel("label_FinSerEvent_Receipt")));
+		}
+		return templateEvents;
 	}
 
 	public static ArrayList<ValueLabel> getPaymentDetails() {

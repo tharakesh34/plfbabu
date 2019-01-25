@@ -1276,8 +1276,9 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public void onClick$btnSearchTemplate(Event event) {
 		logger.debug("Entering" + event.toString());
 
-		Filter[] filters = new Filter[1];
+		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("RuleModule", NotificationConstants.MAIL_MODULE_FIN, Filter.OP_EQUAL);
+		filters[1] = new Filter("RuleEvent", eventAction, Filter.OP_EQUAL);
 
 		Object dataObject = ExtendedSearchListBox.show(this.window_FinanceReferenceDetailDialogLink, "Notifications",
 				filters);

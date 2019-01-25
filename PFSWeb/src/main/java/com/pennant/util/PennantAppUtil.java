@@ -1029,7 +1029,7 @@ public class PennantAppUtil {
 		return countryTypes;
 	}
 
-	public static ArrayList<ValueLabel> getTemplatesList(String module, String templateType) {
+	public static ArrayList<ValueLabel> getTemplatesList(String module, String event, String templateType) {
 		ArrayList<ValueLabel> templates = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
@@ -1039,6 +1039,9 @@ public class PennantAppUtil {
 		searchObject.addField("TemplateCode");
 		if (StringUtils.isNotEmpty(module)) {
 			searchObject.addFilterEqual("Module", module);
+		}
+		if (StringUtils.isNotEmpty(event)) {
+			searchObject.addFilterEqual("Event", event);
 		}
 		if (StringUtils.isNotEmpty(templateType)) {
 			searchObject.addFilterEqual("TemplateFor", templateType);

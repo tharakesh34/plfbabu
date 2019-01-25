@@ -42,6 +42,7 @@ import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSuspHead;
@@ -68,6 +69,7 @@ import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.util.FacilityConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -637,8 +639,10 @@ public class NotificationService {
 		List<CustomerAddres> custAddressList = financeDetail.getCustomerDetails().getAddressList();
 		List<CustomerEMail> customerEmailList = financeDetail.getCustomerDetails().getCustomerEMailList();
 		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
+		List<FinServiceInstruction> servInstructions = financeDetail.getFinScheduleData().getFinServiceInstructions();
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
 		// Finance Data Preparation For Notifications
+		data.setCustCIF(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
@@ -822,6 +826,14 @@ public class NotificationService {
 			}
 			data.setValueDate(DateUtility.formatToLongDate(valueDate));
 			data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
+		} else if (servInstructions != null && !servInstructions.isEmpty()) {
+
+			FinServiceInstruction instruction = servInstructions.get(0);
+			if (!StringUtils.equals(instruction.getFinEvent(), FinanceConstants.FINSER_EVENT_ORG)) {
+				data.setValueDate(DateUtility.formatToLongDate(instruction.getFromDate()));
+				data.setAmount(PennantApplicationUtil.amountFormate(instruction.getAmount(), format));
+			}
+
 		}
 		return data.getDeclaredFieldValues();
 	}
