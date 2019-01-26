@@ -2237,6 +2237,7 @@ public class AgreementGeneration implements Serializable {
 					+ StringUtils.stripToEmpty(customerDocument.getLovDescCustDocCategory()));
 			document.setReceiveDate(DateUtility.formatToLongDate(customerDocument.getCustDocRcvdOn()));
 			document.setDocType("CUSTOMER");
+			document.setDocCategory(StringUtils.trimToEmpty(customerDocument.getCustDocCategory()));
 			document.setUserName(StringUtils.stripToEmpty(document.getUserName()));
 			document.setFileType(StringUtils.trimToEmpty(customerDocument.getCustDocType()));
 			document.setDocImage(documentManagerDAO.getById(customerDocument.getDocRefId()).getDocImage());
@@ -2298,6 +2299,7 @@ public class AgreementGeneration implements Serializable {
 				}
 				document.setReceiveDate(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
 				document.setDocType("LOAN");
+				document.setDocCategory(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
 				document.setFileType(StringUtils.trimToEmpty(documentDetail.getDoctype()));
 				document.setDocImage(documentManagerDAO.getById(documentDetail.getDocRefId()).getDocImage());

@@ -5976,6 +5976,7 @@ public class AgreementDetail {
 		private String cusDocName = "";
 		private String receiveDate = "";
 		private String docType = "";
+		private String docCategory = "";
 		private String userName = "";
 		private String fileType = "";
 		private byte[] docImage;
@@ -6006,6 +6007,14 @@ public class AgreementDetail {
 
 		public void setDocType(String docType) {
 			this.docType = docType;
+		}
+
+		public String getDocCategory() {
+			return docCategory;
+		}
+
+		public void setDocCategory(String docCategory) {
+			this.docCategory = docCategory;
 		}
 
 		public String getUserName() {
