@@ -369,7 +369,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				}
 
 				if ((schedule.isRepayOnSchDate() || schedule.isPftOnSchDate())
-						&& !isHoliday(schedule.getBpiOrHoliday())) {
+						&& !isHoliday(schedule.getBpiOrHoliday(), financeMain.getBpiTreatment())) {
 					if (schedule.getSchDate().compareTo(financeMain.getFinStartDate()) > 0 && firstRepayDate == null) {
 						firstRepayDate = schedule.getSchDate();
 					}
@@ -475,16 +475,23 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	}
 
-	private boolean isHoliday(String bpiOrHoliday) {
+	private  boolean isHoliday(String bpiOrHoliday, String bpiTreatment) {
 		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE)
-				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)) {
+				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)
+				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_BPI)) {
+			
+			if(StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_BPI)){
+				if(StringUtils.equals(bpiTreatment, FinanceConstants.BPI_DISBURSMENT)){
+					return false;
+				}
+			}
 			return true;
 		} else {
 			return false;
 		}
 	}
-
+	
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();

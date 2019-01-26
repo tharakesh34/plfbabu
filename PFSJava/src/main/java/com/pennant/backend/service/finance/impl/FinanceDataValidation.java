@@ -3022,12 +3022,12 @@ public class FinanceDataValidation {
 
 		//Number of Terms & Maturity Date are Mutually Exclusive
 		// This is not applicable for OverDraft Web services
-		//if(!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
-		if (finMain.getNumberOfTerms() > 0 && finMain.getMaturityDate() != null) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
-			return errorDetails;
+		if(!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)){
+			if (finMain.getNumberOfTerms() > 0 && finMain.getMaturityDate() != null) {
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
+				return errorDetails;
+			}
 		}
-		//}
 
 		//Both Grace Terms & Grace End Date are not present
 		if (finMain.getNumberOfTerms() == 0 && finMain.getMaturityDate() == null) {
