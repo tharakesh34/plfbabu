@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	 
-	<changeSet id="1" author="Vinay">
+	 <changeSet id="1" author="Vinay">
 		<sql>
 			update FinanceDeviations set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
 			update FinanceDeviations_Temp set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
@@ -459,4 +459,53 @@
 			INSERT INTO TemplateFields VALUES(	'FIN','userName','User Name','A','AddDisbursement'	);
 		</sql>
 	</changeSet>
+	
+	
+	
+	<changeSet id="17" author="Kranthi">
+		<comment>Insert Receipt Event Template Fields</comment>
+		<sql>
+
+			DELETE FROM TemplateFields WHERE Event = 'Receipts';
+		
+			INSERT INTO TemplateFields VALUES(	'FIN','bounceReason','Bounce Reason','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','cancellationReason','Cancellation Reason','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrLine1','User branch Address Line1','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrLine2','User branch Address Line2','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrHNbr','User branch Address House','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrFlatNo','User branch Address Flat','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrStreet','User branch Address Street','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrCountry','User branch Address Country','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrProvince','User branch Address State','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrFlatNo','Loan branch Address Flat','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrStreet','Loan branch Address Street','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrCountry','Loan branch Address Country','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrCity','Loan branch Address City','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrProvince','Loan branch Address State','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrDistrict','Loan branch Address District','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrPincode','Loan branch Address Pincode','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchPhone','Loan branch Address Phone','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custShrtName','Customer Name','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','bounceDate','Bounce Date','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrCity','User branch Address City','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','valueDate','Receipt Value Date','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranch','Fin Branch','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finCcy','FinCcy','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','receiptAmount','Receipt Amount','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrDistrict','User branch Address District','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchAddrPincode','User branch Address Pincode','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userBranchPhone','User branch Address Phone','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrLine1','Loan branch Address Line1','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrLine2','Loan branch Address Line2','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','finBranchAddrHNbr','Loan branch Address House','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','amount','Receipt Mode Amount','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','custCIF','Customer CIF','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','appDate','Application Date','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','userName','User Name','A','Receipt'	);
+			INSERT INTO TemplateFields VALUES(	'FIN','receiptPurpose','Receipt Purpose','A','Receipt'	);
+
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
