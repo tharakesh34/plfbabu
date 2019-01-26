@@ -192,7 +192,7 @@ public class ExtendedCombobox extends Hbox {
 		this.label.setTooltiptext("");
 		Clients.clearWrongValue(this.button);
 		selctedValue = "";
-		if (list == null) {
+		if (list == null && inputAllowed && !this.textbox.isReadonly()) {
 			validateValue(false);
 		} else {
 			selectFromDefinedList();
