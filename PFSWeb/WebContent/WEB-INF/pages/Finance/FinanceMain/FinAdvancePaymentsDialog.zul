@@ -69,15 +69,21 @@
 										</hbox>
 									</row>
 										<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAmount.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_TotalDisbursementAmount.value')}" />
 										<hbox>
-											<currencyBox id="disbursementAmount" />
+											<currencyBox id="totalDisbursementAmount" />
 										</hbox>
 									</row>
 									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementFixedAmount.value')}" />
+										<label value="${c:l('label_FinAdvancePaymentsDialog_OtherExpenses.value')}" />
 										<hbox>
-											<currencyBox id="disbursementFixed"/>
+											<currencyBox id="otherExpenses"/>
+										</hbox>
+									</row>
+									<row>
+										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAddedAmount.value')}" />
+										<hbox>
+											<currencyBox id="disbursementAddedAmount"/>
 										</hbox>
 									</row>
 									<row>

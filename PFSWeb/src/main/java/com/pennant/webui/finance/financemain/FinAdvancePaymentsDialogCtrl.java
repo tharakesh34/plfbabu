@@ -145,8 +145,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Datebox llDate;
 	protected CurrencyBox custContribution;
 	protected CurrencyBox sellerContribution;
-	protected CurrencyBox disbursementAmount;
-	protected CurrencyBox disbursementFixed;
+	protected CurrencyBox totalDisbursementAmount;
+	protected CurrencyBox otherExpenses;
+	protected CurrencyBox disbursementAddedAmount;
 	protected CurrencyBox netAmount;
 	protected Textbox remarks;
 	protected Textbox transactionRef;
@@ -654,15 +655,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.remarks.setMaxlength(500);
 		this.transactionRef.setReadonly(true);
 
-		this.disbursementAmount.setReadonly(true);
-		this.disbursementAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		this.disbursementAmount.setScale(ccyFormatter);
-		this.disbursementAmount.setTextBoxWidth(150);
+		this.totalDisbursementAmount.setReadonly(true);
+		this.totalDisbursementAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.totalDisbursementAmount.setScale(ccyFormatter);
+		this.totalDisbursementAmount.setTextBoxWidth(150);
 
-		this.disbursementFixed.setReadonly(true);
-		this.disbursementFixed.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
-		this.disbursementFixed.setScale(ccyFormatter);
-		this.disbursementFixed.setTextBoxWidth(150);
+		this.otherExpenses.setReadonly(true);
+		this.otherExpenses.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.otherExpenses.setScale(ccyFormatter);
+		this.otherExpenses.setTextBoxWidth(150);
+
+		this.disbursementAddedAmount.setReadonly(true);
+		this.disbursementAddedAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		this.disbursementAddedAmount.setScale(ccyFormatter);
+		this.disbursementAddedAmount.setTextBoxWidth(150);
+
 
 		this.netAmount.setReadonly(true);
 		this.netAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
@@ -865,11 +872,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			advPayList = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
 
+		BigDecimal otherExp = BigDecimal.ZERO;
+		otherExp = otherExp.add(financeMain.getDeductFeeDisb());
+
 		disbAmount = disbAmount.subtract(financeMain.getDownPayment());
 		disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
 		disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
 		if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 			disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
+			otherExp = otherExp.add(financeMain.getBpiAmount());
 		}
 		disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
 
@@ -886,8 +897,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		advancePayAmount = advancePayAmount.subtract(finAdvancePayments.getAmtToBeReleased());
 
 		// Display Parameters for Summary
-		this.disbursementAmount.setValue(formate(disbAmount.subtract(deductFeeDisb)));
-		this.disbursementFixed.setValue(formate(advancePayAmount));
+		this.totalDisbursementAmount.setValue(formate(disbAmount));
+		this.otherExpenses.setValue(formate(otherExp));
+		this.disbursementAddedAmount.setValue(formate(advancePayAmount));
 		this.netAmount.setValue(formate(disbAmount.subtract(advancePayAmount)));
 
 		//String finDisbursement ="";
