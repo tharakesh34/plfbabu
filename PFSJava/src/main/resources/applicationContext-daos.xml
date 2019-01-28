@@ -5443,6 +5443,8 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		 <!-- 132564:NOT ABLE TO APPROVE AMBATTUR BRANCH   -->
+        <property name="feeTypeDAO" ref="feeTypeDAO" />
 
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
