@@ -70,6 +70,9 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String extReference;
 	private String module;
 
+	private String custCRCPR;
+	private String phoneNumber;
+
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
 	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
@@ -107,6 +110,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("pftDaysBasis");
 		excludeFields.add("payableAdvises");
 		excludeFields.add("payableReserves");
+		excludeFields.add("custCRCPR");
+		excludeFields.add("phoneNumber");
 
 		return excludeFields;
 	}
@@ -574,6 +579,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setInstructionUID(long instructionUID) {
 		this.instructionUID = instructionUID;
+	}
+
+	public String getCustCRCPR() {
+		return custCRCPR;
+	}
+
+	public void setCustCRCPR(String custCRCPR) {
+		this.custCRCPR = custCRCPR;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 }

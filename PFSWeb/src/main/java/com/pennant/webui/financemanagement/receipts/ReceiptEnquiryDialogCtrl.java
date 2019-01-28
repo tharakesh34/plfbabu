@@ -329,18 +329,15 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				receipt.setTransactionRef(this.transactionRef.getValue() == null ? "" : this.transactionRef.getValue());
 			}
 
-			/*
-			 * for (CustomerPhoneNumber phoneNumber : getFinanceDetail().getCustomerDetails().getCustomerPhoneNumList())
-			 * { if (phoneNumber.getPhoneTypePriority() == Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-			 * receipt.setMobileNo(phoneNumber.getPhoneNumber()); } }
-			 * receipt.setPanNumber(getFinanceDetail().getCustomerDetails().getCustomer().getCustCRCPR());
-			 */
+			receipt.setMobileNo(getReceiptHeader().getPhoneNumber());
+			receipt.setPanNumber(getReceiptHeader().getCustCRCPR());
 			receipt.setFinType(getReceiptHeader().getFinType());
 			receipt.setFinTypeDesc(getReceiptHeader().getFinTypeDesc());
 			receipt.setBankCode(this.bankCode.getValue());
-			receipt.setBankName(this.bankCode.getDescription());
+			receipt.setBankName(this.fundingAccount.getDescription());
 			receipt.setBranchCode(getReceiptHeader().getFinBranch());
 			receipt.setBranchName(getReceiptHeader().getFinBranchDesc());
+			receipt.setFeeCharges(getReceiptHeader().getTotFeeAmount().toString());
 			if (getReceiptHeader().getAllocations() != null) {
 				BigDecimal othersPaid = BigDecimal.ZERO;
 				for (ReceiptAllocationDetail aloc : getReceiptHeader().getAllocations()) {

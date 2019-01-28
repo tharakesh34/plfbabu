@@ -234,6 +234,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive ");
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
 				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID ");
+			} else if (StringUtils.trimToEmpty(type).equalsIgnoreCase("_View")) {
+				selectSql.append(" ,CustCRCPR, PhoneNumber ");
 			}
 		}
 		selectSql.append(" From FinReceiptHeader");
