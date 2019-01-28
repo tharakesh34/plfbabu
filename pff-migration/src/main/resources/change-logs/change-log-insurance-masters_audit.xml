@@ -92,4 +92,20 @@
 			Update ADTEXTENDEDFIELDDETAIL set ValFromScript = 0 Where ValFromScript is NULL;
 	 	</sql>
 	</changeSet>
+
+	<changeSet id="10" author="Saikiran.v">
+	 		<dropColumn tableName="AdtVASProviderAccDetail" columnName="ReconciliationAmount"/>
+			<dropColumn tableName="AdtVASProviderAccDetail" columnName="BankCode"/>
+			<dropColumn tableName="AdtVASProviderAccDetail" columnName="IFSCCode"/>
+			<dropColumn tableName="AdtVASProviderAccDetail" columnName="MICRCode"/>
+			<dropColumn tableName="AdtVASProviderAccDetail" columnName="AccountNumber"/>
+	</changeSet>
+	
+	<changeSet id="11" author="Saikiran.v">
+		<addColumn tableName="AdtVASProviderAccDetail">
+			<column name="AccountNumber" type="Varchar(50)" />
+			<column name="ReconciliationAmount" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
