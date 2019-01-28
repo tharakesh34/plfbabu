@@ -1000,10 +1000,18 @@
 </changeSet>
 
 
-<changeSet id="14.1" author="saikiran.v">
-	<createSequence sequenceName="seqVASProviderAccDetail"
-		incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+<changeSet id="14.2" author="Durgaprasad G" dbms="oracle,postgresql">
+		<createSequence sequenceName="seqVASProviderAccDetail" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 </changeSet>
+
+<changeSet id="14.3" author="Durgaprasad G" dbms="mssql">
+	<createTable tableName="seqVASProviderAccDetail">
+		<column name="SeqNo" type="bigint" autoIncrement="true"/>
+		<column name="Value" type="int"/>
+	</createTable>
+</changeSet>
+
+
 	<changeSet id="15.1" author="saikiran.v">
 		<comment></comment>
 		<createView viewName="VASProviderAccDetail_AView"
