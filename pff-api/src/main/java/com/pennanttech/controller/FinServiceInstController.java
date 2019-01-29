@@ -27,6 +27,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -1983,6 +1984,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		Date receiDate = DateUtility
 				.getDBDate(DateUtility.formatDate(finReceiptDetail.getReceivedDate(), PennantConstants.DBDateFormat));
 		finReceiptDetail.setReceivedDate(receiDate);
@@ -2100,7 +2102,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						FinanceDetail response = new FinanceDetail();
 						doEmptyResponseObject(response);
 						String[] valueParm = new String[1];
-						valueParm[0] = String.valueOf(closingBal);
+						valueParm[0] = PennantApplicationUtil.amountFormate(closingBal,ccyFormat);
 						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
 						return response;
 					}
@@ -2109,7 +2111,7 @@ public class FinServiceInstController extends SummaryDetailService {
 							FinanceDetail response = new FinanceDetail();
 							doEmptyResponseObject(response);
 							String[] valueParm = new String[1];
-							valueParm[0] = String.valueOf(closingBal);
+							valueParm[0] = PennantApplicationUtil.amountFormate(closingBal,ccyFormat);
 							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
 							return response;
 						}
