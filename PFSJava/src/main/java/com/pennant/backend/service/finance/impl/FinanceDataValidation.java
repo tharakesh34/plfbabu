@@ -25,6 +25,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -199,7 +200,8 @@ public class FinanceDataValidation {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
-
+		int ccyFormat = CurrencyUtil.getFormat(finMain.getFinCcy());
+		
 		List<ErrorDetail> errorDetails = null;
 		boolean isAPICall = apiFlag;
 		BigDecimal zeroAmount = BigDecimal.ZERO;
@@ -300,7 +302,7 @@ public class FinanceDataValidation {
 
 		if (finMain.getFinAssetValue().compareTo(financeType.getFinMinAmount()) == -1) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(financeType.getFinMinAmount());
+			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(),ccyFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 		}
 
@@ -311,21 +313,21 @@ public class FinanceDataValidation {
 				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(financeType.getFinMinAmount());
+				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(),ccyFormat);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 			}
 		}
 
 		if (finMain.getFinAssetValue().compareTo(financeType.getFinMaxAmount()) > 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(financeType.getFinMaxAmount());
+			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(),ccyFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
 		}
 
 		if (financeType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
 			if (netLoanAmount.compareTo(financeType.getFinMaxAmount()) > 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(financeType.getFinMaxAmount());
+				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(),ccyFormat);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
 			}
 		}

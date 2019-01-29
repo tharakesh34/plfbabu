@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
@@ -30,6 +31,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -52,7 +54,8 @@ public class CustomizeFinanceDataValidation {
 		FinanceType financeType = finScheduleData.getFinanceType();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<ErrorDetail> errorDetails = new ArrayList<>();
-
+		int ccyFormat = CurrencyUtil.getFormat(finMain.getFinCcy());
+		
 		if (StringUtils.isNotBlank(finMain.getLovDescCustCIF())) {
 			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
 			if (customer == null) {
@@ -77,7 +80,7 @@ public class CustomizeFinanceDataValidation {
 		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
 		if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(financeType.getFinMinAmount());
+			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(),ccyFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -86,7 +89,7 @@ public class CustomizeFinanceDataValidation {
 		if (financeType.getFinMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
 			if (netLoanAmount.compareTo(financeType.getFinMaxAmount()) > 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(financeType.getFinMaxAmount());
+				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(),ccyFormat);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
