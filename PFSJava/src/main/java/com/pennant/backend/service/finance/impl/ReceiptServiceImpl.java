@@ -43,6 +43,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -67,6 +68,7 @@ import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -147,6 +149,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -2179,13 +2182,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						new ErrorDetail(PennantConstants.KEY_FIELD, "30538", errParm, valueParm), usrLanguage));
 			}
 		}
+		
+		if (ImplementationConstants.PPPERCENT_VALIDATION_REQ) {
+			FinReceiptData receiptData = (FinReceiptData) auditDetail.getModelData();
+			auditDetail.setErrorDetail(validatePPPercAmount(receiptData));
+		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !financeMain.isWorkflow()) {
 			financeMain.setBefImage(befFinanceMain);
 		}
-
 		return auditDetail;
 	}
 
@@ -4734,6 +4741,98 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else {
 			return 0;
 		}
+	}
+	
+	/**
+	 * Method for Validating Partial Settlement amount collected form Customer with in Year(Find Based on System Parameters)
+	 * 
+	 * Year(Find Based on System Parameters)
+	 */
+	private ErrorDetail validatePPPercAmount(FinReceiptData receiptData) {
+		
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+		if (!StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			return null;
+		}
+		
+		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
+				|| StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+			return null;
+		}
+		
+		//validation for partial payment based on percentage
+		List<FinanceScheduleDetail> scheduleList = receiptData.getFinanceDetail().getFinScheduleData()
+				.getFinanceScheduleDetails();
+		int finFormatter = CurrencyUtil
+				.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		
+		// Value Date Finding
+		Date valueDate = DateUtility.getAppDate();
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			if(StringUtils.equals(receiptHeader.getReceiptMode(), receiptDetail.getPaymentType())){
+				valueDate = receiptDetail.getReceivedDate();
+				break;
+			}
+		}
+
+		Date startDate = null;
+		Date endDate = null;
+
+		int startPeriodMonth = SysParamUtil.getValueAsInt((SMTParameterConstants.EARLYPAY_FY_STARTMONTH));
+		int startYear = DateUtility.getYear(valueDate);
+		int startDay = 1;
+		Date date = DateUtility.getDate(startYear, startPeriodMonth, startDay);
+		startDate = date;
+		if (DateUtility.compare(date, valueDate) == 1) {
+			date = DateUtility.addYears(date, -1);
+			startDate = date;
+		}
+		date = DateUtility.addMonths(date, 11);
+		date = DateUtility.getMonthEndDate(date);
+		endDate = date;
+		
+		// Finding Closing Balance at FY Start Date
+		BigDecimal closingBal = BigDecimal.ZERO;
+		if (CollectionUtils.isNotEmpty(scheduleList)) {
+			for (int i = 0; i < scheduleList.size(); i++) {
+				FinanceScheduleDetail curSchd = scheduleList.get(i);
+				if (i == 0 || DateUtility.compare(curSchd.getSchDate(), startDate) <= 0) {
+					closingBal = PennantApplicationUtil.formateAmount(curSchd.getClosingBalance(), finFormatter);
+				}
+			}
+		}
+
+		BigDecimal utilizedPartPayAmt = PennantApplicationUtil
+				.formateAmount(getFinReceiptDetailDAO().getUtilizedPartPayAmtByDate(receiptHeader, startDate, endDate),
+						finFormatter);
+		BigDecimal alwdPPPerc = new BigDecimal(
+				SysParamUtil.getValueAsInt(SMTParameterConstants.ALWD_EARLYPAY_PERC_BYYEAR));
+
+		BigDecimal maxAlwdPPByFY = (closingBal.multiply(alwdPPPerc)).divide(new BigDecimal(100), 0,
+				RoundingMode.HALF_DOWN);
+
+		// Current Part Payment Amount
+		BigDecimal curPPAmount = BigDecimal.ZERO;
+		for (FinReceiptDetail rcd : receiptHeader.getReceiptDetails()) {
+			for (FinRepayHeader rph : rcd.getRepayHeaders()) {
+				if (!StringUtils.equals(rph.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					continue;
+				}
+				curPPAmount = curPPAmount.add(PennantApplicationUtil.formateAmount(rph.getPriAmount(), finFormatter));
+			}
+		}
+
+		if ((utilizedPartPayAmt.add(curPPAmount)).compareTo(maxAlwdPPByFY) > 0) {
+			if (utilizedPartPayAmt.compareTo(maxAlwdPPByFY) >= 0) {
+				return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0046", null, null));
+			} else {
+				BigDecimal maxAlwdCurPP = maxAlwdPPByFY.subtract(utilizedPartPayAmt);
+				String[] valueParm = new String[1];
+				valueParm[0] = maxAlwdCurPP.toString();
+				return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0047", valueParm, null));
+			}
+		}
+		return null;
 	}
 
 	@Override

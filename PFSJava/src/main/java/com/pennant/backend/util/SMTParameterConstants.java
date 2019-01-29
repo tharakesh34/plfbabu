@@ -73,6 +73,8 @@ public class SMTParameterConstants {
 	public static final String BANKINFO_DAYS = "BANKINFO_DAYS";
 	public static final String BANKINFO_MONTH_YEAR = "BANKINFO_MONTH_YEAR";
 	public static final String MONTHLY_INCOME_REQ = "MONTHLY_INCOME_REQ";
+	public static final String EARLYPAY_FY_STARTMONTH = "EARLYPAY_FY_STARTMONTH";
+	public static final String ALWD_EARLYPAY_PERC_BYYEAR = "ALWD_EARLYPAY_PERC_BYYEAR";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule

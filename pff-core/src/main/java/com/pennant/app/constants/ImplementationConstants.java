@@ -117,6 +117,7 @@ public class ImplementationConstants {
 	public static final boolean GROUP_BATCH_BY_BANK = true;
 	public static final boolean ALLOW_BARCODE = false;
 	public static final boolean CIBIL_BUTTON_REQ = false;
+	public static final boolean PPPERCENT_VALIDATION_REQ = false; // validation based on partial payment percent
 
 	// Deposit Process
 	public static final boolean DEPOSIT_PROC_REQ = false;

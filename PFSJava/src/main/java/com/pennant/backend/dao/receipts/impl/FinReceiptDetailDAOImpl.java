@@ -43,8 +43,8 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +61,7 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -546,5 +547,39 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug("updateSql: " + updateSql.toString());
 		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public BigDecimal getUtilizedPartPayAmtByDate(FinReceiptHeader receiptHeader, Date startDate, Date endDate) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select sum(PriAmount) from FinRepayHeader FRH ");
+		selectSql.append(" INNER JOIN FinReceiptDetail RCD ON FRH.ReceiptSeqID = RCD.ReceiptSeqID ");
+		selectSql.append(" INNER JOIN FinReceiptHeader RCH ON RCD.ReceiptID = RCH.ReceiptID ");
+		selectSql.append(" WHERE FRH.FinReference = :Finreference ");
+		selectSql.append(" AND FRH.Finevent = :FINEVENT AND RCH.ReceiptModeStatus NOT IN ('B', 'C') ");
+		selectSql.append(" AND RCD.ReceivedDate >= :STARTDATE AND  RCD.ReceivedDate <= :ENDDATE");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Finreference", receiptHeader.getReference());
+		source.addValue("STARTDATE", startDate);
+		source.addValue("ENDDATE", endDate);
+		source.addValue("FINEVENT", FinanceConstants.FINSER_EVENT_EARLYRPY);
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+
+		BigDecimal value = BigDecimal.ZERO;
+		try {
+			value = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		} catch (DataAccessException e) {
+			logger.debug(e);
+			value = BigDecimal.ZERO;
+		}
+		if (value == null) {
+			return BigDecimal.ZERO;
+		}
+		return value;
 	}
 }

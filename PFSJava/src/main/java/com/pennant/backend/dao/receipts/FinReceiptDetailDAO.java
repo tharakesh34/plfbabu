@@ -1,7 +1,7 @@
 package com.pennant.backend.dao.receipts;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -46,4 +46,6 @@ public interface FinReceiptDetailDAO {
 
 	//### 30-10-2018, Ticket id:124998
 	void updateReceiptStatusByReceiptId(long receiptId, String status);
+
+	BigDecimal getUtilizedPartPayAmtByDate(FinReceiptHeader receiptHeader, Date startDate, Date endDate);
 }
