@@ -627,5 +627,14 @@ UNION ALL
           WHERE finreceiptheader_temp.receiptid = t1.receiptid))
 	 	</createView>
 	 </changeSet>
+	 
+   <changeSet id="21" author="Swami.v">
+  		<sql>
+  			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinanceMainDialog_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Finance_FinanceMain'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		    UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+	    </sql>
+	</changeSet>
+		
 	
 </databaseChangeLog>

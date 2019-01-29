@@ -5351,8 +5351,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					for (int i = 1; i < scheduelist.size(); i++) {
 
 						FinanceScheduleDetail curSchd = scheduelist.get(i);
-						if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) < 0) {
-							validFrom = DateUtility.getAppDate();
+						if (curSchd.getSchDate().compareTo(appDate) < 0) {
+							validFrom = appDate;
 							continue;
 						}
 						if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
@@ -6165,6 +6165,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				throw new AppException(Labels.getLabel("label_Finance_Record_Locked", new String[] { userName }));
 			}
 		}
+
+		//if Loan Start Date is higher than application Date 
+		autoFinStartDateUpdation(getFinanceDetail());
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
@@ -7405,7 +7408,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setVersion(1);
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setNewRecord(true);
-				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setLastMntOn(DateUtility.getTimestamp(appDate));
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
@@ -7971,7 +7974,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		} else {
-			this.finStartDate.setValue(DateUtility.getAppDate());
+			this.finStartDate.setValue(appDate);
 		}
 
 		autoBuildSchedule();
@@ -8000,7 +8003,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.latePayAmount.setValue(
 						PennantAppUtil.formateAmount(latePayAmt, CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 			}
-
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -8008,11 +8010,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Auto Build Schedule after Loan Start Date has changed 
+	@SuppressWarnings("unused")
 	private void autoBuildSchedule() throws ParseException {
 		logger.debug(Literal.ENTERING);
+
 		if (!ImplementationConstants.ALW_AUTO_SCHD_BUILD || isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			return;
 		}
+
 		// Building Schedule Details automatically based on New Start Date
 		Events.sendEvent("onClick", btnBuildSchedule, null);
 
@@ -8052,11 +8057,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 			}
-
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
+	//Allow Loan Start Date set to update based on AppDate 
+	private void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) throws ParseException {
+		logger.debug(Literal.ENTERING);
+		if (!ImplementationConstants.ALW_AUTO_SCHD_BUILD) {
+			return;
+		}
+		if (isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
+			return;
+		}
+		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		Date finstartDate = financeMain.getFinStartDate();
+		if (DateUtility.compare(finstartDate, appDate) != 1) {
+			for (FinAdvancePayments finAdvancePayments : aFinanceDetail.getAdvancePaymentsList()) {
+				finAdvancePayments.setLLDate(appDate);
+			}
+			this.finStartDate.setValue(appDate);
+			Events.sendEvent("onChange", finStartDate, null);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 
 	public Date getfinstartDate() {
 		return this.finStartDate.getValue();
@@ -9778,7 +9803,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
-					Date curBussDate = DateUtility.getAppDate();
+					Date curBussDate = appDate;
 					if (this.gracePeriodEndDate_two.getValue().before(DateUtility.addDays(curBussDate, 1))) {
 						errorList.add(new ErrorDetail("gracePeriodEndDate", "30569",
 								new String[] {
@@ -11940,10 +11965,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						int minNoofMonths;
 						if (!financeType.isDroplineOD()) {
 							minNoofMonths = DateUtility.getMonthsBetween(this.finStartDate.getValue(),
-									DateUtility.getAppDate());
+									appDate);
 						} else {
 							minNoofMonths = DateUtility.getMonthsBetween(this.firstDroplineDate.getValue(),
-									DateUtility.getAppDate());
+									appDate);
 						}
 						if (tenor < minNoofMonths) {
 							throw new WrongValueException(this.odMnthlyTerms,
@@ -12462,7 +12487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (aFinanceMain.getInitiateDate() == null && getUserWorkspace().getLoggedInUser().getUserId() != 0) {
 			if (!recSave) {
-				aFinanceMain.setInitiateDate(DateUtility.getAppDate());
+				aFinanceMain.setInitiateDate(appDate);
 			}
 		}
 
@@ -12805,7 +12830,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						finVasRecordingDialogCtrl.getVasRecordings()));
 			}
 			accountingSetEntries.addAll(getInstallmentDueService().processbackDateInstallmentDues(getFinanceDetail(),
-					profitDetail, DateUtility.getAppDate(), false, ""));
+					profitDetail, appDate, false, ""));
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
@@ -12819,8 +12844,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-
-		Date curBDay = DateUtility.getAppDate();
 
 		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -12846,7 +12869,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			totalPriSchdOld = profitDetail.getTotalpriSchd();
 		}
 
-		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
+		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, appDate, appDate);
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 			//	aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION));
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
@@ -12857,7 +12880,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
+		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, appDate);
 		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
 		}
@@ -13054,13 +13077,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!isIstisnaProd
 					&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
 
-				Date curBDay = DateUtility.getAppDate();
 				aFinanceSchData.getDisbursementDetails().clear();
 				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
 				disbursementDetails.setDisbDate(aFinanceMain.getFinStartDate());
 				disbursementDetails.setDisbSeq(1);
 				disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
-				disbursementDetails.setDisbReqDate(curBDay);
+				disbursementDetails.setDisbReqDate(appDate);
 				disbursementDetails.setFeeChargeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
 				disbursementDetails.setInsuranceAmt(aFinanceSchData.getFinanceMain().getInsuranceAmt());
 				disbursementDetails
@@ -13077,7 +13099,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					remAssetDisburse.setDisbDate(aFinanceMain.getGrcPeriodEndDate());
 					remAssetDisburse
 							.setDisbAmount(aFinanceMain.getFinAssetValue().subtract(aFinanceMain.getFinAmount()));
-					remAssetDisburse.setDisbReqDate(curBDay);
+					remAssetDisburse.setDisbReqDate(appDate);
 					remAssetDisburse.setFeeChargeAmt(BigDecimal.ZERO);
 					remAssetDisburse
 							.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAcctId.getValue()));
@@ -13282,7 +13304,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//FinanceMain Details Tab ---> 1. Basic Details
 
 		if (this.finStartDate.getValue() == null) {
-			this.finStartDate.setValue(DateUtility.getAppDate());
+			this.finStartDate.setValue(appDate);
 		}
 
 		if (this.finContractDate.getValue() == null) {
@@ -14222,7 +14244,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			legalRequiredRow.setVisible(false);
 		}
 		// Auto Build Schedule after Loan Start Date has changed 
-		if (ImplementationConstants.ALW_AUTO_SCHD_BUILD) {
+		if (ImplementationConstants.ALW_AUTO_SCHD_BUILD && !isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_AutoScheduleBuild"), this.finStartDate);
 		}
 
@@ -18993,11 +19015,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
 				details.setDocName(reportName.substring(15));
-				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setDocReceivedDate(DateUtility.getTimestamp(appDate));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
 				details.setCategoryCode(agreementDefinition.getModuleName());
-				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setLastMntOn(DateUtility.getTimestamp(appDate));
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setNewRecord(true);
