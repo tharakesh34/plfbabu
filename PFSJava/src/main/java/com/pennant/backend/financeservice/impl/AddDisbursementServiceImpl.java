@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -31,6 +32,7 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruction>
@@ -156,7 +158,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		boolean isWIF = finServiceInstruction.isWif();
 		Date fromDate = finServiceInstruction.getFromDate();
 		BigDecimal actualDisbAmount = finServiceInstruction.getAmount();
-
+		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		
 		if (!finScheduleData.getFinanceType().isFinIsAlwMD()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = financeMain.getFinReference();
@@ -226,8 +229,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			// Validating against Available Limit amount
 			if (actualDisbAmount.compareTo(availableLimit) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = String.valueOf(actualDisbAmount);
-				valueParm[1] = String.valueOf(availableLimit);
+				valueParm[0] = PennantApplicationUtil.amountFormate(actualDisbAmount,ccyFormat);
+				valueParm[1] = PennantApplicationUtil.amountFormate(availableLimit,ccyFormat);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91119", valueParm)));
 			} else {
 				// Checking Total Disbursed amount validate against New disbursement
@@ -238,8 +241,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				totDisbAmount = actualDisbAmount.add(totDisbAmount);
 				if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = String.valueOf(totDisbAmount);
-					valueParm[1] = String.valueOf(financeMain.getFinAssetValue());
+					valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmount,ccyFormat);
+					valueParm[1] = PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),ccyFormat);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91120", valueParm)));
 				}
 			}
