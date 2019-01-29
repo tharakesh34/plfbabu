@@ -2541,7 +2541,10 @@
 	</bean>
 
 	<bean id="receiptEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptEnquiryDialogCtrl"
-		parent="basisCtrl" scope="prototype" />
+		parent="basisCtrl" scope="prototype" >
+		<property name="branchService" ref="branchService" />
+	</bean>
+	
 
 	<!--============ Fee Receipt Details ============== -->
 
