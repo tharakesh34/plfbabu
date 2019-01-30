@@ -50,6 +50,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.legal.LegalDetail;
+import com.pennanttech.pff.core.TableType;
 
 public interface LegalDetailService {
 
@@ -86,4 +87,7 @@ public interface LegalDetailService {
 	List<AuditDetail> validateDetailsFromLoan(FinanceDetail financeDetail, String auditTranType, String method);
 
 	List<AuditDetail> processLegalDetails(AuditHeader aAuditHeader, String method);
+
+	void deleteList(String finReference, TableType tempTab);
+
 }

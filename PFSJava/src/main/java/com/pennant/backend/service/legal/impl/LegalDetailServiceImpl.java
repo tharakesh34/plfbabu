@@ -1718,6 +1718,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditDetails;
 	}
 
+	@Override
+	public void deleteList(String finReference, TableType tempTab) {
+		this.legalDetailDAO.delete(finReference, tempTab);
+	}
+
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}

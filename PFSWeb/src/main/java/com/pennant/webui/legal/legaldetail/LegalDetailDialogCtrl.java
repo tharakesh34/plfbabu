@@ -2413,6 +2413,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private String getLoanWorkFlowRoles() {
 		logger.debug(Literal.ENTERING);
 		
+		if (StringUtils.isEmpty(getLegalDetail().getFinType())) {
+			return "";
+		}
+
 		FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowDAO().getFinanceWorkFlow(getLegalDetail().getFinType(),
 				FinanceConstants.FINSER_EVENT_ORG, PennantConstants.WORFLOW_MODULE_FINANCE, "_FTView");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());

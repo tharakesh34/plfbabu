@@ -5814,6 +5814,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		getLegalDetailService().deleteList(financeMain.getFinReference(), TableType.TEMP_TAB);
+
 		// Cheque Details
 		if (financeDetail.getChequeHeader() != null) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new ChequeHeader());

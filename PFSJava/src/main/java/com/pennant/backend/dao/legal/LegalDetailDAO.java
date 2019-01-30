@@ -84,4 +84,6 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 
 	List<Long> getLegalIdListByFinRef(String finReference, String tableType, String moduleName);
 
+	void delete(String finReference, TableType tempTab);
+
 }

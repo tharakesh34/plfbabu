@@ -350,4 +350,26 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		return this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
 	}
 
+	@Override
+	public void delete(String finReference, TableType tempTab) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("delete from LegalDetails");
+		sql.append(tempTab.getSuffix());
+		sql.append(" Where LoanReference = :LoanReference ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("LoanReference", finReference);
+
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }
