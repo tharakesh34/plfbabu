@@ -20,14 +20,14 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 	
-	<changeSet id="07" author="DurgaprasadG" dbms="oracle,postgresql">
+	 <changeSet id="07" author="DurgaprasadG" dbms="oracle,postgresql">
 	<sql>
 		<![CDATA[
 			Insert into VASPRODUCTCATEGORY 
 			(PRODUCTCTG,PRODUCTCTGDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,ACTIVE) values 
 			('INSURANC','Insurance',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,1);
 			
-			Insert into AMTVEHICLEDEALER  values ((Select Max(Dealerid)+1 from AmtVehicledealer),'BAJAJ FINANCE LTD.',5,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'2039574151','2039574151','Regional Office, DNBS, fourth floor.','opp. Mumbai Central Station.','VASM','Byculla, Mumbai – 400 008',null,'IN','MH','BHA','wecare@bajajfinserv.in','411014',null,null,null,null,null,0,'#','400008',1,'5','BLPPG2117B',null,'VASI','GL1');
+			Insert into AMTVEHICLEDEALER  values ((Select Max(Dealerid)+1 from AmtVehicledealer),'DEFAULT',5,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'99999999','99999999','Dummy Address','VASM','CIty',null,'IN',null,'BHA',null,null,null,null,null,null,null,0,null,'400008',1,'5',null,null,'VASI','GL1');
 			
 			Delete from VASPRODUCTTYPE Where PRODUCTTYPE = 'INSURANC';
 			Insert into VASPRODUCTTYPE 
@@ -127,7 +127,7 @@
 			Update SeqAmtVehicledealer set SeqNo = (Select Max(Dealerid)+1 from AmtVehicledealer);
 			]]>
  </sql>
-</changeSet>
+</changeSet> 
 <changeSet id="07" author="DurgaprasadG" dbms="mssql">
 	<sql>
 		<![CDATA[
