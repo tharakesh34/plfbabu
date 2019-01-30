@@ -51,7 +51,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -61,10 +60,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "profitCenterID", "profitCenterCode", "profitCenterDesc", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProfitCenter extends AbstractWorkflowEntity implements Entity {
+public class ProfitCenter extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long profitCenterID = Long.MIN_VALUE;
+	private Long profitCenterID = Long.MIN_VALUE;
 	private String profitCenterCode;
 	private String profitCenterDesc;
 	private boolean active;
@@ -85,7 +84,7 @@ public class ProfitCenter extends AbstractWorkflowEntity implements Entity {
 		super();
 	}
 
-	public ProfitCenter(long id) {
+	public ProfitCenter(Long id) {
 		super();
 		this.setId(id);
 	}
@@ -95,19 +94,19 @@ public class ProfitCenter extends AbstractWorkflowEntity implements Entity {
 		return excludeFields;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return profitCenterID;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.profitCenterID = id;
 	}
 
-	public long getProfitCenterID() {
+	public Long getProfitCenterID() {
 		return profitCenterID;
 	}
 
-	public void setProfitCenterID(long profitCenterID) {
+	public void setProfitCenterID(Long profitCenterID) {
 		this.profitCenterID = profitCenterID;
 	}
 
