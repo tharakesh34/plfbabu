@@ -4489,4 +4489,12 @@
   	</sql>
   </changeSet>
   
+  
+    <changeSet id="163" author="DurgaPrasad G">
+  	<sql>
+		Update VasStructure set batchid = 0 Where batchid is null;
+		Update AMTVehicleDealer set bankbranchid = 0 where bankbranchid is null;
+  	</sql>
+  </changeSet>
+  
 </databaseChangeLog>
