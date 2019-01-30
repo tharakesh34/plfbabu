@@ -123,7 +123,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingCollateralStructureList" height="35px" />
+					<paging id="pagingCollateralStructureList"/>
 				</south>
 			</borderlayout>
 		</window>

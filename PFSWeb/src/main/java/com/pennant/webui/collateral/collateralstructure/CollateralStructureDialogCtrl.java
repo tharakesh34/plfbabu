@@ -114,6 +114,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1539,7 +1540,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				refreshList();
 				closeDialog();
 			}
-		} catch (Exception e) {
+		} catch (AppException e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
