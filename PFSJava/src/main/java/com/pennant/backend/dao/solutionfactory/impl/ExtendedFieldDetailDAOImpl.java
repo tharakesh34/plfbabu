@@ -255,6 +255,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.debug("Exception: ", e);
+			throw e;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -488,7 +489,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				}
 			} catch (DataAccessException e) {
 				fieldDetail.setLovDescErroDesc(e.getMessage());
-				throw new AppException(e.getMessage(), e);
+				throw e;
 			}
 
 			if (recordCount < 0) {
