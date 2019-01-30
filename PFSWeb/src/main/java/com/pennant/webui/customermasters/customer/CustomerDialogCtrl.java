@@ -639,8 +639,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 125 + "px");
 					this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 125 + "px");
 				}
-				this.gb_incomeDetails.setHeight(borderLayoutHeight - 220 + "px");
-				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 220 + "px");
+				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 240 + "px");
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 220 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 220 + "px");
 				this.grid_BankDetails.setHeight(borderLayoutHeight - 220 + "px");
@@ -672,8 +671,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerPhoneNumbers.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
 				this.listBoxCustomerEmails.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
 
-				this.gb_incomeDetails.setHeight(borderLayoutHeight - 40 + "px");
-				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 40 + "px");
+				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 132 + "px");
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 40 + "px");
 
