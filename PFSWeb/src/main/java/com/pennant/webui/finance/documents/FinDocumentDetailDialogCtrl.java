@@ -752,7 +752,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate") }));
 			}
 		}
-		if (!this.docBarcode.isReadonly()) {
+		if (this.docOriginal.isChecked() && !this.docBarcode.isReadonly()) {
 			this.docBarcode.setConstraint(
 			new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentBarcode.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
