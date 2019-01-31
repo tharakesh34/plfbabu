@@ -190,7 +190,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		selectSql.append(
 				" FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm, FinMaxTerm, FinDftTerms, FinRpyFrq, ");
 		selectSql.append(
-				" FInRepayMethod, FinIsAlwDifferment, FinMaxDifferment, FinIsActive, StepFinance, SteppingMandatory, ");
+				" FInRepayMethod, finIsalwpartialrpy, FinIsAlwDifferment, FinMaxDifferment, FinIsActive, StepFinance, SteppingMandatory, ");
 		selectSql.append(" AlwManualSteps, AlwdStepPolicies, DftStepPolicy, FinIsDwPayRequired, FinRvwRateApplFor, ");
 		selectSql.append(" FinAlwRateChangeAnyDate,  FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw, AlwPlanDeferment, ");
 		selectSql.append(

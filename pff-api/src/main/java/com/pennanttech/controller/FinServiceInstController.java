@@ -40,6 +40,7 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
+import com.pennant.backend.dao.finance.FinTypeReceiptModesDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
@@ -104,6 +105,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.ZIPCodeDetails;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -181,6 +183,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	private FinTypeReceiptModesDAO finTypeReceiptModesDAO;
 	
 	//### 18-07-2018 Ticket ID : 124998,Receipt upload
 	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
@@ -1723,6 +1726,16 @@ public class FinServiceInstController extends SummaryDetailService {
 			isOverDraft = true;
 		}
 
+		if (!finType.isFinIsAlwPartialRpy()) {
+			response = new FinanceDetail();
+			String[] valueParm = new String[2];
+			valueParm[0] = "Partial Settlement";
+			valueParm[1] = "Loan Type: " + finType.getFinType();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90204", valueParm));
+			return response;
+		}
+
 		if (isOverDraft && !StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, finServiceInst.getRecalType())) {
 			response = new FinanceDetail();
 			String[] valueParm = new String[2];
@@ -1859,6 +1872,26 @@ public class FinServiceInstController extends SummaryDetailService {
 		Cloner cloner = new Cloner();
 		FinanceDetail financeDetail = cloner.deepClone(aFinanceDetail);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceType finType = finScheduleData.getFinanceType();
+
+		List<FinTypeReceiptModes> receiptModeList = finTypeReceiptModesDAO
+				.getReceiptModesByFinType(finType.getFinType(), "");
+
+		boolean isPaymentModeFound = false;
+		for (FinTypeReceiptModes receiptMode : receiptModeList) {
+			if (StringUtils.equals(receiptMode.getReceiptMode(), finServiceInst.getPaymentMode())) {
+				isPaymentModeFound = true;
+				break;
+			}
+		}
+		if (!isPaymentModeFound) {
+			FinanceDetail response = new FinanceDetail();
+			String[] valueParm = new String[1];
+			valueParm[0] = finServiceInst.getPaymentMode();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90212", valueParm));
+			return response;
+		}
 
 		String rpyHierarchy = finScheduleData.getFinanceType().getRpyHierarchy();
 		finScheduleData.getFinanceType().setRpyHierarchy(rpyHierarchy);
@@ -3545,4 +3578,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
 		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
 	}
+
+	public void setFinTypeReceiptModesDAO(FinTypeReceiptModesDAO finTypeReceiptModesDAO) {
+		this.finTypeReceiptModesDAO = finTypeReceiptModesDAO;
+	}
+
 }
