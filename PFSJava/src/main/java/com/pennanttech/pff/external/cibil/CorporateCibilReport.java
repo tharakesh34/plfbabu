@@ -76,7 +76,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		final CSVWriter writer = new CSVWriter(new BufferedWriter(new FileWriter(cibilFile)));
 		writer.setFieldNamesInFirstRow(false);
-		writer.setFieldSeparator(',');
+		writer.setFieldSeparator('|');
 		writer.open();
 		try {
 
@@ -108,14 +108,15 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				new HeaderSegment(writer).write();
 			}
 
-			String sql = "select distinct custid from cibil_customer_extract where segment_type = :segment_type";
+			String sql = "select distinct custid, finreference from cibil_customer_extract where segment_type = :segment_type";
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_CORP);
 			jdbcTemplate.query(sql, parameterSource, new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
-					long customerId = rs.getLong("CUSTID");
+					long customerId = rs.getLong("custid");
+					String finreference = rs.getString("finreference");
 
 					CustomerDetails customer;
 					try {
@@ -127,7 +128,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 							return;
 						}
 
-						new BorrowerSegment(writer, customer).write();
+						new BorrowerSegment(writer, customer, finreference).write();
 						borrowerCount++;
 
 						EXTRACT_STATUS.setSuccessRecords(successCount++);
@@ -208,7 +209,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		builder.append(DateUtil.getSysDate("ddMMYYYY"));
 		builder.append("-");
 		builder.append(DateUtil.getSysDate("Hmmss"));
-		builder.append(".csv");
+		builder.append(".txt");
 		reportName = new File(builder.toString());
 
 		reportName.createNewFile();
@@ -252,11 +253,13 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 	public class BorrowerSegment {
 		private CSVWriter writer;
-		CustomerDetails customerDetails;
+		private CustomerDetails customerDetails;
+		private String finReference;
 
-		public BorrowerSegment(CSVWriter writer, CustomerDetails customerDetails) {
+		public BorrowerSegment(CSVWriter writer, CustomerDetails customerDetails, String finReference) {
 			this.writer = writer;
 			this.customerDetails = customerDetails;
+			this.finReference = finReference;
 		}
 
 		public void write() throws Exception {
@@ -326,7 +329,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			addField(record, "");
 
 			/* Borrower‟s Legal Constitution */
-			String value = StringUtils.trimToNull(customer.getCustTypeCode());
+			String value = StringUtils.trimToNull(customer.getLegalconstitution());
 			if (value == null) {
 				value = "99";
 			}
@@ -390,7 +393,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 			new AddressSegment(writer, customerDetails).write();
 			// new RelationshipSegment(writer, customerDetails).write();
-			new CreditFacilitySegment(writer, customerDetails).write();
+			new CreditFacilitySegment(writer, customerDetails, finReference).write();
 		}
 
 	}
@@ -587,7 +590,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, address.getCustAddrZIP());
 
 				/* Country */
-				addField(record, address.getCustAddrCountry());
+				addField(record, "079");
 
 				CustomerPhoneNumber phoneNumber = null;
 				for (CustomerPhoneNumber custPhNo : customerPhoneNumber) {
@@ -624,11 +627,13 @@ public class CorporateCibilReport extends BasicDao<Object> {
 	public class CreditFacilitySegment {
 		private CSVWriter writer;
 		private CustomerDetails customerDetails;
+		private String finReference;
 
-		public CreditFacilitySegment(CSVWriter writer, CustomerDetails customerDetails) {
+		public CreditFacilitySegment(CSVWriter writer, CustomerDetails customerDetails, String finReference) {
 			super();
 			this.writer = writer;
 			this.customerDetails = customerDetails;
+			this.finReference = finReference;
 		}
 
 		public void write() {
@@ -639,6 +644,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			}
 
 			for (FinanceEnquiry loan : finances) {
+				if(!StringUtils.equals(finReference, loan.getFinReference())) {
+					continue;
+				}
+								
 				Record record = new Record();
 
 				/* Segment Identifier */
@@ -657,7 +666,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, loan.getFinAssetValue());
 
 				/* Currency Code */
-				addField(record, loan.getFinCcy());
+				addField(record, "INR");
 
 				/* Credit Type */
 				String finType = StringUtils.trimToNull(loan.getFinType());
@@ -701,7 +710,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, rePayfrq);
 
 				/* Drawing Power */
-				addField(record, "");
+				addField(record, loan.getFinAmount());
 
 				/* Current Balance / Limit Utilized /Mark to Marketr */
 				int odDays = Integer.parseInt(getOdDays(loan.getOdDays()));
@@ -922,7 +931,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, "");
 
 				/* Wilful Default Status */
-				addField(record, "");
+				addField(record, "0");
 
 				/* Date Classified as Wilful Default */
 				addField(record, "");
@@ -953,7 +962,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				creditfacilityCount++;
 				try {
 					new GuarantorSegment(writer, loan.getFinGuarenters()).write();
-					new SecuritySegment(writer, loan.getCollateralSetupDetails()).write();
+					// new SecuritySegment(writer, loan.getCollateralSetupDetails()).write();
 					new DishonourOfChequeSegment(writer, loan.getChequeDetail()).write();
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
@@ -1029,7 +1038,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				/* Guarantor Entity Name */
 				if (guarantorType == 1 || guarantorType == 3) {
-					addField(record, ""); // FIXME
+					addField(record, "");
 				} else {
 					addField(record, "");
 				}
@@ -1411,7 +1420,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		addField(record, address.getCustAddrZIP());
 
 		/* Country */
-		addField(record, address.getCustAddrCountry());
 
 		CustomerPhoneNumber customerPhoneNumber = null;
 		for (CustomerPhoneNumber custPhNo : phoneList) {
@@ -1494,6 +1502,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		if (value == null) {
 			value = BigDecimal.ZERO;
 		}
+		
+		value = value.setScale(0, BigDecimal.ROUND_DOWN);
 
 		addField(record, value.toString());
 	}

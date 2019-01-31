@@ -55,8 +55,12 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
@@ -64,6 +68,7 @@ import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.util.StaticListUtil;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
+import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class AbstractCibilEnquiryProcess extends AbstractInterface implements CreditInformation {
 	private static final Logger logger = Logger.getLogger(AbstractCibilEnquiryProcess.class);
@@ -72,9 +77,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	@Autowired(required = false)
 	CibilResponseDetails responseDetails;
 
-	private String CBIL_REPORT_MEMBER_CODE;
-	private String CBIL_REPORT_MEMBER_ID;
-	private String CBIL_REPORT_MEMBER_PASSWORD;
+	@Autowired
+	SearchProcessor searchProcessor;
+
+	private CibilMemberDetail memberDetails;
 	private String CBIL_ENQUIRY_SCORE_TYPE;
 	private Map<String, String> parameters = new HashMap<>();
 	private Map<String, String> cibilStateCodes = new HashMap<>();
@@ -386,7 +392,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		StringBuilder tableName = new StringBuilder("");
 		ExtendedFieldHeader extendedFieldHeader = null;
 		Map<String, Object> extMapValues = null;
-		List<CustomerDetails> customerDetailList = new ArrayList<CustomerDetails>(1);
+		List<CustomerDetails> customerDetailList = new ArrayList<>(1);
 		List<Customer> coAppCustomers = creditInterfaceDao.getCustomerByID(customerIds, "_AVIEW");
 
 		String module = InterfaceConstants.MODULE_CUSTOMER;
@@ -488,20 +494,24 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	}
 
 	private void loadParameters() {
-		this.CBIL_REPORT_MEMBER_CODE = (String) getSMTParameter("CBIL_REPORT_MEMBER_CODE", String.class);
-		this.CBIL_REPORT_MEMBER_ID = (String) getSMTParameter("CBIL_REPORT_MEMBER_ID", String.class);
-		this.CBIL_REPORT_MEMBER_PASSWORD = (String) getSMTParameter("CBIL_REPORT_MEMBER_PASSWORD", String.class);
+		Search search = new Search(CibilMemberDetail.class);
+		search.addTabelName("cibil_member_details");
+		search.addFilter(new Filter("segment_Type", PennantConstants.PFF_CUSTCTG_INDIV));
+
+		memberDetails = (CibilMemberDetail) searchProcessor.getResults(search);
+
+		
 		this.CBIL_ENQUIRY_SCORE_TYPE = (String) getSMTParameter("CBIL_ENQUIRY_SCORE_TYPE", String.class);
 	}
 
 	private void loadAccountTypes() {
 		logger.info("Loading AccountTypes..");
-		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
+		sql.append("SELECT CODE, FIN_TYPE FROM CIBIL_ACCOUNT_TYPES_MAPPING WHERE SEGMENT_TYPE = :SEGMENT_TYPE");
 
-		sql.append("SELECT CODE, FIN_TYPE FROM CIBIL_ACCOUNT_TYPES_MAPPING");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("SEGMENT_TYPE", PennantConstants.PFF_CUSTCTG_INDIV);
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
@@ -513,12 +523,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	private void loadCibilStateCodes() {
 		logger.info("Loading Cibil StateCodes..");
-		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
+		sql.append("SELECT CODE, DESCRIPTION FROM CIBIL_STATES_MAPPING WHERE SEGMENT_TYPE = :SEGMENT_TYPE");
 
-		sql.append("SELECT CODE, DESCRIPTION FROM CIBIL_STATES_MAPPING");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("SEGMENT_TYPE", PennantConstants.PFF_CUSTCTG_INDIV);
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
@@ -530,12 +540,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	private void loadCibilStateCodesforRequest() {
 		logger.info("Loading Cibil StateCodes for Request..");
-		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
+		sql.append("SELECT CPPROVINCE, CODE FROM CIBIL_STATES_MAPPING WHERE SEGMENT_TYPE = :SEGMENT_TYPE");
 
-		sql.append("SELECT CPPROVINCE, CODE FROM CIBIL_STATES_MAPPING");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("SEGMENT_TYPE", PennantConstants.PFF_CUSTCTG_INDIV);
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
@@ -547,12 +557,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	private void loadCibilIdTypes() {
 		logger.info("Loading Cibil Id Types..");
-		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
+		sql.append("SELECT CODE, DESCRIPTION FROM CIBIL_DOCUMENT_TYPES ");
 
-		sql.append("SELECT CODE, DESCRIPTION FROM CIBIL_DOCUMENT_TYPES");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
@@ -564,12 +573,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	private void loadCibilIdTypesforRequest() {
 		logger.info("Loading Cibil Id Types..");
-		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
-
 		sql.append("SELECT CODE, DOCTYPECODE FROM CIBIL_DOCUMENT_TYPES_MAPPING");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
@@ -598,12 +606,12 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 	private void loadCibilLoanTypes() {
 		logger.info("Loading Cibil LoanTypes..");
-		MapSqlParameterSource paramMap;
 
 		StringBuilder sql = new StringBuilder();
-		paramMap = new MapSqlParameterSource();
+		sql.append("SELECT CODE, DESCRIPTION FROM CIBIL_ACCOUNT_TYPES  WHERE SEGMENT_TYPE = :SEGMENT_TYPE");
 
-		sql.append("SELECT CODE, DESCRIPTION FROM CIBIL_ACCOUNT_TYPES");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("SEGMENT_TYPE", PennantConstants.PFF_CUSTCTG_INDIV);
 
 		namedJdbcTemplate.query(sql.toString(), paramMap, new RowCallbackHandler() {
 			@Override
@@ -629,10 +637,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		builder.append(InterfaceConstants.Enquiry_Header_Segment);
 		builder.append(InterfaceConstants.Enquiry_Header_version);
-		builder.append(StringUtils.rightPad(CBIL_REPORT_MEMBER_CODE, 25, ""));
+		builder.append(StringUtils.rightPad(memberDetails.getMemberCode(), 25, ""));
 		builder.append(StringUtils.rightPad("", 2, ""));
-		builder.append(StringUtils.rightPad(CBIL_REPORT_MEMBER_ID, 30, ""));
-		builder.append(StringUtils.rightPad(CBIL_REPORT_MEMBER_PASSWORD, 30, ""));
+		builder.append(StringUtils.rightPad(memberDetails.getMemberId(), 30, ""));
+		builder.append(StringUtils.rightPad(memberDetails.getMemberPassword(), 30, ""));
 
 		String enqPurpose = null;
 		if (financeMain != null) {

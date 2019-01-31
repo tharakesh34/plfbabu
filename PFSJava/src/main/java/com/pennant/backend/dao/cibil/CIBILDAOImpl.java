@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.cibil;
 
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,9 +188,14 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		sql.append(" left join cibil_address_types cat on cat.code = am.Code and cat.segment_type = am.segment_type");
 		sql.append(" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE ");
 		sql.append(" where CUSTID = :CUSTID");
+		
+		if (!PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
+			sql.append(" and custAddrPriority = :custAddrPriority");
+		}
 
 		paramMap.addValue("CUSTID", customerId);
 		paramMap.addValue("segment_type", segmentType);
+		paramMap.addValue("custAddrPriority", PennantConstants.KYC_PRIORITY_VERY_HIGH, Types.INTEGER);
 
 		RowMapper<CustomerAddres> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerAddres.class);
 
@@ -231,8 +237,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from cibil_customer_loans_view cs");
-		sql.append(
-				" inner join cibil_customer_extract cce on cce.finreference = cs.finreference and cs.custid = cce.custid");
+		sql.append(" inner join cibil_customer_extract cce on cce.finreference = cs.finreference");
+		sql.append(" and cs.custid = cce.custid");
 		sql.append(" where cs.custid = :custid");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -436,12 +442,13 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			sql.append(" INNER JOIN FINPFTDETAILS FP ON FP.FINREFERENCE = FM.FINREFERENCE");
 			sql.append(" INNER JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID");
 			sql.append(" INNER JOIN RMTCUSTTYPES CT ON CT.CUSTTYPECODE = C.CUSTTYPECODE");
-			sql.append(" AND CT.CUSTTYPECTG = :CUSTTYPECTG  WHERE LATESTRPYDATE >= :LATESTRPYDATE ");
+			sql.append(" AND CT.CUSTTYPECTG <> :INDIV  WHERE LATESTRPYDATE >= :LATESTRPYDATE ");
 		}
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("LATESTRPYDATE", DateUtil.addMonths(DateUtility.getAppDate(), -36));
 		paramMap.addValue("CUSTTYPECTG", segmentType);
+		paramMap.addValue("INDIV", PennantConstants.PFF_CUSTCTG_INDIV);
 		paramMap.addValue("LATESTRPYDATE_T", LocalDateTime.MIN);
 
 		try {

@@ -973,7 +973,7 @@
 					LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) LATE_PAYMENT_PENALTY_DUE, SUM(TOTPENALTYPAID) LATE_PAYMENT_PENALTY_PAID FROM FINODDETAILS GROUP BY FINREFERENCE) FO ON FO.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
-	</createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="44" author="Akhilesh.k" dbms="oracle,postgresql">
@@ -1730,6 +1730,198 @@
 					LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
 					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
 	</createView>
+	</changeSet>
+	<changeSet id="77_pre" author="murthy.y">
+		<dropTable tableName="CIBIL_STATES_MAPPING"/>
+	</changeSet>
+	<changeSet id="77" author="murthy.y">
+		<createTable tableName="CIBIL_STATES_MAPPING">
+			<column name="Code" type="char(2)"/>
+			<column name="Segment_Type" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Country" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CPProvince" type="VARCHAR2(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="FirstDigitPrefixMin" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FirstDigitPrefixMax" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="77.1" author="murthy.y">
+		<addPrimaryKey columnNames="Code, Segment_Type, Country, CPProvince" constraintName="pk_cb_sm_cd_st_ccy_st" tableName="cibil_states_mapping" />
+	</changeSet>
+	<changeSet id="77.2_pre" author="murthy" dbms="postgresql">
+		<modifyDataType tableName="CIBIL_STATES_MAPPING" columnName="Country" newDataType="citext"/>
+	</changeSet>
+	<changeSet id="77.2" author="murthy.y">
+		<addForeignKeyConstraint baseTableName="CIBIL_STATES_MAPPING" baseColumnNames="Country"
+			referencedTableName="bmtcountries" referencedColumnNames="CountryCode" constraintName="fk_cb_sm_ccy" />
+	</changeSet>
+	<changeSet id="77.3_pre" author="murthy" dbms="postgresql">
+		<modifyDataType tableName="CIBIL_STATES_MAPPING" columnName="CPProvince" newDataType="citext"/>
+	</changeSet>
+	<changeSet id="77.3" author="murthy.y">
+		<addForeignKeyConstraint baseTableName="CIBIL_STATES_MAPPING" baseColumnNames="Country, CPProvince"
+			referencedTableName="RMTCountryVsProvince" referencedColumnNames="CPCountry, CPProvince" constraintName="fk_cb_sm_ccy_cpprovince" />
+	</changeSet>
+	
+	<changeSet id="78" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from CIBIL_STATES_MAPPING;
+				insert into CIBIL_STATES_MAPPING values ('01', 'RETAIL', 'IN', 'AN',  'Andaman and Nicobar Islands',	74, 74,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('02', 'RETAIL', 'IN', 'AP',  'Andhra Pradesh',					50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('12', 'RETAIL', 'IN', 'AR',  'Arunachal Pradesh',				78, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('18', 'RETAIL', 'IN', 'AS',  'Assam',							78, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('10', 'RETAIL', 'IN', 'BH',  'Bihar',			 				80, 85,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('04', 'RETAIL', 'IN', 'CH',  'Chandigarh',      				16, 16,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('22', 'RETAIL', 'IN', 'CT',  'Chhattisgarh',					46, 49,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('26', 'RETAIL', 'IN', 'DN',  'Dadra and Nagar Haveli',			39, 39,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('25', 'RETAIL', 'IN', 'DD',  'Daman and Diu',					36, 39,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('30', 'RETAIL', 'IN', 'GA',  'Goa',							40, 40,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('24', 'RETAIL', 'IN', 'GJ',  'Gujarat',						36, 39,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('06', 'RETAIL', 'IN', 'HR',  'Haryana',         				12, 13,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('02', 'RETAIL', 'IN', 'HP',  'Himachal Pradesh',				17, 17,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('01', 'RETAIL', 'IN', 'JK',  'Jammu and Kashmir', 				18, 19,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('20', 'RETAIL', 'IN', 'JH',  'Jharkhand',						81, 83,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('29', 'RETAIL', 'IN', 'KA',  'Karnataka',						53, 59,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('32', 'RETAIL', 'IN', 'KL',  'Kerala',							67, 69,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('31', 'RETAIL', 'IN', 'LD',  'Lakshadweep',					67, 68,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('23', 'RETAIL', 'IN', 'MP',  'Madhya Pradesh',					45, 48,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('27', 'RETAIL', 'IN', 'MH',  'Maharashtra',					40, 44,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('14', 'RETAIL', 'IN', 'MN',  'Manipur',						79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('17', 'RETAIL', 'IN', 'ME',  'Meghalaya',						79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('15', 'RETAIL', 'IN', 'MI',  'Mizoram',						79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('13', 'RETAIL', 'IN', 'NL',  'Nagaland',						79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('07', 'RETAIL', 'IN', 'DL',  'New Delhi',			 			11, 11,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('21', 'RETAIL', 'IN', 'OR',  'Orissa',							75, 77,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('34', 'RETAIL', 'IN', 'PY',  'Pondicherry',					60, 60,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('03', 'RETAIL', 'IN', 'PB',  'Punjab',          				14, 16,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('08', 'RETAIL', 'IN', 'RJ',  'Rajasthan',		 				30, 34,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('11', 'RETAIL', 'IN', 'SK',  'Sikkim',							73, 73,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('33', 'RETAIL', 'IN', 'TN',  'Tamil Nadu',						53, 66,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('36', 'RETAIL', 'IN', 'TS',  'Telangana',						50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('16', 'RETAIL', 'IN', 'TR',  'Tripura',						72, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('09', 'RETAIL', 'IN', 'UP',  'Uttar Pradesh',	 				20, 28,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('05', 'RETAIL', 'IN', 'UT',  'Uttarakhand',     				24, 26,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('19', 'RETAIL', 'IN', 'WB',  'West Bengal',					70, 74,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				
+				insert into CIBIL_STATES_MAPPING values ('01', 'CORP', 'IN', 'AN', 'Andaman and Nicobar Islands',		74, 74,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('02', 'CORP', 'IN', 'AP', 'Andhra Pradesh',					50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('03', 'CORP', 'IN', 'AR', 'Arunachal Pradesh',				    78, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('04', 'CORP', 'IN', 'AS', 'Assam',							    78, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('05', 'CORP', 'IN', 'BH', 'Bihar',			 				    80, 85,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('06', 'CORP', 'IN', 'CH', 'Chandigarh',      				    16, 16,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('07', 'CORP', 'IN', 'CT', 'Chhattisgarh',					    46, 49,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('07', 'CORP', 'IN', 'DN', 'Dadra and Nagar Haveli',			39, 39,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('09', 'CORP', 'IN', 'DD', 'Daman and Diu',					    36, 39,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('10', 'CORP', 'IN', 'GA', 'Goa',								40, 40,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('11', 'CORP', 'IN', 'GJ', 'Gujarat',							36, 39,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('12', 'CORP', 'IN', 'HR', 'Haryana',         				  	12, 13,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('13', 'CORP', 'IN', 'HP', 'Himachal Pradesh',				    17, 17,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('14', 'CORP', 'IN', 'JK', 'Jammu and Kashmir', 				18, 19,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('15', 'CORP', 'IN', 'JH', 'Jharkhand',						    81, 83,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('16', 'CORP', 'IN', 'KA', 'Karnataka',						    53, 59,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('17', 'CORP', 'IN', 'KL', 'Kerala',							67, 69,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('18', 'CORP', 'IN', 'LD', 'Lakshadweep',						67, 68,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('19', 'CORP', 'IN', 'MP', 'Madhya Pradesh',					45, 48,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('20', 'CORP', 'IN', 'MH', 'Maharashtra',						40, 44,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('21', 'CORP', 'IN', 'MN', 'Manipur',							79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('22', 'CORP', 'IN', 'ME', 'Meghalaya',						    79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('23', 'CORP', 'IN', 'MI', 'Mizoram',							79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('24', 'CORP', 'IN', 'NL', 'Nagaland',						    79, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('25', 'CORP', 'IN', 'DL', 'New Delhi',			 			    11, 11,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('26', 'CORP', 'IN', 'OR', 'Orissa',							75, 77,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('27', 'CORP', 'IN', 'PY', 'Pondicherry',						60, 60,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('28', 'CORP', 'IN', 'PB', 'Punjab',          				    14, 16,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('29', 'CORP', 'IN', 'RJ', 'Rajasthan',		 				    30, 34,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('30', 'CORP', 'IN', 'SK', 'Sikkim',							73, 73,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('31', 'CORP', 'IN', 'TN', 'Tamil Nadu',						53, 66,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('02', 'CORP', 'IN', 'TS', 'Telangana',						    50, 56,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('32', 'CORP', 'IN', 'TR', 'Tripura',							72, 79,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('33', 'CORP', 'IN', 'UP', 'Uttar Pradesh',	 				    20, 28,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('34', 'CORP', 'IN', 'UT', 'Uttarakhand',     				    24, 26,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+				insert into CIBIL_STATES_MAPPING values ('35', 'CORP', 'IN', 'WB', 'West Bengal',						70, 74,   1, 1000, current_timestamp, 'Approved','','','','','', 0);
+			]]>			
+		</sql>
+	</changeSet>
+	
+	<changeSet id="79" author="murthy.y">
+		<createView viewName="cibil_customer_loans_view" replaceIfExists="true">
+			SELECT      
+		            CU.CUSTID,
+					AT.CODE FINTYPE,
+					FM.FINREFERENCE, 
+					FM.FINSTARTDATE,
+					FM.FINAPPROVEDDATE,
+					PD.LATESTRPYDATE,
+					FM.REPAYFRQ,
+					${add.schema}UDF_CONVERTCURRENCY(FINASSETVALUE, FM.FINCCY, 'INR') FINASSETVALUE,
+					${add.schema}UDF_CONVERTCURRENCY(PD.TOTALPRIBAL, FM.FINCCY, 'INR') FUTURE_SCHEDULE_PRIN,
+					${add.schema}UDF_CONVERTCURRENCY((PD.ODPRINCIPAL + PD.ODPROFIT), FM.FINCCY, 'INR') INSTALMENT_DUE,
+					${add.schema}UDF_CONVERTCURRENCY((PD.TOTALPFTPAID + PD.TOTALPRIPAID), FM.FINCCY, 'INR') INSTALMENT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_DUE, FM.FINCCY, 'INR') BOUNCE_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(BOUNCE_PAID, FM.FINCCY, 'INR') BOUNCE_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_DUE, FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_DUE,
+					${add.schema}UDF_CONVERTCURRENCY(LATE_PAYMENT_PENALTY_PAID,FM.FINCCY, 'INR') LATE_PAYMENT_PENALTY_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRISCHD, FM.FINCCY, 'INR') TOTAL_PRI_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPRIPAID, FM.FINCCY, 'INR') TOTAL_PRI_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTSCHD, FM.FINCCY, 'INR') TOTAL_PFT_SCHD,
+					${add.schema}UDF_CONVERTCURRENCY(TOTALPFTPAID, FM.FINCCY, 'INR') TOTAL_PFT_PAID,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMOUNT, FM.FINCCY, 'INR') EXCESS_AMOUNT,
+					${add.schema}UDF_CONVERTCURRENCY(EXCESS_AMT_PAID, FM.FINCCY, 'INR') EXCESS_AMT_PAID,
+					PD.CURODDAYS,
+					FM.CLOSINGSTATUS,
+					CU.OWNERSHIP,
+					${add.schema}UDF_CONVERTCURRENCY(CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
+	       		FROM  FINANCEMAIN FM 
+					INNER JOIN CIBIL_CUSTOMER_EXTRACT CU ON  CU.FINREFERENCE = FM.FINREFERENCE 
+					INNER JOIN FINPFTDETAILS PD ON PD.FINREFERENCE = FM.FINREFERENCE				
+					LEFT JOIN CIBIL_ACCOUNT_TYPES_MAPPING ATM ON ATM.FIN_TYPE = FM.FINTYPE
+					LEFT JOIN CIBIL_ACCOUNT_TYPES AT ON AT.CODE = ATM.CODE and AT.segment_Type = ATM.segment_Type
+					LEFT JOIN (SELECT MA.FINREFERENCE, SUM(COALESCE(MA.ADVISEAMOUNT,0)- COALESCE(MA.PAIDAMOUNT,0)- COALESCE(MA.WAIVEDAMOUNT,0)) BOUNCE_DUE, SUM(MA.PAIDAMOUNT) BOUNCE_PAID FROM MANUALADVISE  MA  WHERE BOUNCEID > 0 GROUP BY MA.FINREFERENCE) MA ON MA.FINREFERENCE = FM.FINREFERENCE
+					LEFT JOIN (SELECT FINREFERENCE, SUM(TOTPENALTYBAL) LATE_PAYMENT_PENALTY_DUE, SUM(TOTPENALTYPAID) LATE_PAYMENT_PENALTY_PAID FROM FINODDETAILS GROUP BY FINREFERENCE) FO ON FO.FINREFERENCE = FM.FINREFERENCE
+					LEFT JOIN (SELECT FINREFERENCE, SUM(AMOUNT) EXCESS_AMOUNT, SUM (COALESCE(UTILISEDAMT,0)+ COALESCE(RESERVEDAMT,0)) EXCESS_AMT_PAID FROM FINEXCESSAMOUNT  GROUP BY FINREFERENCE) FE ON FE.FINREFERENCE = FM.FINREFERENCE
+					LEFT JOIN  (SELECT CUSTID, COALESCE(SUM(CUSTINCOME), 0) CUSTINCOME FROM CUSTOMERINCOMES GROUP BY CUSTID) CI ON CI.CUSTID = CU.CUSTID
+		</createView>
+	</changeSet>
+	<changeSet id="80" author="murthy.y">
+		<dropTable tableName="CIBIL_REPAY_FREQUENCY_MAPPING"/>
+	</changeSet>
+	<changeSet id="81" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete from SMTparameters where SysParmCode IN (
+				'CBIL_REPORT_MEMBER_CODE',
+				'CBIL_REPORT_MEMBER_ID',
+				'CBIL_REPORT_MEMBER_PASSWORD',
+				'CBIL_REPORT_MEMBER_SHORT_NAME',
+				'CBIL_REPORT_PATH')
+			]]>
+			
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>

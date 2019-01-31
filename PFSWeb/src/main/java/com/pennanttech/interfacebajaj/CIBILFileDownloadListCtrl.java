@@ -222,7 +222,7 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 				downloadFromServer(fileDownlaod);
 			}
 			dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(), getUserWorkspace().getUserDetails().getUserId());
-			refresh();
+			search();
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
