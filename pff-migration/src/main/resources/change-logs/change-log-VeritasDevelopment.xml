@@ -69,5 +69,37 @@
 			Update SMTParameters set sysparmvalue = 'N' Where sysparmcode = 'VAS_MEDICAL_STATUS_CALCULATION_YES_NO'; 		 
 		 </sql>
 	   </changeSet>
+		
+		<changeSet id="5" author="Durgaprasad G">
+			<sql>
+			<![CDATA[
+			INSERT [dbo].[ExtendedFieldHeader] ([ModuleId], [ModuleName], [SubModuleName], [TabHeading], [NumberOfColumns], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [POSTVALIDATION], [PREVALIDATION], [POSTVALIDATIONREQ], [PREVALIDATIONREQ], [event]) VALUES (10008, N'VAS', N'INSURANC', N'INSURANC', N'2', 2, 1000, CAST(N'2019-01-31 15:43:08.557' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, NULL, NULL, CAST(0 AS Decimal(1, 0)), CAST(0 AS Decimal(1, 0)), NULL)
 			
+			
+			INSERT [dbo].[ExtendedFieldDetail] ([ModuleId], [FieldName], [FieldType], [FieldLength], [FieldPrec], [FieldLabel], [FieldMandatory], [FieldConstraint], [FieldSeqOrder], [FieldList], [FieldDefaultValue], [FieldMinValue], [FieldMaxValue], [FieldUnique], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [MultiLine], [PARENTTAG], [INPUTELEMENT], [EDITABLE], [ExtendedType], [allowInRule], [scriptlet], [Visible], [filters], [ValFromScript]) VALUES (10008, N'CALCULATEPREMIUM', N'BUTTON', 0, 0, N'Calculate Premium Amount', 0, N'', 40, NULL, NULL, 0, 0, 0, 1, 0, CAST(N'2019-01-31 15:33:09.653' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, 0, N'EXTDETGRPBOX', 0, 1, 0, 0, NULL, 1, NULL, 0)
+			INSERT [dbo].[ExtendedFieldDetail] ([ModuleId], [FieldName], [FieldType], [FieldLength], [FieldPrec], [FieldLabel], [FieldMandatory], [FieldConstraint], [FieldSeqOrder], [FieldList], [FieldDefaultValue], [FieldMinValue], [FieldMaxValue], [FieldUnique], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [MultiLine], [PARENTTAG], [INPUTELEMENT], [EDITABLE], [ExtendedType], [allowInRule], [scriptlet], [Visible], [filters], [ValFromScript]) VALUES (10008, N'CUSTOMERAGE', N'TEXT', 50, 0, N'Customer Age', 0, N'REGEX_ALPHANUM_SPACE_SPL', 10, N'', N'', 0, 0, 0, 1, 0, CAST(N'2019-01-31 15:33:09.653' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, 0, N'EXTDETGRPBOX', 1, 0, 0, 0, NULL, 1, NULL, 0)
+			INSERT [dbo].[ExtendedFieldDetail] ([ModuleId], [FieldName], [FieldType], [FieldLength], [FieldPrec], [FieldLabel], [FieldMandatory], [FieldConstraint], [FieldSeqOrder], [FieldList], [FieldDefaultValue], [FieldMinValue], [FieldMaxValue], [FieldUnique], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [MultiLine], [PARENTTAG], [INPUTELEMENT], [EDITABLE], [ExtendedType], [allowInRule], [scriptlet], [Visible], [filters], [ValFromScript]) VALUES (10008, N'EXTDETGRPBOX', N'GROUPBOX', 0, 0, N'Extended Details', 0, N'', 5, NULL, NULL, 0, 0, 0, 1, 0, CAST(N'2019-01-31 15:33:09.653' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, 0, NULL, 0, 1, 0, 0, NULL, 1, NULL, 0)
+			INSERT [dbo].[ExtendedFieldDetail] ([ModuleId], [FieldName], [FieldType], [FieldLength], [FieldPrec], [FieldLabel], [FieldMandatory], [FieldConstraint], [FieldSeqOrder], [FieldList], [FieldDefaultValue], [FieldMinValue], [FieldMaxValue], [FieldUnique], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [MultiLine], [PARENTTAG], [INPUTELEMENT], [EDITABLE], [ExtendedType], [allowInRule], [scriptlet], [Visible], [filters], [ValFromScript]) VALUES (10008, N'LOANAMOUNT', N'DECIMAL', 18, 0, N'Loan Amount', 0, N'', 30, N'', N'', 0, 0, 0, 1, 0, CAST(N'2019-01-31 15:33:09.653' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, 0, N'EXTDETGRPBOX', 1, 0, 0, 0, NULL, 1, NULL, 0)
+			INSERT [dbo].[ExtendedFieldDetail] ([ModuleId], [FieldName], [FieldType], [FieldLength], [FieldPrec], [FieldLabel], [FieldMandatory], [FieldConstraint], [FieldSeqOrder], [FieldList], [FieldDefaultValue], [FieldMinValue], [FieldMaxValue], [FieldUnique], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [MultiLine], [PARENTTAG], [INPUTELEMENT], [EDITABLE], [ExtendedType], [allowInRule], [scriptlet], [Visible], [filters], [ValFromScript]) VALUES (10008, N'LOANTERMS', N'TEXT', 50, 0, N'Number OF Installments', 0, N'REGEX_ALPHANUM_SPACE_SPL', 20, N'', N'', 0, 0, 0, 2, 0, CAST(N'2019-01-31 15:43:08.557' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, 0, N'EXTDETGRPBOX', 1, 0, 0, 0, NULL, 1, NULL, 0)
+			
+			
+			INSERT [dbo].[VasStructure] ([ProductCode], [ProductDesc], [RecAgainst], [FeeAccrued], [FeeAccounting], [AccrualAccounting], [RecurringType], [FreeLockPeriod], [PreValidationReq], [PostValidationReq], [Remarks], [Active], [Version], [LastMntBy], [LastMntOn], [RecordStatus], [RoleCode], [NextRoleCode], [TaskId], [NextTaskId], [RecordType], [WorkflowId], [ProductType], [VasFee], [AllowFeeToModify], [ManufacturerId], [PreValidation], [PostValidation], [feetype], [flpcalculatedon], [shortcode], [ModeOfPayment], [AllowFeeType], [MedicalApplicable], [BatchId]) VALUES (N'INSURANC', N'Insurance product.', N'Finance', 1, 1109, 1110, 0, 0, 1, 0, N'Insurance product.', 1, 2, 1000, CAST(N'2019-01-31 15:43:08.557' AS DateTime), N'Approved', N'', N'', N'', N'', N'', 0, N'INSURANC', CAST(0 AS Decimal(18, 0)), 1, 7000451, N'
+			
+			var financeMain = fd.getFinScheduleData().getFinanceMain();
+			
+			//Loan Amount
+			defaults.add("LOANAMOUNT",financeMain.getFinAssetValue()/100);
+			    
+			//Loan Terms
+			var loanTerms = financeMain.getNumberOfTerms();
+			loanTerms = loanTerms + financeMain.getGraceTerms();
+			defaults.add("LOANTERMS",loanTerms);
+			
+			
+			//CustomerAge
+			var customer = fd.getCustomerDetails().getCustomer();
+			defaults.add("CUSTOMERAGE",customer.getCustomerAge());', N'', 47, N'#', N'CRD', N'D', N'A', 0, 569);
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

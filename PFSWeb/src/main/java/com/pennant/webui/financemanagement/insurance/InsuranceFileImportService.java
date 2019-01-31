@@ -555,9 +555,15 @@ public class InsuranceFileImportService {
 		VASPremiumCalcDetails premiumCalcDetails = null;
 		List<VASPremiumCalcDetails> calcDetailsList = new ArrayList<>();
 
+		boolean isError = false;
 		//Processing the data
 		for (VASPremiumCalcDetails detailFromFile : calcDetails) {
 			try {
+
+				if (isError) {
+					continue;
+				}
+
 				status.setStatus(ExecutionStatus.E.name());
 				if (!StringUtils.equalsIgnoreCase(manufacturerName, detailFromFile.getManufacturerName())) {
 					throw new Exception("Manufacturer name not matched with the selected manufacturer.");

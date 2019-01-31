@@ -3156,13 +3156,13 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			Customer customer = null;
 			boolean customerExist = false;
 			customer = getClonedFinanceDetail().getCustomerDetails().getCustomer();
-			if (customer.getCustCIF().equals(customerCif)) {
+			if (customerCif != null && customer.getCustCIF().equals(customerCif)) {
 				customerExist = true;
 			}
 
 			List<JointAccountDetail> accountDetailList = getClonedFinanceDetail().getJountAccountDetailList();
 
-			if (CollectionUtils.isNotEmpty(accountDetailList)) {
+			if (customerCif != null && CollectionUtils.isNotEmpty(accountDetailList)) {
 				for (JointAccountDetail jointAccountDetail : accountDetailList) {
 					customer = jointAccountDetail.getCustomerDetails().getCustomer();
 					if (customer.getCustCIF().equals(customerCif)) {
@@ -3172,7 +3172,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				}
 			}
 
-			if (!customerExist) {
+			if (customerCif != null && !customerExist) {
 				MessageUtil.showError("Customer details are not available for the selected CIF.");
 				return;
 			}
