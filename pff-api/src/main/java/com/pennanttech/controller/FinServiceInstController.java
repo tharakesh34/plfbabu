@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -25,12 +24,14 @@ import com.amazonaws.util.CollectionUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleGenerator;
@@ -876,15 +877,14 @@ public class FinServiceInstController extends SummaryDetailService {
 			Date maturityDate = null;
 			if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeDetail.getFinScheduleData().getFinanceType().getFinSchdMthd())){
 				
-				int frqDay = Integer.parseInt(financeDetail.getFinScheduleData().getFinanceMain().getRepayFrq().substring(3));
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(finServiceInst.getFromDate());
-				calendar.set(Calendar.DAY_OF_MONTH, frqDay);
-				if(DateUtility.compare(finServiceInst.getFromDate(), calendar.getTime()) > 0){
-					calendar.add(Calendar.MONTH, 1);
+				Date startDate = finServiceInst.getFromDate();
+				if(DateUtility.compare(finServiceInst.getFromDate(), financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()) != 0){
+					startDate = DateUtility.addDays(finServiceInst.getFromDate(), -1);
 				}
 				
-				 maturityDate = DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),PennantConstants.dateFormat));
+				maturityDate = FrequencyUtil.getNextDate(financeDetail.getFinScheduleData().getFinanceMain().getRepayFrq(), 1, startDate, 
+						HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
+				
 				posIntProcess = true;
 			}
 			boolean isOverdraft=false;
@@ -931,12 +931,11 @@ public class FinServiceInstController extends SummaryDetailService {
 							rpyInstructions.get(i).setRepayAmount(
 									rpyInstructions.get(i).getRepayAmount().add(finServiceInst.getAmount()));
 							rpyInstFound = true;
-							if (DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) <= 0) {
-								futureRpyInst = true;
-							}
+						} else if (DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) < 0) {
+							futureRpyInst = true;
 							break;
 						}
-						
+
 					}
 
 					// If instruction not found then add with Disbursement amount
@@ -2115,31 +2114,40 @@ public class FinServiceInstController extends SummaryDetailService {
 				BigDecimal closingBal = null;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
+					
+					if (closingBal == null) {
+						closingBal = BigDecimal.ZERO;
+					}
+					
 					if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) >= 0) {
-						closingBal = curSchd.getClosingBalance();
+						if(StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
+							closingBal = closingBal.add(curSchd.getDisbAmount().subtract(curSchd.getSchdPriPaid()));
+						}else{
+							closingBal = curSchd.getClosingBalance();
+						}
 						continue;
 					}
-					if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0
-							|| closingBal == null) {
-						if (closingBal == null) {
-							closingBal = BigDecimal.ZERO;
-						}
+					if (DateUtility.compare(finReceiptDetail.getReceivedDate(), curSchd.getSchDate()) == 0) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
+					
 				}
-
+				
 				if (closingBal != null) {
 					if(!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeMain.getScheduleMethod())){
-					if (partPayment.compareTo(closingBal) >= 0) {
-						FinanceDetail response = new FinanceDetail();
-						doEmptyResponseObject(response);
-						String[] valueParm = new String[1];
-						valueParm[0] = PennantApplicationUtil.amountFormate(closingBal,ccyFormat);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
-						return response;
-					}
+
+						if (partPayment.compareTo(closingBal) >= 0) {
+							FinanceDetail response = new FinanceDetail();
+							doEmptyResponseObject(response);
+							String[] valueParm = new String[1];
+							valueParm[0] = String.valueOf(closingBal);
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
+							return response;
+						}
+
 					} else {
+						partPayment=finServiceInst.getAmount();
 						if (partPayment.compareTo(closingBal) > 0) {
 							FinanceDetail response = new FinanceDetail();
 							doEmptyResponseObject(response);
@@ -2148,6 +2156,16 @@ public class FinServiceInstController extends SummaryDetailService {
 							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
 							return response;
 						}
+					}
+				}else{
+					if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())){
+						
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						String[] valueParm = new String[1];
+						valueParm[0] = String.valueOf(closingBal);
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus("91127", valueParm));
+						return response;
 					}
 				}
 			}
@@ -2671,9 +2689,9 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				} else {
 					if (totReceiptAmt.compareTo(remBal) < 0) {
-						WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90332");
-						returnMap.put("ReturnCode", status.getReturnCode());
-						returnMap.put("ReturnText", status.getReturnText());
+						partialPaidAmt = BigDecimal.ZERO;
+						returnMap.put("partPaidAmt", String.valueOf(partialPaidAmt));
+
 					}
 				}
 			}
@@ -2959,7 +2977,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		finScheduleData.setStepPolicyDetails(new ArrayList<FinanceStepPolicyDetail>(1));
 		finScheduleData.setInsuranceList(new ArrayList<Insurance>());
-		finScheduleData.setFinODPenaltyRate(null);
+		//finScheduleData.setFinODPenaltyRate(null);
 		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
 
 		aFinanceDetail.setFinContributorHeader(null);

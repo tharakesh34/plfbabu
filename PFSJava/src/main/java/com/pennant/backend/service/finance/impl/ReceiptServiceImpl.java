@@ -65,12 +65,14 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.CashManagementConstants;
+import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -2471,6 +2473,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					}
 				}
 			}
+			
+			if(totalBal.compareTo(BigDecimal.ZERO) < 0){
+				totalBal = BigDecimal.ZERO;
+			}
 		}
 
 		// Accrued Profit Calculation
@@ -2514,6 +2520,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// Schedule re-modifications only when Effective Schedule Method modified
+		boolean rpyAdditionReq = false;
 		if (!StringUtils.equals(method, CalculationConstants.EARLYPAY_NOEFCT)) {
 			if (StringUtils.equals(recptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 				receiptData.getRepayMain().setEarlyPayAmount(totalBal);
@@ -2549,9 +2556,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 								.subtract(detail.getRepayAmount()));
 						break;
 					} else {
-						final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
-						receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd()
-								.add(receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
+						if (!StringUtils.equals(aFinanceMain.getScheduleMethod(),
+								CalculationConstants.SCHMTHD_POS_INT)) {
+							final BigDecimal earlypaidBal = detail.getEarlyPaidBal();
+							receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd()
+									.add(receiptData.getRepayMain().getEarlyPayAmount()).add(earlypaidBal));
+						} else {
+							if (detail.isFrqDate()) {
+								receiptData.getRepayMain().setEarlyPayAmount(detail.getPrincipalSchd());
+							} else {
+								receiptData.getRepayMain()
+										.setEarlyPayAmount(receiptData.getRepayMain().getEarlyPayAmount());
+								rpyAdditionReq = true;
+							}}
 					}
 					isSchdDateFound = true;
 				}
@@ -2683,21 +2700,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		//  Finance Repay Instruction Changes
 					if(StringUtils.equals(aFinanceMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
-						if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeDetail.getFinScheduleData().getFinanceType().getFinSchdMthd())){
+						if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod())){
 
 							Date dateValueDate = DateUtility.getAppDate();
 							if(finServiceInstruction.getReceiptDetail().getReceivedDate() != null){
 								dateValueDate = finServiceInstruction.getReceiptDetail().getReceivedDate();
 							}
-							int frqDay = Integer.parseInt(finScheduleData.getFinanceMain().getRepayFrq().substring(3));
-							Calendar calendar = Calendar.getInstance();
-							calendar.setTime(finServiceInstruction.getReceiptDetail().getReceivedDate());
-							calendar.set(Calendar.DAY_OF_MONTH, frqDay);
-							if(DateUtility.compare(finServiceInstruction.getReceiptDetail().getReceivedDate(), calendar.getTime()) > 0){
-								calendar.add(Calendar.MONTH, 1);
-							}
 							
-							Date maxRepayAlwDate = DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),PennantConstants.dateFormat));
+							Date maxRepayAlwDate = FrequencyUtil.getNextDate(finScheduleData.getFinanceMain().getRepayFrq(), 1, DateUtility.addDays(finServiceInstruction.getReceiptDetail().getReceivedDate(), -1), 
+									HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 							
 							// Repay Instructions Setting
 							boolean rpyInstFound = false;
@@ -2739,7 +2750,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 								}
 
 								if(rpyInst.getRepayDate().compareTo(dateValueDate) == 0){
-									rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
+									if(rpyAdditionReq){
+										rpyInst.setRepayAmount(rpyInst.getRepayAmount().add(totPaidAmount));
+									}
 								}else if(rpyInst.getRepayDate().compareTo(maxRepayAlwDate) == 0){
 									rpyInst.setRepayAmount(rpyInst.getRepayAmount().subtract(totPaidAmount));
 									if(rpyInst.getRepayAmount().compareTo(BigDecimal.ZERO) == 0){

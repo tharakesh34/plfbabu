@@ -610,10 +610,11 @@ public class FinScheduleListItemRenderer implements Serializable {
 				showZeroEndBal = false;
 				isGrcBaseRate = false;
 				isRpyBaseRate = false;
-
+				
+				List<FinanceDisbursement> disbList = sortDisbursements(getFinScheduleData().getDisbursementDetails());
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
-				for (int i = 0; i < getFinScheduleData().getDisbursementDetails().size(); i++) {
-					FinanceDisbursement curDisb = getFinScheduleData().getDisbursementDetails().get(i);
+				for (int i = 0; i < disbList.size(); i++) {
+					FinanceDisbursement curDisb = disbList.get(i);
 					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 						continue;
 					}
@@ -624,20 +625,31 @@ public class FinScheduleListItemRenderer implements Serializable {
 					}
 					if (DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
+						
+						BigDecimal endBal = BigDecimal.ZERO;
+						
+						if(StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
+							if(prvSchDetail != null && getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate())!=0){
+								endBal = prvSchDetail.getClosingBalance().add(curTotDisbAmt);
+							}else{
+								endBal = curTotDisbAmt;
+							}
+						}else{
+							endBal = getFinanceScheduleDetail().getClosingBalance()
+									.subtract(getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO
+											: getFinanceScheduleDetail().getFeeChargeAmt())
+									.subtract(getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO
+											: getFinanceScheduleDetail().getInsuranceAmt())
+									.subtract(getFinanceScheduleDetail().getDisbAmount()).add(curTotDisbAmt)
+									.add(advEMi).add(getFinanceScheduleDetail().getDownPaymentAmount())
+									.subtract(getFinanceScheduleDetail().getCpzAmount());
+						}
 						doFillListBox(getFinanceScheduleDetail(), count,
 								Labels.getLabel("label_listcell_disbursement.label") + " (Seq : " + curDisb.getDisbSeq()
 										+ ")",
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-								curDisb.getDisbAmount(),
-								getFinanceScheduleDetail().getClosingBalance()
-										.subtract(getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO
-												: getFinanceScheduleDetail().getFeeChargeAmt())
-										.subtract(getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO
-												: getFinanceScheduleDetail().getInsuranceAmt())
-										.subtract(getFinanceScheduleDetail().getDisbAmount()).add(curTotDisbAmt)
-										.add(advEMi).add(getFinanceScheduleDetail().getDownPaymentAmount())
-										.subtract(getFinanceScheduleDetail().getCpzAmount()),
+								curDisb.getDisbAmount(), endBal,
 								isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217",
 								"color_Disbursement", 0, null, false, false);
 
@@ -1495,6 +1507,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 					&& DateUtility.compare(financeMain.getFinStartDate(), odSchd.getDroplineDate()) != 0
 					&& DateUtility.compare(odSchd.getDroplineDate(), data.getSchDate()) == 0) {
 				availableLimit = availableLimit.add(data.getDisbAmount());
+			}
+			
+			if(availableLimit.compareTo(BigDecimal.ZERO) < 0){
+				availableLimit = BigDecimal.ZERO;
 			}
 
 			if (!isODSchdLimit) {
@@ -3491,6 +3507,29 @@ public class FinScheduleListItemRenderer implements Serializable {
 		}
 
 		return feeRuleDetails;
+	}
+	
+	public List<FinanceDisbursement> sortDisbursements(List<FinanceDisbursement> disbursements) {
+
+		if (disbursements != null && disbursements.size() > 0) {
+			Collections.sort(disbursements, new Comparator<FinanceDisbursement>() {
+				@Override
+				public int compare(FinanceDisbursement detail1, FinanceDisbursement detail2) {
+					if (DateUtility.compare(detail1.getDisbDate(), detail1.getDisbDate()) > 0) {
+						return 1;
+					} else if (DateUtility.compare(detail1.getDisbDate(), detail1.getDisbDate()) == 0) {
+						if (detail1.getDisbSeq() > detail2.getDisbSeq()) {
+							return 1;
+						} else if (detail1.getDisbSeq() < detail2.getDisbSeq()) {
+							return -1;
+						}
+					}
+					return 0;
+				}
+			});
+		}
+
+		return disbursements;
 	}
 
 	/**

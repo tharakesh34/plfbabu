@@ -665,7 +665,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
-				details.setCategoryCode(agreementDefinition.getModuleName());
+				//details.setCategoryCode(agreementDefinition.getModuleName());
 				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -1131,7 +1131,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setTaskId(financeMain.getTaskId());
 			detail.setNextTaskId(financeMain.getNextTaskId());
 		}
-
 		financeDetail.setFinScheduleData(finScheduleData);
 		if (financeMain.getCustID() > 0) {
 			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
@@ -1890,7 +1889,11 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 			// set required mandatory values into finance details object
 			doSetRequiredDetails(financeDetail, false, userDetails, stp, true);
-		
+			// Temporary FIXME
+			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
+					financeMain.getFinReference(), FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG,
+					"_View");
+			financeDetail.setDocumentDetailsList(documentList);
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
 			financeDetail.setStp(false);
 			// set LastMntBy , LastMntOn and status fields to schedule details

@@ -213,14 +213,17 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				availableLimit = financeMain.getFinAssetValue();
 			}
 
+
 			// Schedule Outstanding amount calculation
 			List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
 			BigDecimal closingbal = BigDecimal.ZERO;
+			BigDecimal remainingBal= BigDecimal.ZERO;
 			for (int i = 0; i < schList.size(); i++) {
 				if (DateUtility.compare(schList.get(i).getSchDate(), fromDate) > 0) {
 					break;
 				}
 				closingbal = schList.get(i).getClosingBalance();
+				
 			}
 
 			// Actual Available Limit
@@ -235,9 +238,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			} else {
 				// Checking Total Disbursed amount validate against New disbursement
 				BigDecimal totDisbAmount = BigDecimal.ZERO;
-				for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) {
+				/*for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) {
 					totDisbAmount = totDisbAmount.add(finDisbursment.getDisbAmount());
+				}*/
+				for (int i = 0; i < schList.size(); i++) {
+					FinanceScheduleDetail curSchd = schList.get(i);
+					totDisbAmount = totDisbAmount.add(curSchd.getDisbAmount().subtract(curSchd.getSchdPriPaid()));
 				}
+				
 				totDisbAmount = actualDisbAmount.add(totDisbAmount);
 				if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
 					String[] valueParm = new String[2];
@@ -475,6 +483,8 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				auditDetail.setErrorDetail(errorDetails);
 			}
 		}
+
+
 
 		logger.debug("Leaving");
 		return auditDetail;

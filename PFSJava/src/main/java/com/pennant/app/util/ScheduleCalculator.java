@@ -3343,7 +3343,8 @@ public class ScheduleCalculator {
 		finScheduleData = repaySchdCal(finScheduleData, isCalFlat);
 
 		if (finMain.isEqualRepay() && finMain.isCalculateRepay()
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
+				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
 
 			if (finMain.getAdvEMITerms() > 0 && isFirstRun) {
 				finMain.setAdjustClosingBal(true);

@@ -46,7 +46,6 @@ package com.pennant.webui.finance.additional;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -79,8 +78,10 @@ import com.pennant.CurrencyBox;
 import com.pennant.Interface.model.IAccounts;
 import com.pennant.Interface.service.AccountInterfaceService;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -93,7 +94,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
@@ -473,100 +473,120 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (isOverdraft && isValidDate) {
 
-				// Checking against adding disbursement date available limit
-				List<OverdraftScheduleDetail> odSchdDetail = aFinScheduleData.getOverdraftScheduleDetails();
-				BigDecimal fromDateAvailLimit = BigDecimal.ZERO;
-				if (odSchdDetail != null && odSchdDetail.size() > 0) {
-					for (int i = 0; i < odSchdDetail.size(); i++) {
-						if (odSchdDetail.get(i).getDroplineDate().compareTo(this.fromDate.getValue()) > 0) {
-							break;
-						}
-						fromDateAvailLimit = odSchdDetail.get(i).getODLimit();
-					}
-
-					// Schedule Outstanding amount calculation
+				if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT,
+						aFinScheduleData.getFinanceType().getFinSchdMthd())) {
 					List<FinanceScheduleDetail> schList = aFinScheduleData.getFinanceScheduleDetails();
-					BigDecimal closingbal = BigDecimal.ZERO;
+					BigDecimal outstandingBal = BigDecimal.ZERO;
 					for (int i = 0; i < schList.size(); i++) {
-						if (DateUtility.compare(schList.get(i).getSchDate(), this.fromDate.getValue()) > 0) {
-							break;
-						}
-						closingbal = schList.get(i).getClosingBalance();
+						FinanceScheduleDetail curSchd = schList.get(i);
+						outstandingBal = outstandingBal.add(curSchd.getDisbAmount().subtract(curSchd.getSchdPriPaid()));
 					}
-
-					// Actual Available Limit
-					fromDateAvailLimit = fromDateAvailLimit.subtract(closingbal);
-				}
-
-				// Validating against Available Limit amount
-				if (this.disbAmount.getValidateValue()
-						.compareTo(PennantAppUtil.formateAmount(fromDateAvailLimit, formatter)) > 0) {
-					if (fromDateAvailLimit.compareTo(BigDecimal.ZERO) > 0) {
-						throw new WrongValueException(this.disbAmount.getCcyTextBox(), Labels.getLabel(
-								"od_DisbAmount_Validation_RANGE",
-								new String[] { PennantApplicationUtil.amountFormate(fromDateAvailLimit, formatter) }));
-					} else {
-						throw new WrongValueException(this.disbAmount.getCcyTextBox(),
-								Labels.getLabel("od_DisbAmount_Validation", new String[] {}));
-					}
-				} else {
-
-					// Checking Total Disbursed amount validate against New disbursement
-					BigDecimal prvTotDisbValue = BigDecimal.ZERO;
-					for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
-						if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
-							continue;
-						}
-						prvTotDisbValue = prvTotDisbValue.add(curDisb.getDisbAmount());
-					}
-					BigDecimal curTotDisbValue = PennantAppUtil
-							.unFormateAmount(this.disbAmount.getValidateValue(), formatter).add(prvTotDisbValue);
-					if (curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0
-							&& finMain.getFinAssetValue().subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO) > 0) {
-						throw new WrongValueException(this.disbAmount.getCcyTextBox(),
-								Labels.getLabel("od_DisbAmount", new String[] {
-										PennantApplicationUtil.amountFormate(finMain.getFinAssetValue(), formatter),
-										PennantApplicationUtil.amountFormate(
-												finMain.getFinAssetValue().subtract(prvTotDisbValue), formatter) }));
-					} else if (curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0
-							&& finMain.getFinAssetValue().subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO) <= 0) {
+					
+					if ((finMain.getFinAssetValue().subtract(outstandingBal)).compareTo(PennantApplicationUtil.unFormateAmount(this.disbAmount.getActualValue(),formatter)) < 0) {
 						throw new WrongValueException(this.disbAmount.getCcyTextBox(),
 								Labels.getLabel("od_DisAmountExceeded", new String[] {}));
 					}
-				}
 
-				// Checking total Disbursement amounts against available limit to add in Current Disbursement
-				List<FinanceScheduleDetail> finSched = aFinScheduleData.getFinanceScheduleDetails();
-				BigDecimal avalLimit = finMain.getFinAssetValue();
-				for (int i = 1; i < finSched.size() - 1; i++) {
-
-					if (!finSched.get(i).isDisbOnSchDate()) {
-						continue;
-					} else {
-
-						List<OverdraftScheduleDetail> odDetail = aFinScheduleData.getOverdraftScheduleDetails();
-						for (int j = 0; j < odDetail.size() - 1; j++) {
-
-							if (DateUtility.compare(odDetail.get(j).getDroplineDate(),
-									finSched.get(i).getSchDate()) <= 0
-									&& DateUtility.compare(odDetail.get(j + 1).getDroplineDate(),
-											finSched.get(i).getSchDate()) > 0) {
-								avalLimit = odDetail.get(j).getODLimit().subtract(finSched.get(i).getClosingBalance());
+				} else {
+					// Checking against adding disbursement date available limit
+					List<OverdraftScheduleDetail> odSchdDetail = aFinScheduleData.getOverdraftScheduleDetails();
+					BigDecimal fromDateAvailLimit = BigDecimal.ZERO;
+					if (odSchdDetail != null && odSchdDetail.size() > 0) {
+						for (int i = 0; i < odSchdDetail.size(); i++) {
+							if (odSchdDetail.get(i).getDroplineDate().compareTo(this.fromDate.getValue()) > 0) {
 								break;
 							}
+							fromDateAvailLimit = odSchdDetail.get(i).getODLimit();
+						}
+
+						// Schedule Outstanding amount calculation
+						List<FinanceScheduleDetail> schList = aFinScheduleData.getFinanceScheduleDetails();
+						BigDecimal closingbal = BigDecimal.ZERO;
+						for (int i = 0; i < schList.size(); i++) {
+							if (DateUtility.compare(schList.get(i).getSchDate(), this.fromDate.getValue()) > 0) {
+								break;
+							}
+							closingbal = schList.get(i).getClosingBalance();
+						}
+
+						// Actual Available Limit
+						fromDateAvailLimit = fromDateAvailLimit.subtract(closingbal);
+					}
+
+					// Validating against Available Limit amount
+					if (this.disbAmount.getValidateValue()
+							.compareTo(PennantAppUtil.formateAmount(fromDateAvailLimit, formatter)) > 0) {
+						if (fromDateAvailLimit.compareTo(BigDecimal.ZERO) > 0) {
+							throw new WrongValueException(this.disbAmount.getCcyTextBox(),
+									Labels.getLabel("od_DisbAmount_Validation_RANGE", new String[] {
+											PennantApplicationUtil.amountFormate(fromDateAvailLimit, formatter) }));
+						} else {
+							throw new WrongValueException(this.disbAmount.getCcyTextBox(),
+									Labels.getLabel("od_DisbAmount_Validation", new String[] {}));
+						}
+					} else {
+
+						// Checking Total Disbursed amount validate against New
+						// disbursement
+						BigDecimal prvTotDisbValue = BigDecimal.ZERO;
+						for (FinanceDisbursement curDisb : aFinScheduleData.getDisbursementDetails()) {
+							if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
+								continue;
+							}
+							prvTotDisbValue = prvTotDisbValue.add(curDisb.getDisbAmount());
+						}
+						BigDecimal curTotDisbValue = PennantAppUtil
+								.unFormateAmount(this.disbAmount.getValidateValue(), formatter).add(prvTotDisbValue);
+						if (curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0 && finMain.getFinAssetValue()
+								.subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO) > 0) {
+							throw new WrongValueException(this.disbAmount.getCcyTextBox(),
+									Labels.getLabel("od_DisbAmount", new String[] {
+											PennantApplicationUtil.amountFormate(finMain.getFinAssetValue(), formatter),
+											PennantApplicationUtil.amountFormate(
+													finMain.getFinAssetValue().subtract(prvTotDisbValue),
+													formatter) }));
+						} else if (curTotDisbValue.compareTo(finMain.getFinAssetValue()) > 0 && finMain
+								.getFinAssetValue().subtract(prvTotDisbValue).compareTo(BigDecimal.ZERO) <= 0) {
+							throw new WrongValueException(this.disbAmount.getCcyTextBox(),
+									Labels.getLabel("od_DisAmountExceeded", new String[] {}));
 						}
 					}
 
-					// Available Limit Checking against whole period
-					if (avalLimit.compareTo(BigDecimal.ZERO) == 0) {
-						throw new WrongValueException(this.disbAmount.getCcyTextBox(),
-								Labels.getLabel("od_DisbAmount_Validation", new String[] {}));
-					} else if (avalLimit.compareTo(BigDecimal.ZERO) > 0 && (avalLimit
-							.subtract(PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter)))
-									.compareTo(BigDecimal.ZERO) < 0) {
-						throw new WrongValueException(this.disbAmount.getCcyTextBox(),
-								Labels.getLabel("od_DisbAmount_Validation_Maxvalue",
-										new String[] { PennantApplicationUtil.amountFormate(avalLimit, formatter) }));
+					// Checking total Disbursement amounts against available
+					// limit to add in Current Disbursement
+					List<FinanceScheduleDetail> finSched = aFinScheduleData.getFinanceScheduleDetails();
+					BigDecimal avalLimit = finMain.getFinAssetValue();
+					for (int i = 1; i < finSched.size() - 1; i++) {
+
+						if (!finSched.get(i).isDisbOnSchDate()) {
+							continue;
+						} else {
+
+							List<OverdraftScheduleDetail> odDetail = aFinScheduleData.getOverdraftScheduleDetails();
+							for (int j = 0; j < odDetail.size() - 1; j++) {
+
+								if (DateUtility.compare(odDetail.get(j).getDroplineDate(),
+										finSched.get(i).getSchDate()) <= 0
+										&& DateUtility.compare(odDetail.get(j + 1).getDroplineDate(),
+												finSched.get(i).getSchDate()) > 0) {
+									avalLimit = odDetail.get(j).getODLimit()
+											.subtract(finSched.get(i).getClosingBalance());
+									break;
+								}
+							}
+						}
+
+						// Available Limit Checking against whole period
+						if (avalLimit.compareTo(BigDecimal.ZERO) == 0) {
+							throw new WrongValueException(this.disbAmount.getCcyTextBox(),
+									Labels.getLabel("od_DisbAmount_Validation", new String[] {}));
+						} else if (avalLimit.compareTo(BigDecimal.ZERO) > 0 && (avalLimit.subtract(
+								PennantAppUtil.unFormateAmount(this.disbAmount.getValidateValue(), formatter)))
+										.compareTo(BigDecimal.ZERO) < 0) {
+							throw new WrongValueException(this.disbAmount.getCcyTextBox(), Labels.getLabel(
+									"od_DisbAmount_Validation_Maxvalue",
+									new String[] { PennantApplicationUtil.amountFormate(avalLimit, formatter) }));
+						}
 					}
 				}
 			}
@@ -729,15 +749,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		boolean posIntProcess = false;
 		if(StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, aFinScheduleData.getFinanceType().getFinSchdMthd())){
 			
-			int frqDay = Integer.parseInt(aFinScheduleData.getFinanceMain().getRepayFrq().substring(3));
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(this.fromDate.getValue());
-			calendar.set(Calendar.DAY_OF_MONTH, frqDay);
-			if(DateUtility.compare(this.fromDate.getValue(), calendar.getTime()) > 0){
-				calendar.add(Calendar.MONTH, 1);
+			Date startDate = this.fromDate.getValue();
+			if(DateUtility.compare(this.fromDate.getValue(), aFinScheduleData.getFinanceMain().getFinStartDate()) != 0){
+				startDate = DateUtility.addDays(this.fromDate.getValue(), -1);
 			}
 			
-			maturityDate = DateUtility.getDate(DateUtility.formatUtilDate(calendar.getTime(),PennantConstants.dateFormat));
+			maturityDate = FrequencyUtil.getNextDate(aFinScheduleData.getFinanceMain().getRepayFrq(), 1, startDate, 
+					HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 			posIntProcess = true;
 		}
 
@@ -787,9 +805,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) == 0){
 						rpyInstructions.get(i).setRepayAmount(rpyInstructions.get(i).getRepayAmount().add(finServiceInstruction.getAmount()));
 						rpyInstFound = true;
-						if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) <= 0){
-							futureRpyInst = true;
-						}
+					}else if(DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) < 0){
+						futureRpyInst = true;
 						break;
 					}
 				}

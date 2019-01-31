@@ -1199,7 +1199,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.utilisedDef.setValue(financeSummary.getUtilizedDefCnt());
 			
 			this.sanctionAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(),formatter));
-			this.utilizedAmt.setValue(PennantAppUtil.formateAmount(financeSummary.getUnPaidPrincipal(),formatter));
+			this.utilizedAmt.setValue(PennantAppUtil.formateAmount(financeSummary.getUtilizedAmt(),formatter));
 			this.availableAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue().subtract(financeSummary.getUnPaidPrincipal()),formatter));
 		}
 

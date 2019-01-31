@@ -1207,8 +1207,9 @@ public class NotificationService {
 								docImg = docManager.getDocImage();
 							}
 						}
-
-						template.getAttchments().put(document.getDocName(), docImg);
+						if (docImg != null) {
+							template.getAttchments().put(document.getDocName(), docImg);
+						}
 					}
 				}
 			}

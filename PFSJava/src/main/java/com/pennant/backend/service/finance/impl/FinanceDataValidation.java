@@ -1274,7 +1274,7 @@ public class FinanceDataValidation {
 				}
 			}
 
-			errorDetails = mandateValidation(financeDetail);
+			errorDetails = mandateValidation(financeDetail,PennantConstants.VLD_CRT_LOAN);
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;
@@ -1395,7 +1395,7 @@ public class FinanceDataValidation {
 
 		// validate Mandate details
 		if (financeDetail.getMandate() != null) {
-			errorDetails = mandateValidation(financeDetail);
+			errorDetails = mandateValidation(financeDetail,PennantConstants.VLD_UPD_LOAN);
 			if (!errorDetails.isEmpty()) {
 				return errorDetails;
 			}
@@ -1973,7 +1973,7 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private List<ErrorDetail> mandateValidation(FinanceDetail financeDetail) {
+	private List<ErrorDetail> mandateValidation(FinanceDetail financeDetail, String vldGroup) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		Mandate mandate = financeDetail.getMandate();
 		// if it is stp process mandate is mandatory
@@ -2005,13 +2005,25 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90303", valueParm)));
 						return errorDetails;
 					} else {
-						if (!StringUtils.equalsIgnoreCase(curMandate.getCustCIF(),
+						boolean updateFlag=false;
+						if(StringUtils.equals(vldGroup, PennantConstants.VLD_UPD_LOAN)){
+							updateFlag=true;
+						}
+						if (!updateFlag && !StringUtils.equalsIgnoreCase(curMandate.getCustCIF(),
 								financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 							String[] valueParm = new String[2];
 							valueParm[0] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
 							valueParm[1] = curMandate.getCustCIF();
 							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90310", valueParm)));
 							return errorDetails;
+						} else {
+							if(curMandate.getCustID()!=financeDetail.getFinScheduleData().getFinanceMain().getCustID()){
+								String[] valueParm = new String[2];
+								valueParm[0] = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
+								valueParm[1] = curMandate.getCustCIF();
+								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90310", valueParm)));
+								return errorDetails;
+							}
 						}
 						if (!StringUtils.equalsIgnoreCase(curMandate.getMandateType(),
 								financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {

@@ -259,14 +259,15 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 
 		// Compare first drop line date greater than start date
-		if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()==null){
+		/*if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()==null){
 			String[] valueParm = new String[1];
 			valueParm[0] = "FirstDroplineDate";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			response.setReturnStatus(status);
 			return response;
-		}
+		}*/
 
+		if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()!=null) {
 		if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()
 				.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate())<=0) {
 			doEmptyResponseObject(response);
@@ -280,6 +281,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return response;
 		}
 
+		}
 		if (financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(new BigDecimal("0")) != 0) {
 			doEmptyResponseObject(response);
 			response.setStp(financeDetail.isStp());
@@ -612,6 +614,16 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Override
 	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException {
 		logger.debug(Literal.ENTERING);
+
+		if(financeDetail!=null){
+		FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(financeDetail.getFinReference(), "_Temp", false);
+			if (finMain == null) {
+				String valueParam[] = new String[1];
+				valueParam[0] = financeDetail.getFinReference();
+				return APIErrorHandlerService.getFailedStatus("90201", valueParam);
+			}
+		
+		}
 
 		// set default values
 		financeDataDefaulting.doFinanceDetailDefaulting(financeDetail);
