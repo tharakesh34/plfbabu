@@ -4497,4 +4497,15 @@
   	</sql>
   </changeSet>
   
+  <changeSet id="164" author="">
+	<sql>
+		  	
+		Update Data_Engine_Config set uploadpath = '/opt/pennant/PFF/insurance/premiumcalculation' Where name = 'VAS_PREMIUM_CALCULATION_UPLOAD';
+		
+		Update Data_Engine_Config set uploadpath = '/opt/pennant/PFF/insurance/payments' Where name = 'INSURANCE_PAYMENT_UPLOAD';
+		
+		Update Data_Engine_Config set uploadpath = '/opt/pennant/PFF/insurance/details' Where name = 'INSURANCE_FILE_IMPORT';
+		  	
+	</sql>
+  </changeSet>
 </databaseChangeLog>
