@@ -51,8 +51,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
@@ -689,7 +689,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 						securityUserDivBranch.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
 						securityUserDivBranch.getBefImage(), securityUserDivBranch));
-				if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+				if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 					securityUserAccessService.deleteDivBranchDetails(securityUserDivBranch);
 				}
 			}
@@ -895,7 +895,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			division.setRecordStatus(securityUser.getRecordStatus());
 		}
 
-		if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 			securityUserAccessService.saveDivisionBranches(securityUser, method);
 		} else {
 			securityUsersDAO.deleteBranchs(securityUser, type);

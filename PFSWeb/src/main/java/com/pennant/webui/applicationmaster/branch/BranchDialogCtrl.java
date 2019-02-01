@@ -65,9 +65,9 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SessionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -199,7 +199,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.cityName.setVisible(false);
 			}
 
-			if (ImplementationConstants.ALLOW_ORGANISATIONAL_STRUCTURE) {
+			if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 				this.row_org_struct.setVisible(true);
 			}
 
@@ -723,7 +723,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			wve.add(we);
 		}
 		
-		if (ImplementationConstants.ALLOW_ORGANISATIONAL_STRUCTURE) {
+		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 			try {
 				aBranch.setEntity(this.entity.getValidatedValue());
 			} catch (WrongValueException we) {

@@ -57,8 +57,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.administration.SecurityUserDivBranch;
@@ -507,7 +507,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
 
-		if (!ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+		if (!"Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 			sql.append("select usrId, userDivision, UserBranch");
 			sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
 			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");

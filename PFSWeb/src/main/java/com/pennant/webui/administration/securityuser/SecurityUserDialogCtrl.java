@@ -95,7 +95,6 @@ import org.zkoss.zul.Timebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -883,7 +882,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				&& (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())) {
 
 			if (CollectionUtils.isEmpty(tab1)) {
-				if (!ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+				if (!"Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 					doSaveDivBranchDetails(aSecurityUser);
 				} else {
 					doSaveDivBasedClusterDetails(aSecurityUser, tab2);
@@ -954,7 +953,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		// fill the data in divisionBranch tab
 		if (this.secUserDivBranchsTab.isVisible()) {
-			if (!ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+			if (!"Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 				doFillDivisionBranchTab(aSecurityUser);
 			} else {
 				appendDivisions(getDivisionDetails(aSecurityUser));
@@ -1288,7 +1287,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
+		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 			doEditClusterDivisions(false);
 		} else {
 			doDisableDivBranchs(false);
