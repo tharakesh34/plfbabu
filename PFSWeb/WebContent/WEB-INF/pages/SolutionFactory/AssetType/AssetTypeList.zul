@@ -90,7 +90,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingAssetTypeList" height="35px" />
+					<paging id="pagingAssetTypeList" />
 				</south>
 
 			</borderlayout>

@@ -106,7 +106,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingEntityList" height="35px" />
+					<paging id="pagingEntityList" />
 				</south>
 
 			</borderlayout>

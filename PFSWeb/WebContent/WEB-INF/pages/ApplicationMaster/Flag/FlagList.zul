@@ -98,7 +98,7 @@
 				</div>
 			</center>
 			<south border="none">
-				<paging id="pagingFlagList" height="35px" />
+				<paging id="pagingFlagList" />
 			</south>
 		</borderlayout>
 	</window>

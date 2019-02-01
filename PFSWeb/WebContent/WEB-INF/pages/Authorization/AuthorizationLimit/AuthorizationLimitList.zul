@@ -108,7 +108,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingAuthorizationLimitList" height="35px" />
+					<paging id="pagingAuthorizationLimitList" />
 				</south>
 
 			</borderlayout>

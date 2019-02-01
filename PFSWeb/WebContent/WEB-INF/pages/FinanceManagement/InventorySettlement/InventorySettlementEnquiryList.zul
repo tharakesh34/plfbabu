@@ -97,7 +97,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingInventorySettlementList" height="35px" />
+					<paging id="pagingInventorySettlementList" />
 				</south>
 
 			</borderlayout>

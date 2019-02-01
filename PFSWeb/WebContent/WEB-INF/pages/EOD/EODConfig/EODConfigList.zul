@@ -84,7 +84,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingEODConfigList" height="35px" />
+					<paging id="pagingEODConfigList" />
 				</south>
 			</borderlayout>
 		</window>

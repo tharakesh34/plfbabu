@@ -72,7 +72,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingDocumentDetailList" height="35px" />
+					<paging id="pagingDocumentDetailList" />
 				</south>
 			</borderlayout>
 		</window>

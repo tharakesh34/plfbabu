@@ -92,7 +92,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingSukukBondList" height="35px" />
+					<paging id="pagingSukukBondList" />
 				</south>
 			</borderlayout>
 		</window>

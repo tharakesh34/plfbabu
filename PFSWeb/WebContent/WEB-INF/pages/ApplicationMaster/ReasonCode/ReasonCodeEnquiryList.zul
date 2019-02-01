@@ -106,7 +106,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingReasionCodeList" height="35px" />
+					<paging id="pagingReasionCodeList" />
 				</south>
 
 			</borderlayout>

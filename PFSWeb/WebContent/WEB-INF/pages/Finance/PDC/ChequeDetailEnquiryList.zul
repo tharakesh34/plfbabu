@@ -120,7 +120,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingChequeDetailList" height="35px" />
+					<paging id="pagingChequeDetailList" />
 				</south>
 
 			</borderlayout>

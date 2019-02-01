@@ -95,7 +95,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingPaymentHeaderList" height="35px" />
+					<paging id="pagingPaymentHeaderList" />
 				</south>
 			</borderlayout>
 		</window>

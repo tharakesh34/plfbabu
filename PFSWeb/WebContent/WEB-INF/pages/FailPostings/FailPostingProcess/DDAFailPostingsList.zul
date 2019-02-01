@@ -80,7 +80,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingDDAFailPostingsList" height="35px" />
+					<paging id="pagingDDAFailPostingsList" />
 				</south>
 
 			</borderlayout>

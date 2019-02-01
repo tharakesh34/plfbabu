@@ -89,7 +89,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingLocalityList" height="35px" />
+					<paging id="pagingLocalityList" />
 				</south>
 
 			</borderlayout>

@@ -92,7 +92,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingMandateCheckDigitList" height="35px" />
+					<paging id="pagingMandateCheckDigitList" />
 				</south>
 
 			</borderlayout>

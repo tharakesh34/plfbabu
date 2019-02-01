@@ -99,7 +99,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingPromotionList" height="35px" />
+					<paging id="pagingPromotionList" />
 				</south>
 
 			</borderlayout>

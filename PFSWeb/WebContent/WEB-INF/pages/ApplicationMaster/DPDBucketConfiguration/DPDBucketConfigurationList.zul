@@ -97,7 +97,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingDPDBucketConfigurationList" height="35px" />
+					<paging id="pagingDPDBucketConfigurationList" />
 				</south>
 
 			</borderlayout>

@@ -84,7 +84,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingInsuranceDetailsList" height="35px" />
+					<paging id="pagingInsuranceDetailsList" />
 				</south>
 			</borderlayout>
 		</window>

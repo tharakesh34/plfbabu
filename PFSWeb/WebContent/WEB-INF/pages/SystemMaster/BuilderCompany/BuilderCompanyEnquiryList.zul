@@ -92,7 +92,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingBuilderCompanyList" height="35px" />
+					<paging id="pagingBuilderCompanyList" />
 				</south>
 
 			</borderlayout>

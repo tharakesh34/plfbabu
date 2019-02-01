@@ -92,7 +92,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingIRRCodeList" height="35px" />
+					<paging id="pagingIRRCodeList" />
 				</south>
 
 			</borderlayout>

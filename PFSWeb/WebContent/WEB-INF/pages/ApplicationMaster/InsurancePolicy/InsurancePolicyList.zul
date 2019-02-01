@@ -104,7 +104,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingInsurancePolicyList" height="35px" />
+					<paging id="pagingInsurancePolicyList" />
 				</south>
 
 			</borderlayout>

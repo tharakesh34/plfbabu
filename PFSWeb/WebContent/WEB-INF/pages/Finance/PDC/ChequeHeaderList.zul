@@ -87,7 +87,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingChequeHeaderList" height="35px" />
+					<paging id="pagingChequeHeaderList" />
 				</south>
 
 			</borderlayout>

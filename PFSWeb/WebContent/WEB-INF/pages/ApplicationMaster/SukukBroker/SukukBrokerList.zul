@@ -94,7 +94,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingSukukBrokerList" height="35px" />
+					<paging id="pagingSukukBrokerList" />
 				</south>
 			</borderlayout>
 		</window>

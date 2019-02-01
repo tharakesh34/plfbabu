@@ -108,7 +108,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingLimitStructureList" height="35px" />
+					<paging id="pagingLimitStructureList" />
 				</south>
 			</borderlayout>
 		</window>

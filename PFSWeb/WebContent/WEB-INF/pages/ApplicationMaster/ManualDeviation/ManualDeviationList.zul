@@ -103,7 +103,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingManualDeviationList" height="35px" />
+					<paging id="pagingManualDeviationList" />
 				</south>
 
 			</borderlayout>

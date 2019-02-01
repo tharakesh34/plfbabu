@@ -90,7 +90,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingQueryCategoryList" height="35px" />
+					<paging id="pagingQueryCategoryList" />
 				</south>
 
 			</borderlayout>

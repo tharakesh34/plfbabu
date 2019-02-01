@@ -94,7 +94,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingProfitCenterList" height="35px" />
+					<paging id="pagingProfitCenterList" />
 				</south>
 
 			</borderlayout>

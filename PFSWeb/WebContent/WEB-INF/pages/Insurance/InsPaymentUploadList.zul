@@ -84,7 +84,7 @@
 				</div>	
 			</center>
 					<south border="none" >
-					<paging id="pagingInsPaymentUploadList" height="35px"/>
+					<paging id="pagingInsPaymentUploadList" />
 				</south>
 	  </borderlayout>
 	</window>

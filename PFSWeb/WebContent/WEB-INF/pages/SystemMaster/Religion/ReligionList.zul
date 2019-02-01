@@ -92,7 +92,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingReligionList" height="35px" />
+					<paging id="pagingReligionList" />
 				</south>
 
 			</borderlayout>

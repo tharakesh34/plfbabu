@@ -104,7 +104,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingBounceReasonList" height="35px" />
+					<paging id="pagingBounceReasonList" />
 				</south>
 
 			</borderlayout>

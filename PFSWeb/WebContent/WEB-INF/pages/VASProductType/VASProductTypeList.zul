@@ -104,7 +104,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingVASProductTypeList" height="35px" />
+					<paging id="pagingVASProductTypeList" />
 				</south>
 
 			</borderlayout>

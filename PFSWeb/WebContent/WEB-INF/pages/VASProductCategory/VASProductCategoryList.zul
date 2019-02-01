@@ -97,7 +97,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingVASProductCategoryList" height="35px" />
+					<paging id="pagingVASProductCategoryList" />
 				</south>
 
 			</borderlayout>

@@ -167,7 +167,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingVASRecordingList" height="35px" />
+					<paging id="pagingVASRecordingList" />
 				</south>
 
 			</borderlayout>

@@ -104,7 +104,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingReasonCodeList" height="35px" />
+					<paging id="pagingReasonCodeList" />
 				</south>
 
 			</borderlayout>

@@ -93,7 +93,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingOtherBankFinanceTypeList" height="35px" />
+					<paging id="pagingOtherBankFinanceTypeList" />
 				</south>
 			</borderlayout>
 		</window>

@@ -139,7 +139,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingVASConfigurationList" height="35px" />
+					<paging id="pagingVASConfigurationList" />
 				</south>
 
 			</borderlayout>

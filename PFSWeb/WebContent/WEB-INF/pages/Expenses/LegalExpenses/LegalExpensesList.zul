@@ -104,7 +104,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingLegalExpensesList" height="35px" />
+					<paging id="pagingLegalExpensesList" />
 				</south>
 
 			</borderlayout>

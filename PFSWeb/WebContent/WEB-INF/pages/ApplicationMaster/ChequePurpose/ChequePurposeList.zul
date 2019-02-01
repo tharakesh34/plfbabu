@@ -97,7 +97,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingChequePurposeList" height="35px" />
+					<paging id="pagingChequePurposeList" />
 				</south>
 			</borderlayout>
 		</window>

@@ -98,7 +98,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingAccountMappingList" height="35px" />
+					<paging id="pagingAccountMappingList" />
 				</south>
 
 			</borderlayout>

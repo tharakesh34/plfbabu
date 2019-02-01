@@ -113,7 +113,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingBankBranchList" height="35px" />
+					<paging id="pagingBankBranchList" />
 				</south>
 
 			</borderlayout>

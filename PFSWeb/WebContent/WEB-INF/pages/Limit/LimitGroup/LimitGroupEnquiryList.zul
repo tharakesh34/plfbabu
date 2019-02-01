@@ -99,7 +99,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingLimitGroupList" height="35px" />
+					<paging id="pagingLimitGroupList" />
 				</south>
 			</borderlayout>
 		</window>

@@ -159,7 +159,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingManagerChequeList" height="35px" />
+					<paging id="pagingManagerChequeList" />
 				</south>
 
 			</borderlayout>

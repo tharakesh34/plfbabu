@@ -117,7 +117,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingExtFieldConfigList" height="35px" />
+					<paging id="pagingExtFieldConfigList" />
 				</south>
 			</borderlayout>
 		</window>

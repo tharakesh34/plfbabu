@@ -38,7 +38,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingFinQueryDetailList" height="35px" />
+					<paging id="pagingFinQueryDetailList" />
 				</south>
 
 			</borderlayout>

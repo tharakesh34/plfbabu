@@ -94,7 +94,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingCostCenterList" height="35px" />
+					<paging id="pagingCostCenterList" />
 				</south>
 
 			</borderlayout>

@@ -56,7 +56,7 @@
 				</center>
 
 				<south border="border:5px">
-					<paging id="pagingDataExtractionList" height="35px" visible="false" />
+					<paging id="pagingDataExtractionList" visible="false" />
 				</south>
 			</borderlayout>
 		</window>

@@ -92,7 +92,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingPinCodeList" height="35px" />
+					<paging id="pagingPinCodeList" />
 				</south>
 
 			</borderlayout>

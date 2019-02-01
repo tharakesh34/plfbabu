@@ -91,7 +91,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingNPABucketConfigurationList" height="35px" />
+					<paging id="pagingNPABucketConfigurationList" />
 				</south>
 
 			</borderlayout>

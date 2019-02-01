@@ -94,7 +94,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingQueryDetailList" height="35px" />
+					<paging id="pagingQueryDetailList" />
 				</south>
 
 			</borderlayout>

@@ -87,7 +87,7 @@
 									hflex="min" />
 							</listhead>
 						</listbox>
-						<paging id="pagingSukukBrokerBondsList" height="35px" />
+						<paging id="pagingSukukBrokerBondsList" />
 					</groupbox>
 				</div>
 			</center>

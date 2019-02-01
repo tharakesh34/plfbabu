@@ -81,7 +81,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingBuilderGroupList" height="35px" />
+					<paging id="pagingBuilderGroupList" />
 				</south>
 
 			</borderlayout>

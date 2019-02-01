@@ -94,7 +94,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingNPABucketList" height="35px" />
+					<paging id="pagingNPABucketList" />
 				</south>
 
 			</borderlayout>

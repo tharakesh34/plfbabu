@@ -108,7 +108,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingHoldDisbursementList" height="35px"/>
+					<paging id="pagingHoldDisbursementList" />
 				</south>
 				
 			</borderlayout>

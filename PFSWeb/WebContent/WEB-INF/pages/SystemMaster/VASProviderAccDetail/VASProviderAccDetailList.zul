@@ -117,7 +117,7 @@
 				</center>
 
 				<south border="none" >
-					<paging id="pagingVASProviderAccDetailList" height="35px"/>
+					<paging id="pagingVASProviderAccDetailList" />
 				</south>
 				
 			</borderlayout>

@@ -93,7 +93,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingBuilderProjcetList" height="35px" />
+					<paging id="pagingBuilderProjcetList" />
 				</south>
 
 			</borderlayout>

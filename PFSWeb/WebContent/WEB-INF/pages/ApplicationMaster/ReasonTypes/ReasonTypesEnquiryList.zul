@@ -86,7 +86,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingReasonTypesList" height="35px" />
+					<paging id="pagingReasonTypesList" />
 				</south>
 
 			</borderlayout>

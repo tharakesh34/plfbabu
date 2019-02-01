@@ -108,7 +108,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingTaxDetailList" height="35px" />
+					<paging id="pagingTaxDetailList" />
 				</south>
 
 			</borderlayout>
