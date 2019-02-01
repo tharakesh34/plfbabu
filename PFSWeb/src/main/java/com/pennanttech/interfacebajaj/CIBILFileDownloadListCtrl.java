@@ -187,13 +187,20 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(fileType.getSelectedItem().getValue())) {
+		String segmentType = fileType.getSelectedItem().getValue();
+		
+		
+		try {
+		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
 			retailCibilReport.generateReport();
-		} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(fileType.getSelectedItem().getValue())) {
+		} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(segmentType)) {
 			corporateCibilReport.generateReport();
 		} else {
 			MessageUtil.showError("File Type cannot be blank.");
 			return;
+		}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 		
 		search();

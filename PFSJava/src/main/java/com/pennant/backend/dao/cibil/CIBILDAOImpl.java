@@ -385,7 +385,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);
 
 		} catch (Exception e) {
-			throw new AppException(bureauType + " Member Details not configured");
+			throw new AppException("Please configure the CIBIL member details for "+bureauType+".");
 		}
 
 	}
