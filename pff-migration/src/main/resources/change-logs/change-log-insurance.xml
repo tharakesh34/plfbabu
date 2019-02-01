@@ -4497,7 +4497,7 @@
   	</sql>
   </changeSet>
   
-  <changeSet id="164" author="">
+  <changeSet id="164" author="DurgaPrasad G">
 	<sql>
 		  	
 		Update Data_Engine_Config set uploadpath = '/opt/pennant/PFF/insurance/premiumcalculation' Where name = 'VAS_PREMIUM_CALCULATION_UPLOAD';
