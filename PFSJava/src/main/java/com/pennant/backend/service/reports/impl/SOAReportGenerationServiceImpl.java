@@ -44,11 +44,14 @@ package com.pennant.backend.service.reports.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,10 +60,18 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
+import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -70,6 +81,8 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -80,6 +93,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.InterestRateDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
@@ -87,12 +101,17 @@ import com.pennant.backend.model.systemmasters.SOASummaryReport;
 import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.dataengine.model.EventProperties;
 
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
@@ -103,6 +122,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private static final String exclusive = "^";
 
 	private SOAReportGenerationDAO soaReportGenerationDAO;
+	private FinanceTaxDetailDAO financeTaxDetailDAO;
+	private CustomerDetailsService customerDetailsService;
+	private RuleDAO ruleDAO;
+	private FinFeeDetailService finFeeDetailService;
+	private RuleExecutionUtil ruleExecutionUtil;
+	private FeeTypeDAO feeTypeDAO;
+	
+	private String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
+	private int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
 	private Date fixedEndDate = null;
 
@@ -560,6 +588,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
 			//FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
+			
+			FeeType bounceFeeType = null;
+			Map<String, BigDecimal> taxPercmap = getTaxPercentages(finMain);
 
 			BigDecimal due = BigDecimal.ZERO;
 			BigDecimal receipt = BigDecimal.ZERO;
@@ -738,25 +769,46 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
 
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount())
-										.subtract(manualAdvise.getWaivedAmount());
+								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+								
+								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
+									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), manualAdvise.getTaxComponent());
+									bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(gstAmount);
+								}
 							}
 
 							if (manualAdvise.getPaidAmount() != null) {
-								bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount());
+								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
+									bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount()).
+											add(manualAdvise.getPaidCGST()).add(manualAdvise.getPaidIGST()).add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidSGST());
+								} else {
+									bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount());
+								}
 							}
 						}
 
 						if (manualAdvise.getBounceID() > 0) {
 
+							if (bounceFeeType == null) {
+								bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+							}
+							
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount
-										.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+								
+								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
+									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), bounceFeeType.getTaxComponent());
+									bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
+								}
 							}
 
 							if (manualAdvise.getPaidAmount() != null) {
-								bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount
-										.add(manualAdvise.getPaidAmount());
+								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
+									bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount()).
+											add(manualAdvise.getPaidCGST()).add(manualAdvise.getPaidIGST()).add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidSGST());
+								} else {
+									bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount());
+								}
 							}
 						}
 					}
@@ -837,6 +889,40 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 		logger.debug("Leaving");
 		return soaSummaryReportsList;
+	}
+
+	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent) {
+		
+		BigDecimal gstAmount = BigDecimal.ZERO;
+		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
+		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
+		BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
+		BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
+		
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+			if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal cgst = (feeAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
+				gstAmount = gstAmount.add(cgst);
+			}
+			if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal sgst = (feeAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
+				gstAmount = gstAmount.add(sgst);
+			}
+			if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal ugst = (feeAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
+				gstAmount = gstAmount.add(ugst);
+			}
+			if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal igst = (feeAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
+				gstAmount = gstAmount.add(igst);
+			}
+		}
+		
+		return gstAmount;
 	}
 
 	/**
@@ -1732,5 +1818,160 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	public List<String> getSOAFinTypes() {
 
 		return soaReportGenerationDAO.getSOAFinTypes();
+	}
+	
+	public Map<String, BigDecimal> getTaxPercentages(FinanceMain finMain) {
+		
+		//FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finMain.FinReference(), "", false);
+		
+		FinanceDetail financeDetail = new FinanceDetail(); 
+		FinScheduleData finSchData = new FinScheduleData();
+		finSchData.setFinanceMain(finMain);
+		financeDetail.setFinScheduleData(finSchData);
+		financeDetail.setFinanceTaxDetail(null);
+		financeDetail.setCustomerDetails(null);
+
+		// Set Tax Details if Already exists
+		if (financeDetail.getFinanceTaxDetail() == null) {
+			financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO()
+					.getFinanceTaxDetail(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), ""));
+		}
+
+		// Customer Details			
+		if (financeDetail.getCustomerDetails() == null) {
+			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
+					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
+		}
+
+		String custDftBranch = null;
+		String highPriorityState = null;
+		String highPriorityCountry = null;
+		if (financeDetail.getCustomerDetails() != null) {
+			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer
+							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						highPriorityState = customerAddres.getCustAddrProvince();
+						highPriorityCountry = customerAddres.getCustAddrCountry();
+						break;
+					}
+				}
+			}
+		}
+
+		// Map Preparation for Executing GST rules
+		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
+		HashMap<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode, custDftBranch,
+				highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
+
+		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
+
+		BigDecimal totalTaxPerc = BigDecimal.ZERO;
+		Map<String, BigDecimal> taxPercMap = new HashMap<>();
+		taxPercMap.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
+
+		for (Rule rule : rules) {
+			BigDecimal taxPerc = BigDecimal.ZERO;
+			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_CGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_IGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_SGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_UGST, taxPerc);
+			}
+		}
+		taxPercMap.put("TOTALGST", totalTaxPerc);
+
+		return taxPercMap;
+	}
+	
+	/**
+	 * Method for Processing of SQL Rule and get Executed Result
+	 * 
+	 * @return
+	 */
+	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy) {
+		logger.debug("Entering");
+
+		BigDecimal result = BigDecimal.ZERO;
+		try {
+			Object exereslut = getRuleExecutionUtil().executeRule(sqlRule, executionMap, finCcy,
+					RuleReturnType.DECIMAL);
+			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
+				result = BigDecimal.ZERO;
+			} else {
+				result = new BigDecimal(exereslut.toString());
+			}
+		} catch (Exception e) {
+			logger.debug(e);
+		}
+
+		logger.debug("Leaving");
+		return result;
+	}
+
+	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
+		return financeTaxDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public CustomerDetailsService getCustomerDetailsService() {
+		return customerDetailsService;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public FinFeeDetailService getFinFeeDetailService() {
+		return finFeeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 }

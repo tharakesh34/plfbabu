@@ -114,7 +114,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(
 				" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType, FixedRateTenor,");
 		selectSql.append(
-				" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin, advemiterms,advanceemi,MaturityDate ");
+				" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin, advemiterms,advanceemi,MaturityDate, CustId ");
 		selectSql.append(" FROM  FinanceMain Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -291,11 +291,11 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(
-				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
-		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent ");
-		selectSql.append(" FROM ManualAdvise T1 Left Join");
-		selectSql.append(" FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId  ");
+		selectSql.append(" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
+		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
+		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST"); 
+		selectSql.append(" FROM ManualAdvise T1");
+		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
