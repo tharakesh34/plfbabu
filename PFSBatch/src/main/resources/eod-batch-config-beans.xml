@@ -699,21 +699,7 @@
 	<bean id="vehicleDealerService" class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl" />
 
 	<bean id="financeReferenceDetailService" class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" />
-
-	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService" scope="prototype">
-		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
-		<property name="mailTemplateService" ref="mailTemplateService" />
-		<property name="notificationsService" ref="notificationsService" />
-		<property name="customerEMailService" ref="customerEMailService" />
-		<property name="notesService" ref="notesService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="securityRoleService" ref="securityRoleService" />
-		<property name="securityUserService" ref="securityUserService" />
-		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
-		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
-	</bean>
-	
+		
 	<!--============ Customer Details ============== -->
 	<bean id="customerDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

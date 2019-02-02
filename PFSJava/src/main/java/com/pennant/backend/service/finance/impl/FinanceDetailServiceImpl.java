@@ -374,7 +374,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Qualifier("financeDetailPostValidationHook")
 	private PostValidationHook postValidationHook;
 
-	@Autowired
+	@Autowired(required = false)
 	private NotificationService notificationService;
 	private long tempWorkflowId;
 
@@ -2831,8 +2831,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			List<String> mobileNumberList = new ArrayList<>();
 			mobileNumberList.add(mobileNumber);
 			notification.setMobileNumbers(mobileNumberList);
-
-			notificationService.sendNotification(notification, financeDetail);
+			
+			if(notificationService == null) {
+				notificationService.sendNotification(notification, financeDetail);
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -4628,8 +4630,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			notification.setReceivedBy(financeMain.getLastMntBy());
 			financeMain.setWorkflowId(tempWorkflowId);
 			try {
-				notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
-						financeDetail.getDocumentDetailsList());
+				
+				if(notificationService == null) {
+					notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
+							financeDetail.getDocumentDetailsList());
+				}
+				
 			} catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
