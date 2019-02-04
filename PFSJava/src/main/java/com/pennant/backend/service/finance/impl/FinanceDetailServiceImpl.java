@@ -4156,7 +4156,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getGurantorsDetailList() != null
 						&& !financeDetail.getGurantorsDetailList().isEmpty()) {
 					auditDetails.addAll(getGuarantorDetailService().doApprove(financeDetail.getGurantorsDetailList(),
-							"", tranType, financeMain.getFinSourceID()));
+							"", tranType, financeMain.getFinSourceID(),auditHeader.getApiHeader()));
 				}
 
 				// set the Audit Details & Save / Update JountAccount Details
@@ -4164,14 +4164,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getJountAccountDetailList() != null
 						&& !financeDetail.getJountAccountDetailList().isEmpty()) {
 					auditDetails.addAll(getJointAccountDetailService().doApprove(
-							financeDetail.getJountAccountDetailList(), "", tranType, financeMain.getFinSourceID()));
+							financeDetail.getJountAccountDetailList(), "", tranType, financeMain.getFinSourceID(),auditHeader.getApiHeader()));
 				}
 
 				// set Finance Collateral Details Audit
 				// =======================================
 				if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
 					auditDetails.addAll(getFinCollateralService().doApprove(financeDetail.getFinanceCollaterals(), "",
-							tranType, financeMain.getFinSourceID()));
+							tranType, financeMain.getFinSourceID(),auditHeader.getApiHeader()));
 				}
 
 				// Finance Eligibility Rule Details
@@ -5348,7 +5348,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getGurantorsDetailList() != null
 						&& !financeDetail.getGurantorsDetailList().isEmpty()) {
 					auditDetails.addAll(getGuarantorDetailService().doApprove(financeDetail.getGurantorsDetailList(),
-							preApprovalTableType, tranType, ""));
+							preApprovalTableType, tranType, "",auditHeader.getApiHeader()));
 				}
 
 				// set the Audit Details & Save / Update JountAccount Details
@@ -5356,14 +5356,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (financeDetail.getJountAccountDetailList() != null
 						&& !financeDetail.getJountAccountDetailList().isEmpty()) {
 					auditDetails.addAll(getJointAccountDetailService()
-							.doApprove(financeDetail.getJountAccountDetailList(), preApprovalTableType, tranType, ""));
+							.doApprove(financeDetail.getJountAccountDetailList(), preApprovalTableType, tranType, "",auditHeader.getApiHeader()));
 				}
 
 				// set Finance Collateral Details Audit
 				// =======================================
 				if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
 					auditDetails.addAll(getFinCollateralService().doApprove(financeDetail.getFinanceCollaterals(),
-							preApprovalTableType, tranType, ""));
+							preApprovalTableType, tranType, "",auditHeader.getApiHeader()));
 				}
 
 				// set Finance Insurance Details Audit

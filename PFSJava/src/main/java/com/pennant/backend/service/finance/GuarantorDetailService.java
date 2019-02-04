@@ -88,7 +88,7 @@ public interface GuarantorDetailService {
 	List<AuditDetail> saveOrUpdate(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType);
 
 	List<AuditDetail> doApprove(List<GuarantorDetail> guarantorDetailList, String tableType, String auditTranType,
-			String finSourceId);
+			String finSourceId, Object apiHeader);
 
 	List<AuditDetail> validate(List<GuarantorDetail> guarantorDetailList, long workflowId, String method,
 			String auditTranType, String usrLanguage);

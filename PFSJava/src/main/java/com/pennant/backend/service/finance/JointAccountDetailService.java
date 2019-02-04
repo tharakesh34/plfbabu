@@ -89,7 +89,7 @@ public interface JointAccountDetailService {
 	List<AuditDetail> saveOrUpdate(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);
 
 	List<AuditDetail> doApprove(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType,
-			String finSourceId);
+			String finSourceId, Object apiHeader);
 
 	List<AuditDetail> validate(List<JointAccountDetail> jointAcDetailList, long workflowId, String method,
 			String auditTranType, String usrLanguage);
