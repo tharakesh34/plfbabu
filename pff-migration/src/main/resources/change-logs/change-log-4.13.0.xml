@@ -108,10 +108,33 @@
 	<addNotNullConstraint tableName="RMTFinanceTypes_temp" columnName="TaxNoMand"/>
    </changeSet>
 
-	<changeSet id="5" author="vijaykumar.L">
+	<changeSet id="5.1" author="vijaykumar.L" dbms="oracle,MSSQL">
 		<sql>
-			alter table QUERYDETAIL alter column ASSIGNEDROLE varchar(100);
-			alter table QUERYDETAIL_TEMP alter column ASSIGNEDROLE varchar(100);
+			alter table QUERYDETAIL alter column ASSIGNEDROLE  varchar(100);
+			alter table QUERYDETAIL_TEMP alter column ASSIGNEDROLE  varchar(100);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="5.2_pre" author="vijaykumar.L" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'querydetail');
+					select deps_save_and_drop_dependencies ('plf', 'querydetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="5.2" author="vijaykumar.L" dbms="postgresql">
+		<sql>
+			alter table QUERYDETAIL alter column ASSIGNEDROLE TYPE varchar(100);
+			alter table QUERYDETAIL_TEMP alter column ASSIGNEDROLE TYPE varchar(100);
+		</sql>
+	</changeSet>
+	<changeSet id="5.2_post" author="vijaykumar.L" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'querydetail');
+					select deps_restore_dependencies ('plf', 'querydetail_temp');
+			]]>
 		</sql>
 	</changeSet>
 
