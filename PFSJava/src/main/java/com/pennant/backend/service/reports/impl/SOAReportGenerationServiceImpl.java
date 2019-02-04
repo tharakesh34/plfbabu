@@ -129,8 +129,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private RuleExecutionUtil ruleExecutionUtil;
 	private FeeTypeDAO feeTypeDAO;
 	
-	private String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
-	private int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+	
 
 	private Date fixedEndDate = null;
 
@@ -760,6 +759,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					BigDecimal bounceGreaterZeroAdviseAmount = BigDecimal.ZERO;
 					BigDecimal bounceZeroPaidAmount = BigDecimal.ZERO;
 					BigDecimal bounceGreaterZeroPaidAmount = BigDecimal.ZERO;
+					
+					String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
+					int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
 					for (ManualAdvise manualAdvise : manualAdviseList) {
 						if (manualAdvise.getAdviseType() == 2 && manualAdvise.getBalanceAmt() != null) {
@@ -772,7 +774,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
 								
 								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
-									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), manualAdvise.getTaxComponent());
+									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), manualAdvise.getTaxComponent(), taxRoundMode, taxRoundingTarget);
 									bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(gstAmount);
 								}
 							}
@@ -797,7 +799,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
 								
 								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
-									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), bounceFeeType.getTaxComponent());
+									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), bounceFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
 									bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 								}
 							}
@@ -891,7 +893,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		return soaSummaryReportsList;
 	}
 
-	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent) {
+	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent, String taxRoundMode, int taxRoundingTarget) {
 		
 		BigDecimal gstAmount = BigDecimal.ZERO;
 		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
