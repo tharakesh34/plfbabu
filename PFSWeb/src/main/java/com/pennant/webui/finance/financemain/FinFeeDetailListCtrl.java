@@ -440,9 +440,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (!financeDetail.isNewRecord()) {
 			if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailActualList())) {
 				for (FinFeeDetail finFee : financeDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-					if (BigDecimal.ZERO.compareTo(finFee.getCalculatedAmount()) != 0
-							&& finFee.getCalculatedAmount().compareTo(finFee.getActualAmount()) != 0) {
-						finFee.setFeeModified(true);
+					if (BigDecimal.ZERO.compareTo(finFee.getCalculatedAmount()) != 0) {
+						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFee.getTaxComponent())) {
+							if (finFee.getCalculatedAmount().compareTo(finFee.getActualAmountOriginal()) != 0) {
+								finFee.setFeeModified(true);
+							}
+						} else {
+							if (finFee.getCalculatedAmount().compareTo(finFee.getActualAmount()) != 0) {
+								finFee.setFeeModified(true);
+							}
+						}
 					}
 				}
 			}
