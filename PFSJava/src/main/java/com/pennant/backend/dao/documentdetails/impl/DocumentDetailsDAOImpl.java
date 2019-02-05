@@ -185,7 +185,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	public long save(DocumentDetails documentDetails, String type) {
 		logger.debug("Entering");
 
-		if (documentDetails.getDocId() == Long.MIN_VALUE) {
+		if (documentDetails.getDocId() == Long.MIN_VALUE || documentDetails.getDocId() == 0) {
 			documentDetails.setDocId(getNextValue("SeqDocumentDetails"));
 		}
 

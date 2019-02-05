@@ -565,6 +565,10 @@ public class InsuranceFileImportService {
 				}
 
 				status.setStatus(ExecutionStatus.E.name());
+				if (isError) {
+					continue;
+				}
+				
 				if (!StringUtils.equalsIgnoreCase(manufacturerName, detailFromFile.getManufacturerName())) {
 					throw new Exception("Manufacturer name not matched with the selected manufacturer.");
 				}
@@ -655,6 +659,7 @@ public class InsuranceFileImportService {
 
 				sucessRecords++;
 			} catch (Throwable e) {
+				isError = true;
 				logger.debug(Literal.EXCEPTION, e);
 				updateLog(status.getId(), detailFromFile.getCustomerAgeF(), "F", e.getMessage());
 				failureRecords++;

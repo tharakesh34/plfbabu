@@ -7258,7 +7258,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 
 				for (VASRecording vasRecording : vasRecordingList) {
-					if (VASConsatnts.VAS_ALLOWFEE_AUTO.equals(vasRecording.getVasConfiguration().getAllowFeeType())) {
+					if (vasRecording.getVasConfiguration() != null && VASConsatnts.VAS_ALLOWFEE_AUTO.equals(vasRecording.getVasConfiguration().getAllowFeeType())) {
 						addVASMessage = true;
 						break;
 					}
@@ -7836,7 +7836,24 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (aFinanceDetail.getDocumentDetailsList() == null) {
 					aFinanceDetail.setDocumentDetailsList(new ArrayList<DocumentDetails>());
 				}
-				aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
+				//aFinanceDetail.getDocumentDetailsList().addAll(agenDocList);
+				
+				for (int i = 0; i < agenDocList.size(); i++) {
+					boolean rcdFound = false;
+					for (int j = 0; j < aFinanceDetail.getDocumentDetailsList().size(); j++) {
+						if(!StringUtils.equals(aFinanceDetail.getDocumentDetailsList().get(j).getDocCategory(), agenDocList.get(i).getDocCategory())){
+							continue;
+						}
+						rcdFound = true;
+						aFinanceDetail.getDocumentDetailsList().get(j).setDocImage(agenDocList.get(i).getDocImage());
+						aFinanceDetail.getDocumentDetailsList().get(j).setDocRefId(agenDocList.get(i).getDocRefId());
+						break;
+					}
+					
+					if(!rcdFound){
+						aFinanceDetail.getDocumentDetailsList().add(agenDocList.get(i));
+					}
+				}
 				autoDownloadMap.put("autoDownLoadDocs", autoDownloadLst);
 				agrdefMap = null;
 				finRefMap = null;

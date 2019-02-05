@@ -4902,10 +4902,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		default:
 			// Execute any other custom service tasks
 			if (StringUtils.isNotBlank(task.getOperation())) {
-				/*boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
+				boolean taskExecuted = getCustomServiceTask().executeExternalServiceTask(auditHeader, task);
 				if (taskExecuted) {
 					return auditHeader;
-				}*/
+				}
 			}
 
 			if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
@@ -6336,6 +6336,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (contractorAssetDetails != null && !contractorAssetDetails.isEmpty()) {
 					auditDetails.addAll(getContractorAssetDetailService().validate(financeDetail, method, usrLanguage));
 				}
+			}
+			
+			// Cheque Header Details (TODO : Temporary Validation addition)
+			// =======================================
+			if (financeDetail.getChequeHeader() != null) {
+				auditDetail = finChequeHeaderService.validation(auditDetail, usrLanguage);
+				auditHeader.setAuditDetail(auditDetail);
+				auditHeader.setErrorList(auditDetail.getErrorDetails());
 			}
 
 			// Finance Check List Details
@@ -8971,7 +8979,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				long nextUserId = 0;
 
 				// Check if any base role available for the role code
-				baseRole = financeMain.getLovDescBaseRoleCodeMap().get(nextRoleCodes[i]);
+				if(financeMain.getLovDescBaseRoleCodeMap() != null){
+					baseRole = financeMain.getLovDescBaseRoleCodeMap().get(nextRoleCodes[i]);
+				}
 
 				// If base role available, check for the BASE ROLE user in Task Owners table else for the ROLE user and
 				// assign

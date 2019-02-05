@@ -1,5 +1,6 @@
 package com.pennant.backend.service.finance;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennanttech.pff.core.TableType;
@@ -17,4 +18,6 @@ public interface FinChequeHeaderService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	ChequeHeader getChequeHeaderByRef(String finReference);
+
+	AuditDetail validation(AuditDetail auditDetail, String usrLanguage);
 }

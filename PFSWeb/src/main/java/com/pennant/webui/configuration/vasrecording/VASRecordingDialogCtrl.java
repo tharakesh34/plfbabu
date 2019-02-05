@@ -1666,7 +1666,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			List<ScriptError> defaultList = defaults.getAll();
 			for (int i = 0; i < defaultList.size(); i++) {
 				ScriptError dftKeyValue = defaultList.get(i);
-				if (!isNewrecord()) {
+				if (StringUtils.trimToNull(this.vASRecording.getVasReference()) == null || !isNewrecord()) {
 					ExtendedFieldDetail detail = getFieldDetail(dftKeyValue.getProperty(), extendedFieldDetails);
 					if (!detail.isVisible() || detail.isValFromScript()) {
 						if (fieldValuesMap.containsKey(dftKeyValue.getProperty())) {

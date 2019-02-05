@@ -366,10 +366,11 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 
 		ChequeDetail chequeDetail = new ChequeDetail();
 		String[] fields = PennantJavaUtil.getFieldDetails(chequeDetail, chequeDetail.getExcludeFields());
+		ChequeDetail detail = null;
 
 		for (int i = 0; i < chequeHeader.getChequeDetailList().size(); i++) {
 
-			ChequeDetail detail = chequeHeader.getChequeDetailList().get(i);
+			detail = chequeHeader.getChequeDetailList().get(i);
 			if (StringUtils.isEmpty(detail.getRecordType())) {
 				continue;
 			}

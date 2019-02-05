@@ -98,6 +98,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASConfiguration;
@@ -751,6 +752,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.manufacturer.setFilters(filters);
 
+
 		this.feeAccounting.setMandatoryStyle(true);
 		setPropertiesForAEExtCombobox(this.feeAccounting, AccountEventConstants.ACCEVENT_VAS_FEE);
 
@@ -1193,6 +1195,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.freeLockPeriod.setValue(aVASConfiguration.getFreeLockPeriod());
 		this.vasType.setValue(aVASConfiguration.getProductType());
 		this.vasType.setDescription(aVASConfiguration.getProductTypeDesc());
+		this.manufacturer.setObject(new VehicleDealer(aVASConfiguration.getManufacturerId()));
 		this.manufacturer.setValue(String.valueOf(aVASConfiguration.getManufacturerId()));
 		this.manufacturer.setDescription(aVASConfiguration.getManufacturerName());
 		this.active.setChecked(aVASConfiguration.isActive());
@@ -1325,7 +1328,8 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		// Manufaturer
 		try {
-			aVASConfiguration.setManufacturerId(Long.valueOf(this.manufacturer.getValue()));
+			VehicleDealer object = (VehicleDealer) this.manufacturer.getObject();
+			aVASConfiguration.setManufacturerId(object.getId());
 			aVASConfiguration.setManufacturerName(this.manufacturer.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);

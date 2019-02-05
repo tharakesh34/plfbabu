@@ -107,6 +107,7 @@ import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
+import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceEligibility;
@@ -200,9 +201,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private CustomerDedupCheckService customerDedupService;
 	@Autowired(required = false)
 	private CustomerInterfaceService customerExternalInterfaceService;
-
-	private CustomerDedupService custDedupService;
-
+	private CustomerDedupService				custDedupService;
+	@Autowired
+	private VASConfigurationService				vASConfigurationService;
 	private String menuItemRightName = null;
 	private FinanceEligibility financeEligibility = null;
 	private boolean isPromotionPick = false;
@@ -1031,6 +1032,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecording.setAccrualTillDate(DateUtility.getAppDate());
 					vasRecording.setFee(finTypeVASProducts.getVasFee());
 					vasRecording.setRecordType(PennantConstants.RCD_ADD);
+					vasRecording.setVasConfiguration(getvASConfigurationService().getApprovedVASConfigurationByCode(finTypeVASProducts.getVasProduct(), true));
 					vasRecordingList.add(vasRecording);
 				}
 			}
@@ -2023,5 +2025,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setCustDedupService(CustomerDedupService custDedupService) {
 		this.custDedupService = custDedupService;
+	}
+
+	public VASConfigurationService getvASConfigurationService() {
+		return vASConfigurationService;
+	}
+
+	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
+		this.vASConfigurationService = vASConfigurationService;
 	}
 }

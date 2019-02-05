@@ -961,6 +961,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
 					}
+					
+					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
+					/*if(!StringUtils.equals(rcdType, PennantConstants.RECORD_TYPE_UPD) && documentDetails.getDocId() > 0){
+						documentDetails.setDocId(0);
+					}*/
 					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
 					getDocumentDetailsDAO().save(documentDetails, type);
 				}

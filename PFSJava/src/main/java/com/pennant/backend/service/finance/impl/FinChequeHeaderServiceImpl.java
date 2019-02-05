@@ -185,8 +185,9 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
+		ChequeDetail chequeDetail = null;
 		for (int i = 0; i < auditDetails.size(); i++) {
-			ChequeDetail chequeDetail = (ChequeDetail) auditDetails.get(i).getModelData();
+			chequeDetail = (ChequeDetail) auditDetails.get(i).getModelData();
 			if (StringUtils.isEmpty(chequeDetail.getRecordType())) {
 				continue;
 			}
@@ -302,10 +303,11 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		ChequeDetail chequeDetail = new ChequeDetail();
 		String[] fields = PennantJavaUtil.getFieldDetails(chequeDetail, chequeDetail.getExcludeFields());
+		ChequeDetail detail = null;
 
 		for (int i = 0; i < chequeHeader.getChequeDetailList().size(); i++) {
 
-			ChequeDetail detail = chequeHeader.getChequeDetailList().get(i);
+			detail = chequeHeader.getChequeDetailList().get(i);
 			if (StringUtils.isEmpty(detail.getRecordType())) {
 				continue;
 			}
@@ -670,8 +672,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	 * @param usrLanguage
 	 * @return
 	 */
-
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	@Override
+	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
