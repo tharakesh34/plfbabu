@@ -734,6 +734,45 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
+	
+	/**
+	 *  Method to reject loan based on data provided by customer
+	 *  @param financeDetail {@link FinanceDetail}
+	 *  @return {@link WSReturnStatus}
+	 */
+	@Override
+	public WSReturnStatus rejectFinance(FinanceDetail financeDetail) throws ServiceException {
+		
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = null;
+		if (StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinReference())) {
+			List<ErrorDetail> validationErrors = createFinanceController.rejectFinanceValidations(financeDetail);
+			if (CollectionUtils.isEmpty(validationErrors)) {
+				financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
+				List<ErrorDetail> financeDetailErrors = null;
+				if (!CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getErrorDetails())) {
+					financeDetailErrors = financeDetail.getFinScheduleData().getErrorDetails();
+					for (ErrorDetail errorDetail : financeDetailErrors) {
+						doEmptyResponseObject(financeDetail);
+						returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+					}
+				} else {
+					returnStatus = createFinanceController.processRejectFinance(financeDetail, false);
+				}
+			} else {
+				for (ErrorDetail errorDetail : validationErrors) {
+					returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters());
+				}
+			}
+		} else {
+			returnStatus = createFinanceController.processRejectFinance(financeDetail, true);
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return returnStatus;
+	}
 
 	/**
 	 * Method to prepare the log fields.

@@ -5738,7 +5738,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Save Finance Details Data on Reject Tables
 		// =======================================
-		if (!isWIF && StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+		if (!isWIF && StringUtils.equals(financeMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {		
 			getFinanceMainDAO().saveRejectFinanceDetails(financeMain);
 		}
 
@@ -5844,7 +5844,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Main Details Deletion
 		// =======================================
-		getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, isAutoReject);
+		FinanceMain dbFinanceMain = getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
+		if (!(null == dbFinanceMain)) {
+			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, isAutoReject);
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());

@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,7 @@ import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.notifications.NotificationsService;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -182,6 +184,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	private NotificationService notificationService;
 	private AgreementGeneration agreementGeneration;
+	private FinanceTypeService financeTypeService;
 
 	/**
 	 * Method for process create finance request
@@ -2743,6 +2746,168 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		return msg;
 	}
 	
+	public List<ErrorDetail> rejectFinanceValidations(final FinanceDetail financeDetail)	{
+		logger.debug(Literal.ENTERING);
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		if(StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF()))	{
+			String[] param = new String[1];
+			param[0] = "cif";
+				
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+			
+			return errorsList;
+		}
+		
+		Customer customer = customerDetailsService.getCustomerByCIF(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF());
+		if(null == customer)	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "cif: " + financeDetail.getFinScheduleData().getFinanceMain().getCustCIF();
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinType()))	{
+			String[] param = new String[1];
+			param[0] = "finType";
+				
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+			
+			return errorsList;
+		}
+		
+		FinanceType financeType = financeTypeService.getFinanceTypeByFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
+		if(null == financeType)	{
+			String[] valueParm = new String[1];
+			valueParm[0] = "finType: " + financeDetail.getFinScheduleData().getFinanceMain().getFinType();
+			
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
+			
+			return errorsList;
+		}
+		
+		if(null == financeDetail.getFinScheduleData().getFinanceMain().getFinAmount())	{
+			financeDetail.getFinScheduleData().getFinanceMain().setFinAmount(BigDecimal.ZERO);
+		}
+		
+		if(null == financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue())	{
+			financeDetail.getFinScheduleData().getFinanceMain().setFinAssetValue(BigDecimal.ZERO);
+		}
+		
+		if(NumberUtils.compare(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms(), 0) == 0)	{
+			String[] param = new String[1];
+			param[0] = "numberOfTerms";
+				
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
+			
+			return errorsList;
+		}
+		
+		logger.debug(Literal.LEAVING);
+		return errorsList;
+	}
+		
+	private WSReturnStatus prepareAndExecuteAuditHeader(FinanceDetail aFinanceDetail, String tranType) {
+		logger.debug(Literal.ENTERING);
+		
+		WSReturnStatus returnStatus = null;
+		
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceDetail.getBefImage(), aFinanceDetail);
+		AuditHeader auditHeader = new AuditHeader(aFinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail, aFinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		
+		AuditHeader rejectAuditHeader = financeDetailService.doReject(auditHeader, false, false);
+		if (rejectAuditHeader.getAuditError() != null) {
+			for (ErrorDetail errorDetail : rejectAuditHeader.getErrorMessage()) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		} else
+			returnStatus = APIErrorHandlerService.getSuccessStatus();
+			
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+	
+	public WSReturnStatus processRejectFinance(FinanceDetail financeDetail, boolean finReferenceAvailable)	{
+		logger.debug(Literal.ENTERING);
+		
+		WSReturnStatus returnStatus = null;
+		
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		// mandatory fields
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		financeMain.setUserDetails(userDetails);
+		financeMain.setLastMntBy(userDetails.getUserId());
+		financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		financeMain.setVersion(1);
+		financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+		
+		// customer details
+		Customer customer = customerDetailsService.getCustomerByCIF(financeMain.getCustCIF());
+		CustomerDetails customerDetails = new CustomerDetails();
+		customerDetails.setCustomer(customer);
+		financeDetail.setCustomerDetails(customerDetails);
+		String tranType = PennantConstants.TRAN_WF;
+		
+		if(!finReferenceAvailable)	{
+			if (StringUtils.isBlank(financeMain.getFinReference())) {
+				financeMain.setFinReference(String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(financeMain, financeDetail.getFinScheduleData().getFinanceType()))));
+			}
+			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			financeMain.setCustID(customer.getCustID());
+			financeMain.setEqualRepay(financeMain.isEqualRepay());
+			financeMain.setRecalType(financeMain.getRecalType());
+			financeMain.setLastRepayDate(financeMain.getFinStartDate());
+			financeMain.setLastRepayPftDate(financeMain.getFinStartDate());
+			financeMain.setLastRepayRvwDate(financeMain.getFinStartDate());
+			financeMain.setLastRepayCpzDate(financeMain.getFinStartDate());
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+
+			returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);	
+		}
+		else	{
+			FinanceMain dbFinanceMain = financeDetailService.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
+			if (!(null == dbFinanceMain)) {
+				financeMain.setFinReference(dbFinanceMain.getFinReference());
+				financeMain.setLastMntOn(dbFinanceMain.getLastMntOn());
+				financeMain.setCustID(dbFinanceMain.getCustID());
+				financeMain.setEqualRepay(dbFinanceMain.isEqualRepay());
+				financeMain.setRecalType(dbFinanceMain.getRecalType());
+				financeMain.setLastRepayDate(dbFinanceMain.getLastRepayDate());
+				financeMain.setLastRepayPftDate(dbFinanceMain.getLastRepayPftDate());
+				financeMain.setLastRepayRvwDate(dbFinanceMain.getLastRepayRvwDate());
+				financeMain.setLastRepayCpzDate(dbFinanceMain.getLastRepayCpzDate());
+	
+				// override received fields with fetch data
+				financeMain.setLovDescCustCIF(dbFinanceMain.getCustCIF());
+				financeMain.setFinType(dbFinanceMain.getFinType());
+				financeMain.setFinAmount(dbFinanceMain.getFinAmount());
+				financeMain.setFinAssetValue(dbFinanceMain.getFinAssetValue());
+				financeMain.setNumberOfTerms(dbFinanceMain.getNumberOfTerms());
+				
+				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				financeDetail.setUserDetails(userDetails);
+				financeDetail.setCustomerDetails(customerDetails);
+				FinanceType dbFinanceType = financeTypeService.getFinanceTypeById(dbFinanceMain.getFinType());
+				financeDetail.getFinScheduleData().setFinanceType(dbFinanceType);
+				
+				returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);
+			} else {
+				// throw validation error
+				String[] valueParam = new String[1];
+				valueParam[0] = "finreference: " + financeDetail.getFinScheduleData().getFinReference();
+	
+				returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParam);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		
+		return returnStatus;
+	}
+	
 	
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
@@ -2903,6 +3068,10 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
 		this.agreementGeneration = agreementGeneration;
+	}
+
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
 	}
 
 }

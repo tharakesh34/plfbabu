@@ -61,6 +61,7 @@ import com.pennant.backend.model.reports.AvailCommitment;
 import com.pennant.backend.model.reports.AvailFinance;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
@@ -844,9 +845,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" FinanceMain");
 		}
 		sql.append(tableType.getSuffix());
-		sql.append(" where FinReference = :FinReference");
-		if (tableType == TableType.MAIN_TAB || !finalize) {
-			sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		if (StringUtils.equalsIgnoreCase(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			sql.append(" where finReference = :finReference ");
+			if (tableType == TableType.TEMP_TAB || !finalize) {
+				sql.append("and LastMntOn = :lastMntOn");
+			}
+		} else {
+			sql.append(" where FinReference = :FinReference");
+			if (tableType == TableType.MAIN_TAB || !finalize) {
+				sql.append(QueryUtil.getConcurrencyCondition(tableType));
+			}
 		}
 
 		// Execute the SQL, binding the arguments.
