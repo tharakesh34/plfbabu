@@ -930,7 +930,7 @@ public class AccrualService extends ServiceHelper {
 			finFeeDetail.setFeeTypeDesc(lppFeeType.getFeeTypeDesc());
 			finFeeDetail.setTaxApplicable(true);
 			finFeeDetail.setOriginationFee(false);
-			finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdGSTLPPAmz());
+			finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz());
 
 			if (taxPercMap != null && calGstMap != null) {
 				finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
@@ -955,7 +955,7 @@ public class AccrualService extends ServiceHelper {
 		 * finFeeDetail.setFeeTypeCode(lpiFeeType.getFeeTypeCode());
 		 * finFeeDetail.setFeeTypeDesc(lpiFeeType.getFeeTypeDesc()); finFeeDetail.setTaxApplicable(true);
 		 * finFeeDetail.setOriginationFee(false);
-		 * finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdGSTLPIAmz());
+		 * finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPIAmz());
 		 * 
 		 * if (taxPercMap != null && calGstMap != null) { finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
 		 * finFeeDetail.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
