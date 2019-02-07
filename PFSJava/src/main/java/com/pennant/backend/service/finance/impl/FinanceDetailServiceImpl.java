@@ -2832,7 +2832,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			mobileNumberList.add(mobileNumber);
 			notification.setMobileNumbers(mobileNumberList);
 			
-			if(notificationService == null) {
+			if(notificationService != null) {
 				notificationService.sendNotification(notification, financeDetail);
 			}
 		} catch (Exception e) {
@@ -4631,7 +4631,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setWorkflowId(tempWorkflowId);
 			try {
 				
-				if(notificationService == null) {
+				if(notificationService != null) {
 					notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
 							financeDetail.getDocumentDetailsList());
 				}
