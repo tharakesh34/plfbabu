@@ -331,7 +331,9 @@ public abstract class AbstractMandateProcess extends AbstractInterface implement
 		sql.append(" MANDATETYPE MANDATE_TYPE,");
 		sql.append(" NUMBEROFTERMS NUMBER_OF_TERMS,");
 		sql.append(" PERIODICITY FREQUENCY,");
-		sql.append(" STATUS");
+		sql.append(" STATUS,");
+		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
+		sql.append(" LASTMNTON REGISTERED_DATE");
 		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
 		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
 
