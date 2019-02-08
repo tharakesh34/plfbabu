@@ -7903,6 +7903,7 @@
 	</bean>
 
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<!-- Late Pay Buckets -->

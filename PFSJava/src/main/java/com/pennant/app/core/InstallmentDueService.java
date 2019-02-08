@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
@@ -25,6 +26,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -35,6 +37,7 @@ public class InstallmentDueService extends ServiceHelper {
 
 	@Autowired
 	private AccountEngineExecution engineExecution;
+	private GSTInvoiceTxnService gstInvoiceTxnService;
 
 	/**
 	 * @param custId
@@ -143,7 +146,16 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
-		postAccountingEOD(aeEvent);
+		aeEvent = postAccountingEOD(aeEvent);
+		
+		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail.getFinScheduleData().setFinanceMain(finEODEvent.getFinanceMain());
+			financeDetail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
+			financeDetail.setFinanceTaxDetail(null);
+			financeDetail.setCustomerDetails(null);
+			getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail, curSchd.getProfitSchd());
+		}
 
 		//Accrual posted on the installment due postings
 		if (aeEvent.isuAmzExists()) {
@@ -306,14 +318,26 @@ public class InstallmentDueService extends ServiceHelper {
 			aeEvent.setDataMap(dataMap);
 			aeEvent.setPostDate(appDate);
 			if (post) {
-				getPostingsPreparationUtil().postAccounting(aeEvent);
+				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
+					getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail, curSchd.getProfitSchd());
+				}
 			} else {
 				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 				datasets.addAll(aeEvent.getReturnDataSet());
 			}
+			
 		}
 		logger.debug(" Leaving ");
 		return datasets;
+	}
+	
+	public GSTInvoiceTxnService getGstInvoiceTxnService() {
+		return gstInvoiceTxnService;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
 }

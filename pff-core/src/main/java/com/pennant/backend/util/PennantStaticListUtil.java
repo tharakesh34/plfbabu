@@ -262,8 +262,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> finLVTCheckList;
 	private static ArrayList<ValueLabel> depositTypesList;
 	private static ArrayList<String> denominations;
-	private static ArrayList<ValueLabel> invoiceTypes; // GST Invoice Types
-														// (Cr/Dr)
+	private static ArrayList<ValueLabel> invoiceTypes; // GST Invoice Types (Cr/Dr/Exempted)
 	private static ArrayList<ValueLabel> filtersList;
 
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
@@ -4295,10 +4294,11 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getInvoiceTypes() {
 		if (invoiceTypes == null) {
 			invoiceTypes = new ArrayList<ValueLabel>();
-			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
-					Labels.getLabel("Invoice_Type_Debit")));
-			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT,
-					Labels.getLabel("Invoice_Type_Credit")));
+			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, Labels.getLabel("Invoice_Type_Debit")));
+			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, Labels.getLabel("Invoice_Type_Credit")));
+			if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
+				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED, Labels.getLabel("Invoice_Type_Exempted")));
+			}
 		}
 		return invoiceTypes;
 	}

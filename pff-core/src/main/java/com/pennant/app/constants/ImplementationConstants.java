@@ -168,4 +168,6 @@ public class ImplementationConstants {
 	//Allow approved mandate in Loan Pending State trough approve mandate API
 	public static final boolean ALW_APPROVED_MANDATE_IN_ORG = false;
 
+	//Allow profit schedule invoice
+	public static final boolean	ALW_PROFIT_SCHD_INVOICE	= false;
 }
