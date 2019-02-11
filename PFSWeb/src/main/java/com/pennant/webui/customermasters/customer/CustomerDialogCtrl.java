@@ -5028,6 +5028,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		map.put("roleCode", getRole());
 		map.put("isRetailCustomer", isRetailCustomer);
 
+		if (isNewCustCret) {
+			map.put("isNewCustCret", isNewCustCret);
+		}
 		if (getFinanceMainDialogCtrl() != null) {
 			map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
 		}
@@ -5083,6 +5086,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				map.put("isRetailCustomer", isRetailCustomer);
 				if (getFinanceMainDialogCtrl() != null) {
 					map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
+				}
+				if (isNewCustCret) {
+					map.put("isNewCustCret", isNewCustCret);
 				}
 				// call the zul-file with the parameters packed in a map
 				try {
