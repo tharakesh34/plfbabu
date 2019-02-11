@@ -174,6 +174,7 @@ import com.pennant.webui.dedup.dedupparm.FetchCustomerDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchDedupDetails;
 import com.pennant.webui.dedup.dedupparm.FetchFinCustomerDedupDetails;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
+import com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -472,6 +473,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	@Autowired(required = false)
 	private CreditInformation creditInformation;
 	protected Button btn_GenerateCibil;
+	private boolean isNewCustCret = false;
+	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 
 	/**
 	 * default constructor.<br>
@@ -541,6 +544,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (arguments.containsKey("moduleName")) {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
+			if (arguments.containsKey("isNewCustCret")) {
+				this.isNewCustCret  = (boolean) arguments.get("isNewCustCret");
+			}
+			if (arguments.containsKey("jointAccountDetailDialogCtrl")) {
+				this.jointAccountDetailDialogCtrl  = (JointAccountDetailDialogCtrl) arguments.get("jointAccountDetailDialogCtrl");
+			}
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
 				isFinanceProcess = true;
@@ -564,7 +573,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
 			old_ccyFormatter = ccyFormatter;
 
-			if (isFinanceProcess || isEnqProcess) {
+			if (isFinanceProcess || isEnqProcess || isNewCustCret) {
 				if (arguments.containsKey("roleCode")) {
 					setRole((String) arguments.get("roleCode"));
 					getUserWorkspace().allocateRoleAuthorities((String) arguments.get("roleCode"), "CustomerDialog");
@@ -602,14 +611,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 
 			/* set components visible dependent of the users rights */
-			if (!isNotFinanceProcess) {
+			if (!isNotFinanceProcess || isNewCustCret) {
 				doCheckRights();
 			}
 
 			// set Field Properties
 			doSetFieldProperties();
 			// Height Setting
-			if ((isFinanceProcess || isNotFinanceProcess) && !isPromotionPickProcess) {
+			if ((isFinanceProcess || isNotFinanceProcess || isNewCustCret) && !isPromotionPickProcess) {
 				int divKycHeight = this.borderLayoutHeight - 80;
 				int semiBorderlayoutHeights = divKycHeight / 2;
 				if (isRetailCustomer) {
@@ -1981,7 +1990,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doCheckEnquiry();
 
 			this.btnCancel.setVisible(false);
-			if (isFinanceProcess || isNotFinanceProcess || isEnqProcess) {
+			if (isFinanceProcess || isNotFinanceProcess || isEnqProcess || isNewCustCret) {
 				this.north.setVisible(false);
 				this.south.setVisible(false);
 				try {
@@ -2004,6 +2013,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					if (groupbox != null) {
 						this.window_CustomerDialog.setHeight(borderLayoutHeight - 75 + "px");
 						groupbox.appendChild(this.window_CustomerDialog);
+					}
+					if(isNewCustCret){
+						this.north.setVisible(true);
+						this.window_CustomerDialog.setHeight(borderLayoutHeight - 75 + "px");
+						this.window_CustomerDialog.doModal();
 					}
 				} catch (UiException e) {
 					logger.error("Exception: ", e);
@@ -3102,8 +3116,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			return;
 		}
 
-		if (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())
-				|| StringUtils.equals("Approve", userAction.getSelectedItem().getLabel())) {
+		if (!isNewCustCret && (StringUtils.equals("Submit", userAction.getSelectedItem().getLabel())
+				|| StringUtils.equals("Approve", userAction.getSelectedItem().getLabel()))) {
 			if (!validateAddressDetails(this.tabkYCDetails)) {
 				return;
 			}
@@ -3117,6 +3131,19 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				return;
 			}
 
+		} else{
+			if (!validateAddressDetails(this.tabkYCDetails)) {
+				return;
+			}
+			if (!validatePhoneDetails(this.tabkYCDetails)) {
+				return;
+			}
+			if (!validateEmailDetails(this.tabkYCDetails)) {
+				return;
+			}
+			if (isRetailCustomer && !validateEmployemntDetails(this.tabkYCDetails)) {
+				return;
+			}
 		}
 		CustEmployeeDetail custEmployeeDetail = aCustomerDetails.getCustEmployeeDetail();
 		// Write the additional validations as per below example
@@ -3191,13 +3218,23 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (StringUtils.isBlank(aCustomer.getNextTaskId())) {
 					aCustomer.setNextRoleCode("");
 				}
-
+				
+				String rcdStatus = "";
+				if(isNewCustCret){
+					rcdStatus = PennantConstants.RCD_STATUS_APPROVED;
+				} else{
+					rcdStatus = aCustomer.getRecordStatus();
+				}
 				String msg = PennantApplicationUtil.getSavingStatus(aCustomer.getRoleCode(),
-						aCustomer.getNextRoleCode(), aCustomer.getCustCIF(), " Customer ", aCustomer.getRecordStatus());
+						aCustomer.getNextRoleCode(), aCustomer.getCustCIF(), " Customer ", rcdStatus);
 				Clients.showNotification(msg, "info", null, null, -1);
-				refreshList();
+				if(!isNewCustCret){
+					refreshList();
+				}
 				closeDialog();
-
+				if(this.jointAccountDetailDialogCtrl != null){
+					this.jointAccountDetailDialogCtrl.setNewCustCIF(aCustomer.getCustCIF());
+				}
 			}
 			logger.debug(" Calling doSave method completed Successfully");
 		} catch (Exception e) {

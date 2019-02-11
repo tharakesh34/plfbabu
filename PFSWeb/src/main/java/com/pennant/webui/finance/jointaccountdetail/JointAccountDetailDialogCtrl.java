@@ -132,6 +132,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Textbox custCIF;
 	protected Longbox custID;
 	protected Button viewCustInfo;
+	protected Button btn_NewCust;
 	protected Label label_CustCIFName;
 	protected Hbox hbox_CustCIFName;
 	protected Space space_CustCIFName;
@@ -217,6 +218,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	@Autowired
 	private SamplingService samplingService;
 	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	public String newCustCIF;
 	
 	/**
 	 * default constructor.<br>
@@ -662,7 +664,69 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.guarantorList = null;
 		}
 	}
+	
+	
+	/**
+	 * @param event
+	 *  Event for Create a new customer
+	 */
+	public void onClick$btn_NewCust(Event event) {
+		logger.debug("Entering" + event.toString());
+		Map<String, Object> map = getDefaultArguments();
+		map.put("jointAccountDetailDialogCtrl", this);
 
+		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CoreCustomerSelect.zul", null, map);
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Build the Customer Dialog Window with Existing Core banking Data
+	 * 
+	 * @throws Exception
+	 */
+	public void buildDialogWindow(CustomerDetails customerDetails, boolean newRecord) throws Exception {
+		logger.debug("Entering");
+		if (customerDetails != null) {
+			if (isWorkFlowEnabled() && customerDetails.getCustomer().getWorkflowId() == 0) {
+				customerDetails.getCustomer().setWorkflowId(getWorkFlowId());
+			}
+			if (newRecord) {
+				// create a new Customer object, We GET it from the backEnd.
+				// CustomerDetails aCustomerDetails =
+				// getCustomerDetailsService().getNewCustomer(false);
+				Customer customerlov = customerDetailsService.fetchCustomerDetails(customerDetails.getCustomer());
+				customerDetails.setCustomer(customerlov);
+				customerDetailsService.setCustomerDetails(customerDetails);
+			}
+			doShowDialogPage(customerDetails);
+		}
+		logger.debug("Leaving");
+	}
+	
+	/**
+	 * Displays the dialog page with the required parameters as map.
+	 * 
+	 * @param customerDetails
+	 *            The entity that need to be passed to the dialog.
+	 */
+	private void doShowDialogPage(CustomerDetails customerDetails) {
+		logger.debug("Entering");
+
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("customerDetails", customerDetails);
+		arg.put("isNewCustCret", true);
+		arg.put("jointAccountDetailDialogCtrl", this);
+		arg.put("newRecord", customerDetails.getCustomer().isNew());
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug("Leaving");
+	}
+	
 	public void onClick$viewCustInfo(Event event) {
 		if ((!this.custCIF.isDisabled()) && (this.custID.getValue() == null || this.custID.getValue() == 0)) {
 			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",
@@ -1856,6 +1920,15 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setAccountInterfaceService(AccountInterfaceService accountInterfaceService) {
 		this.accountInterfaceService = accountInterfaceService;
+	}
+
+	public String getNewCustCIF() {
+		return newCustCIF;
+	}
+
+	public void setNewCustCIF(String newCustCIF) {
+		this.custCIF.setValue(newCustCIF);
+		setCustomersData();
 	}
 
 }

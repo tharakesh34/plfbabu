@@ -58,6 +58,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -91,6 +92,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -115,6 +117,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Borderlayout borderLayout_CoreCustomer;
 	protected Button btnSearchCustFetch;
 	protected CustomerListCtrl customerListCtrl;
+	protected JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private transient boolean validationOn;
 	protected Radio exsiting;
 	protected Radio prospect;
@@ -185,6 +188,15 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doSetFieldProperties();
 
 		fillComboBox(custCtgType, "", PennantAppUtil.getcustCtgCodeList(), "");
+
+		if (arguments.containsKey("jointAccountDetailDialogCtrl")) {
+			this.exsiting.setVisible(false);
+			this.prospect.setSelected(true);
+			Events.sendEvent(Events.ON_CHECK, prospect, null);
+			jointAccountDetailDialogCtrl = (JointAccountDetailDialogCtrl) arguments.get("jointAccountDetailDialogCtrl");
+		} else {
+			jointAccountDetailDialogCtrl = null;
+		}
 
 		custCIF.setFocus(true);
 		window_CoreCustomer.doModal();
@@ -448,7 +460,11 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 			if (customerDetails != null && !isDedupFound) {
-				customerListCtrl.buildDialogWindow(customerDetails, newRecord);
+				if(jointAccountDetailDialogCtrl != null){
+					jointAccountDetailDialogCtrl.buildDialogWindow(customerDetails, newRecord);
+				} else if(customerListCtrl != null){
+					customerListCtrl.buildDialogWindow(customerDetails, newRecord);
+				}
 			}
 			window_CoreCustomer.onClose();
 		} catch (WrongValueException | WrongValuesException wve) {

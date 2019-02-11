@@ -57,6 +57,8 @@
 										<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" />
 										<space spacing="2px" />
 										<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
+										<space spacing="2px" />
+										<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}" tooltiptext="${c:l('tooltip_NewCust')}" />
 									</hbox>
 									<label id="label_CustCIFName" value="${c:l('label_JountAccountDetailDialog_CustCIFName.value')}" />
 									<hbox id="hbox_CustCIFName">
