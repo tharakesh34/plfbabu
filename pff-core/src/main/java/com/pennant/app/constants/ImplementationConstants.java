@@ -170,4 +170,7 @@ public class ImplementationConstants {
 
 	//Allow profit schedule invoice
 	public static final boolean	ALW_PROFIT_SCHD_INVOICE	= false;
+	
+	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
+	public static final boolean NEGATE_SIGN_TB = false;
 }
