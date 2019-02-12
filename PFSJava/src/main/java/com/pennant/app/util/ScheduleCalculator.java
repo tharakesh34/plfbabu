@@ -3195,7 +3195,7 @@ public class ScheduleCalculator {
 	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain, IRRFinanceType irrFinType) {
 		logger.debug("Entering");
 
-		//BigDecimal cal_IRR = BigDecimal.ZERO;
+		// BigDecimal cal_IRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR = BigDecimal.ZERO;
 		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
 		BigDecimal calcAmount = BigDecimal.ZERO;
@@ -3227,33 +3227,35 @@ public class ScheduleCalculator {
 						if (irrFeeType.getFeeTypeID() == fee.getFeeTypeID()) {
 							feePerc = irrFeeType.getFeePercentage();
 							isRcdFound = true;
+							break;
 						}
 					}
 				}
 				BigDecimal calFeeAmount = BigDecimal.ZERO;
-				if (isRcdFound) {
-					calFeeAmount = fee.getActualAmount().subtract(fee.getWaivedAmount());
-					calFeeAmount = (calFeeAmount.multiply(feePerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-					feeAmount = feeAmount.add(calFeeAmount);
+				if (!isRcdFound) {
+					continue;
+				}
+				calFeeAmount = fee.getActualAmount().subtract(fee.getWaivedAmount());
+				calFeeAmount = (calFeeAmount.multiply(feePerc)).divide(new BigDecimal(100), 0,
+						RoundingMode.HALF_DOWN);
+				feeAmount = feeAmount.add(calFeeAmount);
 
-					if (fee.isRefundable()) {
-						refundablefeeAmt = refundablefeeAmt.add(calFeeAmount);
-					}
-				} else {
-					//FIXME: PV 16JUL18 commented to avoid fee inclusion excluded fees for XIRR
-					//feeAmount = feeAmount.add(fee.getActualAmount().subtract(fee.getWaivedAmount()));
+				if (fee.isRefundable()) {
+					refundablefeeAmt = refundablefeeAmt.add(calFeeAmount);
 				}
 			}
 		}
 
-		//FIXME CH Servicing Fees should be handled
+		// FIXME CH Servicing Fees should be handled
 		for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
 
 			if (finScheduleDetail.isDisbOnSchDate()) {
 				repayDateList.add(finScheduleDetail.getSchDate());
 
 				calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
+				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0 && finMain.getAdvEMITerms() > 0) {
+					calcAmount = calcAmount.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvEMITerms()))));
+				}
 				calcAmount = calcAmount.multiply(new BigDecimal(-1));
 				schAmountList.add(calcAmount);
 
@@ -3264,11 +3266,12 @@ public class ScheduleCalculator {
 				schAmountListWithFee.add(calcAmount);
 			}
 
-			if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0 &&
+					DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) != 0) {
 				schAmountList.add(finScheduleDetail.getRepayAmount());
 				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getMaturityDate()) == 0) {
 					schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd())
-							.add(refundablefeeAmt));
+							.subtract(refundablefeeAmt));
 				} else {
 					schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd()));
 				}
@@ -3277,8 +3280,10 @@ public class ScheduleCalculator {
 		}
 
 		/*
-		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
-		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
+		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int
+		 * termsPerYear =
+		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
+		 * calculated_IRR = calculated_IRR.multiply(new
 		 * BigDecimal(termsPerYear));
 		 */
 
