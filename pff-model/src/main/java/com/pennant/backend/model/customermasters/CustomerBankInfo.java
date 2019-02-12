@@ -44,6 +44,7 @@ package com.pennant.backend.model.customermasters;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -112,6 +113,14 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal eodBalMin = BigDecimal.ZERO;
 	private BigDecimal eodBalMax = BigDecimal.ZERO;
 	private BigDecimal eodBalAvg = BigDecimal.ZERO;
+	private String bankBranch;
+	private Date fromDate;
+	private Date toDate;
+	private String repaymentFrom;
+	private int noOfMonthsBanking;
+	private String lwowRatio;
+	private String ccLimit;
+	private String typeOfBanks;
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -459,6 +468,70 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 
 	public void setBankInfoSubDetails(List<BankInfoSubDetail> bankInfoSubDetails) {
 		this.bankInfoSubDetails = bankInfoSubDetails;
+	}
+
+	public String getBankBranch() {
+		return bankBranch;
+	}
+
+	public void setBankBranch(String bankBranch) {
+		this.bankBranch = bankBranch;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getRepaymentFrom() {
+		return repaymentFrom;
+	}
+
+	public void setRepaymentFrom(String repaymentFrom) {
+		this.repaymentFrom = repaymentFrom;
+	}
+
+	public int getNoOfMonthsBanking() {
+		return noOfMonthsBanking;
+	}
+
+	public void setNoOfMonthsBanking(int noOfMonthsBanking) {
+		this.noOfMonthsBanking = noOfMonthsBanking;
+	}
+
+	public String getLwowRatio() {
+		return lwowRatio;
+	}
+
+	public void setLwowRatio(String lwowRatio) {
+		this.lwowRatio = lwowRatio;
+	}
+
+	public String getCcLimit() {
+		return ccLimit;
+	}
+
+	public void setCcLimit(String ccLimit) {
+		this.ccLimit = ccLimit;
+	}
+
+	public String getTypeOfBanks() {
+		return typeOfBanks;
+	}
+
+	public void setTypeOfBanks(String typeOfBanks) {
+		this.typeOfBanks = typeOfBanks;
 	}
 
 }

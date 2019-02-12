@@ -74,5 +74,19 @@
 	<changeSet id="8" author="vijaya.a">
 	    <modifyDataType tableName="AdtBMTRejectCodes" columnName="REJECTDESC" newDataType="varchar(500)"/>
 	</changeSet>
+	
+	<changeSet id="10" author="Kranthi">
+		<comment>New columns added for BankInfoDetail</comment>
+		<addColumn tableName="AdtCustomerBankInfo">
+			<column name="BankBranch" type="varchar(50)" />
+			<column name="FromDate" type="datetime" />
+			<column name="ToDate" type="datetime" />
+			<column name="RepaymentFrom" type="varchar(50)" />
+			<column name="NoOfMonthsBanking" type="int" />
+			<column name="LwowRatio" type="varchar(50)" />
+			<column name="CCLimit" type="varchar(50)" />
+			<column name="TypeOfBanks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

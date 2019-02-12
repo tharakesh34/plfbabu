@@ -55,6 +55,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> accountPurposes;
 	private static ArrayList<ValueLabel> dedupParams;
 	private static ArrayList<ValueLabel> yesNoList;
+	private static ArrayList<ValueLabel> typeOfBanks;
 	private static ArrayList<ValueLabel> transactionAcTypes;
 	private static ArrayList<ValueLabel> notesTypeList;
 	private static ArrayList<ValueLabel> weekendNames;
@@ -786,6 +787,18 @@ public class PennantStaticListUtil {
 			yesNoList.add(new ValueLabel("N", Labels.getLabel("common.No")));
 		}
 		return yesNoList;
+	}
+
+	public static ArrayList<ValueLabel> getTypeOfBanks() {
+
+		if (typeOfBanks == null) {
+			typeOfBanks = new ArrayList<ValueLabel>(3);
+			typeOfBanks.add(new ValueLabel("Nationalised", "Nationalised"));
+			typeOfBanks.add(new ValueLabel("CO-operative", "CO-operative"));
+			typeOfBanks.add(new ValueLabel("Private", "Private"));
+
+		}
+		return typeOfBanks;
 	}
 
 	public static ArrayList<ValueLabel> getTransactionalAccount(boolean isRIA) {

@@ -54,7 +54,7 @@
 			 LEFT JOIN bmtrejectcodes t7 ON t1.cancelreason = t7.rejectcode		
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="3" author="Kesav">
 		<comment>lovdescfindivision column added</comment>
 		<createView viewName="finreceiptheader_feview" replaceIfExists="true">
@@ -785,5 +785,31 @@ UNION ALL
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 	</createView>
 </changeSet>
+	<changeSet id="27" author="Kranthi">
+		<comment>New columns added for BankInfoDetail</comment>
+		<addColumn tableName="BankInfoDetail">
+			<column name="BankBranch" type="varchar(50)" />
+			<column name="FromDate" type="datetime" />
+			<column name="ToDate" type="datetime" />
+			<column name="RepaymentFrom" type="varchar(50)" />
+			<column name="NoOfMonthsBanking" type="int" />
+			<column name="LwowRatio" type="varchar(50)" />
+			<column name="CCLimit" type="varchar(50)" />
+			<column name="TypeOfBanks" type="varchar(50)" />
+		</addColumn>
+	</changeSet> 
 	
+	<changeSet id="28" author="Kranthi">
+		<comment>New columns added for Customer BankInfoDetail</comment>
+		<addColumn tableName="CustomerBankInfo">
+			<column name="BankBranch" type="varchar(50)" />
+			<column name="FromDate" type="datetime" />
+			<column name="ToDate" type="datetime" />
+			<column name="RepaymentFrom" type="varchar(50)" />
+			<column name="NoOfMonthsBanking" type="int" />
+			<column name="LwowRatio" type="varchar(50)" />
+			<column name="CCLimit" type="varchar(50)" />
+			<column name="TypeOfBanks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

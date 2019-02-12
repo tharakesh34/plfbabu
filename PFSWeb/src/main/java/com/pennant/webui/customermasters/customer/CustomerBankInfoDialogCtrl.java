@@ -66,6 +66,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Columns;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Hbox;
@@ -103,6 +104,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -158,6 +160,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Row row_eodBalMin;
 	protected Row row_eodBalMax;
 	protected Row row_eodBalAvg;
+	protected Row row_bankBranch;
+	protected Row row_fromDate;
+	protected Row row_toDate;
+	protected Row row_repaymentFrom;
+	protected Row row_noOfMonthsBanking;
+	protected Row row_lwowRatio;
+	protected Row row_ccLimit;
+	protected Row row_typeOfBanks;
 	
 	protected Intbox creditTranNo;
 	protected CurrencyBox creditTranAmt;
@@ -177,6 +187,15 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected CurrencyBox eodBalMin;
 	protected CurrencyBox eodBalMax;
 	protected CurrencyBox eodBalAvg;
+	protected Textbox bankBranch;
+	protected Datebox fromDate;
+	protected Datebox toDate;
+	protected Combobox repaymentFrom;
+	protected Intbox NoOfMonthsBanking;
+	protected Textbox lwowRatio;
+	protected Textbox ccLimit;
+	protected Combobox typeOfBanks;
+	
 
 	//BHFL
 	protected Button button_CustomerBankInfoDialog_btnAccBehaviour;
@@ -341,6 +360,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.accountType.setDescColumn("ValueDesc");
 		this.accountType.setValidateColumns(new String[] { "FieldCodeValue" });
 
+		fillComboBox(repaymentFrom, "", PennantStaticListUtil.getYesNo(), "");
+		fillComboBox(typeOfBanks, "", PennantStaticListUtil.getTypeOfBanks(), "");
 		Filter filter[] = new Filter[1];
 		filter[0] = new Filter("FieldCode", "ACC_TYPE", Filter.OP_EQUAL);
 		this.accountType.setFilters(filter);
@@ -824,6 +845,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalMin(), finFormatter));
 		this.eodBalMax.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalMax(), finFormatter));
 		this.eodBalAvg.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalAvg(), finFormatter));
+		this.bankBranch.setValue(aCustomerBankInfo.getBankBranch());
+		this.fromDate.setValue(aCustomerBankInfo.getFromDate());
+		this.toDate.setValue(aCustomerBankInfo.getToDate());
+		this.repaymentFrom.setValue(aCustomerBankInfo.getRepaymentFrom());
+		this.NoOfMonthsBanking.setValue(aCustomerBankInfo.getNoOfMonthsBanking());
+		this.lwowRatio.setValue(aCustomerBankInfo.getLwowRatio());
+		this.ccLimit.setValue(aCustomerBankInfo.getCcLimit());
+		this.typeOfBanks.setValue(aCustomerBankInfo.getTypeOfBanks());
 
 		this.recordStatus.setValue(aCustomerBankInfo.getRecordStatus());
 		
@@ -984,7 +1013,46 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		try {
+			aCustomerBankInfo.setBankBranch((this.bankBranch.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setFromDate((this.fromDate.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setToDate((this.toDate.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setRepaymentFrom((this.repaymentFrom.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setNoOfMonthsBanking((this.NoOfMonthsBanking.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setLwowRatio((this.lwowRatio.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setCcLimit((this.ccLimit.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomerBankInfo.setTypeOfBanks((this.typeOfBanks.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1539,6 +1607,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.eodBalMin.setReadonly(true);
 			this.eodBalMax.setReadonly(true);
 			this.eodBalAvg.setReadonly(true);
+			this.bankBranch.setReadonly(true);
+			this.fromDate.setReadonly(true);
+			this.toDate.setReadonly(true);
+			this.repaymentFrom.setReadonly(true);
+			this.NoOfMonthsBanking.setReadonly(true);
+			this.lwowRatio.setReadonly(true);
+			this.ccLimit.setReadonly(true);
+			this.typeOfBanks.setReadonly(true);
 
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
@@ -1656,9 +1732,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.chqIssueAmt.setConstraint("");
 		this.inwardChqBounceNo.setConstraint("");
 		this.outwardChqBounceNo.setConstraint("");
-		this.eodBalMin.setConstraint("");
-		this.eodBalMax.setConstraint("");
-		this.eodBalAvg.setConstraint("");
+		this.bankBranch.setConstraint("");
+		this.fromDate.setConstraint("");
+		this.toDate.setConstraint("");
+		this.repaymentFrom.setConstraint("");
+		this.NoOfMonthsBanking.setConstraint("");
+		this.lwowRatio.setConstraint("");
+		this.ccLimit.setConstraint("");
+		this.typeOfBanks.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1712,6 +1793,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setErrorMessage("");
 		this.eodBalMax.setErrorMessage("");
 		this.eodBalAvg.setErrorMessage("");
+		this.bankBranch.setErrorMessage("");
+		this.fromDate.setErrorMessage("");
+		this.toDate.setErrorMessage("");
+		this.repaymentFrom.setErrorMessage("");
+		this.NoOfMonthsBanking.setErrorMessage("");
+		this.lwowRatio.setErrorMessage("");
+		this.ccLimit.setErrorMessage("");
+		this.typeOfBanks.setErrorMessage("");
 		logger.debug("Leaving");
 	}
 
@@ -1796,7 +1885,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.custID.setReadonly(true);
 		this.custCIF.setReadonly(true);
 		this.accountType.setReadonly(isReadOnly("CustomerBankInfoDialog_AccountType"));
-
 		this.creditTranNo.setReadonly(isReadOnly("CustomerBankInfoDialog_CreditTranNo"));
 		this.creditTranAmt.setReadonly(isReadOnly("CustomerBankInfoDialog_CreditTranAmt"));
 		this.creditTranAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_CreditTranAvg"));
@@ -1815,6 +1903,24 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMin"));
 		this.eodBalMax.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMax"));
 		this.eodBalAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalAvg"));
+
+		/*
+		 * this.bankBranch.setReadonly(isReadOnly(
+		 * "CustomerBankInfoDialog_BankBranch"));
+		 * this.fromDate.setReadonly(isReadOnly(
+		 * "CustomerBankInfoDialog_FromDate"));
+		 * this.fromDate.setReadonly(isReadOnly("CustomerBankInfoDialog_ToDate")
+		 * ); this.repaymentFrom.setReadonly(isReadOnly(
+		 * "CustomerBankInfoDialog_RepaymentFrom"));
+		 * this.NoOfMonthsBanking.setReadonly(isReadOnly(
+		 * "CustomerBankInfoDialog_NoOfMonthsBanking"));
+		 * this.lwowRatio.setReadonly(isReadOnly(
+		 * "CustomerBankInfoDialog_lwowRatio"));
+		 * this.ccLimit.setReadonly(isReadOnly("CustomerBankInfoDialog_CCLimit")
+		 * ); this.typeOfBanks.setReadonly(isReadOnly(
+		 * "CustomerBankInfoDialog_TypeOfBanks"));
+		 */
+		 
 		if(monthlyIncome != null && StringUtils.equals(monthlyIncome, PennantConstants.YES)){
 			this.toolBar_AccBehaviour.setVisible(true);
 			this.listBoxAccBehaviour.setVisible(true);
@@ -1838,6 +1944,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.row_eodBalMin.setVisible(false);
 			this.row_eodBalMax.setVisible(false);
 			this.row_eodBalAvg.setVisible(false);
+			/*
+			 * this.row_bankBranch.setVisible(false);
+			 * this.row_fromDate.setVisible(false);
+			 * this.row_toDate.setVisible(false);
+			 * this.row_repaymentFrom.setVisible(false);
+			 * this.row_noOfMonthsBanking.setVisible(false);
+			 * this.row_lwowRatio.setVisible(false);
+			 * this.row_ccLimit.setVisible(false);
+			 * this.row_typeOfBanks.setVisible(false);
+			 */
 			
 		}
 		
@@ -1911,8 +2027,15 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.inwardChqBounceNo.setReadonly(true);
 		this.outwardChqBounceNo.setReadonly(true);
 		this.eodBalMin.setReadonly(true);
-		this.eodBalMax.setReadonly(true);
-		this.eodBalAvg.setReadonly(true);
+		this.bankBranch.setReadonly(true);
+		this.fromDate.setReadonly(true);
+		this.toDate.setReadonly(true);
+		this.repaymentFrom.setReadonly(true);
+		this.NoOfMonthsBanking.setReadonly(true);
+		this.lwowRatio.setReadonly(true);
+		this.ccLimit.setReadonly(true);
+		this.typeOfBanks.setReadonly(true);
+
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1958,6 +2081,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setValue("");
 		this.eodBalMax.setValue("");
 		this.eodBalAvg.setValue("");
+		this.bankBranch.setValue("");
+		this.repaymentFrom.setValue("");
+		this.NoOfMonthsBanking.setValue(0);
+		this.lwowRatio.setValue("");
+		this.typeOfBanks.setValue("");
+
 		logger.debug("Leaving");
 	}
 
