@@ -976,6 +976,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSave"));
 			this.btnSearchCustCIF
 					.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSearchCustCIF"));
+			this.btn_NewCust.setVisible(ImplementationConstants.COAPP_CUST_CRET);
 		}
 		logger.debug("Leaving");
 	}
