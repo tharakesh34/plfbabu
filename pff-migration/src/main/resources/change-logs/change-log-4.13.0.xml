@@ -30,7 +30,7 @@
 		</sql>
 	</changeSet>
 	 
-	 <changeSet id="1" author="Vinay">
+ 	 <changeSet id="1" author="Vinay">
 		<sql>
 			update FinanceDeviations set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
 			update FinanceDeviations_Temp set Module = 'ELIGIBILITY' where Module = 'EILIBILITY';
@@ -811,5 +811,210 @@ UNION ALL
 			<column name="CCLimit" type="varchar(50)" />
 			<column name="TypeOfBanks" type="varchar(50)" />
 		</addColumn>
+	</changeSet>
+	<changeSet id="27_post" author="Kranthi">
+		<dropColumn tableName="BankInfoDetail" columnName="BankBranch"/>
+		<dropColumn tableName="BankInfoDetail" columnName="FromDate"/>
+		<dropColumn tableName="BankInfoDetail" columnName="ToDate"/>
+		<dropColumn tableName="BankInfoDetail" columnName="RepaymentFrom"/>
+		<dropColumn tableName="BankInfoDetail" columnName="NoOfMonthsBanking"/>
+		<dropColumn tableName="BankInfoDetail" columnName="LwowRatio"/>
+		<dropColumn tableName="BankInfoDetail" columnName="CCLimit"/>
+		<dropColumn tableName="BankInfoDetail" columnName="TypeOfBanks"/>
+	</changeSet>
+	
+	<changeSet id="29" author="Kranthi">
+		<comment>New columns added for Customer BankInfoDetail</comment>
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="BankBranch" type="varchar(50)" />
+			<column name="FromDate" type="datetime" />
+			<column name="ToDate" type="datetime" />
+			<column name="RepaymentFrom" type="varchar(50)" />
+			<column name="NoOfMonthsBanking" type="int" />
+			<column name="LwowRatio" type="varchar(50)" />
+			<column name="CCLimit" type="varchar(50)" />
+			<column name="TypeOfBanks" type="varchar(50)" />
+		</addColumn>
+	</changeSet> 
+
+ 	 <changeSet id="30" author="Kranthi">
+		<createView viewName="customerbankinfo_aview" replaceIfExists="true">
+			SELECT t1.bankid,
+			    t1.custid,
+			    t1.bankname,
+			    t1.accountnumber,
+			    t1.accounttype,
+			    t1.salaryaccount,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.bankname AS lovdescbankname,
+			    t4.valuedesc AS lovdescaccounttype,
+			    t1.credittranno,
+			    t1.credittranamt,
+			    t1.credittranavg,
+			    t1.debittranno,
+			    t1.debittranamt,
+			    t1.cashdepositno,
+			    t1.cashdepositamt,
+			    t1.cashwithdrawalno,
+			    t1.cashwithdrawalamt,
+			    t1.chqdepositno,
+			    t1.chqdepositamt,
+			    t1.chqissueno,
+			    t1.chqissueamt,
+			    t1.inwardchqbounceno,
+			    t1.outwardchqbounceno,
+			    t1.eodbalmin,
+			    t1.eodbalmax,
+			    t1.eodbalavg,
+			    t1.bankbranch,
+				t1.fromdate,
+				t1.todate,
+				t1.repaymentfrom,
+				t1.noofmonthsbanking,
+				t1.lwowratio,
+				t1.cclimit,
+				t1.typeofbanks
+			   FROM customerbankinfo t1
+			     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			     JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+		</createView>
+	</changeSet> 
+ 
+ 
+<changeSet id="31" author="Kranthi">
+		<createView viewName="customerbankinfo_view" replaceIfExists="true">
+			SELECT t1.bankid,
+			    t1.custid,
+			    t1.bankname,
+			    t1.accountnumber,
+			    t1.accounttype,
+			    t1.salaryaccount,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.bankname AS lovdescbankname,
+			    t4.valuedesc AS lovdescaccounttype,
+			    t1.credittranno,
+			    t1.credittranamt,
+			    t1.credittranavg,
+			    t1.debittranno,
+			    t1.debittranamt,
+			    t1.cashdepositno,
+			    t1.cashdepositamt,
+			    t1.cashwithdrawalno,
+			    t1.cashwithdrawalamt,
+			    t1.chqdepositno,
+			    t1.chqdepositamt,
+			    t1.chqissueno,
+			    t1.chqissueamt,
+			    t1.inwardchqbounceno,
+			    t1.outwardchqbounceno,
+			    t1.eodbalmin,
+			    t1.eodbalmax,
+			    t1.eodbalavg,
+			    t1.bankbranch,
+				t1.fromdate,
+				t1.todate,
+				t1.repaymentfrom,
+				t1.noofmonthsbanking,
+				t1.lwowratio,
+				t1.cclimit,
+				t1.typeofbanks
+			   FROM customerbankinfo_temp t1
+			     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			     JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+			UNION ALL
+			 SELECT t1.bankid,
+			    t1.custid,
+			    t1.bankname,
+			    t1.accountnumber,
+			    t1.accounttype,
+			    t1.salaryaccount,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.bankname AS lovdescbankname,
+			    t4.valuedesc AS lovdescaccounttype,
+			    t1.credittranno,
+			    t1.credittranamt,
+			    t1.credittranavg,
+			    t1.debittranno,
+			    t1.debittranamt,
+			    t1.cashdepositno,
+			    t1.cashdepositamt,
+			    t1.cashwithdrawalno,
+			    t1.cashwithdrawalamt,
+			    t1.chqdepositno,
+			    t1.chqdepositamt,
+			    t1.chqissueno,
+			    t1.chqissueamt,
+			    t1.inwardchqbounceno,
+			    t1.outwardchqbounceno,
+			    t1.eodbalmin,
+			    t1.eodbalmax,
+			    t1.eodbalavg,
+			     t1.bankbranch,
+				t1.fromdate,
+				t1.todate,
+				t1.repaymentfrom,
+				t1.noofmonthsbanking,
+				t1.lwowratio,
+				t1.cclimit,
+				t1.typeofbanks
+			   FROM customerbankinfo t1
+			     JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			     JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM customerbankinfo_temp
+			          WHERE customerbankinfo_temp.bankid = t1.bankid))
+		</createView>
+	</changeSet>
+ 
+	<changeSet id="32" author="Vinay">
+		<sql>
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_BankBranch','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_FromDate','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_ToDate','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_RepaymentFrom','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_NoOfMonthsBanking','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_lwowRatio','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_CCLimit','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CustomerBankInfoDialog_TypeOfBanks','CustomerBankInfoDialog',0,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_BankBranch'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_FromDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_ToDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_RepaymentFrom'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_NoOfMonthsBanking'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_lwowRatio'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_CCLimit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CustomerBankInfo_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerBankInfoDialog_TypeOfBanks'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+		</sql>
 	</changeSet>
 </databaseChangeLog>
