@@ -3110,4 +3110,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="160" author="Kesav">
+		<sql>
+			 Delete from FeeTypes where FeeTypeCode = 'INSTINC';
+			 Insert into FEETYPES values ( (Select SeqNo + 1 from SeqFeeTypes),'INSTINC','Installment Due','1',2,1000,Current_TimeStamp,'Approved','','','','','',0,'0',null,1,'','#','true','0','0');
+			 Update SeqFeeTypes set SeqNo = SeqNo + 1;
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -543,10 +544,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		
+		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
 
 		if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
 				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
-				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)) {
+				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)
+				|| (StringUtils.isNotBlank(feeCode) && StringUtils.equals(aFeeType.getFeeTypeCode(), feeCode))) {
 
 			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 				this.row1.setVisible(false);

@@ -2341,6 +2341,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT;
 							} else if ("Debit".equals(template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
+							} else if("Exempted".equals(template.getFieldValue())){
+								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED;
 							}
 						}
 					}
