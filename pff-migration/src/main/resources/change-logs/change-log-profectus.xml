@@ -2340,6 +2340,14 @@ UNION ALL
 			Insert into SMTPARAMETERS values ('CIBIL_EXPY_DAYS','Cibil expiry days','int','0','30',3,0,'NULL','NULL','Cibil expiry days',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="139" author="Kesav">
+		<sql>
+			 Delete from FeeTypes where FeeTypeCode = 'INSTINC';
+			 Insert into FEETYPES values ( (Select SeqNo + 1 from SeqFeeTypes),'INSTINC','Installment Due','1',2,1000,Current_TimeStamp,'Approved','','','','','',0,'0',null,1,'','#','true','0','0');
+			 Update SeqFeeTypes set SeqNo = SeqNo + 1;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
