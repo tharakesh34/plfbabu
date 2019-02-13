@@ -2348,6 +2348,13 @@ UNION ALL
 			 Update SeqFeeTypes set SeqNo = SeqNo + 1;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="140" author="Vinay">
+		<sql>
+			update customerbankinfo_temp set noOfMonthsBanking=0 where noOfMonthsBanking is null;
+			update customerbankinfo set noOfMonthsBanking=0 where noOfMonthsBanking is null;
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
