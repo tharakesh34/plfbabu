@@ -8041,6 +8041,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Modification of Cheque Detail Amounts, if EMI modified based on "TDS" tab visible
 		if (chequeDetailDialogCtrl != null) {
 			for (Listitem listItem : chequeDetailDialogCtrl.listBoxChequeDetail.getItems()) {
+				Listcell listcell = (Listcell) listItem.getChildren().get(0);
+				if (StringUtils.equals(listcell.getLabel(), FinanceConstants.REPAYMTH_PDC)) {
 				Listcell emiDateLc = (Listcell) listItem.getChildren().get(6);
 				Combobox emiComboBox = (Combobox) emiDateLc.getFirstChild();
 				Date emiDate = DateUtility.parse(emiComboBox.getSelectedItem().getLabel(), PennantConstants.dateFormat);
@@ -8057,7 +8059,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						break;
 					}
 				}
-
+				}
 			}
 			//Modification of Cheque Detail Amounts, if EMI modified 
 		} else if (getFinanceDetail().getChequeHeader() != null
