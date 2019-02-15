@@ -69,10 +69,10 @@ import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -251,15 +251,9 @@ public class FacilityDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetail
 			customerDocument.setLovDescCustCIF(financeMain.getCustCIF());
 			customerDocument.setLovDescCustShrtName(financeMain.getCustShrtName());
 
-			Filter[] countrysystemDefault = new Filter[1];
-			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
-
-			if (countryObj != null) {
-				Country country = (Country) countryObj;
-				customerDocument.setCustDocIssuedCountry(country.getCountryCode());
-				customerDocument.setLovDescCustDocIssuedCountry(country.getCountryDesc());
-			}
+			Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+			customerDocument.setCustDocIssuedCountry(defaultCountry.getCountryCode());
+			customerDocument.setLovDescCustDocIssuedCountry(defaultCountry.getCountryDesc());
 
 			map.put("customerDocument", customerDocument);
 		} else {

@@ -345,7 +345,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.recordStatus.setValue(aDocumentType.getRecordStatus());
 		this.docIsPdfExtRequired.setChecked(aDocumentType.isDocIsPdfExtRequired());
 		this.docIsPasswordProtected.setChecked(aDocumentType.isDocIsPasswordProtected());
-		this.docExternalRef.setValue(aDocumentType.getDocExternalRef());
+		this.docExternalRef.setValue(StringUtils.trimToEmpty(aDocumentType.getDocExternalRef()));
 		DocumentCategory category = new DocumentCategory();
 		category.setId(aDocumentType.getCategoryId());
 		category.setCode(aDocumentType.getCategoryCode());
@@ -469,12 +469,8 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 
 		try {
-			if (this.mappingRef.getValue() != null) {
-				aDocumentType.setPdfMappingRef(
-						Long.valueOf(org.apache.commons.lang3.StringUtils.isBlank(this.mappingRef.getValue()) ? "0"
-								: this.mappingRef.getValue()));
-			} else {
-				aDocumentType.setPdfMappingRef(0);
+			if (this.mappingRef.getValue() != null && StringUtils.isNumeric(this.mappingRef.getValue())) {
+				aDocumentType.setPdfMappingRef(Long.parseLong(this.mappingRef.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

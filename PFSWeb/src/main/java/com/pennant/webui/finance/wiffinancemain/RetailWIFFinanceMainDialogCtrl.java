@@ -7639,15 +7639,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.custShrtName.setValue("");
 					this.custDOB.setValue(null);
 
-					Filter[] countrysystemDefault = new Filter[1];
-					countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-					Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
-
-					if (countryObj != null) {
-						Country country = (Country) countryObj;
-						this.custNationality.setValue(country.getCountryCode());
-						this.custNationality.setDescription(country.getCountryDesc());
-					}
+					Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+					this.custNationality.setValue(defaultCountry.getCountryCode());
+					this.custNationality.setDescription(defaultCountry.getCountryDesc());
 
 					PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
 					this.custBaseCcy.setValue(parameter.getSysParmValue().trim());

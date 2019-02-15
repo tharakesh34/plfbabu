@@ -79,6 +79,7 @@ import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -1022,8 +1023,9 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custTradeLicenceNum.setValue("");
 
 		if (isRetailCustomer) {
-			if (StringUtils.trimToEmpty(this.custParentCountry.getValue())
-					.equals(SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"))) {
+			Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+
+			if (StringUtils.trimToEmpty(this.custParentCountry.getValue()).equals(defaultCountry.getCountryCode())) {
 				this.label_CustomerDialog_CustVisaNum.setVisible(!isRetailCustomer);
 				this.hbox_visaNum.setVisible(!isRetailCustomer);
 			}

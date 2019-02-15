@@ -68,7 +68,7 @@ public class DocumentType extends AbstractWorkflowEntity {
 	private boolean docIssuedAuthorityMand;
 	private boolean docIsPdfExtRequired;
 	private boolean docIsPasswordProtected;
-	private long pdfMappingRef;
+	private Long pdfMappingRef;
 	private boolean pdd;
 	private boolean otc;
 	private boolean lvReq;
@@ -239,11 +239,11 @@ public class DocumentType extends AbstractWorkflowEntity {
 		this.docIsPasswordProtected = docIsPasswordProtected;
 	}
 
-	public long getPdfMappingRef() {
+	public Long getPdfMappingRef() {
 		return pdfMappingRef;
 	}
 
-	public void setPdfMappingRef(long pdfMappingRef) {
+	public void setPdfMappingRef(Long pdfMappingRef) {
 		this.pdfMappingRef = pdfMappingRef;
 	}
 

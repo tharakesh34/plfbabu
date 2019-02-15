@@ -201,9 +201,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private CustomerDedupCheckService customerDedupService;
 	@Autowired(required = false)
 	private CustomerInterfaceService customerExternalInterfaceService;
-	private CustomerDedupService				custDedupService;
+	private CustomerDedupService custDedupService;
 	@Autowired
-	private VASConfigurationService				vASConfigurationService;
+	private VASConfigurationService vASConfigurationService;
 	private String menuItemRightName = null;
 	private FinanceEligibility financeEligibility = null;
 	private boolean isPromotionPick = false;
@@ -1032,7 +1032,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecording.setAccrualTillDate(DateUtility.getAppDate());
 					vasRecording.setFee(finTypeVASProducts.getVasFee());
 					vasRecording.setRecordType(PennantConstants.RCD_ADD);
-					vasRecording.setVasConfiguration(getvASConfigurationService().getApprovedVASConfigurationByCode(finTypeVASProducts.getVasProduct(), true));
+					vasRecording.setVasConfiguration(getvASConfigurationService()
+							.getApprovedVASConfigurationByCode(finTypeVASProducts.getVasProduct(), true));
 					vasRecordingList.add(vasRecording);
 				}
 			}
@@ -1083,14 +1084,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customerDetails.setCustomerDedupList(customerDedupList);
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}
-		
+
 		//  tasks #1152 Business Vertical Tagged with Loan
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
 		financeMain.setBusinessVertical(user.getBusinessVertical());
 		financeMain.setBusinessVerticalCode(user.getBusinessVerticalCode());
 		financeMain.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
-		
+
 		showDetailView(financeDetail);
 		return true;
 	}
@@ -1729,26 +1730,20 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customer.setLovDescCustLngName(parameter.getSysParmDescription());
 		}
 
-		Filter[] countrysystemDefault = new Filter[1];
-		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-		Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
+		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
 
-		if (countryObj != null) {
-			Country country = (Country) countryObj;
+		if (customerDetails.getCustomer().getCustCOB() == null) {
+			customer.setCustCOB(defaultCountry.getCountryCode());
+			customer.setCustParentCountry(defaultCountry.getCountryCode());
+			customer.setCustResdCountry(defaultCountry.getCountryCode());
+			customer.setCustRiskCountry(defaultCountry.getCountryCode());
+			customer.setCustNationality(defaultCountry.getCountryCode());
 
-			if (customerDetails.getCustomer().getCustCOB() == null) {
-				customer.setCustCOB(country.getCountryCode());
-				customer.setCustParentCountry(country.getCountryCode());
-				customer.setCustResdCountry(country.getCountryCode());
-				customer.setCustRiskCountry(country.getCountryCode());
-				customer.setCustNationality(country.getCountryCode());
-
-				customer.setLovDescCustCOBName(country.getCountryDesc());
-				customer.setLovDescCustParentCountryName(country.getCountryDesc());
-				customer.setLovDescCustResdCountryName(country.getCountryDesc());
-				customer.setLovDescCustRiskCountryName(country.getCountryDesc());
-				customer.setLovDescCustNationalityName(country.getCountryDesc());
-			}
+			customer.setLovDescCustCOBName(defaultCountry.getCountryDesc());
+			customer.setLovDescCustParentCountryName(defaultCountry.getCountryDesc());
+			customer.setLovDescCustResdCountryName(defaultCountry.getCountryDesc());
+			customer.setLovDescCustRiskCountryName(defaultCountry.getCountryDesc());
+			customer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
 		}
 
 		//Setting Primary Relation Ship Officer

@@ -99,7 +99,7 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 	}
 
 	@Override
-	public int getCustomerEmploymentByCustEmpName(final long id, long custEmpName, long custEmpId, String type) {
+	public int getCustomerEmploymentByCustEmpName(final long id, Long custEmpName, long custEmpId, String type) {
 		logger.debug("Entering");
 		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
 		customerEmploymentDetail.setCustEmpId(custEmpId);

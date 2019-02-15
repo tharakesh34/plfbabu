@@ -499,24 +499,18 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		customer.setCustBaseCcy(SysParamUtil.getValueAsString("APP_DFT_CURR"));
 		customer.setCustLng(SysParamUtil.getValueAsString("APP_LNG"));
 
-		Filter[] countrysystemDefault = new Filter[1];
-		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-		Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
+		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+		customer.setCustCOB(defaultCountry.getCountryCode());
+		customer.setCustParentCountry(defaultCountry.getCountryCode());
+		customer.setCustResdCountry(defaultCountry.getCountryCode());
+		customer.setCustRiskCountry(defaultCountry.getCountryCode());
+		customer.setCustNationality(defaultCountry.getCountryCode());
 
-		if (countryObj != null) {
-			Country country = (Country) countryObj;
-			customer.setCustCOB(country.getCountryCode());
-			customer.setCustParentCountry(country.getCountryCode());
-			customer.setCustResdCountry(country.getCountryCode());
-			customer.setCustRiskCountry(country.getCountryCode());
-			customer.setCustNationality(country.getCountryCode());
-
-			customer.setLovDescCustCOBName(country.getCountryDesc());
-			customer.setLovDescCustParentCountryName(country.getCountryDesc());
-			customer.setLovDescCustResdCountryName(country.getCountryDesc());
-			customer.setLovDescCustRiskCountryName(country.getCountryDesc());
-			customer.setLovDescCustNationalityName(country.getCountryDesc());
-		}
+		customer.setLovDescCustCOBName(defaultCountry.getCountryDesc());
+		customer.setLovDescCustParentCountryName(defaultCountry.getCountryDesc());
+		customer.setLovDescCustResdCountryName(defaultCountry.getCountryDesc());
+		customer.setLovDescCustRiskCountryName(defaultCountry.getCountryDesc());
+		customer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
 
 		//Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = getRelationshipOfficerService()

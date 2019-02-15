@@ -71,7 +71,7 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 	@XmlElement(name = "employmentId")
 	private long custEmpId = Long.MIN_VALUE;
 	@XmlElement(name = "employerId")
-	private long custEmpName;
+	private Long custEmpName;
 	private String lovDesccustEmpName;
 	@XmlElement(name = "startDate")
 	private Date custEmpFrom;
@@ -139,11 +139,11 @@ public class CustomerEmploymentDetail extends AbstractWorkflowEntity implements 
 		this.custID = custID;
 	}
 
-	public long getCustEmpName() {
+	public Long getCustEmpName() {
 		return custEmpName;
 	}
 
-	public void setCustEmpName(long custEmpName) {
+	public void setCustEmpName(Long custEmpName) {
 		this.custEmpName = custEmpName;
 	}
 

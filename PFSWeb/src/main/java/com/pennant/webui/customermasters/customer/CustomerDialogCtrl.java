@@ -545,10 +545,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.moduleName = (String) arguments.get("moduleName");
 			}
 			if (arguments.containsKey("isNewCustCret")) {
-				this.isNewCustCret  = (boolean) arguments.get("isNewCustCret");
+				this.isNewCustCret = (boolean) arguments.get("isNewCustCret");
 			}
 			if (arguments.containsKey("jointAccountDetailDialogCtrl")) {
-				this.jointAccountDetailDialogCtrl  = (JointAccountDetailDialogCtrl) arguments.get("jointAccountDetailDialogCtrl");
+				this.jointAccountDetailDialogCtrl = (JointAccountDetailDialogCtrl) arguments
+						.get("jointAccountDetailDialogCtrl");
 			}
 			if (arguments.containsKey("financeDetail")) {
 				setFinancedetail((FinanceDetail) arguments.get("financeDetail"));
@@ -2014,7 +2015,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						this.window_CustomerDialog.setHeight(borderLayoutHeight - 75 + "px");
 						groupbox.appendChild(this.window_CustomerDialog);
 					}
-					if(isNewCustCret){
+					if (isNewCustCret) {
 						this.north.setVisible(true);
 						this.window_CustomerDialog.setHeight(borderLayoutHeight - 75 + "px");
 						this.window_CustomerDialog.doModal();
@@ -3131,7 +3132,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				return;
 			}
 
-		} else{
+		} else {
 			if (!validateAddressDetails(this.tabkYCDetails)) {
 				return;
 			}
@@ -3218,21 +3219,21 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (StringUtils.isBlank(aCustomer.getNextTaskId())) {
 					aCustomer.setNextRoleCode("");
 				}
-				
+
 				String rcdStatus = "";
-				if(isNewCustCret){
+				if (isNewCustCret) {
 					rcdStatus = PennantConstants.RCD_STATUS_APPROVED;
-				} else{
+				} else {
 					rcdStatus = aCustomer.getRecordStatus();
 				}
 				String msg = PennantApplicationUtil.getSavingStatus(aCustomer.getRoleCode(),
 						aCustomer.getNextRoleCode(), aCustomer.getCustCIF(), " Customer ", rcdStatus);
 				Clients.showNotification(msg, "info", null, null, -1);
-				if(!isNewCustCret){
+				if (!isNewCustCret) {
 					refreshList();
 				}
 				closeDialog();
-				if(this.jointAccountDetailDialogCtrl != null){
+				if (this.jointAccountDetailDialogCtrl != null) {
 					this.jointAccountDetailDialogCtrl.setNewCustCIF(aCustomer.getCustCIF());
 				}
 			}
@@ -5172,14 +5173,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			customerAddres.setCustAddrPriority(Integer.parseInt(priority));
 		}
 
-		Filter[] countrysystemDefault = new Filter[1];
-		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-		Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
-		if (countryObj != null) {
-			Country country = (Country) countryObj;
-			customerAddres.setCustAddrCountry(country.getCountryCode());
-			customerAddres.setLovDescCustAddrCountryName(country.getCountryDesc());
-		}
+		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+		customerAddres.setCustAddrCountry(defaultCountry.getCountryCode());
+		customerAddres.setLovDescCustAddrCountryName(defaultCountry.getCountryDesc());
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerAddres", customerAddres);

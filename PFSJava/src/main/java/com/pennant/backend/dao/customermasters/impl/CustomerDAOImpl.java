@@ -77,6 +77,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.smtmasters.PFSParameter;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -130,19 +131,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public Customer getNewCustomer(boolean createNew, Customer customer) {
 		logger.debug("Entering");
 
+		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+
 		customer = getCustomer(createNew, customer);
 		customer.setNewRecord(true);
+		customer.setCustCOB(defaultCountry.getCountryCode());
 
-		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_NATION");
-		if (customer.getCustCOB() == null) {
-			customer.setCustCOB(parameter.getSysParmValue().trim());
-		}
-
-		if (customer.getLovDescCustCOBName() == null) {
-			customer.setLovDescCustCOBName(parameter.getSysParmDescription());
-		}
-
-		parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
+		PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
 
 		if (customer.getCustBaseCcy() == null) {
 			customer.setCustBaseCcy(parameter.getSysParmValue().trim());
@@ -156,41 +151,18 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			customer.setLovDescCustLngName(parameter.getSysParmDescription());
 		}
 
-		parameter = SysParamUtil.getSystemParameterObject("APP_DFT_NATION");
+		customer.setCustParentCountry(defaultCountry.getCountryCode());
+		customer.setLovDescCustParentCountryName(parameter.getSysParmDescription());
 
-		if (customer.getCustParentCountry() == null) {
-			customer.setCustParentCountry(parameter.getSysParmValue().trim());
-		}
+		customer.setCustRiskCountry(defaultCountry.getCountryCode());
+		customer.setLovDescCustRiskCountryName(defaultCountry.getCountryDesc());
 
-		if (customer.getCustRiskCountry() == null) {
-			customer.setCustRiskCountry(parameter.getSysParmValue().trim());
-		}
+		customer.setCustResdCountry(defaultCountry.getCountryCode());
+		customer.setLovDescCustResdCountryName(defaultCountry.getCountryDesc());
 
-		if (customer.getLovDescCustParentCountryName() == null) {
-			customer.setLovDescCustParentCountryName(parameter.getSysParmDescription());
-		}
+		customer.setCustNationality(defaultCountry.getCountryCode());
+		customer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
 
-		if (customer.getLovDescCustRiskCountryName() == null) {
-			customer.setLovDescCustRiskCountryName(parameter.getSysParmDescription());
-		}
-
-		if (customer.getCustResdCountry() == null) {
-			customer.setCustResdCountry(parameter.getSysParmValue().trim());
-		}
-
-		if (customer.getLovDescCustResdCountryName() == null) {
-			customer.setLovDescCustResdCountryName(parameter.getSysParmDescription());
-		}
-
-		parameter = SysParamUtil.getSystemParameterObject("CURR_SYSTEM_COUNTRY");
-
-		if (customer.getCustNationality() == null) {
-			customer.setCustNationality(parameter.getSysParmValue().trim());
-		}
-
-		if (customer.getLovDescCustNationalityName() == null) {
-			customer.setLovDescCustNationalityName(parameter.getSysParmDescription());
-		}
 		customer.setCustGroupID(0);
 
 		logger.debug("Leaving");

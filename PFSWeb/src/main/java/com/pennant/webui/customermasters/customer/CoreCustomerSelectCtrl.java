@@ -81,6 +81,7 @@ import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -460,9 +461,9 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			}
 			if (customerDetails != null && !isDedupFound) {
-				if(jointAccountDetailDialogCtrl != null){
+				if (jointAccountDetailDialogCtrl != null) {
 					jointAccountDetailDialogCtrl.buildDialogWindow(customerDetails, newRecord);
-				} else if(customerListCtrl != null){
+				} else if (customerListCtrl != null) {
 					customerListCtrl.buildDialogWindow(customerDetails, newRecord);
 				}
 			}
@@ -610,7 +611,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		row_CustCIF.setVisible(false);
 		row_PrimaryID.setVisible(true);
 
-		custNationality.setValue(SysParamUtil.getValueAsString("CURR_SYSTEM_COUNTRY"));
+		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+		custNationality.setValue(defaultCountry.getCountryCode());
 
 		doSetPrimaryIdAttributes();
 	}

@@ -80,17 +80,16 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.systemmasters.ProvinceService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
@@ -126,7 +125,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 	// not auto wired variables
 	private Province province; // overHanded per parameter
-	private transient ProvinceListCtrl provinceListCtrl; // overHanded per parameter
+	private transient ProvinceListCtrl provinceListCtrl; // overHanded per
+															// parameter
 	private List<TaxDetail> taxDetailList = new ArrayList<TaxDetail>();
 
 	private transient boolean validationOn;
@@ -136,8 +136,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	private Country sysDefaultCountry;
 	protected Button btnNew_gstDetails;
 	protected Row row_taxAvailable;
-	//protected Space						space_taxStateCode;
-	//protected Space						space_businessArea;
+	// protected Space space_taxStateCode;
+	// protected Space space_businessArea;
 
 	/**
 	 * default constructor.<br>
@@ -217,7 +217,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.cPCountry.setMaxlength(2);
 		this.cPProvince.setMaxlength(8);
 		this.cPProvinceName.setMaxlength(50);
@@ -360,7 +360,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 
 		old_BusineesArea = aProvince.getBusinessArea();
 
-		//Reneder GSTIN Mapping
+		// Reneder GSTIN Mapping
 		doFillGSTINMappingDetails(aProvince.getTaxDetailList());
 
 		if (aProvince.isNewRecord()) {
@@ -383,9 +383,9 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
-	//Mapping details like new button , list diaplay and double click.....
+	// Mapping details like new button , list diaplay and double click.....
 
-	//Reneder the list
+	// Reneder the list
 	public void doFillGSTINMappingDetails(List<TaxDetail> taxMappingDetailList) {
 		logger.debug("Entering");
 
@@ -423,7 +423,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		logger.debug("Leaving");
 	}
 
-	//Double click GSTIN Mapping Details list
+	// Double click GSTIN Mapping Details list
 	public void onTaxDetailItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -781,14 +781,14 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			this.cPProvince.setReadonly(false);
 			this.cPProvinceName.setReadonly(false);
 			this.taxStateCode.setReadonly(isReadOnly("ProvinceDialog_taxStateCode"));
-			//this.taxAvailable.setDisabled(true);
+			// this.taxAvailable.setDisabled(true);
 		} else {
 			this.cPCountry.setReadonly(true);
 			this.btnCancel.setVisible(true);
 			this.cPProvince.setReadonly(true);
 			this.cPProvinceName.setReadonly(true);
 			this.taxStateCode.setReadonly(true);
-			//this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
+			// this.taxAvailable.setDisabled(isReadOnly("ProvinceDialog_taxAvailable"));
 		}
 
 		this.bankRefNo.setReadonly(isReadOnly("ProvinceDialog_BankRefNo"));
@@ -926,7 +926,8 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 			}
 		}
 
-		// Write the additional validations as per below example get the selected branch object from the listbox Do data
+		// Write the additional validations as per below example get the
+		// selected branch object from the listbox Do data
 		// level validations here
 
 		isNew = aProvince.isNew();
@@ -1134,7 +1135,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		return processCompleted;
 	}
 
-	// WorkFlow Details	
+	// WorkFlow Details
 
 	/**
 	 * Get Audit Header Details
@@ -1191,12 +1192,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 	}
 
 	public void setCountrySystemDefault() {
-		Filter[] systemDefault = new Filter[1];
-		systemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-		Object countrydef = PennantAppUtil.getSystemDefault("Country", "", systemDefault);
-		if (countrydef != null) {
-			sysDefaultCountry = (Country) countrydef;
-		}
+		sysDefaultCountry = PennantApplicationUtil.getDefaultCounty();
 	}
 
 	public void onFulfill$cPCountry(Event event) {

@@ -586,16 +586,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIssuedCountry.setValue(aCustomerDocument.getCustDocIssuedCountry());
 
 		if (aCustomerDocument.isNew() && StringUtils.isBlank(this.custDocIssuedCountry.getValue())) {
-			Filter[] countrysystemDefault = new Filter[1];
-			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
-
-			if (countryObj != null) {
-				Country country = (Country) countryObj;
-				this.custDocIssuedCountry.setValue(country.getCountryCode());
-				this.custDocIssuedCountry.setDescription(country.getCountryDesc());
-			}
+			Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+			this.custDocIssuedCountry.setValue(defaultCountry.getCountryCode());
+			this.custDocIssuedCountry.setDescription(defaultCountry.getCountryDesc());
 		}
+
 		this.custDocIsVerified.setChecked(aCustomerDocument.isCustDocIsVerified());
 		this.custDocIsAcrive.setChecked(aCustomerDocument.isCustDocIsAcrive());
 		this.custCIF.setValue(aCustomerDocument.getLovDescCustCIF());

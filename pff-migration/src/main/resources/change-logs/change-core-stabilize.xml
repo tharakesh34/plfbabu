@@ -107,7 +107,7 @@
 		          WHERE (customerempdetails_temp.custempid = ce.custempid))))
 		</createView>
 	</changeSet>
-	<changeSet id="4" author="satyanarayana.g">
+	<changeSet id="5" author="satyanarayana.g">
 		<createView viewName="customerempdetails_aview" replaceIfExists="true">
 			SELECT ce.custempid,
 		    ce.custid,

@@ -69,6 +69,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.DocumentType;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -425,15 +426,10 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				customerDocument.setCustDocCategory(doctype.getDocTypeCode());
 				customerDocument.setLovDescCustDocCategory(doctype.getDocTypeDesc());
 
-				Filter[] countrysystemDefault = new Filter[1];
-				countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-				Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
+				Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+				customerDocument.setCustDocIssuedCountry(defaultCountry.getCountryCode());
+				customerDocument.setLovDescCustDocIssuedCountry(defaultCountry.getCountryDesc());
 
-				if (countryObj != null) {
-					Country country = (Country) countryObj;
-					customerDocument.setCustDocIssuedCountry(country.getCountryCode());
-					customerDocument.setLovDescCustDocIssuedCountry(country.getCountryDesc());
-				}
 				map.put("isDocAllowedForInput", true);
 				map.put("isCheckList", true);
 				map.put("customerDocument", customerDocument);

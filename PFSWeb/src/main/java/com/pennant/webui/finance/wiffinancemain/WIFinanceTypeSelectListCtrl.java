@@ -701,15 +701,9 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 				PFSParameter parameter = SysParamUtil.getSystemParameterObject("APP_DFT_CURR");
 				wifcustomer.setCustBaseCcy(parameter.getSysParmValue().trim());
 
-				Filter[] countrysystemDefault = new Filter[1];
-				countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-				Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
-
-				if (countryObj != null) {
-					Country country = (Country) countryObj;
-					wifcustomer.setCustNationality(country.getCountryCode());
-					wifcustomer.setLovDescCustNationalityName(country.getCountryDesc());
-				}
+				Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+				wifcustomer.setCustNationality(defaultCountry.getCountryCode());
+				wifcustomer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
 
 				wifcustomer.setCustTypeCode(PennantConstants.DEFAULT_CUST_TYPE);
 				wifcustomer.setLovDescCustTypeCodeName(PennantConstants.DEFAULT_CUST_TYPE);

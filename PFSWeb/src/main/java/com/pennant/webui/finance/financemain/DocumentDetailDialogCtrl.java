@@ -93,7 +93,6 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -272,7 +271,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			if (VerificationType.FI.getValue().equals(moduleName) || VerificationType.TV.getValue().equals(moduleName)
 					|| VerificationType.LV.getValue().equals(moduleName)
 					|| VerificationType.RCU.getValue().equals(moduleName)
-					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName) || VASConsatnts.MODULE_NAME.equals(moduleName)) {
+					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName)
+					|| VASConsatnts.MODULE_NAME.equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}
 
@@ -357,15 +357,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setLovDescCustCIF(list != null ? String.valueOf(list.get(1).toString()) : "");
 			customerDocument.setLovDescCustShrtName(list != null ? String.valueOf(list.get(2).toString()) : "");
 
-			Filter[] countrysystemDefault = new Filter[1];
-			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
-			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
-
-			if (countryObj != null) {
-				Country country = (Country) countryObj;
-				customerDocument.setCustDocIssuedCountry(country.getCountryCode());
-				customerDocument.setLovDescCustDocIssuedCountry(country.getCountryDesc());
-			}
+			Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+			customerDocument.setCustDocIssuedCountry(defaultCountry.getCountryCode());
+			customerDocument.setLovDescCustDocIssuedCountry(defaultCountry.getCountryDesc());
 
 			if ((PennantConstants.CPRCODE.equals(checkListDetail.getDocType())
 					|| PennantConstants.PASSPORT.equals(checkListDetail.getDocType()))

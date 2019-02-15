@@ -68,6 +68,6 @@ public interface CustomerEmploymentDetailDAO {
 
 	int getVersion(long custID, long custEmpId);
 
-	int getCustomerEmploymentByCustEmpName(long id, long custEmpName, long custEmpId, String type);
+	int getCustomerEmploymentByCustEmpName(long id, Long custEmpName, long custEmpId, String type);
 
 }

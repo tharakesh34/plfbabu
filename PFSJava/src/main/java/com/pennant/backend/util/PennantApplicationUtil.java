@@ -30,7 +30,9 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.PagedListService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
@@ -41,6 +43,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 public class PennantApplicationUtil {
 	private static final Logger logger = Logger.getLogger(PennantApplicationUtil.class);
 	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
+	private static Country defaultCountry = null;
 
 	public static boolean matches(BigDecimal val1, BigDecimal val2) {
 		if (val1 == null) {
@@ -824,8 +827,23 @@ public class PennantApplicationUtil {
 		}
 		return "";
 	}
-	
+
 	public static SearchProcessor getSearchProcessor() {
 		return (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+	}
+
+	public static Country getDefaultCounty() {
+		if (defaultCountry == null) {
+			Search search = new Search(Country.class);
+			search.addField("CountryCode");
+			search.addFilter(new Filter("SystemDefault", 1, Filter.OP_EQUAL));
+			defaultCountry = (Country) SEARCH_PROCESSOR.getResults(search).get(0);
+		}
+
+		if (defaultCountry == null) {
+			throw new AppException("Default country not defined, please define default country.");
+		}
+
+		return defaultCountry;
 	}
 }

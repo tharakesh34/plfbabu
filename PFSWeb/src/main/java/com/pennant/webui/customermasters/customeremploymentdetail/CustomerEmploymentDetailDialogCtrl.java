@@ -452,7 +452,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		this.currentEmployer.setChecked(aCustomerEmploymentDetail.isCurrentEmployer());
 		this.companyName.setValue(aCustomerEmploymentDetail.getCompanyName());
 
-		if (aCustomerEmploymentDetail.getCustEmpName() == 0) {
+		if (aCustomerEmploymentDetail.getCustEmpName() == null || aCustomerEmploymentDetail.getCustEmpName() == 0) {
 			this.custEmpDesg.setDescription("");
 			this.custEmpDept.setDescription("");
 			this.custEmpType.setDescription("");
@@ -465,13 +465,20 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		}
 		this.recordStatus.setValue(aCustomerEmploymentDetail.getRecordStatus());
 
+		String strEmployeeId = null;
 		try {
-			otherEmployerId = Long.parseLong(getMasterDefService().getMasterCode("CustomerEmployment", "OTHER"));
+			strEmployeeId = getMasterDefService().getMasterCode("CustomerEmployment", "OTHER");
 		} catch (Exception e) {
-			otherEmployerId = 0;
 		}
 
-		if (otherEmployerId != 0 && !enqiryModule && otherEmployerId == aCustomerEmploymentDetail.getCustEmpName()) {
+		if (strEmployeeId == null || !StringUtils.isNumeric(strEmployeeId)) {
+			otherEmployerId = 0;
+		} else {
+			otherEmployerId = Long.parseLong(strEmployeeId);
+		}
+
+		if (otherEmployerId != 0 && !enqiryModule && (aCustomerEmploymentDetail.getCustEmpName() != null
+				&& otherEmployerId == aCustomerEmploymentDetail.getCustEmpName())) {
 			if (!isReadOnly("CustomerEmploymentDetailDialog_companyName")) {
 				this.companyName.setReadonly(false);
 			} else {
@@ -523,7 +530,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		}
 		try {
 			aCustomerEmploymentDetail.setLovDesccustEmpName(this.custEmpName.getDescription());
-			aCustomerEmploymentDetail.setCustEmpName(Long.parseLong(this.custEmpName.getValue()));
+			if (StringUtils.isNotEmpty(this.custEmpName.getValue())) {
+				aCustomerEmploymentDetail.setCustEmpName(Long.parseLong(this.custEmpName.getValue()));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

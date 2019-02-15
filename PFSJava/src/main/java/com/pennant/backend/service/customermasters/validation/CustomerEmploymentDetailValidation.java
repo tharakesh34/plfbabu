@@ -128,11 +128,13 @@ public class CustomerEmploymentDetailValidation {
 				}
 			}
 		}
-		int count = getCustomerEmploymentDetailDAO().getCustomerEmploymentByCustEmpName(
-				customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpName(),
-				customerEmploymentDetail.getCustEmpId(), "_View");
-		if (count != 0) {
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+		if (customerEmploymentDetail.getCustEmpName() != null) {
+			int count = getCustomerEmploymentDetailDAO().getCustomerEmploymentByCustEmpName(
+					customerEmploymentDetail.getCustID(), customerEmploymentDetail.getCustEmpName(),
+					customerEmploymentDetail.getCustEmpId(), "_View");
+			if (count != 0) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
