@@ -6225,7 +6225,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceDetail.setAccountingEventCode(eventCode);
 
 		// Extended Field validations
-		if (aFinanceDetail.getExtendedFieldHeader() != null) {
+		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
 			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
 		}
 
