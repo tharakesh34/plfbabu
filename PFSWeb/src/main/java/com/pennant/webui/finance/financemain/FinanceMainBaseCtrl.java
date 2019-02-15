@@ -4260,7 +4260,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setUserRole(getRole());
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
 		}
 		logger.debug(Literal.LEAVING);
 	}
