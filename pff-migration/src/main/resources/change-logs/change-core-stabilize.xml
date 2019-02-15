@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="satyanarayana.g" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="satyanarayana.g">
+		<addNotNullConstraint tableName="bmtdocumenttypes" columnName="docispdfextrequired" />
+		<addNotNullConstraint tableName="bmtdocumenttypes_temp" columnName="docispdfextrequired" />
+	</changeSet>
+
+	<changeSet id="2" author="satyanarayana.g">
+		<addNotNullConstraint tableName="PinCodes" columnName="serviceable" />
+		<addNotNullConstraint tableName="PinCodes_temp" columnName="serviceable" />
+	</changeSet>
+
+	<changeSet id="3" author="satyanarayana.g">
+		<dropNotNullConstraint tableName="customerempdetails_temp" columnName="custempname" />
+		<dropNotNullConstraint tableName="customerempdetails" columnName="custempname" />
+	</changeSet>
+
+	<changeSet id="4" author="satyanarayana.g">
+		<createView viewName="customerempdetails_view" replaceIfExists="true">
+			SELECT ce.custempid,
+		    ce.custid,
+		    ce.custempname,
+		    ce.custempfrom,
+		    ce.custempto,
+		    ce.custempdesg,
+		    de.gendesgdesc lovdesccustempdesgname,
+		    ce.custempdept,
+		    dp.gendeptdesc lovdesccustempdeptname,
+		    ce.custemptype,
+		    et.emptypedesc lovdesccustemptypename,
+		    ce.version,
+		    ce.lastmntby,
+		    ce.lastmnton,
+		    ce.recordstatus,
+		    ce.rolecode,
+		    ce.nextrolecode,
+		    ce.taskid,
+		    ce.nexttaskid,
+		    ce.recordtype,
+		    ce.workflowid,
+		    emp.empname lovdesccustempname,
+		    ce.currentemployer,
+		    ce.companyname
+		   FROM ((((customerempdetails_temp ce
+		     INNER JOIN rmtgendesignations de ON ((ce.custempdesg = de.gendesignation)))
+		     LEFT JOIN rmtgendepartments dp ON ((ce.custempdept = dp.gendepartment)))
+		     INNER JOIN rmtemptypes et ON ((ce.custemptype = et.emptype)))
+		     LEFT JOIN employerdetail emp ON ((ce.custempname = emp.employerid)))
+		UNION ALL
+		 SELECT ce.custempid,
+		    ce.custid,
+		    ce.custempname,
+		    ce.custempfrom,
+		    ce.custempto,
+		    ce.custempdesg,
+		    de.gendesgdesc lovdesccustempdesgname,
+		    ce.custempdept,
+		    dp.gendeptdesc lovdesccustempdeptname,
+		    ce.custemptype,
+		    et.emptypedesc lovdesccustemptypename,
+		    ce.version,
+		    ce.lastmntby,
+		    ce.lastmnton,
+		    ce.recordstatus,
+		    ce.rolecode,
+		    ce.nextrolecode,
+		    ce.taskid,
+		    ce.nexttaskid,
+		    ce.recordtype,
+		    ce.workflowid,
+		    emp.empname lovdesccustempname,
+		    ce.currentemployer,
+		    ce.companyname
+		   FROM ((((customerempdetails ce
+		     INNER JOIN rmtgendesignations de ON ((ce.custempdesg = de.gendesignation)))
+		     LEFT JOIN rmtgendepartments dp ON ((ce.custempdept = dp.gendepartment)))
+		     INNER JOIN rmtemptypes et ON ((ce.custemptype = et.emptype)))
+		     LEFT JOIN employerdetail emp ON ((ce.custempname = emp.employerid)))
+		  WHERE (NOT (EXISTS ( SELECT 1 AS expr1
+		           FROM customerempdetails_temp
+		          WHERE (customerempdetails_temp.custempid = ce.custempid))))
+		</createView>
+	</changeSet>
+	<changeSet id="4" author="satyanarayana.g">
+		<createView viewName="customerempdetails_aview" replaceIfExists="true">
+			SELECT ce.custempid,
+		    ce.custid,
+		    ce.custempname,
+		    ce.custempfrom,
+		    ce.custempto,
+		    ce.custempdesg,
+		    de.gendesgdesc AS lovdesccustempdesgname,
+		    ce.custempdept,
+		    dp.gendeptdesc AS lovdesccustempdeptname,
+		    ce.custemptype,
+		    et.emptypedesc AS lovdesccustemptypename,
+		    ce.version,
+		    ce.lastmntby,
+		    ce.lastmnton,
+		    ce.recordstatus,
+		    ce.rolecode,
+		    ce.nextrolecode,
+		    ce.taskid,
+		    ce.nexttaskid,
+		    ce.recordtype,
+		    ce.workflowid,
+		    emp.empname AS lovdesccustempname,
+		    ce.currentemployer,
+		    ce.companyname
+		   FROM ((((customerempdetails ce
+		     INNER JOIN rmtgendesignations de ON ((ce.custempdesg = de.gendesignation)))
+		     LEFT JOIN rmtgendepartments dp ON ((ce.custempdept = dp.gendepartment)))
+		     INNER JOIN rmtemptypes et ON ((ce.custemptype = et.emptype)))
+		     LEFT JOIN employerdetail emp ON ((ce.custempname = emp.employerid)))
+		</createView>
+	</changeSet>
+</databaseChangeLog>
