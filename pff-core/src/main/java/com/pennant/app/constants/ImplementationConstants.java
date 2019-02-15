@@ -176,4 +176,7 @@ public class ImplementationConstants {
 
 	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
 	public static final boolean COAPP_CUST_CRET = false;
+
+	//Document
+	public static final boolean DOC_OWNER_VALIDATION = false;
 }
