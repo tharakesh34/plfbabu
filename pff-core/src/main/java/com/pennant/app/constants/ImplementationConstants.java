@@ -177,6 +177,6 @@ public class ImplementationConstants {
 	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
 	public static final boolean COAPP_CUST_CRET = false;
 
-	//Document
+	//If True, Document Modification can be done by only document owner
 	public static final boolean DOC_OWNER_VALIDATION = false;
 }

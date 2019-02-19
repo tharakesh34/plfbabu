@@ -78,7 +78,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -694,9 +693,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 
 			doCheckEnquiry();
-			if (ImplementationConstants.DOC_OWNER_VALIDATION) {
-				doCheckDocumentOwner();
-			}
+			/*
+			 * if (ImplementationConstants.DOC_OWNER_VALIDATION) { doCheckDocumentOwner(); }
+			 */
 			if (isNewDocument()) {
 				this.window_FinDocumentDetailDialog.setHeight("85%");
 				this.window_FinDocumentDetailDialog.setWidth("100%");
@@ -1371,13 +1370,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 	}
 
-	private void doCheckDocumentOwner() {
-		if (getDocumentDetails().getLastMntBy() != 0
-				&& getUserWorkspace().getLoggedInUser().getLoginLogId() != getDocumentDetails().getLastMntBy()) {
-			this.btnDelete.setVisible(false);
-			this.btnSave.setVisible(false);
-			this.btnUploadDoc.setVisible(false);
-		}
-	}
+	/*
+	 * private void doCheckDocumentOwner() { if (getDocumentDetails().getLastMntBy() != 0 &&
+	 * getUserWorkspace().getLoggedInUser().getUserId() != getDocumentDetails().getLastMntBy()) {
+	 * this.btnDelete.setVisible(false); this.btnSave.setVisible(false); this.btnUploadDoc.setVisible(false); } }
+	 */
 
 }
