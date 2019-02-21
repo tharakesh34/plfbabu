@@ -227,10 +227,15 @@ public class MiscellaneousServiceController {
 					int formatter = CurrencyUtil.getFormat(finCcy);
 					object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
 				}
-				finElgDetail.setRuleResult(object.toString());
+				
+				if(object != null)	{
+					finElgDetail.setRuleResult(object.toString());
+				}
 				break;
 			case INTEGER:
-				finElgDetail.setRuleResult(object.toString());
+				if(object != null)	{
+					finElgDetail.setRuleResult(object.toString());
+				}
 				break;
 
 			case BOOLEAN:
@@ -243,16 +248,17 @@ public class MiscellaneousServiceController {
 				finElgDetail.setRuleResult(resultValue);
 				break;
 
-			case OBJECT: // FIXME to discuss with Sathish
+			case OBJECT:
 				RuleResult ruleResult = (RuleResult) object;
 				Object resultval = ruleResult.getValue();
 				Object resultvalue = ruleResult.getDeviation();
 
+				BigDecimal tempResult = null;
 				if (resultval instanceof Double) {
-					BigDecimal tempResult = new BigDecimal(resultval.toString());
+					tempResult = new BigDecimal(resultval.toString());
 					finElgDetail.setRuleResult(tempResult.toString());
 				} else if (resultval instanceof Integer) {
-					BigDecimal tempResult = new BigDecimal(resultval.toString());
+					tempResult = new BigDecimal(resultval.toString());
 					finElgDetail.setRuleResult(tempResult.toString());
 				}
 				break;
@@ -269,7 +275,7 @@ public class MiscellaneousServiceController {
 
 		return finElgDetail;
 	}
-
+	
 	private List<ErrorDetail> doDashboardValidations(DashBoardRequest request, boolean usernameProvided) {
 
 		logger.debug(Literal.ENTERING);
@@ -358,8 +364,7 @@ public class MiscellaneousServiceController {
 							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
 				}
 			}
-		}
-		else	{
+		} else	{
 			// user login available in request
 			response = new DashBoardResponse();
 			List<ErrorDetail> validationErrors = doDashboardValidations(request, true);
@@ -436,10 +441,11 @@ public class MiscellaneousServiceController {
 			posting.setBranch(financeMainData.getFinBranch());
 			posting.setBatch(jvPosting.getBatch());
 			posting.setBatchReference(0);
-			if(StringUtils.isNotBlank(jvPosting.getCurrency()))	
+			if(StringUtils.isNotBlank(jvPosting.getCurrency()))	{
 				posting.setCurrency(jvPosting.getCurrency());
-			else
+			} else	{
 				posting.setCurrency(financeMainData.getFinCcy());
+			}
 			posting.setPostingDate(DateUtility.getAppDate());
 			posting.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
 			posting.setBatchPurpose("");
@@ -477,9 +483,8 @@ public class MiscellaneousServiceController {
 					postingEntry.setAccCCy(financeMainData.getFinCcy());
 					postingEntry.setTxnCCy(financeMainData.getFinCcy());
 
-					if ( null != accountMapping)	{
-						switch (transactionCode.getTranType())	{
-						case "C":
+					if (null != accountMapping)	{
+						if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
@@ -489,9 +494,8 @@ public class MiscellaneousServiceController {
 							
 							setJVPostingEntryMandatoryFieldsData(postingEntry);
 							creditEntryList.add(postingEntry);
-							break;
-					
-						case "D":
+						}
+						else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
@@ -502,7 +506,6 @@ public class MiscellaneousServiceController {
 							
 							setJVPostingEntryMandatoryFieldsData(postingEntry);
 							debitEntryList.add(postingEntry);
-							break;
 						}
 					}
 				}
@@ -511,13 +514,15 @@ public class MiscellaneousServiceController {
 			// reorganize all JVPostingEntries in order [C,D]
 			for (int i = 0, j = i; i <= creditEntryList.size() && j <= debitEntryList.size(); i++, j++) {
 				if(i < creditEntryList.size() && creditEntryList.get(i) != null)	{
-					if (!postingEntryList.contains(creditEntryList.get(i)))
+					if (!postingEntryList.contains(creditEntryList.get(i)))	{
 						postingEntryList.add(creditEntryList.get(i));
+					}
 				}
 				
 				if(j < debitEntryList.size() && debitEntryList.get(j) != null)	{
-					if(!postingEntryList.contains(debitEntryList.get(j)))
+					if(!postingEntryList.contains(debitEntryList.get(j)))	{
 						postingEntryList.add(debitEntryList.get(j));
+					}
 				}
 			}
 			posting.setJVPostingEntrysList(postingEntryList);
@@ -526,8 +531,7 @@ public class MiscellaneousServiceController {
 			setJVPostingMandatoryFieldsData(posting);
 			
 			returnStatus = saveJVPostingData(posting);
-		}
-		else	{
+		} else	{
 			// financemain data is not available
 			String[] valueParm = new String[1];
 			valueParm[0] = "reference: " + jvPosting.getReference();
@@ -568,9 +572,9 @@ public class MiscellaneousServiceController {
 			for (ErrorDetail errorDetail : savedJVPostData.getErrorMessage()) {
 				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
-		}
-		else
+		} else	{
 			returnStatus = APIErrorHandlerService.getSuccessStatus();
+		}
 		
 		logger.debug(Literal.LEAVING);
 		
