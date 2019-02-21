@@ -37,8 +37,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		List<ErrorDetail> validationErrors = jVPostingService.doMiscellaneousValidations(posting);
 		if(CollectionUtils.isEmpty(validationErrors))	{
 			returnStatus = miscellaneousController.prepareJVPostData(posting);			
-		} 
-		else	{
+		} else	{
 			for (ErrorDetail errorDetail : validationErrors) {
 				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters());
 			}
