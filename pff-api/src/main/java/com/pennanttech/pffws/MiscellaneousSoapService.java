@@ -15,13 +15,13 @@ import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 @WebService
 public interface MiscellaneousSoapService {
 	
-	public WSReturnStatus createPosting(@WebParam(name = "posting") JVPosting posting) throws ServiceException;
+	WSReturnStatus createPosting(@WebParam(name = "posting") JVPosting posting) throws ServiceException;
 	
 	@WebResult(name = "DashBoardResponse")
-	public DashBoardResponse createDashboard(@WebParam(name = "dashboardRequest") DashBoardRequest dashboardRequest) throws ServiceException;
+	DashBoardResponse createDashboard(@WebParam(name = "dashboardRequest") DashBoardRequest dashboardRequest) throws ServiceException;
 
 	@WebResult(name = "EligibilityDetailResponse")
-	public EligibilityDetailResponse createEligibilityDetail(
+	EligibilityDetailResponse createEligibilityDetail(
 			@WebParam(name = "eligibilityDetail") EligibilityDetail eligibilityDetail) throws ServiceException;
 
 }

@@ -17,15 +17,15 @@ public interface MiscellaneousRestService {
 	
 	@POST
 	@Path("/miscellaneous/AddFinanceJVPostings")
-	public WSReturnStatus createPosting(JVPosting posting) throws ServiceException;
+	WSReturnStatus createPosting(JVPosting posting) throws ServiceException;
 	
 	@POST
 	@Path("/miscellaneous/createDashboard")
-	public DashBoardResponse createDashboard(DashBoardRequest dashboardRequest) throws ServiceException;
+	DashBoardResponse createDashboard(DashBoardRequest dashboardRequest) throws ServiceException;
 
 	@POST
 	@Path(value = "/miscellaneous/CreateEligibility")
-	public EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail)
+	EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail)
 			throws ServiceException;
 
 }
