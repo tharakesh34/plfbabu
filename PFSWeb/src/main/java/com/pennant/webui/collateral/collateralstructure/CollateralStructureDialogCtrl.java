@@ -1009,6 +1009,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			List<ExtendedFieldDetail> techValuationDetailList = getTechnicalValuationDialogCtrl()
 					.doSave_TechnicalValuationFields(techValuationDetailsTab);
 			extendedFieldHeader.setTechnicalValuationDetailList(techValuationDetailList);
+			extendedFieldHeader.setTabHeading(collateralStructure.getCollateralDesc());
 			collateralStructure.setExtendedFieldHeader(extendedFieldHeader);
 		}
 
