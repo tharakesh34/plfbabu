@@ -1195,7 +1195,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 		}
 
-		if (!(totalDebits.compareTo(totalCredits) == 0)) {
+		if (totalDebits.compareTo(totalCredits) != 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "TransactionAmount " + totalCredits.toString();
 			valueParm[1] = totalDebits.toString();
