@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -3755,7 +3757,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try	{
 			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch(Exception e)	{
-			e.printStackTrace();
+			logger.error(e.getMessage());
+			logger.log(Level.ERROR, e.getCause(), e);
 		}
 		
 		logger.debug(Literal.LEAVING);
