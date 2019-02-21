@@ -33,8 +33,7 @@ public class RemarksController {
 			
 			if(notes.getInDate()!= null)	{
 				notes.setInputDate(new Timestamp(notes.getInDate().getTime()));
-			}
-			else	{
+			} else	{
 				notes.setInputDate(new Timestamp(DateUtility.getAppDate().getTime()));
 			}
 			
