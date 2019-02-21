@@ -1185,13 +1185,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		BigDecimal totalCredits = BigDecimal.ZERO;
 		for (JVPostingEntry postingEntry : postingEntries) {
 			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
-			switch (transactionCode.getTranType()) {
-			case "D":
+			if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
 				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
-				break;
-			case "C":
+			}
+			else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
 				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
-				break;
 			}
 		}
 
@@ -1203,9 +1201,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 			return errorsList;
 		}
-		
-		
-		
 		
 		return errorsList;
 	}
