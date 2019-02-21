@@ -12,6 +12,6 @@ import com.pennant.ws.exception.ServiceException;
 @WebService
 public interface RemarksSoapService {
 	
-	public WSReturnStatus addRemarks(@WebParam(name = "remarks") List<Notes> remarks) throws ServiceException;
+	WSReturnStatus addRemarks(@WebParam(name = "remarks") List<Notes> remarks) throws ServiceException;
 
 }

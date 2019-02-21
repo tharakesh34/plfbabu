@@ -15,6 +15,6 @@ public interface RemarksRestService {
 	
 	@POST
 	@Path("/remarksService/createRemarks")
-	public WSReturnStatus addRemarks(List<Notes> remarks) throws ServiceException;
+	WSReturnStatus addRemarks(List<Notes> remarks) throws ServiceException;
 	
 }
