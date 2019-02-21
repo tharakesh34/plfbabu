@@ -219,47 +219,53 @@ public class MiscellaneousServiceController {
 				ruleReturnType);
 
 		String resultValue = null;
-		switch (ruleReturnType) {
-		case DECIMAL:
-			if (object != null && object instanceof BigDecimal) {
-				// unFormating object
-				int formatter = CurrencyUtil.getFormat(finCcy);
-				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
+		if(StringUtils.isNotBlank(ruleReturnType.value()))	{
+			switch (ruleReturnType) {
+			case DECIMAL:
+				if (object instanceof BigDecimal) {
+					// unFormating object
+					int formatter = CurrencyUtil.getFormat(finCcy);
+					object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
+				}
+				finElgDetail.setRuleResult(object.toString());
+				break;
+			case INTEGER:
+				finElgDetail.setRuleResult(object.toString());
+				break;
+
+			case BOOLEAN:
+				boolean tempBoolean = (boolean) object;
+				if (tempBoolean) {
+					resultValue = "1";
+				} else {
+					resultValue = "0";
+				}
+				finElgDetail.setRuleResult(resultValue);
+				break;
+
+			case OBJECT: // FIXME to discuss with Sathish
+				RuleResult ruleResult = (RuleResult) object;
+				Object resultval = ruleResult.getValue();
+				Object resultvalue = ruleResult.getDeviation();
+
+				if (resultval instanceof Double) {
+					BigDecimal tempResult = new BigDecimal(resultval.toString());
+					finElgDetail.setRuleResult(tempResult.toString());
+				} else if (resultval instanceof Integer) {
+					BigDecimal tempResult = new BigDecimal(resultval.toString());
+					finElgDetail.setRuleResult(tempResult.toString());
+				}
+				break;
+
+			default:
+				// do-nothing
+				break;
 			}
-			finElgDetail.setRuleResult(object.toString());
-			break;
-		case INTEGER:
-			finElgDetail.setRuleResult(object.toString());
-			break;
-
-		case BOOLEAN:
-			boolean tempBoolean = (boolean) object;
-			if (tempBoolean) {
-				resultValue = "1";
-			} else {
-				resultValue = "0";
-			}
-			finElgDetail.setRuleResult(resultValue);
-			break;
-
-		case OBJECT: // FIXME to discuss with Sathish
-			RuleResult ruleResult = (RuleResult) object;
-			Object resultval = ruleResult.getValue();
-			Object resultvalue = ruleResult.getDeviation();
-
-			if (resultval instanceof Double) {
-				BigDecimal tempResult = new BigDecimal(resultval.toString());
-				finElgDetail.setRuleResult(tempResult.toString());
-			} else if (resultval instanceof Integer) {
-				BigDecimal tempResult = new BigDecimal(resultval.toString());
-				finElgDetail.setRuleResult(tempResult.toString());
-			}
-			break;
-
-		default:
-			// do-nothing
-			break;
 		}
+		else	{
+			logger.info("Improper 'ruleReturnType' value");
+		}
+		
 
 		return finElgDetail;
 	}
