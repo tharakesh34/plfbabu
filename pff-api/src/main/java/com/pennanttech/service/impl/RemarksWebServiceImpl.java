@@ -55,8 +55,7 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 			returnStatus = new WSReturnStatus();
 			returnStatus.setReturnCode("90502");
 			returnStatus.setReturnText("Empty Notes List");			
-		}
-		else	{
+		} else	{
 			for (Notes notes : remarks) {
 				if (StringUtils.isBlank(notes.getReference())) {
 					String[] valueParm = new String[1];
@@ -90,15 +89,15 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 					} 
 				} 
 				
-				if ((!notes.getAlignType().isEmpty()) && (!notes.getRemarkType().isEmpty()))	{ 
-					if ((!notes.getAlignType().equals("R")) && (!notes.getAlignType().equals("F")))	{
+				if (StringUtils.isNotEmpty(notes.getAlignType()) && StringUtils.isNotEmpty(notes.getRemarkType()))	{
+					if (StringUtils.containsNone(notes.getAlignType(), "R") && StringUtils.containsNone(notes.getAlignType(), "F"))	{
 						String[] param = new String[2];
 						param[0] = "Align Type";
 						param[1] = notes.getAlignType();
 						return	APIErrorHandlerService.getFailedStatus("90224", param);
 					}
 					
-					if ((!notes.getRemarkType().equals("N")) && (!notes.getRemarkType().equals("I")))	{
+					if (StringUtils.containsNone(notes.getRemarkType(), "N") && StringUtils.containsNone(notes.getRemarkType(), "I"))	{
 						String[] param = new String[2];
 						param[0] = "Remark Type";
 						param[1] = notes.getRemarkType();
