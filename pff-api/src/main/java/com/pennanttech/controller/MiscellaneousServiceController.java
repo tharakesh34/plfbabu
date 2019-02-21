@@ -136,8 +136,6 @@ public class MiscellaneousServiceController {
 			response = new EligibilityDetailResponse();
 			List<Rule> rules = ruleService.getEligibilityRules(eligibilityDetail.getRuleCodes());
 			
-			// FIXME Error of eligibilityDetail.getRuleCodes() size not equal to rules size then error
-			
 			if (CollectionUtils.isEmpty(rules) || eligibilityDetail.getRuleCodes().size() != rules.size()) {
 				List<ErrorDetail> errorsList = new ArrayList<>();
 				String[] param = new String[1];
@@ -148,8 +146,7 @@ public class MiscellaneousServiceController {
 					response.setReturnStatus(
 							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
 				}
-			}
-			else {
+			} else {
 				List<FinanceEligibilityDetail> eligibilityDetailsList = new ArrayList<>();
 				List<FinanceEligibilityDetail> eligibilityDetailsList1 = new ArrayList<>();
 
