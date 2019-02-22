@@ -2822,8 +2822,9 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			for (ErrorDetail errorDetail : rejectAuditHeader.getErrorMessage()) {
 				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
-		} else
+		} else	{
 			returnStatus = APIErrorHandlerService.getSuccessStatus();
+		}
 			
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
