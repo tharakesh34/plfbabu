@@ -10,6 +10,10 @@ public class EligibilityDetailResponse {
 	private List<FinanceEligibilityDetail> eligibilityDetails;
 
 	private WSReturnStatus returnStatus;
+	
+	public EligibilityDetailResponse() {
+		super();
+	}
 
 	public List<FinanceEligibilityDetail> getEligibilityDetails() {
 		return eligibilityDetails;
