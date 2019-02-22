@@ -13,6 +13,10 @@ public class DashBoardResponse {
 	private List<ChartSetElement> chartSetElement = new ArrayList<>();
 	private WSReturnStatus returnStatus;
 
+	public DashBoardResponse() {
+		super();
+	}
+
 	public DashboardConfiguration getDashboardConfiguration() {
 		return dashboardConfiguration;
 	}
