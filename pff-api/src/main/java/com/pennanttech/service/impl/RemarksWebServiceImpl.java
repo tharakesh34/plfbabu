@@ -27,6 +27,10 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 	private SecurityUserDAO securityUserDAO;
 	private RemarksController remarksController;
 	
+	public RemarksWebServiceImpl() {
+		super();
+	}
+	
 	@Override
 	public WSReturnStatus addRemarks(List<Notes> remarks) throws ServiceException {
 		
