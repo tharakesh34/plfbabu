@@ -70,6 +70,10 @@ public class MiscellaneousServiceController {
 	private RuleService ruleService;
 	private RuleExecutionUtil ruleExecutionUtil;
 
+	public MiscellaneousServiceController() {
+		super();
+	}
+
 	private List<ErrorDetail> doEligibilityValidations(EligibilityDetail eligibilityDetail) {
 		List<ErrorDetail> errorsList = new ArrayList<>();
 
