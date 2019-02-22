@@ -37,5 +37,9 @@
 	<changeSet id="3" author="satyanarayana.g">
 		<dropNotNullConstraint tableName="Adtcustomerempdetails" columnName="custempname" />
 	</changeSet>
+	
+	<changeSet id="4" author="satyanarayana.g">
+		<addNotNullConstraint tableName="AdtcustomerBankInfo" columnName="noOfMonthsBanking" />
+	</changeSet>
 
 </databaseChangeLog>

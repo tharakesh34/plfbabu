@@ -86,6 +86,14 @@
 														</hbox>
 													</row>
 													<row>
+														<label id="label_FinanceMainDialog_BusinessVertical"
+															value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+														<hbox>
+															<textbox id="businessVertical" width="250px"
+																readonly="true" />
+														</hbox>
+													</row>
+													<row>
 														<label id="label_FinanceMainDialog_FinType" value="${c:l('label_FinanceMainDialog_FinType.value')}" />
 														<hbox>
 															<space spacing="2px" sclass="mandatory" />
@@ -908,6 +916,12 @@
 														</hbox>
 													</row>
 													<row visible="true">
+													<hbox>
+														<label id="label_FinanceMainDialog_LPPRULE"
+															value="${c:l('label_FinanceMainDialog_LPPRULE.value')}" visible="false" />
+													</hbox>
+												</row>
+													<row visible="true">
 														<label id="label_FinanceMainDialog_ODChargeType" value="${c:l('label_FinanceMainDialog_ODChargeType.value')}" />
 														<hbox>
 															<space id="space_oDChargeType" spacing="2px" sclass="mandatory" />
@@ -917,6 +931,7 @@
 														<hbox>
 															<space spacing="2px" id="space_oDChargeAmtOrPerc" sclass="mandatory" />
 															<decimalbox id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
+															<extendedcombobox id="lPPRule" />
 														</hbox>
 													</row>
 													<row visible="true">
@@ -929,6 +944,14 @@
 														<hbox>
 															<space id="space_oDMaxWaiverPerc" spacing="2px" sclass="mandatory" />
 															<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="6" />
+														</hbox>
+													</row>
+													<row id="row_ODMinCapAmount" visible="false">
+														<label id="label_FinanceMainDialog_ODMinCapAmount"
+															value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
+														<hbox>
+															<space id="space_ODMinCapAmount" spacing="2px" />
+															<decimalbox id="oDMinCapAmount" width="120px" />
 														</hbox>
 													</row>
 												</rows>

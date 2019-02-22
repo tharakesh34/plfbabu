@@ -140,4 +140,8 @@
 		     LEFT JOIN employerdetail emp ON ((ce.custempname = emp.employerid)))
 		</createView>
 	</changeSet>
+	<changeSet id="6" author="satyanarayana.g">
+		<addNotNullConstraint tableName="CustomerBankInfo" columnName="noOfMonthsBanking" />
+		<addNotNullConstraint tableName="CustomerBankInfo_Temp" columnName="noOfMonthsBanking" />
+	</changeSet>
 </databaseChangeLog>

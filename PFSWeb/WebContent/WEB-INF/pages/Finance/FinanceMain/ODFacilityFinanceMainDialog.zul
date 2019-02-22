@@ -88,6 +88,13 @@
 													</hbox>
 												</row>
 												<row>
+													<label id="label_FinanceMainDialog_BusinessVertical"
+														value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+													<hbox>
+														<textbox id="businessVertical" width="250px" readonly="true" />
+													</hbox>
+												</row>
+												<row>
 													<label id="label_FinanceMainDialog_FinType" value="${c:l('label_FinanceMainDialog_ODFinType.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
