@@ -27,6 +27,10 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private MiscellaneousServiceController miscellaneousController;
 	private JVPostingService jVPostingService;
 	
+	public MiscellaneousWebServiceImpl() {
+		super();
+	}
+
 	// jvposting
 	@Override
 	public WSReturnStatus createPosting(JVPosting posting) throws ServiceException {
