@@ -215,11 +215,10 @@ public class MiscellaneousServiceController {
 			ruleReturnType = RuleReturnType.OBJECT;
 		}
 
-		Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy,
-				ruleReturnType);
-
-		String resultValue = null;
 		if(StringUtils.isNotBlank(ruleReturnType.value()))	{
+			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
+
+			String resultValue = null;
 			switch (ruleReturnType) {
 			case DECIMAL:
 				if (object instanceof BigDecimal) {
