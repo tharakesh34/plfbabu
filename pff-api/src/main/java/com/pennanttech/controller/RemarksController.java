@@ -20,6 +20,10 @@ public class RemarksController {
 	private final Logger logger = Logger.getLogger(getClass());
 	
 	private NotesService notesService;
+	
+	public RemarksController() {
+		super();
+	}
 
 	public WSReturnStatus doAddRemarks(List<Notes> remarks) {
 		
