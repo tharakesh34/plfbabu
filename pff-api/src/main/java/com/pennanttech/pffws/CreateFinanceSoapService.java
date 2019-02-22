@@ -13,31 +13,31 @@ import com.pennanttech.ws.model.financetype.FinanceInquiry;
 public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finance")
-	public FinanceDetail createFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
+	FinanceDetail createFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
 	@WebResult(name = "finance")
-	public FinanceDetail createFinanceWithWIF(@WebParam(name = "finance") FinanceDetail financeDetail)
+	FinanceDetail createFinanceWithWIF(@WebParam(name = "finance") FinanceDetail financeDetail)
 			throws ServiceException;
 
 	@WebResult(name = "finReference")
-	public FinanceDetail getFinanceDetails(@WebParam(name = "finReference") String finReference)
+	FinanceDetail getFinanceDetails(@WebParam(name = "finReference") String finReference)
 			throws ServiceException;
 
 	@WebResult(name = "finance")
-	public FinanceDetail getFinInquiryDetails(@WebParam(name = "finReference") String finReference)
+	FinanceDetail getFinInquiryDetails(@WebParam(name = "finReference") String finReference)
 			throws ServiceException;
 
 	@WebResult(name = "finance")
-	public FinanceInquiry getFinanceWithCustomer(@WebParam(name = "cif") String custCif) throws ServiceException;
+	FinanceInquiry getFinanceWithCustomer(@WebParam(name = "cif") String custCif) throws ServiceException;
 
 	@WebResult(name = "finance")
-	public FinanceInquiry getFinanceWithCollateral(@WebParam(name = "collateralRef") String collateralRef)
+	FinanceInquiry getFinanceWithCollateral(@WebParam(name = "collateralRef") String collateralRef)
 			throws ServiceException;
 
 	@WebResult(name = "finance")
-	public WSReturnStatus updateFinance(@WebParam(name = "finance") FinanceDetail financeDetail)
+	WSReturnStatus updateFinance(@WebParam(name = "finance") FinanceDetail financeDetail)
 			throws ServiceException;
 
 	@WebResult(name = "finance")
-	public WSReturnStatus rejectFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
+	WSReturnStatus rejectFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 }
