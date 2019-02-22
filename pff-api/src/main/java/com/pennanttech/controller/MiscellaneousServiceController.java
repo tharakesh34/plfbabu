@@ -266,8 +266,7 @@ public class MiscellaneousServiceController {
 				// do-nothing
 				break;
 			}
-		}
-		else	{
+		} else	{
 			logger.info("Improper 'ruleReturnType' value");
 		}
 		
@@ -493,8 +492,7 @@ public class MiscellaneousServiceController {
 							
 							setJVPostingEntryMandatoryFieldsData(postingEntry);
 							creditEntryList.add(postingEntry);
-						}
-						else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
+						} else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
