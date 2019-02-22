@@ -5858,7 +5858,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Main Details Deletion
 		// =======================================
 		FinanceMain dbFinanceMain = getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
-		if (!(null == dbFinanceMain)) {
+		if (null != dbFinanceMain) {
 			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, isAutoReject);
 		}
 
