@@ -6,6 +6,10 @@ public class FieldData {
 
 	private Object fieldValue;
 
+	public FieldData() {
+		super();
+	}
+
 	public String getFieldName() {
 		return fieldName;
 	}
