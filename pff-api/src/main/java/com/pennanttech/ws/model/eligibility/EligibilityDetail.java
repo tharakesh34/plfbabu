@@ -13,6 +13,10 @@ public class EligibilityDetail {
 	private List<String> ruleCodes;
 	private Map<String, Object> map;
 
+	public EligibilityDetail() {
+		super();
+	}
+
 	public List<EligibilityRuleCodeData> getEligibilityRuleCodeDatas() {
 		return eligibilityRuleCodeDatas;
 	}
