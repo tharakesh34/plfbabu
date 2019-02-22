@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1114,15 +1115,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			return errorsList;
 		}
 		
-		BigDecimal txnAmount = null;
-		String txnCode = null;
-		String account = null;
 		for (JVPostingEntry postingEntry : postingEntries) {
-			txnAmount = postingEntry.getTxnAmount();
-			txnCode = postingEntry.getTxnCode();
-			account = postingEntry.getAccount();
 			
-			if(null == txnAmount)	{
+			if(null == postingEntry.getTxnAmount())	{
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionAmount";
 				
@@ -1131,7 +1126,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 			
-			if(txnAmount.compareTo(BigDecimal.ZERO) == 0)	{
+			if(postingEntry.getTxnAmount().compareTo(BigDecimal.ZERO) == 0)	{
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionAmount";
 				
@@ -1140,7 +1135,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 			
-			if(StringUtils.isBlank(txnCode))	{
+			if(StringUtils.isBlank(postingEntry.getTxnCode()))	{
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionCode";
 				
@@ -1160,7 +1155,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 			
-			if(StringUtils.isBlank(account))	{
+			if(StringUtils.isBlank(postingEntry.getAccount()))	{
 				String[] valueParm = new String[1];
 				valueParm[0] = "account";
 				
@@ -1183,16 +1178,10 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		
 		BigDecimal totalDebits = BigDecimal.ZERO;
 		BigDecimal totalCredits = BigDecimal.ZERO;
-		for (JVPostingEntry postingEntry : postingEntries) {
-			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
-			if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
-				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
-			}
-			else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
-				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
-			}
-		}
-
+		Map<String, BigDecimal> amount = sumDebitCreditPostAmount(totalDebits, totalCredits, postingEntries);
+		totalDebits = amount.get("debitTotal");
+		totalCredits = amount.get("creditTotal");
+		
 		if (totalDebits.compareTo(totalCredits) != 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "TransactionAmount " + totalCredits.toString();
@@ -1203,6 +1192,23 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		}
 		
 		return errorsList;
+	}
+	
+	private Map<String, BigDecimal> sumDebitCreditPostAmount(BigDecimal totalDebits, BigDecimal totalCredits, final List<JVPostingEntry> postingEntries)	{
+		Map<String, BigDecimal> amount = new HashMap<>();
+		for (JVPostingEntry postingEntry : postingEntries) {
+			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+			if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
+				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
+			}
+			else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
+				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
+			}
+		}
+		amount.put("debitTotal", totalDebits);
+		amount.put("creditTotal", totalCredits);
+		
+		return amount;
 	}
 
 	/**
