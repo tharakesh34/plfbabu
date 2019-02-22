@@ -185,8 +185,7 @@ public class MiscellaneousServiceController {
 				response.setEligibilityDetails(responseList);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
-		}
-		else {
+		} else {
 			response = new EligibilityDetailResponse();
 			for (ErrorDetail errorDetail : eligibilityErrors) {
 				response.setReturnStatus(
