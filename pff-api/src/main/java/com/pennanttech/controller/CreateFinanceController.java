@@ -2868,10 +2868,9 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 
 			returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);	
-		}
-		else	{
+		} else	{
 			FinanceMain dbFinanceMain = financeDetailService.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
-			if (!(null == dbFinanceMain)) {
+			if (null != dbFinanceMain) {
 				financeMain.setFinReference(dbFinanceMain.getFinReference());
 				financeMain.setLastMntOn(dbFinanceMain.getLastMntOn());
 				financeMain.setCustID(dbFinanceMain.getCustID());
