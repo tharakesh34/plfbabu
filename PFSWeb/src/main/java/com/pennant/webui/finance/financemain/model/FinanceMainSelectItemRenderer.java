@@ -66,7 +66,7 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 	private static final long serialVersionUID = 1552059797117039294L;
 
 	public FinanceMainSelectItemRenderer() {
-
+		super();
 	}
 
 	@Override

@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -76,6 +77,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -123,6 +125,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
@@ -212,6 +215,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private String buildedWhereCondition = "";
 	final Map<String, Object> map = getDefaultArguments();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private List<String> usrfinRolesList = new ArrayList<String>();
 
 	/**
 	 * Default constructor
@@ -393,6 +397,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_TFPREMIUMEXCL)) {
 			this.listheader_RecordStatus.setVisible(false);
 		}
+
+		usrfinRolesList = getUserFinanceRoles(new String[] { "FINANCE" }, moduleDefiner);
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -789,6 +795,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	public void doSearch(boolean isFilterSearch) {
 		logger.debug("Entering");
+
+		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
+			return;
+		}
 
 		getSearchObj(false);
 
@@ -3011,11 +3021,24 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			buildedWhereCondition = buildedWhereCondition.concat(
 					" UsrID= " + getUserWorkspace().getUserDetails().getUserId() + " AND AppCode='" + App.CODE + "')");
 			buildedWhereCondition = buildedWhereCondition
-					.concat(")) OR NextRoleCode IN (SELECT RoleCd FROM UserOperationRoles_View WHERE ");
-			buildedWhereCondition = buildedWhereCondition.concat(
-					" UsrID= " + getUserWorkspace().getUserDetails().getUserId() + " AND AppCode='" + App.CODE + "')");
+					.concat(")) ");
 
+			for (String role : usrfinRolesList) {
+				if (buildedWhereCondition.length() > 0) {
+					buildedWhereCondition = buildedWhereCondition.concat(" OR ");
+				}
+
+				buildedWhereCondition = buildedWhereCondition.concat("(',' ");
+
+				buildedWhereCondition = buildedWhereCondition.concat(QueryUtil.getQueryConcat());
+				buildedWhereCondition = buildedWhereCondition.concat(" nextRoleCode ");
+				buildedWhereCondition = buildedWhereCondition.concat(QueryUtil.getQueryConcat());
+				buildedWhereCondition = buildedWhereCondition.concat(" ',' LIKE '%,");
+				buildedWhereCondition = buildedWhereCondition.concat(role);
+				buildedWhereCondition = buildedWhereCondition.concat(",%')");
+			}
 		}
+
 		Filter[] productCodeFilter = new Filter[1];
 		productCodeFilter[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_QARDHASSAN, Filter.OP_NOT_EQUAL);
 		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGPFT)
@@ -3038,6 +3061,20 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		return this.searchObject;
+	}
+
+	public ArrayList<String> getUserFinanceRoles(String[] moduleNames, String finEvent) {
+		Set<String> finRoleSet = FinanceWorkflowRoleUtil.getFinanceRoles(moduleNames, finEvent);
+		ArrayList<String> arrayRoleCode = new ArrayList<String>();
+
+		Object[] roles = getUserWorkspace().getUserRoleSet().toArray();
+		for (Object role : roles) {
+			if (finRoleSet.contains(role.toString())) {
+				arrayRoleCode.add(role.toString());
+			}
+		}
+
+		return arrayRoleCode;
 	}
 
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {
