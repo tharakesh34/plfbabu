@@ -717,9 +717,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
 		JVPosting jvPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 
 		String auditTranType = "";
@@ -732,7 +730,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		if (jvPosting.getJVPostingEntrysList() != null && jvPosting.getJVPostingEntrysList().size() > 0) {
 			auditDetailMap.put("JVPostingEntry", setJVPostingEntryAuditData(jvPosting, auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("JVPostingEntry"));
 		}
 
 		jvPosting.setAuditDetailMap(auditDetailMap);
@@ -1200,8 +1197,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
 			if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
 				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
-			}
-			else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
+			} else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
 				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
 			}
 		}
