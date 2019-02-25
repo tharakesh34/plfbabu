@@ -218,7 +218,7 @@ public class MiscellaneousServiceController {
 			ruleReturnType = RuleReturnType.OBJECT;
 		}
 
-		if(StringUtils.isNotBlank(ruleReturnType.value()))	{
+		if(StringUtils.isNotEmpty(ruleReturnType.value()))	{
 			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
 
 			String resultValue = null;
