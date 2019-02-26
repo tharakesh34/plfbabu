@@ -796,11 +796,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void doSearch(boolean isFilterSearch) {
 		logger.debug("Entering");
 
+		getSearchObj(false);
+
 		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
 			return;
 		}
-
-		getSearchObj(false);
 
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
