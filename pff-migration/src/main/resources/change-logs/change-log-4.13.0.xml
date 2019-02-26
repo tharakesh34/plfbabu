@@ -1017,4 +1017,33 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
+	
+	<changeSet id="33" author="Abhay.b">
+	 	<sql>
+		Delete from SMTparameters where SysParmCode = 'PRESENTMENT_REQUEST';
+		INSERT INTO SMTparameters  VALUES ('PRESENTMENT_REQUEST', 'Default Presentment Request.', 'String', '1', 'PRESENTMENT_REQUEST', 30, 0, NULL, NULL,'Presentment Request.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+
+		Delete from SMTparameters where SysParmCode = 'PRESENTMENT_REQUEST_ECS';
+		INSERT INTO SMTparameters  VALUES ('PRESENTMENT_REQUEST_ECS', 'Presentment Request ECS.', 'String', '1', 'PRESENTMENT_REQUEST', 30, 0, NULL, NULL,'Presentment Request ECS.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		
+		Delete from SMTparameters where SysParmCode = 'PRESENTMENT_REQUEST_NACH';
+		INSERT INTO SMTparameters  VALUES ('PRESENTMENT_REQUEST_NACH', 'Presentment Request NACH.', 'String', '1', 'PRESENTMENT_REQUEST', 30, 0, NULL, NULL,'Presentment Request NACH.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		
+		Delete from SMTparameters where SysParmCode = 'PRESENTMENT_REQUEST_PDC';
+		INSERT INTO SMTparameters  VALUES ('PRESENTMENT_REQUEST_PDC', 'Presentment Request PDC.', 'String', '1', 'PRESENTMENT_REQUEST_PDC', 30, 0, NULL, NULL,'Presentment Request PDC.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="30" author="Abhay.b">
+	    <sql>
+	       ALTER TABLE PRESENTMENT_REQ_DETAILS ADD PARTNER_BANK VARCHAR(50) NULL;
+		   ALTER TABLE PRESENTMENT_REQ_DETAILS ADD IFSC VARCHAR(50) NULL;
+		   ALTER TABLE PRESENTMENT_REQ_DETAILS_TEMP ADD PARTNER_BANK VARCHAR(50) NULL;
+		   ALTER TABLE PRESENTMENT_REQ_DETAILS_TEMP ADD IFSC VARCHAR(50) NULL;
+		   ALTER TABLE PRESENTMENT_REQ_DETAILS ADD ChequeSerialNo VARCHAR(20) NULL;
+           ALTER TABLE PRESENTMENT_REQ_DETAILS ADD ChequeDate Date NULL;
+           ALTER TABLE PRESENTMENT_REQ_DETAILS_TEMP ADD ChequeSerialNo VARCHAR(20) NULL;
+          ALTER TABLE PRESENTMENT_REQ_DETAILS_TEMP ADD ChequeDate Date NULL;
+	    </sql>
+    </changeSet>
 </databaseChangeLog>

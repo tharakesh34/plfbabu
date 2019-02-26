@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -96,8 +97,9 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 					isPresentMentFileDownnloadReq = presentmentReq.equalsIgnoreCase("Y");
 				}
 
+
 				if (isPresentMentFileDownnloadReq && !isBatchFail) {
-					prepareRequestFile(idList);
+					prepareRequestFile(idList, presentmentId);
 				}
 			}
 		}
@@ -111,23 +113,34 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 	/**
 	 * Method for creating PRESENTMENT_REQUEST file.
 	 * 
+	 * @param presentmentId2
+	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile(List<Long> idList) throws Exception {
+	public void prepareRequestFile(List<Long> idList, long presentmentId) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
+			String paymentMode = getPaymenyMode(presentmentId);
+			String paymentModeConfigName = "PRESENTMENT_REQUEST_";
+			paymentModeConfigName = paymentModeConfigName.concat(paymentMode);
+			Object smtPaymentModeConfig = getSMTParameter(paymentModeConfigName, Object.class);
+
 			DataEngineExport dataEngine = null;
 			dataEngine = new DataEngineExport(dataSource, new Long(1000), App.DATABASE.name(), true, getValueDate());
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("TXN_REF", idList);
 			dataEngine.setFilterMap(filterMap);
-			dataEngine.exportData("PRESENTMENT_REQUEST");
+
+			if (smtPaymentModeConfig != null) {
+				dataEngine.exportData(smtPaymentModeConfig.toString());
+			} else {
+				dataEngine.exportData("PRESENTMENT_REQUEST");
+			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -139,9 +152,10 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T3.MANDATEREF, T4.IFSC, ");
 		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, T3.STARTDATE, T3.EXPIRYDATE, T3.MANDATETYPE, ");
-		sql.append(
-				" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
-		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS FROM PRESENTMENTHEADER T0 ");
+		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
+		sql.append(" T7.PARTNERBANKNAME, NULL CHEQUESERIALNO, NULL CHEQUEDATE ");
+		sql.append(" FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
@@ -165,10 +179,11 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(" 'PDC' MANDATETYPE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
 		sql.append(" T0.PRESENTMENTDATE, T4.IFSC, ");
-		sql.append(" T7.PARTNERBANKCODE, T7.UTILITYCODE, ");
-		sql.append(
-				" T2.FINTYPE, T2.CUSTID , T7.PARTNERBANKCODE, T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
-		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS FROM PRESENTMENTHEADER T0 ");
+		sql.append(" T7.PARTNERBANKCODE, NULL PARTNERBANKNAME, T7.UTILITYCODE, ");
+		sql.append(" T2.FINTYPE, T2.CUSTID , T1.EMINO, T4.BRANCHDESC, T4.BRANCHCODE, T1.ID, T1.PresentmentRef, ");
+		sql.append(" T8.BRANCHSWIFTBRNCDE, T11.ENTITYCODE, T10.CCYMINORCCYUNITS, ");
+		sql.append(" T3.ChequeSerialNo, T3.ChequeDate ");
+		sql.append(" FROM PRESENTMENTHEADER T0 ");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS T1 ON T0.ID = T1.PRESENTMENTID ");
 		sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE ");
 		sql.append(" INNER JOIN CuSTOMERS T5 ON T5.CUSTID = T2.CUSTID ");
@@ -191,7 +206,7 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		public Presentment mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Presentment presement = new Presentment();
 
-			//Payment Mode Data
+			// Payment Mode Data
 			presement.setAccType(Long.valueOf(rs.getString("ACCTYPE")));
 			presement.setAccountNo(rs.getString("ACCNUMBER"));
 			presement.setUmrnNo(rs.getString("MANDATEREF"));
@@ -252,6 +267,12 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 				presement.setCustomerId(Long.valueOf(string));
 			}
 			presement.setCycleDate(rs.getDate("SCHDATE"));
+			presement.setPartnerBankName(rs.getString("PARTNERBANKNAME"));
+			presement.setIFSC(rs.getString("IFSC"));
+			presement.setChequeSerialNo(rs.getString("CHEQUESERIALNO"));
+			if (rs.getString("CHEQUEDATE") != null) {
+				presement.setChequeDate(rs.getDate("CHEQUEDATE"));
+			}
 
 			return presement;
 		}
@@ -264,7 +285,9 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
 		sql.append(" CustomerId, AGREEMENTNO, CHEQUEAMOUNT, EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE,");
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
-		sql.append(" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate)");
+		sql.append(
+				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
+		sql.append(" ChequeSerialNo, ChequeDate) ");
 		sql.append(" values( :TxnReference,");
 
 		if (presentment.getEntityCode() == 0) {
@@ -276,7 +299,9 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		sql.append(" :CycleType, :InstrumentMode, :PresentationDate, :BankCode, :ProductCode,");
 		sql.append(" :CustomerId, :AgreementNo, :ChequeAmount, :EmiNo, :TxnTypeCode, :SourceCode, :BrCode,");
 		sql.append(" :UmrnNo , :BankName, :MicrCode, :AccountNo, :DestAccHolder, :AccType, :BankAddress, :ResubFlag,");
-		sql.append(" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate)");
+		sql.append(
+				" :OrginSystem, :DataGenDate , :UserID, :BatchId, :JobId , :PickupBatchId, :CycleDate, :partnerBankName, :IFSC,");
+		sql.append(" :ChequeSerialNo, :ChequeDate)");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(presentment);
 		try {
@@ -464,6 +489,29 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String getPaymenyMode(long presentmentId) {
+		logger.debug("Entering");
+
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource parmMap;
+
+		parmMap = new MapSqlParameterSource();
+		parmMap.addValue("ID", presentmentId);
+
+		sql.append(" SELECT MANDATETYPE ");
+		sql.append(" FROM PRESENTMENTHEADER  ");
+		sql.append(" WHERE ID = :ID");
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			return this.namedJdbcTemplate.queryForObject(sql.toString(), parmMap, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+		}
+		logger.debug("Leaving");
+		return null;
 	}
 
 }

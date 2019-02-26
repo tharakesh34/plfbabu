@@ -94,13 +94,49 @@ public class Presentment {
 	private String lateResponseFlag;
 	private Date processedDate;
 	private long responseID;
+	private String partnerBankName;
+	private String IFSC;
+	private String chequeSerialNo;
+	private Date chequeDate;
 
 	//getter and setter
+	
+	public String getChequeSerialNo() {
+		return chequeSerialNo;
+	}
+
+	public void setChequeSerialNo(String chequeSerialNo) {
+		this.chequeSerialNo = chequeSerialNo;
+	}
+
+	public Date getChequeDate() {
+		return chequeDate;
+	}
+
+	public void setChequeDate(Date chequeDate) {
+		this.chequeDate = chequeDate;
+	}
+
+	public String getPartnerBankName() {
+		return partnerBankName;
+	}
+
+	public void setPartnerBankName(String partnerBankName) {
+		this.partnerBankName = partnerBankName;
+	}
+		
+	public String getIFSC() {
+		return IFSC;
+	}
+
+	public void setIFSC(String iFSC) {
+		IFSC = iFSC;
+	}
 
 	public Long getReturnCode() {
 		return returnCode;
 	}
-
+	
 	public void setReturnCode(Long returnCode) {
 		this.returnCode = returnCode;
 	}
