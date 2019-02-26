@@ -3165,7 +3165,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 2,
 				RoundingMode.HALF_DOWN);
-
+		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 		logger.debug("Leaving");
 
 		return calculatedAmt;
