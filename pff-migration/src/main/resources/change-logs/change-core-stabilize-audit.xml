@@ -26,20 +26,33 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="satyanarayana.g">
+	<changeSet id="1" author="satyanarayana.g" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="Adtbmtdocumenttypes" columnName="docispdfextrequired" />
 	</changeSet>
-
-	<changeSet id="2" author="satyanarayana.g">
+	<changeSet id="1.1" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="Adtbmtdocumenttypes" columnName="docispdfextrequired"
+			columnDataType="NUMBER(1,0)" />
+	</changeSet>
+	<changeSet id="2" author="satyanarayana.g" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="AdtPinCodes" columnName="serviceable" />
 	</changeSet>
+	<!-- <changeSet id="3" author="satyanarayana.g" dbms="oracle,postgresql"> <dropNotNullConstraint tableName="Adtcustomerempdetails" 
+		columnName="custempname" /> </changeSet> -->
 
-	<changeSet id="3" author="satyanarayana.g">
-		<dropNotNullConstraint tableName="Adtcustomerempdetails" columnName="custempname" />
+	<changeSet id="4.2" author="satyanarayana.g">
+		<sql>
+			update AdtcustomerBankInfo set noOfMonthsBanking=0 where noOfMonthsBanking is null
+		</sql>
 	</changeSet>
-	
-	<changeSet id="4" author="satyanarayana.g">
+	<changeSet id="3.1" author="satyanarayana.g" dbms="mssql">
+		<dropNotNullConstraint tableName="Adtcustomerempdetails" columnName="custempname"
+			columnDataType="NUMBER(19,0)" />
+	</changeSet>
+	<changeSet id="4" author="satyanarayana.g" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="AdtcustomerBankInfo" columnName="noOfMonthsBanking" />
 	</changeSet>
-
+	<changeSet id="4.1" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="AdtcustomerBankInfo" columnName="noOfMonthsBanking"
+			columnDataType="NUMBER(38,0)" />
+	</changeSet>
 </databaseChangeLog>

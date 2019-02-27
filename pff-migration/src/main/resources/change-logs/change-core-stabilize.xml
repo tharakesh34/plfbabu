@@ -26,19 +26,34 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="satyanarayana.g">
+	<changeSet id="1" author="satyanarayana.g" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="bmtdocumenttypes" columnName="docispdfextrequired" />
 		<addNotNullConstraint tableName="bmtdocumenttypes_temp" columnName="docispdfextrequired" />
 	</changeSet>
+	
+	<changeSet id="1.1" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="bmtdocumenttypes" columnName="docispdfextrequired" columnDataType="NUMBER(1,0)" />
+		<addNotNullConstraint tableName="bmtdocumenttypes_temp" columnName="docispdfextrequired" columnDataType="NUMBER(1,0)" />
+	</changeSet>
 
-	<changeSet id="2" author="satyanarayana.g">
+	<changeSet id="2" author="satyanarayana.g" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="PinCodes" columnName="serviceable" />
 		<addNotNullConstraint tableName="PinCodes_temp" columnName="serviceable" />
 	</changeSet>
+	
+		<changeSet id="2.2" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="PinCodes" columnName="serviceable" columnDataType="NUMBER(5,0)" />
+		<addNotNullConstraint tableName="PinCodes_temp" columnName="serviceable" columnDataType="NUMBER(5,0)" />
+	</changeSet>
 
-	<changeSet id="3" author="satyanarayana.g">
+	<changeSet id="3" author="satyanarayana.g" dbms="oracle,postgresql">
 		<dropNotNullConstraint tableName="customerempdetails_temp" columnName="custempname" />
 		<dropNotNullConstraint tableName="customerempdetails" columnName="custempname" />
+	</changeSet>
+	
+		<changeSet id="3.1" author="satyanarayana.g" dbms="mssql">
+		<dropNotNullConstraint tableName="customerempdetails_temp" columnName="custempname" columnDataType="NUMBER(19,0)" />
+		<dropNotNullConstraint tableName="customerempdetails" columnName="custempname" columnDataType="NUMBER(19,0)" />
 	</changeSet>
 
 	<changeSet id="4" author="satyanarayana.g">
@@ -140,8 +155,21 @@
 		     LEFT JOIN employerdetail emp ON ((ce.custempname = emp.employerid)))
 		</createView>
 	</changeSet>
+	
 	<changeSet id="6" author="satyanarayana.g">
+	<sql>update CustomerBankInfo set noOfMonthsBanking=0 where noOfMonthsBanking is null
+	</sql>
+	</changeSet>
+	
+	
+	<changeSet id="6.1" author="satyanarayana.g" dbms="oracle,postgresql">
 		<addNotNullConstraint tableName="CustomerBankInfo" columnName="noOfMonthsBanking" />
 		<addNotNullConstraint tableName="CustomerBankInfo_Temp" columnName="noOfMonthsBanking" />
 	</changeSet>
+	
+	<changeSet id="6.2" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="CustomerBankInfo" columnName="noOfMonthsBanking" columnDataType="NUMBER(10,0)" />
+		<addNotNullConstraint tableName="CustomerBankInfo_Temp" columnName="noOfMonthsBanking" columnDataType="NUMBER(10,0)" />
+	</changeSet>
+	
 </databaseChangeLog>
