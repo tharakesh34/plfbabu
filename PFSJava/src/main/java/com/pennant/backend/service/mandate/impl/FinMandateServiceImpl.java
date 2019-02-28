@@ -389,8 +389,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 			}
 
 			//Mandate start date {0} should be before first repayments date {1}.
-			if (mandate.getStartDate() != null && firstRepayDate != null
-					&& firstRepayDate.compareTo(mandate.getStartDate()) < 0) {
+			if (mandate.getStartDate()!=null && financeMain.getNextRepayDate()!=null && financeMain.getNextRepayDate().compareTo(mandate.getStartDate())<0) {
 				String[] errParmFrq = new String[2];
 				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
 				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
