@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -205,7 +206,7 @@ public class MiscellaneousServiceController {
 			String finCcy) {
 
 		RuleReturnType ruleReturnType = null;
-
+		
 		if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.BOOLEAN.value())) {
 			ruleReturnType = RuleReturnType.BOOLEAN;
 		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.DECIMAL.value())) {
@@ -218,7 +219,10 @@ public class MiscellaneousServiceController {
 			ruleReturnType = RuleReturnType.OBJECT;
 		}
 
-		if(StringUtils.isNotEmpty(ruleReturnType.value()))	{
+		if((null == ruleReturnType) || (StringUtils.isBlank(ruleReturnType.value())))	{
+			logger.info("Improper 'ruleReturnType' value");
+		}
+		else {
 			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
 
 			String resultValue = null;
@@ -256,10 +260,7 @@ public class MiscellaneousServiceController {
 				Object resultvalue = ruleResult.getDeviation();
 
 				BigDecimal tempResult = null;
-				if (resultval instanceof Double) {
-					tempResult = new BigDecimal(resultval.toString());
-					finElgDetail.setRuleResult(tempResult.toString());
-				} else if (resultval instanceof Integer) {
+				if (resultval instanceof Double || resultval instanceof Integer) {
 					tempResult = new BigDecimal(resultval.toString());
 					finElgDetail.setRuleResult(tempResult.toString());
 				}
@@ -269,10 +270,7 @@ public class MiscellaneousServiceController {
 				// do-nothing
 				break;
 			}
-		} else	{
-			logger.info("Improper 'ruleReturnType' value");
-		}
-		
+		} 		
 
 		return finElgDetail;
 	}
