@@ -329,4 +329,8 @@ public interface FinanceMainDAO {
 
 	String getFinanceTypeFinReference(String reference, String type);
 	
+	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
+
+	
+	
 }

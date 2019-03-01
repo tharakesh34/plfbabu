@@ -224,6 +224,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		if (isFinactive) {
 			financeMainDAO.updateMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
+			financeMainDAO.updateFinPftMaturity(detail.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
 
 		logger.debug(Literal.LEAVING);

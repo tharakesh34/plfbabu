@@ -2199,6 +2199,26 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Leaving");
 	}
 
+	
+	@Override
+	public void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive) {
+		logger.debug("Entering");
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinReference(finReference);
+		financeMain.setClosingStatus(closingStatus);
+		financeMain.setFinIsActive(finIsActive);
+
+		StringBuilder updateSql = new StringBuilder("Update finpftdetails ");
+		updateSql.append(" Set FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus ");
+		updateSql.append(" Where FinReference = :FinReference ");
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+
 	@Override
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
