@@ -12489,7 +12489,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				isIstisnaProduct = true;
 			}
 
-			aFinanceSchData = doWriteSchData(aFinanceSchData, isIstisnaProduct);
+			//133697 AUxilo  Schedule Error during grace period change
+			if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
+				aFinanceSchData = doWriteSchData(aFinanceSchData, isIstisnaProduct);
+			}
 		}
 
 		//FinanceMain Details Tab Validation Error Throwing
