@@ -255,6 +255,14 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		} else if ("Submit".equals(userAction)) {
 			submitPresentments(excludeList, includeList, presentmentId, partnerBankId);
 		} else if ("Approve".equals(userAction)) {
+
+			// update presentment id as zero
+			List<PresentmentDetail> listPrstitems = this.presentmentDetailDAO.getExcludeDetails(presentmentId);
+			if (listPrstitems != null && !listPrstitems.isEmpty()) {
+				for (PresentmentDetail presentmentDetail : listPrstitems) {
+					updatePresentmentIdAsZero(presentmentDetail.getId());
+				}
+			}
 			approvePresentments(presentmentId, userDetails, isPDC);
 		} else if ("Resubmit".equals(userAction)) {
 			resubmitPresentments(presentmentId, partnerBankId);
@@ -381,44 +389,47 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.ENTERING);
 
 		List<Long> idList = new ArrayList<Long>();
-		List<Long> idExcludeEmiList = new ArrayList<>();
-		
+		List<Long> idExcludeEmiList = new ArrayList<Long>();
 		boolean isError = false;
 		List<PresentmentDetail> detailList = getPresentmentDetailDAO().getPresentmentDetail(presentmentId, true);
-		if (detailList != null && !detailList.isEmpty()) {
-			for (PresentmentDetail detail : detailList) {
-				if (DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) >= 0) {
-					try {
-						if (detail.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
-							processReceipts(detail);
-							idExcludeEmiList.add(detail.getId());
-						} else {
-							idList.add(detail.getId());
-							processReceipts(detail);
-						}
-					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
-						isError = true;
-						throw e;
-					}
-				} else {
+		if (detailList != null && !detailList.isEmpty()) {for (PresentmentDetail detail : detailList) {
+			if (DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) >= 0) {
+				try {
+
 					if (detail.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
+						processReceipts(detail, true);
 						idExcludeEmiList.add(detail.getId());
 					} else {
+						processReceipts(detail, false);
 						idList.add(detail.getId());
 					}
-				}
-			}
-			// Storing the presentment data into bajaj inteface tables
-				try {
-					presentmentRequest.sendReqest(idList,idExcludeEmiList, presentmentId, isError, isPDC);
+
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
+					isError = true;
 					throw e;
 				}
+				
+			} else {
+				if (detail.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
+					idExcludeEmiList.add(detail.getId());
+				} else {
+					idList.add(detail.getId());
+				}
+			}
 		}
+
+		// Storing the presentment data into bajaj inteface tables
+
+		try {
+			presentmentRequest.sendReqest(idList, idExcludeEmiList, presentmentId, isError,isPDC);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}}
 		logger.debug(Literal.LEAVING);
 	}
+
 
 	/**
 	 * Create a new Receipt
@@ -525,4 +536,86 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		financeDetail.setFinScheduleData(finScheduleData);
 		return financeDetail;
 	}
+	
+	 public void processReceipts(PresentmentDetail presentmentDetail, boolean isFullEMIPresent) throws Exception {
+
+			FinReceiptData finReceiptData = new FinReceiptData();
+			FinReceiptHeader header = new FinReceiptHeader();
+
+			Date appDate = DateUtility.getAppDate();
+
+			long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
+			header.setReference(presentmentDetail.getFinReference());
+			header.setReceiptDate(presentmentDetail.getSchDate());
+			header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+			header.setReceiptID(receiptId);
+			header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+			header.setExcessAdjustTo(PennantConstants.List_Select);
+			header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+			header.setReceiptAmount(presentmentDetail.getPresentmentAmt().add(presentmentDetail.getAdvanceAmt()));
+			header.setEffectSchdMethod(PennantConstants.List_Select);
+			header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+			header.setLogSchInPresentment(true);
+			
+			
+			List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+			
+			FinReceiptDetail receiptDetail = new FinReceiptDetail();
+
+			if (presentmentDetail.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
+				receiptDetail = new FinReceiptDetail();
+				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
+				receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
+				receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
+				receiptDetail.setValueDate(presentmentDetail.getSchDate());
+				receiptDetail.setReceivedDate(appDate);
+				receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
+				receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+				receiptDetails.add(receiptDetail);
+
+			}
+			
+			if (presentmentDetail.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+				receiptDetail = new FinReceiptDetail();
+				receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+				receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+				receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+				receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
+				receiptDetail.setAmount(presentmentDetail.getAdvanceAmt());
+				receiptDetail.setValueDate(presentmentDetail.getSchDate());
+				receiptDetail.setReceivedDate(appDate);
+				receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
+				receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
+				receiptDetail.setNoReserve(false);
+				receiptDetails.add(receiptDetail);
+			}
+
+			header.setReceiptDetails(receiptDetails);
+			
+			header.setRemarks("");
+			finReceiptData.setReceiptHeader(header);
+			finReceiptData.setFinReference(presentmentDetail.getFinReference());
+			finReceiptData.setSourceId("");
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(presentmentDetail.getFinReference(), "_AView",
+					false);
+			CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
+					"_AView");
+			List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
+					.getFinScheduleDetails(presentmentDetail.getFinReference(), "_AView",
+					false);
+			FinanceProfitDetail profitDetail = profitDetailsDAO
+					.getFinProfitDetailsById(presentmentDetail.getFinReference());
+			FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
+			repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
+					profitDetail, header, financeType, presentmentDetail.getSchDate(), appDate);
+			if (presentmentDetail.getId() != Long.MIN_VALUE) {
+				presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
+			}
+		}
+
+
 }

@@ -172,5 +172,7 @@ public class RepayConstants {
 	public static final String PRES_LOANCLOSED = "PR005";
 	public static final String PRES_HOLD_DAYS = "PR006";
 	public static final String PRES_FAILED = "PR007";
+	
+	public static final String PAYTYPE_EMIINADV = "EMIINADV";
 
 }

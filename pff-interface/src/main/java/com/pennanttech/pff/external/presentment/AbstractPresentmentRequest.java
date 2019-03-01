@@ -105,7 +105,33 @@ public class AbstractPresentmentRequest extends AbstractInterface implements Pre
 		}
 		
 		if (idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
-			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
+			 updatePresentmentExcludeDetails(idExcludeEmiList, "A");
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updatePresentmentExcludeDetails(List<Long> idList, String status) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+
+		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where ID in (:IDList) ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		
+		MapSqlParameterSource source = null;
+
+		source = new MapSqlParameterSource();
+		source.addValue("IDList", idList);
+		source.addValue("STATUS", status);
+
+		try {
+			this.namedJdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
 		}
 		logger.debug(Literal.LEAVING);
 	}

@@ -801,16 +801,17 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select T.id, T.presentmentId, T.finReference, T.schDate, T.mandateId, T.schAmtDue, T.schPriDue, T.schPftDue, ");
-		sql.append(
-				" T.schFeeDue, T.schInsDue,T.BOUNCEID,T.schPenaltyDue, T.advanceAmt, T.excessID,T.adviseAmt,T.presentmentAmt, ");
-		sql.append(
-				" T.Emino, T.status, T.presentmentRef, T.ecsReturn, T.receiptID, T.excludeReason,T.Version, T.LastMntOn, T.LastMntBy,");
-		sql.append(
-				" T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, PB.ACCOUNTNO, PB.ACTYPE  ");
-		sql.append(" From PRESENTMENTDETAILS T INNER JOIN PRESENTMENTHEADER PH ON PH.ID = T.PRESENTMENTID ");
-		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
+		sql.append(" Select T.id, T.presentmentId, T.finReference, T.schDate, T.mandateId, T.schAmtDue, T.schPriDue, T.schPftDue, T.schFeeDue, T.schInsDue, ");
+		sql.append(" T.schPenaltyDue, T.advanceAmt, T.excessID, T.adviseAmt, T.presentmentAmt, T.Emino, T.status, T.presentmentRef, T.ecsReturn, T.receiptID, T.excludeReason,");
+		sql.append(" T.Version, T.LastMntOn, T.LastMntBy,T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId ");
+		if (includeData) {
+			sql.append(",PB.Accountno,PB.actype ");
+		}
+		sql.append(" From PRESENTMENTDETAILS T INNER JOIN PRESENTMENTHEADER PH ON PH.ID=T.PRESENTMENTID ");
+		
+		if (includeData) {
+			sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
+		}
 		sql.append(" WHERE T.PresentmentId = :PresentmentId");
 		if (includeData) {
 			sql.append(
@@ -828,8 +829,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			source.addValue("Status", RepayConstants.PEXC_APPROV);
 		}
 
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PresentmentDetail.class);
+
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -839,6 +840,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
+
 
 	@Override
 	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
@@ -1086,8 +1089,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	/**
-	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI
-	 * Advance
+	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI Advance
 	 * 
 	 * @param presentmentId
 	 */

@@ -37,13 +37,12 @@ public class PresentmentRequestProcess extends DatabaseDataEngine {
 	
 	private List<Long> idExcludeEmiList;
 
-	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList,
-			List<Long> idExcludeEmiList,long presentmentId, boolean isError) {
+	
+	public PresentmentRequestProcess(DataSource dataSource, long userId, Date valueDate, List<Long> idList, long presentmentId, boolean isError) {
 		super(dataSource, App.DATABASE.name(), userId, true, valueDate);
 		this.idList = idList;
 		this.presentmentId = presentmentId;
 		this.isError = isError;
-		this.idExcludeEmiList = idExcludeEmiList;
 		parameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 

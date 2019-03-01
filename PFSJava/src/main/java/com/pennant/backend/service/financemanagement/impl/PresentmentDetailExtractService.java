@@ -309,7 +309,8 @@ public class PresentmentDetailExtractService {
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
 			emiInAdvanceAmt = finExcessAmount.getBalanceAmt();
-			if ((BigDecimal.ZERO.compareTo(emiInAdvanceAmt) > 0)
+			
+			if ((emiInAdvanceAmt.compareTo(BigDecimal.ZERO) > 0)
 					&& emiInAdvanceAmt.compareTo(presentmentDetail.getSchAmtDue()) >= 0) {
 				presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
 				presentmentDetail.setPresentmentAmt(BigDecimal.ZERO);
