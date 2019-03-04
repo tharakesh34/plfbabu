@@ -1796,7 +1796,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			//Advance EMI should be shown on transaction as total disbursement, advance emi debit entry.
 			if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
 				for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {
-					if (financeScheduleDetail.getDisbAmount() != null) {
+					if (financeScheduleDetail.getDisbAmount() != null && BigDecimal.ZERO.compareTo(finMain.getAdvanceEMI()) != 0) {
 						soaTranReport = new SOATransactionReport();
 						soaTranReport.setEvent(advEmiDebitEntry + finRef);
 						soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
@@ -1804,20 +1804,22 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTranReport.setDebitAmount(finMain.getAdvanceEMI());
 						soaTranReport.setCreditAmount(BigDecimal.ZERO);
 						soaTranReport.setPriority(25);
+						soaTransactionReports.add(soaTranReport);
 					}
-					soaTransactionReports.add(soaTranReport);
 					break;
 				}
 			}
 
 			//AdvanceEMI credit entry with maturity date
-			soaTranReport = new SOATransactionReport();
-			soaTranReport.setTransactionDate(finMain.getMaturityDate());
-			soaTranReport.setValueDate(finMain.getMaturityDate());
-			soaTranReport.setEvent(advEmiCreditEntry + finRef);
-			soaTranReport.setCreditAmount(finMain.getAdvanceEMI());
-			soaTranReport.setPriority(26);
-			soaTransactionReports.add(soaTranReport);
+			if (BigDecimal.ZERO.compareTo(finMain.getAdvanceEMI()) != 0) {
+				soaTranReport = new SOATransactionReport();
+				soaTranReport.setTransactionDate(finMain.getMaturityDate());
+				soaTranReport.setValueDate(finMain.getMaturityDate());
+				soaTranReport.setEvent(advEmiCreditEntry + finRef);
+				soaTranReport.setCreditAmount(finMain.getAdvanceEMI());
+				soaTranReport.setPriority(26);
+				soaTransactionReports.add(soaTranReport);
+			}
 
 		}
 
