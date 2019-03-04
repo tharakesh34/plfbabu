@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -221,8 +220,7 @@ public class MiscellaneousServiceController {
 
 		if((null == ruleReturnType) || (StringUtils.isBlank(ruleReturnType.value())))	{
 			logger.info("Improper 'ruleReturnType' value");
-		}
-		else {
+		} else {
 			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
 
 			String resultValue = null;
