@@ -68,7 +68,7 @@ public class PinCode extends AbstractWorkflowEntity implements Entity {
 	private String lovDescPCProvinceName;
 	private String gstin;
 	private boolean active;
-	private long groupId;
+	private Long groupId;
 	private boolean serviceable;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -246,11 +246,11 @@ public class PinCode extends AbstractWorkflowEntity implements Entity {
 		this.gstin = gstin;
 	}
 
-	public long getGroupId() {
+	public Long getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(long groupId) {
+	public void setGroupId(Long groupId) {
 		this.groupId = groupId;
 	}
 
