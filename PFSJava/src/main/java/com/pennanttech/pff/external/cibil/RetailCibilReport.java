@@ -443,7 +443,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 					province = "99";
 				}
 
-				writeValue(builder, province, province, "02");
+				writeValue(builder, "06", province, "02");
 
 				writeValue(builder, "07", address.getCustAddrZIP(), 10, "PA");
 
