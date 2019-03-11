@@ -57,7 +57,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -7653,8 +7652,11 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Early settlement Validation , if entered amount not sufficient with paid and waived amounts
 		if (StringUtils.equals(tempReceiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			
+			BigDecimal gstAmount = calculateWaiverGST();
+			
 			BigDecimal earlySettleBal = totReceiptAmount.subtract(totalDue.subtract(totalWaived))
-					.subtract(totalAdvDue.subtract(totalAdvWaived));
+					.subtract(totalAdvDue.subtract(totalAdvWaived)).add(gstAmount);
 			if (earlySettleBal.compareTo(BigDecimal.ZERO) < 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_EarlySettlement"));
 				return false;
@@ -7662,7 +7664,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			// Paid amount still not cleared by paid's or waivers amounts
 			BigDecimal remainingPaid = (totalDue.add(totalAdvDue)).subtract(totalPaid).subtract(totalWaived)
-					.subtract(totalAdvPaid).subtract(totalAdvWaived);
+					.subtract(totalAdvPaid).subtract(totalAdvWaived).subtract(gstAmount);
 			if (remainingPaid.compareTo(BigDecimal.ZERO) > 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Paids_EarlySettlement"));
 				return false;
@@ -7702,6 +7704,81 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		logger.debug("Leaving");
 		return true;
+	}
+
+	private BigDecimal calculateWaiverGST() {
+		logger.debug(Literal.ENTERING);
+		
+		List<String> waivedBoxKeys = new ArrayList<>(waivedAllocationMap.keySet());
+		BigDecimal gstAmount = BigDecimal.ZERO;
+		
+		if (CollectionUtils.isNotEmpty(waivedBoxKeys)) {
+			if (taxPercMap == null) {
+				taxPercMap = getReceiptCalculator().getTaxPercentages(getFinanceDetail());
+			}
+			
+			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+			BigDecimal cgstPerc = taxPercMap.get(RuleConstants.CODE_CGST);
+			BigDecimal sgstPerc = taxPercMap.get(RuleConstants.CODE_SGST);
+			BigDecimal ugstPerc = taxPercMap.get(RuleConstants.CODE_UGST);
+			BigDecimal igstPerc = taxPercMap.get(RuleConstants.CODE_IGST);
+			
+			for (int i = 0; i < waivedBoxKeys.size(); i++) {
+				String waivedBoxId = waivedBoxKeys.get(i);
+				BigDecimal waivedAmount = waivedAllocationMap.get(waivedBoxId);
+				
+				String taxType = null;
+				if (StringUtils.isNotBlank(waivedBoxId) && waivedAmount != null && BigDecimal.ZERO.compareTo(waivedAmount) != 0) {
+					if (waivedBoxId.startsWith("AllocateWaived_")) {
+						if (waivedBoxId.contains(RepayConstants.ALLOCATION_ODC)) {
+							taxType = getFeeTypeService().getTaxCompByCode(RepayConstants.ALLOCATION_ODC);
+						} else if (StringUtils.equals(waivedBoxId, "AllocateWaived_" + RepayConstants.ALLOCATION_TDS)
+								|| StringUtils.equals(waivedBoxId, "AllocateWaived_" + RepayConstants.ALLOCATION_PFT)) {
+							// Nothing To do
+						}
+					} else if (waivedBoxId.startsWith("AllocateAdvWaived_")) {
+						if (waivedBoxId.contains(RepayConstants.ALLOCATION_MANADV)) {
+							String adviseID = (waivedBoxId.replace("AllocateAdvWaived_", "")).replaceAll(RepayConstants.ALLOCATION_MANADV + "_", "");
+							taxType = getManualAdviseService().getTaxComponent(Long.valueOf(adviseID), "_AView");
+						} else if (waivedBoxId.contains(RepayConstants.ALLOCATION_BOUNCE)) {
+							taxType = getFeeTypeService().getTaxCompByCode(RepayConstants.ALLOCATION_BOUNCE);
+						} 
+					}
+				}
+				
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+					//Cgst
+					if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal cgst = (waivedAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
+						gstAmount = gstAmount.add(cgst);
+					}
+					//Sgst
+					if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal sgst = (waivedAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
+						gstAmount = gstAmount.add(sgst);
+					}
+					//Ugst
+					if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal ugst = (waivedAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
+						gstAmount = gstAmount.add(ugst);
+					}
+					//Igst
+					if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal igst = (waivedAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+						igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
+						gstAmount = gstAmount.add(igst);
+					}
+				}
+			}
+		}
+		
+		logger.debug(Literal.LEAVING);
+		
+		return gstAmount;
 	}
 
 	/**
