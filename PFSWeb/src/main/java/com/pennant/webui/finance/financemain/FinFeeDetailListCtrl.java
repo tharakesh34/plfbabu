@@ -2219,14 +2219,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		this.dataChanged = true;
 
+		//PSD Ticket : 133623 (Early Settlement Due Payment Details Refreshed any changes done on Fees)
 		// Can be utilized only on Receipts Process
-		if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
+		/*if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
 			try {
 				getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl());
 			} catch (Exception e) {
 				logger.info(e);
 			}
-		}
+		}*/
 
 		logger.debug("Leaving");
 	}
