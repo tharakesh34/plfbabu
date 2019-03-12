@@ -26,10 +26,10 @@ public class FetchDedupDetails {
 	private static DedupParmService dedupParmService;
 	private int userAction = -1;
 
-	private String FINDEDUPLABELSWBG = "CustCIF,FinLimitRef,CustCRCPR,ChassisNumber,EngineNumber,DupReference,StartDate,"
+	private String FINDEDUPLABELSWBG = "CustCIF,FinLimitRef,CustCRCPR,CustShrtName,MobileNumber,DupReference,StartDate,"
 			+ "FinanceAmount,FinanceType,ProfitAmount,StageDesc,DedupeRule,OverrideUser";
 
-	private String FINDEDUPLABELSPBG = "CustCIF,CustCRCPR,ChassisNumber,EngineNumber,DupReference,StartDate,"
+	private String FINDEDUPLABELSPBG = "CustCIF,CustCRCPR,CustShrtName,MobileNumber,DupReference,StartDate,"
 			+ "FinanceAmount,FinanceType,ProfitAmount,StageDesc,DedupeRule,OverrideUser";
 
 	private CustomerDetails customerDetails;

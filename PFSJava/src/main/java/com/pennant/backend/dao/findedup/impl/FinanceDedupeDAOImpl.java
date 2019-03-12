@@ -76,11 +76,11 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinDedupDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference ,DupReference, CustCIF , CustCRCPR , ChassisNumber , ");
-		insertSql.append(" EngineNumber , StartDate , FinanceAmount ,FinanceType , ");
+		insertSql.append(" (FinReference ,DupReference, CustCIF , CustCRCPR , CustShrtName , ");
+		insertSql.append(" MobileNumber , StartDate , FinanceAmount ,FinanceType , ");
 		insertSql.append("  ProfitAmount , Stage ,DedupeRule, OverrideUser,FinLimitRef)");
-		insertSql.append(" Values(:FinReference ,:DupReference, :CustCIF , :CustCRCPR , :ChassisNumber , ");
-		insertSql.append(" :EngineNumber , :StartDate , :FinanceAmount ,:FinanceType ,  ");
+		insertSql.append(" Values(:FinReference ,:DupReference, :CustCIF , :CustCRCPR , :CustShrtName , ");
+		insertSql.append(" :MobileNumber , :StartDate , :FinanceAmount ,:FinanceType ,  ");
 		insertSql.append(" :ProfitAmount , :Stage , :DedupeRule, :OverrideUser,:FinLimitRef)");
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dedups.toArray());
@@ -97,9 +97,9 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update FinDedupDetail");
-		updateSql.append(" Set CustCIF = :CustCIF , CustCRCPR = :CustCRCPR , ChassisNumber = :ChassisNumber, ");
+		updateSql.append(" Set CustCIF = :CustCIF , CustCRCPR = :CustCRCPR , CustShrtName = :CustShrtName, ");
 		updateSql.append(
-				" EngineNumber = :EngineNumber, StartDate = :StartDate , FinanceAmount = :FinanceAmount ,FinanceType = :FinanceType, ");
+				" MobileNumber = :MobileNumber, StartDate = :StartDate , FinanceAmount = :FinanceAmount ,FinanceType = :FinanceType, ");
 		updateSql.append("  ProfitAmount= :ProfitAmount , Stage = :Stage ,DedupeRule = :DedupeRule,  ");
 		updateSql.append(" OverrideUser = :OverrideUser,FinLimitRef = :FinLimitRef");
 		updateSql.append(" Where FinReference =:FinReference And DupReference=:DupReference ");
@@ -119,8 +119,8 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 		dedup.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select D.FinReference ,D.DupReference, D.CustCIF , D.CustCRCPR , D.ChassisNumber , ");
-		selectSql.append(" D.EngineNumber , D.StartDate , D.FinanceAmount ,D.FinanceType , ");
+				" Select D.FinReference ,D.DupReference, D.CustCIF , D.CustCRCPR , D.CustShrtName , ");
+		selectSql.append(" D.MobileNumber , D.StartDate , D.FinanceAmount ,D.FinanceType , ");
 		selectSql.append(" D.ProfitAmount , D.Stage ,D.DedupeRule, D.OverrideUser, S.RoleDesc StageDesc,D.FinLimitRef");
 		selectSql.append(" From FinDedupDetail D LEFT OUTER JOIN SecRoles S ON S.RoleCd = D.Stage ");
 		selectSql.append(" Where D.FinReference = :FinReference AND D.DedupeRule LIKE  '%,");

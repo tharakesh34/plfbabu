@@ -1050,4 +1050,11 @@ UNION ALL
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 	    </sql>
 	</changeSet>
+	
+	<changeSet id="35" author="aditya.a">
+    <addColumn tableName="FinDedupDetail">
+           <column name="CustShrtName" type="VARCHAR(100)"/>
+           <column name="MobileNumber" type="VARCHAR(100)"/>
+    </addColumn>
+    </changeSet>
 </databaseChangeLog>
