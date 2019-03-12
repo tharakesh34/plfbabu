@@ -7040,7 +7040,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isWorkFlowEnabled()) {
 
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isEmpty(aFinanceMain.getRecordType())) {
+			if (StringUtils.isBlank(aFinanceMain.getRecordType())) {
 				aFinanceMain.setVersion(aFinanceMain.getVersion() + 1);
 				if (isNew) {
 					aFinanceMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
