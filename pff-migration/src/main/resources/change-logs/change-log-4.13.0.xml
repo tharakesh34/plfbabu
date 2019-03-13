@@ -1057,4 +1057,17 @@ UNION ALL
            <column name="MobileNumber" type="VARCHAR(100)"/>
     </addColumn>
     </changeSet>
+    
+    <changeSet id="36" author="aditya.a">
+		 <update tableName="ErrorDetails">
+	     <column name="Severity">W</column>
+	     <where>Code='RU0046'</where>
+  	     </update>
+	</changeSet>
+	<changeSet id="37" author="aditya.a">
+     	 <update tableName="ErrorDetails">
+	     <column name="Severity">W</column>
+	     <where>Code='RU0047'</where>
+  		 </update>
+	</changeSet>
 </databaseChangeLog>
