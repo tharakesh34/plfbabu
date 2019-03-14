@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -20,37 +20,29 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="satyanarayana.g"
-		runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="satyanarayana.g" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
 	<changeSet id="1" author="satyanarayana.g">
-		<addNotNullConstraint tableName="bmtdocumenttypes"
-			columnName="docispdfextrequired" columnDataType="boolean" />
-		<addNotNullConstraint tableName="bmtdocumenttypes_temp"
-			columnName="docispdfextrequired" columnDataType="boolean" />
+		<addNotNullConstraint tableName="bmtdocumenttypes" columnName="docispdfextrequired" columnDataType="boolean" />
+		<addNotNullConstraint tableName="bmtdocumenttypes_temp" columnName="docispdfextrequired" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="2" author="satyanarayana.g">
-		<addNotNullConstraint tableName="PinCodes"
-			columnName="serviceable" columnDataType="smallint" />
-		<addNotNullConstraint tableName="PinCodes_temp"
-			columnName="serviceable" columnDataType="smallint" />
+		<addNotNullConstraint tableName="PinCodes" columnName="serviceable" columnDataType="smallint" />
+		<addNotNullConstraint tableName="PinCodes_temp" columnName="serviceable" columnDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="3" author="satyanarayana.g">
-		<dropNotNullConstraint tableName="customerempdetails_temp"
-			columnName="custempname" columnDataType="bigint" />
-		<dropNotNullConstraint tableName="customerempdetails"
-			columnName="custempname" columnDataType="bigint" />
+		<dropNotNullConstraint tableName="customerempdetails_temp" columnName="custempname" columnDataType="bigint" />
+		<dropNotNullConstraint tableName="customerempdetails" columnName="custempname" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="4" author="satyanarayana.g">
-		<createView viewName="customerempdetails_view"
-			replaceIfExists="true">
+		<createView viewName="customerempdetails_view" replaceIfExists="true">
 			SELECT ce.custempid,
 		    ce.custid,
 		    ce.custempname,
@@ -116,8 +108,7 @@
 		</createView>
 	</changeSet>
 	<changeSet id="5" author="satyanarayana.g">
-		<createView viewName="customerempdetails_aview"
-			replaceIfExists="true">
+		<createView viewName="customerempdetails_aview" replaceIfExists="true">
 			SELECT ce.custempid,
 		    ce.custid,
 		    ce.custempname,
@@ -220,16 +211,22 @@
 			select deps_restore_dependencies('plf','income_details');
 		</sql>
 	</changeSet>
-
-	<changeSet id="8.2" author="murthy.y" dbms="postgresql">
-		<modifyDataType tableName="income_details" columnName="incomeType"
-			newDataType="citext" />
-		<modifyDataType tableName="income_details" columnName="incomeExpense"
-			newDataType="citext" />
-		<modifyDataType tableName="income_details" columnName="category"
-			newDataType="citext" />
+	
+	<changeSet id="8.2_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','income_details');
+		</sql>
 	</changeSet>
-	<changeSet id="9" author="murthy.y">
-		<dropTable tableName="income_details_bk" />
+	
+	<changeSet id="8.2" author="murthy.y" dbms="postgresql">
+		<modifyDataType tableName="income_details" columnName="incomeType" newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="incomeExpense" newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="category" newDataType="citext" />
+	</changeSet>
+	
+	<changeSet id="8.2_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','income_details');
+		</sql>
 	</changeSet>
 </databaseChangeLog>

@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-	
+
 	<include file="change-logs/change-log-GSTCoreChanges.xml" />
 	<include file="change-logs/change-log-verification-fi.xml" />
 	<include file="change-logs/change-log-verification-tv.xml" />
 	<include file="change-logs/change-log-verification-lv.xml" />
 	<include file="change-logs/change-log-verification-rcu.xml" />
-	<include file="change-logs/change-log-customer-extliability-enhancement.xml"/>
-	<include file="change-logs/change-log-customer-income-enhancement.xml"/>
-	<include file="change-logs/change-log-sampling.xml"/>
-	<include file="change-logs/change-log-legal.xml"/>
+	<include file="change-logs/change-log-customer-extliability-enhancement.xml" />
+	<include file="change-logs/change-log-customer-income-enhancement.xml" />
+	<include file="change-logs/change-log-sampling.xml" />
+	<include file="change-logs/change-log-legal.xml" />
 	<include file="change-logs/change-log-4.7.17.xml" />
 	<include file="change-logs/change-log-4.9.0.xml" />
-	<include file="change-logs/change-log-4.10.0.xml"/>
-	<include file="change-logs/change-log-notification-engine.xml"/>
-	<include file="change-logs/change-log-organizations.xml"/>
-	<include file="change-logs/change-log-Collateral.xml"/>
-	<include file="change-logs/change-log-4.11.0.xml"/> 
-	<include file="change-logs/change-log-4.12.0.xml"/>
-	<include file="change-logs/change-log-Core_MLOD.xml"/>
-	<include file="change-logs/change-log-insurance-masters.xml"/>
- 	<include file="change-logs/change-log-insurance.xml"/>
- 	<include file="change-logs/change-log-insurance_vas_structure.xml"/>
- 	<include file="change-logs/change-log-cibil-extract-enhacements.xml"/>
- 	<include file="change-logs/change-log-bugs-1135.xml"/>
- 	<include file="change-logs/change-log-legal.xml"/>
- 	<include file="change-logs/change_log_story #1138.xml"/>
- 	<include file="change-logs/change-log-4.13.0.xml"/>
- 	<include file="change-logs/change-log-seqobjects-mssql.xml"/>
- 	<include file="change-logs/change-core-stabilize.xml"/>
+	<include file="change-logs/change-log-4.10.0.xml" />
+	<include file="change-logs/change-log-notification-engine.xml" />
+	<include file="change-logs/change-log-organizations.xml" />
+	<include file="change-logs/change-log-Collateral.xml" />
+	<include file="change-logs/change-log-4.11.0.xml" />
+	<include file="change-logs/change-log-4.12.0.xml" />
+	<include file="change-logs/change-log-Core_MLOD.xml" />
+	<include file="change-logs/change-log-insurance-masters.xml" />
+	<include file="change-logs/change-log-insurance.xml" />
+	<include file="change-logs/change-log-insurance_vas_structure.xml" />
+	<include file="change-logs/change-log-cibil-extract-enhacements.xml" />
+	<include file="change-logs/change-log-bugs-1135.xml" />
+	<include file="change-logs/change-log-legal.xml" />
+	<include file="change-logs/change_log_story #1138.xml" />
+	<include file="change-logs/change-log-4.13.0.xml" />
+	<include file="change-logs/change-log-seqobjects-mssql.xml" />
+	<include file="change-logs/change-core-stabilize.xml" />
+	<include file="change-logs/change-log-covenants-1.1.xml" />
+	<include file="change-logs/change-log-put-call-1.1.xml" />
 </databaseChangeLog>

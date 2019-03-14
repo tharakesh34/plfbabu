@@ -531,6 +531,7 @@
 		          WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 	</createView>
 	</changeSet>
+	
 	<changeSet id="4" author="shinde.b">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
 			SELECT t1.fintype,
@@ -1134,8 +1135,8 @@
 	</changeSet>
 
 	<changeSet id="27.1" author="amanullah.m">
-		<addForeignKeyConstraint constraintName="FK_FIN_OPTION_ALERTS_FOID" referencedTableName="FIN_OPTIONS"
-			baseColumnNames="FinOptiontId" baseTableName="FIN_OPTION_ALERTS" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="FK_FIN_OPTION_ALERTS_FOID" referencedTableName="FIN_OPTIONS" baseColumnNames="FinOptiontId"
+			baseTableName="FIN_OPTION_ALERTS" referencedColumnNames="id" />
 	</changeSet>
 
 	<changeSet id="28" author="amanulla.m">
