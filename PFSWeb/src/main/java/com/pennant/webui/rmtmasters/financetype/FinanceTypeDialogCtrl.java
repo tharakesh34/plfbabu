@@ -156,15 +156,17 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/financeTypeDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/SolutionFactory/FinanceType/financeTypeDialog.zul file.
  */
 public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private static final long serialVersionUID = 4493449538614654801L;
 	private static final Logger logger = Logger.getLogger(FinanceTypeDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinanceTypeDialog; // autoWired
 	protected Label dialogTitle; // autoWired
@@ -232,9 +234,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Textbox eligibilityMethod;
 	protected Button btnAlwElgMthdDetails;
 	protected Checkbox taxNoMand;
-	
-	protected Row									row_AutoRejectionDays;
-	protected Intbox								autoRejectionDays;
+
+	protected Row row_AutoRejectionDays;
+	protected Intbox autoRejectionDays;
 
 	// Grace Period Schedule Details Tab
 	protected Space space_cbfinGrcRateType;
@@ -281,8 +283,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row row_FinRepRates; // autoWired
 	protected Decimalbox finIntRate; // autoWired
 	protected Checkbox alwZeroIntAcc;
-	protected Row 	   row_FinBaseRates;
-	protected Row 	   row_FinIsRvwAlw;
+	protected Row row_FinBaseRates;
+	protected Row row_FinIsRvwAlw;
 	protected RateBox financeBaserate;
 	protected Checkbox equalRepayment; // autoWired
 	protected Label label_FinanceTypeDialog_EqualRepayment; // autoWired
@@ -397,7 +399,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Button btnMandatoryVasProduct;
 	private List<FinTypeVASProducts> finTypeVASProductsList = null;
 	protected JdbcSearchObject<VASConfiguration> againstSearchObject;
-	
+
 	protected Label label_FinanceTypeDialog_ODChargeAmtOrPerc;
 	protected Label label_FinanceTypeDialog_LPPRULE;
 
@@ -405,7 +407,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Textbox alwdReceiptModes;
 	protected Button btnAlwReceiptModes;
 	private List<FinTypeReceiptModes> finTypeReceiptModesList = null;
-	
+
 	// Accounting SetUp Details Tab
 
 	protected Row row_ProgCliamEvent; // autoWired
@@ -555,12 +557,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Button btnAlwIRRDetails;
 	private List<IRRFinanceType> irrFinanceTypeList = null;
 
-	//Collateral LTV Check Details
+	// Collateral LTV Check Details
 	protected Combobox finLTVCheck;
 	protected Row row_LTVCheck;
 	protected Checkbox finCollateralCheck;
 
-	//Advance EMI Details
+	// Advance EMI Details
 	protected Checkbox alwAdvEMI;
 	protected Row row_advEMITerms;
 	protected Intbox advEMIMinTerms;
@@ -569,7 +571,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Intbox advEMIDftTerms;
 	protected Combobox cbAdvEMIMethod;
 	protected Space space_advEMIMethod;
-	protected Checkbox putCallRequired; 
+	protected Checkbox putCallRequired;
 
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	FinanceType fintypeLTVCheck = null;
@@ -589,8 +591,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected FinanceType object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected FinanceType object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -672,7 +675,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (isPromotion) {
 			this.product.setMaxlength(8);
 			this.product.setMandatoryStyle(true);
-			// Module name taken as Financeworkflow to copy all the data related to process editor at approval
+			// Module name taken as Financeworkflow to copy all the data related
+			// to process editor at approval
 			this.product.setModuleName("FinanceWorkFlow");
 			this.product.setValueColumn("FinType");
 			this.product.setDescColumn("LovDescFinTypeName");
@@ -904,8 +908,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDMaxWaiverPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.oDMinCapAmount.setMaxlength(15);
 		this.oDMinCapAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
-		
-		if(isOverdraft){
+
+		if (isOverdraft) {
 			this.lPPRule.setVisible(false);
 			this.lPPRule.setMaxlength(8);
 			this.lPPRule.setMandatoryStyle(true);
@@ -931,7 +935,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxReAgeHolidays.setMaxlength(3);
 		this.maxUnplannedEmi.setMaxlength(3);
 
-		//Cost of funds
+		// Cost of funds
 		this.costOfFunds.setModuleName("CostOfFundCode");
 		this.costOfFunds.setValueColumn("CofCode");
 		this.costOfFunds.setDescColumn("CofDesc");
@@ -977,7 +981,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.row_ApplyPricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
 		this.row_ApplyGracePricingPolicy.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
 
-		//Accounting Details
+		// Accounting Details
 		this.profitCenter.setMaxlength(8);
 		this.profitCenter.setModuleName("ProfitCenter");
 		this.profitCenter.setValueColumn("ProfitCenterCode");
@@ -1009,12 +1013,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDivision.setButtonDisabled(true);
 		this.finDivision.setReadonly(false);
 
-		//Advance EMI Details
+		// Advance EMI Details
 		this.advEMIDftTerms.setMaxlength(3);
 		this.advEMIMaxTerms.setMaxlength(3);
 		this.advEMIMinTerms.setMaxlength(3);
-		
-		//Allow Minimum Cap Amount
+
+		// Allow Minimum Cap Amount
 		this.row_ODMinCapAmount.setVisible(ImplementationConstants.ALW_LPP_MIN_CAP_AMT);
 		logger.debug("Leaving");
 
@@ -1024,7 +1028,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 * User rights check. <br>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -1224,14 +1229,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finGrcDftIntFrq.setValue(aFinanceType.getFinGrcDftIntFrq());
 
 		this.finIsAlwGrcRepay.setChecked(aFinanceType.isFinIsAlwGrcRepay());
-		if(!isOverdraft){
-		fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),
-				",EQUAL,PRI,PRI_PFT,POSINT,");
-		}else{
-			fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(),
-					",EQUAL,PRI,PRI_PFT,");
+		if (!isOverdraft) {
+			fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(),
+					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI,PRI_PFT,POSINT,");
+		} else {
+			fillComboBox(this.finGrcSchdMthd, aFinanceType.getFinGrcSchdMthd(),
+					PennantStaticListUtil.getScheduleMethods(), ",EQUAL,PRI,PRI_PFT,");
 		}
-		
+
 		boolean isFinGrcIntCpz = aFinanceType.isFinGrcIsIntCpz();
 		if (isOverdraft) {
 			isFinGrcIntCpz = false;
@@ -1278,7 +1283,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.financeBaserate.setBaseValue(aFinanceType.getFinBaseRate());
 		this.financeBaserate.setSpecialValue(aFinanceType.getFinSplRate());
 		this.financeBaserate.setMarginValue(aFinanceType.getFinMargin());
-		if(isOverdraft){
+		if (isOverdraft) {
 			this.alwZeroIntAcc.setChecked(aFinanceType.isAlwZeroIntAcc());
 			setZeroIntAccount();
 		}
@@ -1494,13 +1499,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		fillComboBox(this.oDChargeCalOn, aFinanceType.getODChargeCalOn(), PennantStaticListUtil.getODCCalculatedOn(),
 				"");
 		this.oDGraceDays.setValue(aFinanceType.getODGraceDays());
-		
-		if(isOverdraft){
-			fillComboBox(this.oDChargeType, aFinanceType.getODChargeType(), PennantStaticListUtil.getODCChargeType(), "");
-		}else{
-			fillComboBox(this.oDChargeType, aFinanceType.getODChargeType(), PennantStaticListUtil.getODCChargeType(), ",R,");
+
+		if (isOverdraft) {
+			fillComboBox(this.oDChargeType, aFinanceType.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
+					"");
+		} else {
+			fillComboBox(this.oDChargeType, aFinanceType.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
+					",R,");
 		}
-		
+
 		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 			onChangeODChargeType(true);
@@ -1508,17 +1515,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))
-				&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
+						&& !FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
 			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(aFinanceType.getODChargeAmtOrPerc(), 2));
-		}else if(FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))){
-			if(isOverdraft){
+		} else if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(getComboboxValue(this.oDChargeType))) {
+			if (isOverdraft) {
 				this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
 				this.label_FinanceTypeDialog_LPPRULE.setVisible(true);
 				this.space_oDChargeAmtOrPerc.setVisible(false);
 				this.oDChargeAmtOrPerc.setVisible(false);
 				this.lPPRule.setVisible(true);
 				this.lPPRule.setValue(aFinanceType.getODRuleCode());
-			}else{
+			} else {
 				this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(true);
 				this.label_FinanceTypeDialog_LPPRULE.setVisible(false);
 				this.space_oDChargeAmtOrPerc.setVisible(true);
@@ -1596,7 +1603,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		doSetDownpayProperties(aFinanceType.getProductCategory(), false);
 
-		//Collaterl LTV Checking In Main Table//FIXME
+		// Collaterl LTV Checking In Main Table//FIXME
 		if (!this.isCompReadonly) {
 
 			this.fintypeLTVCheck = getFinanceTypeService().getFinLtvCheckByFinType(aFinanceType.getFinType());
@@ -1608,7 +1615,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.profitCenter.setValue(aFinanceType.getProfitcenterCode());
 		this.profitCenter.setDescription(aFinanceType.getProfitCenterDesc());
 		this.profitCenter.setObject(new ProfitCenter(aFinanceType.getProfitCenterID()));
-		if(!isOverdraft){
+		if (!isOverdraft) {
 			appendFeeDetailTab();
 		}
 		appendExpenseDetailTab();
@@ -1631,7 +1638,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doAlwEMICheckBoxChecked(aFinanceType.isAlwAdvEMI());
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
-		
+
 		this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
 
 		logger.debug("Leaving doWriteBeanToComponents()");
@@ -1639,6 +1646,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	/**
 	 * Method to fill the combo box with given list of values
+	 * 
 	 * @param combobox
 	 * @param roundTarget
 	 * @param targetList
@@ -1671,7 +1679,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
 	 * 
 	 */
 	protected void appendInsuranceDetailsTab() {
@@ -1702,7 +1711,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
 	 * 
 	 */
 	protected void appendAccountingDetailsTab() {
@@ -1733,7 +1743,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
 	 * 
 	 */
 	protected void appendFeeDetailTab() {
@@ -1764,7 +1775,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
 	 * 
 	 */
 	protected void appendPartnerBankTab() {
@@ -1796,8 +1808,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
-	 * parameter
+	 * This method will create tab and will assign corresponding tab selection
+	 * method and makes tab visibility based on parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -2128,20 +2140,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 
-		//LTV Check For Collateral
+		// LTV Check For Collateral
 		try {
 			aFinanceType.setFinLTVCheck(getComboboxValue(this.finLTVCheck));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		//Partially Secured or not
+		// Partially Secured or not
 		try {
 			aFinanceType.setPartiallySecured(this.finCollateralCheck.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aFinanceType.setODRuleCode(this.lPPRule.getValue());
 		} catch (WrongValueException we) {
@@ -2166,7 +2178,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			try {
 				/*
-				 * to check mutually exclusive values i.e Grace base rate code and Grace profit rate
+				 * to check mutually exclusive values i.e Grace base rate code
+				 * and Grace profit rate
 				 */
 				if (this.finGrcIntRate.getValue() != null) {
 					if (this.finGrcIntRate.getValue().compareTo(BigDecimal.ZERO) > 0
@@ -2204,7 +2217,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				wve.add(we);
 			}
 			try {
-				// Field is foreign key and not a mandatory value so it should be either null or non empty
+				// Field is foreign key and not a mandatory value so it should
+				// be either null or non empty
 				aFinanceType.setFinGrcBaseRate(StringUtils.isEmpty(this.financeGrcBaseRate.getBaseValue()) ? null
 						: this.financeGrcBaseRate.getBaseValue());
 			} catch (WrongValueException we) {
@@ -2222,7 +2236,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				wve.add(we);
 			}
 			try {
-				// Field is foreign key and not a mandatory value so it should be either null or non empty
+				// Field is foreign key and not a mandatory value so it should
+				// be either null or non empty
 				aFinanceType.setFinGrcSplRate(StringUtils.isEmpty(this.financeGrcBaseRate.getSpecialValue()) ? null
 						: this.financeGrcBaseRate.getSpecialValue());
 			} catch (WrongValueException we) {
@@ -2236,7 +2251,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			try {
 				/*
-				 * to check mutually exclusive values i.e Grace base rate code and Grace profit rate
+				 * to check mutually exclusive values i.e Grace base rate code
+				 * and Grace profit rate
 				 */
 				if (this.grcAdvPftRate.getValue() != null) {
 					if (this.grcAdvPftRate.getValue().compareTo(BigDecimal.ZERO) > 0
@@ -2254,7 +2270,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				wve.add(we);
 			}
 			try {
-				// Field is foreign key and not a mandatory value so it should be either null or non empty
+				// Field is foreign key and not a mandatory value so it should
+				// be either null or non empty
 				aFinanceType.setGrcAdvBaseRateDesc(this.grcAdvBaseRate.getDescription());
 				aFinanceType.setGrcAdvBaseRate(
 						StringUtils.isEmpty(this.grcAdvBaseRate.getValue()) ? null : this.grcAdvBaseRate.getValue());
@@ -2477,7 +2494,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			// To check mutually exclusive values i.e base rate code and profit rate
+			// To check mutually exclusive values i.e base rate code and profit
+			// rate
 			if (this.finIntRate.getValue() != null) {
 				if (this.finIntRate.getValue().compareTo(BigDecimal.ZERO) > 0
 						&& StringUtils.isNotEmpty(this.financeBaserate.getBaseValue())) {
@@ -2514,14 +2532,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			// Field is foreign key and not a mandatory value so it should be either null or non empty
+			// Field is foreign key and not a mandatory value so it should be
+			// either null or non empty
 			aFinanceType.setFinBaseRate(StringUtils.isEmpty(this.financeBaserate.getBaseValue()) ? null
 					: this.financeBaserate.getBaseValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			// Field is foreign key and not a mandatory value so it should be either null or non empty
+			// Field is foreign key and not a mandatory value so it should be
+			// either null or non empty
 			aFinanceType.setFinSplRate(StringUtils.isEmpty(this.financeBaserate.getSpecialValue()) ? null
 					: this.financeBaserate.getSpecialValue());
 		} catch (WrongValueException we) {
@@ -2535,7 +2555,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			/*
-			 * to check mutually exclusive values i.e Repay base rate code and Repay profit rate
+			 * to check mutually exclusive values i.e Repay base rate code and
+			 * Repay profit rate
 			 */
 			if (this.rpyAdvPftRate.getValue() != null) {
 				if (this.rpyAdvPftRate.getValue().compareTo(BigDecimal.ZERO) > 0
@@ -2553,7 +2574,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			// Field is foreign key and not a mandatory value so it should be either null or non empty
+			// Field is foreign key and not a mandatory value so it should be
+			// either null or non empty
 			aFinanceType.setRpyAdvBaseRateDesc(this.rpyAdvBaseRate.getDescription());
 			aFinanceType.setRpyAdvBaseRate(
 					StringUtils.isEmpty(this.rpyAdvBaseRate.getValue()) ? null : this.rpyAdvBaseRate.getValue());
@@ -3228,11 +3250,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		/*
-		 * try { if (validate && !isOverdraft && (this.listBoxFinTypeAccounts.getItems() == null ||
+		 * try { if (validate && !isOverdraft &&
+		 * (this.listBoxFinTypeAccounts.getItems() == null ||
 		 * this.listBoxFinTypeAccounts.getItems().isEmpty())) { throw new
 		 * WrongValueException(this.listBoxFinTypeAccounts,
-		 * Labels.getLabel("tab_FinanceTypeDialog_FinTypeAccountDetails.value") + " Must Be Entered "); } } catch
-		 * (WrongValueException we) { wve.add(we); }
+		 * Labels.getLabel("tab_FinanceTypeDialog_FinTypeAccountDetails.value")
+		 * + " Must Be Entered "); } } catch (WrongValueException we) {
+		 * wve.add(we); }
 		 */
 		// To check whether the margin entered without base rate
 
@@ -3469,15 +3493,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Cheque Capture
+		// Cheque Capture
 		try {
 			aFinanceType.setChequeCaptureReq(this.chequeCaptureReq.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		//auto rejection no of days
-		try{
+
+		// auto rejection no of days
+		try {
 			aFinanceType.setAutoRejectionDays(this.autoRejectionDays.intValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -3503,13 +3527,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (getFinTypeExpenseListCtrl() != null) {
 			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().doSave());
 		}
-		
+
 		try {
 			aFinanceType.setPutCallRequired(this.putCallRequired.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
 
 		// ****************End of Tab 6********************//
@@ -3536,8 +3560,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Opens the Dialog window modal. It checks if the dialog opens with a new or existing object and set the readOnly
-	 * mode accordingly.
+	 * Opens the Dialog window modal. It checks if the dialog opens with a new
+	 * or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceType
 	 * @throws Exception
@@ -3672,12 +3696,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						Labels.getLabel("label_FinanceTypeDialog_AlwEarlyPayMethods.value"), null, true));
 			}
 		}
-		
+
 		if (isOverdraft && this.lPPRule.isVisible() && !this.lPPRule.isReadonly()) {
-			this.lPPRule.setConstraint(new PTStringValidator(Labels.getLabel("label_OverDraftFinanceTypeDialog_LPPRULE.value"),null,true,true));
+			this.lPPRule.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_OverDraftFinanceTypeDialog_LPPRULE.value"), null, true, true));
 		}
 		/*
-		 * To Check Whether it is save or submit if save no validation else it should validate
+		 * To Check Whether it is save or submit if save no validation else it
+		 * should validate
 		 */
 		// ****** Schedule Profit tab **************//
 
@@ -3851,12 +3877,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finLTVCheck.setConstraint(new StaticListValidator(finLVTCheckList,
 					Labels.getLabel("label_FinanceTypeDialog_FinCollateralLTV.value")));
 		}
-		
+
 		if (!this.autoRejectionDays.isReadonly()) {
 			this.autoRejectionDays.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -4082,7 +4108,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			// this.finType.setReadonly(true);
 			this.space_finType.setSclass("");
 			this.btnCopyTo.setVisible(!isCompReadonly && alwCopyOption);
-			// TBD: PV: Additional conditions required. if no deals found in the system it can be maintainable.
+			// TBD: PV: Additional conditions required. if no deals found in the
+			// system it can be maintainable.
 			this.finDivision.setReadonly(true);
 			this.finDivision.setMandatoryStyle(false);
 		}
@@ -4172,7 +4199,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.costOfFunds.setReadonly(isTrue);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
-			//this.alwdIRRDetails.setReadonly(isTrue);
+			// this.alwdIRRDetails.setReadonly(isTrue);
 			this.btnAlwIRRDetails.setDisabled(isTrue);
 		}
 
@@ -4241,7 +4268,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		readOnlyComponent(isTrue, this.finLTVCheck);
 		readOnlyComponent(isTrue, this.finCollateralCheck);
 		this.cbAdvEMIMethod.setDisabled(isTrue);
-		if(isOverdraft){
+		if (isOverdraft) {
 			this.lPPRule.setReadonly(isTrue);
 			this.lPPRule.setButtonDisabled(isTrue);
 			this.alwZeroIntAcc.setDisabled(isTrue);
@@ -4348,7 +4375,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
-		
+
 		this.putCallRequired.setDisabled(isTrue);
 
 		if (isTrue) {
@@ -4545,7 +4572,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setDescription("");
 		this.manualSchedule.setChecked(false);
 		this.taxNoMand.setChecked(false);
-		if(isOverdraft){
+		if (isOverdraft) {
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
 		}
@@ -4634,8 +4661,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			aFinanceType.setFinTypeVASProductsList(null);
 		}
-		
-		//Fin Type Receipt Modes
+
+		// Fin Type Receipt Modes
 		fetchReceiptModes();
 		if (getFinTypeReceiptModesList() != null && !getFinTypeReceiptModesList().isEmpty()) {
 			aFinanceType.setFinTypeReceiptModesList(getFinTypeReceiptModesList());
@@ -4643,7 +4670,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setFinTypeReceiptModesList(null);
 		}
 
-		//IRR codes
+		// IRR codes
 		if (ImplementationConstants.ALLOW_IRRCODES && !isOverdraft) {
 			fetchIRRCodeDetals();
 
@@ -4758,7 +4785,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			String operationRefs = getServiceOperations(taskId, aFinanceType);
 
-			if (aFinanceType.getFinTypeReceiptModesList() != null && !aFinanceType.getFinTypeReceiptModesList().isEmpty()) {
+			if (aFinanceType.getFinTypeReceiptModesList() != null
+					&& !aFinanceType.getFinTypeReceiptModesList().isEmpty()) {
 				for (FinTypeReceiptModes details : finTypeReceiptModesList) {
 					if (StringUtils.isNotBlank(details.getRecordType())) {
 						details.setFinType(aFinanceType.getFinType());
@@ -4779,7 +4807,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					}
 				}
 			}
-			
+
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
 			} else {
@@ -4915,7 +4943,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To get the currency LOV List From RMTCurrencies Table And Amount is formatted based on the currency
+	 * To get the currency LOV List From RMTCurrencies Table And Amount is
+	 * formatted based on the currency
 	 * 
 	 * @throws InterruptedException
 	 */
@@ -4975,7 +5004,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To get the currency LOV List From RMTCurrencies Table And Amount is formatted based on the currency
+	 * To get the currency LOV List From RMTCurrencies Table And Amount is
+	 * formatted based on the currency
 	 */
 	public void onFulfill$finCcy(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -5018,8 +5048,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get non internal account and it's
-	 * purpose is movement
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is
+	 * applied to get non internal account and it's purpose is movement
 	 */
 
 	public void onFulfill$finAcType(Event event) {
@@ -5039,8 +5069,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get non internal account and it's
-	 * purpose is movement
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is
+	 * applied to get non internal account and it's purpose is movement
 	 */
 
 	public void onFulfill$pftPayAcType(Event event) {
@@ -5060,8 +5090,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an Internal account and
-	 * it's purpose is movement and it is a Suspense account
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is
+	 * applied to get only an Internal account and it's purpose is movement and
+	 * it is a Suspense account
 	 */
 	public void onFulfill$finSuspAcType(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -5080,8 +5111,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To get the AccountType LOV List From RMTAccountTypes Table filter is applied to get only an internal account and
-	 * it's purpose is movement and it is a Provision account
+	 * To get the AccountType LOV List From RMTAccountTypes Table filter is
+	 * applied to get only an internal account and it's purpose is movement and
+	 * it is a Provision account
 	 */
 	public void onFulfill$finProvisionAcType(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -5378,7 +5410,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onCheck$developerFinance(Event event) {//FIXME
+	public void onCheck$developerFinance(Event event) {// FIXME
 		logger.debug("Entering" + event.toString());
 		setDeveloperFinanceFlagDetail();
 		logger.debug("Leaving" + event.toString());
@@ -5398,7 +5430,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.btnSearchAlwEarlyMethod.setDisabled(true);
 			this.alwEarlyPayMethods.setValue(CalculationConstants.EARLYPAY_PRIHLD);
 		} else {
-			if(!isCompReadonly){
+			if (!isCompReadonly) {
 				this.cbfinSchdMthd.setDisabled(false);
 				this.cbFinScheduleOn.setDisabled(false);
 				this.btnSearchAlwEarlyMethod.setDisabled(false);
@@ -5578,7 +5610,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		setMultiDisbCheckReqFlag(true);
 		logger.debug("Leaving");
 	}
-	
+
 	public void onCheck$alwZeroIntAcc(Event event) {
 		logger.debug("Entering");
 		setZeroIntAccount();
@@ -5587,7 +5619,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	private void setZeroIntAccount() {
 		logger.debug("Entering");
-		if(this.alwZeroIntAcc.isChecked()){
+		if (this.alwZeroIntAcc.isChecked()) {
 			this.row_FinBaseRates.setVisible(false);
 			this.row_FinRepRates.setVisible(false);
 			this.row_FinIsRvwAlw.setVisible(false);
@@ -5602,7 +5634,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.financeBaserate.setSpecialValue("");
 			this.fInMinRate.setValue(BigDecimal.ZERO);
 			this.finMaxRate.setValue(BigDecimal.ZERO);
-		}else{
+		} else {
 			this.row_FinBaseRates.setVisible(true);
 			this.row_FinRepRates.setVisible(true);
 			this.row_FinIsRvwAlw.setVisible(true);
@@ -5627,8 +5659,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * To disable Grace period tab Used twice in the page onCreatedWindow and onCheck Events. a boolean if condition is
-	 * applied on doSetValidations and doWriteComponentstoBean to Stop validation when Disabled
+	 * To disable Grace period tab Used twice in the page onCreatedWindow and
+	 * onCheck Events. a boolean if condition is applied on doSetValidations and
+	 * doWriteComponentstoBean to Stop validation when Disabled
 	 */
 	private void dodisableGracePeriod() {
 		logger.debug("Entering ");
@@ -5647,7 +5680,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.gracePeriod.setDisabled(false);
 			this.gracePeriod.setSclass("");
 			if (this.financeType.isNewRecord()) {
-				this.finIsAlwGrcRepay.setChecked(true); // As per FSD default for this field is true
+				this.finIsAlwGrcRepay.setChecked(true); // As per FSD default
+														// for this field is
+														// true
 			} else {
 				this.finIsAlwGrcRepay.setChecked(finTypeBef.isFinIsAlwGrcRepay());
 			}
@@ -6049,11 +6084,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			// repayment
 			if (StringUtils.equals(value, CalculationConstants.RATE_BASIS_R)) {
-				if(isOverdraft && this.alwZeroIntAcc.isChecked()){
+				if (isOverdraft && this.alwZeroIntAcc.isChecked()) {
 					this.financeBaserate.setReadonly(true);
 					this.finIntRate.setReadonly(true);
 					this.finIsRvwAlw.setDisabled(true);
-				}else{
+				} else {
 					this.financeBaserate.setReadonly(isCompReadonly);
 					this.finIntRate.setReadonly(isCompReadonly);
 					this.finIsRvwAlw.setDisabled(isCompReadonly);
@@ -6156,14 +6191,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_oDChargeType.setSclass("");
 			this.space_ODMinCapAmount.setSclass("");
 		}
-		
-		if(isOverdraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)){
+
+		if (isOverdraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)) {
 			this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
 			this.label_FinanceTypeDialog_LPPRULE.setVisible(true);
 			this.space_oDChargeAmtOrPerc.setVisible(false);
 			this.oDChargeAmtOrPerc.setVisible(false);
 			this.lPPRule.setVisible(true);
-		}else{
+		} else {
 			this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(true);
 			this.label_FinanceTypeDialog_LPPRULE.setVisible(false);
 			this.space_oDChargeAmtOrPerc.setVisible(true);
@@ -6227,14 +6262,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				}
 			}
 		}
-		
-		if(isOverdraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)){
+
+		if (isOverdraft && getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_RULEFXDD)) {
 			this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(false);
 			this.label_FinanceTypeDialog_LPPRULE.setVisible(true);
 			this.space_oDChargeAmtOrPerc.setVisible(false);
 			this.oDChargeAmtOrPerc.setVisible(false);
 			this.lPPRule.setVisible(true);
-		}else{
+		} else {
 			this.label_FinanceTypeDialog_ODChargeAmtOrPerc.setVisible(true);
 			this.label_FinanceTypeDialog_LPPRULE.setVisible(false);
 			this.space_oDChargeAmtOrPerc.setVisible(true);
@@ -6271,8 +6306,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * If Allow BPI Treatment? is checked and Default BPI Treatment is not No BPI than BPI Interest Days Basis is
-	 * mandatory otherwise un-mandatory
+	 * If Allow BPI Treatment? is checked and Default BPI Treatment is not No
+	 * BPI than BPI Interest Days Basis is mandatory otherwise un-mandatory
 	 * 
 	 * @param bpiRateBasis
 	 */
@@ -6333,7 +6368,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Method for Setting Default Values of visibility on Check Planned Emi Holidays
+	 * Method for Setting Default Values of visibility on Check Planned Emi
+	 * Holidays
 	 */
 	public void onCheck$alwPlannedEmiHoliday(Event event) {
 		logger.debug("Entering");
@@ -6614,7 +6650,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving");
 	}
 
-	/** To Check the user action based on the result removes the error messages; */
+	/**
+	 * To Check the user action based on the result removes the error messages;
+	 */
 	public void onCheck$userAction(Event event) {
 		logger.debug("Entering" + event.toString());
 		if ("Save".equals(userAction.getSelectedItem().getLabel())) {
@@ -6814,7 +6852,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
-	// If UnPlannedEmiHoliday is selected UnPlannedEmiHoliday details should be made visible
+	// If UnPlannedEmiHoliday is selected UnPlannedEmiHoliday details should be
+	// made visible
 	private void doCheckUnPlannedEmiHoliday(boolean checked, Checkbox checkbox) {
 		if (checked) {
 			checkbox.setDisabled(isCompReadonly);
@@ -6939,7 +6978,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * In finance type check the Collateral required then collaterlType and Collateral Check is enabled.
+	 * In finance type check the Collateral required then collaterlType and
+	 * Collateral Check is enabled.
 	 * 
 	 * @param finType
 	 */
@@ -7282,7 +7322,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Based on selection Past Due Profit Calculation method visible only Schedule Rate & Margin
+	 * Based on selection Past Due Profit Calculation method visible only
+	 * Schedule Rate & Margin
 	 * 
 	 * @param event
 	 */
@@ -7330,7 +7371,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private boolean isMaintainable() {
-		// If workflow enabled and not first task owner then cannot maintain. Else can maintain
+		// If workflow enabled and not first task owner then cannot maintain.
+		// Else can maintain
 		if (isWorkFlowEnabled()) {
 			if (!StringUtils.equals(getRole(), getWorkFlow().firstTaskOwner())) {
 				return false;
@@ -7374,7 +7416,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for processing Vas product details
 	 * 
@@ -7474,7 +7516,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components VAS Products list
+	 * Method Used for set list of values been class to components VAS Products
+	 * list
 	 * 
 	 * @param FinTypeVASProducts
 	 */
@@ -7629,12 +7672,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	 */
 	public void onClick$btnAlwReceiptModes(Event event) throws Exception {
 		logger.debug("Entering");
-		
+
 		setReceiptModes();
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for processing Vas product details
 	 * 
@@ -7654,9 +7697,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
-	 * Method Used for set list of values been class to components VAS Products list
+	 * Method Used for set list of values been class to components VAS Products
+	 * list
 	 * 
 	 * @param FinTypeVASProducts
 	 */
@@ -7682,7 +7726,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Entering");
 	}
-	
+
 	/**
 	 * Method for Used for render the Data from List
 	 * 
@@ -7769,7 +7813,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug("Leaving");
 	}
-	
+
 	private void doStoreEventDetails() {
 		List<AccountEngineEvent> accEventsList = getAccountingEvents();
 		this.eventDetailMap.clear();
@@ -7857,8 +7901,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwdIRRDetails.setErrorMessage("");
 
 		// ####_0.2
-		//Filter[] filter = new Filter[1];
-		//filter[0] = new Filter("IRRID", null, Filter.OP_NOT_EQUAL);
+		// Filter[] filter = new Filter[1];
+		// filter[0] = new Filter("IRRID", null, Filter.OP_NOT_EQUAL);
 
 		String selectedValues = null;
 		if (isVasAlwd) {
@@ -8020,7 +8064,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/**
-	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
+	 * Creates a page from a zul-file in a tab in the center area of the
+	 * borderlayout.
 	 * 
 	 */
 	protected void appendExpenseDetailTab() {
