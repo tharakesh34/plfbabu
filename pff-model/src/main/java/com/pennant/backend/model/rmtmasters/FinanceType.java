@@ -258,7 +258,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean chequeCaptureReq;
 	//autorejection No of Days
 	private int autoRejectionDays;
-	
+
 	//Gst detial
 	private boolean taxNoMand;
 
@@ -316,24 +316,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Eligibility Method
 	private String eligibilityMethods;
 	private boolean putCallRequired = false;
-	
-	private boolean grcAdvIntersetReq;
-	private String grcAdvType;
-	private int grcAdvMinTerms;
-	private int grcAdvMaxTerms;
-	private int grcAdvDefaultTerms;
-	
-	private boolean advIntersetReq;
-	private String advType;
-	private int AdvMinTerms;
-	private int AdvMaxTerms;
-	private int AdvDefaultTerms;
-	private String advStage;
-	
-	private boolean dsfReq;
-	private boolean cashCollateralReq;
-	
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -2209,7 +2192,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setAlwZeroIntAcc(boolean alwZeroIntAcc) {
 		this.alwZeroIntAcc = alwZeroIntAcc;
 	}
-	
+
 	public List<FinTypeReceiptModes> getFinTypeReceiptModesList() {
 		return finTypeReceiptModesList;
 	}
@@ -2241,112 +2224,4 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setPutCallRequired(boolean putCallRequired) {
 		this.putCallRequired = putCallRequired;
 	}
-
-	public boolean isGrcAdvIntersetReq() {
-		return grcAdvIntersetReq;
-	}
-
-	public void setGrcAdvIntersetReq(boolean grcAdvIntersetReq) {
-		this.grcAdvIntersetReq = grcAdvIntersetReq;
-	}
-
-	public String getGrcAdvType() {
-		return grcAdvType;
-	}
-
-	public void setGrcAdvType(String grcAdvType) {
-		this.grcAdvType = grcAdvType;
-	}
-
-	
-
-	public boolean isAdvIntersetReq() {
-		return advIntersetReq;
-	}
-
-	public void setAdvIntersetReq(boolean advIntersetReq) {
-		this.advIntersetReq = advIntersetReq;
-	}
-
-	public String getAdvType() {
-		return advType;
-	}
-
-	public void setAdvType(String advType) {
-		this.advType = advType;
-	}
-
-
-	public int getGrcAdvMinTerms() {
-		return grcAdvMinTerms;
-	}
-
-	public void setGrcAdvMinTerms(int grcAdvMinTerms) {
-		this.grcAdvMinTerms = grcAdvMinTerms;
-	}
-
-	public int getGrcAdvMaxTerms() {
-		return grcAdvMaxTerms;
-	}
-
-	public void setGrcAdvMaxTerms(int grcAdvMaxTerms) {
-		this.grcAdvMaxTerms = grcAdvMaxTerms;
-	}
-
-	public int getGrcAdvDefaultTerms() {
-		return grcAdvDefaultTerms;
-	}
-
-	public void setGrcAdvDefaultTerms(int grcAdvDefaultTerms) {
-		this.grcAdvDefaultTerms = grcAdvDefaultTerms;
-	}
-
-	public int getAdvMinTerms() {
-		return AdvMinTerms;
-	}
-
-	public void setAdvMinTerms(int advMinTerms) {
-		AdvMinTerms = advMinTerms;
-	}
-
-	public int getAdvMaxTerms() {
-		return AdvMaxTerms;
-	}
-
-	public void setAdvMaxTerms(int advMaxTerms) {
-		AdvMaxTerms = advMaxTerms;
-	}
-
-	public int getAdvDefaultTerms() {
-		return AdvDefaultTerms;
-	}
-
-	public void setAdvDefaultTerms(int advDefaultTerms) {
-		AdvDefaultTerms = advDefaultTerms;
-	}
-
-	public String getAdvStage() {
-		return advStage;
-	}
-
-	public void setAdvStage(String advStage) {
-		this.advStage = advStage;
-	}
-
-	public boolean isDsfReq() {
-		return dsfReq;
-	}
-
-	public void setDsfReq(boolean dsfReq) {
-		this.dsfReq = dsfReq;
-	}
-
-	public boolean isCashCollateralReq() {
-		return cashCollateralReq;
-	}
-
-	public void setCashCollateralReq(boolean cashCollateralReq) {
-		this.cashCollateralReq = cashCollateralReq;
-	}
-
 }
