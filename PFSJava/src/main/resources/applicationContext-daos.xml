@@ -3380,6 +3380,8 @@
 		<property name="customServiceTask" ref="customServiceTask" />
 		<property name="queryDetailService" ref="queryDetailService" />
 		<property name="pSLDetailService" ref="pSLDetailService" />
+		<property name="covenantsService" ref="covenantsService" />
+		<property name="finOptionService" ref="finOptionService" />
 
 		<!-- Limits -->
 		<property name="limitManagement" ref="limitManagement" />
@@ -4340,6 +4342,7 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="mandateDAO" ref="mandateDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="covenantsService" ref="covenantsService" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->
@@ -5443,8 +5446,8 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		 <!-- 132564:NOT ABLE TO APPROVE AMBATTUR BRANCH   -->
-        <property name="feeTypeDAO" ref="feeTypeDAO" />
+		<!-- 132564:NOT ABLE TO APPROVE AMBATTUR BRANCH -->
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
@@ -10061,7 +10064,7 @@
 
 	<!-- VASProviderAccDetail -->
 	<bean id="vASProviderAccDetailDAO" class="com.pennant.backend.dao.systemmasters.impl.VASProviderAccDetailDAOImpl"
-		parent="secSequenceDao" />
+		parent="sequenceDao" />
 	<bean id="vASProviderAccDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -10126,16 +10129,16 @@
 	<bean id="configurationService" class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl" init-method="init">
 		<property name="masterDefDAO" ref="masterDefTempDAO" />
 	</bean>
-	
-	<!-- Cluster and User Hierarchy Changes-->
+
+	<!-- Cluster and User Hierarchy Changes -->
 	<bean id="securityUserAccessDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserAccessDAOImpl"
 		parent="secSequenceDao" />
 	<bean id="securityUserHierarchyDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserHierarchyDAOImpl"
 		parent="secSequenceDao" />
-	
+
 
 	<!-- Cluster -->
-	<bean id="clusterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterDAOImpl" parent="secSequenceDao" />
+	<bean id="clusterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterDAOImpl" parent="sequenceDao" />
 	<bean id="clusterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -10161,7 +10164,7 @@
 
 	<!-- ReportingManager -->
 	<bean id="reportingManagerDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReportingManagerDAOImpl"
-		parent="secSequenceDao" />
+		parent="sequenceDao" />
 	<bean id="reportingManagerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -10187,7 +10190,7 @@
 
 	<!-- BusinessVertical -->
 	<bean id="businessVerticalDAO" class="com.pennant.backend.dao.applicationmaster.impl.BusinessVerticalDAOImpl"
-		parent="secSequenceDao" />
+		parent="sequenceDao" />
 
 	<bean id="businessVerticalService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -10283,7 +10286,7 @@
 	<bean name="securityUserHierarchyServiceTarget" class="com.pennant.backend.service.administration.impl.SecurityUserHierarchyServiceImpl">
 		<property name="securityUserHierarchyDAO" ref="securityUserHierarchyDAO"></property>
 	</bean>
-	
+
 	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
 		<property name="notesService" ref="notesService" />
 		<property name="financeDetailService" ref="financeDetailService" />
@@ -10291,5 +10294,111 @@
 		<property name="securityUserService" ref="securityUserService" />
 		<property name="activityLogService" ref="activityLogService" />
 	</bean>
-	
+
+	<!-- CovenantType -->
+	<bean id="covenantTypeDAO" class="com.pennant.backend.dao.finance.covenant.impl.CovenantTypeDAOImpl" parent="sequenceDao" />
+
+	<bean id="covenantTypeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="covenantTypeServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="covenantTypeServiceTarget" class="com.pennant.backend.service.finance.covenant.impl.CovenantTypeServiceImpl">
+		<property name="covenantTypeDAO" ref="covenantTypeDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<bean id="covenantsDAO" class="com.pennant.backend.dao.finance.covenant.impl.CovenantsDAOImpl" parent="sequenceDao" />
+
+	<bean id="covenantsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="covenantServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="doProcess*">PROPAGATION_MANDATORY</prop>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="covenantServiceTarget" class="com.pennant.backend.service.finance.covenant.impl.CovenantsServiceImpl">
+		<property name="covenantsDAO" ref="covenantsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+	</bean>
+
+	<bean id="covenantAlerts" class="com.pennant.backend.service.finance.covenant.impl.CovenantAlerts" parent="basicDao">
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="covenantsDAO" ref="covenantsDAO" />
+	</bean>
+
+
+	<bean id="putCallAlerts" class="com.pennant.backend.service.finance.covenant.impl.PutCallAlerts" parent="basicDao">
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="finOptionDAO" ref="finOptionDAO" />
+	</bean>
+
+
+	<bean id="finOptionDAO" class="com.pennant.backend.dao.finance.putcall.impl.FinOptionDAOImpl" parent="sequenceDao" />
+
+	<bean id="finOptionService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="finOptionServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="finOptionServiceTarget" class="com.pennant.backend.service.finance.putcall.impl.FinOptionServiceImpl">
+		<property name="finOptionDAO" ref="finOptionDAO" />
+	</bean>
+ 
+  <bean name="finOptionMaintanceService" class="com.pennant.backend.service.finance.impl.FinOptionMaintanceServiceImpl">
+	   <property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
+	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	   <property name="finOptionDAO" ref="finOptionDAO" />
+	   <property name="finOptionService" ref="finOptionService" />
+   </bean>
+
 </beans>

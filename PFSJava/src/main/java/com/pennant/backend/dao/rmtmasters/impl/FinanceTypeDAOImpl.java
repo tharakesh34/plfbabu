@@ -132,13 +132,12 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds,");
 		selectSql.append(
 				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode, AlwZeroIntAcc,");
-		selectSql.append(" AutoRejectionDays, TaxNoMand, ");
-				
+		selectSql.append(" AutoRejectionDays, TaxNoMand, PutCallRequired,");
 		if (type.contains("View")) {
 			selectSql.append(
 					" FinCategoryDesc, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName,");
 			selectSql.append(
-					" lovDescPftPayAcTypeName,lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode,");
+					" lovDescPftPayAcTypeName,lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode, ");
 		}
 
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
@@ -218,7 +217,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,AlwReage,AlwUnPlanEmiHoliday,alwMaxDisbCheckReq,quickDisb,ProductCategory,DeveloperFinance, CostOfFunds, ");
 		selectSql.append(
 				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc,");
-		selectSql.append(" AutoRejectionDays, TaxNoMand ");
+		selectSql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired");
 		if (type.contains("ORGView")) {
 			selectSql.append(
 					" ,DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
@@ -407,7 +406,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck, PartiallySecured, ");
 		insertSql.append(
 				" alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc, ");
-		insertSql.append(" AutoRejectionDays, TaxNoMand ) ");
+		insertSql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired ) ");
 		insertSql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
 		insertSql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
@@ -454,7 +453,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck, :PartiallySecured, ");
 		insertSql.append(
 				" :alwAdvEMI, :advEMIMinTerms, :advEMIMaxTerms, :advEMIDftTerms, :advEMISchdMthd, :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
-		insertSql.append(" :AutoRejectionDays, :TaxNoMand ) ");
+		insertSql.append(" :AutoRejectionDays, :TaxNoMand , :PutCallRequired ) ");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
@@ -569,7 +568,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		updateSql.append(
 				" alwAdvEMI = :alwAdvEMI, advEMIMinTerms = :advEMIMinTerms, advEMIMaxTerms = :advEMIMaxTerms, advEMIDftTerms = :advEMIDftTerms, advEMISchdMthd = :advEMISchdMthd, bpiPftDaysBasis = :bpiPftDaysBasis, eligibilityMethods = :eligibilityMethods,");
 		updateSql.append(" alwHybridRate = :alwHybridRate, fixedRateTenor = :fixedRateTenor, ODRuleCode = :ODRuleCode, AlwZeroIntAcc = :AlwZeroIntAcc, ");
-		updateSql.append(" AutoRejectionDays = :AutoRejectionDays, TaxNoMand = :TaxNoMand ");
+		updateSql.append(" AutoRejectionDays = :AutoRejectionDays, TaxNoMand = :TaxNoMand ,");
+		updateSql.append(" PutCallRequired= :PutCallRequired ");
+
 		updateSql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {

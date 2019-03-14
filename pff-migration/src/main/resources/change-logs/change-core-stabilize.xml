@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -20,44 +20,37 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="satyanarayana.g" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="satyanarayana.g"
+		runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="satyanarayana.g" dbms="oracle,postgresql">
-		<addNotNullConstraint tableName="bmtdocumenttypes" columnName="docispdfextrequired" />
-		<addNotNullConstraint tableName="bmtdocumenttypes_temp" columnName="docispdfextrequired" />
-	</changeSet>
-	
-	<changeSet id="1.1" author="satyanarayana.g" dbms="mssql">
-		<addNotNullConstraint tableName="bmtdocumenttypes" columnName="docispdfextrequired" columnDataType="NUMBER(1,0)" />
-		<addNotNullConstraint tableName="bmtdocumenttypes_temp" columnName="docispdfextrequired" columnDataType="NUMBER(1,0)" />
+	<changeSet id="1" author="satyanarayana.g">
+		<addNotNullConstraint tableName="bmtdocumenttypes"
+			columnName="docispdfextrequired" columnDataType="boolean" />
+		<addNotNullConstraint tableName="bmtdocumenttypes_temp"
+			columnName="docispdfextrequired" columnDataType="boolean" />
 	</changeSet>
 
-	<changeSet id="2" author="satyanarayana.g" dbms="oracle,postgresql">
-		<addNotNullConstraint tableName="PinCodes" columnName="serviceable" />
-		<addNotNullConstraint tableName="PinCodes_temp" columnName="serviceable" />
-	</changeSet>
-	
-		<changeSet id="2.2" author="satyanarayana.g" dbms="mssql">
-		<addNotNullConstraint tableName="PinCodes" columnName="serviceable" columnDataType="NUMBER(5,0)" />
-		<addNotNullConstraint tableName="PinCodes_temp" columnName="serviceable" columnDataType="NUMBER(5,0)" />
+	<changeSet id="2" author="satyanarayana.g">
+		<addNotNullConstraint tableName="PinCodes"
+			columnName="serviceable" columnDataType="smallint" />
+		<addNotNullConstraint tableName="PinCodes_temp"
+			columnName="serviceable" columnDataType="smallint" />
 	</changeSet>
 
-	<changeSet id="3" author="satyanarayana.g" dbms="oracle,postgresql">
-		<dropNotNullConstraint tableName="customerempdetails_temp" columnName="custempname" />
-		<dropNotNullConstraint tableName="customerempdetails" columnName="custempname" />
-	</changeSet>
-	
-		<changeSet id="3.1" author="satyanarayana.g" dbms="mssql">
-		<dropNotNullConstraint tableName="customerempdetails_temp" columnName="custempname" columnDataType="NUMBER(19,0)" />
-		<dropNotNullConstraint tableName="customerempdetails" columnName="custempname" columnDataType="NUMBER(19,0)" />
+	<changeSet id="3" author="satyanarayana.g">
+		<dropNotNullConstraint tableName="customerempdetails_temp"
+			columnName="custempname" columnDataType="bigint" />
+		<dropNotNullConstraint tableName="customerempdetails"
+			columnName="custempname" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="4" author="satyanarayana.g">
-		<createView viewName="customerempdetails_view" replaceIfExists="true">
+		<createView viewName="customerempdetails_view"
+			replaceIfExists="true">
 			SELECT ce.custempid,
 		    ce.custid,
 		    ce.custempname,
@@ -123,7 +116,8 @@
 		</createView>
 	</changeSet>
 	<changeSet id="5" author="satyanarayana.g">
-		<createView viewName="customerempdetails_aview" replaceIfExists="true">
+		<createView viewName="customerempdetails_aview"
+			replaceIfExists="true">
 			SELECT ce.custempid,
 		    ce.custid,
 		    ce.custempname,
@@ -155,21 +149,87 @@
 		     LEFT JOIN employerdetail emp ON ((ce.custempname = emp.employerid)))
 		</createView>
 	</changeSet>
-	
-	<changeSet id="6" author="satyanarayana.g">
-	<sql>update CustomerBankInfo set noOfMonthsBanking=0 where noOfMonthsBanking is null
-	</sql>
+
+	<changeSet id="6" author="murthy.y">
+		<createTable tableName="income_details_bk">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="linkId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="incomeExpense" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="income" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="margin" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="auxiliary1" type="varchar(10)" />
+			<column name="auxiliary2" type="varchar(10)" />
+			<column name="auxiliary3" type="varchar(10)" />
+			<column name="auxiliary4" type="varchar(10)" />
+			<column name="auxiliary5" type="varchar(10)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
 	</changeSet>
-	
-	
-	<changeSet id="6.1" author="satyanarayana.g" dbms="oracle,postgresql">
-		<addNotNullConstraint tableName="CustomerBankInfo" columnName="noOfMonthsBanking" />
-		<addNotNullConstraint tableName="CustomerBankInfo_Temp" columnName="noOfMonthsBanking" />
+
+	<changeSet id="7" author="murthy.y">
+		<sql>
+			<![CDATA[
+				insert into income_details_bk select * from income_details;
+			]]>
+		</sql>
 	</changeSet>
-	
-	<changeSet id="6.2" author="satyanarayana.g" dbms="mssql">
-		<addNotNullConstraint tableName="CustomerBankInfo" columnName="noOfMonthsBanking" columnDataType="NUMBER(10,0)" />
-		<addNotNullConstraint tableName="CustomerBankInfo_Temp" columnName="noOfMonthsBanking" columnDataType="NUMBER(10,0)" />
+
+	<changeSet id="8_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','income_details');
+		</sql>
 	</changeSet>
-	
+
+	<changeSet id="8" author="murthy.y">
+		<dropTable tableName="income_details" />
+	</changeSet>
+
+	<changeSet id="8.1" author="murthy.y">
+		<renameTable newTableName="income_details" oldTableName="income_details_bk" />
+	</changeSet>
+
+	<changeSet id="8_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','income_details');
+		</sql>
+	</changeSet>
+
+	<changeSet id="8.2" author="murthy.y" dbms="postgresql">
+		<modifyDataType tableName="income_details" columnName="incomeType"
+			newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="incomeExpense"
+			newDataType="citext" />
+		<modifyDataType tableName="income_details" columnName="category"
+			newDataType="citext" />
+	</changeSet>
+	<changeSet id="9" author="murthy.y">
+		<dropTable tableName="income_details_bk" />
+	</changeSet>
 </databaseChangeLog>

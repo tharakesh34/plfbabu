@@ -32,6 +32,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -42,6 +43,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
 import com.pennanttech.pff.model.external.gst.TaxDownload;
+import com.pennanttech.pff.staticlist.AppStaticList;
 
 /**
  * This is the controller class for the /WEB-INF/pages/DataExtraction/DataExtractionList.zul file.
@@ -61,7 +63,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	protected Combobox processMonth;
 	protected Combobox configName;
 
-	private List<ValueLabel> monthList = PennantStaticListUtil.getMonthList();
+	private List<Property> months = AppStaticList.getMonths();
 	private List<ValueLabel> configNamesList = PennantStaticListUtil.getConfigNames();
 
 	/**
@@ -91,7 +93,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * Set the component level properties.
 	 */
 	private void doSetFieldProperties() {
-		fillComboBox(this.processMonth, "", monthList, "");
+		fillList(this.processMonth, months, "");
 		fillComboBox(this.configName, "", configNamesList, "");
 	}
 
@@ -147,7 +149,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 */
 	private void doSetValidations() {
 		this.processMonth.setConstraint(
-				new PTListValidator(Labels.getLabel("label_DataExtractionList_Month.value"), monthList, true));
+				new PTListValidator(Labels.getLabel("label_DataExtractionList_Month.value"), months, true));
 		this.configName.setConstraint(new PTListValidator(Labels.getLabel("label_DataExtractionList_ProcessName.value"),
 				configNamesList, true));
 	}
@@ -164,7 +166,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		fillComboBox(this.processMonth, "", monthList, "");
+		fillList(this.processMonth, months, "");
 		fillComboBox(this.configName, "", configNamesList, "");
 	}
 

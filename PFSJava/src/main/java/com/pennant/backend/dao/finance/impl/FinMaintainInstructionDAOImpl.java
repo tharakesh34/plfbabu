@@ -246,7 +246,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 
 		sql.append(" where FinMaintainId = :FinMaintainId");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -271,7 +271,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		StringBuilder sql = new StringBuilder("delete From FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" where FinMaintainId = :FinMaintainId");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

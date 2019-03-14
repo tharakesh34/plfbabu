@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -478,7 +479,7 @@ public class PennantApplicationUtil {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		return pagedListService.getBySearchObject(searchObject);
 	}
-
+	
 	public static String getUserDesc(long userID) {
 		Search search = new Search(SecurityUser.class);
 
@@ -837,7 +838,12 @@ public class PennantApplicationUtil {
 			Search search = new Search(Country.class);
 			search.addField("CountryCode");
 			search.addFilter(new Filter("SystemDefault", 1, Filter.OP_EQUAL));
-			defaultCountry = (Country) SEARCH_PROCESSOR.getResults(search).get(0);
+
+			List<Country> countries = SEARCH_PROCESSOR.getResults(search);
+
+			if (CollectionUtils.isNotEmpty(countries)) {
+				defaultCountry = (Country) SEARCH_PROCESSOR.getResults(search).get(0);
+			}
 		}
 
 		if (defaultCountry == null) {

@@ -167,6 +167,8 @@ public class ImplementationConstants {
 	public static final boolean ALW_AUTO_SCHD_BUILD = false;
 	//Allow approved mandate in Loan Pending State trough approve mandate API
 	public static final boolean ALW_APPROVED_MANDATE_IN_ORG = false;
+	
+	public static final boolean NEW_COVENANT_MODULE = false;
 
 	//Allow profit schedule invoice
 	public static final boolean	ALW_PROFIT_SCHD_INVOICE	= false;

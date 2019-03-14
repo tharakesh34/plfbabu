@@ -51,21 +51,22 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zul.Constraint;
 
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 
-public class PTListValidator implements Constraint {
+public class PTListValidator<T> implements Constraint {
 
-	private List<ValueLabel> valueList;
+	private List<T> valueList;
 	private String fieldParm = "";
 	private boolean mandatory = false;
 
-	public PTListValidator(String fieldParm, List<ValueLabel> valueList) {
+	public PTListValidator(String fieldParm, List<T> valueList) {
 		this.valueList = valueList;
 		setFieldParm(fieldParm);
 	}
 
-	public PTListValidator(String fieldParm, List<ValueLabel> valueList, boolean mandatory) {
+	public PTListValidator(String fieldParm, List<T> valueList, boolean mandatory) {
 		this.valueList = valueList;
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
@@ -103,9 +104,15 @@ public class PTListValidator implements Constraint {
 			return "";
 		}
 
-		for (int i = 0; i < this.valueList.size(); i++) {
-			if (compValue.equals(this.valueList.get(i).getLabel())) {
-				return null;
+		for (T object : this.valueList) {
+			if (object instanceof ValueLabel) {
+				if (compValue.equals(((ValueLabel) object).getLabel())) {
+					return null;
+				}
+			} else if (object instanceof Property) {
+				if (compValue.equals(((Property) object).getKey())) {
+					return null;
+				}
 			}
 		}
 
@@ -120,11 +127,11 @@ public class PTListValidator implements Constraint {
 		this.fieldParm = fieldParm;
 	}
 
-	List<ValueLabel> getValueList() {
+	List<T> getValueList() {
 		return valueList;
 	}
 
-	void setValueList(List<ValueLabel> valueList) {
+	void setValueList(List<T> valueList) {
 		this.valueList = valueList;
 	}
 

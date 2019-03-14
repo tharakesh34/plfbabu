@@ -1,6 +1,7 @@
 package com.pennant.backend.model.mail;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MailTemplateData {
 
@@ -1081,8 +1082,8 @@ public class MailTemplateData {
 		this.recieveMail = recieveMail;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> customerScoringMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> customerScoringMap = new HashMap<>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				customerScoringMap.put(this.getClass().getDeclaredFields()[i].getName(),

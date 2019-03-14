@@ -657,7 +657,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Leaving");
 	}
 
-	private DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list,
+	public DocumentDetails getDocumentContent(DocumentDetails finDocumentDetail, List<Object> list,
 			HashMap<String, Object> map) {
 		if (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) {
 			finDocumentDetail = getCustomerDocumentService().getCustDocByCustAndDocType(

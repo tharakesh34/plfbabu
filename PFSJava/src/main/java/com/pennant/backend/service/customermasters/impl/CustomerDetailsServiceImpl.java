@@ -183,6 +183,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.constants.InterfaceConstants;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -692,6 +693,23 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Leaving");
 		return customerDetails;
 	}
+	
+	@Override
+	public void setCustomerBasicDetails(CustomerDetails customer) {
+
+		if (customer == null || customer.getCustID() == Long.MIN_VALUE) {
+			throw new AppException("Customer Id cannot be blank.");
+		}
+
+		long custId = customer.getCustID();
+		String tableType = "_aview";
+
+		customer.setCustomer(customerDAO.getCustomerByID(custId, tableType));
+		customer.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(custId, tableType));
+		customer.setCustomerPhoneNumList(customerPhoneNumberDAO.getCustomerPhoneNumberByCustomer(custId, tableType));
+		customer.setCustomerEMailList(customerEMailDAO.getCustomerEmailByCustomer(custId, tableType));
+	}
+	
 
 	/**
 	 * @return the customerDetails for the given customer id.

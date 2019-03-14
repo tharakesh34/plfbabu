@@ -46,9 +46,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -58,11 +60,14 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
+import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -77,6 +82,9 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
+	
+	@Autowired
+	private CovenantsService covenantsService;
 
 	public FinCovenantMaintanceServiceImpl() {
 		super();
@@ -125,12 +133,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -152,19 +160,24 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			getFinMaintainInstructionDAO().update(finMaintainInstruction, tableType);
 		}
 
-		// Covenants List
-		if (finMaintainInstruction.getFinCovenantTypeList() != null
-				&& finMaintainInstruction.getFinCovenantTypeList().size() > 0) {
+		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
 			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), "_Temp");
 			auditDetails.addAll(details);
+		}
+
+		List<Covenant> covenants = finMaintainInstruction.getCovenants();
+		if (CollectionUtils.isNotEmpty(covenants)) {
+			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.TEMP_TAB,
+					auditHeader.getAuditTranType(), false));
 		}
 
 		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
@@ -181,12 +194,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -199,7 +212,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -234,12 +247,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -280,12 +293,17 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			}
 		}
 
-		// Covenants
-		if (finMaintainInstruction.getFinCovenantTypeList() != null
-				&& finMaintainInstruction.getFinCovenantTypeList().size() > 0) {
+		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
 			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), "");
 			auditDetails.addAll(details);
+		}
+
+		List<Covenant> covenants = finMaintainInstruction.getCovenants();
+		if (CollectionUtils.isNotEmpty(covenantTypes)) {
+			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB,
+					auditHeader.getAuditTranType(), true));
 		}
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
@@ -308,7 +326,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -324,12 +342,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -346,7 +364,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -359,7 +377,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, false);
 		auditHeader.setAuditDetail(auditDetail);
@@ -372,12 +390,17 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				.getModelData();
 		String usrLanguage = finMaintainInstruction.getUserDetails().getLanguage();
 
-		// FinCovenants
-		if (finMaintainInstruction.getFinCovenantTypeList() != null
-				&& finMaintainInstruction.getFinCovenantTypeList().size() > 0) {
+		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
 			details = finCovenantListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
+		}
+
+		List<Covenant> covenants = finMaintainInstruction.getCovenants();
+		if (CollectionUtils.isNotEmpty(covenants)) {
+			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("Covenants");
+			auditDetails.addAll(covenantsService.validateCovenant(details, usrLanguage, method));
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
@@ -386,7 +409,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		auditHeader = nextProcess(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -401,7 +424,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
 			boolean isUniqueCheckReq) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
 		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
@@ -422,7 +445,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
@@ -435,7 +458,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	private List<AuditDetail> processingFinCovenantsList(List<AuditDetail> auditDetails, String finReference,
 			String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -522,7 +545,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			auditDetails.get(i).setModelData(finCovenantType);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -535,7 +558,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	private List<AuditDetail> setFinCovenantAuditData(FinMaintainInstruction finMaintainInstruction,
 			String auditTranType, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinCovenantType finCovenantType = new FinCovenantType();
@@ -590,10 +613,77 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 					fincovenantType));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
+	
+	
+	
+	
+	private List<AuditDetail> setCovenantAuditData(FinMaintainInstruction finMaintainInstruction,
+			String auditTranType, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+	        Covenant covenant = new Covenant();
+
+		String[] fields = PennantJavaUtil.getFieldDetails(covenant, covenant.getExcludeFields());
+
+		for (int i = 0; i < finMaintainInstruction.getCovenants().size(); i++) {
+			Covenant covenants = finMaintainInstruction.getCovenants().get(i);
+
+			if (StringUtils.isEmpty(covenants.getRecordType())) {
+				continue;
+			}
+
+			covenants.setKeyReference(finMaintainInstruction.getFinReference());
+			covenants.setWorkflowId(finMaintainInstruction.getWorkflowId());
+
+			boolean isRcdType = false;
+
+			if (covenants.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				covenants.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (covenants.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				covenants.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (finMaintainInstruction.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (covenants.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				covenants.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if ("saveOrUpdate".equals(method) && isRcdType) {
+				covenants.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (covenants.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (covenants.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| covenants.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			covenants.setRecordStatus(finMaintainInstruction.getRecordStatus());
+			covenants.setUserDetails(finMaintainInstruction.getUserDetails());
+			covenants.setLastMntOn(finMaintainInstruction.getLastMntOn());
+			covenants.setLastMntBy(finMaintainInstruction.getLastMntBy());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], covenants.getBefImage(),
+					covenants));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
+	
+	
+	
 	/**
 	 * 
 	 * @param auditHeader
@@ -601,7 +691,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @return
 	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -622,12 +712,18 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			auditDetailMap.put("FinCovenants", setFinCovenantAuditData(finMaintainInstruction, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinCovenants"));
 		}
+		
+		if (finMaintainInstruction.getCovenants()!= null
+				&& finMaintainInstruction.getCovenants().size() > 0) {
+			auditDetailMap.put("Covenants", setCovenantAuditData(finMaintainInstruction, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("Covenants"));
+		}
 
 		finMaintainInstruction.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
 		auditHeader.setAuditDetails(auditDetails);
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -640,25 +736,23 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	public List<AuditDetail> listDeletion(FinMaintainInstruction finMaintainInstruction, String tableType,
 			String auditTranType) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		// Covenants
-		if (finMaintainInstruction.getFinCovenantTypeList() != null
-				&& finMaintainInstruction.getFinCovenantTypeList().size() > 0) {
-
+		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			FinCovenantType finCovenantType = new FinCovenantType();
 			String[] fields = PennantJavaUtil.getFieldDetails(finCovenantType, finCovenantType.getExcludeFields());
 
-			for (FinCovenantType covenantType : finMaintainInstruction.getFinCovenantTypeList()) {
+			for (FinCovenantType covenant : covenantTypes) {
 				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
-						covenantType.getBefImage(), covenantType));
+						covenant.getBefImage(), covenant));
 			}
-			getFinCovenantTypeDAO().deleteByFinRef(finMaintainInstruction.getFinReference(), tableType);
+			finCovenantTypeDAO.deleteByFinRef(finMaintainInstruction.getFinReference(), tableType);
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return auditList;
 	}
 
@@ -669,7 +763,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
@@ -709,7 +803,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetailsList;
 	}
 
@@ -722,7 +816,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 */
 	public List<AuditDetail> finCovenantListValidation(List<AuditDetail> auditDetails, String method,
 			String usrLanguage) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (auditDetails != null && auditDetails.size() > 0) {
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
@@ -733,7 +827,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			return details;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return new ArrayList<AuditDetail>();
 	}
 
@@ -745,7 +839,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	 * @return
 	 */
 	private AuditDetail validateFinCovenantType(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinCovenantType covenantType = (FinCovenantType) auditDetail.getModelData();

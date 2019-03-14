@@ -76,8 +76,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -102,6 +102,8 @@ import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.mandate.Mandate;
@@ -120,6 +122,8 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.NotificationLogDetailsService;
 import com.pennant.backend.service.finance.ScoringDetailService;
 import com.pennant.backend.service.finance.UploadHeaderService;
+import com.pennant.backend.service.finance.covenant.CovenantsService;
+import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.util.FinanceConstants;
@@ -134,6 +138,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.finsampling.service.FinSamplingService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/FinanceEnquiryHeaderDialogCtrl.zul.
@@ -185,6 +190,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CheckListDetailService checkListDetailService;
 	private FinCovenantTypeService finCovenantTypeService;
 	private CollateralSetupService collateralSetupService;
+	private FinOptionService finOptionService;
 
 	private ManualPaymentService manualPaymentService;
 	private OverdueChargeRecoveryService overdueChargeRecoveryService;
@@ -215,6 +221,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DocumentDetailsDAO documentDetailsDAO;
 
 	private NotificationLogDetailsService notificationLogDetailsService;
+	
+	@Autowired
+	private CovenantsService covenantsService;
 
 	/**
 	 * default constructor.<br>
@@ -589,18 +598,42 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			path = "/WEB-INF/pages/Enquiry/LatepayProfitEnquiry/LatepayProfitRecoveryList.zul";
 
 		} else if ("COVENQ".equals(this.enquiryType)) {
-
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CovenantEnquiry.value"));
-			List<FinCovenantType> finCovenants;
-			if (fromApproved) {
-				finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EAView", true);
-			} else {
-				finCovenants = getFinCovenantTypeService().getFinCovenantTypeById(this.finReference, "_EView", true);
-			}
-			map.put("finCovenants", finCovenants);
+			
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";
-		} else if ("FEEENQ".equals(this.enquiryType)) {
+			
+			if (ImplementationConstants.NEW_COVENANT_MODULE) {
+				List<Covenant> covenants;
+				covenants = covenantsService.getCovenants(this.finReference, "Loan", TableType.VIEW);
+				
+				FinanceMain financeMain = new FinanceMain();
+				financeMain.setFinStartDate(enquiry.getFinStartDate());
+				financeMain.setMaturityDate(enquiry.getMaturityDate());
+				
+				FinanceDetail financeDetail = new FinanceDetail();
+				financeDetail.getFinScheduleData().setFinReference(this.finReference);
+				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				
+				
+				
+				financeDetail.setCovenants(covenants);
+				map.put("financeDetail", financeDetail);
+				map.put("enqiryModule", true);
+				
+				path = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
+			} else {
+				List<FinCovenantType> finCovenants;
+				String tableType = "_EView";
+				if (fromApproved) {
+					tableType = "_EAView";
+				}
 
+				finCovenants = finCovenantTypeService.getFinCovenantTypeById(this.finReference, tableType, true);
+				map.put("finCovenants", finCovenants);
+				map.put("enqModule", true);
+				map.put("module", module);
+			}
+		} else if ("FEEENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinFeeEnquiry.value"));
 			List<FinFeeDetail> feeDetails;
 			if (fromApproved) {
@@ -664,6 +697,29 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeDetail", financeDetail);
 			map.put("enqiryModule", true);
 			path = "/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul";
+		}
+		
+		else if ("FINOPT".equals(this.enquiryType)) {
+			
+			FinanceMain financeMain = new FinanceMain();
+			financeMain.setFinStartDate(enquiry.getFinStartDate());
+			financeMain.setMaturityDate(enquiry.getMaturityDate());
+			
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail.getFinScheduleData().setFinReference(this.finReference);
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			
+			List<FinOption> finOptions=finOptionService.getFinOptions(this.finReference, TableType.VIEW);
+			
+			financeDetail.setFinOptions(finOptions);
+
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinOptionEnquiry.value"));
+			map.put("finReference", this.finReference);
+			map.put("financeDetail",financeDetail);
+			map.put("enqiryModule", true);
+			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+			path = "/WEB-INF/pages/Finance/FinOption/FinOptionList.zul";
+
 		}
 		if (StringUtils.isNotEmpty(path)) {
 
@@ -1068,6 +1124,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setInsuranceRebookingDialogCtrl(InsuranceRebookingDialogCtrl insuranceRebookingDialogCtrl) {
 		this.insuranceRebookingDialogCtrl = insuranceRebookingDialogCtrl;
+	}
+
+	public FinOptionService getFinOptionService() {
+		return finOptionService;
+	}
+
+	public void setFinOptionService(FinOptionService finOptionService) {
+		this.finOptionService = finOptionService;
 	}
 
 }

@@ -191,7 +191,9 @@ import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.legal.LegalDetail;
@@ -615,8 +617,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
 			financeDetail.setCovenantTypeList(
 					getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View", false));
+			if (ImplementationConstants.NEW_COVENANT_MODULE) {
+				financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
+			}
 		}
 
+		//Put-call
+		
+		financeDetail.setFinOptions(finOptionService.getFinOptions(finReference, TableType.VIEW));
+		
+		
 		// Asset Type Details
 		financeDetail.setFinAssetTypesList(getFinAssetTypeDAO().getFinAssetTypesByFinRef(finReference, "_TView"));
 
@@ -1040,6 +1050,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setCovenantTypeList(
 				getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
 
+		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
+		}
+
 		logger.debug("Leaving");
 
 		return financeDetail;
@@ -1357,6 +1371,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeDetail.setCovenantTypeList(
 							getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View", false));
 				}
+
+				if (ImplementationConstants.NEW_COVENANT_MODULE) {
+					financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
+				}
+				
+				financeDetail.setFinOptions(finOptionService.getFinOptions(finReference, TableType.VIEW));
 
 				// Asset Evaluation Details
 				financeDetail.setFinAssetEvaluation(
@@ -2041,6 +2061,33 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException {
 		logger.debug("Entering");
 
+		FinanceDetail financeDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		String finReference = financeMain.getFinReference();
+		Date curBDay = DateUtility.getAppDate();
+
+		if (finScheduleData.getFinServiceInstructions().isEmpty()) {
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(finReference);
+			finServInst.setFinEvent(financeDetail.getModuleDefiner());
+
+			finScheduleData.setFinServiceInstruction(finServInst);
+		}
+
+		long serviceUID = Long.MIN_VALUE;
+		for (FinServiceInstruction finSerList : finScheduleData.getFinServiceInstructions()) {
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
+				if (serviceUID == Long.MIN_VALUE) {
+					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+				}
+				finSerList.setInstructionUID(serviceUID);
+			} else {
+				serviceUID = finSerList.getInstructionUID();
+			}
+		}
+
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF, false);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!isWIF) {
@@ -2059,30 +2106,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditHeader = aAuditHeader.getNewCopyInstance();
 		} catch (Exception e) {
 			logger.error("Error Occured {}", e);
-		}
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String finReference = financeMain.getFinReference();
-		Date curBDay = DateUtility.getAppDate();
-		long serviceUID = Long.MIN_VALUE;
-
-		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinReference(finReference);
-			finServInst.setFinEvent(financeDetail.getModuleDefiner());
-
-			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
-		}
-
-		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
-				if (serviceUID == Long.MIN_VALUE) {
-					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
-				}
-				finSerList.setInstructionUID(serviceUID);
-			} else {
-				serviceUID = finSerList.getInstructionUID();
-			}
 		}
 
 		TableType tableType = TableType.MAIN_TAB;
@@ -2436,7 +2459,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Save Document Details
 			// =======================================
-			if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
+			List<DocumentDetails> documentDetails = financeDetail.getDocumentDetailsList();
+			if (CollectionUtils.isNotEmpty(documentDetails)) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 				details = processingDocumentDetailsList(details, tableType.getSuffix(),
 						financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),
@@ -2565,8 +2589,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					finCovenantType.setWorkflowId(financeMain.getWorkflowId());
 					finCovenantType.setLastMntOn(financeMain.getLastMntOn());
 				}
-				auditDetails.addAll(getFinCovenantTypeService().saveOrUpdate(financeDetail.getCovenantTypeList(),
-						tableType.getSuffix(), auditTranType));
+
+				List<AuditDetail> covenantAuditDetails = null;
+				covenantAuditDetails = finCovenantTypeService.saveOrUpdate(financeDetail.getCovenantTypeList(),
+						tableType.getSuffix(), auditTranType);
+
+				auditDetails.addAll(covenantAuditDetails);
+			}
+
+			List<Covenant> covenants = financeDetail.getCovenants();
+			if (CollectionUtils.isNotEmpty(covenants)) {
+				for (Covenant covenant : financeDetail.getCovenants()) {
+					covenant.setKeyReference(finReference);
+					covenant.setTaskId(financeMain.getTaskId());
+					covenant.setNextTaskId(financeMain.getNextTaskId());
+					covenant.setRoleCode(financeMain.getRoleCode());
+					covenant.setNextRoleCode(financeMain.getNextRoleCode());
+					covenant.setRecordStatus(financeMain.getRecordStatus());
+					covenant.setWorkflowId(financeMain.getWorkflowId());
+					covenant.setLastMntOn(financeMain.getLastMntOn());
+				}
+				auditDetails.addAll(covenantsService.doProcess(covenants, tableType, auditTranType, false));
 			}
 
 			// set Finance Collateral Details Audit
@@ -2745,6 +2788,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinInsuranceDetails");
 			details = processFinInsuranceDetails(details, tableType.getSuffix(), financeDetail, isWIF);
 			auditDetails.addAll(details);
+		}
+
+		// Put-Call
+		List<FinOption> finOptions = financeDetail.getFinOptions();
+		String auditTranType = auditHeader.getAuditTranType();
+		if (CollectionUtils.isNotEmpty(finOptions)) {
+			for (FinOption finOption : financeDetail.getFinOptions()) {
+				finOption.setFinReference(finReference);
+				finOption.setTaskId(financeMain.getTaskId());
+				finOption.setNextTaskId(financeMain.getNextTaskId());
+				finOption.setRoleCode(financeMain.getRoleCode());
+				finOption.setNextRoleCode(financeMain.getNextRoleCode());
+				finOption.setRecordStatus(financeMain.getRecordStatus());
+				finOption.setWorkflowId(financeMain.getWorkflowId());
+				finOption.setLastMntOn(financeMain.getLastMntOn());
+			}
+			auditDetails.addAll(finOptionService.doProcess(finOptions, tableType, auditTranType, false));
 		}
 
 		if (!isWIF) {
@@ -3397,9 +3457,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(), "",
 						auditHeader.getAuditTranType()));
 			}
-			if (financeDetail.getCovenantTypeList() != null) {
-				auditDetails.addAll(getFinCovenantTypeService().delete(financeDetail.getCovenantTypeList(), "",
-						auditHeader.getAuditTranType()));
+			
+			String auditTranType = auditHeader.getAuditTranType();
+			List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
+			if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
+				auditDetails.addAll(finCovenantTypeService.delete(finCovenantTypes, "", auditTranType));
+			}
+
+			List<Covenant> covenants = financeDetail.getCovenants();
+			if (CollectionUtils.isNotEmpty(covenants)) {
+				auditDetails.addAll(covenantsService.delete(covenants, TableType.MAIN_TAB, auditTranType));
 			}
 
 			// Collateral assignment Details
@@ -4141,18 +4208,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails
 							.addAll(getContractorAssetDetailService().doApprove(contractorAssetDetails, "", tranType));
 				}
-
-				// Save Document Details
-				// =======================================
-				if (financeDetail.getDocumentDetailsList() != null
-						&& financeDetail.getDocumentDetailsList().size() > 0) {
+				
+				List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
+				if (CollectionUtils.isNotEmpty(documents)) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-					details = processingDocumentDetailsList(details, "",
-							financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),
-							serviceUID);
+					details = processingDocumentDetailsList(details, "", financeMain,
+							financeDetail.getModuleDefiner(), serviceUID);
 					auditDetails.addAll(details);
-					listDocDeletion(financeDetail, "_Temp");
 				}
+
 
 				// set Check list details Audit
 				// =======================================
@@ -4244,12 +4308,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					getFinAdvancePaymentsService().processDisbursments(financeDetail);
 				}
 
-				// Covenant Type Details
-				// =======================================
-				if (financeDetail.getCovenantTypeList() != null) {
-					getFinCovenantTypeService().doApprove(financeDetail.getCovenantTypeList(), "", tranType);
+				if (CollectionUtils.isNotEmpty(financeDetail.getCovenantTypeList())) {
+					finCovenantTypeService.doApprove(financeDetail.getCovenantTypeList(), "", tranType);
+				}
+				
+				List<Covenant> covenants = financeDetail.getCovenants();
+				if (CollectionUtils.isNotEmpty(covenants)) {
+					auditDetails.addAll(covenantsService.doApprove(covenants, TableType.MAIN_TAB, tranType));
 				}
 
+				List<FinOption> finOptions = financeDetail.getFinOptions();
+				if (CollectionUtils.isNotEmpty(finOptions)) {
+					auditDetails.addAll(finOptionService.doApprove(finOptions, TableType.MAIN_TAB, tranType));
+				}
+				
 				// Collateral Assignments Details
 				// =======================================
 				if (financeDetail.getCollateralAssignmentList() != null
@@ -4494,10 +4566,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetailList.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),
 							"_Temp", auditHeader.getAuditTranType()));
 				}
-				if (financeDetail.getCovenantTypeList() != null) {
-					auditDetailList.addAll(getFinCovenantTypeService().delete(financeDetail.getCovenantTypeList(),
-							"_Temp", auditHeader.getAuditTranType()));
+				
+				String auditTranType = auditHeader.getAuditTranType();
+				List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
+				if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
+					//auditDetailList.addAll(finCovenantTypeService.delete(finCovenantTypes, "_Temp", auditTranType));
+					finCovenantTypeService.delete(finCovenantTypes, "_Temp", auditTranType);
 				}
+
+				List<Covenant> covenants = financeDetail.getCovenants();
+				if (CollectionUtils.isNotEmpty(covenants)) {
+					// auditDetailList.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
+					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
+				}
+
+				List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
+				if (!financeDetail.isExtSource() && !isWIF) {
+					if (CollectionUtils.isNotEmpty(documents)) {
+						listDocDeletion(financeDetail, "_Temp");
+					}
+				}
+				
 				if (financeDetail.getFinAssetEvaluation() != null) {
 					auditDetailList.add(getFinAssetEvaluationService().delete(financeDetail.getFinAssetEvaluation(),
 							"_Temp", auditHeader.getAuditTranType()));
@@ -5345,7 +5434,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),
 							serviceUID);
 					auditDetails.addAll(details);
-					listDocDeletion(financeDetail, "_Temp");
 				}
 
 				// set Check list details Audit
@@ -5453,6 +5541,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							tranType);
 				}
 
+				List<Covenant> covenants = financeDetail.getCovenants();
+				if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenants)) {
+					covenantsService.doApprove(covenants, TableType.PRE_APPR_TAB, tranType);
+				}
+
+				List<FinOption> finOptions = financeDetail.getFinOptions();
+				if (CollectionUtils.isNotEmpty(finOptions)) {
+					finOptionService.doApprove(finOptions, TableType.PRE_APPR_TAB, tranType);
+				}
+
 				// set Finance Collateral Details Audit
 				// =======================================
 				if (financeDetail.getCollateralAssignmentList() != null
@@ -5519,9 +5617,32 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),
 							"_Temp", auditHeader.getAuditTranType()));
 				}
-				if (financeDetail.getCovenantTypeList() != null) {
-					auditDetails.addAll(getFinCovenantTypeService().delete(financeDetail.getCovenantTypeList(), "_Temp",
-							auditHeader.getAuditTranType()));
+				
+				
+				String auditTranType = auditHeader.getAuditTranType();
+				
+				List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
+				if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
+					//auditDetails.addAll(getFinCovenantTypeService().delete(finCovenantTypes, "_Temp", auditTranType));
+					getFinCovenantTypeService().delete(finCovenantTypes, "_Temp", auditTranType);
+				}
+
+				List<Covenant> covenants = financeDetail.getCovenants();
+				if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenants)) {
+					//auditDetails.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
+					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
+				}
+				
+				List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
+				if (!financeDetail.isExtSource() && !isWIF) {
+					if (CollectionUtils.isNotEmpty(documents)) {
+						listDocDeletion(financeDetail, "_Temp");
+					}
+				}
+
+				List<FinOption> finOptions = financeDetail.getFinOptions();
+				if (CollectionUtils.isNotEmpty(finOptions)) {
+					auditDetails.addAll(finOptionService.delete(finOptions, TableType.TEMP_TAB, auditTranType));
 				}
 
 				// Collateral assignment Details
@@ -5770,7 +5891,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Document Details
 		// =======================================
 		if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
-			getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(), "_Temp");
+			//getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(), "_Temp");
 		}
 
 		// Secondary Account deletion
@@ -5994,10 +6115,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),
 						"_Temp", auditHeader.getAuditTranType()));
 			}
-			if (financeDetail.getCovenantTypeList() != null) {
-				auditDetails.addAll(getFinCovenantTypeService().delete(financeDetail.getCovenantTypeList(), "_Temp",
-						auditHeader.getAuditTranType()));
+			
+			String auditTranType = auditHeader.getAuditTranType();
+
+			List<FinCovenantType> finCovenantTyps = financeDetail.getCovenantTypeList();
+			if (CollectionUtils.isNotEmpty(finCovenantTyps)) {
+				//auditDetails.addAll(finCovenantTypeService.delete(finCovenantTyps, "_Temp", auditTranType));
+				finCovenantTypeService.delete(finCovenantTyps, "_Temp", auditTranType);
 			}
+
+			List<Covenant> covenants = financeDetail.getCovenants();
+			if (CollectionUtils.isNotEmpty(covenants)) {
+				//auditDetails.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
+				covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
+			}
+			
+			List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
+			if (!financeDetail.isExtSource() && !isWIF) {
+				if (CollectionUtils.isNotEmpty(documents)) {
+					listDocDeletion(financeDetail, "_Temp");
+				}
+			}
+
 			if (financeDetail.getFinAssetEvaluation() != null) {
 				auditDetails.add(getFinAssetEvaluationService().delete(financeDetail.getFinAssetEvaluation(), "_Temp",
 						auditHeader.getAuditTranType()));
@@ -6175,6 +6314,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME, type));
 		financeDetail.setCovenantTypeList(
 				getFinCovenantTypeService().getFinCovenantDocTypeByFinRef(finReference, type, false));
+
+		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.TEMP_TAB));
+		}
+
 		financeDetail.setFinanceCheckList(getCheckListDetailService().getCheckListByFinRef(finReference, type));
 		financeDetail.setFinAssetTypesList(getFinAssetTypeDAO().getFinAssetTypesByFinRef(finReference, type));
 		financeDetail.setExtendedFieldRenderList(
@@ -6495,12 +6639,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			}
 
+			List<Covenant> covenats = financeDetail.getCovenants();
+			if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenats)) {
+				auditDetails.addAll(covenantsService.validate(covenats, financeMain.getWorkflowId(), method,
+						auditTranType, usrLanguage));
+				validateDisbursements(financeDetail, auditDetails);
+
+			}
+
 			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
 					&& !method.equals(PennantConstants.method_doReject)
 					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_RESUBMITTED)
 					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED)
 					&& !financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) {
-				validateOtcPayment(auditDetails, financeDetail);
+
+				if (ImplementationConstants.NEW_COVENANT_MODULE) {
+					covenantsService.validateOTC(financeDetail);
+				} else {
+					validateOtcPayment(auditDetails, financeDetail);
+				}
+
 			}
 			// Collateral Assignments details
 			// =======================================
@@ -7096,8 +7254,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Loan Field Details
 		if (financeDetail.getExtendedFieldRender() != null) {
-			auditDetailMap.put("LoanExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method));
+			auditDetailMap.put("LoanExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
+							financeDetail.getExtendedFieldRender(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
 		}
 
@@ -9775,22 +9934,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Override
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain) {
-
-		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(financeMain.getFinReference());
-		scheduleData.setFinanceMain(financeMain); // FIXME
+		scheduleData.setFinanceMain(financeMain);
 
-		// Covenants List
-		financeDetail.setCovenantTypeList(
-				getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
+		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			financeDetail
+					.setCovenants(covenantsService.getCovenants(financeMain.getFinReference(), "Loan", TableType.VIEW));
+		} else {
+			financeDetail.setCovenantTypeList(
+					getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
+		}
 
-		// Customer and Customer Document Details
 		financeDetail.setCustomerDetails(
 				getCustomerDetailsService().getCustomerAndCustomerDocsById(financeMain.getCustID(), ""));
 
-		// Document details
 		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO()
 				.getDocumentDetailsByRef(financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
 

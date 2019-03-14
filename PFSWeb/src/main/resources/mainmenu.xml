@@ -264,6 +264,12 @@
 			<menuItem id="menu_Item_DocumentType"
 				zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul"
 				rightName="menuItem_SystemMaster_DocumentType" />
+			<menuItem id="menu_Item_CovenantType" 
+			    zulNavigation="/WEB-INF/pages/Finance/Covenant/CovenantTypeList.zul"
+	            rightName="menuItem_CovenantType" />
+	        <!-- <menuItem id="menu_Item_CovenantTypeEnquiry" 
+	            zulNavigation="/WEB-INF/pages/Finance/Covenant/CovenantTypeEnquiryList.zul"
+		        rightName="menuItem_CovenantTypeEnquiry" /> -->
 			<menuItem id="menu_Item_ExpenseType" zulNavigation="/WEB-INF/pages/AMTMasters/ExpenseType/ExpenseTypeList.zul" 
 			 rightName="menuItem_ApplicationMaster_ExpenseType" />
 			<menuItem id="menu_Item_FeeType"
@@ -726,9 +732,10 @@
 			<menuItem id="menu_Item_RpyBasicDetail"
 				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menuItem_FinanceManagement_RpyBasicDetail" />
-			<menuItem id="menu_Item_FinCovenants"
-				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-				rightName="menuItem_FinanceManagement_FinCovenants" />
+			<menuItem id="menu_Item_FinCovenants" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+            	rightName="menuItem_FinanceManagement_FinCovenants" />
+	        <menuItem id="menu_Item_FinOptions" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+		     rightName="menuItem_FinanceManagement_FinCovenants" />
 			<menuItem id="menu_Item_FinanceTaxDetail"
 				zulNavigation="/WEB-INF/pages/Finance/FinanceTaxDetail/FinanceTaxDetailList.zul"
 				rightName="menuItem_FinanceManagement_FinanceTaxDetail" />
@@ -1607,6 +1614,9 @@
 	<menuItem id="menu_Item_ReasonCodeEnquiry"
 		zulNavigation="/WEB-INF/pages/ApplicationMaster/ReasonCode/ReasonCodeEnquiryList.zul?enqiryModule=Y"
 		rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry" />
+    <!-- <menuItem id="menuItem_FinOptionTypeEnquiry"
+	    zulNavigation="/WEB-INF/pages/ApplicationMaster/FinoptionTypes/FinOptionTypeEnquiryList.zul?enqiryModule=Y"
+	    rightName="menuItem_FinOptionTypeEnquiry" /> --> 
 
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 
@@ -1817,6 +1827,11 @@
 			<menuItem id="menu_Item_FinanceUserAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=Y" rightName="menuItem_Authorization_FinanceUserAuthorizationLimitHold1"/>
 			<menuItem id="menu_Item_FinanceRoleAuthorizationLimitHold" zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=2;hold=Y" rightName="menuItem_Authorization_FinanceRoleAuthorizationLimitHold1" />
 		</menu>
+	</menu>
+	
+	<menu id="menu_Category_Alerts">
+      <menuItem id="menu_Item_Alerts_Covenant" zulNavigation="/WEB-INF/pages/Alert/AlertList.zul?module=COVENANT" rightName="" />
+      <menuItem id="menu_Item_Alerts_PutCall" zulNavigation="/WEB-INF/pages/Alert/AlertList.zul?module=PUTCALL" rightName="" />
 	</menu>
 	<!--//APPEND AFTER THIS// -->
 </ns2:XMLRootMenu>

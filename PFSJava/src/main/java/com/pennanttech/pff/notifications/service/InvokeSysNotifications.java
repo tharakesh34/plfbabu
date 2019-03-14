@@ -1,8 +1,10 @@
 package com.pennanttech.pff.notifications.service;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,7 +208,7 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								if ("DATE".equals(attr.getType())) {
 									String formatedDate = null;
 									if (rs.getDate(columnName) != null) {
-										java.util.Date date = new java.util.Date(rs.getDate(columnName).getTime());
+										Date date = new Date(rs.getDate(columnName).getTime());
 										formatedDate = DateUtil.format(date, attr.getFormat());
 									}
 									map.put(columnName, formatedDate);
@@ -221,9 +223,8 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 									}
 								} else if ("AMOUNT".equals(attr.getType())) {
 									if (rs.getBigDecimal(columnName) != null) {
-										java.math.BigDecimal amount = rs.getBigDecimal(columnName);
-										java.math.BigDecimal formattedamount = PennantApplicationUtil
-												.formateAmount(amount, 2);
+										BigDecimal amount = rs.getBigDecimal(columnName);
+										BigDecimal formattedamount = PennantApplicationUtil.formateAmount(amount, 2);
 										map.put(columnName, formattedamount.toString());
 									}
 								} else {
@@ -239,6 +240,7 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								}
 								builder.setOMElement(builder, data.getKey(), value);
 							}
+							
 							System.out.println((builder.getEnvelope().toString()));
 							logExecutionDetails(builder.getEnvelope().toString().getBytes("UTF-8"), id, email,
 									mobileNum, (int) systemNotifications.getId(), map);

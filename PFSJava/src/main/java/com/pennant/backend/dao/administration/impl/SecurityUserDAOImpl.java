@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.administration.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -638,5 +639,39 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		}
 		logger.debug("Leaving ");
 		return securityUser.getUsrID();
+	}
+
+	@Override
+	public List<SecurityUser> getSecUsersByRoles(String[] roles) {
+		logger.debug(Literal.ENTERING);
+
+		if (roles == null || roles.length == 0) {
+			return new ArrayList<>();
+		}
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select u.UsrID, u.UsrLogin, u.UsrFName, u.UsrMName, u.UsrLName, u.UsrMobile, u.UsrEmail");
+		sql.append(", u.UsrBranchCode, b.BranchDesc LovDescUsrBranchCodeName");
+		sql.append(" from SecUsers u");
+		sql.append(" left join rmtbranches b on b.branchcode = u.UsrBranchCode");
+		sql.append(" inner join SecuserOPerations uop on uop.usrId = u.usrId");
+		sql.append(" inner join secOPerationRoles opr on opr.oprid = uop.oprid");
+		sql.append(" where opr.roleId in (select roleId from secRoles where rolecd in (:Rolecd))");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Rolecd", Arrays.asList(roles));
+
+		RowMapper<SecurityUser> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+
+		try {
+			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 }

@@ -95,6 +95,7 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_QUERY_MGMT = "QUERYMGMT";
 	public static final String UNIQUE_ID_PSL_DETAILS = "PSLDETAILS";
 	public static final String UNIQUE_ID_LEGAL_DETAILS = "LEGALDETAILS";
+	public static final String UNIQUE_ID_PUTCALL = "PUT_CALL";
 
 	public static final int DEFAULT_ITEMNO = 1;
 

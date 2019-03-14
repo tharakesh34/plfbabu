@@ -33,6 +33,8 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerSystemNotificationInvokeJob();
 		registerSystemNotificationProcessJob();
 		autoReceiptResponseJob();
+		registercovenantAlertsJob();
+		registerPutCallAlertsJob();
 	}
 
 	/**
@@ -99,6 +101,67 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		jobs.put(AUTO_RECPT_RESPONSE_JOB, job);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void registercovenantAlertsJob() {
+		logger.debug(Literal.ENTERING);
+
+		String alertsRequired = App.getProperty("covenants.alerts");
+
+		if (alertsRequired == null) {
+			alertsRequired = "false";
+		}
+
+		if (!Boolean.parseBoolean(alertsRequired)) {
+			logger.warn(CovenantAlertsJob.JOB_KEY + " not registred.");
+			return;
+		}
+
+		String jobKey = CovenantAlertsJob.JOB_KEY;
+		String trigger = CovenantAlertsJob.JOB_TRIGGER;
+		String cronExpression = CovenantAlertsJob.getCronExpression();
+
+		Job job = new Job();
+
+		job.setJobDetail(JobBuilder.newJob(CovenantAlertsJob.class).withIdentity(jobKey, jobKey).withDescription(jobKey)
+				.build());
+		job.setTrigger(TriggerBuilder.newTrigger().withIdentity(trigger, trigger).withDescription(trigger)
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
+
+		jobs.put(AUTO_RECPT_RESPONSE_JOB, job);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerPutCallAlertsJob() {
+		logger.debug(Literal.ENTERING);
+
+		String alertsRequired = App.getProperty("fin.put.call.alerts");
+
+		if (alertsRequired == null) {
+			alertsRequired = "false";
+		}
+
+		if (!Boolean.parseBoolean(alertsRequired)) {
+			logger.warn(FinPutCallAlertsJob.JOB_KEY + " not registred.");
+			return;
+		}
+
+		String jobKey = FinPutCallAlertsJob.JOB_KEY;
+		String trigger = FinPutCallAlertsJob.JOB_TRIGGER;
+		String cronExpression = FinPutCallAlertsJob.getCronExpression();
+
+		Job job = new Job();
+
+		job.setJobDetail(JobBuilder.newJob(FinPutCallAlertsJob.class).withIdentity(jobKey, jobKey)
+				.withDescription(jobKey).build());
+		job.setTrigger(TriggerBuilder.newTrigger().withIdentity(trigger, trigger).withDescription(trigger)
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
+
+		jobs.put(AUTO_RECPT_RESPONSE_JOB, job);
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 }

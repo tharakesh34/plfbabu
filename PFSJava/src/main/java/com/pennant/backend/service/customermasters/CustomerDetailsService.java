@@ -101,4 +101,6 @@ public interface CustomerDetailsService {
 
 	CustomerDetails getCustomerChildDetails(long id, String type);
 
+	void setCustomerBasicDetails(CustomerDetails customerDetails);
+
 }

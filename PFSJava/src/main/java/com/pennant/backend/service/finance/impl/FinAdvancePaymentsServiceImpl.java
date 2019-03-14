@@ -76,6 +76,7 @@ import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -102,6 +103,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private PartnerBankService partnerBankService;
 	private MandateDAO mandateDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
+	private CovenantsService covenantsService;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -393,8 +395,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinAdvancePayments tempFinAdvancePay = null;
 		boolean isOverDraft = false;
 		int maxODDays = SysParamUtil.getValueAsInt(SMTParameterConstants.MAX_ODDAYS_ADDDISB);
-		
-		if(StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())){
+
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
 			isOverDraft = true;
 		}
 		if (finAdvancePay.isWorkflow()) {
@@ -492,42 +495,48 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 
 		}
-		
+
 		// for Overdraft loan types checking for mandate is approved or not. and validate for Expiry date.
 		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		if(isOverDraft && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB) 
-				&& financeDetail.getFinScheduleData().getFinanceMain().getMandateID() != 0){
-			
+		if (isOverDraft && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ADDDISB)
+				&& financeDetail.getFinScheduleData().getFinanceMain().getMandateID() != 0) {
+
 			Mandate mandate = new Mandate();
 			long mandateID = financeDetail.getFinScheduleData().getFinanceMain().getMandateID();
-			
+
 			mandate = getMandateDAO().getMandateStatusById(finReference, mandateID);
-			if(mandate !=null && !StringUtils.isEmpty(mandate.getStatus()) && !StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())){
+			if (mandate != null && !StringUtils.isEmpty(mandate.getStatus())
+					&& !StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())) {
 				String[] errParam = new String[1];
-				errParam[0] =  String.valueOf(mandateID);
+				errParam[0] = String.valueOf(mandateID);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM001", errParam, valueParm), usrLanguage));
 			}
 
-			if(mandate !=null && StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus()) && mandate.getExpiryDate() != null  &&
-					DateUtility.compare(DateUtility.getAppDate(),mandate.getExpiryDate()) > 0){
+			if (mandate != null && StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())
+					&& mandate.getExpiryDate() != null
+					&& DateUtility.compare(DateUtility.getAppDate(), mandate.getExpiryDate()) > 0) {
 				String[] errParam = new String[1];
-				errParam[0] =  String.valueOf(mandateID);
+				errParam[0] = String.valueOf(mandateID);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM002", errParam, valueParm), usrLanguage));
 			}
 		}
-		
+
 		//Validation for Automatic Blocking of Add Disbursement after N due days from Overdue schedules. 
-		if(isOverDraft){
+		if (isOverDraft) {
 			int currODDays = getProfitDetailsDAO().getCurOddays(finReference, "");
-			if(currODDays != 0 &&  currODDays > maxODDays){
+			if (currODDays != 0 && currODDays > maxODDays) {
 				String[] errParam = new String[2];
-				errParam[0] =  finReference;
-				errParam[1] =  String.valueOf(maxODDays);
+				errParam[0] = finReference;
+				errParam[1] = String.valueOf(maxODDays);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "ADM003", errParam, valueParm), usrLanguage));
 			}
+		}
+
+		if (covenantsService != null) {
+			auditDetail.setErrorDetails(covenantsService.validatePDDDocuments(finReference));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -909,5 +918,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
-	
+
+	public void setCovenantsService(CovenantsService covenantsService) {
+		this.covenantsService = covenantsService;
+	}
 }

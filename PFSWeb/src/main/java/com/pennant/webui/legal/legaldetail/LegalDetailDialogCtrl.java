@@ -2406,7 +2406,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		map.put("allowedRoles", getLoanWorkFlowRoles());
 		map.put("roleCode", getRole());
 		map.put("enquiry", this.enqiryModule);
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul", coventsTabPanel, map);
+		Executions.createComponents("/WEB-INF/pages/Finance/Covenant/CovenantsList.zul", coventsTabPanel, map);
 		logger.debug(Literal.LEAVING);
 	}
 

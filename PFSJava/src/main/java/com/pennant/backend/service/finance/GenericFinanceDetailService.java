@@ -180,7 +180,9 @@ import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidatio
 import com.pennant.backend.service.collateral.impl.FinAssetTypesValidation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.contractor.ContractorAssetDetailService;
+import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.finance.impl.FinInsuranceValidation;
+import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
@@ -272,7 +274,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinAssetEvaluationService finAssetEvaluationService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private FinFeeDetailService finFeeDetailService;
-	private FinCovenantTypeService finCovenantTypeService;
+	protected FinCovenantTypeService finCovenantTypeService;
 	private RepaymentPostingsUtil repayPostingUtil;
 	private SecondaryAccountDAO secondaryAccountDAO;
 	private AgreementFieldsDetailService agreementFieldsDetailService;
@@ -306,6 +308,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private RuleExecutionUtil ruleExecutionUtil;
 	private RuleDAO ruleDAO;
 
+	protected CovenantsService covenantsService;
+	
+	protected FinOptionService finOptionService;
+	
 	public GenericFinanceDetailService() {
 		super();
 	}
@@ -3479,4 +3485,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}
+	
+	public void setCovenantsService(CovenantsService covenantsService) {
+		this.covenantsService = covenantsService;
+	}
+
+	public FinOptionService getFinOptionService() {
+		return finOptionService;
+	}
+
+	public void setFinOptionService(FinOptionService finOptionService) {
+		this.finOptionService = finOptionService;
+	}
+		
 }

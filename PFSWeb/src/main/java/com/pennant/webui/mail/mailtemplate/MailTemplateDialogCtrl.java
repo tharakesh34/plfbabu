@@ -1281,19 +1281,20 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	// Template Event
 	public void onChange$templateEvent(Event event) {
 		logger.debug("Entering " + event);
+
 		this.templateData.getItems().clear();
 		this.templateData1.getItems().clear();
 
-		if (StringUtils.isNotEmpty(this.templateEvent.getSelectedItem().getValue())
-				&& !StringUtils.equals(this.templateEvent.getSelectedItem().getValue(), PennantConstants.List_Select)) {
+		String templateEvent = this.templateEvent.getSelectedItem().getValue();
+		String templateModule = this.templateModule.getSelectedItem().getValue();
+
+		if (!StringUtils.equals(templateEvent, PennantConstants.List_Select)) {
 
 			// Subject Line Parameters
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), templateData,
-					this.templateEvent.getSelectedItem().getValue());
+			doFillTemplateFields(templateModule, templateData, templateEvent);
 
 			// Mail Body Parameters
-			doFillTemplateFields(this.templateModule.getSelectedItem().getValue().toString(), templateData1,
-					this.templateEvent.getSelectedItem().getValue());
+			doFillTemplateFields(templateModule, templateData1, templateEvent);
 
 			this.emailSubject.setValue("");
 			this.htmlArtifact.setValue("");
@@ -1453,22 +1454,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.plainText.setValue("");
 	}
 
-	/**
-	 * To get template fields from MessageDetail table and fill the template
-	 * fields listbox
-	 * 
-	 * @param msgKey
-	 *            (long)
-	 */
-	/*
-	 * public void onSelect$templateModule(Event event) { String tempValue =
-	 * aMailTemplate.getModule(); logger.debug("Entering " + event.toString());
-	 * 
-	 * 
-	 * logger.debug("Leaving " + event.toString());
-	 * 
-	 * }
-	 */
+	
 	private void doFillTemplateFields(String module, Listbox templateData, String event) {
 		logger.debug("Entering");
 		templateData.getItems().clear();

@@ -569,6 +569,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Intbox advEMIDftTerms;
 	protected Combobox cbAdvEMIMethod;
 	protected Space space_advEMIMethod;
+	protected Checkbox putCallRequired; 
 
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	FinanceType fintypeLTVCheck = null;
@@ -1630,13 +1631,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doAlwEMICheckBoxChecked(aFinanceType.isAlwAdvEMI());
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
+		
+		this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
 
 	/**
 	 * Method to fill the combo box with given list of values
-	 * 
 	 * @param combobox
 	 * @param roundTarget
 	 * @param targetList
@@ -3501,7 +3503,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (getFinTypeExpenseListCtrl() != null) {
 			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().doSave());
 		}
-
+		
+		try {
+			aFinanceType.setPutCallRequired(this.putCallRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
 
 		// ****************End of Tab 6********************//
@@ -4340,6 +4348,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
+		
+		this.putCallRequired.setDisabled(isTrue);
 
 		if (isTrue) {
 			this.space_finType.setSclass("");

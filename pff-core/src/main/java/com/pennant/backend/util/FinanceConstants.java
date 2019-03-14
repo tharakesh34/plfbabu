@@ -178,6 +178,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_FAIRVALREVAL = "FairValueRevaluation";
 	public static final String FINSER_EVENT_INSCHANGE = "InsuranceChange";
 	public static final String FINSER_EVENT_RECEIPT = "Receipt";
+	public static final String FINSER_EVENT_COVENANT = "Covenants";
 	public static final String FINSER_EVENT_SCHDRPY = "SchdlRepayment";
 	public static final String FINSER_EVENT_EARLYRPY = "EarlyPayment";
 	public static final String FINSER_EVENT_EARLYSETTLE = "EarlySettlement";
@@ -211,6 +212,8 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_HOLDDISB = "HoldDisbursement";
 	// This value is Hard coded in View "CovenantsMaintenance_View"
 	public static final String FINSER_EVENT_COVENANTS = "Covenants";
+	//This value is Hard coded in View "CovenantsMaintenance_View"
+	public static final String FINSER_EVENT_FINOPTION = "FinOptions";
 
 	// Finance Collateral Details
 	public static final String COLLATERAL_FIXEDDEPOSIT = "FD";
@@ -392,5 +395,15 @@ public class FinanceConstants {
 	// FLP Calculated Types
 	public static final String FLPCALCULATED_TYPE_ON_ISSUANCEDATE = "I";
 	public static final String FLPCALCULATED_TYPE_ON_VASAPPROVALDATE = "A";
+	
+	
+	public static final String FIN_OPTIONS_PUT = "Put";
+	public static final String FIN_OPTIONS_CALL = "Call";
+	public static final String FIN_OPTIONS_PUTCALL = "Put-Call";
+	public static final String FIN_OPTIONS_INTEREST_REVIEW = "Interest Review";
+	public static final String FIN_ASSET_REVIEW = "Asset Review";
+	public static final String FIN_OPTION_OTHERS = "Others";
+	
+	public static final String FINSER_EVENT_PUTCALL = "Putcall";	
 
 }

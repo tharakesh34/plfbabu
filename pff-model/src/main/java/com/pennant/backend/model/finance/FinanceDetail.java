@@ -70,7 +70,9 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinNomineeDetail;
@@ -174,6 +176,8 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElementWrapper(name = "covenants")
 	@XmlElement(name = "covenant")
 	private List<FinCovenantType> covenantTypeList;
+	private Covenant covenant;
+	private List<Covenant> covenants;
 	private RolledoverFinanceHeader rolledoverFinanceHeader;
 	@XmlElement(name = "customer")
 	private CustomerDetails customerDetails;
@@ -255,7 +259,10 @@ public class FinanceDetail implements java.io.Serializable {
 	private FinNomineeDetail finNomineeDetail;
 	private FinBeneficiary finBeneficiary;
 	private boolean upFrentFee;
+	private FinOption finOption;
+	private List<FinOption> finOptions = new ArrayList<FinOption>();
 
+	
 	public FinanceDetail() {
 		super();
 	}
@@ -370,6 +377,10 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setTatDetail(TATDetail tatDetail) {
 		this.tatDetail = tatDetail;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	public FinAssetEvaluation getFinAssetEvaluation() {
@@ -1257,4 +1268,39 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setUpFrentFee(boolean upFrentFee) {
 		this.upFrentFee = upFrentFee;
 	}
+		
+	public Covenant getCovenant() {
+		return covenant;
+	}
+
+	public void setCovenant(Covenant covenant) {
+		this.covenant = covenant;
+	}
+
+	public List<Covenant> getCovenants() {
+		return covenants;
+	}
+
+	public void setCovenants(List<Covenant> covenants) {
+		this.covenants = covenants;
+	}
+
+	public List<FinOption> getFinOptions() {
+		return finOptions;
+	}
+
+	public void setFinOptions(List<FinOption> finOptions) {
+		this.finOptions = finOptions;
+	}
+
+	public FinOption getFinOption() {
+		return finOption;
+	}
+
+	public void setFinOption(FinOption finOption) {
+		this.finOption = finOption;
+	}
+	
+	
+
 }

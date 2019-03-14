@@ -3,12 +3,16 @@ package com.pennant.backend.model.finance;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -17,7 +21,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-public class FinMaintainInstruction extends AbstractWorkflowEntity implements Entity {
+public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	private static final long serialVersionUID = 1L;
 
 	private long finMaintainId = Long.MIN_VALUE;
@@ -29,12 +33,11 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity implements En
 	@XmlTransient
 	private LoggedInUser userDetails;
 
-	private List<FinCovenantType> finCovenantTypeList = new ArrayList<FinCovenantType>(1);
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+	private List<FinCovenantType> finCovenantTypeList = new ArrayList<>(1);
+	private List<Covenant> covenants = new ArrayList<>();
+	private List<FinOption> finOptions = new ArrayList<>();
 
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public FinMaintainInstruction() {
 		super();
@@ -44,7 +47,19 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity implements En
 		super();
 		this.setId(id);
 	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("covenants");
+		excludeFields.add("finOptions");
+		return excludeFields;
+	}
 
+	public boolean isNew() {
+		return isNewRecord();
+	}
+	
+	
 	public long getId() {
 		return finMaintainId;
 	}
@@ -54,7 +69,7 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity implements En
 	}
 
 	public long getFinMaintainId() {
-		return finMaintainId;
+		return getId();
 	}
 
 	public void setFinMaintainId(long finMaintainId) {
@@ -105,11 +120,11 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity implements En
 		this.finCovenantTypeList = finCovenantTypeList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
@@ -128,5 +143,22 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity implements En
 	public void setEvent(String event) {
 		this.event = event;
 	}
+
+	public List<Covenant> getCovenants() {
+		return covenants;
+	}
+
+	public void setCovenants(List<Covenant> covenants) {
+		this.covenants = covenants;
+	}
+
+	public List<FinOption> getFinOptions() {
+		return finOptions;
+	}
+
+	public void setFinOptions(List<FinOption> finOptions) {
+		this.finOptions = finOptions;
+	}
+	
 
 }

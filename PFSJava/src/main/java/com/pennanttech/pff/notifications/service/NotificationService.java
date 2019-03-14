@@ -86,6 +86,7 @@ import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
+import com.pennanttech.pff.core.util.DataMapUtil;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -117,7 +118,7 @@ public class NotificationService {
 	private EmailEngine emailEngine;
 	@Autowired
 	private SmsEngine smsEngine;
-	
+
 	public NotificationService() {
 		super();
 	}
@@ -161,11 +162,15 @@ public class NotificationService {
 
 		if (template.isEmailTemplate()) {
 			sendEmailNotification(message);
+			mailKeyData.setId(message.getId());
 		}
 
 		if (template.isSmsTemplate()) {
 			sendSmsNotification(message);
+			mailKeyData.setId(message.getId());
 		}
+		
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -440,7 +445,7 @@ public class NotificationService {
 	 * @param templateData
 	 * @throws Exception
 	 */
-	public void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
+	private void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
 		logger.debug("Entering");
 
 		String subject = "";
@@ -588,7 +593,7 @@ public class NotificationService {
 		List<CustomerEMail> customerEmailList = financeDetail.getCustomerDetails().getCustomerEMailList();
 		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
 		int format = CurrencyUtil.getFormat(main.getFinCcy());
-		
+
 		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
 		data.setFinReference(main.getFinReference());
 		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
@@ -618,7 +623,7 @@ public class NotificationService {
 		data.setFinType(main.getFinType());
 		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
 		data.setPriority(main.getPriority());
- 
+
 		data.setValueDate(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
 		data.setAmount(PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
 		data.setBounceReason(presentmentDetail.getBounceReason());
@@ -633,7 +638,7 @@ public class NotificationService {
 	 * @param main
 	 * @return
 	 */
-	private HashMap<String, Object> getTemplData(FinanceDetail financeDetail, FinReceiptHeader receiptHeader) {
+	private Map<String, Object> getTemplData(FinanceDetail financeDetail, FinReceiptHeader receiptHeader) {
 		MailTemplateData data = new MailTemplateData();
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 		List<CustomerAddres> custAddressList = financeDetail.getCustomerDetails().getAddressList();
@@ -1054,16 +1059,25 @@ public class NotificationService {
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		// Role Code For Alert Notification
 		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
-			main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
+			if (StringUtils.isNotEmpty(main.getRoleCode())) {
+				main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
 
-			// user Details
-			main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
-			main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
+				// user Details
+				main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
+				main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
+			}
+
 		}
 		HashMap<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
 		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
 		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
-		declaredFieldValues.putAll(getTemplData(aFinanceDetail, receiptHeader));
+		try {
+			declaredFieldValues.putAll(getTemplData(aFinanceDetail, receiptHeader));
+		} catch (Exception e) {
+			
+		}
+		declaredFieldValues.putAll(DataMapUtil.getDataMap(aFinanceDetail));
+
 		return declaredFieldValues;
 	}
 
@@ -1216,10 +1230,10 @@ public class NotificationService {
 		}
 	}
 
-	public String[] getAttchmentRuleResult(String attachmentRule,FinanceDetail financeDetail){
-		String[] documentCodes = getAttachmentCode(attachmentRule,getTemplateData(financeDetail, null));
+	public String[] getAttchmentRuleResult(String attachmentRule, FinanceDetail financeDetail) {
+		String[] documentCodes = getAttachmentCode(attachmentRule, getTemplateData(financeDetail, null));
 		return documentCodes;
-		
+
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//

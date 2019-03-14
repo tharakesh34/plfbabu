@@ -271,6 +271,27 @@ public class ExtendedFieldDetailsService {
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
+	
+	
+	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldHeader header, ExtendedFieldRender render, String tranType,
+			String method) {
+		logger.debug(Literal.ENTERING);
+		int auditSeq = 1;
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		
+		if(render.getTableName() == null) {
+			render.setTableName(getTableName(header.getModuleName(), header.getSubModuleName(), header.getEvent()));
+		}
+
+		AuditDetail auditDetail = setExtendedFieldAuditData(render, tranType, method, auditSeq);
+		if (auditDetail == null) {
+			return auditDetails;
+		}
+
+		auditDetails.add(auditDetail);
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+	}
 
 	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
 			String method, int auditSeq) {
@@ -325,6 +346,16 @@ public class ExtendedFieldDetailsService {
 		auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
 		auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
 		auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+		
+
+        //FIXME:Need to rechecks for which case InstructioinUid Required.
+	  /*	String tableName = StringUtils.trimToEmpty(extendedFieldRender.getTableName()).toUpperCase();
+		if (tableName.startsWith("LOAN_") && tableName.endsWith("_ED")) {
+			auditMapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+		}*/
+
+	
+		
 		extendedFieldRender.setAuditMapValues(auditMapValues);
 
 		String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
@@ -337,7 +368,8 @@ public class ExtendedFieldDetailsService {
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Extended FieldDetails
+	 * Method For Preparing List of AuditDetails for Check List for Extended
+	 * FieldDetails
 	 * 
 	 * @param deatils
 	 * @param collateralSetup
@@ -607,7 +639,7 @@ public class ExtendedFieldDetailsService {
 	}
 
 	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> details, String module, String event,
-			String type,long instructionUID) {
+			String type, long instructionUID) {
 		logger.debug(Literal.ENTERING);
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -704,7 +736,7 @@ public class ExtendedFieldDetailsService {
 					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
 					if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
 						extendedFieldRender.setInstructionUID(instructionUID);
-						mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+						//mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
 					}
 				}
 
@@ -860,7 +892,8 @@ public class ExtendedFieldDetailsService {
 			if (updateRecord) {
 				if (approveRec) {
 
-					// Handle on approve after resubmit(for got to add collaterals on initial approve)
+					// Handle on approve after resubmit(for got to add
+					// collaterals on initial approve)
 					if (extendedFieldRenderDAO.isExists(reference, extendedFieldRender.getSeqNo(),
 							tableName + type.getSuffix())) {
 						extendedFieldRenderDAO.update(reference, extendedFieldRender.getSeqNo(),
@@ -1116,18 +1149,18 @@ public class ExtendedFieldDetailsService {
 
 			if (!render.isWorkflow()) {// With out Work flow only new records
 				if (befExtRender != null) { // Record Already Exists in the
-												// table then error
+											// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																						// records
 																						// type
 																						// is
 																						// new
 					if (befExtRender != null || tempRender != null) { // if
-																			// records
+																		// records
 																		// already
 																		// exists
 																		// in
@@ -1146,10 +1179,10 @@ public class ExtendedFieldDetailsService {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!render.isWorkflow()) { // With out Work flow for update and
-											// delete
+										// delete
 
 				if (befExtRender == null) { // if records not exists in the main
-												// table
+											// table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
@@ -1167,7 +1200,7 @@ public class ExtendedFieldDetailsService {
 			} else {
 
 				if (tempRender == null) { // if records not exists in the Work
-												// flow table
+											// flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
@@ -1455,23 +1488,25 @@ public class ExtendedFieldDetailsService {
 			}
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
-			BigDecimal fValue= new BigDecimal(fieldValue);
-			/*if (fieldValue.length() > (deatils.getFieldLength() - deatils.getFieldPrec())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = fieldName;
-				valueParm[1] = String.valueOf(deatils.getFieldLength() - deatils.getFieldPrec());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
-			}*/
+			BigDecimal fValue = new BigDecimal(fieldValue);
+			/*
+			 * if (fieldValue.length() > (deatils.getFieldLength() -
+			 * deatils.getFieldPrec())) { String[] valueParm = new String[2];
+			 * valueParm[0] = fieldName; valueParm[1] =
+			 * String.valueOf(deatils.getFieldLength() -
+			 * deatils.getFieldPrec()); errors.add(ErrorUtil.getErrorDetail(new
+			 * ErrorDetail("90300", "", valueParm))); }
+			 */
 			if (fValue.compareTo(BigDecimal.ZERO) < 0 || fValue.compareTo(new BigDecimal(100)) > 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = fieldName;
 				valueParm[1] = "0";
 				valueParm[2] = "100";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));			
-				}
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
+			}
 			if (deatils.getFieldMaxValue() > 0 || deatils.getFieldMinValue() > 0) {
-				if (	fValue.compareTo(new BigDecimal(deatils.getFieldMaxValue())) > 0
-						|| 				fValue.compareTo(new BigDecimal(deatils.getFieldMinValue())) < 0) {
+				if (fValue.compareTo(new BigDecimal(deatils.getFieldMaxValue())) > 0
+						|| fValue.compareTo(new BigDecimal(deatils.getFieldMinValue())) < 0) {
 					String[] valueParm = new String[3];
 					valueParm[0] = fieldName;
 					valueParm[1] = String.valueOf(deatils.getFieldMinValue());
@@ -1922,8 +1957,9 @@ public class ExtendedFieldDetailsService {
 			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			exdFieldRender.setVersion(1);
 			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
-			for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-				instructionUID = finServiceInstruction.getInstructionUID(); 
+			for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData()
+					.getFinServiceInstructions()) {
+				instructionUID = finServiceInstruction.getInstructionUID();
 				exdFieldRender.setInstructionUID(instructionUID);
 			}
 

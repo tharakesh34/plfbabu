@@ -108,6 +108,7 @@ import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.applicationmaster.Entities;
 import com.pennant.backend.model.applicationmaster.Entity;
+import com.pennant.backend.model.applicationmaster.FinOptionType;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.applicationmaster.FinanceApplicationCode;
 import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
@@ -267,7 +268,11 @@ import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
 import com.pennant.backend.model.finance.commodity.CommodityBrokerDetail;
 import com.pennant.backend.model.finance.commodity.CommodityDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
+import com.pennant.backend.model.finance.covenant.Covenant;
+import com.pennant.backend.model.finance.covenant.CovenantDocument;
+import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.finance.psl.PSLEndUse;
@@ -490,7 +495,7 @@ public class PennantJavaUtil {
 	private static String feeWaiverWF = "FEE_WAIVER";
 	private final static String PaymentWF = "PAYMENTINSTRUCTION";
 	private static String insuranceDetails = "INSURANCE_DETAILS";
-	
+
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
 			return "";
@@ -738,10 +743,8 @@ public class PennantJavaUtil {
 						new Object[][] { { "SubSectorIsActive", "0", 1 } }, 400));
 
 		/*
-		 * ModuleUtil.register("PurposeDetail", new
-		 * ModuleMapping("PurposeDetail", PurposeDetail.class, new String[] {
-		 * "PurposeDetails" }, masterWF, new String[] { "PurposeCode",
-		 * "purposeDesc" }, null, 400));
+		 * ModuleUtil.register("PurposeDetail", new ModuleMapping("PurposeDetail", PurposeDetail.class, new String[] {
+		 * "PurposeDetails" }, masterWF, new String[] { "PurposeCode", "purposeDesc" }, null, 400));
 		 */
 
 		ModuleUtil.register("SubSegment",
@@ -833,7 +836,6 @@ public class PennantJavaUtil {
 						masterWF,
 						new String[] { "BranchCode", "BranchDesc", "BankCode", "BankName", "MICR", "IFSC", "city" },
 						null, 1200));
-
 
 		ModuleUtil.register("DataEngine",
 				new ModuleMapping("BankBranch", BankBranch.class, new String[] { "BankBranches", "BankBranches_AView" },
@@ -2004,7 +2006,7 @@ public class PennantJavaUtil {
 						new String[] { "UsrLogin", "UsrFName", "UsrMName", "UsrLName" }, null, 600));
 
 		ModuleUtil.register("SecurityRole", new ModuleMapping("SecurityRole", SecurityRole.class,
-				new String[] { "SecRoles", "SecRoles" }, masterWF, new String[] { "RoleCd", "RoleDesc" }, null, 300));
+				new String[] { "SecRoles", "SecRoles" }, masterWF, new String[] { "RoleCd", "RoleDesc" }, null, 450));
 
 		ModuleUtil.register("SecurityRoleEnq", new ModuleMapping("SecurityRole", SecurityRole.class,
 				new String[] { "SecRoles", "SecRoles" }, masterWF, new String[] { "RoleCd", "RoleDesc" }, null, 450));
@@ -2406,10 +2408,9 @@ public class PennantJavaUtil {
 						new Object[][] { { "Active", "0", 1 } }, 300));
 
 		/*
-		 * ModuleUtil.register("LimitLine", new ModuleMapping("Rule",
-		 * Rule.class, new String[] { "Rules", "Rules_AView" }, masterWF, new
-		 * String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { {
-		 * "RuleModule", "0", RuleConstants.MODULE_LMTLINE } }, 400));
+		 * ModuleUtil.register("LimitLine", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView"
+		 * }, masterWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { { "RuleModule", "0",
+		 * RuleConstants.MODULE_LMTLINE } }, 400));
 		 */
 
 		ModuleUtil.register("LimitDetails",
@@ -2667,10 +2668,9 @@ public class PennantJavaUtil {
 		/* RMT Lov Filed Details */
 		// Two modules are there ,Need to check it. FIXME:
 		/*
-		 * ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose",
-		 * LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
-		 * masterWF , new String[] { "FieldCodeValue", "ValueDesc" }, new
-		 * String[][] { { "FieldCode", "0", "PUR_LOAN" } }, 300));
+		 * ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class, new String[] {
+		 * "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" }, new String[][] { {
+		 * "FieldCode", "0", "PUR_LOAN" } }, 300));
 		 */
 
 		ModuleUtil.register("DocumentDataMapping",
@@ -3016,7 +3016,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ReleaseLock", new ModuleMapping("ReleaseLock", FinanceMain.class,
 				new String[] { "LockedFinances_View" }, null, new String[] { "" }, null, 350));
 
-		 //VASRebooking
+		//VASRebooking
 		ModuleUtil.register("VASRebooking",
 				new ModuleMapping("VASRecording", VASRecording.class,
 						new String[] { "VASRecording", "VASRecording_AView" }, VASWF,
@@ -3026,7 +3026,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("VASRecording", VASRecording.class,
 						new String[] { "VASRecording", "VASRecording_AView" }, VASWF,
 						new String[] { "PrimaryLinkRef", "ProductCode" }, null, 300));
-	    //Insurance Details
+		//Insurance Details
 		ModuleUtil.register("InsuranceDetails",
 				new ModuleMapping("InsuranceDetails", InsuranceDetails.class,
 						new String[] { "InsuranceDetails", "InsuranceDetails_AView" }, insuranceDetails,
@@ -3041,17 +3041,17 @@ public class PennantJavaUtil {
 				new ModuleMapping("InsurancePaymentInstructions", InsurancePaymentInstructions.class,
 						new String[] { "InsurancePaymentInstructions", "InsurancePaymentInstructions" }, null,
 						new String[] { "EntityCode", "ProviderId" }, null, 600));
-		
+
 		ModuleUtil.register("DataEngineStatusInsUpload",
 				new ModuleMapping("DataEngineStatusInsUpload", FileBatchStatus.class,
 						new String[] { "DataEngineStatus", "DATAENGINESTATUS_IUVIEW" }, null,
 						new String[] { "Id", "FileName" }, null, 600));
-		
+
 		ModuleUtil.register("DataEngineStatusInsPayUpload",
 				new ModuleMapping("DataEngineStatusInsPayUpload", FileBatchStatus.class,
 						new String[] { "DataEngineStatus", "DATAENGINESTATUS_IPUVIEW" }, null,
 						new String[] { "Id", "FileName" }, null, 600));
-		
+
 		ModuleUtil.register("ClusterHierarchy",
 				new ModuleMapping("ClusterHierarchy", ClusterHierarchy.class,
 						new String[] { "Cluster_Hierarchy", "Cluster_Hierarchy" }, CLUSTER_HIERARCHY,
@@ -3083,6 +3083,31 @@ public class PennantJavaUtil {
 						new String[] { "TemplateFields", "TemplateFields" }, masterWF,
 						new String[] { "module", "event" }, new Object[][] { { "Active", "0", 1 } }, 400));
 
+		ModuleUtil.register("CovenantType",
+				new ModuleMapping("CovenantType", CovenantType.class,
+						new String[] { "COVENANT_TYPES", "COVENANT_TYPES_AView" }, masterWF,
+						new String[] { "Code", "Description", "CovenantType" }, null, 600));
+
+		ModuleUtil.register("Covenant",
+				new ModuleMapping("Covenant", Covenant.class, new String[] { "COVENANTS", "COVENANTS_AVIEW" }, masterWF,
+						new String[] { "Id", "CovenantType" }, null, 300));
+
+		ModuleUtil.register("CovenantDocument",
+				new ModuleMapping("CovenantDocument", CovenantDocument.class,
+						new String[] { "Covenant_Documents", "Covenant_Documents_Aview" }, masterWF,
+						new String[] { "Id", "CovenantType" }, null, 300));
+
+		ModuleUtil.register("FinOptionType",
+				new ModuleMapping("FinOptionType", FinOptionType.class,
+						new String[] { "FIN_OPTION_TYPES", "FIN_OPTION_TYPES_AView" }, masterWF,
+						new String[] { "Code", "Description", "OptionType", "Frequency" }, null, 600));
+		ModuleUtil.register("OperationRoles",
+				new ModuleMapping("OperationRoles", SecurityRole.class,
+						new String[] { "SecurityRole", "operation_roles_view" }, securityWF,
+						new String[] { "RoleCd", "RoleDesc" }, null, 600));
+		ModuleUtil.register("FinOption",
+				new ModuleMapping("FinOption", FinOption.class, new String[] { "FIN_OPTIONS", "FIN_OPTIONS_AView" },
+						masterWF, new String[] { "Id", "FinOption" }, null, 600));
 		registerCustomModules();
 	}
 

@@ -45,6 +45,7 @@ package com.pennant.backend.model.customermasters;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -126,7 +127,7 @@ public class CustomerDetails implements java.io.Serializable {
 
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
-	private List<CustomerDocument> customerDocumentsList;// ======Customer ID's
+	private List<CustomerDocument> customerDocumentsList;
 
 	@XmlElementWrapper(name = "addresses")
 	@XmlElement(name = "address")
@@ -163,11 +164,11 @@ public class CustomerDetails implements java.io.Serializable {
 	private List<CustomerDedup> customerDedupList;
 	@XmlElementWrapper(name = "balckListCustomers")
 	@XmlElement(name = "balckListCustomers")
-	List<BlackListCustomers> balckListCustomers;
+	private List<BlackListCustomers> balckListCustomers;
 	private CoreCustomer coreCustomer;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private CustomerDedup custDedup;
-	private String coreReferenceNum; // used while performing ReleaseCIF service
+	private String coreReferenceNum;
 
 	private List<FinanceEnquiry> customerFinances;
 	private FinanceEnquiry customerFinance;
@@ -346,16 +347,15 @@ public class CustomerDetails implements java.io.Serializable {
 		return customerDocumentsList;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
 	public CustomerDedup getCustDedup() {
-
 		CustomerPhoneNumber custPhoneNumber = null;
 		CustomerAddres custAddress = null;
 		CustomerEMail custEmail = null;
@@ -377,27 +377,27 @@ public class CustomerDetails implements java.io.Serializable {
 
 		// Customer Phone Number
 		List<CustomerPhoneNumber> custPhoneNoList = this.customerPhoneNumList;
-		if (custPhoneNoList != null && custPhoneNoList.size() > 0) {
+		if (custPhoneNoList != null && !custPhoneNoList.isEmpty()) {
 			for (int i = 0; i < custPhoneNoList.size(); i++) {
-				custPhoneNumber = (CustomerPhoneNumber) custPhoneNoList.get(i);
+				custPhoneNumber = custPhoneNoList.get(i);
 				custDedup.setPhoneNumber(custPhoneNumber.getPhoneNumber());
 			}
 		}
 
 		// Customer Address Number
 		List<CustomerAddres> custAddressList = this.addressList;
-		if (custAddressList != null && custAddressList.size() > 0) {
+		if (custAddressList != null && !custAddressList.isEmpty()) {
 			for (int i = 0; i < custAddressList.size(); i++) {
-				custAddress = (CustomerAddres) custAddressList.get(i);
+				custAddress = custAddressList.get(i);
 				custDedup.setPhoneNumber(custAddress.getCustAddrPhone());
 			}
 		}
 
 		// Customer Email Details
-		List<CustomerEMail> customerEMailList = this.customerEMailList;
-		if (customerEMailList != null && customerEMailList.size() > 0) {
-			for (int i = 0; i < customerEMailList.size(); i++) {
-				custEmail = (CustomerEMail) customerEMailList.get(i);
+		List<CustomerEMail> customerEmails = this.customerEMailList;
+		if (customerEmails != null && !customerEmails.isEmpty()) {
+			for (int i = 0; i < customerEmails.size(); i++) {
+				custEmail = customerEmails.get(i);
 				custDedup.setCustEMail(custEmail.getCustEMail());
 			}
 		}
@@ -597,7 +597,6 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setCibilExecuted(boolean cibilExecuted) {
 		this.cibilExecuted = cibilExecuted;
 	}
-	
 
 	public List<BlackListCustomers> getBalckListCustomers() {
 		return balckListCustomers;
