@@ -156,6 +156,7 @@ public final class AppStaticList {
 		list.add(new Property("H", "Half Yearly"));
 		list.add(new Property("A", "Annually"));
 		list.add(new Property("O", "One-Time"));
+		list.add(new Property("B", "Biennially"));
 
 		return list;
 	}
