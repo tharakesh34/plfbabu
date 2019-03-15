@@ -2507,7 +2507,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			
 			finMaintainInstruction.setCovenants(financeDetail.getCovenants());
 			
-
 			// Role Code State Checking
 			String userRole = finMaintainInstruction.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
@@ -2594,7 +2593,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				finMaintainInstruction.setNewRecord(true);
 			}
 			// FinanceDetails
-			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForCovenants(aFinanceMain);
+			FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailForFinOptions(aFinanceMain);
 
 			// Covenants List
 			//finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());

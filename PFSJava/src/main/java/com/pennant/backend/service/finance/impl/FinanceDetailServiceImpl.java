@@ -9955,6 +9955,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return financeDetail;
 	}
+	
+	@Override
+	public FinanceDetail getFinanceDetailForFinOptions(FinanceMain financeMain) {
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
+		scheduleData.setFinReference(financeMain.getFinReference());
+		scheduleData.setFinanceMain(financeMain);
+
+		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			financeDetail
+					.setFinOptions(finOptionService.getFinOptions(financeMain.getFinReference(), TableType.VIEW));
+		} 
+
+		financeDetail.setCustomerDetails(
+				getCustomerDetailsService().getCustomerAndCustomerDocsById(financeMain.getCustID(), ""));
+
+		financeDetail.setDocumentDetailsList(getDocumentDetailsDAO()
+				.getDocumentDetailsByRef(financeMain.getFinReference(), FinanceConstants.MODULE_NAME, "", ""));
+
+		return financeDetail;
+	}
+	
 
 	/**
 	 * Method for Add loan type Expense to the loan

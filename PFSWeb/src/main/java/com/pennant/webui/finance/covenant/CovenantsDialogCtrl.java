@@ -1090,10 +1090,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 					new PTDateValidator(Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value"), true));
 		}
 
-		if (this.notifyTo.isVisible() && !this.notifyTo.isButtonDisabled()) {
-			if (!this.notifyTo.getButton().isDisabled() && this.covenantNextFrequencyDate.getValue() != null) {
-				this.notifyTo.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CovenantTypeDialog_AlertToRoles.value"), null, true));
+		if (this.alertType.getSelectedIndex() == 1) {
+			if (this.notifyTo.isVisible() && !this.notifyTo.isButtonDisabled()) {
+				if (!this.notifyTo.getButton().isDisabled() && this.covenantNextFrequencyDate.getValue() != null) {
+					this.notifyTo.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_CovenantTypeDialog_AlertToRoles.value"), null, true));
+				}
 			}
 		}
 
@@ -1738,6 +1740,13 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				this.otc.setDisabled(false);
 			}
 		}
+		else
+		{
+			this.pdd.setDisabled(false);
+			this.pdd.setChecked(false);
+			this.otc.setDisabled(false);
+			this.otc.setChecked(false);
+		}
 	}
 
 	public void onCheck$otc(Event event) {
@@ -2069,6 +2078,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.notifyTo.setValue("");
 		this.alertsRequired.setChecked(false);
 		this.alertType.setSelectedIndex(0);
+		this.pdd.setChecked(false);
+		this.otc.setChecked(false);
+		this.mandRole.setValue(null);
 	}
 
 	public void covenantTypeDetails(CovenantType covenantType) {
@@ -2181,11 +2193,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.covenantGraceDueDate.setText(null);
 		}
 
-		String covenantFrequency = this.covenantFrequency.getSelectedItem().getValue();
-
-		if (!PennantConstants.List_Select.equals(covenantFrequency)) {
-			setFrequencyDateField(covenantFrequency);
-		}
+		
 	}
 
 	public void onSelect$alertType(Event event) {

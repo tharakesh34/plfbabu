@@ -3,6 +3,7 @@ package com.pennant.backend.service.finance.putcall;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pff.core.TableType;
 
@@ -26,4 +27,7 @@ public interface FinOptionService {
 			boolean isApproveRcd);
 
 	List<AuditDetail> validateFinOptions(List<AuditDetail> auditDetails, String usrLanguage, String method);
+
+	FinanceDetail getFinanceDetailById(String id, String type, String userRole, String moduleDefiner,
+			String eventCodeRef);
 }

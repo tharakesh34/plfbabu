@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -44,6 +45,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
@@ -88,11 +90,16 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	protected boolean loanEnquiry = false;
 	protected FinMaintainInstruction finMaintainInstruction;
 	private FinanceSelectCtrl financeSelectCtrl = null;
+	@Autowired 
 	private transient FinOptionMaintanceService finOptionMaintanceService;
 
 	protected North north;
 	protected South south1;
-
+	
+	private boolean isFinOptionNew = false;
+	private FinanceMainBaseCtrl financeMainDialogCtrl;
+	private boolean newCustomer;
+	
 	public FinOptionDialogCtrl() {
 		super();
 	}
@@ -156,6 +163,11 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		}
 
+		if (arguments.containsKey("financeMainDialogCtrl")) {
+			financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
+			setNewCustomer(true);
+		}
+		
 		maturityDate = this.financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
 		loanStartDt = this.financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 
@@ -210,6 +222,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 	public void onClick$btnNew_NewFinOption(Event event) throws Exception {
 		FinOption option = new FinOption();
+		isFinOptionNew = true;
 		option.setNewRecord(true);
 		if (StringUtils.isBlank(option.getRecordType())) {
 			option.setVersion(1);
@@ -730,12 +743,13 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-
+			option.setRecordStatus(this.recordStatus.getValue());
 			finoptions.add(option);
 		}
 
+		
 		this.financeDetail.setFinOptions(finoptions);
-
+		
 		logger.debug(Literal.LEAVING);
 
 		return wve;
@@ -752,6 +766,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		doClearMessage();
 
 		doSetValidation();
+		
 		List<WrongValueException> wve = doWriteComponentsToBean();
 
 		if (!wve.isEmpty() && tab != null) {
@@ -1010,10 +1025,11 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
 
 		doWriteComponentsToBean();
+		setFinInsturctionDetails(aFinMaintainInstruction);
 
 		boolean isNew;
 		isNew = aFinMaintainInstruction.isNew();
-		String tranType;
+		String tranType = null;
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
@@ -1027,11 +1043,32 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				}
 			}
 		} else {
-			aFinMaintainInstruction.setVersion(aFinMaintainInstruction.getVersion() + 1);
-			if (isNew) {
-				tranType = PennantConstants.TRAN_ADD;
+			if (isNewCustomer()) {
+				if (isFinOptionNew) {
+					aFinMaintainInstruction.setVersion(1);
+					aFinMaintainInstruction.setRecordType(PennantConstants.RCD_ADD);
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
+				}
+
+				if (StringUtils.isBlank(aFinMaintainInstruction.getRecordType())) {
+					aFinMaintainInstruction.setVersion(aFinMaintainInstruction.getVersion() + 1);
+					aFinMaintainInstruction.setRecordType(PennantConstants.RCD_UPD);
+				}
+
+				if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RCD_ADD) && isFinOptionNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					aFinMaintainInstruction.setVersion(aFinMaintainInstruction.getVersion() + 1);
+					tranType = PennantConstants.TRAN_UPD;
+				}
 			} else {
-				tranType = PennantConstants.TRAN_UPD;
+				aFinMaintainInstruction.setVersion(aFinMaintainInstruction.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
+				}
 			}
 		}
 
@@ -1223,4 +1260,19 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		return processCompleted;
 	}
 
+	public void setFinInsturctionDetails(FinMaintainInstruction aFinMaintainInstruction){
+		aFinMaintainInstruction.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+		aFinMaintainInstruction.setEvent(this.moduleCode);
+		aFinMaintainInstruction.setRecordStatus(this.recordStatus.getValue());
+		aFinMaintainInstruction.setFinOptions(this.financeDetail.getFinOptions());
+	}
+	
+	public void setNewCustomer(boolean newCustomer) {
+		this.newCustomer = newCustomer;
+	}
+
+	public boolean isNewCustomer() {
+		return newCustomer;
+	}
+	
 }
