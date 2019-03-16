@@ -193,6 +193,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				userRole = arguments.get("role").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, super.pageRightName);
 			}
+			
+			if (arguments.containsKey("enqiryModule")) {
+				enqiryModule=true;
+			}
+			
 
 			this.finTypeFees.setWorkflowId(0);
 			doLoadWorkFlow(this.finTypeFees.isWorkflow(), this.finTypeFees.getWorkflowId(),
@@ -788,6 +793,25 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_alwModifyFeeSchdMthd"), this.alwModifyFeeSchdMthd);
 		readOnlyComponent(isReadOnly("FinTypeFeesDialog_active"), this.active);
 
+		if (enqiryModule) {
+			this.feeType.setReadonly(true);
+			this.finEvent.setReadonly(true);
+			this.calculationType.setDisabled(true);
+			this.ruleCode.setReadonly(true);
+			this.amount.setReadonly(true);
+			this.percentage.setReadonly(true);
+			this.calculationOn.setReadonly(true);
+			this.feeOrder.setReadonly(true);
+			this.feeScheduleMethod.setDisabled(true);
+			this.alwDeviation.setDisabled(true);
+			this.maxWaiver.setDisabled(true);
+			this.alwModifyFee.setDisabled(true);
+			this.alwModifyFeeSchdMthd.setDisabled(true);
+			this.active.setDisabled(true);
+			this.btnSave.setDisabled(true);
+			this.btnDelete.setDisabled(true);
+		}
+		
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);

@@ -847,5 +847,28 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 
 	}
+	
+	@Override
+	public boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select FeeTypeId from fintypefees where FeeTypeId  = :FeeTypeId");
+		sql.append(" and FinType = :FinType and ModuleId = :ModuleId and OriginationFee = :OriginationFee");
 
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
+		beanParameters.addValue("FeeTypeId", feeTypeId);
+		beanParameters.addValue("FinType", finType);
+		beanParameters.addValue("ModuleId", moduleId);
+		beanParameters.addValue("OriginationFee", originationFee);
+		
+		int count = 0;
+		try {
+			count =  this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			// TODO: handle exception
+		}
+		return count > 0;
+	}
 }

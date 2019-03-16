@@ -57,6 +57,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
 
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(String id, boolean isWIF, String type);
@@ -117,5 +118,7 @@ public interface FinFeeDetailService {
 			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
 
 	HashMap<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
+	
+    boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee) ;
 
 }

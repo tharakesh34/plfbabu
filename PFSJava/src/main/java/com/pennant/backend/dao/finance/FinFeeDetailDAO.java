@@ -90,4 +90,6 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);
 
 	List<FinFeeDetail> getDMFinFeeDetailByFinRef(String id, String type);
+
+	boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee);
 }

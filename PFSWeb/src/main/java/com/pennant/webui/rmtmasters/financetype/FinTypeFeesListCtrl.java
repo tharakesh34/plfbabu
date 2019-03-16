@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
@@ -71,6 +72,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
@@ -249,67 +251,69 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	public void doFillFinTypeFeesOrigination(List<FinTypeFees> finTypeFeesList) {
 		logger.debug("Entering");
 		try {
-			if (finTypeFeesList != null) {
-				finTypeFeesList = sortFeesByFeeOrder(finTypeFeesList);
-				setFinTypeFeesOriginationList(finTypeFeesList);
-				this.listBoxFinTypeFeesListOrigination.getItems().clear();
-				String listGroupEvent = "";
-				Listgroup group;
-				Listcell lc;
-				List<ValueLabel> remFeeSchList = PennantStaticListUtil.getRemFeeSchdMethods();
-				List<ValueLabel> feeCalTypeList = PennantStaticListUtil.getRemFeeSchdMethods();
 
-				for (FinTypeFees finTypeFee : finTypeFeesList) {
-					if (!finTypeFee.isOriginationFee()) {
-						continue;
-					}
-					if (!StringUtils.equals(finTypeFee.getFinEvent(), listGroupEvent)) {
-						group = new Listgroup();
-						if (this.eventDetailMap.get(finTypeFee.getFinEvent()) == null) {
-							lc = new Listcell(finTypeFee.getFinEvent());
-						} else {
-							lc = new Listcell(
-									finTypeFee.getFinEvent() + "-" + this.eventDetailMap.get(finTypeFee.getFinEvent()));
-						}
-						lc.setParent(group);
-						this.listBoxFinTypeFeesListOrigination.appendChild(group);
-					}
-					listGroupEvent = finTypeFee.getFinEvent();
-					Listitem item = new Listitem();
-					lc = new Listcell(String.valueOf(finTypeFee.getFeeOrder()));
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getFeeTypeCode());
-					lc.setParent(item);
-					lc = new Listcell(
-							PennantStaticListUtil.getlabelDesc(finTypeFee.getCalculationType(), feeCalTypeList));
-					lc.setParent(item);
-					lc = new Listcell(
-							PennantStaticListUtil.getlabelDesc(finTypeFee.getFeeScheduleMethod(), remFeeSchList));
-					lc.setParent(item);
-					lc = new Listcell(String.valueOf(finTypeFee.getMaxWaiverPerc()));
-					lc.setStyle("text-align:right;");
-					lc.setParent(item);
-					lc = new Listcell();
-					Checkbox modifyFeeCB = new Checkbox();
-					modifyFeeCB.setChecked(finTypeFee.isAlwModifyFee());
-					modifyFeeCB.setDisabled(true);
-					modifyFeeCB.setParent(lc);
-					lc.setParent(item);
-					lc = new Listcell();
-					Checkbox alwDeviationCB = new Checkbox();
-					alwDeviationCB.setChecked(finTypeFee.isAlwDeviation());
-					alwDeviationCB.setDisabled(true);
-					alwDeviationCB.setParent(lc);
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getRecordStatus());
-					lc.setParent(item);
-					lc = new Listcell(finTypeFee.getRecordType());
-					lc.setParent(item);
-					item.setAttribute("data", finTypeFee);
-					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeFeesOrgItemDoubleClicked");
-					this.listBoxFinTypeFeesListOrigination.appendChild(item);
-				}
+			if (CollectionUtils.isEmpty(finTypeFeesList)) {
+				return;
 			}
+
+			finTypeFeesList = sortFeesByFeeOrder(finTypeFeesList);
+			setFinTypeFeesOriginationList(finTypeFeesList);
+			this.listBoxFinTypeFeesListOrigination.getItems().clear();
+			String listGroupEvent = "";
+			Listgroup group;
+			Listcell lc;
+			List<ValueLabel> remFeeSchList = PennantStaticListUtil.getRemFeeSchdMethods();
+			List<ValueLabel> feeCalTypeList = PennantStaticListUtil.getRemFeeSchdMethods();
+
+			for (FinTypeFees finTypeFee : finTypeFeesList) {
+				if (!finTypeFee.isOriginationFee()) {
+					continue;
+				}
+				if (!StringUtils.equals(finTypeFee.getFinEvent(), listGroupEvent)) {
+					group = new Listgroup();
+					if (this.eventDetailMap.get(finTypeFee.getFinEvent()) == null) {
+						lc = new Listcell(finTypeFee.getFinEvent());
+					} else {
+						lc = new Listcell(
+								finTypeFee.getFinEvent() + "-" + this.eventDetailMap.get(finTypeFee.getFinEvent()));
+					}
+					lc.setParent(group);
+					this.listBoxFinTypeFeesListOrigination.appendChild(group);
+				}
+				listGroupEvent = finTypeFee.getFinEvent();
+				Listitem item = new Listitem();
+				lc = new Listcell(String.valueOf(finTypeFee.getFeeOrder()));
+				lc.setParent(item);
+				lc = new Listcell(finTypeFee.getFeeTypeCode());
+				lc.setParent(item);
+				lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getCalculationType(), feeCalTypeList));
+				lc.setParent(item);
+				lc = new Listcell(PennantStaticListUtil.getlabelDesc(finTypeFee.getFeeScheduleMethod(), remFeeSchList));
+				lc.setParent(item);
+				lc = new Listcell(String.valueOf(finTypeFee.getMaxWaiverPerc()));
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+				lc = new Listcell();
+				Checkbox modifyFeeCB = new Checkbox();
+				modifyFeeCB.setChecked(finTypeFee.isAlwModifyFee());
+				modifyFeeCB.setDisabled(true);
+				modifyFeeCB.setParent(lc);
+				lc.setParent(item);
+				lc = new Listcell();
+				Checkbox alwDeviationCB = new Checkbox();
+				alwDeviationCB.setChecked(finTypeFee.isAlwDeviation());
+				alwDeviationCB.setDisabled(true);
+				alwDeviationCB.setParent(lc);
+				lc.setParent(item);
+				lc = new Listcell(finTypeFee.getRecordStatus());
+				lc.setParent(item);
+				lc = new Listcell(finTypeFee.getRecordType());
+				lc.setParent(item);
+				item.setAttribute("data", finTypeFee);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onFinTypeFeesOrgItemDoubleClicked");
+				this.listBoxFinTypeFeesListOrigination.appendChild(item);
+			}
+
 		} catch (Exception e) {
 			logger.debug(e);
 		}
@@ -361,6 +365,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		FinTypeFees finTypeFees = (FinTypeFees) item.getAttribute("data");
+		
 
 		if (!StringUtils.trimToEmpty(finTypeFees.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			finTypeFees.setNewRecord(false);
@@ -379,7 +384,14 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		map.put("finTypeFeesListCtrl", this);
 		map.put("role", roleCode);
 		map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy));
+		
+		String feeTypeCode=finTypeFees.getFeeTypeCode();
 
+		if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode) || AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
+				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode)
+				|| AdvanceRuleCode.DSF.name().equals(feeTypeCode))) {
+			map.put("enqiryModule", enqiryModule);
+		}
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinTypeFeesDialog.zul", null, map);

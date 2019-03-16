@@ -85,7 +85,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="2.4" author="shinde.b">
+	<changeSet id="2.4" author="shinde.b"  dbms="postgresql, oracle" >
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="putCallRequired" />
+	</changeSet>
+	
+	<changeSet id="2.4" dbms="mssql" author="shinde.b">
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="putCallRequired" />
 	</changeSet>
 

@@ -43,14 +43,19 @@
 
 package com.pennant.backend.service.rmtmasters.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -83,12 +88,16 @@ import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.collateral.impl.FinTypeVasDetailValidation;
 import com.pennant.backend.service.collateral.impl.IRRFinanceValidation;
+import com.pennant.backend.service.feetype.FeeTypeService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -125,6 +134,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private IRRFinanceTypeDAO irrFinanceTypeDAO;
 	private IRRFinanceValidation irrFinanceValidation;
 
+	@Autowired
+	private FinFeeDetailService finFeeDetailService;
+
+	@Autowired
+	private FeeTypeService feeTypeService;
+
 	public FinanceTypeServiceImpl() {
 		super();
 	}
@@ -148,19 +163,22 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return financeType;
 	}
 
-	// To get finPurpose details by assestId 
+	// To get finPurpose details by assestId
 	@Override
 	public List<ProductAsset> getFinPurposeByAssetId(ArrayList<String> list, String type) {
 		return getProductAssetDAO().getFinPurposeByAssetId(list, type);
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * RMTFinanceTypes/RMTFinanceTypes_Temp by using FinanceTypeDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using FinanceTypeDAO's update method 3) Audit the record in to
-	 * AuditHeader and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * RMTFinanceTypes/RMTFinanceTypes_Temp by using FinanceTypeDAO's save
+	 * method b) Update the Record in the table. based on the module workFlow
+	 * Configuration. by using FinanceTypeDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtRMTFinanceTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -198,7 +216,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			FinanceConfigCache.clearFinanceTypeCache(financeType.getFinType());
 		}
 
-		//Customer Accounts
+		// Customer Accounts
 		if (financeType.getFinTypeAccounts() != null && financeType.getFinTypeAccounts().size() > 0) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeCustAccount");
 			details = processFinTypeCustAccountDetails(financeType, details, tableType);
@@ -228,14 +246,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(accountingDetails);
 		}
 
-		//FinVasTypeProduct Details
+		// FinVasTypeProduct Details
 		if (financeType.getFinTypeVASProductsList() != null && !financeType.getFinTypeVASProductsList().isEmpty()) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
 			details = processingVasProductDetailList(details, financeType.getFinAcType(), tableType);
 			auditDetails.addAll(details);
 		}
-		
-		//FinTypeReceiptModes Details
+
+		// FinTypeReceiptModes Details
 		if (financeType.getFinTypeReceiptModesList() != null && !financeType.getFinTypeReceiptModesList().isEmpty()) {
 			List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeReceiptModes");
 			details = processingReceiptModesList(details, financeType.getFinAcType(), tableType);
@@ -273,10 +291,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * RMTFinanceTypes by using FinanceTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table RMTFinanceTypes by using FinanceTypeDAO's delete method with type
+	 * as Blank 3) Audit the record in to AuditHeader and AdtRMTFinanceTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -327,9 +347,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
 			}
 			financeType.setFinTypeAccounts(getFinTypeAccountDAO().getFinTypeAccountListByID(finType, "_View"));
-			//FinTypeVasProduct Details
+			// FinTypeVasProduct Details
 			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View"));
-			financeType.setFinTypeReceiptModesList(getFinTypeReceiptModesDAO().getReceiptModesByFinType(finType, "_View"));
+			financeType
+					.setFinTypeReceiptModesList(getFinTypeReceiptModesDAO().getReceiptModesByFinType(finType, "_View"));
 			financeType.setFinTypeFeesList(
 					getFinTypeFeesService().getFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeInsurances(getFinTypeInsurancesService().getFinTypeInsuranceListByID(finType,
@@ -392,8 +413,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's getFinanceTypeById method . with parameter
-	 * id and type as blank. it fetches the approved records from the RMTFinanceTypes.
+	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's
+	 * getFinanceTypeById method . with parameter id and type as blank. it
+	 * fetches the approved records from the RMTFinanceTypes.
 	 * 
 	 * @param finType
 	 *            (String)
@@ -417,15 +439,19 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinanceTypeDAO().delete with
-	 * parameters financeType,"" b) NEW Add new record in to main table by using getFinanceTypeDAO().save with
-	 * parameters financeType,"" c) EDIT Update record in the main table by using getFinanceTypeDAO().update with
-	 * parameters financeType,"" 3) Delete the record from the workFlow table by using getFinanceTypeDAO().delete with
-	 * parameters financeType,"_Temp" 4) Audit the record in to AuditHeader and AdtRMTFinanceTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRMTFinanceTypes
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using getFinanceTypeDAO().delete with parameters financeType,"" b) NEW
+	 * Add new record in to main table by using getFinanceTypeDAO().save with
+	 * parameters financeType,"" c) EDIT Update record in the main table by
+	 * using getFinanceTypeDAO().update with parameters financeType,"" 3) Delete
+	 * the record from the workFlow table by using getFinanceTypeDAO().delete
+	 * with parameters financeType,"_Temp" 4) Audit the record in to AuditHeader
+	 * and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow 5) Audit the record in to AuditHeader and AdtRMTFinanceTypes by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -450,7 +476,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			//List
+			// List
 			auditDetails.addAll(deleteChilds(financeType, "", tranType));
 			getFinanceTypeDAO().delete(financeType, "");
 		} else {
@@ -465,9 +491,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				financeType.setRecordType("");
 				getFinanceTypeDAO().save(financeType, "");
 
-				// Copy of Finance Workflow & Process Editor Details to Promotion by Finance Type(Product Code)
+				// Copy of Finance Workflow & Process Editor Details to
+				// Promotion by Finance Type(Product Code)
 				if (StringUtils.isNotBlank(financeType.getProduct())) {
-					//Finance Workflow Details 
+					// Finance Workflow Details
 					List<FinanceWorkFlow> financeWorkFlowList = getFinanceWorkFlowDAO().getFinanceWorkFlowListById(
 							financeType.getProduct(), PennantConstants.WORFLOW_MODULE_FINANCE, "");
 
@@ -481,7 +508,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 						}
 						getFinanceWorkFlowDAO().saveList(financeWorkFlowList, "");
 
-						//Process Editor Details
+						// Process Editor Details
 						List<FinanceReferenceDetail> refList = getFinanceReferenceDetailDAO()
 								.getFinanceRefListByFinType(financeType.getProduct(), "");
 						for (FinanceReferenceDetail refDetail : refList) {
@@ -506,21 +533,22 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				details = processFinTypeCustAccountDetails(financeType, details, "");
 				auditDetails.addAll(details);
 			}
-			//FinTypeVasProduct Details
+			// FinTypeVasProduct Details
 			if (financeType.getFinTypeVASProductsList() != null && financeType.getFinTypeVASProductsList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeVASProducts");
 				details = processingVasProductDetailList(details, financeType.getFinAcType(), "");
 				auditDetails.addAll(details);
 			}
-			
-			//FinTypeReceiptModes Details
-			if (financeType.getFinTypeReceiptModesList() != null && financeType.getFinTypeReceiptModesList().size() > 0) {
+
+			// FinTypeReceiptModes Details
+			if (financeType.getFinTypeReceiptModesList() != null
+					&& financeType.getFinTypeReceiptModesList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("FinTypeReceiptModes");
 				details = processingReceiptModesList(details, financeType.getFinAcType(), "");
 				auditDetails.addAll(details);
 			}
 
-			//IRRCode Details
+			// IRRCode Details
 			if (financeType.getIrrFinanceTypeList() != null && financeType.getIrrFinanceTypeList().size() > 0) {
 				List<AuditDetail> details = financeType.getAuditDetailMap().get("IRRCode");
 				details = processingIRRCodeDetailList(details, financeType.getFinType(), tranType1);
@@ -580,7 +608,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		getFinanceTypeDAO().delete(financeType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//List
+		// List
 		auditHeader.setAuditDetails(deleteChilds(financeType, "_Temp", auditHeader.getAuditTranType()));
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceType(), financeType.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -591,7 +619,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(financeType);
 
-		//List
+		// List
 		auditHeader.setAuditDetails(processChildsAudit(auditDetails));
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -600,11 +628,123 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return auditHeader;
 	}
 
+	private void addAdvTypeFeeDetails(FinanceType financeType, List<FinTypeFees> fees) {
+		if (fees == null) {
+			fees = new ArrayList<>();
+		}
+
+		FinTypeFees finTypeFee = null;
+		String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		boolean exist = false;
+		int orgFeeOrder = 0;
+		int servFeeOrder = 0;
+		int moduleId = FinanceConstants.MODULEID_FINTYPE;
+		boolean originationFee = true;
+
+		long feeTypeId;
+
+		String finType = financeType.getFinType();
+
+		for (FinTypeFees finTypeFees : fees) {
+			if (finTypeFees.isOriginationFee()) {
+				orgFeeOrder = orgFeeOrder + 1;
+			} else {
+				servFeeOrder = servFeeOrder + 1;
+			}
+		}
+
+		if (financeType.isGrcAdvIntersetReq()) {
+			feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVINT.name());
+			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, originationFee);
+			if (!exist) {
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), finEvent, originationFee);
+				finTypeFee.setFeeOrder(++orgFeeOrder);
+				fees.add(finTypeFee);
+			}
+
+			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+			if (AdvanceType.UF.getCode().equals(financeType.getGrcAdvType())) {
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), finEvent, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					fees.add(finTypeFee);
+				}
+			} else if (exist) {
+				for (FinTypeFees finTypeFees : fees) {
+					if (AdvanceRuleCode.ADVINT.name().equals(finTypeFees.getFeeTypeCode()) && moduleId == 1
+							&& !finTypeFees.isOriginationFee()) {
+						finTypeFees.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					}
+				}
+			}
+		}
+
+		if (financeType.isAdvIntersetReq()) {
+			feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVEMI.name());
+			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, originationFee);
+			if (!exist) {
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), finEvent, originationFee);
+				finTypeFee.setFeeOrder(++orgFeeOrder);
+				fees.add(finTypeFee);
+			}
+		}
+
+		if (financeType.isDsfReq()) {
+			feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.DSF.name());
+			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, originationFee);
+			if (!exist) {
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), finEvent, originationFee);
+				finTypeFee.setFeeOrder(++orgFeeOrder);
+				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
+				finTypeFee.setAlwModifyFee(true);
+				finTypeFee.setAlwDeviation(true);
+				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+				fees.add(finTypeFee);
+			}
+		}
+
+		if (financeType.isCashCollateralReq()) {
+			feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.CASHCLT.name());
+			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, originationFee);
+			if (!exist) {
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), finEvent, originationFee);
+				finTypeFee.setFeeOrder(++orgFeeOrder);
+				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
+				finTypeFee.setAlwModifyFee(true);
+				finTypeFee.setAlwDeviation(true);
+				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+				fees.add(finTypeFee);
+			}
+		}
+	}
+
+	private FinTypeFees getFinTypeFee(Long feeTypeId, String feeTypeCode, String finEvent, boolean originationFee) {
+		FinTypeFees finTypeFee = new FinTypeFees();
+		finTypeFee.setFeeTypeID(feeTypeId);
+		finTypeFee.setOriginationFee(originationFee);
+		finTypeFee.setFeeTypeCode(feeTypeCode);
+		finTypeFee.setFinEvent(finEvent);
+		finTypeFee.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+		finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+		finTypeFee.setAlwModifyFeeSchdMthd(false);
+		finTypeFee.setAlwModifyFee(false);
+		finTypeFee.setAlwDeviation(false);
+		finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
+		finTypeFee.setModuleId(FinanceConstants.MODULEID_FINTYPE);
+		finTypeFee.setRecordType(PennantConstants.RCD_ADD);
+		finTypeFee.setNewRecord(true);
+
+		return finTypeFee;
+	}
+
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinanceTypeDAO().delete with parameters financeType,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getFinanceTypeDAO().delete with parameters
+	 * financeType,"_Temp" 3) Audit the record in to AuditHeader and
+	 * AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -623,7 +763,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getFinanceTypeDAO().delete(financeType, "_Temp");
-		//List
+		// List
 		auditHeader.setAuditDetails(
 				processChildsAudit(deleteChilds(financeType, "_Temp", auditHeader.getAuditTranType())));
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -634,8 +774,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -682,9 +824,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
+	 * if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -713,14 +856,28 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
-		if (financeType.isNew()) { // for New record or new record into work flow
-			if (!financeType.isWorkflow()) {// With out Work flow only new records
-				if (befFinanceType != null) { // Record Already Exists in the table then error
+		if (financeType.isNew()) { // for New record or new record into work
+									// flow
+			if (!financeType.isWorkflow()) {// With out Work flow only new
+											// records
+				if (befFinanceType != null) { // Record Already Exists in the
+												// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinanceType != null || tempFinanceType != null) { // if records already exists in the main table
+				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																							// records
+																							// type
+																							// is
+																							// new
+					if (befFinanceType != null || tempFinanceType != null) { // if
+																				// records
+																				// already
+																				// exists
+																				// in
+																				// the
+																				// main
+																				// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -730,9 +887,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!financeType.isWorkflow()) { // With out Work flow for update and delete
-				if (befFinanceType == null) { // if records not exists in the main table
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!financeType.isWorkflow()) { // With out Work flow for update
+												// and delete
+				if (befFinanceType == null) { // if records not exists in the
+												// main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldFinanceType != null
@@ -748,7 +908,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					}
 				}
 			} else {
-				if (tempFinanceType == null) { // if records not exists in the Work flow table
+				if (tempFinanceType == null) { // if records not exists in the
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempFinanceType != null && oldFinanceType != null
@@ -763,18 +924,20 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		/*
-		 * if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) { auditDetail.setErrorDetail(new
+		 * if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) {
+		 * auditDetail.setErrorDetail(new
 		 * ErrorDetails(PennantConstants.KEY_FIELD, "30573", errParm, null)); }
 		 */
 
 		/*
-		 * if(financeType.isPlanEMIHAlw() && financeType.isFinIsAlwMD()){ auditDetail.setErrorDetail(new
+		 * if(financeType.isPlanEMIHAlw() && financeType.isFinIsAlwMD()){
+		 * auditDetail.setErrorDetail(new
 		 * ErrorDetails(PennantConstants.KEY_FIELD, "30574", errParm, null)); }
 		 */
 
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(financeType.getRecordType())) {
-			//FinanceMain Details
+			// FinanceMain Details
 			boolean isFinTypeExists = getFinanceMainDAO().isFinTypeExistsInFinanceMain(financeType.getFinType(),
 					"_View");
 
@@ -805,12 +968,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		//HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+		// HashMap<String, List<AuditDetail>> auditDetailMap = new
+		// HashMap<String, List<AuditDetail>>();
 		FinanceType financeType = (FinanceType) auditHeader.getAuditDetail().getModelData();
-		//String auditTranType = "";
+		// String auditTranType = "";
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
 			if (financeType.isWorkflow()) {
-				//auditTranType = PennantConstants.TRAN_WF;
+				// auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
@@ -822,7 +986,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		return auditHeader;
 	}
 
-	//=================================== List maintain
+	// =================================== List maintain
 	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
@@ -843,7 +1007,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(auditDetailMap.get("FinTypeCustAccount"));
 		}
 		// Fees
-		if (financeType.getFinTypeFeesList() != null && financeType.getFinTypeFeesList().size() > 0) {
+
+		List<FinTypeFees> feedetails = financeType.getFinTypeFeesList();
+
+		if ("doApprove".equals(method)) {
+			addAdvTypeFeeDetails(financeType, feedetails);
+		}
+
+		if (CollectionUtils.isNotEmpty(feedetails)) {
 			for (FinTypeFees finTypeFees : financeType.getFinTypeFeesList()) {
 				finTypeFees.setFinType(financeType.getFinType());
 				finTypeFees.setWorkflowId(financeType.getWorkflowId());
@@ -918,15 +1089,16 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			auditDetails.addAll(auditDetailMap.get("FinTypePartnerBank"));
 		}
 
-		//Finance Type VAS Details
+		// Finance Type VAS Details
 		if (financeType.getFinTypeVASProductsList() != null && financeType.getFinTypeVASProductsList().size() > 0) {
 			auditDetailMap.put("FinTypeVASProducts", setFinTypeVasProcuctAuditData(financeType, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeVASProducts"));
 		}
-		
-		//FinTypeReceiptModes Details
+
+		// FinTypeReceiptModes Details
 		if (financeType.getFinTypeReceiptModesList() != null && financeType.getFinTypeReceiptModesList().size() > 0) {
-			auditDetailMap.put("FinTypeReceiptModes", setFinTypeReceiptModesAuditData(financeType, auditTranType, method));
+			auditDetailMap.put("FinTypeReceiptModes",
+					setFinTypeReceiptModesAuditData(financeType, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypeReceiptModes"));
 		}
 
@@ -1037,7 +1209,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			}
 			getFinTypeVASProductsDAO().deleteList(financeType.getFinType(), tableType);
 		}
-		
+
 		// Finance Type Receipt Modes
 		if (financeType.getFinTypeReceiptModesList() != null && !financeType.getFinTypeReceiptModesList().isEmpty()) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinTypeReceiptModes(),
@@ -1159,7 +1331,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			}
 		}
-		//FinTypeExpense 
+		// FinTypeExpense
 		if (financeType.getAuditDetailMap().get("FinTypeExpense") != null) {
 			auditDetails = financeType.getAuditDetailMap().get("FinTypeExpense");
 			for (AuditDetail auditDetail : auditDetails) {
@@ -1321,10 +1493,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
-	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * Validation method do the following steps. 1) get the details from the
+	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
+	 * based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from
+	 * getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1353,15 +1527,29 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_FinTypeAccountDialog_FinCcy.value") + ":" + valueParm[0] + ","
 				+ PennantJavaUtil.getLabel("label_FinTypeAccountDialog_Event.value") + ":" + valueParm[1];
 
-		if (finTypeAccount.isNew()) { // for New record or new record into work flow
-			if (!finTypeAccount.isWorkflow()) {// With out Work flow only new records
-				if (befFinTypeAccount != null) { // Record Already Exists in the table then error
+		if (finTypeAccount.isNew()) { // for New record or new record into work
+										// flow
+			if (!finTypeAccount.isWorkflow()) {// With out Work flow only new
+												// records
+				if (befFinTypeAccount != null) { // Record Already Exists in the
+													// table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (finTypeAccount.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinTypeAccount != null || tempFinTypeAccount != null) { // if records already exists in the main table
+				if (finTypeAccount.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																								// records
+																								// type
+																								// is
+																								// new
+					if (befFinTypeAccount != null || tempFinTypeAccount != null) { // if
+																					// records
+																					// already
+																					// exists
+																					// in
+																					// the
+																					// main
+																					// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -1373,9 +1561,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!finTypeAccount.isWorkflow()) { // With out Work flow for update and delete
-				if (befFinTypeAccount == null) { // if records not exists in the main table
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!finTypeAccount.isWorkflow()) { // With out Work flow for update
+												// and delete
+				if (befFinTypeAccount == null) { // if records not exists in the
+													// main table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
@@ -1392,7 +1583,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					}
 				}
 			} else {
-				if (tempFinTypeAccount == null) { // if records not exists in the Work flow table
+				if (tempFinTypeAccount == null) { // if records not exists in
+													// the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -1417,7 +1609,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Finance Type VAS Details
+	 * Method For Preparing List of AuditDetails for Check List for Finance Type
+	 * VAS Details
 	 * 
 	 * @param auditDetails
 	 * @param financeType
@@ -1512,9 +1705,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		return auditDetails;
 	}
-	
+
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Finance Type ReceiptModes Details
+	 * Method For Preparing List of AuditDetails for Check List for Finance Type
+	 * ReceiptModes Details
 	 * 
 	 * @param auditDetails
 	 * @param financeType
@@ -1524,12 +1718,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private List<AuditDetail> processingReceiptModesList(List<AuditDetail> auditDetails, String financeType,
 			String type) {
 		logger.debug("Entering");
-		
+
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
-		
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinTypeReceiptModes finTypeReceiptModes = (FinTypeReceiptModes) auditDetails.get(i).getModelData();
 			saveRecord = false;
@@ -1538,7 +1732,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			approveRec = false;
 			String rcdType = "";
 			String recordStatus = "";
-			
+
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
 				finTypeReceiptModes.setRoleCode("");
@@ -1546,9 +1740,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeReceiptModes.setTaskId("");
 				finTypeReceiptModes.setNextTaskId("");
 			}
-			
+
 			finTypeReceiptModes.setWorkflowId(0);
-			
+
 			if (finTypeReceiptModes.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (finTypeReceiptModes.isNewRecord()) {
@@ -1577,41 +1771,42 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					updateRecord = true;
 				}
 			}
-			
+
 			if (approveRec) {
 				rcdType = finTypeReceiptModes.getRecordType();
 				recordStatus = finTypeReceiptModes.getRecordStatus();
 				finTypeReceiptModes.setRecordType("");
 				finTypeReceiptModes.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
-			
+
 			if (saveRecord) {
 				getFinTypeReceiptModesDAO().save(finTypeReceiptModes, type);
 			}
-			
+
 			if (updateRecord) {
 				getFinTypeReceiptModesDAO().update(finTypeReceiptModes, type);
 			}
-			
+
 			if (deleteRecord) {
-				getFinTypeReceiptModesDAO().delete(finTypeReceiptModes.getFinType(), finTypeReceiptModes.getReceiptMode(),
-						type);
+				getFinTypeReceiptModesDAO().delete(finTypeReceiptModes.getFinType(),
+						finTypeReceiptModes.getReceiptMode(), type);
 			}
-			
+
 			if (approveRec) {
 				finTypeReceiptModes.setRecordType(rcdType);
 				finTypeReceiptModes.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(finTypeReceiptModes);
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditDetails;
 	}
 
 	/**
-	 * Methods for Creating List Finance Type VAS Details of Audit Details with detailed fields
+	 * Methods for Creating List Finance Type VAS Details of Audit Details with
+	 * detailed fields
 	 * 
 	 * @param financeType
 	 * @param auditTranType
@@ -1678,9 +1873,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		return auditDetails;
 	}
-	
+
 	/**
-	 * Methods for Creating List Finance Type ReceiptModes Details of Audit Details with detailed fields
+	 * Methods for Creating List Finance Type ReceiptModes Details of Audit
+	 * Details with detailed fields
 	 * 
 	 * @param financeType
 	 * @param auditTranType
@@ -1690,23 +1886,23 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	private List<AuditDetail> setFinTypeReceiptModesAuditData(FinanceType financeType, String auditTranType,
 			String method) {
 		logger.debug("Entering");
-		
+
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinTypeReceiptModes finTypeReceiptModes = new FinTypeReceiptModes();
 		String[] fields = PennantJavaUtil.getFieldDetails(finTypeReceiptModes, finTypeReceiptModes.getExcludeFields());
-		
+
 		for (int i = 0; i < financeType.getFinTypeReceiptModesList().size(); i++) {
 			FinTypeReceiptModes finTypeReceiptMode = financeType.getFinTypeReceiptModesList().get(i);
-			
+
 			if (StringUtils.isEmpty(finTypeReceiptMode.getRecordType())) {
 				continue;
 			}
-			
+
 			finTypeReceiptMode.setFinType(financeType.getFinType());
 			finTypeReceiptMode.setWorkflowId(financeType.getWorkflowId());
-			
+
 			boolean isRcdType = false;
-			
+
 			if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 				finTypeReceiptMode.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
@@ -1718,11 +1914,11 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			} else if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 				finTypeReceiptMode.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
-			
+
 			if ("saveOrUpdate".equals(method) && isRcdType) {
 				finTypeReceiptMode.setNewRecord(true);
 			}
-			
+
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (finTypeReceiptMode.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
@@ -1733,18 +1929,18 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			
+
 			finTypeReceiptMode.setRecordStatus(financeType.getRecordStatus());
 			finTypeReceiptMode.setUserDetails(financeType.getUserDetails());
 			finTypeReceiptMode.setLastMntOn(financeType.getLastMntOn());
 			finTypeReceiptMode.setLastMntBy(financeType.getLastMntBy());
-			
+
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 					finTypeReceiptMode.getBefImage(), finTypeReceiptMode));
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return auditDetails;
 	}
 
@@ -1900,7 +2096,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Methods for Creating List IRRCode Details of Audit Details with detailed fields
+	 * Methods for Creating List IRRCode Details of Audit Details with detailed
+	 * fields
 	 * 
 	 * @param financeType
 	 * @param auditTranType
@@ -1968,7 +2165,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for IRR CODE Details
+	 * Method For Preparing List of AuditDetails for Check List for IRR CODE
+	 * Details
 	 * 
 	 * @param auditDetails
 	 * @param financeType

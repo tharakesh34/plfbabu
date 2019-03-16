@@ -293,6 +293,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.StageTabConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -958,6 +960,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private boolean isBranchanged;
 	private String branchSwiftCode;
+	
+	private Combobox grcAdvType;
+	private Intbox grcAdvTerms;
+	private Combobox advType;
+	private Intbox advTerms;
+	private Combobox advStage;
+	private Row row_grcAdvTypes;
+	private Row row_advTypes;
+	private Row row_advStages;
+	
 
 	//Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
@@ -1467,7 +1479,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.advEMITerms.setMaxlength(3);
 			this.advEMITerms.setStyle("text-align:right;");
 		}
-
+		
 		if (financeType.isAlwHybridRate()) {
 			this.row_hybridRates.setVisible(true);
 			this.fixedRateTenor.setMaxlength(3);
@@ -1479,11 +1491,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.fixedTenorRate.setScale(LengthConstants.LEN_RATE_SCALE);
 		}
 
+		if (financeType.isGrcAdvIntersetReq()) {
+			this.row_grcAdvTypes.setVisible(true);
+			this.grcAdvType.setReadonly(true);
+			this.grcAdvTerms.setDisabled(true);
+
+		}
+		
+		if (financeType.isAdvIntersetReq()) {
+			this.row_advTypes.setVisible(true);
+			this.row_advStages.setVisible(true);
+			this.advTerms.setDisabled(true);
+			this.advStage.setDisabled(true);
+		}
+		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -4189,6 +4216,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
 		} else {
 			this.businessVertical.setAttribute("Id", null);
+		}
+		
+		
+		if (financeType.isGrcAdvIntersetReq()) {
+			
+			if (financeType.getGrcAdvType() != null) {
+				fillList(this.grcAdvType, AdvanceType.getList(), financeType.getGrcAdvType());
+			}
+			doChangeGrcAdvTypes();
+			if (aFinanceMain.getGrcAdvType() != null) {
+				this.grcAdvTerms.setValue(aFinanceMain.getGrcAdvTerms());
+			}
+		}
+
+		if (financeType.isAdvIntersetReq()) {
+		
+			if (financeType.getAdvType() != null) {
+				fillList(this.advType, AdvanceType.getList(), financeType.getAdvType());
+			}
+			doChangeAdvTypes();
+			if (aFinanceMain.getAdvTerms() != 0) {
+				this.advTerms.setValue(aFinanceMain.getAdvTerms());
+			}
+			fillList(this.advStage, AdvanceStage.getList(), aFinanceMain.getAdvStage());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -12679,7 +12730,68 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			aFinanceMain.setBusinessVertical(null);
 		}
+		
+		
+		String grcMinLabel = "Minimum Advance Terms";
+		String grcMaxLabel = "Maximum Advance Terms";
+		String grcGraceTerms = "Grace Terms";
 
+		
+		if (financeType.isGrcAdvIntersetReq()) {
+			aFinanceMain.setGrcAdvType(financeType.getGrcAdvType());
+			
+			try {
+				int grcAdvTermValue=this.grcAdvTerms.getValue();
+				
+				if (!this.grcAdvTerms.isDisabled()) {
+					if (grcAdvTermValue < financeType.getGrcAdvMinTerms()) {
+						throw new WrongValueException(grcAdvTerms,
+								String.format("%s should be >= %s", grcMinLabel, grcMaxLabel));
+					} else if (grcAdvTermValue > aFinanceMain.getGraceTerms()) {
+						throw new WrongValueException(grcAdvTerms,
+								String.format("%s should be >= %s", grcGraceTerms, grcMaxLabel));
+					} 
+					
+					
+					else if (grcAdvTermValue > financeType.getGrcAdvMaxTerms()) {
+						throw new WrongValueException(grcAdvTerms,
+								String.format("%s should be >= %s", grcMaxLabel, grcMaxLabel));
+					}
+				}
+
+				aFinanceMain.setGrcAdvTerms(grcAdvTermValue);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+		}
+
+		if (financeType.isAdvIntersetReq()) {
+			aFinanceMain.setAdvType(financeType.getAdvType());
+			try {
+				int advTermValue=this.advTerms.getValue();
+				
+				if (!this.advTerms.isDisabled()) {
+					if (advTermValue < financeType.getGrcAdvMinTerms()) {
+						throw new WrongValueException(advTerms,
+								String.format("%s should be >= %s", grcMinLabel, grcMaxLabel));
+					} else if (advTermValue > aFinanceMain.getGraceTerms()) {
+						throw new WrongValueException(grcAdvTerms,
+								String.format("%s should be >= %s", grcGraceTerms, grcMinLabel));
+					} else if (advTermValue > financeType.getGrcAdvMaxTerms()) {
+						throw new WrongValueException(advTerms,
+								String.format("%s should be >= %s", grcMaxLabel, grcMaxLabel));
+					}
+				}
+				
+				aFinanceMain.setAdvTerms(advTermValue);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			aFinanceMain.setAdvStage(getComboboxValue(this.advStage));
+		}
+		
 		return wve;
 	}
 
@@ -19277,6 +19389,40 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		logger.info(Literal.LEAVING);
 	}
+	
+
+	private void doChangeAdvTypes() {
+		this.advTerms.setDisabled(true);
+		this.advStage.setDisabled(true);
+		this.advTerms.setValue(0);
+		if (this.advStage.getSelectedIndex() > 0) {
+			this.advStage.setSelectedIndex(0);
+		}
+
+		if (AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))
+				|| AdvanceType.UT.getCode().equals(getComboboxValue(this.advType))) {
+			this.advTerms.setDisabled(false);
+		}
+		
+		if (AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))) {
+			this.advStage.setDisabled(false);
+		}
+		this.advType.setDisabled(true);
+	}
+	
+	
+	private void doChangeGrcAdvTypes() {
+		this.grcAdvTerms.setDisabled(true);
+		this.grcAdvTerms.setValue(0);
+		
+		if (AdvanceType.AE.getCode().equals(getComboboxValue(this.grcAdvType))
+				|| AdvanceType.UT.getCode().equals(getComboboxValue(this.grcAdvType))) {
+			this.grcAdvTerms.setDisabled(false);
+		}
+		this.grcAdvType.setDisabled(true);
+	}
+	
+	
 
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;

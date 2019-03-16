@@ -712,6 +712,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
+	
+	private String grcAdvType;
+	private int grcAdvTerms;
+	private String advType;
+	private int advTerms;
+	private String advStage;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -4101,5 +4107,45 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setBusinessVerticalDesc(String businessVerticalDesc) {
 		this.businessVerticalDesc = businessVerticalDesc;
+	}
+
+	public String getGrcAdvType() {
+		return grcAdvType;
+	}
+
+	public void setGrcAdvType(String grcAdvType) {
+		this.grcAdvType = grcAdvType;
+	}
+
+	public int getGrcAdvTerms() {
+		return grcAdvTerms;
+	}
+
+	public void setGrcAdvTerms(int grcAdvTerms) {
+		this.grcAdvTerms = grcAdvTerms;
+	}
+
+	public String getAdvType() {
+		return advType;
+	}
+
+	public void setAdvType(String advType) {
+		this.advType = advType;
+	}
+
+	public int getAdvTerms() {
+		return advTerms;
+	}
+
+	public void setAdvTerms(int advTerms) {
+		this.advTerms = advTerms;
+	}
+
+	public String getAdvStage() {
+		return advStage;
+	}
+
+	public void setAdvStage(String advStage) {
+		this.advStage = advStage;
 	}
 }

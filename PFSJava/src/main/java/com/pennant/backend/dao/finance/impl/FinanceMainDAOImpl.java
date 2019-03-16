@@ -224,6 +224,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" , PromotionCode,RvwRateApplFor , SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin, ReAgeBucket, FinCategory, ProductCategory,EligibilityMethod,connector ");
 		selectSql.append(", AdvanceEMI, AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes");
 		selectSql.append(", BusinessVertical");
+		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
@@ -295,23 +296,24 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb, BpiAmount, ");
 		selectSql.append(
-				" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory,");
-		selectSql.append(" AdvanceEMI, AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,");
-		selectSql.append(" BusinessVertical,");
+				" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory ");
+		selectSql.append(" AdvanceEMI, AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor ");
+		selectSql.append(", BusinessVertical");
+		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" lovDescFinTypeName, lovDescFinBranchName, ");
-			selectSql.append(" BusinessVerticalCode, BusinessVerticalDesc,");
+			selectSql.append(", lovDescFinTypeName, lovDescFinBranchName, ");
+			selectSql.append(" BusinessVerticalCode, BusinessVerticalDesc ");
 			if (!isWIF) {
-				selectSql.append(" ReAgeBucket, FinLimitRef, ProcessAttributes, ");
+				selectSql.append(", ReAgeBucket, FinLimitRef, ProcessAttributes, ");
 				selectSql.append(" lovDescAccruedTillLBD, lovDescFinScheduleOn, finBranchProvinceCode,");
 				selectSql.append(
 						" lovDescFinDivision,LovDescStepPolicyName,CustStsDescription, lovDescAccountsOfficer, DsaCodeDesc,  ");
 				selectSql.append(
-						"  ReferralIdDesc ,EmployeeNameDesc, DmaCodeDesc , SalesDepartmentDesc,lovDescEntityCode,LOVDESCSOURCECITY,lovEligibilityMethod,lovDescEligibilityMethod,lovdescfinpurposename,connectorCode,connectorDesc, ");
+						"  ReferralIdDesc ,EmployeeNameDesc, DmaCodeDesc , SalesDepartmentDesc,lovDescEntityCode,LOVDESCSOURCECITY,lovEligibilityMethod,lovDescEligibilityMethod,lovdescfinpurposename,connectorCode,connectorDesc ");
 			}
 		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
+		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 
 		if (isWIF) {
@@ -641,10 +643,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,");
 		sql.append(
 				" FinCategory, ProductCategory, AdvanceEMI, AdvEMITerms, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,");
-		sql.append(" businessVertical,");
+		sql.append(" BusinessVertical ");
+		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage ");
 
 		if (!wif) {
-			sql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
+			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
 			sql.append(
 					" LimitValid, OverrideLimit,FinPurpose,FinStatus, FinStsReason, InitiateUser, BankName, Iban, AccountType, DdaReferenceNo, DeviationApproval,FinPreApprovedRef,MandateID,");
 			sql.append(" JointAccount,JointCustId,DownPayAccount, SecurityDeposit, RcdMaintainSts,FinCancelAc, ");
@@ -653,9 +656,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" DsaCode, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ReferralId,EmployeeName, DmaCode, SalesDepartment, QuickDisb, WifReference,");
 			sql.append(
-					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes,");
+					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes ");
 		}
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode)");
 		sql.append(" values (:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
@@ -689,9 +692,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb,:RvwRateApplFor ,:SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin,");
 		sql.append(
 				" :FinCategory, :ProductCategory, :AdvanceEMI, :AdvEMITerms, :BpiPftDaysBasis, :FixedTenorRate,:FixedRateTenor, ");
-		sql.append(" :BusinessVertical,");
+		sql.append(" :BusinessVertical ");
+		sql.append(", :GrcAdvType, :GrcAdvTerms, :AdvType, :AdvTerms, :AdvStage ");
 		if (!wif) {
-			sql.append(" :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR,");
+			sql.append(", :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR,");
 			sql.append(
 					" :LimitValid, :OverrideLimit,:FinPurpose,:FinStatus, :FinStsReason, :InitiateUser, :BankName, :Iban, :AccountType, :DdaReferenceNo, :DeviationApproval, :FinPreApprovedRef,:MandateID,");
 			sql.append(
@@ -702,9 +706,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" :DsaCode,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :ReferralId,:EmployeeName, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference,");
 			sql.append(
-					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes,");
+					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes ");
 		}
-		sql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
+		sql.append(", :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode)");
 
 		// Execute the SQL, binding the arguments.

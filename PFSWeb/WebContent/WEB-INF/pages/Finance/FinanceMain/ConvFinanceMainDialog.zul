@@ -672,6 +672,19 @@
 														value="${c:l('label_FinanceMainDialog_GrcMaxReqAmount.value')}" />
 													<currencyBox id="grcMaxAmount" />
 												</row>
+												<row id="row_grcAdvTypes" visible="false">
+													<label value="Grace Advance Type" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="grcAdvType" disabled="true"/>
+													</hbox>
+													<label value="Grace Advance Terms" />
+													<hbox>
+														<space spacing="2px" />
+														<intbox id="grcAdvTerms" />
+													</hbox>
+												</row>
+
 											</rows>
 										</grid>
 									</groupbox>
@@ -1018,6 +1031,28 @@
 														<space spacing="2px" sclass="mandatory" />
 														<intbox id="advEMITerms" width="45px" maxlength="3"
 															style="text-align:right" />
+													</hbox>
+												</row>
+												
+												
+												<row id="row_advTypes" visible="false">
+													<label value="Advance Type" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="advType" />
+													</hbox>
+													<label value="Advance Terms" />
+													<hbox>
+														<space spacing="2px"  />
+														<intbox id="advTerms"/>
+													</hbox>
+												</row>
+												
+												<row id="row_advStages" visible="false">
+													<label value="Advance Stage" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="advStage" />
 													</hbox>
 												</row>
 											</rows>

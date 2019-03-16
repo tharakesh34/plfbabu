@@ -94,6 +94,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -1877,6 +1878,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		return gstExecutionMap;
 	}
+	
+	@Override
+	public boolean getFeeTypeId(long feeTypeId, String finType, int moduleId, boolean originationFee) {
+		return finFeeDetailDAO.isFinTypeFeeExists(feeTypeId, finType, moduleId, originationFee);
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -1957,4 +1963,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
 	}
+
+	
 }

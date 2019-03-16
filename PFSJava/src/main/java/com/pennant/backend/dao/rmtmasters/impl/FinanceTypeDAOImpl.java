@@ -91,68 +91,71 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		FinanceType financeType = new FinanceType();
 		financeType.setId(id);
 
-		StringBuilder selectSql = new StringBuilder(
+		StringBuilder sql = new StringBuilder(
 				"SELECT FinType, Product,FinCategory, FinTypeDesc, FinCcy, FinDaysCalType,");
-		selectSql.append(" FinAcType, FinContingentAcType, FinBankContingentAcType, FinProvisionAcType,FinSuspAcType,");
-		selectSql.append(" FinIsGenRef, FinMaxAmount, FinMinAmount,FinIsOpenNewFinAc, FinDftStmtFrq,FinIsAlwMD, ");
-		selectSql.append(" FinSchdMthd, FInIsAlwGrace,FinHistRetension, EqualRepayment,FinRateType, ");
-		selectSql.append(" FinBaseRate,FinSplRate,FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq,  FinIsIntCpz,");
-		selectSql.append(" FinCpzFrq,  FinIsRvwAlw, FinRvwFrq,  FinGrcRateType, FinGrcBaseRate,");
-		selectSql.append(" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate,FinGrcDftIntFrq,");
-		selectSql.append(" FinGrcIsIntCpz, FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm,");
-		selectSql.append(" FinMaxTerm, FinDftTerms, FinRpyFrq,  finRepayMethod, FinIsAlwPartialRpy,");
-		selectSql.append(" FinIsAlwDifferment,FinMaxDifferment, FinIsAlwEarlyRpy, FinIsAlwEarlySettle,");
-		selectSql.append(" FinODRpyTries, AlwPlanDeferment,PlanDeferCount ,");
-		selectSql.append(" FinIsDwPayRequired,  FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd,");
-		selectSql.append(
+		sql.append(" FinAcType, FinContingentAcType, FinBankContingentAcType, FinProvisionAcType,FinSuspAcType,");
+		sql.append(" FinIsGenRef, FinMaxAmount, FinMinAmount,FinIsOpenNewFinAc, FinDftStmtFrq,FinIsAlwMD, ");
+		sql.append(" FinSchdMthd, FInIsAlwGrace,FinHistRetension, EqualRepayment,FinRateType, ");
+		sql.append(" FinBaseRate,FinSplRate,FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq,  FinIsIntCpz,");
+		sql.append(" FinCpzFrq,  FinIsRvwAlw, FinRvwFrq,  FinGrcRateType, FinGrcBaseRate,");
+		sql.append(" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate,FinGrcDftIntFrq,");
+		sql.append(" FinGrcIsIntCpz, FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm,");
+		sql.append(" FinMaxTerm, FinDftTerms, FinRpyFrq,  finRepayMethod, FinIsAlwPartialRpy,");
+		sql.append(" FinIsAlwDifferment,FinMaxDifferment, FinIsAlwEarlyRpy, FinIsAlwEarlySettle,");
+		sql.append(" FinODRpyTries, AlwPlanDeferment,PlanDeferCount ,");
+		sql.append(" FinIsDwPayRequired,  FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd,");
+		sql.append(
 				" FinSchCalCodeOnRvw, FinAssetType , FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity,FinIsActive,PftPayAcType,");
-		selectSql.append(" FinIsOpenPftPayAcc,FinGrcSchdMthd,FinIsAlwGrcRepay,FinMargin,FinGrcMargin,");
-		selectSql.append(" FinScheduleOn,FinGrcScheduleOn,FinCommitmentReq,FinCollateralReq,");
-		selectSql.append(" FinDepreciationReq,FinDepreciationFrq, ");
-		selectSql.append(" AllowRIAInvestment , OverrideLimit , LimitRequired ,");
-		selectSql.append(
-				" FinCommitmentOvrride , FinCollateralOvrride ,FinRepayPftOnFrq, FinPftUnChanged,ManualSchedule, ");
-		selectSql.append(
+		sql.append(" FinIsOpenPftPayAcc,FinGrcSchdMthd,FinIsAlwGrcRepay,FinMargin,FinGrcMargin,");
+		sql.append(" FinScheduleOn,FinGrcScheduleOn,FinCommitmentReq,FinCollateralReq,");
+		sql.append(" FinDepreciationReq,FinDepreciationFrq, ");
+		sql.append(" AllowRIAInvestment , OverrideLimit , LimitRequired ,");
+		sql.append(" FinCommitmentOvrride , FinCollateralOvrride ,FinRepayPftOnFrq, FinPftUnChanged,ManualSchedule, ");
+		sql.append(
 				" ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, ODMinCapAmount, ODMinCapAmount, FinDivision, ");
-		selectSql.append(
+		sql.append(
 				" StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate,");
-		selectSql.append(" AllowDownpayPgm,Remarks,AlwEarlyPayMethods,");
-		selectSql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
-		selectSql.append(
+		sql.append(" AllowDownpayPgm,Remarks,AlwEarlyPayMethods,");
+		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
+		sql.append(
 				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate, RollOverFinance,RollOverFrq,");
-		selectSql.append(
-				" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
-		selectSql.append(
+		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
+		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod ,RateChgAnyDay, ");
-		selectSql.append(
+		sql.append(
 				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , ");
-		selectSql.append(
+		sql.append(
 				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,AlwReage,AlwUnPlanEmiHoliday, ");
-		selectSql.append(
+		sql.append(
 				" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds,");
-		selectSql.append(
+		sql.append(
 				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode, AlwZeroIntAcc,");
-		selectSql.append(" AutoRejectionDays, TaxNoMand, PutCallRequired,");
+		sql.append(" AutoRejectionDays, TaxNoMand, PutCallRequired");
+
+		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
+		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMinTerms, AdvDefaultTerms");
+		sql.append(", AdvStage, DsfReq, CashCollateralReq");
+
 		if (type.contains("View")) {
-			selectSql.append(
-					" FinCategoryDesc, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName,");
-			selectSql.append(
-					" lovDescPftPayAcTypeName,lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode, ");
+			sql.append(
+					", FinCategoryDesc, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName");
+			sql.append(
+					", lovDescPftPayAcTypeName, lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode ");
 		}
 
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" , Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
-		selectSql.append(" FROM RMTFinanceTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType");
+		sql.append(" FROM RMTFinanceTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinType = :FinType");
 
-		logger.debug("selectListSql: " + selectSql.toString());
+		logger.debug("selectListSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
-			financeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeType = null;
@@ -176,64 +179,69 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		FinanceType financeType = new FinanceType();
 		financeType.setId(finType);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
+		StringBuilder sql = new StringBuilder();
+		sql.append(
 				" Select FinType, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType, FinAcType, FinContingentAcType, ");
-		selectSql.append(
+		sql.append(
 				" FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsOpenNewFinAc, FinIsAlwMD, FinSchdMthd, FInIsAlwGrace, ");
-		selectSql.append(" EqualRepayment, FinRateType, FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, ");
-		selectSql.append(
+		sql.append(" EqualRepayment, FinRateType, FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, ");
+		sql.append(
 				" FinDftIntFrq, FinIsIntCpz, FinCpzFrq, FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, ");
-		selectSql.append(
+		sql.append(
 				" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate, FinGrcDftIntFrq, FinGrcIsIntCpz, ");
-		selectSql.append(
+		sql.append(
 				" FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm, FinMaxTerm, FinDftTerms, FinRpyFrq, ");
-		selectSql.append(
+		sql.append(
 				" FInRepayMethod, finIsalwpartialrpy, FinIsAlwDifferment, FinMaxDifferment, FinIsActive, StepFinance, SteppingMandatory, ");
-		selectSql.append(" AlwManualSteps, AlwdStepPolicies, DftStepPolicy, FinIsDwPayRequired, FinRvwRateApplFor, ");
-		selectSql.append(" FinAlwRateChangeAnyDate,  FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw, AlwPlanDeferment, ");
-		selectSql.append(
+		sql.append(" AlwManualSteps, AlwdStepPolicies, DftStepPolicy, FinIsDwPayRequired, FinRvwRateApplFor, ");
+		sql.append(" FinAlwRateChangeAnyDate,  FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw, AlwPlanDeferment, ");
+		sql.append(
 				" PlanDeferCount, PftPayAcType, FinIsOpenPftPayAcc, FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, ");
-		selectSql.append(" FinMargin, FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, ");
-		selectSql.append(
+		sql.append(" FinMargin, FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, ");
+		sql.append(
 				" FinBankContingentAcType, FinProvisionAcType, AllowRIAInvestment, OverrideLimit, LimitRequired, ");
-		selectSql.append(
+		sql.append(
 				" FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ");
-		selectSql.append(" ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ");
-		selectSql
+		sql.append(" ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ");
+		sql
 				.append(" ODMaxWaiverPerc, ODMinCapAmount, FinDivision, FinSuspAcType, Product, StartDate, EndDate, AllowDownpayPgm, ");
-		selectSql.append(
+		sql.append(
 				" PastduePftCalMthd,PastduePftMargin,  AlwAdvanceRent, GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, ");
-		selectSql
+		sql
 				.append(" RpyAdvMargin, RpyAdvPftRate, RollOverFinance, RollOverFrq, DownPayRule, AlwMultiPartyDisb, ");
-		selectSql.append(
+		sql.append(
 				" CollateralType, TDSApplicable,ApplyGrcPricing, ApplyRpyPricing, DroplineOD, DroppingMethod, ");
-		selectSql.append(" RateChgAnyDay, ManualSchedule, AlwBPI , BpiTreatment , PftDueSchOn , ");
-		selectSql.append(
+		sql.append(" RateChgAnyDay, ManualSchedule, AlwBPI , BpiTreatment , PftDueSchOn , ");
+		sql.append(
 				" PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,PlanEMIHLockPeriod , PlanEMICpz , ");
-		selectSql.append(
+		sql.append(
 				" UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, ");
-		selectSql.append(
+		sql.append(
 				" MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,AlwReage,AlwUnPlanEmiHoliday,alwMaxDisbCheckReq,quickDisb,ProductCategory,DeveloperFinance, CostOfFunds, ");
-		selectSql.append(
+		sql.append(
 				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc,");
-		selectSql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired");
+		sql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired");
+		
+		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
+		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms, AdvStage");
+		sql.append(", DsfReq, CashCollateralReq");
+		
 		if (type.contains("ORGView")) {
-			selectSql.append(
+			sql.append(
 					" ,DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
-			selectSql.append(
+			sql.append(
 					" GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType, RpyHierarchy, LovDescEntityCode, LovDescEntityDesc");
 		}
-		selectSql.append(" FROM RMTFinanceTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType = :FinType");
+		sql.append(" FROM RMTFinanceTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinType = :FinType");
 
-		logger.debug("selectListSql: " + selectSql.toString());
+		logger.debug("selectListSql: " + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
 
 		try {
-			financeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			financeType = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeType = null;
@@ -358,105 +366,113 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	@Override
 	public String save(FinanceType financeType, String type) {
 		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTFinanceTypes");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
+		StringBuilder sql = new StringBuilder("Insert Into RMTFinanceTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(
 				"(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, FinAcType, FinContingentAcType,");
-		insertSql.append(" FinBankContingentAcType, FinProvisionAcType,FinSuspAcType, FinIsGenRef,");
-		insertSql.append(" FinMaxAmount, FinMinAmount,  FinIsOpenNewFinAc, FinDftStmtFrq,  FinIsAlwMD,");
-		insertSql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, FinRateType,");
-		insertSql.append(
+		sql.append(" FinBankContingentAcType, FinProvisionAcType,FinSuspAcType, FinIsGenRef,");
+		sql.append(" FinMaxAmount, FinMinAmount,  FinIsOpenNewFinAc, FinDftStmtFrq,  FinIsAlwMD,");
+		sql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, FinRateType,");
+		sql.append(
 				" FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate,FinDftIntFrq,  FinIsIntCpz, FinCpzFrq,");
-		insertSql.append(
+		sql.append(
 				" FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, FinGrcSplRate, FinGrcIntRate, FInGrcMinRate,");
-		insertSql.append(
+		sql.append(
 				" FinGrcMaxRate,FinGrcDftIntFrq,  FinGrcIsIntCpz, FinGrcCpzFrq,  FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm,");
-		insertSql.append(
+		sql.append(
 				" FinMaxTerm, FinDftTerms, FinRpyFrq,  finRepayMethod,FinIsAlwPartialRpy, FinIsAlwDifferment, FinMaxDifferment,");
-		insertSql.append(" AlwPlanDeferment, PlanDeferCount,FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, ");
-		insertSql.append(" FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, ");
-		insertSql.append(" FinAlwRateChangeAnyDate, ");
-		insertSql.append(
+		sql.append(" AlwPlanDeferment, PlanDeferCount,FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, ");
+		sql.append(" FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, ");
+		sql.append(" FinAlwRateChangeAnyDate, ");
+		sql.append(
 				" FinSchCalCodeOnRvw,FinAssetType ,FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity, ");
-		insertSql.append(
+		sql.append(
 				" FinIsActive, PftPayAcType,FinIsOpenPftPayAcc	,Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		insertSql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
-		insertSql.append("	FinCommitmentReq,FinCollateralReq,FinDepreciationReq,FinDepreciationFrq,");
-		insertSql.append(" FinMargin,FinGrcMargin,FinScheduleOn,FinGrcScheduleOn, ");
-		insertSql.append(" FinPftUnChanged ,ManualSchedule,");
-		insertSql.append(
+		sql.append(" NextTaskId, RecordType, WorkflowId ,FinGrcSchdMthd,FinIsAlwGrcRepay,");
+		sql.append("	FinCommitmentReq,FinCollateralReq,FinDepreciationReq,FinDepreciationFrq,");
+		sql.append(" FinMargin,FinGrcMargin,FinScheduleOn,FinGrcScheduleOn, ");
+		sql.append(" FinPftUnChanged ,ManualSchedule,");
+		sql.append(
 				"  AllowRIAInvestment , OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, ");
-		insertSql.append(
+		sql.append(
 				"  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, ODMinCapAmount, FinDivision, ");
-		insertSql.append(
+		sql.append(
 				"  StepFinance , SteppingMandatory , AlwManualSteps , AlwdStepPolicies, DftStepPolicy, StartDate, EndDate, ");
-		insertSql.append(" AllowDownpayPgm, Remarks, AlwEarlyPayMethods ,ProductCategory, ");
-		insertSql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
-		insertSql.append(
+		sql.append(" AllowDownpayPgm, Remarks, AlwEarlyPayMethods ,ProductCategory, ");
+		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
+		sql.append(
 				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate , RollOverFinance, RollOverFrq,");
-		insertSql.append(
+		sql.append(
 				" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
-		insertSql.append(
+		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
-		insertSql.append(
+		sql.append(
 				" AlwBPI , BpiTreatment , PftDueSchOn , PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,AlwReage,AlwUnPlanEmiHoliday,QuickDisb, chequeCaptureReq, ");
-		insertSql.append(
+		sql.append(
 				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,MaxUnplannedEmi, MaxReAgeHolidays, ");
-		insertSql.append(
+		sql.append(
 				" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck, PartiallySecured, ");
-		insertSql.append(
+		sql.append(
 				" alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc, ");
-		insertSql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired ) ");
-		insertSql.append(
+		sql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired  ");
+		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
+		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms, AdvStage");
+		sql.append(", DsfReq, CashCollateralReq ) ");
+		
+		sql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
-		insertSql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
-		insertSql.append(" :FinMaxAmount, :FinMinAmount,  :FinIsOpenNewFinAc, :FinDftStmtFrq,  :FinIsAlwMD,");
-		insertSql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :EqualRepayment, :FinRateType,");
-		insertSql.append(
+		sql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
+		sql.append(" :FinMaxAmount, :FinMinAmount,  :FinIsOpenNewFinAc, :FinDftStmtFrq,  :FinIsAlwMD,");
+		sql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :EqualRepayment, :FinRateType,");
+		sql.append(
 				" :FinBaseRate, :FinSplRate, :FinIntRate, :FInMinRate, :FinMaxRate,:FinDftIntFrq,  :FinIsIntCpz, :FinCpzFrq,");
-		insertSql.append(
+		sql.append(
 				" :FinIsRvwAlw, :FinRvwFrq, :FinGrcRateType, :FinGrcBaseRate, :FinGrcSplRate, :FinGrcIntRate, :FInGrcMinRate,");
-		insertSql.append(
+		sql.append(
 				" :FinGrcMaxRate,:FinGrcDftIntFrq,  :FinGrcIsIntCpz, :FinGrcCpzFrq,  :FinGrcIsRvwAlw, :FinGrcRvwFrq, :FinMinTerm,");
-		insertSql.append(
+		sql.append(
 				" :FinMaxTerm, :FinDftTerms, :FinRpyFrq,  :finRepayMethod,:FinIsAlwPartialRpy, :FinIsAlwDifferment, :FinMaxDifferment,");
-		insertSql.append(
+		sql.append(
 				" :AlwPlanDeferment, :PlanDeferCount,:FinIsAlwEarlyRpy, :FinIsAlwEarlySettle, :FinODRpyTries, ");
-		insertSql.append(" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, ");
-		insertSql.append(
+		sql.append(" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, ");
+		sql.append(
 				" :FinSchCalCodeOnRvw,:FinAssetType ,:FinDepositRestrictedTo,:FinAEBuyOrInception,:FinAESellOrMaturity, ");
-		insertSql.append(
+		sql.append(
 				" :FinIsActive, :PftPayAcType,:FinIsOpenPftPayAcc ,:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, ");
-		insertSql.append(" :NextTaskId, :RecordType, :WorkflowId ,:FinGrcSchdMthd,:FinIsAlwGrcRepay,");
-		insertSql.append(" :FinCommitmentReq,:FinCollateralReq,:FinDepreciationReq,:FinDepreciationFrq,");
-		insertSql.append(" :FinMargin,:FinGrcMargin,:FinScheduleOn,:FinGrcScheduleOn, ");
-		insertSql.append(" :FinPftUnChanged ,:ManualSchedule,");
-		insertSql.append(
+		sql.append(" :NextTaskId, :RecordType, :WorkflowId ,:FinGrcSchdMthd,:FinIsAlwGrcRepay,");
+		sql.append(" :FinCommitmentReq,:FinCollateralReq,:FinDepreciationReq,:FinDepreciationFrq,");
+		sql.append(" :FinMargin,:FinGrcMargin,:FinScheduleOn,:FinGrcScheduleOn, ");
+		sql.append(" :FinPftUnChanged ,:ManualSchedule,");
+		sql.append(
 				" :AllowRIAInvestment , :OverrideLimit, :LimitRequired, :FinCommitmentOvrride, :FinCollateralOvrride , :FinRepayPftOnFrq, ");
-		insertSql.append(
+		sql.append(
 				" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :ODMinCapAmount, :FinDivision, ");
-		insertSql.append(
+		sql.append(
 				" :StepFinance , :SteppingMandatory , :AlwManualSteps , :AlwdStepPolicies, :DftStepPolicy, :StartDate, :EndDate, ");
-		insertSql.append(" :AllowDownpayPgm, :Remarks, :AlwEarlyPayMethods ,:ProductCategory, ");
-		insertSql.append(" :PastduePftCalMthd,:PastduePftMargin,:AlwAdvanceRent,");
-		insertSql.append(
+		sql.append(" :AllowDownpayPgm, :Remarks, :AlwEarlyPayMethods ,:ProductCategory, ");
+		sql.append(" :PastduePftCalMthd,:PastduePftMargin,:AlwAdvanceRent,");
+		sql.append(
 				" :GrcAdvBaseRate , :GrcAdvMargin , :GrcAdvPftRate, :RpyAdvBaseRate , :RpyAdvMargin , :RpyAdvPftRate , :RollOverFinance, :RollOverFrq,");
-		insertSql.append(
+		sql.append(
 				" :DownPayRule, :FinSuspTrigger, :FinSuspRemarks, :AlwMultiPartyDisb, :TDSApplicable, :CollateralType, ");
-		insertSql.append(
+		sql.append(
 				" :ApplyGrcPricing, :GrcPricingMethod, :ApplyRpyPricing, :RpyPricingMethod, :RpyHierarchy, :DroplineOD, :DroppingMethod, :RateChgAnyDay,");
-		insertSql.append(
+		sql.append(
 				" :AlwBPI , :BpiTreatment , :PftDueSchOn , :PlanEMIHAlw , :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :AlwReage, :AlwUnPlanEmiHoliday, :QuickDisb, :chequeCaptureReq, ");
-		insertSql.append(
+		sql.append(
 				" :PlanEMIHLockPeriod , :PlanEMICpz , :UnPlanEMIHLockPeriod , :UnPlanEMICpz , :ReAgeCpz, :FddLockPeriod, :AlwdRpyMethods,:MaxUnplannedEmi, :MaxReAgeHolidays,  ");
-		insertSql.append(
+		sql.append(
 				" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck, :PartiallySecured, ");
-		insertSql.append(
+		sql.append(
 				" :alwAdvEMI, :advEMIMinTerms, :advEMIMaxTerms, :advEMIDftTerms, :advEMISchdMthd, :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
-		insertSql.append(" :AutoRejectionDays, :TaxNoMand , :PutCallRequired ) ");
+		sql.append(" :AutoRejectionDays, :TaxNoMand , :PutCallRequired ");
+		sql.append(", :AdvIntersetReq, :AdvType, :AdvMinTerms, :AdvMaxTerms, :AdvDefaultTerms");
+		sql.append(", :GrcAdvIntersetReq, :GrcAdvType, :GrcAdvMinTerms, :GrcAdvMaxTerms, :GrcAdvDefaultTerms, :AdvStage");
+		sql.append(", :DsfReq, :CashCollateralReq ) ");
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		logger.debug("Leaving");
 		return financeType.getId();
@@ -479,106 +495,109 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	public void update(FinanceType financeType, String type) {
 		int recordCount = 0;
 		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update RMTFinanceTypes");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
+		StringBuilder sql = new StringBuilder("Update RMTFinanceTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(
 				" Set Product = :Product,  FinTypeDesc = :FinTypeDesc, FinCategory =:FinCategory, FinCcy = :FinCcy,");
-		updateSql.append(
+		sql.append(
 				" FinDaysCalType = :FinDaysCalType,FinAcType = :FinAcType, FinContingentAcType = :FinContingentAcType,");
-		updateSql.append(
+		sql.append(
 				" FinBankContingentAcType= :FinBankContingentAcType, FinProvisionAcType= :FinProvisionAcType,FinSuspAcType=:FinSuspAcType,");
-		updateSql.append(" FinIsGenRef = :FinIsGenRef, FinMaxAmount = :FinMaxAmount,FinMinAmount = :FinMinAmount,");
-		updateSql.append(
+		sql.append(" FinIsGenRef = :FinIsGenRef, FinMaxAmount = :FinMaxAmount,FinMinAmount = :FinMinAmount,");
+		sql.append(
 				" FinIsOpenNewFinAc = :FinIsOpenNewFinAc, FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
-		updateSql.append(
+		sql.append(
 				" FinSchdMthd = :FinSchdMthd, FInIsAlwGrace = :FInIsAlwGrace, FinHistRetension = :FinHistRetension,");
-		updateSql.append(" EqualRepayment = :EqualRepayment,");
-		updateSql.append(" FinRateType = :FinRateType, FinBaseRate = :FinBaseRate, FinSplRate = :FinSplRate,");
-		updateSql.append(
+		sql.append(" EqualRepayment = :EqualRepayment,");
+		sql.append(" FinRateType = :FinRateType, FinBaseRate = :FinBaseRate, FinSplRate = :FinSplRate,");
+		sql.append(
 				" FinIntRate = :FinIntRate,FInMinRate = :FInMinRate, FinMaxRate = :FinMaxRate, FinDftIntFrq = :FinDftIntFrq,");
-		updateSql.append(
+		sql.append(
 				" FinIsIntCpz = :FinIsIntCpz, FinCpzFrq = :FinCpzFrq, FinIsRvwAlw = :FinIsRvwAlw,FinRvwFrq = :FinRvwFrq, ");
-		updateSql.append(
+		sql.append(
 				" FinGrcRateType = :FinGrcRateType, FinGrcBaseRate = :FinGrcBaseRate,FinGrcSplRate = :FinGrcSplRate,");
-		updateSql.append(
+		sql.append(
 				" FinGrcIntRate = :FinGrcIntRate, FInGrcMinRate = :FInGrcMinRate, FinGrcMaxRate = :FinGrcMaxRate,");
-		updateSql.append(
+		sql.append(
 				" FinGrcDftIntFrq = :FinGrcDftIntFrq,  FinGrcIsIntCpz = :FinGrcIsIntCpz, FinGrcCpzFrq = :FinGrcCpzFrq,");
-		updateSql.append(" FinGrcIsRvwAlw = :FinGrcIsRvwAlw, FinGrcRvwFrq = :FinGrcRvwFrq,FinMinTerm = :FinMinTerm,");
-		updateSql.append(" FinMaxTerm = :FinMaxTerm, FinDftTerms = :FinDftTerms, FinRpyFrq = :FinRpyFrq,");
-		updateSql.append(" finRepayMethod = :finRepayMethod, FinIsAlwPartialRpy = :FinIsAlwPartialRpy,");
-		updateSql.append(
+		sql.append(" FinGrcIsRvwAlw = :FinGrcIsRvwAlw, FinGrcRvwFrq = :FinGrcRvwFrq,FinMinTerm = :FinMinTerm,");
+		sql.append(" FinMaxTerm = :FinMaxTerm, FinDftTerms = :FinDftTerms, FinRpyFrq = :FinRpyFrq,");
+		sql.append(" finRepayMethod = :finRepayMethod, FinIsAlwPartialRpy = :FinIsAlwPartialRpy,");
+		sql.append(
 				" FinIsAlwDifferment = :FinIsAlwDifferment, FinMaxDifferment= :FinMaxDifferment, AlwPlanDeferment=:AlwPlanDeferment,");
-		updateSql.append(
+		sql.append(
 				" PlanDeferCount=:PlanDeferCount, FinIsAlwEarlyRpy = :FinIsAlwEarlyRpy, FinIsAlwEarlySettle = :FinIsAlwEarlySettle,");
-		updateSql.append(" FinODRpyTries = :FinODRpyTries,");
-		updateSql.append(" FinIsDwPayRequired = :FinIsDwPayRequired,");
-		updateSql.append(
+		sql.append(" FinODRpyTries = :FinODRpyTries,");
+		sql.append(" FinIsDwPayRequired = :FinIsDwPayRequired,");
+		sql.append(
 				" FinRvwRateApplFor = :FinRvwRateApplFor,FinIsIntCpzAtGrcEnd = :FinIsIntCpzAtGrcEnd,FinAlwRateChangeAnyDate = :FinAlwRateChangeAnyDate,  ");
-		updateSql.append(
+		sql.append(
 				" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,FinDepositRestrictedTo=:FinDepositRestrictedTo,");
-		updateSql.append(
+		sql.append(
 				" FinAEBuyOrInception=:FinAEBuyOrInception,FinAESellOrMaturity=:FinAESellOrMaturity,FinIsActive = :FinIsActive,");
-		updateSql.append(
+		sql.append(
 				" PftPayAcType=:PftPayAcType,FinIsOpenPftPayAcc=:FinIsOpenPftPayAcc,Version = :Version ,LastMntBy = :LastMntBy,LastMntOn = :LastMntOn,");
-		updateSql.append(
+		sql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(
+		sql.append(
 				" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,FinGrcSchdMthd=:FinGrcSchdMthd, ");
-		updateSql.append(
+		sql.append(
 				" FinIsAlwGrcRepay=:FinIsAlwGrcRepay,FinScheduleOn=:FinScheduleOn,FinGrcScheduleOn=:FinGrcScheduleOn,");
-		updateSql.append(
+		sql.append(
 				" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,GrcAdvBaseRate=:GrcAdvBaseRate , GrcAdvMargin=:GrcAdvMargin , ");
-		updateSql.append(
+		sql.append(
 				" GrcAdvPftRate=:GrcAdvPftRate, RpyAdvBaseRate=:RpyAdvBaseRate , RpyAdvMargin=:RpyAdvMargin , RpyAdvPftRate=:RpyAdvPftRate,");
-		updateSql.append(
+		sql.append(
 				" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,FinDepreciationReq=:FinDepreciationReq,");
-		updateSql.append(" FinDepreciationFrq=:FinDepreciationFrq ,");
-		updateSql.append(" FinPftUnChanged=:FinPftUnChanged ,ManualSchedule = :ManualSchedule,");
-		updateSql.append(" AllowRIAInvestment =:AllowRIAInvestment , OverrideLimit=:OverrideLimit, ");
-		updateSql.append(
+		sql.append(" FinDepreciationFrq=:FinDepreciationFrq ,");
+		sql.append(" FinPftUnChanged=:FinPftUnChanged ,ManualSchedule = :ManualSchedule,");
+		sql.append(" AllowRIAInvestment =:AllowRIAInvestment , OverrideLimit=:OverrideLimit, ");
+		sql.append(
 				" LimitRequired=:LimitRequired ,FinCommitmentOvrride=:FinCommitmentOvrride ,FinCollateralOvrride=:FinCollateralOvrride , FinRepayPftOnFrq =:FinRepayPftOnFrq, ");
-		updateSql.append(
+		sql.append(
 				" ApplyODPenalty =:ApplyODPenalty , ODIncGrcDays =:ODIncGrcDays, ODChargeType=:ODChargeType , ODGraceDays=:ODGraceDays , ");
-		updateSql.append(
+		sql.append(
 				" ODChargeCalOn=:ODChargeCalOn , ODChargeAmtOrPerc=:ODChargeAmtOrPerc , ODAllowWaiver=:ODAllowWaiver , ODMaxWaiverPerc=:ODMaxWaiverPerc, ODMinCapAmount=:ODMinCapAmount, FinDivision=:FinDivision, ");
-		updateSql.append(
+		sql.append(
 				" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy,");
-		updateSql.append(" StartDate=:StartDate, EndDate=:EndDate, ");
-		updateSql
+		sql.append(" StartDate=:StartDate, EndDate=:EndDate, ");
+		sql
 				.append(" AllowDownpayPgm=:AllowDownpayPgm, Remarks=:Remarks, AlwEarlyPayMethods=:AlwEarlyPayMethods,");
-		updateSql.append("  PastduePftCalMthd=:PastduePftCalMthd,PastduePftMargin=:PastduePftMargin,");
-		updateSql.append(
+		sql.append("  PastduePftCalMthd=:PastduePftCalMthd,PastduePftMargin=:PastduePftMargin,");
+		sql.append(
 				" AlwAdvanceRent=:AlwAdvanceRent, RollOverFinance=:RollOverFinance, RollOverFrq = :RollOverFrq, ");
-		updateSql.append(" DownPayRule=:DownPayRule, ProductCategory=:ProductCategory,");
-		updateSql.append(
+		sql.append(" DownPayRule=:DownPayRule, ProductCategory=:ProductCategory,");
+		sql.append(
 				" FinSuspTrigger=:FinSuspTrigger, FinSuspRemarks=:FinSuspRemarks , AlwMultiPartyDisb = :AlwMultiPartyDisb , TDSApplicable=:TDSApplicable, CollateralType = :CollateralType, ");
-		updateSql.append(
+		sql.append(
 				" ApplyGrcPricing = :ApplyGrcPricing, GrcPricingMethod = :GrcPricingMethod, ApplyRpyPricing = :ApplyRpyPricing, RpyPricingMethod = :RpyPricingMethod, RpyHierarchy = :RpyHierarchy, ");
-		updateSql.append(" DroplineOD = :DroplineOD, DroppingMethod = :DroppingMethod, RateChgAnyDay=:RateChgAnyDay,");
-		updateSql.append(
+		sql.append(" DroplineOD = :DroplineOD, DroppingMethod = :DroppingMethod, RateChgAnyDay=:RateChgAnyDay,");
+		sql.append(
 				" AlwBPI=:AlwBPI , BpiTreatment=:BpiTreatment , PftDueSchOn=:PftDueSchOn , PlanEMIHAlw =:PlanEMIHAlw , PlanEMIHMethod =:PlanEMIHMethod , PlanEMIHMaxPerYear =:PlanEMIHMaxPerYear , PlanEMIHMax=:PlanEMIHMax , ");
-		updateSql.append(
+		sql.append(
 				" PlanEMIHLockPeriod=:PlanEMIHLockPeriod , PlanEMICpz=:PlanEMICpz , UnPlanEMIHLockPeriod=:UnPlanEMIHLockPeriod , UnPlanEMICpz=:UnPlanEMICpz ,AlwReage=:AlwReage,AlwUnPlanEmiHoliday=:AlwUnPlanEmiHoliday, ");
-		updateSql.append(
+		sql.append(
 				" ReAgeCpz=:ReAgeCpz, FddLockPeriod=:FddLockPeriod, AlwdRpyMethods=:AlwdRpyMethods, MaxUnplannedEmi=:MaxUnplannedEmi, MaxReAgeHolidays=:MaxReAgeHolidays, chequeCaptureReq = :chequeCaptureReq, ");
-		updateSql.append(
+		sql.append(
 				" RoundingMode=:RoundingMode ,RoundingTarget=:RoundingTarget, FrequencyDays=:FrequencyDays,AlwMaxDisbCheckReq=:AlwMaxDisbCheckReq,QuickDisb=:QuickDisb, ProfitCenterID = :ProfitCenterID, DeveloperFinance = :DeveloperFinance, CostOfFunds = :CostOfFunds,");
-		updateSql.append(" FinLTVCheck = :FinLTVCheck, PartiallySecured = :PartiallySecured,");
-		updateSql.append(
+		sql.append(" FinLTVCheck = :FinLTVCheck, PartiallySecured = :PartiallySecured,");
+		sql.append(
 				" alwAdvEMI = :alwAdvEMI, advEMIMinTerms = :advEMIMinTerms, advEMIMaxTerms = :advEMIMaxTerms, advEMIDftTerms = :advEMIDftTerms, advEMISchdMthd = :advEMISchdMthd, bpiPftDaysBasis = :bpiPftDaysBasis, eligibilityMethods = :eligibilityMethods,");
-		updateSql.append(" alwHybridRate = :alwHybridRate, fixedRateTenor = :fixedRateTenor, ODRuleCode = :ODRuleCode, AlwZeroIntAcc = :AlwZeroIntAcc, ");
-		updateSql.append(" AutoRejectionDays = :AutoRejectionDays, TaxNoMand = :TaxNoMand ,");
-		updateSql.append(" PutCallRequired= :PutCallRequired ");
+		sql.append(" alwHybridRate = :alwHybridRate, fixedRateTenor = :fixedRateTenor, ODRuleCode = :ODRuleCode, AlwZeroIntAcc = :AlwZeroIntAcc, ");
+		sql.append(" AutoRejectionDays = :AutoRejectionDays, TaxNoMand = :TaxNoMand ,");
+		sql.append(" PutCallRequired= :PutCallRequired ");
 
-		updateSql.append(" Where FinType =:FinType");
+		sql.append(", GrcAdvIntersetReq= :GrcAdvIntersetReq, GrcAdvType= :GrcAdvType, GrcAdvMinTerms= :GrcAdvMinTerms, GrcAdvMaxTerms= :GrcAdvMaxTerms, GrcAdvDefaultTerms= :GrcAdvDefaultTerms");
+		sql.append(", AdvIntersetReq= :AdvIntersetReq, AdvType= :AdvType, AdvMinTerms= :AdvMinTerms, AdvMaxTerms= :AdvMaxTerms, AdvDefaultTerms= :AdvDefaultTerms");
+		sql.append(", AdvStage= :AdvStage, DsfReq= :DsfReq, CashCollateralReq= :CashCollateralReq");
+		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
+			sql.append(" AND Version= :Version-1");
 		}
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

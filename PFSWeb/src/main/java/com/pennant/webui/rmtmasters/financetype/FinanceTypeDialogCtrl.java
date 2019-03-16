@@ -130,6 +130,8 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -572,6 +574,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox cbAdvEMIMethod;
 	protected Space space_advEMIMethod;
 	protected Checkbox putCallRequired;
+
+	protected Checkbox advIntersetReq;
+	protected Combobox advType;
+	protected Intbox advMinTerms;
+	protected Intbox advMaxTerms;
+	protected Intbox advDefaultTerms;
+
+	protected Checkbox grcAdvIntersetReq;
+	protected Combobox grcAdvType;
+	protected Intbox grcAdvMinTerms;
+	protected Intbox grcAdvMaxTerms;
+	protected Intbox grcAdvDefaultTerms;
+	protected Combobox advStage;
+	protected Checkbox dsfReq;
+	protected Checkbox cashCollateralReq;
 
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	FinanceType fintypeLTVCheck = null;
@@ -1641,6 +1658,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
 
+		this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
+		fillList(this.grcAdvType, AdvanceType.getList(), aFinanceType.getGrcAdvType());
+		doChangeGrcAdvTypes();
+		this.grcAdvMaxTerms.setValue(aFinanceType.getGrcAdvMaxTerms());
+		this.grcAdvMinTerms.setValue(aFinanceType.getGrcAdvMinTerms());
+		this.grcAdvDefaultTerms.setValue(aFinanceType.getGrcAdvDefaultTerms());
+
+		this.advIntersetReq.setChecked(aFinanceType.isAdvIntersetReq());
+		fillList(this.advType, AdvanceType.getList(), aFinanceType.getAdvType());
+		doChangeAdvTypes();
+		this.advMinTerms.setValue(aFinanceType.getAdvMinTerms());
+		this.advMaxTerms.setValue(aFinanceType.getAdvMaxTerms());
+		this.advDefaultTerms.setValue(aFinanceType.getAdvDefaultTerms());
+
+		fillList(this.advStage, AdvanceStage.getList(), aFinanceType.getAdvStage());
+		this.dsfReq.setChecked(aFinanceType.isDsfReq());
+		this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
+
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
 
@@ -2429,6 +2464,73 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			try {
+				aFinanceType.setGrcAdvIntersetReq(this.grcAdvIntersetReq.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				aFinanceType.setGrcAdvType(getComboboxValue(this.grcAdvType));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			int grcMinTerms = grcAdvMinTerms.getValue();
+			int grcMaxTerms = grcAdvMaxTerms.getValue();
+			int grcDeftTerms = grcAdvDefaultTerms.getValue();
+
+			String grcMinLabel = "Minimum Advance Terms";
+			String grcMaxLabel = "Maximum Advance Terms";
+			String grcDftLabel = "Default Advance Terms";
+
+			try {
+				if (!this.grcAdvMinTerms.isDisabled()) {
+					if (grcMinTerms > grcMaxTerms) {
+						throw new WrongValueException(grcAdvMinTerms,
+								String.format("%s should be <= %s", grcMinLabel, grcMaxLabel));
+					} else if (grcMinTerms > grcDeftTerms) {
+						throw new WrongValueException(grcAdvMinTerms,
+								String.format("%s should be <= %s", grcMinLabel, grcDftLabel));
+					}
+				}
+
+				aFinanceType.setGrcAdvMinTerms(grcMinTerms);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (!this.grcAdvMaxTerms.isDisabled()) {
+					if (grcMaxTerms < grcMinTerms) {
+						throw new WrongValueException(grcAdvMaxTerms,
+								String.format("%s should be >= %s", grcMaxLabel, grcMinLabel));
+					} else if (grcMaxTerms < grcDeftTerms) {
+						throw new WrongValueException(grcAdvMaxTerms,
+								String.format("%s should be >= %s", grcMaxLabel, grcDftLabel));
+					}
+				}
+
+				aFinanceType.setGrcAdvMaxTerms(grcMaxTerms);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (!this.grcAdvDefaultTerms.isDisabled()) {
+					if (grcDeftTerms < grcMinTerms) {
+						throw new WrongValueException(grcAdvDefaultTerms,
+								String.format("%s should be >= %s", grcDftLabel, grcMinLabel));
+					} else if (grcDeftTerms > grcMaxTerms) {
+						throw new WrongValueException(grcAdvDefaultTerms,
+								String.format("%s should be <= %s", grcDftLabel, grcMaxLabel));
+					}
+				}
+				aFinanceType.setGrcAdvDefaultTerms(grcDeftTerms);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		try {
@@ -2762,6 +2864,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
 		try {
 
 			int minTerms = this.finMinTerm.intValue();
@@ -3201,6 +3304,91 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			aFinanceType.setAdvIntersetReq(this.advIntersetReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setAdvType(getComboboxValue(this.advType));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		int advMinTerms = this.advMinTerms.getValue();
+		int advMaxTerms = this.advMaxTerms.getValue();
+		int advDefaultTerms = this.advDefaultTerms.getValue();
+
+		String grcMinLabel = "Minimun Advance Terms";
+		String grcMaxLabel = "Maximum Advance Terms";
+		String grcDftLabel = "Default Advance Terms";
+
+		try {
+			if (!this.grcAdvMinTerms.isDisabled()) {
+				if (advMinTerms > advMaxTerms) {
+					throw new WrongValueException(this.advMinTerms,
+							String.format("%s should be <= %s", grcMinLabel, grcMaxLabel));
+				} else if (advMinTerms > advDefaultTerms) {
+					throw new WrongValueException(this.advMinTerms,
+							String.format("%s should be <= %s", grcMinLabel, grcDftLabel));
+				}
+			}
+
+			aFinanceType.setAdvMinTerms(advMinTerms);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!this.grcAdvMaxTerms.isDisabled()) {
+				if (advMaxTerms < advMinTerms) {
+					throw new WrongValueException(grcAdvMaxTerms,
+							String.format("%s should be >= %s", grcMaxLabel, grcMinLabel));
+				} else if (advMaxTerms < advDefaultTerms) {
+					throw new WrongValueException(grcAdvMaxTerms,
+							String.format("%s should be >= %s", grcMaxLabel, grcDftLabel));
+				}
+			}
+
+			aFinanceType.setAdvMaxTerms(advMaxTerms);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!this.grcAdvDefaultTerms.isDisabled()) {
+				if (advDefaultTerms < advMinTerms) {
+					throw new WrongValueException(grcAdvDefaultTerms,
+							String.format("%s should be >= %s", grcDftLabel, grcMinLabel));
+				} else if (advDefaultTerms > advMaxTerms) {
+					throw new WrongValueException(grcAdvDefaultTerms,
+							String.format("%s should be <= %s", grcDftLabel, grcMaxLabel));
+				}
+			}
+			aFinanceType.setAdvDefaultTerms(advDefaultTerms);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setAdvStage(getComboboxValue(advStage));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setDsfReq(this.dsfReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setCashCollateralReq(cashCollateralReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		if (isOverdraft) {
 			showErrorDetails(wve, basicDetails);
@@ -3427,6 +3615,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		if (isOverdraft) {
+			showErrorDetails(wve, basicDetails);
+		} else {
+			showErrorDetails(wve, extendedDetails);
 		}
 
 		if (isOverdraft) {
@@ -3882,6 +4076,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.autoRejectionDays.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
 		}
+		
+		
+		if(this.advIntersetReq.isChecked()){
+			if (!this.advType.isDisabled()) {
+				this.advType.setConstraint(new StaticListValidator(AdvanceType.getList(),
+						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
+			}
+		}
+		
+		if(this.grcAdvIntersetReq.isChecked()){
+			if (!this.grcAdvType.isDisabled()) {
+				this.grcAdvType.setConstraint(new StaticListValidator(AdvanceType.getList(),
+						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
+			}
+		}
 
 		logger.debug("Leaving");
 	}
@@ -3934,6 +4143,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cbAdvEMIMethod.setConstraint("");
 		this.lPPRule.setConstraint("");
 		this.autoRejectionDays.setConstraint("");
+		this.grcAdvMinTerms.setConstraint("");
+		this.grcAdvMaxTerms.setConstraint("");
+		this.grcAdvDefaultTerms.setConstraint("");
+		this.advMinTerms.setConstraint("");
+		this.advMaxTerms.setConstraint("");
+		this.advDefaultTerms.setConstraint("");
+		
 		logger.debug("Leaving");
 	}
 
@@ -4377,6 +4593,22 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
 
 		this.putCallRequired.setDisabled(isTrue);
+
+		this.advIntersetReq.setDisabled(isTrue);
+		this.advType.setReadonly(isTrue);
+		this.advMinTerms.setReadonly(isTrue);
+		this.advMaxTerms.setReadonly(isTrue);
+		this.advDefaultTerms.setReadonly(isTrue);
+
+		this.grcAdvIntersetReq.setDisabled(isTrue);
+		this.grcAdvType.setReadonly(isTrue);
+		this.grcAdvMinTerms.setReadonly(isTrue);
+		this.grcAdvMaxTerms.setReadonly(isTrue);
+		this.grcAdvDefaultTerms.setReadonly(isTrue);
+		this.advStage.setReadonly(isTrue);
+
+		this.dsfReq.setDisabled(isTrue);
+		this.cashCollateralReq.setDisabled(isTrue);
 
 		if (isTrue) {
 			this.space_finType.setSclass("");
@@ -6793,6 +7025,78 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					financeTypeListCtrl.window_FinanceTypeList, getFinanceType());
 		}
 		logger.debug("Leaving");
+	}
+
+	public void onCheck$grcAdvIntersetReq(Event event) {
+		doCheckGrcAdvIntersetReq();
+	}
+
+	private void doCheckGrcAdvIntersetReq() {
+		if (this.grcAdvIntersetReq.isChecked()) {
+			if (!isCompReadonly) {
+				this.grcAdvType.setDisabled(false);
+			}
+		} else {
+			if (this.grcAdvType.getSelectedIndex() > 0) {
+				this.grcAdvType.setSelectedIndex(0);
+				doChangeGrcAdvTypes();
+			}
+		}
+	}
+
+	public void onChange$grcAdvType(Event event) {
+		doChangeGrcAdvTypes();
+	}
+
+	private void doChangeGrcAdvTypes() {
+		if (AdvanceType.UT.getCode().equals(getComboboxValue(this.grcAdvType))) {
+			this.grcAdvDefaultTerms.setDisabled(isCompReadonly);
+			this.grcAdvMinTerms.setDisabled(isCompReadonly);
+			this.grcAdvMaxTerms.setDisabled(isCompReadonly);
+		} else {
+			this.grcAdvMinTerms.setValue(0);
+			this.grcAdvMaxTerms.setValue(0);
+			this.grcAdvDefaultTerms.setValue(0);
+			this.grcAdvMinTerms.setDisabled(true);
+			this.grcAdvMaxTerms.setDisabled(true);
+			this.grcAdvDefaultTerms.setDisabled(true);
+		}
+	}
+
+	public void onCheck$advIntersetReq(Event event) {
+		doCheckAdvIntersetReq();
+	}
+
+	private void doCheckAdvIntersetReq() {
+		if (this.advIntersetReq.isChecked()) {
+			if (!isCompReadonly) {
+				this.advType.setDisabled(false);
+			}
+		} else {
+			if (this.advType.getSelectedIndex() > 0) {
+				this.advType.setSelectedIndex(0);
+				doChangeAdvTypes();
+			}
+		}
+	}
+
+	public void onChange$advType(Event event) {
+		doChangeAdvTypes();
+	}
+
+	private void doChangeAdvTypes() {
+		if (AdvanceType.UT.getCode().equals(getComboboxValue(this.advType))) {
+			this.advDefaultTerms.setDisabled(isCompReadonly);
+			this.advMinTerms.setDisabled(isCompReadonly);
+			this.advMaxTerms.setDisabled(isCompReadonly);
+		} else {
+			this.advMinTerms.setValue(0);
+			this.advMaxTerms.setValue(0);
+			this.advDefaultTerms.setValue(0);
+			this.advMinTerms.setDisabled(true);
+			this.advMaxTerms.setDisabled(true);
+			this.advDefaultTerms.setDisabled(true);
+		}
 	}
 
 	// ====================//

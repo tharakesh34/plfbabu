@@ -474,4 +474,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
+	
+	
+	
 }
