@@ -2355,6 +2355,10 @@ UNION ALL
 			update customerbankinfo set noOfMonthsBanking=0 where noOfMonthsBanking is null;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="141" author="Vinay">
+		<modifyDataType tableName="verifications" columnName="referenceType" newDataType="varchar(50)"/>
+	</changeSet>
 </databaseChangeLog>
 	
 	
