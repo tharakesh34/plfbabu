@@ -592,12 +592,12 @@
 									</columns>
 									<rows>
 										<row>
-											<label value="Advance Interset Required?" />
+											<label value="${c:l('label_FinanceTypeDialog_AdvanceIntersetRequired.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<checkbox id="grcAdvIntersetReq" checked="false" />
 											</hbox>
-											<label value="Advance Type" />
+											<label value="${c:l('label_FinanceTypeDialog_AdvanceType.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<combobox id="grcAdvType" />
@@ -605,13 +605,13 @@
 										</row>
 
 										<row>
-											<label value="Minimun Advance Terms" />
+											<label value="${c:l('label_FinanceTypeDialog_MinimunAdvanceTerms.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<intbox id="grcAdvMinTerms" width="45px" maxlength="3"
 													style="text-align:right" />
 											</hbox>
-											<label value="Maximum Advance Terms" />
+											<label value="${c:l('label_FinanceTypeDialog_MaximumAdvanceTerms.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<intbox id="grcAdvMaxTerms" width="45px" maxlength="3"
@@ -619,7 +619,7 @@
 											</hbox>
 										</row>
 										<row>
-											<label value="Default Advance Terms" />
+											<label value="${c:l('label_FinanceTypeDialog_DefaultAdvanceTerms.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<intbox id="grcAdvDefaultTerms" width="45px" maxlength="3"
@@ -1164,25 +1164,25 @@
 										</columns>
 										<rows>
 											<row>
-												<label value="Advance EMI/Interset Required?" />
+												<label value="${c:l('label_FinanceTypeDialog_AdvanceEmiIntersetRequired.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="advIntersetReq" checked="false" />
 												</hbox>
-												<label value="Advance Type" />
+												<label value="${c:l('label_FinanceTypeDialog_AdvanceType.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<combobox id="advType" />
 												</hbox>
 											</row>
 											<row>
-												<label value="Minimun Advance Terms" />
+												<label value="${c:l('label_FinanceTypeDialog_MinimunAdvanceTerms.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<intbox id="advMinTerms" width="45px" maxlength="3"
 														style="text-align:right" />
 												</hbox>
-												<label value="Maximum Advance Terms" />
+												<label value="${c:l('label_FinanceTypeDialog_MaximumAdvanceTerms.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<intbox id="advMaxTerms" width="45px" maxlength="3"
@@ -1190,7 +1190,7 @@
 												</hbox>
 											</row>
 											<row>
-												<label value="Default Advance Terms" />
+												<label value="${c:l('label_FinanceTypeDialog_DefaultAdvanceTerms.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<intbox id="advDefaultTerms" width="45px" maxlength="3"
@@ -1198,7 +1198,7 @@
 												</hbox>
 											</row>
 											<row>
-												<label value="Advance Stage" />
+												<label value="${c:l('label_FinanceTypeDialog_AdvanceStage.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<combobox id="advStage" />
@@ -1218,12 +1218,12 @@
 										</columns>
 										<rows>
 											<row>
-												<label value="DSF Required?" />
+												<label value="${c:l('label_FinanceTypeDialog_DSFRequired.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="dsfReq" />
 												</hbox>
-												<label value="Cash Collateral Required?" />
+												<label value="${c:l('label_FinanceTypeDialog_CashCollateralRequired.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="cashCollateralReq" />

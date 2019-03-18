@@ -316,6 +316,22 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Eligibility Method
 	private String eligibilityMethods;
 	private boolean putCallRequired = false;
+	
+	private boolean advIntersetReq;
+	private String advType;
+	private int advMinTerms;
+	private int advMaxTerms;
+	private int advDefaultTerms;
+
+	private boolean grcAdvIntersetReq;
+	private String grcAdvType;
+	private int grcAdvMinTerms;
+	private int grcAdvMaxTerms;
+	private int grcAdvDefaultTerms;
+	private String advStage;
+	
+	private boolean dsfReq;
+	private boolean cashCollateralReq;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -2223,5 +2239,109 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setPutCallRequired(boolean putCallRequired) {
 		this.putCallRequired = putCallRequired;
+	}
+
+	public boolean isAdvIntersetReq() {
+		return advIntersetReq;
+	}
+
+	public void setAdvIntersetReq(boolean advIntersetReq) {
+		this.advIntersetReq = advIntersetReq;
+	}
+
+	public String getAdvType() {
+		return advType;
+	}
+
+	public void setAdvType(String advType) {
+		this.advType = advType;
+	}
+
+	public int getAdvMinTerms() {
+		return advMinTerms;
+	}
+
+	public void setAdvMinTerms(int advMinTerms) {
+		this.advMinTerms = advMinTerms;
+	}
+
+	public int getAdvMaxTerms() {
+		return advMaxTerms;
+	}
+
+	public void setAdvMaxTerms(int advMaxTerms) {
+		this.advMaxTerms = advMaxTerms;
+	}
+
+	public int getAdvDefaultTerms() {
+		return advDefaultTerms;
+	}
+
+	public void setAdvDefaultTerms(int advDefaultTerms) {
+		this.advDefaultTerms = advDefaultTerms;
+	}
+
+	public boolean isGrcAdvIntersetReq() {
+		return grcAdvIntersetReq;
+	}
+
+	public void setGrcAdvIntersetReq(boolean grcAdvIntersetReq) {
+		this.grcAdvIntersetReq = grcAdvIntersetReq;
+	}
+
+	public String getGrcAdvType() {
+		return grcAdvType;
+	}
+
+	public void setGrcAdvType(String grcAdvType) {
+		this.grcAdvType = grcAdvType;
+	}
+
+	public int getGrcAdvMaxTerms() {
+		return grcAdvMaxTerms;
+	}
+
+	public void setGrcAdvMaxTerms(int grcAdvMaxTerms) {
+		this.grcAdvMaxTerms = grcAdvMaxTerms;
+	}
+
+	public int getGrcAdvDefaultTerms() {
+		return grcAdvDefaultTerms;
+	}
+
+	public void setGrcAdvDefaultTerms(int grcAdvDefaultTerms) {
+		this.grcAdvDefaultTerms = grcAdvDefaultTerms;
+	}
+
+	public String getAdvStage() {
+		return advStage;
+	}
+
+	public void setAdvStage(String advStage) {
+		this.advStage = advStage;
+	}
+
+	public boolean isDsfReq() {
+		return dsfReq;
+	}
+
+	public void setDsfReq(boolean dsfReq) {
+		this.dsfReq = dsfReq;
+	}
+
+	public boolean isCashCollateralReq() {
+		return cashCollateralReq;
+	}
+
+	public void setCashCollateralReq(boolean cashCollateralReq) {
+		this.cashCollateralReq = cashCollateralReq;
+	}
+
+	public int getGrcAdvMinTerms() {
+		return grcAdvMinTerms;
+	}
+
+	public void setGrcAdvMinTerms(int grcAdvMinTerms) {
+		this.grcAdvMinTerms = grcAdvMinTerms;
 	}
 }
