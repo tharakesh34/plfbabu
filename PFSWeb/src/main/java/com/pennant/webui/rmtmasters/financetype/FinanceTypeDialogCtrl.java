@@ -4595,17 +4595,17 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.putCallRequired.setDisabled(isTrue);
 
 		this.advIntersetReq.setDisabled(isTrue);
-		this.advType.setReadonly(isTrue);
+		this.advType.setDisabled(isTrue);
 		this.advMinTerms.setReadonly(isTrue);
 		this.advMaxTerms.setReadonly(isTrue);
 		this.advDefaultTerms.setReadonly(isTrue);
 
 		this.grcAdvIntersetReq.setDisabled(isTrue);
-		this.grcAdvType.setReadonly(isTrue);
+		this.grcAdvType.setDisabled(isTrue);
 		this.grcAdvMinTerms.setReadonly(isTrue);
 		this.grcAdvMaxTerms.setReadonly(isTrue);
 		this.grcAdvDefaultTerms.setReadonly(isTrue);
-		this.advStage.setReadonly(isTrue);
+		this.advStage.setDisabled(isTrue);
 
 		this.dsfReq.setDisabled(isTrue);
 		this.cashCollateralReq.setDisabled(isTrue);
