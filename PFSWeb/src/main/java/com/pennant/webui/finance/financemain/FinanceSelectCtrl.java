@@ -1292,11 +1292,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			openFinCovenantMaintanceDialog(item);
 
-		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
 
 			openFinFinoptionMaintanceDialog(item);
-		}
-		else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 
 			openFeeWaiverHeaderDialog(item);
 
@@ -2504,9 +2503,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Covenants List
 			finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
-			
+
 			finMaintainInstruction.setCovenants(financeDetail.getCovenants());
-			
+
 			// Role Code State Checking
 			String userRole = finMaintainInstruction.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
@@ -2567,8 +2566,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 
-	
-	
 	private void openFinFinoptionMaintanceDialog(Listitem item) throws Exception {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
@@ -2597,9 +2594,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Covenants List
 			//finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
-			
+
 			finMaintainInstruction.setFinOptions(financeDetail.getFinOptions());
-			
 
 			// Role Code State Checking
 			String userRole = finMaintainInstruction.getNextRoleCode();
@@ -2660,6 +2656,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving ");
 	}
+
 	/**
 	 * 
 	 * @param item
@@ -2799,12 +2796,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving");
 	}
-	
-	
-	
-	
-	private void showFinOptionMaintanceView(FinMaintainInstruction finMaintainInstruction,
-			FinanceDetail financeDetail) throws Exception {
+
+	private void showFinOptionMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceDetail financeDetail)
+			throws Exception {
 		logger.debug("Entering");
 
 		if (finMaintainInstruction.getWorkflowId() == 0 && isWorkFlowEnabled()) {
@@ -3096,7 +3090,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_FINOPTION;
 					workflowCode = FinanceConstants.FINSER_EVENT_FINOPTION;
 				}
-				
+
 				else if ("tab_FeeWaivers".equals(tab.getId())) {
 					eventCodeRef = "";
 					moduleDefiner = FinanceConstants.FINSER_EVENT_FEEWAIVERS;
@@ -3169,8 +3163,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
 			this.searchObject.addTabelName("FinoptionsMaintenance_View");
 		}
-		
-		
+
 		else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 			this.searchObject.addTabelName("FeeWaivers_View");
 		} else {
@@ -3201,8 +3194,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					.concat("' AND WF.FirstTaskOwner IN (SELECT RoleCd FROM UserOperationRoles_View WHERE ");
 			buildedWhereCondition = buildedWhereCondition.concat(
 					" UsrID= " + getUserWorkspace().getUserDetails().getUserId() + " AND AppCode='" + App.CODE + "')");
-			buildedWhereCondition = buildedWhereCondition
-					.concat(")) ");
+			buildedWhereCondition = buildedWhereCondition.concat(")) ");
 
 			for (String role : usrfinRolesList) {
 				if (buildedWhereCondition.length() > 0) {
@@ -3232,7 +3224,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		rcdTypeFilter[1] = Filter.isNull("RecordType");
 		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
 			this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 
@@ -3390,7 +3383,5 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinOptionMaintanceService(FinOptionMaintanceService finOptionMaintanceService) {
 		this.finOptionMaintanceService = finOptionMaintanceService;
 	}
-	
-	
 
 }

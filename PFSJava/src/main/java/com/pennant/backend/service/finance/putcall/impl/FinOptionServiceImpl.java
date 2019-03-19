@@ -114,7 +114,6 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 		if (finOption.isWorkflow()) {
 			tempFinOption = finOptionDAO.getFinOption(finOption.getId(), TableType.TEMP_TAB);
 		}
-
 		FinOption befFinOption = finOptionDAO.getFinOption(finOption.getId(), TableType.MAIN_TAB);
 		FinOption oldFinOption = finOption.getBefImage();
 
@@ -353,7 +352,7 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 	public void setfinOptionDAO(FinOptionDAO finOptionDAO) {
 		this.finOptionDAO = finOptionDAO;
 	}
-	
+
 	@Override
 	public FinanceDetail getFinanceDetailById(String finreference, String type, String userRole, String moduleDefiner,
 			String eventCodeRef) {

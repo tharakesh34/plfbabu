@@ -90,16 +90,16 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	protected boolean loanEnquiry = false;
 	protected FinMaintainInstruction finMaintainInstruction;
 	private FinanceSelectCtrl financeSelectCtrl = null;
-	@Autowired 
+	@Autowired
 	private transient FinOptionMaintanceService finOptionMaintanceService;
 
 	protected North north;
 	protected South south1;
-	
+
 	private boolean isFinOptionNew = false;
 	private FinanceMainBaseCtrl financeMainDialogCtrl;
 	private boolean newCustomer;
-	
+
 	public FinOptionDialogCtrl() {
 		super();
 	}
@@ -167,7 +167,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
 			setNewCustomer(true);
 		}
-		
+
 		maturityDate = this.financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
 		loanStartDt = this.financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 
@@ -747,9 +747,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			finoptions.add(option);
 		}
 
-		
 		this.financeDetail.setFinOptions(finoptions);
-		
+
 		logger.debug(Literal.LEAVING);
 
 		return wve;
@@ -766,7 +765,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		doClearMessage();
 
 		doSetValidation();
-		
+
 		List<WrongValueException> wve = doWriteComponentsToBean();
 
 		if (!wve.isEmpty() && tab != null) {
@@ -880,12 +879,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 					currentOption.setConstraint(new PTDateValidator(receivableDateLabel, true));
 				} else if (DateUtility.compare(selectedOptionDate, appDate) < 0
 						|| DateUtility.compare(selectedOptionDate, maturityDate) > 0) {
-					
-					if(maturityDate==loanStartDt){
-						currentOption.setConstraint(
-								new PTDateValidator(receivableDateLabel, true, appDate, null, false));
-					}else{
-						
+
+					if (maturityDate == loanStartDt) {
+						currentOption
+								.setConstraint(new PTDateValidator(receivableDateLabel, true, appDate, null, false));
+					} else {
+
 						currentOption.setConstraint(
 								new PTDateValidator(receivableDateLabel, true, appDate, maturityDate, false));
 					}
@@ -1025,6 +1024,14 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
 
 		doWriteComponentsToBean();
+
+		finMaintainInstruction.setFinReference(String.valueOf(headerList.get(3)));
+		finMaintainInstruction.setEvent("FinOptions");
+
+		// List
+		finMaintainInstruction.setFinOptions(financeDetail.getFinOptions());
+		finMaintainInstruction.setRecordStatus(this.recordStatus.getValue());
+
 		setFinInsturctionDetails(aFinMaintainInstruction);
 
 		boolean isNew;
@@ -1260,13 +1267,13 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		return processCompleted;
 	}
 
-	public void setFinInsturctionDetails(FinMaintainInstruction aFinMaintainInstruction){
+	public void setFinInsturctionDetails(FinMaintainInstruction aFinMaintainInstruction) {
 		aFinMaintainInstruction.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 		aFinMaintainInstruction.setEvent(this.moduleCode);
 		aFinMaintainInstruction.setRecordStatus(this.recordStatus.getValue());
 		aFinMaintainInstruction.setFinOptions(this.financeDetail.getFinOptions());
 	}
-	
+
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
@@ -1274,5 +1281,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	public boolean isNewCustomer() {
 		return newCustomer;
 	}
-	
+
+	public void onClick$btnClose(Event event) {
+		doClose(this.btnSave.isVisible());
+	}
+
 }

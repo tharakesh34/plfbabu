@@ -139,13 +139,13 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		RowMapper<FinOption> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinOption.class);
 
 		try {
-			finOption = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return finOption;
+		return null;
 	}
 
 	@Override
@@ -225,7 +225,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		sql.append(" From FIN_OPTIONS");
 		return sql;
 	}
-	
+
 	@Override
 	public void deleteByFinRef(String loanReference, String tableType) {
 		logger.debug("Entering");
@@ -242,6 +242,5 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		logger.debug("Leaving");
 
 	}
-
 
 }
