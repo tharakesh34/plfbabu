@@ -9963,10 +9963,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinReference(financeMain.getFinReference());
 		scheduleData.setFinanceMain(financeMain);
 
-		if (ImplementationConstants.NEW_COVENANT_MODULE) {
-			financeDetail
-					.setFinOptions(finOptionService.getFinOptions(financeMain.getFinReference(), TableType.VIEW));
-		} 
+		financeDetail.setFinOptions(finOptionService.getFinOptions(financeMain.getFinReference(), TableType.VIEW));
 
 		financeDetail.setCustomerDetails(
 				getCustomerDetailsService().getCustomerAndCustomerDocsById(financeMain.getCustID(), ""));
