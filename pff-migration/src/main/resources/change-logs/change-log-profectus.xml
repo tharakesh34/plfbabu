@@ -2359,6 +2359,29 @@ UNION ALL
 	<changeSet id="141" author="Vinay">
 		<modifyDataType tableName="verifications" columnName="referenceType" newDataType="varchar(50)"/>
 	</changeSet>
+	
+	<changeSet id="142_pre" author="Vinay" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'verifications');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="142" author="Vinay">
+		<modifyDataType tableName="verifications" columnName="referenceFor" newDataType="varchar(50)"/>
+	</changeSet>
+	
+	<changeSet id="142_post" author="Vinay" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'verifications');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 	
 	

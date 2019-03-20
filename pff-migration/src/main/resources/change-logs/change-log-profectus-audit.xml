@@ -76,5 +76,29 @@
 	<changeSet id="15" author="Vinay">
 		<modifyDataType tableName="adtrmtfinancetypes" columnName="finmaxterm" newDataType="decimal(4,0)"/>
 	</changeSet>
+	
+	<changeSet id="142_pre" author="Vinay" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'adtverifications');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="142" author="Vinay">
+		<modifyDataType tableName="adtverifications" columnName="referenceFor" newDataType="varchar(50)"/>
+	</changeSet>
+	
+	
+	<changeSet id="142_post" author="Vinay" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'adtverifications');
+					
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
