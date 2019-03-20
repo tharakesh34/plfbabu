@@ -111,7 +111,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="3.4" author="shinde.b">
+	<changeSet id="3.4" author="shinde.b" dbms="postgresql, oracle">
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="putCallRequired" />
 	</changeSet>
 	
