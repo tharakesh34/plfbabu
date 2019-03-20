@@ -116,7 +116,7 @@
 	</changeSet>
 	
 	 <changeSet id="1.4" dbms="mssql" author="shinde.b">
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="putCallRequired" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="putCallRequired" columnDataType="boolean" />
 	</changeSet>
 
 </databaseChangeLog>

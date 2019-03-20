@@ -60,7 +60,7 @@
 	</changeSet>
 
     <changeSet id="1.4" dbms="mssql" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="putCallRequired" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="putCallRequired" columnDataType="boolean"/>
 	</changeSet>
 	
 	<changeSet id="2" author="shinde.b">
@@ -94,7 +94,7 @@
 	</changeSet>
 	
 	<changeSet id="2.4" dbms="mssql" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="putCallRequired" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="putCallRequired" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="shinde.b">
