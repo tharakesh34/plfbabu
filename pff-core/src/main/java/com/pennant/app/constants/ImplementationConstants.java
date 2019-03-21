@@ -184,4 +184,8 @@ public class ImplementationConstants {
 
 	//If True, Makes Frequency Dates to empty on loan startdate change
 	public static final boolean CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE = false;
+
+	//If True, Makes Frequency Dates to empty for change gestation period
+	public static final boolean CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = false;
+
 }

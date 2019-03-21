@@ -4239,6 +4239,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			fillList(this.advStage, AdvanceStage.getList(), aFinanceMain.getAdvStage());
 		}
+		// Makes Frequency Dates to empty 
+		if (StringUtils.equals(menuItemRightName, "menuItem_FinanceManagement_ChangeGestation")
+				&& ImplementationConstants.CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES) {
+			this.nextRepayDate.setValue(null);
+			this.nextRepayRvwDate.setValue(null);
+			this.nextRepayPftDate.setValue(null);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
