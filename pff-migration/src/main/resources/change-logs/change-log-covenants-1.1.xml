@@ -1417,8 +1417,14 @@
 	<changeSet id="16.3" author="vijaya.a" dbms="oracle">
 		<sql>
 			<![CDATA[
-				 ALTER SEQUENCE SEQCOVENANTS RESTART WITH (select Max(id) from COVENANTS_VIEW;
-			]]>
+				declare st varchar2(200);
+ 						nu integer;
+				begin
+		   		Select Coalesce(max(id),0) into nu from (Select max(id)+1 id from COVENANT_TYPES_VIEW );
+		   				st:= 'ALTER SEQUENCE SEQCOVENANTS RESTART START WITH ' ||nu ;
+		      	execute immediate st;
+				end;
+		]]>
 		</sql>
 	</changeSet>
 
@@ -1468,7 +1474,13 @@
 	<changeSet id="17.1" author="vijaya.a" dbms="oracle">
 		<sql>
 			<![CDATA[
-				 ALTER SEQUENCE SEQCOVENANT_DOCUMENTS RESTART WITH (select Max(id) from COVENANT_DOCUMENTS_VIEW;
+				declare st varchar2(200);
+ 					nu integer;
+				begin
+		  		Select Coalesce(max(id),0) into nu from (Select max(id)+1 id from COVENANT_DOCUMENTS_VIEW );
+		   			st:= 'ALTER SEQUENCE SEQCOVENANT_DOCUMENTS RESTART START WITH ' ||nu ;
+		      	execute immediate st;
+				end;
 			]]>
 		</sql>
 	</changeSet>
