@@ -1301,6 +1301,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
+			this.modeOfPayment.setDisabled(true);
+			this.allowFeeType.setDisabled(true);
 		}
 		this.paidAmt.setReadonly(true);
 		this.paidAmt.setDisabled(true);
@@ -1638,6 +1640,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		List<Object> objectList = new ArrayList<>();
 		setObjectData(objectList);
 		
+		if (!enqiryModule) {
 		//Pre-Validation Checking & Setting Defaults
 		Map<String, Object> fieldValuesMap = null;
 		if (getExtendedFieldRender() != null && getExtendedFieldRender().getMapValues() != null) {
@@ -1701,7 +1704,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		//Enable and disabling the Premium amount Button 
 		setPremiumCalcButton(aVASRecording);
-		
+		}
 		logger.debug("Leaving");
 	}
 
