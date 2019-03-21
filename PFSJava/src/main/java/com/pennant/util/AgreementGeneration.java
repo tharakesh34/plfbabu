@@ -185,6 +185,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
+import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -263,6 +264,8 @@ public class AgreementGeneration implements Serializable {
 	private DocumentManagerDAO documentManagerDAO;
 
 	private List<DocumentType> documentTypeList;
+
+	private MasterDefService masterDefService;
 
 	private List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
 	private List<ValueLabel> subCategoryList = PennantStaticListUtil.getSubCategoryList();
@@ -525,10 +528,12 @@ public class AgreementGeneration implements Serializable {
 							PennantApplicationUtil.amountFormate(customer.getCustTotalExpense(), formatter));
 					agreement.setNoOfDependents(String.valueOf(customer.getNoOfDependents()));
 					agreement.setCustSector(StringUtils.trimToEmpty(customer.getCustSector()));
+					agreement.setCustSectorDesc(StringUtils.trimToEmpty(customer.getLovDescCustSectorName()));
 					agreement.setCustSubSector(
 							StringUtils.trimToEmpty(StringUtils.trimToEmpty(customer.getCustSubSector())));
 					agreement.setCustSegment(StringUtils.trimToEmpty(customer.getCustSegment()));
 					agreement.setCustIndustry(StringUtils.trimToEmpty(customer.getLovDescCustIndustryName()));
+					agreement.setCustIndustryDesc(StringUtils.trimToEmpty(customer.getLovDescCustIndustryName()));
 					agreement.setCustJointDOB(DateUtility.formatToLongDate(customer.getJointCustDob()));
 					agreement.setCustJointName(StringUtils.trimToEmpty(customer.getJointCustName()));
 					agreement.setCustSalutation(StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
@@ -595,18 +600,18 @@ public class AgreementGeneration implements Serializable {
 					}
 
 					if (customerDocumentsList != null && !customerDocumentsList.isEmpty()) {
-
-						//pan number
-						agreement.setPanNumber(PennantApplicationUtil.getPanNumber(customerDocumentsList));
-
-						String cusCtg = StringUtils.trimToEmpty(customer.getCustCtgCode());
-						boolean corpCust = false;
-						if (StringUtils.isNotEmpty(cusCtg) && !cusCtg.equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
-							corpCust = true;
-						}
-
+						String masterKeyCode = getMasterDefService().getMasterCode("DOC_TYPE", "PAN");
 						for (CustomerDocument customerDocument : customerDocumentsList) {
 							String docCategory = customerDocument.getCustDocCategory();
+							//pan number
+							if (StringUtils.equals(masterKeyCode, docCategory)) {
+								agreement.setPanNumber(StringUtils.trimToEmpty(customerDocument.getCustDocTitle()));
+							}
+							String cusCtg = StringUtils.trimToEmpty(customer.getCustCtgCode());
+							boolean corpCust = false;
+							if (StringUtils.isNotEmpty(cusCtg) && !cusCtg.equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
+								corpCust = true;
+							}
 							if (corpCust) {
 								// Trade License for Corporate Customer/ SME Customer
 								if (StringUtils.equals(docCategory, PennantConstants.TRADELICENSE)) {
@@ -3110,6 +3115,8 @@ public class AgreementGeneration implements Serializable {
 			agreement.setPftDaysBasis(main.getProfitDaysBasis());
 			agreement.setFinBranch(main.getFinBranch());
 			agreement.setFinBranchName(main.getLovDescFinBranchName());
+			agreement.setFinEmpCode(main.getEmployeeName());
+			agreement.setFinEmpName(main.getEmployeeNameDesc());
 
 			if (StringUtils.isNotBlank(main.getFinBranch())) {
 				if (branchService != null) {
@@ -3129,6 +3136,7 @@ public class AgreementGeneration implements Serializable {
 						agreement.setFinBranchAddrCityName(branchdetails.getLovDescBranchCityName());
 						agreement.setFinBranchAddrZIP(branchdetails.getPinCode());
 						agreement.setFinBranchAddrPhone(branchdetails.getBranchTel());
+						agreement.setFinBranchRegion(branchdetails.getRegion());
 					}
 
 				}
@@ -3811,5 +3819,13 @@ public class AgreementGeneration implements Serializable {
 
 	public void setCollateralSetupFetchingService(CollateralSetupFetchingService collateralSetupFetchingService) {
 		this.collateralSetupFetchingService = collateralSetupFetchingService;
+	}
+
+	public MasterDefService getMasterDefService() {
+		return masterDefService;
+	}
+
+	public void setMasterDefService(MasterDefService masterDefService) {
+		this.masterDefService = masterDefService;
 	}
 }

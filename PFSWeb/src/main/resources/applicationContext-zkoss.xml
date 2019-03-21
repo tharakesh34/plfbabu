@@ -1793,7 +1793,10 @@
 		<property name="agreementGeneration" ref="agreementGeneration" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
 	</bean>
-
+	
+	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
+	    <property name="masterDefService" ref="masterDefService" />
+	</bean>
 
 	<!--============ Indicative Term Sheet Detail ============== -->
 

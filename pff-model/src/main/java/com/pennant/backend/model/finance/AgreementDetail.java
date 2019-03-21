@@ -147,6 +147,8 @@ public class AgreementDetail {
 	 */
 	private String custSector = ""; // Customer Sector
 
+	private String custSectorDesc = ""; // Customer Sector Description
+
 	/**
 	 * Provides Customer SubSector.
 	 */
@@ -161,6 +163,8 @@ public class AgreementDetail {
 	 * Provides Customer Industry.
 	 */
 	private String custIndustry = ""; // Customer Industry
+
+	private String custIndustryDesc = ""; //Customer Industry Description
 
 	/**
 	 * Provides Customer Nationality.
@@ -784,6 +788,10 @@ public class AgreementDetail {
 	 */
 	private String repayFrqDay = ""; // Payment Frequency Day
 	private String repayFrqCode = ""; // Payment Frequency Day 
+
+	private String finEmpCode = ""; // Employee Code
+	private String finEmpName = ""; // Employee Name
+	private String finBranchRegion = ""; // Loan Branch assigned region
 
 	public String getFinBranchAddrHNbr() {
 		return StringUtils.trimToEmpty(finBranchAddrHNbr);
@@ -8440,6 +8448,46 @@ public class AgreementDetail {
 
 	public void setKycDetails(List<KycDetail> kycDetails) {
 		this.kycDetails = kycDetails;
+	}
+
+	public String getCustSectorDesc() {
+		return custSectorDesc;
+	}
+
+	public void setCustSectorDesc(String custSectorDesc) {
+		this.custSectorDesc = custSectorDesc;
+	}
+
+	public String getCustIndustryDesc() {
+		return custIndustryDesc;
+	}
+
+	public void setCustIndustryDesc(String custIndustryDesc) {
+		this.custIndustryDesc = custIndustryDesc;
+	}
+
+	public String getFinEmpCode() {
+		return finEmpCode;
+	}
+
+	public void setFinEmpCode(String finEmpCode) {
+		this.finEmpCode = finEmpCode;
+	}
+
+	public String getFinEmpName() {
+		return finEmpName;
+	}
+
+	public void setFinEmpName(String finEmpName) {
+		this.finEmpName = finEmpName;
+	}
+
+	public String getFinBranchRegion() {
+		return finBranchRegion;
+	}
+
+	public void setFinBranchRegion(String finBranchRegion) {
+		this.finBranchRegion = finBranchRegion;
 	}
 
 	public class KycDetail {
