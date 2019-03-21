@@ -8197,6 +8197,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!ImplementationConstants.ALW_AUTO_SCHD_BUILD || isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			return;
 		}
+		// Makes Frequency Dates to empty 
+		if (ImplementationConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE) {
+			this.nextRepayDate.setValue(null);
+			this.nextRepayRvwDate.setValue(null);
+			this.nextRepayPftDate.setValue(null);
+		}
 
 		// Building Schedule Details automatically based on New Start Date
 		Events.sendEvent("onClick", btnBuildSchedule, null);
@@ -11726,6 +11732,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							Labels.getLabel("FRQ_DATE_MISMATCH",
 									new String[] { Labels.getLabel("label_FinanceMainDialog_NextRepayDate.value"),
 											Labels.getLabel("label_FinanceMainDialog_RepayFrq.value") }));
+				}
+			}
+			if (ImplementationConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE) {
+				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
+						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
+					aFinanceMain.setNextRepayDate(DateUtility.getDate(DateUtility
+							.formatUtilDate(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
 

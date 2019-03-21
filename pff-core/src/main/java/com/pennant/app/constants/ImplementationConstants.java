@@ -181,4 +181,7 @@ public class ImplementationConstants {
 
 	//If True, Document Modification can be done by only document owner
 	public static final boolean DOC_OWNER_VALIDATION = false;
+
+	//If True, Makes Frequency Dates to empty on loan startdate change
+	public static final boolean CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE = false;
 }
