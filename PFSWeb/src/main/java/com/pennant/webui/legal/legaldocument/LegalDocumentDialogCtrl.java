@@ -46,6 +46,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -804,10 +806,11 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
+		Date appDate = DateUtility.getAppDate();
 
 		if (!this.documentDate.isReadonly()) {
-			this.documentDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentDate.value"), true));
+			this.documentDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_LegalDocumentDialog_DocumentDate.value"), true, null, appDate, true));
 		}
 		if (!this.documentDetail.isReadonly()) {
 			this.documentDetail.setConstraint(
