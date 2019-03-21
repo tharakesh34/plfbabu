@@ -10571,6 +10571,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setReAgeCpz(financeType.isReAgeCpz());
 
 		financeMain.setFixedRateTenor(financeType.getFixedRateTenor());
+		
+		// tasks # >>Start Advance EMI and DSF
+		if (financeType.isGrcAdvIntersetReq()) {
+			financeMain.setGrcAdvType(financeType.getGrcAdvType());
+			financeMain.setGrcAdvTerms(financeType.getGrcAdvDefaultTerms());
+		} else {
+			financeMain.setGrcAdvType(PennantConstants.List_Select);
+			financeMain.setGrcAdvTerms(0);
+		}
+
+		if (financeType.isAdvIntersetReq()) {
+			financeMain.setAdvType(financeType.getAdvType());
+			financeMain.setAdvTerms(financeType.getAdvDefaultTerms());
+			financeMain.setAdvStage(financeType.getAdvStage());
+		} else {
+			financeMain.setAdvType(PennantConstants.List_Select);
+			financeMain.setAdvTerms(0);
+			financeMain.setAdvStage(PennantConstants.List_Select);
+		}
+		// tasks # >>End Advance EMI and DSF
 
 		return financeMain;
 	}

@@ -53,11 +53,11 @@ import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
 
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(String id, boolean isWIF, String type);
@@ -96,29 +96,30 @@ public interface FinFeeDetailService {
 
 	//GST
 	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail,
-			HashMap<String, Object> gstExecutionMap, boolean apiRequest);
+			Map<String, Object> gstExecutionMap, boolean apiRequest);
 
-	BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy,
-			HashMap<String, Object> gstExecutionMap);
+	BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy, Map<String, Object> gstExecutionMap);
 
-	BigDecimal getFeeResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy);
+	BigDecimal getFeeResult(String sqlRule, Map<String, Object> executionMap, String finCcy);
 
-	void calculateFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, HashMap<String, Object> gstExecutionMap);
+	void calculateFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, Map<String, Object> gstExecutionMap);
+
+	void calculateFees(FinFeeDetail finFeeDetail, FinScheduleData finScheduleData, Map<String, Object> gstExecutionMap);
 
 	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode,
 			int taxRoundingTarget);
 
 	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail,
-			HashMap<String, Object> gstExecutionMap, boolean apiRequest);
+			Map<String, Object> gstExecutionMap, boolean apiRequest);
 
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
-			HashMap<String, Object> gstExecutionMap);
+			Map<String, Object> gstExecutionMap);
 
 	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
 			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
 
 	HashMap<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
-	
-    boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee) ;
+
+	boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee);
 
 }

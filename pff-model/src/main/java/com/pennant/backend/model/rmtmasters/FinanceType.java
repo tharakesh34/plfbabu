@@ -316,18 +316,18 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Eligibility Method
 	private String eligibilityMethods;
 	private boolean putCallRequired = false;
-	
-	private boolean advIntersetReq;
-	private String advType;
-	private int advMinTerms;
-	private int advMaxTerms;
-	private int advDefaultTerms;
 
 	private boolean grcAdvIntersetReq;
 	private String grcAdvType;
 	private int grcAdvMinTerms;
 	private int grcAdvMaxTerms;
 	private int grcAdvDefaultTerms;
+	
+	private boolean advIntersetReq;
+	private String advType;
+	private int advMinTerms;
+	private int advMaxTerms;
+	private int advDefaultTerms;
 	private String advStage;
 	
 	private boolean dsfReq;
