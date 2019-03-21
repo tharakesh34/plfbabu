@@ -4604,8 +4604,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.grcAdvType.setDisabled(isTrue);
 		this.grcAdvMinTerms.setReadonly(isTrue);
 		this.grcAdvMaxTerms.setReadonly(isTrue);
-		this.grcAdvDefaultTerms.setReadonly(isTrue);
 		this.advStage.setDisabled(isTrue);
+		this.grcAdvDefaultTerms.setReadonly(isTrue);
 
 		this.dsfReq.setDisabled(isTrue);
 		this.cashCollateralReq.setDisabled(isTrue);
