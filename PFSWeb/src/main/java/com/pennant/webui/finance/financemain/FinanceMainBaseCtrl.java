@@ -4220,7 +4220,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		
 		
 		if (financeType.isGrcAdvIntersetReq()) {
-			
 			if (financeType.getGrcAdvType() != null) {
 				fillList(this.grcAdvType, AdvanceType.getList(), financeType.getGrcAdvType());
 			}
@@ -4231,7 +4230,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (financeType.isAdvIntersetReq()) {
-		
 			if (financeType.getAdvType() != null) {
 				fillList(this.advType, AdvanceType.getList(), financeType.getAdvType());
 			}
@@ -12751,14 +12749,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						throw new WrongValueException(grcAdvTerms,
 								String.format("%s should be >= %s", grcGraceTerms, grcMaxLabel));
 					} 
-					
-					
 					else if (grcAdvTermValue > financeType.getGrcAdvMaxTerms()) {
 						throw new WrongValueException(grcAdvTerms,
 								String.format("%s should be >= %s", grcMaxLabel, grcMaxLabel));
 					}
 				}
-
 				aFinanceMain.setGrcAdvTerms(grcAdvTermValue);
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -12770,12 +12765,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setAdvType(financeType.getAdvType());
 			try {
 				int advTermValue=this.advTerms.getValue();
-				
 				if (!this.advTerms.isDisabled()) {
 					if (advTermValue < financeType.getGrcAdvMinTerms()) {
 						throw new WrongValueException(advTerms,
 								String.format("%s should be >= %s", grcMinLabel, grcMaxLabel));
-					} else if (advTermValue > aFinanceMain.getGraceTerms()) {
+					} else if (advTermValue > aFinanceMain.getNumberOfTerms()) {
 						throw new WrongValueException(grcAdvTerms,
 								String.format("%s should be >= %s", grcGraceTerms, grcMinLabel));
 					} else if (advTermValue > financeType.getGrcAdvMaxTerms()) {
@@ -12783,7 +12777,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								String.format("%s should be >= %s", grcMaxLabel, grcMaxLabel));
 					}
 				}
-				
 				aFinanceMain.setAdvTerms(advTermValue);
 			} catch (WrongValueException we) {
 				wve.add(we);

@@ -699,6 +699,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeFee.setAlwModifyFee(true);
 				finTypeFee.setAlwDeviation(true);
 				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+				finTypeFee.setActive(true);
+				finTypeFee.setAlwModifyFeeSchdMthd(false);
 				fees.add(finTypeFee);
 			}
 		}
@@ -713,6 +715,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeFee.setAlwModifyFee(true);
 				finTypeFee.setAlwDeviation(true);
 				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
+				finTypeFee.setActive(true);
+				finTypeFee.setAlwModifyFeeSchdMthd(false);
+
 				fees.add(finTypeFee);
 			}
 		}
@@ -733,6 +738,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		finTypeFee.setModuleId(FinanceConstants.MODULEID_FINTYPE);
 		finTypeFee.setRecordType(PennantConstants.RCD_ADD);
 		finTypeFee.setNewRecord(true);
+		finTypeFee.setActive(true);
+		finTypeFee.setAlwModifyFeeSchdMthd(false);
 
 		return finTypeFee;
 	}

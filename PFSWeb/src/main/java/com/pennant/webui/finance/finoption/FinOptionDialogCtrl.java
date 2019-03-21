@@ -45,10 +45,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.mail.MailTemplate;
-import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
@@ -1023,7 +1021,15 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		Cloner cloner = new Cloner();
 		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
 
-		doWriteComponentsToBean();
+		doClearMessage();
+
+		doSetValidation();
+
+		List<WrongValueException> wve = doWriteComponentsToBean();
+
+		Tab tab = null;
+
+		showErrorDetails(wve, tab);
 
 		finMaintainInstruction.setFinReference(String.valueOf(headerList.get(3)));
 		finMaintainInstruction.setEvent("FinOptions");
