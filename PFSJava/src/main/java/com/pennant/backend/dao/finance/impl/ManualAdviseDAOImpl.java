@@ -287,6 +287,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType ");
+		sql.append(" AND (AdviseAmount - PaidAmount - WaivedAmount) > 0");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
