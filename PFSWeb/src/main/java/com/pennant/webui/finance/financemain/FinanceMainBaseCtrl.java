@@ -17015,6 +17015,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
 
+		// Extended Field validations
+		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
+		}
+
 		//Schedule details Tab Validation
 		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
