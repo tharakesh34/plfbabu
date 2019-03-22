@@ -13144,7 +13144,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, appDate);
-		if (!FinanceConstants.BPI_NO.equals(finMain.getBpiTreatment())) {
+		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
 		}
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
