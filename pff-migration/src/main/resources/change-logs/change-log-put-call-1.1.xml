@@ -1298,4 +1298,14 @@
 			))
 		</createView>
 	</changeSet>
+	
+	<changeSet id="30" author="shinde.b">
+		<sql>
+			<![CDATA[
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION), 'Excel:PUT-CALL Report', 'PUT-CALL Report', 1, 'PutCallReport', 'dataSource', 1, 'menu_Item_Put_CallReport', 1, 1000, null, null, null, null, null, null, 0, current_timestamp, 0, 1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_Put_CallReport'), 1, 'Reference', 'LOVSEARCH', 'Reference', 'T.KeyReference', null, 'FinanceMain', 'getFinReference', 'getFinReference', 1, 0, 0, 0, 1, 0, null, null, null, null, 150, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_Put_CallReport'), 2, 'Cust CIF', 'LOVSEARCH', 'Customer Number', 't2.custcif', null, 'Customer', 'getCustCIF', 'getCustShrtName', 1, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
