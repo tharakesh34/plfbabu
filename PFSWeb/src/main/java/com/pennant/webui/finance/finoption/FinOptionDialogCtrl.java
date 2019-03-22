@@ -131,7 +131,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			financeMainBaseCtrl = ((FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl"));
 			financeMainBaseCtrl.setFinOptionDialogCtrl(this);
 		} else {
-			//finBasicdetails.setVisible(false);
+			// finBasicdetails.setVisible(false);
 		}
 
 		if (arguments.get("module") != null) {
@@ -206,7 +206,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		if (module.equals("Maintanance")) {
 			/*
-			 * this.finOptionListWindow.setHeight("85%"); this.finOptionListWindow.setWidth("100%");
+			 * this.finOptionListWindow.setHeight("85%");
+			 * this.finOptionListWindow.setWidth("100%");
 			 * this.finOptionListWindow.doModal();
 			 */
 
@@ -294,7 +295,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		listcell.appendChild(frequency);
 		listcell.setParent(listitem);
 
-		//Notice Period Days
+		// Notice Period Days
 		Intbox noticePriodDays = new Intbox();
 		noticePriodDays.setWidth("80px");
 		noticePriodDays.setValue(option.getNoticePeriodDays());
@@ -302,7 +303,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		listcell.appendChild(noticePriodDays);
 		listcell.setParent(listitem);
 
-		//Alert Days
+		// Alert Days
 		Intbox alertDays = new Intbox();
 		alertDays.setWidth("80px");
 		alertDays.setValue(option.getAlertDays());
@@ -310,7 +311,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		listcell.appendChild(alertDays);
 		listcell.setParent(listitem);
 
-		//OptionExcercise
+		// OptionExcercise
 		Checkbox optionExcercise = new Checkbox();
 		optionExcercise.setWidth("10px");
 		optionExcercise.setChecked(option.isOptionExercise());
@@ -322,7 +323,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		appendNextOptionDate(option, listitem);
 
-		//AlertType
+		// AlertType
 		Combobox alertType = new Combobox();
 		alertType.setWidth("100px");
 		fillList(alertType, AppStaticList.getAlertsFor(), option.getAlertType());
@@ -941,6 +942,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				Intbox alertDays = (Intbox) getComponent(listitem, 4);
 				Intbox noticePeriodDays = (Intbox) getComponent(listitem, 5);
 				Combobox alertType = (Combobox) getComponent(listitem, 8);
+				ExtendedCombobox alertRoles = (ExtendedCombobox) getComponent(listitem, 9);
+				ExtendedCombobox customerTemplate = (ExtendedCombobox) getComponent(listitem, 10);
+				ExtendedCombobox UserTemplate = (ExtendedCombobox) getComponent(listitem, 11);
 
 				optionCombo.setDisabled(true);
 				currentOption.setDisabled(true);
@@ -948,6 +952,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				alertDays.setDisabled(true);
 				noticePeriodDays.setDisabled(true);
 				alertType.setDisabled(true);
+				alertRoles.setReadonly(true);
+				customerTemplate.setReadonly(true);
+				UserTemplate.setReadonly(true);
 			}
 		}
 
