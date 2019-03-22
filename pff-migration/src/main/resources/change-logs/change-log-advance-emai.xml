@@ -95,7 +95,6 @@
 		<addDefaultValue columnName="GrcAdvDefaultTerms" tableName="RMTFINANCETYPES" defaultValue="0" />
 
 		<addDefaultValue columnName="AdvIntersetReq" tableName="RMTFINANCETYPES" defaultValue="0" />
-		<addDefaultValue columnName="AdvType" tableName="RMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="AdvMaxTerms" tableName="RMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="AdvMinTerms" tableName="RMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="AdvDefaultTerms" tableName="RMTFINANCETYPES" defaultValue="0" />
@@ -105,19 +104,18 @@
 	</changeSet>
 
 	<changeSet id="1.3" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvIntersetReq" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvMinTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvMaxTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvDefaultTerms" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvIntersetReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvMinTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvMaxTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="GrcAdvDefaultTerms" columnDataType="int"/>
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvIntersetReq" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvType" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvMinTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvMaxTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvDefaultTerms" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvIntersetReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvMinTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvMaxTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="AdvDefaultTerms" columnDataType="int"/>
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="DSFReq" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="CashCollateralReq" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="DSFReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES" columnName="CashCollateralReq" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="2" author="shinde.b">
@@ -193,18 +191,18 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms" columnDataType="int"/>
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMinTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMaxTerms" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMinTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMaxTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms" columnDataType="int"/>
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="DSFReq" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="DSFReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="3" author="shinde.b">
@@ -1151,8 +1149,8 @@
 	</changeSet>
 
 	<changeSet id="7.3" author="shinde.b">
-		<addNotNullConstraint tableName="FINANCEMAIN" columnName="GrcAdvTerms" />
-		<addNotNullConstraint tableName="FINANCEMAIN" columnName="AdvTerms" />
+		<addNotNullConstraint tableName="FINANCEMAIN" columnName="GrcAdvTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="FINANCEMAIN" columnName="AdvTerms" columnDataType="int"/>
 	</changeSet>
 
 	<changeSet id="8" author="shinde.b">
@@ -1190,8 +1188,8 @@
 	</changeSet>
 
 	<changeSet id="8.3" author="shinde.b">
-		<addNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="GrcAdvTerms" />
-		<addNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="AdvTerms" />
+		<addNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="GrcAdvTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="FINANCEMAIN_TEMP" columnName="AdvTerms" columnDataType="int"/>
 	</changeSet>
 	
 	<changeSet id="9" author="shinde.b">
@@ -1229,8 +1227,8 @@
 	</changeSet>
 
 	<changeSet id="9.3" author="shinde.b">
-		<addNotNullConstraint tableName="WIFFINANCEMAIN" columnName="GrcAdvTerms" />
-		<addNotNullConstraint tableName="WIFFINANCEMAIN" columnName="AdvTerms" />
+		<addNotNullConstraint tableName="WIFFINANCEMAIN" columnName="GrcAdvTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="WIFFINANCEMAIN" columnName="AdvTerms" columnDataType="int"/>
 	</changeSet>
 
 	<changeSet id="10" author="shinde.b">
@@ -1268,8 +1266,8 @@
 	</changeSet>
 
 	<changeSet id="10.3" author="shinde.b">
-		<addNotNullConstraint tableName="WIFFINANCEMAIN_TEMP" columnName="GrcAdvTerms" />
-		<addNotNullConstraint tableName="WIFFINANCEMAIN_TEMP" columnName="AdvTerms" />
+		<addNotNullConstraint tableName="WIFFINANCEMAIN_TEMP" columnName="GrcAdvTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="WIFFINANCEMAIN_TEMP" columnName="AdvTerms" columnDataType="int"/>
 	</changeSet>
 
 	<changeSet id="11.0" author="shinde.b">

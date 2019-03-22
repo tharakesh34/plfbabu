@@ -64,7 +64,7 @@
 			<![CDATA[
 				UPDATE ADTRMTFINANCETYPES SET GRCADVINTERSETREQ = 0;
 				UPDATE ADTRMTFINANCETYPES SET GRCADVMINTERMS = 0;
-				UPDATE ADTRMTFINANCETYPES SET GRCADVMINTERMS = 0;
+				UPDATE ADTRMTFINANCETYPES SET GRCADVMAXTERMS = 0;
 				UPDATE ADTRMTFINANCETYPES SET GRCADVDEFAULTTERMS = 0;
 				
 				UPDATE ADTRMTFINANCETYPES SET ADVINTERSETREQ = 0;
@@ -82,13 +82,13 @@
 		<sql>
 			<![CDATA[
 				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_GRCADVINTERSETREQ DEFAULT 0 FOR GRCADVINTERSETREQ;
-				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_GRCMINADVTERMS DEFAULT 0 FOR GRCADVMINTERMS;
-				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_GRCMAXADVTERMS DEFAULT 0 FOR GRCADVMINTERMS;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_GRCADVMINTERMS DEFAULT 0 FOR GRCADVMINTERMS;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_GRCADVMAXTERMS DEFAULT 0 FOR GRCADVMAXTERMS;
 				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_GRCDEFAULTTERMS DEFAULT 0 FOR GRCADVDEFAULTTERMS;
 				
 				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_ADVINTERSETREQ DEFAULT 0 FOR ADVINTERSETREQ;
-				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_MINADVTERMS DEFAULT 0 FOR ADVMINTERMS;
-				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_MAXADVTERMS DEFAULT 0 FOR ADVMAXTERMS;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_ADVMINTERMS DEFAULT 0 FOR ADVMINTERMS;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_ADVMAXTERMS DEFAULT 0 FOR ADVMAXTERMS;
 				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_DEFAULTTERMS DEFAULT 0 FOR ADVDEFAULTTERMS;
 				
 				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_DSFREQ DEFAULT 0 FOR DSFREQ;
@@ -113,18 +113,18 @@
 	</changeSet>
 
 	<changeSet id="1.3" author="shinde.b" >
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvIntersetReq" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMinTerms" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMinTerms" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvDefaultTerms" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvIntersetReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMinTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMaxTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvDefaultTerms" columnDataType="int"/>
 
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvIntersetReq" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMinTerms" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMaxTerms" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvDefaultTerms" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvIntersetReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMinTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMaxTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvDefaultTerms" columnDataType="int"/>
 
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="DSFReq" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="CashCollateralReq" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="DSFReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="CashCollateralReq" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="2" author="shinde.b">
@@ -162,8 +162,8 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="GrcAdvTerms" />
-		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="AdvTerms" />
+		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="GrcAdvTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="AdvTerms" columnDataType="int"/>
 	</changeSet>
 
 </databaseChangeLog>
