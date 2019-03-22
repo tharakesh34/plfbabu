@@ -1514,6 +1514,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		fee.setActualAmount(advanceProfit);
 		fee.setCalculatedAmount(advanceProfit);
 		fee.setActualAmountOriginal(advanceProfit);
+		
+		fm.setAdvanceEMI(advanceProfit);
 	}
 
 	private BigDecimal getAdvanceProfit(AdvanceType advanceType, AdvanceRuleCode advanceRuleCode, int terms,
