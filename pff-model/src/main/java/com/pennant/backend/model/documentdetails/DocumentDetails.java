@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
@@ -18,6 +19,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
 		"custDocIssuedOn",
 		"custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
+@XmlRootElement(name = "DocumentDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = -5569765259024813213L;

@@ -72,4 +72,6 @@ public interface QueryCategoryDAO extends BasicCrudDao<QueryCategory> {
 	 */
 	boolean isDuplicateKey(long id, String code, TableType tableType);
 
+	QueryCategory getQueryCategoryByCode(String code, String type);
+
 }

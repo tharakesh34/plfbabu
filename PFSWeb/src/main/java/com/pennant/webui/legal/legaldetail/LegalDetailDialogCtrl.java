@@ -83,6 +83,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
@@ -2406,7 +2407,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		map.put("allowedRoles", getLoanWorkFlowRoles());
 		map.put("roleCode", getRole());
 		map.put("enquiry", this.enqiryModule);
-		Executions.createComponents("/WEB-INF/pages/Finance/Covenant/CovenantsList.zul", coventsTabPanel, map);
+
+		String url = "/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul";
+
+		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
+		}
+
+		Executions.createComponents(url, coventsTabPanel, map);
 		logger.debug(Literal.LEAVING);
 	}
 

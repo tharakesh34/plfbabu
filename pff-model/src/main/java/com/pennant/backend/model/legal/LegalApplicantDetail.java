@@ -48,6 +48,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -60,9 +61,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalApplicantDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "legalApplicantId", "legalReference", "title", "propertyOwnersName", "age", "relationshipType",
-		"iDType", "iDNo", "remarks" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "title", "propertyOwnersName", "age", "relationshipType", "iDType", "iDNo", "remarks" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class LegalApplicantDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
@@ -71,14 +71,21 @@ public class LegalApplicantDetail extends AbstractWorkflowEntity implements Enti
 	private long customerId = Long.MIN_VALUE;
 	private int seqNum = 0;
 	private String legalReference;;
+	@XmlElement
 	private String title;
 	private String titleName;
+	@XmlElement(name = "applicantName")
 	private String propertyOwnersName;
+	@XmlElement
 	private int age;
+	@XmlElement
 	private String relationshipType;
+	@XmlElement
 	private String iDType;
 	private String iDTypeName;
+	@XmlElement
 	private String iDNo;
+	@XmlElement
 	private String remarks;
 	private Customer customer;
 	private boolean isDefault;

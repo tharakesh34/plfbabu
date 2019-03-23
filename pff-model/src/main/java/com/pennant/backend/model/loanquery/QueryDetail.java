@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -64,26 +65,27 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>QueryDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "finReference", "id", "usrLogin", "raisedOn", "description", "qryNotes", "status", "raisedBy",
-		"code", "categoryId", "assignedRole", "notifyTo", "responsNotes", "responseBy", "responseOn", "closerNotes",
-		"closerBy", "closerOn" })
+@XmlType(propOrder = { "categoryCode", "assignedRole", "notifyTo", "qryNotes", "status" })
 
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "QueryDetail")
+@XmlAccessorType(XmlAccessType.NONE)
 public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement
 	private long id = Long.MIN_VALUE;
 	private String finReference;
 	// private String finReferenceName;
 	private long categoryId = 0;
 	private String categoryIdName;
+	@XmlElement
 	private String qryNotes;
+	@XmlElement
 	private String assignedRole;
+	@XmlElement
 	private String notifyTo;
+	@XmlElement
 	private String status;
 	private long raisedBy = 0;
-	@XmlElement
 	private String usrLogin;
 
 	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
@@ -108,6 +110,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private QueryDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	@XmlElement
 	private String categoryCode;
 	private String responseUser;
 	private String closerUser;

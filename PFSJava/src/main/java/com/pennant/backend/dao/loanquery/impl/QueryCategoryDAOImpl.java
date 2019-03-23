@@ -234,4 +234,36 @@ public class QueryCategoryDAOImpl extends SequenceDao<QueryCategory> implements 
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public QueryCategory getQueryCategoryByCode(String code, String type) {
+		logger.debug(Literal.ENTERING);
+
+		QueryCategory queryCategory = new QueryCategory();
+		queryCategory.setCode(code);
+
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, code, description, active, ");
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From BMTQueryCategories");
+		sql.append(type);
+		sql.append(" Where code = :code");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryCategory);
+		RowMapper<QueryCategory> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryCategory.class);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+
+		} catch (DataAccessException e) {
+			logger.warn(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

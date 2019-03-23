@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,14 +43,18 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.loanquery.QueryCategoryDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
+import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.dao.systemmasters.LoanPurposeDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
+import com.pennant.backend.dao.systemmasters.SalutationDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -85,6 +90,12 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
+import com.pennant.backend.model.legal.LegalApplicantDetail;
+import com.pennant.backend.model.legal.LegalDetail;
+import com.pennant.backend.model.legal.LegalDocument;
+import com.pennant.backend.model.legal.LegalPropertyDetail;
+import com.pennant.backend.model.loanquery.QueryCategory;
+import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -97,6 +108,7 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
@@ -128,7 +140,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
@@ -175,6 +189,13 @@ public class FinanceDataValidation {
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private GeneralDepartmentService generalDepartmentService;
 	private LovFieldDetailService			lovFieldDetailService;
+	private SalutationDAO salutationDAO;
+	private DocumentTypeDAO documentTypeDAO;
+	private QueryCategoryDAO queryCategoryDAO;
+
+	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
+		this.queryCategoryDAO = queryCategoryDAO;
+	}
 
 	public FinanceDataValidation() {
 		super();
@@ -1021,6 +1042,59 @@ public class FinanceDataValidation {
 				return finScheduleData;
 			}
 		}
+
+		if (isCreateLoan && !financeDetail.isStp()) {
+			List<LegalDetail> legalDetails=financeDetail.getLegalDetailsList();
+			if (!finMain.isLegalRequired()) {
+				if (legalDetails != null && !CollectionUtils.isEmpty(legalDetails)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Legal Details";
+					valueParm[1] = "LegalRequired";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+					finScheduleData.setErrorDetails(errorDetails);
+					return finScheduleData;
+				}
+			}
+
+			//validate Legal Details
+			errorDetails = doLegalDetailsValidation(financeDetail);
+			if (!CollectionUtils.isEmpty(errorDetails)) {
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+			
+			if (legalDetails != null && !CollectionUtils.isEmpty(legalDetails)) {
+				for (LegalDetail legalDetail : legalDetails) {
+
+					//validate Legal Property Details
+					errorDetails = validatePropertyDetails(legalDetail.getPropertyDetailList());
+					if (!CollectionUtils.isEmpty(errorDetails)) {
+						finScheduleData.setErrorDetails(errorDetails);
+						return finScheduleData;
+					}
+
+					//validate Legal Document Details
+					errorDetails = validateLegalDocument(legalDetail.getDocumentList());
+					if (!CollectionUtils.isEmpty(errorDetails)) {
+						finScheduleData.setErrorDetails(errorDetails);
+						return finScheduleData;
+					}
+
+					//validate Legal Query Details
+					if (legalDetail.getQueryDetail() != null) {
+						errorDetails = validateLegalQueryDetail(legalDetail.getQueryDetail());
+						if (!CollectionUtils.isEmpty(errorDetails)) {
+							finScheduleData.setErrorDetails(errorDetails);
+							return finScheduleData;
+						}
+					}
+				}
+				
+			}
+
+		}
+		
+		
 		// validate FinReference
 		String financeReference = null;
 		if (financeDetail.getFinScheduleData().getFinReference() != null) {
@@ -5349,6 +5423,583 @@ public class FinanceDataValidation {
 		}
 		return errors;
 	}
+
+	/**
+	 * Method for do Legal Details Validation
+	 * 
+	 * @param financeDetail
+	 * @return List<ErrorDetail>
+	 */
+	private List<ErrorDetail> doLegalDetailsValidation(FinanceDetail financeDetail) {
+		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
+		List<LegalDetail> legalDetails = financeDetail.getLegalDetailsList();
+		List<CollateralAssignment> collateralAssignments = financeDetail.getCollateralAssignmentList();
+		
+		//When collateral is not available legal details are not applicable
+		if (collateralAssignments == null && CollectionUtils.isEmpty(collateralAssignments)) {
+			if (legalDetails != null && !legalDetails.isEmpty()) {
+				String[] param = new String[2];
+				param[0] = "Legal Details ";
+				param[1] = "Collateral Assignment/Collateral Setup";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91132", param)));
+				return errors;
+			}
+		}
+
+		if (collateralAssignments != null && !CollectionUtils.isEmpty(collateralAssignments) && legalDetails != null
+				&& !CollectionUtils.isEmpty(legalDetails)) {
+
+			//No. of legal details should less than/equal to no. of Collateral Details
+			if (legalDetails.size() > collateralAssignments.size()) {
+				String[] param = new String[2];
+				param[0] = "No. of Legaldetails";
+				param[1] = "No. of Collateral Details";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30508", param)));
+				return errors;
+			}
+
+			//both legal sequence and Collateral Sequence are Mandatory when Legal Details are Available
+			//legalSeq is Mandatory
+			for (LegalDetail legal : legalDetails) {
+				if (legal.getLegalSeq() <= 0) {
+					String[] param = new String[1];
+					param[0] = "legalSeq ";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errors;
+				}
+			}
+
+			//Collateral Sequence is Mandatory
+			for (CollateralAssignment assignment : collateralAssignments) {
+				if (assignment.getAssignmentSeq() <= 0) {
+					String[] param = new String[1];
+					param[0] = "Collateral Seq ";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errors;
+				}
+			}
+
+			//validate against duplicate Collateral Sequence
+			int seqCount = 0;
+			for (CollateralAssignment collateralAssignment : collateralAssignments) {
+				for (CollateralAssignment assignment : collateralAssignments) {
+					if (collateralAssignment.getAssignmentSeq() == assignment.getAssignmentSeq()) {
+						seqCount++;
+					}
+				}
+				if (seqCount > 1) {
+					String[] param = new String[2];
+					param[0] = "Collateral Seq: ";
+					param[1] = String.valueOf(collateralAssignment.getAssignmentSeq());
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", param)));
+					return errors;
+				}
+				seqCount = 0;
+			}
+
+			//validate against duplicate Legal Sequence
+			int count = 0;
+			for (LegalDetail legalDetail : legalDetails) {
+				for (LegalDetail legal : legalDetails) {
+					if (legalDetail.getLegalSeq() == legal.getLegalSeq()) {
+						count++;
+					}
+				}
+				if (count > 1) {
+					String[] param = new String[2];
+					param[0] = "Legal Seq: ";
+					param[1] = String.valueOf(legalDetail.getLegalSeq());
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", param)));
+					return errors;
+				}
+				count = 0;
+			}
+
+			boolean isLegal = false;
+			for (LegalDetail legalDetail : legalDetails) {
+				for (CollateralAssignment assignment : collateralAssignments) {
+					if (assignment.getAssignmentSeq() == legalDetail.getLegalSeq()) {
+						isLegal = true;
+						break;
+					}
+				}
+				if (!isLegal) {
+					String[] param = new String[2];
+					param[0] = "Legal Seq";
+					param[1] = "Collateral Seq";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("99017", param)));
+					return errors;
+				}
+				isLegal = false;
+			}
+		}
+		return errors;
+	}
+
+	private List<ErrorDetail> validatePropertyDetails(List<LegalPropertyDetail> propertyDetails) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+		List<ValueLabel> yesNoList = PennantStaticListUtil.getYesNo();
+
+		if (propertyDetails != null && !CollectionUtils.isEmpty(propertyDetails)) {
+			for (LegalPropertyDetail property : propertyDetails) {
+				if (StringUtils.isBlank(property.getRegistrationDistrict())) {
+					String[] param = new String[1];
+					param[0] = "RegistrationDistrict ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(property.getRegistrationOffice())) {
+					String[] param = new String[1];
+					param[0] = "RegistrationOffice ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(property.getNorthSideEastByWest())) {
+					String[] param = new String[1];
+					param[0] = "NorthSideEastByWest ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(property.getSouthSideWestByEast())) {
+					String[] param = new String[1];
+					param[0] = "SouthSideWestByEast ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(property.getEastSideNorthBySouth())) {
+					String[] param = new String[1];
+					param[0] = "EastSideNorthBySouth ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+				
+				if (StringUtils.isBlank(property.getWestSideSouthByNorth())) {
+					String[] param = new String[1];
+					param[0] = "WestSideSouthByNorth ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(property.getUrbanLandCeiling())) {
+					String[] param = new String[1];
+					param[0] = "UrbanLandCeiling ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean urbanLandCeiling = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getUrbanLandCeiling(), yesNo.getValue())) {
+							urbanLandCeiling = true;
+							break;
+						}
+
+					}
+					if (!urbanLandCeiling) {
+						String[] param = new String[2];
+						param[0] = "UrbanLandCeiling ";
+						param[0] = property.getUrbanLandCeiling();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getMinorshareInvolved())) {
+					String[] param = new String[1];
+					param[0] = "MinorshareInvolved ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean minorshareInvolved = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getMinorshareInvolved(), yesNo.getValue())) {
+							minorshareInvolved = true;
+							break;
+						}
+
+					}
+					if (!minorshareInvolved) {
+						String[] param = new String[2];
+						param[0] = "MinorshareInvolved ";
+						param[0] = property.getMinorshareInvolved();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getPropertyIsGramanatham())) {
+					String[] param = new String[1];
+					param[0] = "PropertyIsGramanatham ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean propertyIsGramanatham = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getPropertyIsGramanatham(), yesNo.getValue())) {
+							propertyIsGramanatham = true;
+							break;
+						}
+
+					}
+					if (!propertyIsGramanatham) {
+						String[] param = new String[2];
+						param[0] = "PropertyIsGramanatham ";
+						param[0] = property.getPropertyIsGramanatham();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getPropertyReleased())) {
+					String[] param = new String[1];
+					param[0] = "PropertyReleased ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean propertyReleased = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getPropertyReleased(), yesNo.getValue())) {
+							propertyReleased = true;
+							break;
+						}
+
+					}
+					if (!propertyReleased) {
+						String[] param = new String[2];
+						param[0] = "PropertyReleased ";
+						param[0] = property.getPropertyReleased();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getPropOriginalsAvailable())) {
+					String[] param = new String[1];
+					param[0] = "PropOriginalsAvailable ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean propOriginalsAvailable = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getPropOriginalsAvailable(), yesNo.getValue())) {
+							propOriginalsAvailable = true;
+							break;
+						}
+
+					}
+					if (!propOriginalsAvailable) {
+						String[] param = new String[2];
+						param[0] = "PropOriginalsAvailable ";
+						param[0] = property.getPropOriginalsAvailable();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getPropertyIsAgricultural())) {
+					String[] param = new String[1];
+					param[0] = "PropertyIsAgricultural ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean propertyIsAgricultural = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getPropertyIsAgricultural(), yesNo.getValue())) {
+							propertyIsAgricultural = true;
+							break;
+						}
+
+					}
+					if (!propertyIsAgricultural) {
+						String[] param = new String[2];
+						param[0] = "PropertyIsAgricultural ";
+						param[0] = property.getPropertyIsAgricultural();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getNocObtainedFromLPA())) {
+					String[] param = new String[1];
+					param[0] = "NocObtainedFromLPA ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean nocObtainedFromLPA = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getNocObtainedFromLPA(), yesNo.getValue())) {
+							nocObtainedFromLPA = true;
+							break;
+						}
+
+					}
+					if (!nocObtainedFromLPA) {
+						String[] param = new String[2];
+						param[0] = "NocObtainedFromLPA ";
+						param[0] = property.getNocObtainedFromLPA();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(property.getAnyMortgagePending())) {
+					String[] param = new String[1];
+					param[0] = "AnyMortgagePending ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean anyMortgagePending = false;
+					for (ValueLabel yesNo : yesNoList) {
+						if (StringUtils.equals(property.getAnyMortgagePending(), yesNo.getValue())) {
+							anyMortgagePending = true;
+							break;
+						}
+
+					}
+					if (!anyMortgagePending) {
+						String[] param = new String[2];
+						param[0] = "AnyMortgagePending ";
+						param[0] = property.getAnyMortgagePending();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isNotBlank(property.getScheduleType())) {
+					List<ValueLabel> scheduleTypes = PennantStaticListUtil.getScheduleTypes();
+					boolean isSchedule = false;
+					for (ValueLabel scheduleType : scheduleTypes) {
+						if (StringUtils.equals(property.getScheduleType(), scheduleType.getValue())) {
+							isSchedule = true;
+							break;
+						}
+
+					}
+					if (!isSchedule) {
+						String[] param = new String[2];
+						param[0] = "ScheduleType ";
+						param[0] = property.getScheduleType();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isNotBlank(property.getPropertyType())) {
+					List<ValueLabel> propertyTypes = PennantStaticListUtil.getLegalPropertyTypes();
+					boolean isProperty = false;
+					for (ValueLabel propertyType : propertyTypes) {
+						if (StringUtils.equals(property.getPropertyType(), propertyType.getValue())) {
+							isProperty = true;
+							break;
+						}
+						
+					}
+					if (!isProperty) {
+						String[] param = new String[2];
+						param[0] = "PropertyType ";
+						param[0] = property.getPropertyType();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+			}
+		}
+
+		return errorDetails;
+	}
+
+	private List<ErrorDetail> validateLegalApplicant(List<LegalApplicantDetail> applicantDetails) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+
+		for (LegalApplicantDetail applicantDetail : applicantDetails) {
+			if (StringUtils.isNotBlank(applicantDetail.getTitle())) {
+				Salutation salutation = salutationDAO.getSalutationById(applicantDetail.getTitle(), "_AView");
+				if (salutation == null) {
+					String[] param = new String[2];
+					param[0] = "Title";
+					param[1] = applicantDetail.getTitle();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+					return errorDetails;
+				}
+			}
+
+			if (StringUtils.isNotBlank(applicantDetail.getIDType())) {
+				DocumentType documentType = documentTypeDAO.getDocumentTypeById(applicantDetail.getIDType(), "_AView");
+				if (documentType == null) {
+					String[] param = new String[2];
+					param[0] = "IdType";
+					param[1] = applicantDetail.getIDType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+					return errorDetails;
+				}
+			}
+		}
+		return errorDetails;
+	}
+
+	private List<ErrorDetail> validateLegalDocument(List<LegalDocument> documents) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+
+		if (documents != null && CollectionUtils.isEmpty(documents)) {
+			for (LegalDocument document : documents) {
+				if (StringUtils.isBlank(document.getDocumentNo())) {
+					String[] param = new String[1];
+					param[0] = "docNo";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (document.getDocumentDate() == null) {
+					String[] param = new String[1];
+					param[0] = "docDate";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(document.getDocumentType())) {
+					String[] param = new String[1];
+					param[0] = "docType";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				} else {
+					boolean isType = false;
+					List<ValueLabel> documentTypes = PennantStaticListUtil.getDocumentTypes();
+					for (ValueLabel docType : documentTypes) {
+						if (StringUtils.equals(document.getDocumentType(), docType.getValue())) {
+							isType = true;
+							break;
+						}
+					}
+					if (!isType) {
+						String[] param = new String[2];
+						param[0] = "docType";
+						param[1] = document.getDocumentType();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isNotBlank(document.getDocumentCategory())) {
+					DocumentType documentType = documentTypeDAO.getDocumentTypeById(document.getDocumentCategory(),
+							"_AView");
+					if (documentType == null) {
+						String[] param = new String[2];
+						param[0] = "docCategory";
+						param[1] = document.getDocumentCategory();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isNotBlank(document.getScheduleType())) {
+					List<ValueLabel> scheduleTypes = PennantStaticListUtil.getScheduleTypes();
+					boolean isSchedule = false;
+					for (ValueLabel scheduleType : scheduleTypes) {
+						if (StringUtils.equals(document.getScheduleType(), scheduleType.getValue())) {
+							isSchedule = true;
+							break;
+						}
+
+					}
+					if (!isSchedule) {
+						String[] param = new String[2];
+						param[0] = "ScheduleType ";
+						param[0] = document.getScheduleType();
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+						return errorDetails;
+					}
+				}
+
+				if (StringUtils.isBlank(document.getDocumentPropertyAddress())) {
+					String[] param = new String[1];
+					param[0] = "docPropertyAddrs";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(document.getDocumentBriefTracking())) {
+					String[] param = new String[1];
+					param[0] = "docBriefTracking";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+
+				if (StringUtils.isBlank(document.getDocumentHolderProperty())) {
+					String[] param = new String[1];
+					param[0] = "docHolder";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+					return errorDetails;
+				}
+			}
+		}
+		return errorDetails;
+	}
+
+	private List<ErrorDetail> validateLegalQueryDetail(QueryDetail queryDetail) {
+		List<ErrorDetail> errorDetails = new ArrayList<>();
+
+		if (StringUtils.isBlank(queryDetail.getCategoryCode())) {
+			String[] param = new String[1];
+			param[0] = "categoryCode";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+			return errorDetails;
+		} else {
+			QueryCategory category = queryCategoryDAO.getQueryCategoryByCode(queryDetail.getCategoryCode(), "_AView");
+			if (category == null) {
+				String[] param = new String[2];
+				param[0] = "categoryCode";
+				param[1] = queryDetail.getCategoryCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+				return errorDetails;
+			} else {
+				queryDetail.setCategoryId(category.getId());
+			}
+		}
+
+		if (StringUtils.isBlank(queryDetail.getAssignedRole())) {
+			String[] param = new String[1];
+			param[0] = "assignedRole";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
+			return errorDetails;
+		}else{
+			String workflowType = ModuleUtil.getWorkflowType("LegalDetail");
+			WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
+			String[] roles=workFlowDetails.getRoles();
+			boolean isRole = false;
+			for (String role : roles) {
+				if (StringUtils.equals(queryDetail.getAssignedRole(), role)) {
+					isRole = true;
+					break;
+				}
+			}
+			if (!isRole) {
+				String[] param = new String[2];
+				param[0] = "AssignedRole ";
+				param[1] = Arrays.toString(roles);
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", param)));
+				return errorDetails;
+			}
+		}
+
+		List<DocumentDetails> documentDetails = queryDetail.getDocumentDetailsList();
+		for (DocumentDetails documents : documentDetails) {
+
+			if (StringUtils.isNotBlank(documents.getDocCategory())) {
+				DocumentType documentType = documentTypeDAO.getDocumentTypeById(documents.getDocCategory(), "_AView");
+				if (documentType == null) {
+					String[] param = new String[2];
+					param[0] = "docCategory";
+					param[1] = documents.getDocCategory();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+					return errorDetails;
+				}
+			}
+		}
+		return errorDetails;
+	}
 	/*
 	 * ################################################################################################################
 	 * DEFAULT SETTER GETTER METHODS
@@ -5509,6 +6160,14 @@ public class FinanceDataValidation {
 	
 	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
 		this.lovFieldDetailService = lovFieldDetailService;
+	}
+
+	public void setSalutationDAO(SalutationDAO salutationDAO) {
+		this.salutationDAO = salutationDAO;
+	}
+
+	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
+		this.documentTypeDAO = documentTypeDAO;
 	}
 
 }

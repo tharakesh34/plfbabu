@@ -51,6 +51,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.Customer;
@@ -65,6 +71,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalDetail table</b>.<br>
  *
  */
+
+@XmlRootElement(name = "LegalDetail")
+@XmlAccessorType(XmlAccessType.NONE)
 public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
@@ -85,6 +94,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private Date propertyDetailECDate;
 	private String ecPropertyOwnerName;
 	private String module;
+	@XmlElement
 	private boolean active = false;
 	private boolean newRecord = false;
 	private String lovValue;
@@ -92,12 +102,21 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private byte[] docImage;
 	private LegalDetail befImage;
 	private LoggedInUser userDetails;
+	@XmlElement(name = "seq")
+	private long legalSeq;
 
+	@XmlElement
 	private QueryDetail queryDetail = new QueryDetail();
 	private List<Customer> customerList = new ArrayList<>();
 	private List<DocumentDetails> collateralDocumentList = new ArrayList<>();
+	@XmlElementWrapper(name = "applicantDetails")
+	@XmlElement(name = "applicantDetail")
 	private List<LegalApplicantDetail> applicantDetailList = new ArrayList<>();
+	@XmlElementWrapper(name = "propertyDetails")
+	@XmlElement(name = "propertyDetail")
 	private List<LegalPropertyDetail> propertyDetailList = new ArrayList<>();
+	@XmlElementWrapper(name = "legalDocuments")
+	@XmlElement(name = "legalDocument")
 	private List<LegalDocument> documentList = new ArrayList<>();
 	private List<LegalPropertyTitle> propertyTitleList = new ArrayList<>();
 	private List<LegalECDetail> ecdDetailsList = new ArrayList<>();
@@ -160,6 +179,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("modtDoc");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("jointAccountDetailList");
+		excludeFields.add("legalSeq");
 		return excludeFields;
 	}
 
@@ -604,6 +624,14 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setModule(String module) {
 		this.module = module;
+	}
+
+	public long getLegalSeq() {
+		return legalSeq;
+	}
+
+	public void setLegalSeq(long legalSeq) {
+		this.legalSeq = legalSeq;
 	}
 
 }

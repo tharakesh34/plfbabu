@@ -49,6 +49,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -60,10 +61,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalDocument table</b>.<br>
  *
  */
-@XmlType(propOrder = { "legalDocumentId", "legalReference", "documentDate", "documentDetail", "documentNo", "surveyNo",
-		"documentTypeMaker", "documentCategory", "scheduleType", "documentTypeVerify", "documentRemarks",
-		"documentReference", "documentTypeApprove", "documentAccepted" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "documentDate", "documentNo", "documentDetail", "surveyNo", "documentType", "documentCategory",
+		"scheduleType", "documentHolderProperty", "documentPropertyAddress", "documentBriefTracking",
+		"documentMortgage" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
@@ -72,14 +73,21 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private int seqNum = 0;
 	private byte[] docImage;
 	private long documentReference = Long.MIN_VALUE;
+	@XmlElement(name = "docDate")
 	private Date documentDate;
+	@XmlElement(name = "docDetail")
 	private String documentDetail;
 	private String documentName;
+	@XmlElement(name = "docNo")
 	private String documentNo;
 	private String uploadDocumentType;
+	@XmlElement
 	private String surveyNo;
+	@XmlElement(name = "docType")
 	private String documentType;
+	@XmlElement(name = "docCategory")
 	private String documentCategory;
+	@XmlElement
 	private String scheduleType;
 	private String documentTypeVerify;
 	private String documentRemarks;
@@ -100,9 +108,13 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentTypeApproveName;
 	
 	// --- Document Tracking fields -----//
+	@XmlElement(name = "docHolder")
 	private String documentHolderProperty;
+	@XmlElement(name = "docPropertyAddrs")
 	private String documentPropertyAddress;
+	@XmlElement(name = "docBriefTracking")
 	private String documentBriefTracking;
+	@XmlElement(name = "docMortage")
 	private boolean documentMortgage = false;
 
 	public boolean isNew() {

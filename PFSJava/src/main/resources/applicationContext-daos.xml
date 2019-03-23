@@ -3882,6 +3882,9 @@
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<property name="generalDepartmentService" ref="generalDepartmentService" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
+		<property name="salutationDAO" ref="salutationDAO"/>
+		<property name="documentTypeDAO" ref="documentTypeDAO"/>
+		<property name="queryCategoryDAO" ref="queryCategoryDAO"/>
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
@@ -10972,6 +10975,10 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
 		<property name="branchService" ref="branchService" />
+		<property name="legalApplicantDetailDAO" ref="legalApplicantDetailDAO" />
+		<property name="legalPropertyDetailDAO" ref="legalPropertyDetailDAO" />
+		<property name="legalDocumentDAO" ref="legalDocumentDAO"/>
+		<property name="queryDetailDAO" ref="queryDetailDAO"/>
 	</bean>
 
 	<!-- LegallApplicantDetail -->

@@ -49,8 +49,8 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -60,10 +60,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>LegalPropertyDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "legalPropertyId", "legalReference", "scheduleType", "propertySchedule", "propertyType",
-		"northBy", "southBy", "eastBy", "westBy", "measurement", "registrationOffice", "registrationDistrict",
-		"propertyOwner" })
-@XmlAccessorType(XmlAccessType.FIELD)
+
+@XmlAccessorType(XmlAccessType.NONE)
 public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
@@ -71,18 +69,29 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	private long legalId = Long.MIN_VALUE;
 	private int seqNum = 0;
 	private String legalReference;
+	@XmlElement
 	private String scheduleType;
 	private String scheduleTypeName;
+	@XmlElement
 	private String propertySchedule;
+	@XmlElement
 	private String propertyType;
 	private String propertyTypeName;
+	@XmlElement
 	private String northBy;
+	@XmlElement
 	private String southBy;
+	@XmlElement
 	private String eastBy;
+	@XmlElement
 	private String westBy;
+	@XmlElement
 	private BigDecimal measurement = BigDecimal.ZERO;
+	@XmlElement
 	private String registrationOffice;
+	@XmlElement
 	private String registrationDistrict;
+	@XmlElement
 	private String propertyOwner;
 	private String listApplicantNames;
 	@XmlTransient
@@ -94,18 +103,30 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	@XmlTransient
 	private LoggedInUser userDetails;
 	
+	@XmlElement
 	private String urbanLandCeiling;
+	@XmlElement
 	private String minorshareInvolved;
+	@XmlElement
 	private String propertyIsGramanatham;
+	@XmlElement
 	private String propertyReleased;
+	@XmlElement
 	private String propOriginalsAvailable;
+	@XmlElement
 	private String propertyIsAgricultural;
+	@XmlElement
 	private String nocObtainedFromLPA;
+	@XmlElement
 	private String anyMortgagePending;
 	
+	@XmlElement
 	private String northSideEastByWest;
+	@XmlElement
 	private String southSideWestByEast;
+	@XmlElement
 	private String eastSideNorthBySouth;
+	@XmlElement
 	private String westSideSouthByNorth;
 	
 

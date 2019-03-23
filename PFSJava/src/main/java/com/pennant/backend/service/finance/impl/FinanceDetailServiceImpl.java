@@ -2737,10 +2737,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			/**
 			 * save Legal details
 			 */
-
-			if (financeMain.isLegalRequired() && !financeDetail.isActionSave()
+			if (financeMain.isLegalRequired() && (!financeDetail.isActionSave() || auditHeader.getApiHeader() != null)
 					&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
-				legalDetailService.saveLegalDetails(financeDetail);
+				legalDetailService.saveLegalDetails(financeDetail, auditHeader.getApiHeader());
 			}
 
 		}

@@ -64,7 +64,11 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.legal.LegalApplicantDetailDAO;
 import com.pennant.backend.dao.legal.LegalDetailDAO;
+import com.pennant.backend.dao.legal.LegalDocumentDAO;
+import com.pennant.backend.dao.legal.LegalPropertyDetailDAO;
+import com.pennant.backend.dao.loanquery.QueryDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -137,6 +141,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	private CustomerDetailsService customerDetailsService;
 	private JointAccountDetailService jointAccountDetailService;
 	private BranchService branchService;
+
+	private LegalApplicantDetailDAO legalApplicantDetailDAO;
+	private LegalPropertyDetailDAO legalPropertyDetailDAO;
+	private LegalDocumentDAO legalDocumentDAO;
+	private QueryDetailDAO queryDetailDAO;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -242,9 +251,11 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	 * Save the legal details from loan Origination
 	 */
 	@Override
-	public void saveLegalDetails(FinanceDetail financeDetail) {
+	public void saveLegalDetails(FinanceDetail financeDetail, Object apiHeader) {
 
 		List<CollateralAssignment> collateralAssignmentList = financeDetail.getCollateralAssignmentList();
+		List<LegalDetail> legalDetails=financeDetail.getLegalDetailsList();
+		
 		if (CollectionUtils.isEmpty(collateralAssignmentList)) {
 			return;
 		}
@@ -278,29 +289,68 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			if (isExists) {
 				getLegalDetailDAO().updateLegalDeatils(assignment.getReference(), assignment.getCollateralRef(), true);
 			} else {
+				//SetActive data from legalList if request from API 
+				if (apiHeader != null
+						&& StringUtils.equals(aFinanceMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+					if (legalDetails != null && !legalDetails.isEmpty()) {
+						for (LegalDetail legal : financeDetail.getLegalDetailsList()) {
+							if (assignment.getAssignmentSeq() == legal.getLegalSeq()) {
+								legal.setLoanReference(assignment.getReference());
+								legal.setCollateralReference(assignment.getCollateralRef());
+								legal.setBranch(aFinanceMain.getFinBranch());
+								legal.setNewRecord(true);
+								doSetLegalProperties(legal);
+								long legalId = Long.valueOf(getLegalDetailDAO().save(legal, TableType.TEMP_TAB));
+								
+								if (legal.getApplicantDetailList() != null
+										&& !CollectionUtils.isEmpty(legal.getApplicantDetailList())) {
+									for (LegalApplicantDetail applicantDetail : legal.getApplicantDetailList()) {
+										if(applicantDetail.isNew()){
+											applicantDetail.setLegalId(legalId);
+											legalApplicantDetailDAO.save(applicantDetail, TableType.TEMP_TAB);
+										}
+									}
+								}
+								
+								if (legal.getPropertyDetailList() != null
+										&& !CollectionUtils.isEmpty(legal.getPropertyDetailList())) {
+									for (LegalPropertyDetail propertyDetail : legal.getPropertyDetailList()) {
+										if (propertyDetail.isNew()) {
+											propertyDetail.setLegalId(legalId);
+											legalPropertyDetailDAO.save(propertyDetail, TableType.TEMP_TAB);
+										}
+									}
+								}
+								
+								if (legal.getDocumentList() != null
+										&& !CollectionUtils.isEmpty(legal.getDocumentList())) {
+									for (LegalDocument document : legal.getDocumentList()) {
+										document.setLegalId(legalId);
+										legalDocumentDAO.save(document, TableType.TEMP_TAB);
+									}
+								}
 
-				String workflowType = ModuleUtil.getWorkflowType("LegalDetail");
-				WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
-				WorkflowEngine engine = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-				LegalDetail legalDetail = new LegalDetail();
-				legalDetail.setLoanReference(assignment.getReference());
-				legalDetail.setCollateralReference(assignment.getCollateralRef());
-				legalDetail.setBranch(aFinanceMain.getFinBranch());
-				legalDetail.setNewRecord(true);
-				legalDetail.setActive(true);
-				legalDetail.setLegalDate(new Timestamp(System.currentTimeMillis()));
-				legalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				legalDetail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-				legalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				legalDetail.setWorkflowId(workFlowDetails.getWorkflowId());
-				legalDetail.setRoleCode(workFlowDetails.getFirstTaskOwner());
-				legalDetail.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
-				legalDetail.setTaskId(engine.getUserTaskId(legalDetail.getRoleCode()));
-				legalDetail.setNextTaskId(engine.getUserTaskId(legalDetail.getNextRoleCode()) + ";");
-				legalDetail.setModule(PennantConstants.QUERY_LEGAL_VERIFICATION);
-
-				getLegalDetailDAO().save(legalDetail, TableType.TEMP_TAB);
+								if (legal.getQueryDetail() != null) {
+									QueryDetail queryDetail = legal.getQueryDetail();
+									queryDetail.setFinReference(assignment.getReference());
+									queryDetail.setReference(assignment.getReference());
+									queryDetailDAO.save(queryDetail, TableType.TEMP_TAB);
+								}
+							}
+						}
+					}
+				} else {//Set active:true if request from WEB
+					LegalDetail legalDetail = new LegalDetail();
+					legalDetail.setLoanReference(assignment.getReference());
+					legalDetail.setCollateralReference(assignment.getCollateralRef());
+					legalDetail.setBranch(aFinanceMain.getFinBranch());
+					legalDetail.setNewRecord(true);
+					legalDetail.setActive(true);
+					doSetLegalProperties(legalDetail);
+					getLegalDetailDAO().save(legalDetail, TableType.TEMP_TAB);
+				}
 			}
+
 		}
 	}
 
@@ -1453,7 +1503,9 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		aLegalDetail.setUserDetails(financeMain.getUserDetails());
 		aLegalDetail.setWorkflowId(financeMain.getWorkflowId());
-		aLegalDetail.setModule(FinanceConstants.MODULE_NAME);
+		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			aLegalDetail.setModule(FinanceConstants.MODULE_NAME);
+		}
 
 		// Applicant details
 		List<LegalApplicantDetail> legalApplicantDetails = aLegalDetail.getApplicantDetailList();
@@ -1718,6 +1770,171 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditDetails;
 	}
 
+	private void doSetLegalProperties(LegalDetail aLegalDetail) {
+
+		String workflowType = ModuleUtil.getWorkflowType("LegalDetail");
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getDetailsByType(workflowType);
+		WorkflowEngine engine = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
+
+		aLegalDetail.setLegalDate(new Timestamp(System.currentTimeMillis()));
+		aLegalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aLegalDetail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+		aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		aLegalDetail.setWorkflowId(workFlowDetails.getWorkflowId());
+		aLegalDetail.setRoleCode(workFlowDetails.getFirstTaskOwner());
+		aLegalDetail.setNextRoleCode(workFlowDetails.getFirstTaskOwner());
+		aLegalDetail.setTaskId(engine.getUserTaskId(aLegalDetail.getRoleCode()));
+		aLegalDetail.setNextTaskId(engine.getUserTaskId(aLegalDetail.getNextRoleCode()) + ";");
+		aLegalDetail.setModule(PennantConstants.QUERY_LEGAL_VERIFICATION);
+		aLegalDetail.setNewRecord(true);
+
+		List<LegalApplicantDetail> legalApplicantDetails = aLegalDetail.getApplicantDetailList();
+		if (CollectionUtils.isNotEmpty(legalApplicantDetails)) {
+			for (LegalApplicantDetail details : legalApplicantDetails) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLegalReference(aLegalDetail.getLegalReference());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setRecordType(aLegalDetail.getRecordType());
+				details.setNewRecord(aLegalDetail.isNewRecord());
+			}
+		}
+
+		// Property details
+		List<LegalPropertyDetail> legalPropertyDetail = aLegalDetail.getPropertyDetailList();
+		if (CollectionUtils.isNotEmpty(legalPropertyDetail)) {
+			for (LegalPropertyDetail details : legalPropertyDetail) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setRecordType(aLegalDetail.getRecordType());
+				details.setNewRecord(aLegalDetail.isNewRecord());
+			}
+		}
+
+		// Document details
+		List<LegalDocument> legaldDocumentDetails = aLegalDetail.getDocumentList();
+		if (CollectionUtils.isNotEmpty(legaldDocumentDetails)) {
+			for (LegalDocument details : legaldDocumentDetails) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setRecordType(aLegalDetail.getRecordType());
+				details.setNewRecord(aLegalDetail.isNewRecord());
+			}
+		}
+
+		// Legal Property Title
+		List<LegalPropertyTitle> legalPropertyTitles = aLegalDetail.getPropertyTitleList();
+		if (CollectionUtils.isNotEmpty(legalPropertyTitles)) {
+			for (LegalPropertyTitle details : legalPropertyTitles) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setRecordType(aLegalDetail.getRecordType());
+				details.setNewRecord(aLegalDetail.isNewRecord());
+			}
+		}
+
+		// Legal EC Details
+		List<LegalECDetail> legalECDetails = aLegalDetail.getEcdDetailsList();
+		if (CollectionUtils.isNotEmpty(legalECDetails)) {
+			for (LegalECDetail details : legalECDetails) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setRecordType(aLegalDetail.getRecordType());
+				details.setNewRecord(aLegalDetail.isNewRecord());
+			}
+		}
+
+		// Legal Notes
+		List<LegalNote> legalNotes = aLegalDetail.getLegalNotesList();
+		if (CollectionUtils.isNotEmpty(legalNotes)) {
+			for (LegalNote details : legalNotes) {
+				details.setLegalId(aLegalDetail.getLegalId());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+				details.setUserDetails(aLegalDetail.getUserDetails());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setWorkflowId(aLegalDetail.getWorkflowId());
+				details.setTaskId(aLegalDetail.getTaskId());
+				details.setNextTaskId(aLegalDetail.getNextTaskId());
+				details.setRoleCode(aLegalDetail.getRoleCode());
+				details.setNextRoleCode(aLegalDetail.getNextRoleCode());
+				details.setRecordStatus(aLegalDetail.getRecordStatus());
+				details.setRecordType(aLegalDetail.getRecordType());
+				details.setNewRecord(aLegalDetail.isNewRecord());
+			}
+		}
+
+		if (aLegalDetail.getQueryDetail() != null) {
+			QueryDetail queryDetail = aLegalDetail.getQueryDetail();
+			queryDetail.setLastMntBy(aLegalDetail.getLastMntBy());
+			queryDetail.setLastMntOn(aLegalDetail.getLastMntOn());
+			queryDetail.setUserDetails(aLegalDetail.getUserDetails());
+			queryDetail.setRecordStatus(aLegalDetail.getRecordStatus());
+			queryDetail.setWorkflowId(aLegalDetail.getWorkflowId());
+			queryDetail.setTaskId(aLegalDetail.getTaskId());
+			queryDetail.setNextTaskId(aLegalDetail.getNextTaskId());
+			queryDetail.setRoleCode(aLegalDetail.getRoleCode());
+			queryDetail.setNextRoleCode(aLegalDetail.getNextRoleCode());
+			queryDetail.setRecordStatus(aLegalDetail.getRecordStatus());
+			queryDetail.setRecordType(aLegalDetail.getRecordType());
+			queryDetail.setNewRecord(aLegalDetail.isNewRecord());
+		}
+
+		// Covenent details
+		List<FinCovenantType> covenantTypeDetails = aLegalDetail.getCovenantTypeList();
+		if (CollectionUtils.isNotEmpty(covenantTypeDetails)) {
+			for (FinCovenantType details : covenantTypeDetails) {
+				details.setFinReference(aLegalDetail.getLoanReference());
+				details.setLastMntBy(aLegalDetail.getLastMntBy());
+				details.setLastMntOn(aLegalDetail.getLastMntOn());
+			}
+		}
+
+	}
 	@Override
 	public void deleteList(String finReference, TableType tempTab) {
 		this.legalDetailDAO.delete(finReference, tempTab);
@@ -1785,6 +2002,22 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
+	}
+
+	public void setLegalApplicantDetailDAO(LegalApplicantDetailDAO legalApplicantDetailDAO) {
+		this.legalApplicantDetailDAO = legalApplicantDetailDAO;
+	}
+
+	public void setLegalPropertyDetailDAO(LegalPropertyDetailDAO legalPropertyDetailDAO) {
+		this.legalPropertyDetailDAO = legalPropertyDetailDAO;
+	}
+
+	public void setLegalDocumentDAO(LegalDocumentDAO legalDocumentDAO) {
+		this.legalDocumentDAO = legalDocumentDAO;
+	}
+
+	public void setQueryDetailDAO(QueryDetailDAO queryDetailDAO) {
+		this.queryDetailDAO = queryDetailDAO;
 	}
 
 }

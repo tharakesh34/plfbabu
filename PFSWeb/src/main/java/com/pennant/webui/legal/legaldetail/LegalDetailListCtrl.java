@@ -61,9 +61,11 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.legal.legaldetail.model.LegalDetailListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -150,6 +152,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 	@Override
 	protected void doAddFilters() {
 		this.searchObject.clearFilters();
+		String legalParam = SysParamUtil.getValueAsString(SMTParameterConstants.LEGAL_DETAILS_DISPLAY_INACTIVE_RECORDS);
 
 		// Add filter for user's role queue.
 		if (isWorkFlowEnabled() && !enqiryModule) {
@@ -205,6 +208,17 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 			Filter[] fileters = new Filter[1];
 			fileters[0] = new Filter("module", PennantConstants.QUERY_LEGAL_VERIFICATION, Filter.OP_EQUAL);
 			this.searchObject.addFilterOr(fileters);
+		}
+
+		if (StringUtils.isNotBlank(legalParam)) {
+			if (!StringUtils.equals(legalParam, PennantConstants.YES)) {
+				if (!StringUtils.equals(this.module, PennantConstants.YES)) {
+					Filter[] fileters = new Filter[1];
+					fileters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+					this.searchObject.addFilterOr(fileters);
+				}
+			}
+
 		}
 	}
 

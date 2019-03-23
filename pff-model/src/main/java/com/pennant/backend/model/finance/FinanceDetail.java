@@ -232,6 +232,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<ExtendedField> extendedDetails;
 	private ChequeHeader chequeHeader;
 	private ReasonHeader reasonHeader;
+	@XmlElementWrapper(name = "legalDetails")
+	@XmlElement(name = "legalDetail")
 	private List<LegalDetail> legalDetailsList;
 	private Verification fiVerification;
 	private Verification tvVerification;
