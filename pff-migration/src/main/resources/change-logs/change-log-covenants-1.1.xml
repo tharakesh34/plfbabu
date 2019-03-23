@@ -1200,8 +1200,8 @@
 	</changeSet>
 
 	<changeSet id="15.1" author="vijaya.a">
-		<addForeignKeyConstraint constraintName="FK_COVENANT_DOCUMENTS_CID" referencedTableName="COVENANTS" referencedColumnNames="Id"
-			baseTableName="COVENANT_DOCUMENTS" baseColumnNames="CovenantId" />
+		<addForeignKeyConstraint constraintName="FK_COVENANT_DOCUMENTS_CID" referencedTableName="COVENANTS"
+			referencedColumnNames="Id" baseTableName="COVENANT_DOCUMENTS" baseColumnNames="CovenantId" />
 	</changeSet>
 
 	<changeSet id="15.2" author="vijaya.a">
@@ -1506,8 +1506,8 @@
 	</changeSet>
 
 	<changeSet id="18.1" author="amanullah.m">
-		<addForeignKeyConstraint constraintName="FK_COVENANT_ALERTS_CID" referencedTableName="COVENANTS" baseColumnNames="CovenantId"
-			baseTableName="COVENANT_ALERTS" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="FK_COVENANT_ALERTS_CID" referencedTableName="COVENANTS"
+			baseColumnNames="CovenantId" baseTableName="COVENANT_ALERTS" referencedColumnNames="id" />
 	</changeSet>
 
 	<changeSet id="19" author="vijaya.a">
@@ -1592,12 +1592,9 @@
 				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
 				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
 				
-				INSERT INTO SecGroups Values ((Select max(GrpID)+1 From SecGroups), 'REPORTS_COVENANTS','Group for Covenant Reports',1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
-				INSERT INTO SecGroups Values ((Select max(GrpID)+1 From SecGroups), 'REPORTS_PUTCALL','Group for Put-call Report',1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
-				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_CovenantDetailsReport','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',NULL,NULL,NULL,NULL,NULL,0);
-				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_Put_CallReport','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',NULL,NULL,NULL,NULL,NULL,0);
-				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_COVENANTS'), (Select RightID from SecRights where RightName = 'menu_Item_CovenantDetailsReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_PUTCALL'), (Select RightID from SecRights where RightName = 'menu_Item_Put_CallReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecGroups Values ((Select max(GrpID)+1 From SecGroups), 'COVENANT_REPORTS', 'Group for Covenant Reports', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_CovenantDetailsReport', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_REPORTS'), (Select RightID from SecRights where RightName = 'menu_Item_CovenantDetailsReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				
 				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
@@ -1605,4 +1602,5 @@
 			]]>
 		</sql>
 	</changeSet>
+
 </databaseChangeLog>

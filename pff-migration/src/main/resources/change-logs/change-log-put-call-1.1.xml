@@ -1308,4 +1308,22 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="31" author="shinde.b">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				
+				INSERT INTO SecGroups Values ((Select max(GrpID)+1 From SecGroups), 'PUT_CALL_REPORTS','Group for Put-call Report', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_Put_CallReport', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PUT_CALL_REPORTS'), (Select RightID from SecRights where RightName = 'menu_Item_Put_CallReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
