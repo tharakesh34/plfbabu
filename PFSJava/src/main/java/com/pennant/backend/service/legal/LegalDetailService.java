@@ -66,7 +66,7 @@ public interface LegalDetailService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	void saveLegalDetails(FinanceDetail financeDetail);
+	void saveLegalDetails(FinanceDetail financeDetail, Object apiHeader);
 
 	AuditHeader isLegalApproved(AuditHeader auditHeader);
 
