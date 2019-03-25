@@ -72,6 +72,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -2918,8 +2919,10 @@ public class ScheduleCalculator {
 			for (int j = 0; j < riSize; j++) {
 				RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(j);
 				if (DateUtility.compare(curInstruction.getRepayDate(), finMain.getGrcPeriodEndDate()) > 0) {
-					finMain.setAdvanceEMI(
-							curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvEMITerms())));
+					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+						finMain.setAdvanceEMI(curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvEMITerms())));
+					}
+					
 				}
 			}
 		}
@@ -3254,7 +3257,9 @@ public class ScheduleCalculator {
 
 				calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
 				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0 && finMain.getAdvEMITerms() > 0) {
-					calcAmount = calcAmount.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvEMITerms()))));
+					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+						calcAmount = calcAmount.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvEMITerms()))));
+					}
 				}
 				calcAmount = calcAmount.multiply(new BigDecimal(-1));
 				schAmountList.add(calcAmount);
@@ -3611,10 +3616,13 @@ public class ScheduleCalculator {
 				curSchd.getDisbAmount().add(curSchd.getFeeChargeAmt()).subtract(curSchd.getDownPaymentAmount()));
 		curSchd.setRvwOnSchDate(true);
 
-		if (finMain.isAdjustClosingBal() || finMain.getAdvanceEMI().compareTo(BigDecimal.ZERO) > 0) {
-			curSchd.setClosingBalance(curSchd.getClosingBalance().subtract(finMain.getAdvanceEMI()));
-			finMain.setAdjustClosingBal(false);
+		if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+			if (finMain.isAdjustClosingBal()) {
+				curSchd.setClosingBalance(curSchd.getClosingBalance().subtract(finMain.getAdvanceEMI()));
+				finMain.setAdjustClosingBal(false);
+			}	
 		}
+		
 
 		curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
 

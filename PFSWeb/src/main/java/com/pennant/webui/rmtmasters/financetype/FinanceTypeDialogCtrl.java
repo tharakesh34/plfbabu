@@ -1656,19 +1656,19 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
 		fillList(this.grcAdvType, AdvanceType.getList(), aFinanceType.getGrcAdvType());
-		doChangeGrcAdvTypes();
 		this.grcAdvMaxTerms.setValue(aFinanceType.getGrcAdvMaxTerms());
 		this.grcAdvMinTerms.setValue(aFinanceType.getGrcAdvMinTerms());
 		this.grcAdvDefaultTerms.setValue(aFinanceType.getGrcAdvDefaultTerms());
+		doCheckGrcAdvIntersetReq();
 
 		this.advIntersetReq.setChecked(aFinanceType.isAdvIntersetReq());
 		fillList(this.advType, AdvanceType.getList(), aFinanceType.getAdvType());
-		doChangeAdvTypes();
 		this.advMinTerms.setValue(aFinanceType.getAdvMinTerms());
 		this.advMaxTerms.setValue(aFinanceType.getAdvMaxTerms());
 		this.advDefaultTerms.setValue(aFinanceType.getAdvDefaultTerms());
-
 		fillList(this.advStage, AdvanceStage.getList(), aFinanceType.getAdvStage());
+		doCheckAdvIntersetReq();
+
 		this.dsfReq.setChecked(aFinanceType.isDsfReq());
 		this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
 
@@ -2468,65 +2468,68 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				wve.add(we);
 			}
 
-			String grcMinLabel = "Minimum Advance Terms";
-			String grcMaxLabel = "Maximum Advance Terms";
-			String grcDftLabel = "Default Advance Terms";
+			if ((AdvanceType.AF.name().equals(aFinanceType.getGrcAdvType()))) {
+				String grcMinLabel = "Minimum Advance Terms";
+				String grcMaxLabel = "Maximum Advance Terms";
+				String grcDftLabel = "Default Advance Terms";
 
-			int grcAdvMinTerms = this.grcAdvMinTerms.intValue();
-			int grcAdvMaxTerms = this.grcAdvMaxTerms.intValue();
-			int grcAdvDeftTerms = this.grcAdvDefaultTerms.intValue();
-			boolean validationRequired = true;
+				int grcAdvMinTerms = this.grcAdvMinTerms.intValue();
+				int grcAdvMaxTerms = this.grcAdvMaxTerms.intValue();
+				int grcAdvDeftTerms = this.grcAdvDefaultTerms.intValue();
+				boolean validationRequired = true;
 
-			try {
-				if (this.grcAdvIntersetReq.isChecked() && grcAdvMinTerms < 0) {
-					throw new WrongValueException(this.grcAdvMinTerms,
-							Labels.getLabel("FIELD_IS_GREATER", new String[] { grcMinLabel, "0" }));
+				try {
+					if (this.grcAdvIntersetReq.isChecked() && grcAdvMinTerms < 0) {
+						throw new WrongValueException(this.grcAdvMinTerms,
+								Labels.getLabel("FIELD_IS_GREATER", new String[] { grcMinLabel, "0" }));
+					}
+
+					aFinanceType.setAdvMinTerms(grcAdvMinTerms);
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
 
-				aFinanceType.setAdvMinTerms(grcAdvMinTerms);
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				if (grcAdvMaxTerms == 0) {
-					validationRequired = false;
-				} else if (this.grcAdvIntersetReq.isChecked() && grcAdvMaxTerms < 0) {
-					throw new WrongValueException(this.grcAdvMaxTerms,
-							Labels.getLabel("FIELD_IS_GREATER", new String[] { grcMaxLabel, "0" }));
-				}
-
-				if (validationRequired) {
-					if (grcAdvMaxTerms < grcAdvMinTerms || grcAdvMaxTerms > grcAdvMaxTerms) {
+				try {
+					if (grcAdvMaxTerms == 0) {
+						validationRequired = false;
+					} else if (this.grcAdvIntersetReq.isChecked() && grcAdvMaxTerms < 0) {
 						throw new WrongValueException(this.grcAdvMaxTerms,
-								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { grcMaxLabel,
-										String.valueOf(grcAdvMinTerms), String.valueOf(grcAdvMaxTerms) }));
+								Labels.getLabel("FIELD_IS_GREATER", new String[] { grcMaxLabel, "0" }));
 					}
+
+					if (validationRequired) {
+						if (grcAdvMaxTerms < grcAdvMinTerms || grcAdvMaxTerms > grcAdvMaxTerms) {
+							throw new WrongValueException(this.grcAdvMaxTerms,
+									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { grcMaxLabel,
+											String.valueOf(grcAdvMinTerms), String.valueOf(grcAdvMaxTerms) }));
+						}
+					}
+					aFinanceType.setGrcAdvMaxTerms(grcAdvMaxTerms);
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
-				aFinanceType.setGrcAdvMaxTerms(grcAdvMaxTerms);
-			} catch (WrongValueException we) {
-				wve.add(we);
+
+				try {
+					validationRequired = true;
+
+					if (grcAdvMinTerms == 0 && grcAdvMaxTerms == 0 && grcAdvDeftTerms >= 0) {
+						validationRequired = false;
+					}
+
+					if (validationRequired) {
+						if (grcAdvDeftTerms < grcAdvMinTerms || grcAdvDeftTerms > grcAdvMaxTerms) {
+							throw new WrongValueException(this.grcAdvDefaultTerms,
+									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { grcDftLabel,
+											String.valueOf(grcAdvMinTerms), String.valueOf(grcAdvMaxTerms) }));
+						}
+					}
+
+					aFinanceType.setGrcAdvDefaultTerms(grcAdvDeftTerms);
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
 			}
 
-			try {
-				validationRequired = true;
-
-				if (grcAdvMinTerms == 0 && grcAdvMaxTerms == 0 && grcAdvDeftTerms >= 0) {
-					validationRequired = false;
-				}
-
-				if (validationRequired) {
-					if (grcAdvDeftTerms < grcAdvMinTerms || grcAdvDeftTerms > grcAdvMaxTerms) {
-						throw new WrongValueException(this.grcAdvDefaultTerms,
-								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { grcDftLabel,
-										String.valueOf(grcAdvMinTerms), String.valueOf(grcAdvMaxTerms) }));
-					}
-				}
-
-				aFinanceType.setGrcAdvDefaultTerms(grcAdvDeftTerms);
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
 			// tasks # >>End Advance EMI and DSF
 		}
 
@@ -3314,64 +3317,68 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 
-		String advMinLabel = "Minimum Advance Terms";
-		String advMaxLabel = "Maximum Advance Terms";
-		String advDftLabel = "Default Advance Terms";
+		if (AdvanceType.AF.name().equals(aFinanceType.getAdvType())) {
+			String advMinLabel = "Minimum Advance Terms";
+			String advMaxLabel = "Maximum Advance Terms";
+			String advDftLabel = "Default Advance Terms";
 
-		int advMinTerms = this.advMinTerms.intValue();
-		int advMaxTerms = this.advMaxTerms.intValue();
-		int advDefaultTerms = this.advDefaultTerms.intValue();
-		boolean validationRequired = true;
+			int advMinTerms = this.advMinTerms.intValue();
+			int advMaxTerms = this.advMaxTerms.intValue();
+			int advDefaultTerms = this.advDefaultTerms.intValue();
+			boolean validationRequired = true;
 
-		try {
+			try {
 
-			if (this.advIntersetReq.isChecked() && advMinTerms < 0) {
-				throw new WrongValueException(this.advMinTerms,
-						Labels.getLabel("FIELD_IS_GREATER", new String[] { advMinLabel, "0" }));
-			}
-
-			aFinanceType.setAdvMinTerms(advMinTerms);
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-
-			if (advMaxTerms == 0) {
-				validationRequired = false;
-			} else if (this.advIntersetReq.isChecked() && advMaxTerms < 0) {
-				throw new WrongValueException(this.advMaxTerms,
-						Labels.getLabel("FIELD_IS_GREATER", new String[] { advMaxLabel, "0" }));
-			}
-
-			if (validationRequired) {
-				if (advMaxTerms < advMinTerms || advMaxTerms > advMaxTerms) {
-					throw new WrongValueException(this.advMaxTerms, Labels.getLabel("NUMBER_RANGE_EQ",
-							new String[] { advMaxLabel, String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+				if (this.advIntersetReq.isChecked() && advMinTerms < 0) {
+					throw new WrongValueException(this.advMinTerms,
+							Labels.getLabel("FIELD_IS_GREATER", new String[] { advMinLabel, "0" }));
 				}
-			}
-			aFinanceType.setAdvMaxTerms(advMaxTerms);
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 
-		try {
-			validationRequired = true;
-
-			if (advMinTerms == 0 && advMaxTerms == 0 && advDefaultTerms >= 0) {
-				validationRequired = false;
+				aFinanceType.setAdvMinTerms(advMinTerms);
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
 
-			if (validationRequired) {
-				if (advDefaultTerms < advMinTerms || advDefaultTerms > advMaxTerms) {
-					throw new WrongValueException(this.advDefaultTerms, Labels.getLabel("NUMBER_RANGE_EQ",
-							new String[] { advDftLabel, String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+			try {
+
+				if (advMaxTerms == 0) {
+					validationRequired = false;
+				} else if (this.advIntersetReq.isChecked() && advMaxTerms < 0) {
+					throw new WrongValueException(this.advMaxTerms,
+							Labels.getLabel("FIELD_IS_GREATER", new String[] { advMaxLabel, "0" }));
 				}
+
+				if (validationRequired) {
+					if (advMaxTerms < advMinTerms || advMaxTerms > advMaxTerms) {
+						throw new WrongValueException(this.advMaxTerms,
+								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advMaxLabel,
+										String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+					}
+				}
+				aFinanceType.setAdvMaxTerms(advMaxTerms);
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
 
-			aFinanceType.setAdvDefaultTerms(advDefaultTerms);
-		} catch (WrongValueException we) {
-			wve.add(we);
+			try {
+				validationRequired = true;
+
+				if (advMinTerms == 0 && advMaxTerms == 0 && advDefaultTerms >= 0) {
+					validationRequired = false;
+				}
+
+				if (validationRequired) {
+					if (advDefaultTerms < advMinTerms || advDefaultTerms > advMaxTerms) {
+						throw new WrongValueException(this.advDefaultTerms,
+								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advDftLabel,
+										String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+					}
+				}
+
+				aFinanceType.setAdvDefaultTerms(advDefaultTerms);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		try {
@@ -7030,10 +7037,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.grcAdvType.setDisabled(false);
 			}
 		} else {
-			this.grcAdvType.setSelectedIndex(0);
+			if (this.grcAdvType.getSelectedIndex() > 0) {
+				this.grcAdvType.setSelectedIndex(0);
+			}
 			this.grcAdvType.setDisabled(true);
-			doChangeGrcAdvTypes();
 		}
+
+		doChangeGrcAdvTypes();
 	}
 
 	public void onChange$grcAdvType(Event event) {
@@ -7067,8 +7077,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			this.advType.setSelectedIndex(0);
 			this.advType.setDisabled(true);
-			doChangeAdvTypes();
 		}
+
+		doChangeAdvTypes();
 	}
 
 	public void onChange$advType(Event event) {
@@ -7087,7 +7098,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.advMinTerms.setDisabled(true);
 			this.advMaxTerms.setDisabled(true);
 			this.advDefaultTerms.setDisabled(true);
-		} if (AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))) {
+		}
+
+		if (AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))) {
 			if (!isCompReadonly) {
 				this.advStage.setDisabled(false);
 			}
