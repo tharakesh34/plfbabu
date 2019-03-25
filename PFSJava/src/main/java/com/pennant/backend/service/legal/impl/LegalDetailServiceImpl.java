@@ -290,6 +290,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				getLegalDetailDAO().updateLegalDeatils(assignment.getReference(), assignment.getCollateralRef(), true);
 			} else {
 				//SetActive data from legalList if request from API 
+				//and save Legal child details
 				if (apiHeader != null
 						&& StringUtils.equals(aFinanceMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
 					if (legalDetails != null && !legalDetails.isEmpty()) {
@@ -302,6 +303,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								doSetLegalProperties(legal);
 								long legalId = Long.valueOf(getLegalDetailDAO().save(legal, TableType.TEMP_TAB));
 								
+								//Legal Applicant Details
 								if (legal.getApplicantDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getApplicantDetailList())) {
 									for (LegalApplicantDetail applicantDetail : legal.getApplicantDetailList()) {
@@ -312,6 +314,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									}
 								}
 								
+								//Legal Property Details
 								if (legal.getPropertyDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getPropertyDetailList())) {
 									for (LegalPropertyDetail propertyDetail : legal.getPropertyDetailList()) {
@@ -322,19 +325,42 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									}
 								}
 								
+								//Legal Document Details
 								if (legal.getDocumentList() != null
 										&& !CollectionUtils.isEmpty(legal.getDocumentList())) {
 									for (LegalDocument document : legal.getDocumentList()) {
-										document.setLegalId(legalId);
-										legalDocumentDAO.save(document, TableType.TEMP_TAB);
+										if (document.isNew()) {
+											document.setLegalId(legalId);
+											legalDocumentDAO.save(document, TableType.TEMP_TAB);
+										}
 									}
 								}
 
+								//Legal Query Details
 								if (legal.getQueryDetail() != null) {
-									QueryDetail queryDetail = legal.getQueryDetail();
-									queryDetail.setFinReference(assignment.getReference());
-									queryDetail.setReference(assignment.getReference());
-									queryDetailDAO.save(queryDetail, TableType.TEMP_TAB);
+									QueryDetail queryDetail = null;
+									if (legal.isNew()) {
+										queryDetail = legal.getQueryDetail();
+										queryDetail.setFinReference(assignment.getReference());
+										queryDetail.setReference(legal.getLegalReference());
+										queryDetailDAO.save(queryDetail, TableType.TEMP_TAB);
+									}
+
+									//Query Documents
+									if (queryDetail.getDocumentDetailsList() != null
+											&& !CollectionUtils.isEmpty(queryDetail.getDocumentDetailsList())) {
+										for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
+											if (documentDetails.isNew()) {
+												documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
+												DocumentManager documentManager = new DocumentManager();
+												documentManager.setDocImage(documentDetails.getDocImage());
+												documentDetails
+														.setDocRefId(getDocumentManagerDAO().save(documentManager));
+												documentDetailsDAO.save(documentDetails,
+														TableType.TEMP_TAB.getSuffix());
+											}
+										}
+									}
 								}
 							}
 						}
@@ -1777,6 +1803,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		WorkflowEngine engine = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
 
 		aLegalDetail.setLegalDate(new Timestamp(System.currentTimeMillis()));
+		aLegalDetail.setLastMntBy(workFlowDetails.getLastMntBy());
 		aLegalDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aLegalDetail.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 		aLegalDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -1805,6 +1832,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details.setRecordStatus(aLegalDetail.getRecordStatus());
 				details.setRecordType(aLegalDetail.getRecordType());
 				details.setNewRecord(aLegalDetail.isNewRecord());
+				details.setNewRecord(true);
 			}
 		}
 
@@ -1825,6 +1853,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details.setRecordStatus(aLegalDetail.getRecordStatus());
 				details.setRecordType(aLegalDetail.getRecordType());
 				details.setNewRecord(aLegalDetail.isNewRecord());
+				details.setNewRecord(true);
 			}
 		}
 
@@ -1845,6 +1874,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details.setRecordStatus(aLegalDetail.getRecordStatus());
 				details.setRecordType(aLegalDetail.getRecordType());
 				details.setNewRecord(aLegalDetail.isNewRecord());
+				details.setNewRecord(true);
 			}
 		}
 
@@ -1865,6 +1895,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details.setRecordStatus(aLegalDetail.getRecordStatus());
 				details.setRecordType(aLegalDetail.getRecordType());
 				details.setNewRecord(aLegalDetail.isNewRecord());
+				details.setNewRecord(true);
 			}
 		}
 
@@ -1885,6 +1916,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details.setRecordStatus(aLegalDetail.getRecordStatus());
 				details.setRecordType(aLegalDetail.getRecordType());
 				details.setNewRecord(aLegalDetail.isNewRecord());
+				details.setNewRecord(true);
 			}
 		}
 
@@ -1905,6 +1937,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 				details.setRecordStatus(aLegalDetail.getRecordStatus());
 				details.setRecordType(aLegalDetail.getRecordType());
 				details.setNewRecord(aLegalDetail.isNewRecord());
+				details.setNewRecord(true);
 			}
 		}
 
@@ -1922,6 +1955,31 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			queryDetail.setRecordStatus(aLegalDetail.getRecordStatus());
 			queryDetail.setRecordType(aLegalDetail.getRecordType());
 			queryDetail.setNewRecord(aLegalDetail.isNewRecord());
+			queryDetail.setModule(PennantConstants.QUERY_LEGAL_VERIFICATION);
+			queryDetail.setRaisedBy(aLegalDetail.getLastMntBy());
+			queryDetail.setRaisedOn(new Timestamp(System.currentTimeMillis()));
+			queryDetail.setNewRecord(true);
+
+			List<DocumentDetails>  documentDetails=aLegalDetail.getQueryDetail().getDocumentDetailsList();
+			if (documentDetails != null && !CollectionUtils.isEmpty(documentDetails)) {
+				for (DocumentDetails documen : documentDetails) {
+					documen.setLastMntBy(aLegalDetail.getLastMntBy());
+					documen.setLastMntOn(aLegalDetail.getLastMntOn());
+					documen.setUserDetails(aLegalDetail.getUserDetails());
+					documen.setRecordStatus(aLegalDetail.getRecordStatus());
+					documen.setWorkflowId(aLegalDetail.getWorkflowId());
+					documen.setTaskId(aLegalDetail.getTaskId());
+					documen.setNextTaskId(aLegalDetail.getNextTaskId());
+					documen.setRoleCode(aLegalDetail.getRoleCode());
+					documen.setNextRoleCode(aLegalDetail.getNextRoleCode());
+					documen.setRecordStatus(aLegalDetail.getRecordStatus());
+					documen.setRecordType(aLegalDetail.getRecordType());
+					documen.setNewRecord(aLegalDetail.isNewRecord());
+					documen.setNewRecord(true);
+					documen.setDocModule(FinanceConstants.QUERY_MANAGEMENT);
+					documen.setFinEvent(PennantConstants.QUERY_ORIGINATION);
+				}
+			}
 		}
 
 		// Covenent details

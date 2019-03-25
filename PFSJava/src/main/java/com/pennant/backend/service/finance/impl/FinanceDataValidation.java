@@ -5990,10 +5990,60 @@ public class FinanceDataValidation {
 			if (StringUtils.isNotBlank(documents.getDocCategory())) {
 				DocumentType documentType = documentTypeDAO.getDocumentTypeById(documents.getDocCategory(), "_AView");
 				if (documentType == null) {
-					String[] param = new String[2];
-					param[0] = "docCategory";
-					param[1] = documents.getDocCategory();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", param)));
+					String[] param = new String[1];
+					param[0] = documents.getDocCategory();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90401", param)));
+					return errorDetails;
+				}
+			}
+
+			if (!(StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_PDF)
+					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_DOC)
+					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
+					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_IMAGE))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = documents.getDoctype();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN"));
+				return errorDetails;
+			}
+
+			String docName = documents.getDocName();
+			boolean isImage = false;
+			if (StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)) {
+				isImage = true;
+				if (!docName.endsWith(".jpg") && !docName.endsWith(".jpeg") && !docName.endsWith(".png")) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "document type: " + documents.getDocName();
+					valueParm[1] = documents.getDoctype();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
+					return errorDetails;
+				}
+			}
+
+			//if docName has no extension.
+			if (!docName.contains(".")) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "docName: " + docName;
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90291", "", valueParm), "EN"));
+				return errorDetails;
+			} else {
+				// document name is only extension
+				String docNameExtension = docName.substring(docName.lastIndexOf("."));
+				if (StringUtils.equalsIgnoreCase(documents.getDocName(), docNameExtension)) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "docName: ";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN"));
+					return errorDetails;
+				}
+			}
+			String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
+			//if doc type and doc Extension are invalid
+			if (!isImage) {
+				if (!StringUtils.equalsIgnoreCase(documents.getDoctype(), docExtension)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "document type: " + documents.getDocName();
+					valueParm[1] = documents.getDoctype();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90289", "", valueParm), "EN"));
 					return errorDetails;
 				}
 			}
