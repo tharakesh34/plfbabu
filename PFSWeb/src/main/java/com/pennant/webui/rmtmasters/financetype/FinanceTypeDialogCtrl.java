@@ -2484,7 +2484,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 								Labels.getLabel("FIELD_IS_GREATER", new String[] { grcMinLabel, "0" }));
 					}
 
-					aFinanceType.setAdvMinTerms(grcAdvMinTerms);
+					aFinanceType.setGrcAdvMinTerms(grcAdvMinTerms);
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}

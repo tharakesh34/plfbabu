@@ -133,7 +133,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" AutoRejectionDays, TaxNoMand, PutCallRequired");
 
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
-		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMinTerms, AdvDefaultTerms");
+		sql.append(", AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
 		sql.append(", AdvStage, DsfReq, CashCollateralReq");
 
 		if (type.contains("View")) {

@@ -313,6 +313,7 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 				recordStatus = finOption.getRecordStatus();
 				finOption.setRecordType("");
 				finOption.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				finOptionDAO.delete(finOption, TableType.TEMP_TAB);
 			}
 			if (saveRecord) {
 				finOptionDAO.save(finOption, tableType);

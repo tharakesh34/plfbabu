@@ -11390,7 +11390,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int grcAdvTerms = this.grcAdvTerms.intValue();
 				boolean validationRequired = true;
 
-				if (minTerms == 0 && maxTerms == 0 && grcAdvTerms >= 0) {
+				if (minTerms == 0 && maxTerms == 0 && grcAdvTerms == 0) {
 					validationRequired = false;
 				}
 
@@ -11953,7 +11953,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			int advTerms = this.advTerms.intValue();
 			boolean validationRequired = true;
 
-			if (minTerms == 0 && maxTerms == 0 && advTerms >= 0) {
+			if (minTerms == 0 && maxTerms == 0 && advTerms == 0) {
 				validationRequired = false;
 			}
 

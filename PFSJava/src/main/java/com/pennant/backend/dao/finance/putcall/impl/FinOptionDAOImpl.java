@@ -102,7 +102,6 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		StringBuilder sql = new StringBuilder("delete from FIN_OPTIONS");
 		sql.append(tableType.getSuffix());
 		sql.append(" where id = :id ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finoption);
@@ -113,13 +112,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override

@@ -650,7 +650,7 @@
 	<!-- menuItem id="menu_Item_TrialBalanceReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_DAILYDISBURSALREPORT"/> 
 		<menuItem id="menu_Item_TrialBalancesByDealTypeandCurrency" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_FinDeptReports_TrialBalancesByDealTypeandCurrency"/> -->
 			<menuItem id="menu_Item_CovenantDetailsReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_CovenantDetailsReport" />
-			<menuItem id="menu_Item_Put_CallReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Put_CallReport" />
+			<menuItem id="menu_Item_PutCallReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Put_CallReport" />
 		</menu>
 
 		<menu id="menu_Category_Legal">

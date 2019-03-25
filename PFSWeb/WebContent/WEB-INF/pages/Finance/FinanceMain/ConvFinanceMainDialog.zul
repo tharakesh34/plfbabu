@@ -1036,7 +1036,7 @@
 												
 												
 												<row id="row_advTypes" visible="false">
-													<label value="${c:l('label_FinanceMainDialog_AdvEMITerms.value')}" />
+													<label value="${c:l('label_financemainDialog_AdvanceType.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<combobox id="advType" />

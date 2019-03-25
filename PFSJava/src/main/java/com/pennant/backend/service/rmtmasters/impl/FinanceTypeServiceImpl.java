@@ -701,6 +701,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
 				finTypeFee.setActive(true);
 				finTypeFee.setAlwModifyFeeSchdMthd(false);
+				finTypeFee.setNextRoleCode("");
 				fees.add(finTypeFee);
 			}
 		}
@@ -717,6 +718,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypeFee.setMaxWaiverPerc(new BigDecimal(100));
 				finTypeFee.setActive(true);
 				finTypeFee.setAlwModifyFeeSchdMthd(false);
+				finTypeFee.setNextRoleCode("");
 
 				fees.add(finTypeFee);
 			}
@@ -740,6 +742,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		finTypeFee.setNewRecord(true);
 		finTypeFee.setActive(true);
 		finTypeFee.setAlwModifyFeeSchdMthd(false);
+		finTypeFee.setNextRoleCode("");
 
 		return finTypeFee;
 	}
