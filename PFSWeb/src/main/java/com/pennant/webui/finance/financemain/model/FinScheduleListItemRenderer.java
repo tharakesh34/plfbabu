@@ -86,6 +86,7 @@ import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -610,7 +611,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				showZeroEndBal = false;
 				isGrcBaseRate = false;
 				isRpyBaseRate = false;
-				
+
 				List<FinanceDisbursement> disbList = sortDisbursements(getFinScheduleData().getDisbursementDetails());
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
 				for (int i = 0; i < disbList.size(); i++) {
@@ -625,23 +626,29 @@ public class FinScheduleListItemRenderer implements Serializable {
 					}
 					if (DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
-						
+
 						BigDecimal endBal = BigDecimal.ZERO;
-						
-						if(StringUtils.equals(aFinanceMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)){
-							if(prvSchDetail != null && getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate())!=0){
+
+						if (StringUtils.equals(aFinanceMain.getScheduleMethod(),
+								CalculationConstants.SCHMTHD_POS_INT)) {
+							if (prvSchDetail != null && getFinanceScheduleDetail().getSchDate()
+									.compareTo(aFinanceMain.getFinStartDate()) != 0) {
 								endBal = prvSchDetail.getClosingBalance().add(curTotDisbAmt);
-							}else{
+							} else {
 								endBal = curTotDisbAmt;
 							}
-						}else{
+						} else {
 							endBal = getFinanceScheduleDetail().getClosingBalance()
 									.subtract(getFinanceScheduleDetail().getFeeChargeAmt() == null ? BigDecimal.ZERO
 											: getFinanceScheduleDetail().getFeeChargeAmt())
 									.subtract(getFinanceScheduleDetail().getInsuranceAmt() == null ? BigDecimal.ZERO
 											: getFinanceScheduleDetail().getInsuranceAmt())
-									.subtract(getFinanceScheduleDetail().getDisbAmount()).add(curTotDisbAmt)
-									.add(advEMi).add(getFinanceScheduleDetail().getDownPaymentAmount())
+									.subtract(getFinanceScheduleDetail().getDisbAmount()).add(curTotDisbAmt);
+
+							if (AdvanceType.AE.name().equals(aFinanceMain.getAdvType())) {
+								endBal = endBal.add(advEMi);
+							}
+							endBal = endBal.add(getFinanceScheduleDetail().getDownPaymentAmount())
 									.subtract(getFinanceScheduleDetail().getCpzAmount());
 						}
 						doFillListBox(getFinanceScheduleDetail(), count,
@@ -649,9 +656,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 										+ ")",
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 								BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-								curDisb.getDisbAmount(), endBal,
-								isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217",
-								"color_Disbursement", 0, null, false, false);
+								curDisb.getDisbAmount(), endBal, isEditable, isRate, showZeroEndBal, isGrcBaseRate,
+								isRpyBaseRate, "#F87217", "color_Disbursement", 0, null, false, false);
 
 						count = 2;
 					}
@@ -1508,8 +1514,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 					&& DateUtility.compare(odSchd.getDroplineDate(), data.getSchDate()) == 0) {
 				availableLimit = availableLimit.add(data.getDisbAmount());
 			}
-			
-			if(availableLimit.compareTo(BigDecimal.ZERO) < 0){
+
+			if (availableLimit.compareTo(BigDecimal.ZERO) < 0) {
 				availableLimit = BigDecimal.ZERO;
 			}
 
@@ -1724,7 +1730,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 										+ "%");
 							}
 
-							if(i == 13 || i == 14 || i == 15){
+							if (i == 13 || i == 14 || i == 15) {
 								lc = new Listcell("");
 							}
 							lc.setStyle("text-align:right;color:" + bgColor + ";");
@@ -1733,7 +1739,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 							}
 						} else {
 
-							if(i == 13 || i == 14 || i == 15){
+							if (i == 13 || i == 14 || i == 15) {
 								lc = new Listcell("");
 							} else {
 								lc = new Listcell(PennantApplicationUtil.formatRate(amountlist[i].doubleValue(),
@@ -1757,8 +1763,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 						if (fillType == 5) {
 							lc = new Listcell("");
 						}
-						
-						if(i == 14 && amountlist[i].compareTo(BigDecimal.ZERO) < 0){
+
+						if (i == 14 && amountlist[i].compareTo(BigDecimal.ZERO) < 0) {
 							lc.setStyle("text-align:right;color:red;");
 						} else {
 
@@ -1777,12 +1783,13 @@ public class FinScheduleListItemRenderer implements Serializable {
 						}
 					}
 
-				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 13)){
+				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 13)) {
 					lc = new Listcell("");
 
-					lc.setStyle("text-align:right;color:"+bgColor+";");
-				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 14)){
-					if(fillType==0  && !lastRec  && (count ==1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))){
+					lc.setStyle("text-align:right;color:" + bgColor + ";");
+				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 14)) {
+					if (fillType == 0 && !lastRec
+							&& (count == 1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))) {
 
 						lc = new Listcell(PennantAppUtil.amountFormate(availableLimit, finFormatter));
 						lc.setStyle("text-align:right;");
@@ -1794,8 +1801,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 						lc.setStyle("text-align:right;");
 					}
 
-				}else if(amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 15)){
-					if(fillType==0 && !lastRec && showZeroEndBal &&(count == 1 ||(data.isDisbOnSchDate() && data.isRepayOnSchDate()) )){
+				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 15)) {
+					if (fillType == 0 && !lastRec && showZeroEndBal
+							&& (count == 1 || (data.isDisbOnSchDate() && data.isRepayOnSchDate()))) {
 
 						lc = new Listcell(PennantAppUtil.amountFormate(odLimit, finFormatter));
 						lc.setStyle("text-align:right;");
@@ -1814,9 +1822,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 						lc.setStyle("text-align:right;cursor:default;");
 					}
 
-				}else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 1 || i == 2 || i == 3 || 
-						(i == 12)) && showZeroEndBal) {
-					if(fillType == 5){
+				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 1 || i == 2 || i == 3 || (i == 12))
+						&& showZeroEndBal) {
+					if (fillType == 5) {
 						lc = new Listcell("");
 					} else {
 						lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], finFormatter));
@@ -1826,7 +1834,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 						lc.setStyle("text-align:right;cursor:default;");
 					}
 
-				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && ( i == 10) && isFee) {
+				} else if (amountlist[i].compareTo(BigDecimal.ZERO) == 0 && (i == 10) && isFee) {
 					lc = new Listcell(PennantAppUtil.amountFormate(amountlist[i], finFormatter));
 					if (StringUtils.isNotEmpty(bgColor)) {
 						lc.setStyle("text-align:right;font-weight: bold;color:" + bgColor + ";");
@@ -3508,7 +3516,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 		return feeRuleDetails;
 	}
-	
+
 	public List<FinanceDisbursement> sortDisbursements(List<FinanceDisbursement> disbursements) {
 
 		if (disbursements != null && disbursements.size() > 0) {
