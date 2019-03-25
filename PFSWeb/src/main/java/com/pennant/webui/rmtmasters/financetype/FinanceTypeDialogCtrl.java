@@ -7030,10 +7030,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.grcAdvType.setDisabled(false);
 			}
 		} else {
-			if (this.grcAdvType.getSelectedIndex() > 0) {
-				this.grcAdvType.setSelectedIndex(0);
-				doChangeGrcAdvTypes();
-			}
+			this.grcAdvType.setSelectedIndex(0);
+			this.grcAdvType.setDisabled(true);
+			doChangeGrcAdvTypes();
 		}
 	}
 
@@ -7066,10 +7065,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.advType.setDisabled(false);
 			}
 		} else {
-			if (this.advType.getSelectedIndex() > 0) {
-				this.advType.setSelectedIndex(0);
-				doChangeAdvTypes();
-			}
+			this.advType.setSelectedIndex(0);
+			this.advType.setDisabled(true);
+			doChangeAdvTypes();
 		}
 	}
 
@@ -7089,6 +7087,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.advMinTerms.setDisabled(true);
 			this.advMaxTerms.setDisabled(true);
 			this.advDefaultTerms.setDisabled(true);
+		} if (AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))) {
+			if (!isCompReadonly) {
+				this.advStage.setDisabled(false);
+			}
+		} else {
+			this.advStage.setSelectedIndex(0);
+			this.advStage.setDisabled(true);
 		}
 	}
 
