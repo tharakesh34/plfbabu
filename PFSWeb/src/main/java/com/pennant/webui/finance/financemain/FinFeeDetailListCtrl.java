@@ -116,6 +116,7 @@ import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -1835,6 +1836,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				} else {
 					paidBox.setDisabled(true);
 				}
+				
+				
+				if (AdvanceRuleCode.ADVEMI.name().equals(finFeeDetail.getFeeTypeCode())
+						|| AdvanceRuleCode.ADVINT.name().equals(finFeeDetail.getFeeTypeCode())) {
+					paidBox.setDisabled(true);
+				}
+				
 				paidBox.setId(getComponentId(FEE_UNIQUEID_PAID_AMOUNT, finFeeDetail));
 				paidBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
 				lc = new Listcell();

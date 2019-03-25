@@ -4218,13 +4218,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		//	tasks # >>Start Advance EMI and DSF
-		fillList(this.grcAdvType, AdvanceType.getList(), aFinanceMain.getGrcAdvType());
+		fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceMain.getGrcAdvType());
 
 		doChangeGrcAdvTypes();
 
 		this.grcAdvTerms.setValue(aFinanceMain.getGrcAdvTerms());
 
-		fillList(this.advType, AdvanceType.getList(), aFinanceMain.getAdvType());
+		fillList(this.advType, AdvanceType.getRepayList(), aFinanceMain.getAdvType());
 
 		doChangeAdvTypes();
 
@@ -11400,9 +11400,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								new String[] { grcAdvTermsLabel, String.valueOf(minTerms), String.valueOf(maxTerms) }));
 					}
 
-					if (grcAdvTerms >= aFinanceMain.getGraceTerms()) {
-						throw new WrongValueException(this.grcAdvTerms, Labels.getLabel("NUMBER_MAXVALUE",
-								new String[] { grcAdvTermsLabel, String.valueOf(aFinanceMain.getNumberOfTerms()) }));
+					if (grcAdvTerms > aFinanceMain.getGraceTerms()) {
+						throw new WrongValueException(this.grcAdvTerms, Labels.getLabel("NUMBER_MAXVALUE_EQ",
+								new String[] { grcAdvTermsLabel, String.valueOf(aFinanceMain.getGraceTerms()) }));
 					}
 				}
 
@@ -11963,8 +11963,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							new String[] { advTermsLabel, String.valueOf(minTerms), String.valueOf(maxTerms) }));
 				}
 
-				if (advTerms >= aFinanceMain.getNumberOfTerms()) {
-					throw new WrongValueException(this.advTerms, Labels.getLabel("NUMBER_MAXVALUE",
+				if (advTerms > aFinanceMain.getNumberOfTerms()) {
+					throw new WrongValueException(this.advTerms, Labels.getLabel("NUMBER_MAXVALUE_EQ",
 							new String[] { advTermsLabel, String.valueOf(aFinanceMain.getNumberOfTerms()) }));
 				}
 			}

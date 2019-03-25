@@ -1476,7 +1476,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		int terms = 0;
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
-
+		
 		if (advanceRuleCode == AdvanceRuleCode.ADVINT) {
 			advType = fm.getGrcAdvType();
 			terms = fm.getGrcAdvTerms();
@@ -1505,6 +1505,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			break;
 		case AF:
 			terms = 1;
+			break;
+		case UT:
+		case AE:
 			break;
 		default:
 			break;

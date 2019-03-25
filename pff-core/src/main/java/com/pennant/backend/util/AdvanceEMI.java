@@ -40,7 +40,18 @@ public class AdvanceEMI {
 			return null;
 		}
 
-		public static List<Property> getList() {
+		public static List<Property> getGrcList() {
+			List<Property> list = new ArrayList<>();
+			for (AdvanceType type : values()) {
+				if (AdvanceType.AE == type) {
+					continue;
+				}
+				list.add(new Property(type.code, type.value));
+			}
+			return list;
+		}
+		
+		public static List<Property> getRepayList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceType type : values()) {
 				list.add(new Property(type.code, type.value));

@@ -58,6 +58,8 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -367,7 +369,7 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 					}
 				}
 			} else {
-				if (tempFinTypeFees == null) { // if records not exists in the Work flow table
+				if (tempFinTypeFees == null && !isAdvanceTypeFeeCode(finTypeFees)) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -387,6 +389,17 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 		}
 
 		return auditDetail;
+	}
+
+	private boolean isAdvanceTypeFeeCode(FinTypeFees finTypeFees) {
+		if (AdvanceRuleCode.ADVINT.name().equals(finTypeFees.getFeeTypeCode())
+				|| AdvanceRuleCode.ADVEMI.name().equals(finTypeFees.getFeeTypeCode())
+				|| AdvanceRuleCode.CASHCLT.name().equals(finTypeFees.getFeeTypeCode())
+				|| AdvanceRuleCode.DSF.name().equals(finTypeFees.getFeeTypeCode())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

@@ -1655,14 +1655,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
 
 		this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
-		fillList(this.grcAdvType, AdvanceType.getList(), aFinanceType.getGrcAdvType());
+		fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceType.getGrcAdvType());
 		this.grcAdvMaxTerms.setValue(aFinanceType.getGrcAdvMaxTerms());
 		this.grcAdvMinTerms.setValue(aFinanceType.getGrcAdvMinTerms());
 		this.grcAdvDefaultTerms.setValue(aFinanceType.getGrcAdvDefaultTerms());
 		doCheckGrcAdvIntersetReq();
 
 		this.advIntersetReq.setChecked(aFinanceType.isAdvIntersetReq());
-		fillList(this.advType, AdvanceType.getList(), aFinanceType.getAdvType());
+		fillList(this.advType, AdvanceType.getRepayList(), aFinanceType.getAdvType());
 		this.advMinTerms.setValue(aFinanceType.getAdvMinTerms());
 		this.advMaxTerms.setValue(aFinanceType.getAdvMaxTerms());
 		this.advDefaultTerms.setValue(aFinanceType.getAdvDefaultTerms());
@@ -2468,7 +2468,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				wve.add(we);
 			}
 
-			if ((AdvanceType.AF.name().equals(aFinanceType.getGrcAdvType()))) {
+			if ((AdvanceType.UT.name().equals(aFinanceType.getGrcAdvType()))) {
 				String grcMinLabel = "Minimum Advance Terms";
 				String grcMaxLabel = "Maximum Advance Terms";
 				String grcDftLabel = "Default Advance Terms";
@@ -2528,6 +2528,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				} catch (WrongValueException we) {
 					wve.add(we);
 				}
+			} else {
+				aFinanceType.setGrcAdvMinTerms(0);
+				aFinanceType.setGrcAdvMaxTerms(0);
+				aFinanceType.setGrcAdvDefaultTerms(0);
 			}
 
 			// tasks # >>End Advance EMI and DSF
@@ -3317,7 +3321,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 
-		if (AdvanceType.AF.name().equals(aFinanceType.getAdvType())) {
+		if (AdvanceType.UT.name().equals(aFinanceType.getAdvType())) {
 			String advMinLabel = "Minimum Advance Terms";
 			String advMaxLabel = "Maximum Advance Terms";
 			String advDftLabel = "Default Advance Terms";
@@ -3379,6 +3383,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+		} else {
+			aFinanceType.setAdvMinTerms(0);
+			aFinanceType.setAdvMaxTerms(0);
+			aFinanceType.setAdvDefaultTerms(0);
 		}
 
 		try {
@@ -4086,14 +4094,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (this.advIntersetReq.isChecked()) {
 			if (!this.advType.isDisabled()) {
-				this.advType.setConstraint(new StaticListValidator(AdvanceType.getList(),
+				this.advType.setConstraint(new StaticListValidator(AdvanceType.getRepayList(),
 						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
 			}
 		}
 
 		if (this.grcAdvIntersetReq.isChecked()) {
 			if (!this.grcAdvType.isDisabled()) {
-				this.grcAdvType.setConstraint(new StaticListValidator(AdvanceType.getList(),
+				this.grcAdvType.setConstraint(new StaticListValidator(AdvanceType.getGrcList(),
 						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
 			}
 		}
