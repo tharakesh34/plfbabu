@@ -1066,6 +1066,16 @@ public class FinanceDataValidation {
 			if (legalDetails != null && !CollectionUtils.isEmpty(legalDetails)) {
 				for (LegalDetail legalDetail : legalDetails) {
 
+					//validate applicant details
+					if (legalDetail.getApplicantDetailList() != null
+							&& !CollectionUtils.isEmpty(legalDetail.getApplicantDetailList())) {
+						errorDetails = validateLegalApplicant(legalDetail.getApplicantDetailList());
+						if (!CollectionUtils.isEmpty(errorDetails)) {
+							finScheduleData.setErrorDetails(errorDetails);
+							return finScheduleData;
+						}
+					}
+
 					//validate Legal Property Details
 					errorDetails = validatePropertyDetails(legalDetail.getPropertyDetailList());
 					if (!CollectionUtils.isEmpty(errorDetails)) {

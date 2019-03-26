@@ -106,7 +106,7 @@ public class LegalDetail extends AbstractWorkflowEntity implements Entity {
 	private long legalSeq;
 
 	@XmlElement
-	private QueryDetail queryDetail = new QueryDetail();
+	private QueryDetail queryDetail;
 	private List<Customer> customerList = new ArrayList<>();
 	private List<DocumentDetails> collateralDocumentList = new ArrayList<>();
 	@XmlElementWrapper(name = "applicantDetails")
