@@ -1559,10 +1559,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void calculateFees(FinFeeDetail finFeeDetail, FinScheduleData finScheduleData,
 			Map<String, Object> gstExecutionMap) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		if (finFeeDetail.getFeeTypeCode().equals(AdvanceRuleCode.ADVINT.name())) {
+		if (AdvanceRuleCode.ADVINT.name().equals(finFeeDetail.getFeeTypeCode())) {
 			setAdvanceProfit(AdvanceRuleCode.ADVINT, finScheduleData, finFeeDetail);
 		}
-		if (finFeeDetail.getFeeTypeCode().equals(AdvanceRuleCode.ADVEMI.name())) {
+		if (AdvanceRuleCode.ADVEMI.name().equals(finFeeDetail.getFeeTypeCode())) {
 			setAdvanceProfit(AdvanceRuleCode.ADVEMI, finScheduleData, finFeeDetail);
 		}
 		calculateFees(finFeeDetail, financeMain, gstExecutionMap);
