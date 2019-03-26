@@ -1161,7 +1161,7 @@ public class FinanceDataValidation {
 			 * //TODO }
 			 */
 		}
-		if (financeType.isFinCollateralReq()) {
+		if (financeType.isFinCollateralReq() && financeDetail.isStp()) {
 			if (financeDetail.getCollateralAssignmentList() == null
 					|| financeDetail.getCollateralAssignmentList().isEmpty()) {
 				String[] valueParm = new String[1];
@@ -1476,7 +1476,8 @@ public class FinanceDataValidation {
 		}
 
 		//Extended Field Details Validation
-		if (financeDetail.getExtendedDetails() != null && !financeDetail.getExtendedDetails().isEmpty()) {
+		if ((financeDetail.isStp()) || (financeDetail.getExtendedDetails() != null
+				&& !financeDetail.getExtendedDetails().isEmpty() && !financeDetail.isStp())) {
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
 					ExtendedFieldConstants.MODULE_LOAN, subModule, FinanceConstants.FINSER_EVENT_ORG);
@@ -1498,7 +1499,8 @@ public class FinanceDataValidation {
 	private List<ErrorDetail> finCollateralValidation(FinanceDetail financeDetail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		List<CollateralAssignment> finCollateralAssignmentDetails = financeDetail.getCollateralAssignmentList();
-		if (finCollateralAssignmentDetails != null && !finCollateralAssignmentDetails.isEmpty()) {
+		if ((financeDetail.isStp())
+				|| (!financeDetail.isStp() && CollectionUtils.isNotEmpty(finCollateralAssignmentDetails))) {
 			boolean finColltReq = financeDetail.getFinScheduleData().getFinanceType().isFinCollateralReq();
 			if (!finColltReq) {
 				String[] valueParm = new String[2];
