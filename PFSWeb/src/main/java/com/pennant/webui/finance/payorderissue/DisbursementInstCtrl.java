@@ -74,6 +74,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -568,7 +569,10 @@ public class DisbursementInstCtrl {
 			if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 			}
-			totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+			
+			if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
+				totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+			}
 		}
 		totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 		return totdisbAmt;

@@ -91,6 +91,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -882,8 +883,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
 			otherExp = otherExp.add(financeMain.getBpiAmount());
 		}
-		disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
-
+		
+		if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
+			disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
+		}
+		
 		if (advPayList != null && !advPayList.isEmpty()) {
 			for (FinAdvancePayments advPay : advPayList) {
 				if (StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_CANCEL)
