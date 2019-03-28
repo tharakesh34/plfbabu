@@ -742,23 +742,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
-		if (ImplementationConstants.DISB_ACCNO_MASKING) {
-			if (!isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
-				String dType = this.finAdvancePayments.getPaymentType();
-				if (StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IMPS)
-						|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_NEFT)
-						|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_IFT)
-						|| StringUtils.equals(dType, DisbursementConstants.PAYMENT_TYPE_RTGS)) {
+		if (ImplementationConstants.DISB_ACCNO_MASKING
+				&& !isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
+			this.btnSave.setVisible(true);
+			this.row_ReEnterBenfAccNo.setVisible(true);
+			this.space_ReEnterAccNo.setSclass(PennantConstants.mandateSclass);
+			this.reEnterBeneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
+			reEntrBenfAccNo = true;
 
-					this.btnSave.setVisible(true);
-					this.row_ReEnterBenfAccNo.setVisible(true);
-					this.space_ReEnterAccNo.setSclass(PennantConstants.mandateSclass);
-					this.reEnterBeneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-					reEntrBenfAccNo = true;
-					if (ImplementationConstants.DISB_ACCNO_MASKING) {
-						this.beneficiaryAccNo.setType("password");
-					}
-				}
+			if (ImplementationConstants.DISB_ACCNO_MASKING) {
+				this.beneficiaryAccNo.setType("password");
 			}
 		}
 		setStatusDetails(gb_statusDetails, groupboxWf, south, enqModule);

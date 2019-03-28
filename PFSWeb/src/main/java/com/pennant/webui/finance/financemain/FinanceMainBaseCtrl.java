@@ -277,6 +277,8 @@ import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -293,8 +295,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.StageTabConstants;
 import com.pennant.backend.util.VASConsatnts;
-import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -6547,6 +6547,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("userAction", this.userAction.getSelectedItem().getLabel());
 				map.put("isFinalStage", "Accounting".equals(getTaskTabs(getTaskId(getRole()))));
 				map.put("moduleDefiner", moduleDefiner);
+				//Masking the account number in disbursment tab based on rightname
+				if (ImplementationConstants.DISB_ACCNO_MASKING
+						&& !isReadOnly("FinanceMainDialog_ValidateBeneficiaryAccNo")) {
+					for (FinAdvancePayments finPayDetail : aFinanceDetail.getAdvancePaymentsList()) {
+						if (StringUtils.isEmpty(finPayDetail.getReEnterBeneficiaryAccNo())) {
+							MessageUtil.showError("Please re-enter the account number in disbursement tab");
+							return;
+						} else if (!StringUtils.equals(finPayDetail.getBeneficiaryAccNo(),
+								finPayDetail.getReEnterBeneficiaryAccNo())) {
+							MessageUtil.showError("Account number changed, please re-enter the account number");
+							return;
+						}
+					}
+				}
 				boolean proceed = finAdvancePaymentsListCtrl.onAdvancePaymentValidation(map);
 				if (proceed) {
 					if (aFinanceDetail.getAdvancePaymentsList() != null
