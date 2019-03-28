@@ -1169,6 +1169,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Filtering added based on user branch and division
 		whereClause.append(" ) AND ( " + getUsrFinAuthenticationQry(false));
 
+		// Filtering closed loans based on system parameter
+		if (StringUtils.equals("N", SysParamUtil.getValueAsString("ALLOW_CLOSED_LOANS_IN_RECEIPTS"))) {
+			whereClause.append(" AND FINISACTIVE = '1' ");
+		}
+
 		searchObject.addWhereClause(whereClause.toString());
 		setSearchObj(searchObject);
 		if (isFilterSearch) {

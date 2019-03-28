@@ -1101,5 +1101,14 @@ UNION ALL
         ]]>
       </sql>
   </changeSet>
+  
+  <changeSet id="40" author="aditya.a">
+    <comment> Added smtparamter weather to allow closed loan or not </comment>
+      <sql>
+        <![CDATA[
+          INSERT INTO SMTparameters  VALUES ('ALLOW_CLOSED_LOANS_IN_RECEIPTS', 'Allow closed loans in receipts', 'String', '1', 'Y', 1, 0, NULL, NULL,'Allow closed loans in receipts.', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+        ]]>
+      </sql>
+  </changeSet>
     
 </databaseChangeLog>
