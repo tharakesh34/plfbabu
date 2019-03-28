@@ -676,7 +676,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, finType);
 
 				/* Tenure / Weighted Average maturity period of Contracts */
-				addField(record, "");
+				addField(record,String.valueOf(loan.getNumberOfTerms()));
 
 				/* Repayment Frequency */
 				String rePayfrq = StringUtils.trimToEmpty(loan.getRepayFrq());
@@ -1420,6 +1420,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		addField(record, address.getCustAddrZIP());
 
 		/* Country */
+		addField(record, "079");
 
 		CustomerPhoneNumber customerPhoneNumber = null;
 		for (CustomerPhoneNumber custPhNo : phoneList) {
@@ -1488,6 +1489,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		/* Fax Number(s) */
 		addField(record, fax.toString());
+		
+		/* Filters */
+		addField(record, "");
 	}
 
 	private void addField(Record record, String value) {

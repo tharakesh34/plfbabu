@@ -181,7 +181,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
-		sql.append(" CustAddrLine1, CustAddrLine2, sm.code CustAddrProvince, CustAddrZIP");
+		sql.append(" CustAddrLine1, CustAddrLine2, sm.code CustAddrProvince, CustAddrZIP , CustAddrCountry");
 		sql.append(" from CustomerAddresses ca");
 		sql.append(" left join cibil_address_types_mapping am on am.address_type = ca.custaddrtype");
 		sql.append(" and am.segment_type = :segment_type");
