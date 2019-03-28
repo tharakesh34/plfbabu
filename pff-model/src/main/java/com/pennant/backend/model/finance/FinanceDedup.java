@@ -69,7 +69,6 @@ public class FinanceDedup implements Serializable {
 		excludeFields.add("custFName");
 		excludeFields.add("custMName");
 		excludeFields.add("custLName");
-		excludeFields.add("custShrtName");
 		excludeFields.add("custMotherMaiden");
 		excludeFields.add("likeCustFName");
 		excludeFields.add("likeCustMName");
@@ -77,7 +76,6 @@ public class FinanceDedup implements Serializable {
 		excludeFields.add("custNationality");
 		excludeFields.add("custParentCountry");
 		excludeFields.add("custDOB");
-		excludeFields.add("mobileNumber");
 		excludeFields.add("stageDesc");
 		excludeFields.add("custPassportNo");
 		excludeFields.add("custCPRNo");

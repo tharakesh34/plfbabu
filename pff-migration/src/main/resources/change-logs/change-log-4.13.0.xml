@@ -1078,4 +1078,12 @@ UNION ALL
 	     <where>Code='RU0047'</where>
   		 </update>
 	</changeSet>
+	
+	<changeSet id="38" author="aditya.a">
+    <addColumn tableName="rejectfindedupdetail">
+           <column name="CustShrtName" type="VARCHAR(100)"/>
+           <column name="MobileNumber" type="VARCHAR(100)"/>
+    </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>
