@@ -1471,34 +1471,76 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	private void setAdvanceProfit(AdvanceRuleCode advanceRuleCode, FinScheduleData finScheduleData, FinFeeDetail fee) {
 		String advType = null;
+		String grcAdvType = null;
 		String finTypeCode = fee.getFeeTypeCode();
 		String finEvent = fee.getFinEvent();
 		int terms = 0;
+		int grcTerms = 0;
+
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
-		
+
 		if (advanceRuleCode == AdvanceRuleCode.ADVINT) {
-			advType = fm.getGrcAdvType();
-			terms = fm.getGrcAdvTerms();
+			if (fm.getGrcAdvType() != null) {
+				grcAdvType = fm.getGrcAdvType();
+				grcTerms = fm.getGrcAdvTerms();
+			}
+
+			if (fm.getAdvType() != null) {
+				advType = fm.getAdvType();
+				terms = fm.getAdvTerms();
+			}
+
 		} else if (advanceRuleCode == AdvanceRuleCode.ADVEMI) {
 			advType = fm.getAdvType();
 			terms = fm.getAdvTerms();
 		}
 
-		if (advType == null || !(advanceRuleCode.name().equals(finTypeCode)
+		if ((advType == null && grcAdvType == null) || !(advanceRuleCode.name().equals(finTypeCode)
 				&& AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent))) {
 			return;
 		}
 
 		AdvanceType advanceType = AdvanceType.getType(advType);
+		AdvanceType grcadvanceType = AdvanceType.getType(grcAdvType);
 
-		if (advanceType == null) {
+		if (advanceType == null && grcadvanceType == null) {
 			return;
 		}
 
-		BigDecimal advanceProfit = BigDecimal.ZERO;
+		BigDecimal advanceIntrest = BigDecimal.ZERO;
+		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
+		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
+
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 
+		if (fm.getGrcAdvType() != null) {
+			graceAdvanceIntrest = getAdvanceInterst(advanceRuleCode, grcTerms, gracePeriodEndDate,
+					grcadvanceType, schedules);
+		}
+
+		if (fm.getAdvType() != null) {
+			repayAdvanceIntrest = getAdvanceInterst(advanceRuleCode, terms, gracePeriodEndDate, advanceType,
+					schedules);
+		}
+
+		advanceIntrest = graceAdvanceIntrest.add(repayAdvanceIntrest);
+
+		fee.setActualAmount(advanceIntrest);
+		fee.setCalculatedAmount(advanceIntrest);
+		fee.setActualAmountOriginal(advanceIntrest);
+
+		fm.setAdvanceEMI(advanceIntrest);
+	}
+
+	private BigDecimal getAdvanceInterst(AdvanceRuleCode advanceRuleCode, int terms, Date gracePeriodEndDate,
+			AdvanceType advanceType, List<FinanceScheduleDetail> schedules) {
+		
+		if (advanceType == null) {
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal advanceProfit;
 		switch (advanceType) {
 		case UF:
 			terms = -1;
@@ -1514,11 +1556,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		}
 
 		advanceProfit = getAdvanceProfit(advanceType, advanceRuleCode, terms, gracePeriodEndDate, schedules);
-		fee.setActualAmount(advanceProfit);
-		fee.setCalculatedAmount(advanceProfit);
-		fee.setActualAmountOriginal(advanceProfit);
-		
-		fm.setAdvanceEMI(advanceProfit);
+		return advanceProfit;
 	}
 
 	private BigDecimal getAdvanceProfit(AdvanceType advanceType, AdvanceRuleCode advanceRuleCode, int terms,
@@ -1559,10 +1597,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void calculateFees(FinFeeDetail finFeeDetail, FinScheduleData finScheduleData,
 			Map<String, Object> gstExecutionMap) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		if (AdvanceRuleCode.ADVINT.name().equals(finFeeDetail.getFeeTypeCode())) {
+		if (finFeeDetail.getFeeTypeCode().equals(AdvanceRuleCode.ADVINT.name())) {
 			setAdvanceProfit(AdvanceRuleCode.ADVINT, finScheduleData, finFeeDetail);
 		}
-		if (AdvanceRuleCode.ADVEMI.name().equals(finFeeDetail.getFeeTypeCode())) {
+		if (finFeeDetail.getFeeTypeCode().equals(AdvanceRuleCode.ADVEMI.name())) {
 			setAdvanceProfit(AdvanceRuleCode.ADVEMI, finScheduleData, finFeeDetail);
 		}
 		calculateFees(finFeeDetail, financeMain, gstExecutionMap);
