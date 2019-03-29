@@ -1119,5 +1119,13 @@ UNION ALL
         ]]>
       </sql>
   </changeSet>
-    
+  
+  <changeSet id="42" author="aditya.a">
+      <sql>
+        <![CDATA[
+           update errordetails set message  = 'Customer already paid upto max allowed partial settlement amount' where code = 'RU0046'
+        ]]>
+      </sql>
+  </changeSet>
+  
 </databaseChangeLog>
