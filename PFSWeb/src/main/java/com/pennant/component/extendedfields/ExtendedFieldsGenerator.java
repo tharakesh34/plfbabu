@@ -2251,6 +2251,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			radio.setValue(radiofields[j]);
 
 			radio.setDisabled(isReadOnly);
+			radiogroup.appendChild(radio);
 
 			// Data Setting
 			if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
@@ -2260,7 +2261,6 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			} else {
 				radio.setChecked(false);
 			}
-			radiogroup.appendChild(radio);
 		}
 		return radiogroup;
 	}
