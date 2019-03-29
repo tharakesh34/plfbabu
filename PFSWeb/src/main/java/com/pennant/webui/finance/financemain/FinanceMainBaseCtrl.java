@@ -277,8 +277,6 @@ import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -295,6 +293,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.StageTabConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -970,7 +970,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Row row_advTypes;
 	private Row row_advStages;
 	
-
+	private String oldVal_advType;
+	private String oldVal_grcAdvType;
+	private int oldVal_advTerms;
+	private int oldVal_grcTerms;
+	
 	//Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	//for pdf extraction
@@ -1493,7 +1497,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (!PennantConstants.List_Select.equals(financeMain.getGrcAdvType())) {
 			this.row_grcAdvTypes.setVisible(true);
-			this.grcAdvType.setReadonly(true);
 			this.grcAdvTerms.setDisabled(true);
 		}
 		
@@ -4895,6 +4898,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.doReSetDataChanged();
 		}
+		
+		this.oldVal_advType=this.advType.getValue();
+		this.oldVal_grcAdvType=this.grcAdvType.getValue();
+		this.oldVal_advTerms=this.advTerms.intValue();
+		this.oldVal_grcTerms=this.grcAdvTerms.intValue();
 	}
 
 	/**
@@ -5309,6 +5317,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (customerDialogCtrl != null && customerDialogCtrl.isFeeDataModified()) {
 			return true;
+		}
+		
+		if (!this.advType.isDisabled() || !this.grcAdvType.isDisabled()) {
+			
+			if (!StringUtils.equals(this.oldVal_advType, this.advType.getValue())) {
+				return true;
+			}
+			if (!StringUtils.equals(this.oldVal_grcAdvType, this.grcAdvType.getValue())) {
+				return true;
+			}
+			if (this.oldVal_grcTerms != this.grcAdvTerms.intValue()) {
+				return true;
+			}
+			if (this.oldVal_advTerms != this.advTerms.intValue()) {
+				return true;
+			}
 		}
 
 		return false;
@@ -6547,20 +6571,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("userAction", this.userAction.getSelectedItem().getLabel());
 				map.put("isFinalStage", "Accounting".equals(getTaskTabs(getTaskId(getRole()))));
 				map.put("moduleDefiner", moduleDefiner);
-				//Masking the account number in disbursment tab based on rightname
-				if (ImplementationConstants.DISB_ACCNO_MASKING
-						&& !isReadOnly("FinanceMainDialog_ValidateBeneficiaryAccNo")) {
-					for (FinAdvancePayments finPayDetail : aFinanceDetail.getAdvancePaymentsList()) {
-						if (StringUtils.isEmpty(finPayDetail.getReEnterBeneficiaryAccNo())) {
-							MessageUtil.showError("Please re-enter the account number in disbursement tab");
-							return;
-						} else if (!StringUtils.equals(finPayDetail.getBeneficiaryAccNo(),
-								finPayDetail.getReEnterBeneficiaryAccNo())) {
-							MessageUtil.showError("Account number changed, please re-enter the account number");
-							return;
-						}
-					}
-				}
 				boolean proceed = finAdvancePaymentsListCtrl.onAdvancePaymentValidation(map);
 				if (proceed) {
 					if (aFinanceDetail.getAdvancePaymentsList() != null
@@ -19409,7 +19419,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.info(Literal.LEAVING);
 	}
 	
-
+	public void onChange$advType(Event event) {
+		doChangeAdvTypes();
+		
+		if (isSchdlRegenerate()) {
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+		}
+	}
+	
 	private void doChangeAdvTypes() {
 		this.advTerms.setDisabled(true);
 		this.advStage.setDisabled(true);
@@ -19426,9 +19443,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))) {
 			this.advStage.setDisabled(false);
 		}
-		this.advType.setDisabled(true);
 	}
 	
+	public void onChange$grcAdvType(Event event) {
+		doChangeGrcAdvTypes();
+		
+		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+		}
+	}
 	
 	private void doChangeGrcAdvTypes() {
 		this.grcAdvTerms.setDisabled(true);
@@ -19438,9 +19461,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				|| AdvanceType.UT.getCode().equals(getComboboxValue(this.grcAdvType))) {
 			this.grcAdvTerms.setDisabled(false);
 		}
-		this.grcAdvType.setDisabled(true);
 	}
 	
+	
+	public void onChange$grcAdvTerms(Event event) {
+		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+		}
+	}
+	
+	public void onChange$advTerms(Event event) {
+		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
+			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
+		}
+	}
 	
 
 	public List<String> getAssignCollateralRef() {
