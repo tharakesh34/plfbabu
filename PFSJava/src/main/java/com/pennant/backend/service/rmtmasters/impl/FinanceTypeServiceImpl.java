@@ -97,6 +97,7 @@ import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -690,7 +691,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVEMI.name());
 		
-		if (financeType.isAdvIntersetReq()) {
+		//FOR SP FINANCE ADVANCE EMI FEES NOT REQUIRED.
+		if (financeType.isAdvIntersetReq() && financeType.getAdvType().equals(AdvanceType.AE)) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
 				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), finEvent, true);
