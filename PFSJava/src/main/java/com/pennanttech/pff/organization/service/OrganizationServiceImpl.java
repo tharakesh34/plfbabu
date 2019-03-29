@@ -350,7 +350,7 @@ public class OrganizationServiceImpl extends GenericService<Organization> implem
 		// Extended Field Details
 		if (organization.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(organization.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(organization.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 

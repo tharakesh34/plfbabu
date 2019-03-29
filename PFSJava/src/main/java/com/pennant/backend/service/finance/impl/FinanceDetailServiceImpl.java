@@ -6465,7 +6465,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extendedFieldRender.setReference(recording.getVasReference());
 				extendedFieldRender.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 				details.add(extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender, auditTranType,
-						method, i + 1));
+						method, i + 1, null));
 
 			}
 			financeDetail.getAuditDetailMap().put("VasExtendedDetails", details);
@@ -7247,7 +7247,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<ExtendedFieldRender> renderList = financeDetail.getExtendedFieldRenderList();
 		if (renderList != null && !renderList.isEmpty()) {
 			auditDetailMap.put("ExtendedFieldDetails",
-					extendedFieldDetailsService.setExtendedFieldsAuditData(renderList, auditTranType, method));
+					extendedFieldDetailsService.setExtendedFieldsAuditData(renderList, auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -7255,7 +7255,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getExtendedFieldRender() != null) {
 			auditDetailMap.put("LoanExtendedFieldDetails",
 					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
-							financeDetail.getExtendedFieldRender(), auditTranType, method));
+							financeDetail.getExtendedFieldRender(), auditTranType, method, ExtendedFieldConstants.MODULE_LOAN));
 			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
 		}
 

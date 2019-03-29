@@ -440,7 +440,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 		// Extended Field Details
 		if (lv.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(lv.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(lv.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 

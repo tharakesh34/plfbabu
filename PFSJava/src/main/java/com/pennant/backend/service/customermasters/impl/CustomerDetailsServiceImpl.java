@@ -4805,7 +4805,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// Extended Field Details
 		if (customerDetails.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(customerDetails.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(customerDetails.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 

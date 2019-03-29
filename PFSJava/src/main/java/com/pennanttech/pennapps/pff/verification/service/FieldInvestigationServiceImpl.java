@@ -642,7 +642,7 @@ public class FieldInvestigationServiceImpl extends GenericService<FieldInvestiga
 		// Extended Field Details
 		if (fieldInvestigation.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(fieldInvestigation.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(fieldInvestigation.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 

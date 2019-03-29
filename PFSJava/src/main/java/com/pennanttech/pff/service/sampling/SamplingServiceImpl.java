@@ -1202,7 +1202,7 @@ public class SamplingServiceImpl extends GenericService<Sampling> implements Sam
 		// Collateral Extended Field Details
 		if (sampling.getExtFieldRenderList() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(
-					new ArrayList<>(sampling.getExtFieldRenderList().values()), auditTranType, method));
+					new ArrayList<>(sampling.getExtFieldRenderList().values()), auditTranType, method, null));
 
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}

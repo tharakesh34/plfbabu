@@ -460,7 +460,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 		// Extended Field Details
 		if (tv.getExtendedFieldRender() != null) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(tv.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(tv.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 

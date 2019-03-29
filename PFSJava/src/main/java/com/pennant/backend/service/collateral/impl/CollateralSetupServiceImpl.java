@@ -1191,7 +1191,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		if (collateralSetup.getExtendedFieldRenderList() != null
 				&& collateralSetup.getExtendedFieldRenderList().size() > 0) {
 			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(collateralSetup.getExtendedFieldRenderList(), auditTranType, method));
+					.setExtendedFieldsAuditData(collateralSetup.getExtendedFieldRenderList(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 

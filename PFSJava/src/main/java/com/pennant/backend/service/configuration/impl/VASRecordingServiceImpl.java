@@ -1379,7 +1379,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		// VAS Extended Field Details
 		if (vasRecording.getExtendedFieldRender() != null  && vasRecording.getVasConfiguration().getExtendedFieldHeader() != null) {
 			auditDetailMap.put("ExtendedFieldDetail", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(vasRecording.getExtendedFieldRender(), auditTranType, method));
+					.setExtendedFieldsAuditData(vasRecording.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetail"));
 		}
 

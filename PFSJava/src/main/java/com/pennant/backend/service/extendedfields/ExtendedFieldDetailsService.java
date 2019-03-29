@@ -239,14 +239,14 @@ public class ExtendedFieldDetailsService {
 	}
 
 	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> details, String tranType,
-			String method) {
+			String method, String module) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		for (int i = 0; i < details.size(); i++) {
 			ExtendedFieldRender extendedFieldRender = details.get(i);
-			AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, i + 1);
+			AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, i + 1, module);
 			if (auditDetail != null) {
 				auditDetails.add(auditDetail);
 			}
@@ -257,12 +257,12 @@ public class ExtendedFieldDetailsService {
 	}
 
 	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
-			String method) {
+			String method, String module) {
 		logger.debug(Literal.ENTERING);
 		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq);
+		AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq, module);
 		if (auditDetail == null) {
 			return auditDetails;
 		}
@@ -274,7 +274,7 @@ public class ExtendedFieldDetailsService {
 	
 	
 	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldHeader header, ExtendedFieldRender render, String tranType,
-			String method) {
+			String method, String module) {
 		logger.debug(Literal.ENTERING);
 		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -283,7 +283,7 @@ public class ExtendedFieldDetailsService {
 			render.setTableName(getTableName(header.getModuleName(), header.getSubModuleName(), header.getEvent()));
 		}
 
-		AuditDetail auditDetail = setExtendedFieldAuditData(render, tranType, method, auditSeq);
+		AuditDetail auditDetail = setExtendedFieldAuditData(render, tranType, method, auditSeq, module);
 		if (auditDetail == null) {
 			return auditDetails;
 		}
@@ -294,7 +294,7 @@ public class ExtendedFieldDetailsService {
 	}
 
 	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
-			String method, int auditSeq) {
+			String method, int auditSeq, String module) {
 		logger.debug(Literal.ENTERING);
 
 		if (extendedFieldRender == null) {
@@ -349,10 +349,13 @@ public class ExtendedFieldDetailsService {
 		
 
         //FIXME:Need to rechecks for which case InstructioinUid Required.
-	  /*	String tableName = StringUtils.trimToEmpty(extendedFieldRender.getTableName()).toUpperCase();
-		if (tableName.startsWith("LOAN_") && tableName.endsWith("_ED")) {
-			auditMapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
-		}*/
+		if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)){
+			String tableName = StringUtils.trimToEmpty(extendedFieldRender.getTableName()).toUpperCase();
+			if (tableName.startsWith("LOAN_") && tableName.endsWith("_ED")) {
+				auditMapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+			}
+		}
+	  	
 
 	
 		
@@ -736,7 +739,7 @@ public class ExtendedFieldDetailsService {
 					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
 					if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
 						extendedFieldRender.setInstructionUID(instructionUID);
-						//mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+						mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
 					}
 				}
 
@@ -1984,7 +1987,7 @@ public class ExtendedFieldDetailsService {
 
 		if (financeDetail.getExtendedFieldRender() != null) {
 			auditDetailMap.put("LoanExtendedFieldDetails",
-					setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, "saveOrUpdate"));
+					setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, "saveOrUpdate", ExtendedFieldConstants.MODULE_LOAN));
 		}
 
 		if (financeDetail.getExtendedFieldRender() != null) {
