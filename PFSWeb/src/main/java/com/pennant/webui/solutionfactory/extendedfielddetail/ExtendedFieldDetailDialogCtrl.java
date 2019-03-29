@@ -2228,6 +2228,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			}
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BUTTON, fieldType)) {
 				this.rowMandatory.setVisible(false);
+				this.rowfieldAllowInRule.setVisible(false);
 			}
 
 			if (this.rowfieldLength.isVisible()) {
