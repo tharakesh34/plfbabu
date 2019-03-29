@@ -267,6 +267,25 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		return count > 0 ? true : false;
 	}
 
+	@Override
+	public boolean isDecisionPositive(String loanReference) {
+		logger.debug(Literal.ENTERING);
+
+		int count = 0;
+
+		StringBuilder sql = new StringBuilder("select count(*)  from LegalDetails");
+		sql.append(" where loanReference = :loanReference and LegalDecision != 'p'");
+		logger.debug("selectSql: " + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("loanReference", loanReference);
+
+		count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+
+		logger.debug(Literal.LEAVING);
+		return count == 0 ? true : false;
+	}
+
 	/**
 	 * Updating the legal details
 	 */

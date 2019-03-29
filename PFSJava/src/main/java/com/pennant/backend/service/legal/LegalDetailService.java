@@ -70,6 +70,15 @@ public interface LegalDetailService {
 
 	AuditHeader isLegalApproved(AuditHeader auditHeader);
 
+	/**
+	 * Checks whether all Legal Details Completed with Legal Decision as “Positive” for the Loan.
+	 * 
+	 * @param auditHeader
+	 *            The audit header.
+	 * @return True if all Legal Details Completed with Legal Decision as “Positive” for the Loan. Otherwise False.
+	 */
+	AuditHeader isLegalCompletedAsPositive(AuditHeader auditHeader);
+
 	List<LegalDetail> getApprovedLegalDetail(FinanceMain aFinanceMain) throws Exception;
 
 	LegalDetail formatLegalDetails(LegalDetail legalDetail) throws Exception;

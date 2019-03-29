@@ -1167,6 +1167,34 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		return auditHeader;
 	}
 
+	@Override
+	public AuditHeader isLegalCompletedAsPositive(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+
+		boolean isExists = getLegalDetailDAO().isExists(finReference, TableType.TEMP_TAB);
+
+		if (isExists) {
+			AuditDetail auditDetail = auditHeader.getAuditDetail();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "LG001", null, null), auditHeader.getUsrLanguage()));
+		} else {
+			isExists = getLegalDetailDAO().isDecisionPositive(finReference);
+
+			if (!isExists) {
+				AuditDetail auditDetail = auditHeader.getAuditDetail();
+				auditDetail.setErrorDetail(
+						ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "LG002", null, null),
+								auditHeader.getUsrLanguage()));
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
 	/*
 	 * Getting the all legal details against the loan reference
 	 */

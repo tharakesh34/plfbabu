@@ -261,7 +261,11 @@ public class FinanceExternalServiceTask implements CustomServiceTask {
 				}
 				break;
 			case PennantConstants.METHOD_DO_VALIDATE_LEGAL_APPROVAL:
-				auditHeader = getLegalDetailService().isLegalApproved(auditHeader);
+				if ("ALLOW_POSITIVE_ONLY".equals(serviceTask.getParameters())) {
+					auditHeader = getLegalDetailService().isLegalCompletedAsPositive(auditHeader);
+				} else {
+					auditHeader = getLegalDetailService().isLegalApproved(auditHeader);
+				}
 				taskExecuted = true;
 				break;
 			case PennantConstants.METHOD_OFFERLETTER:

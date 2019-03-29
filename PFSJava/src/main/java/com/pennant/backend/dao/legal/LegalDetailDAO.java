@@ -78,6 +78,15 @@ public interface LegalDetailDAO extends BasicCrudDao<LegalDetail> {
 
 	boolean isExists(String reference, String collateralRef, String type);
 
+	/**
+	 * Checks whether all the completed legal details for the loan has the decision as "Positive".
+	 * 
+	 * @param loanReference
+	 *            The loan reference to check.
+	 * @return True if all the completed legal details for the loan has the decision as "Positive". Otherwise False.
+	 */
+	boolean isDecisionPositive(String loanReference);
+
 	void updateLegalDeatils(String reference, String collateralRef, boolean active);
 
 	boolean isExists(String finReference, TableType mainTab);

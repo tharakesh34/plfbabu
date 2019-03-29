@@ -1110,5 +1110,14 @@ UNION ALL
         ]]>
       </sql>
   </changeSet>
+  
+  <changeSet id="41" author="aditya.a">
+      <sql>
+        <![CDATA[
+         Insert into errordetails (code, language, severity, message, recordstatus, workflowid, lastmnton, lastmntby, version) 
+	     values ('LG002', 'EN', 'E', 'The loan cannot be processed with the selected user action as the decision of legal is not positive.', 'Approved', 0, CURRENT_TIMESTAMP, 1000, 1);
+        ]]>
+      </sql>
+  </changeSet>
     
 </databaseChangeLog>
