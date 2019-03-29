@@ -655,7 +655,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVINT.name());
 			
 		
-		if (financeType.isGrcAdvIntersetReq()) {
+		if (financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq() && !financeType.getAdvType().equals(AdvanceType.AE)) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
 				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), finEvent, true);

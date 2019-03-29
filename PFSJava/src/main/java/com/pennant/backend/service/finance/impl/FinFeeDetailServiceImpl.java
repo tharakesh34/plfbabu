@@ -1470,33 +1470,17 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	private void setAdvanceProfit(AdvanceRuleCode advanceRuleCode, FinScheduleData finScheduleData, FinFeeDetail fee) {
-		String advType = null;
-		String grcAdvType = null;
 		String finTypeCode = fee.getFeeTypeCode();
 		String finEvent = fee.getFinEvent();
-		int terms = 0;
-		int grcTerms = 0;
 
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
+		String grcAdvType = fm.getGrcAdvType();
+		int grcTerms = fm.getGrcAdvTerms();
+		String advType = fm.getAdvType();
+		int advTerms = fm.getAdvTerms();
 
-		if (advanceRuleCode == AdvanceRuleCode.ADVINT) {
-			if (fm.getGrcAdvType() != null) {
-				grcAdvType = fm.getGrcAdvType();
-				grcTerms = fm.getGrcAdvTerms();
-			}
-
-			if (fm.getAdvType() != null) {
-				advType = fm.getAdvType();
-				terms = fm.getAdvTerms();
-			}
-
-		} else if (advanceRuleCode == AdvanceRuleCode.ADVEMI) {
-			advType = fm.getAdvType();
-			terms = fm.getAdvTerms();
-		}
-
-		if ((advType == null && grcAdvType == null) || !(advanceRuleCode.name().equals(finTypeCode)
+		if ((grcAdvType == null && advType == null) || !(advanceRuleCode.name().equals(finTypeCode)
 				&& AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent))) {
 			return;
 		}
@@ -1515,13 +1499,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 
 		if (fm.getGrcAdvType() != null) {
-			graceAdvanceIntrest = getAdvanceInterst(advanceRuleCode, grcTerms, gracePeriodEndDate,
-					grcadvanceType, schedules);
+			graceAdvanceIntrest = getAdvanceInterst("GRACE", grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
 		}
 
 		if (fm.getAdvType() != null) {
-			repayAdvanceIntrest = getAdvanceInterst(advanceRuleCode, terms, gracePeriodEndDate, advanceType,
-					schedules);
+			repayAdvanceIntrest = getAdvanceInterst("REPAY", advTerms, gracePeriodEndDate, advanceType, schedules);
 		}
 
 		advanceIntrest = graceAdvanceIntrest.add(repayAdvanceIntrest);
@@ -1533,20 +1515,20 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		fm.setAdvanceEMI(advanceIntrest);
 	}
 
-	private BigDecimal getAdvanceInterst(AdvanceRuleCode advanceRuleCode, int terms, Date gracePeriodEndDate,
-			AdvanceType advanceType, List<FinanceScheduleDetail> schedules) {
-		
+	private BigDecimal getAdvanceInterst(String type, int Terms, Date gracePeriodEndDate, AdvanceType advanceType,
+			List<FinanceScheduleDetail> schedules) {
+
 		if (advanceType == null) {
 			return BigDecimal.ZERO;
 		}
-		
+
 		BigDecimal advanceProfit;
 		switch (advanceType) {
 		case UF:
-			terms = -1;
+			Terms = -1;
 			break;
 		case AF:
-			terms = 1;
+			Terms = 1;
 			break;
 		case UT:
 		case AE:
@@ -1555,12 +1537,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			break;
 		}
 
-		advanceProfit = getAdvanceProfit(advanceType, advanceRuleCode, terms, gracePeriodEndDate, schedules);
+		advanceProfit = getAdvanceProfit(advanceType, type, Terms, gracePeriodEndDate, schedules);
 		return advanceProfit;
 	}
 
-	private BigDecimal getAdvanceProfit(AdvanceType advanceType, AdvanceRuleCode advanceRuleCode, int terms,
-			Date gracePeriodEndDate, List<FinanceScheduleDetail> schedules) {
+	private BigDecimal getAdvanceProfit(AdvanceType advanceType, String type, int terms, Date gracePeriodEndDate,
+			List<FinanceScheduleDetail> schedules) {
 		BigDecimal advanceProfit = BigDecimal.ZERO;
 
 		int term = 0;
@@ -1569,12 +1551,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
 				Date schDate = sd.getSchDate();
 				BigDecimal profitSchd = sd.getProfitSchd();
-				if (advanceRuleCode == AdvanceRuleCode.ADVINT && schDate.compareTo(gracePeriodEndDate) <= 0) {
+				if (schDate.compareTo(gracePeriodEndDate) <= 0 && "GRACE".equals(type)) {
 					advanceProfit = advanceProfit.add(profitSchd);
 					term++;
 				}
 
-				if (advanceRuleCode == AdvanceRuleCode.ADVEMI && schDate.compareTo(gracePeriodEndDate) > 0) {
+				if (schDate.compareTo(gracePeriodEndDate) > 0 && "REPAY".equals(type)) {
 					if (advanceType == AdvanceType.AE) {
 						BigDecimal principalSchd = sd.getPrincipalSchd();
 						advanceProfit = advanceProfit.add(profitSchd).add(principalSchd);
