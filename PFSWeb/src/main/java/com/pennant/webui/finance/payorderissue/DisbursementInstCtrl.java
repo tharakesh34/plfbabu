@@ -540,7 +540,10 @@ public class DisbursementInstCtrl {
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 					}
-					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+					
+					if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
+						totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+					}
 				}
 				totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 			}
