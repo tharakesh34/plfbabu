@@ -1,8 +1,12 @@
 <?page id="ErrorPage" title="pennApps Product Suite"?>
 <?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_ErrorDialog" width="450px" closable="false" mode="modal" use="org.zkoss.zul.impl.MessageboxDlg" apply="${errorCtrl}">
+	<window id="window_ErrorDialog" width="450px" closable="false" mode="modal" use="org.zkoss.zul.impl.MessageboxDlg"
+		apply="${errorCtrl}">
 		<panel id="panel" border="normal" sclass="myMultiMessageBox">
 			<panelchildren>
 				<hbox style="padding: 8px;">
@@ -13,8 +17,10 @@
 				</hbox>
 				<separator bar="true" />
 				<hbox width="100%" pack="center" style="padding: 4px 0px 8px;">
-					<button label="Continue" sclass="z-messagebox-btn" style="margin: 0px 4px;" onClick="spaceOwner.detach()" />
-					<!-- <button label="Reload" sclass="z-messagebox-btn" style="margin: 0px 4px;" onClick="Executions.sendRedirect(null)" /> -->
+					<button label="Continue" sclass="z-messagebox-btn" style="margin: 0px 4px;"
+						onClick="spaceOwner.detach()" />
+					<!-- <button label="Reload" sclass="z-messagebox-btn" style="margin: 0px 4px;" onClick="Executions.sendRedirect(null)" 
+						/> -->
 				</hbox>
 			</panelchildren>
 		</panel>
