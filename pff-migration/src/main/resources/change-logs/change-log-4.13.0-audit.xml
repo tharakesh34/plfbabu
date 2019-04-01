@@ -88,5 +88,12 @@
 			<column name="TypeOfBanks" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	  <changeSet id="11" author="aditya.a">
+    <addColumn tableName="AdtFinDedupDetail">
+           <column name="CustShrtName" type="VARCHAR(100)"/>
+           <column name="MobileNumber" type="VARCHAR(100)"/>
+    </addColumn>
+  </changeSet>
 
 </databaseChangeLog>
