@@ -277,8 +277,6 @@ import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -295,6 +293,8 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.StageTabConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -11430,7 +11430,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int grcAdvTerms = this.grcAdvTerms.intValue();
 				boolean validationRequired = true;
 
-				if (minTerms == 0 && maxTerms == 0 && grcAdvTerms == 0) {
+				if (minTerms == 0 && maxTerms == 0) {
 					validationRequired = false;
 				}
 
@@ -11439,7 +11439,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						throw new WrongValueException(this.grcAdvTerms, Labels.getLabel("NUMBER_RANGE_EQ",
 								new String[] { grcAdvTermsLabel, String.valueOf(minTerms), String.valueOf(maxTerms) }));
 					}
+				}
+				
+				validationRequired = true;
+				if (minTerms == 0 && maxTerms == 0 && grcAdvTerms == 0) {
+					validationRequired = false;
+				}
 
+				if (!this.grcAdvTerms.isDisabled() && validationRequired) {
 					if (grcAdvTerms > aFinanceMain.getGraceTerms()) {
 						throw new WrongValueException(this.grcAdvTerms, Labels.getLabel("NUMBER_MAXVALUE_EQ",
 								new String[] { grcAdvTermsLabel, String.valueOf(aFinanceMain.getGraceTerms()) }));
@@ -11993,7 +12000,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			int advTerms = this.advTerms.intValue();
 			boolean validationRequired = true;
 
-			if (minTerms == 0 && maxTerms == 0 && advTerms == 0) {
+			if (minTerms == 0 && maxTerms == 0) {
 				validationRequired = false;
 			}
 
@@ -12002,7 +12009,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					throw new WrongValueException(this.advTerms, Labels.getLabel("NUMBER_RANGE_EQ",
 							new String[] { advTermsLabel, String.valueOf(minTerms), String.valueOf(maxTerms) }));
 				}
+			}
+			
+			validationRequired = true;
+			if (minTerms == 0 && maxTerms == 0 && advTerms == 0) {
+				validationRequired = false;
+			}
 
+			if (!this.advTerms.isDisabled() && validationRequired) {
 				if (advTerms > aFinanceMain.getNumberOfTerms()) {
 					throw new WrongValueException(this.advTerms, Labels.getLabel("NUMBER_MAXVALUE_EQ",
 							new String[] { advTermsLabel, String.valueOf(aFinanceMain.getNumberOfTerms()) }));
