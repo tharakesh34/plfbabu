@@ -676,7 +676,7 @@
 													<label value="${c:l('label_financemainDialog_GraceAdvanceType.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<combobox id="grcAdvType" disabled="true"/>
+														<combobox id="grcAdvType"/>
 													</hbox>
 													<label value="${c:l('label_financemainDialog_GraceAdvanceTerms.value')}" />
 													<hbox>
