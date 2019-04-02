@@ -947,5 +947,23 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.LEAVING);
 		return totalExposer;
 	}
+	
+	@Override
+	public void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive) {
+		logger.debug("Entering");
+		FinanceProfitDetail pftDetail = new FinanceProfitDetail();
+		pftDetail.setFinReference(finReference);
+		pftDetail.setClosingStatus(closingStatus);
+		pftDetail.setFinIsActive(finIsActive);
+
+		StringBuilder updateSql = new StringBuilder("Update finpftdetails ");
+		updateSql.append(" Set FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus ");
+		updateSql.append(" Where FinReference = :FinReference ");
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pftDetail);
+
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
 
 }

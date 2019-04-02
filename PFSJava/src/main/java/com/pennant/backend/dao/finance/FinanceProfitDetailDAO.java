@@ -113,4 +113,6 @@ public interface FinanceProfitDetailDAO {
 	BigDecimal getTotalCustomerExposre(long custId);
 
 	BigDecimal getTotalCoApplicantsExposre(String finReferece);
+	
+	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
 }
