@@ -128,8 +128,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private FinFeeDetailService finFeeDetailService;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private FeeTypeDAO feeTypeDAO;
-	
-	
 
 	private Date fixedEndDate = null;
 
@@ -240,6 +238,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private List<OtherFinanceDetail> getCustOtherFinDetails(long custID, String finReference) {
 		return this.soaReportGenerationDAO.getCustOtherFinDetails(custID, finReference);
 	}
+
 	public void setSoaReportGenerationDAO(SOAReportGenerationDAO soaReportGenerationDAO) {
 		this.soaReportGenerationDAO = soaReportGenerationDAO;
 	}
@@ -275,7 +274,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			statementOfAccount.setLinkedFinRef(financeProfitDetail.getLinkedFinRef());
 			statementOfAccount.setClosedlinkedFinRef(financeProfitDetail.getClosedlinkedFinRef());
 
-
 			//BFSD Related
 			statementOfAccount.setFinPurpose(financeProfitDetail.getFinPurpose());
 			statementOfAccount.setCurrentDate(DateUtility.getAppDate());
@@ -308,12 +306,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			//Rate Code will be displayed when Referential Rate is selected against the loan
 			String plrRate = statementOfAccount.getPlrRate();
-			if(StringUtils.isEmpty(plrRate)){
+			if (StringUtils.isEmpty(plrRate)) {
 				statementOfAccount.setPlrRate("-");
-			}else{
+			} else {
 				statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
 			}
-			
+
 			if (finMain.getAdvEMITerms() > 0) {
 				statementOfAccount.setAdvEmiApplicable(true);
 			}
@@ -321,11 +319,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			//Including advance EMI terms
 			int tenure = statementOfAccount.getTenure();
 			statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
-			
+
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
 					+ " / " + finMain.getAdvEMITerms());
-
 
 			//get the Customer Details
 			StatementOfAccount statementOfAccountCustDetails = getSOACustomerDetails(custId);
@@ -394,8 +391,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		statementOfAccount.setClosedlinkedFinRef(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getClosedlinkedFinRef(), ccyEditField));
 
-		statementOfAccount.setEmiReceivedPri(
-				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPri().add(finMain.getAdvanceEMI()), ccyEditField));
+		statementOfAccount.setEmiReceivedPri(PennantApplicationUtil
+				.formateAmount(statementOfAccount.getEmiReceivedPri().add(finMain.getAdvanceEMI()), ccyEditField));
 		statementOfAccount.setEmiReceivedPft(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPft(), ccyEditField));
 
@@ -421,7 +418,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		Map<String, BigDecimal> taxPercmap = getTaxPercentages(finMain);
 		String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference, finMain, financeProfitDetail, taxPercmap, taxRoundMode, taxRoundingTarget);
+		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference, finMain, financeProfitDetail,
+				taxPercmap, taxRoundMode, taxRoundingTarget);
 
 		for (SOASummaryReport summary : soaSummaryDetailsList) {
 			summary.setFinReference(finReference);
@@ -431,7 +429,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		//get the Transaction Details
-		List<SOATransactionReport> soaTransactionReportsList = getTransactionDetails(finReference, statementOfAccount, finMain, taxPercmap, taxRoundMode, taxRoundingTarget);
+		List<SOATransactionReport> soaTransactionReportsList = getTransactionDetails(finReference, statementOfAccount,
+				finMain, taxPercmap, taxRoundMode, taxRoundingTarget);
 
 		List<SOATransactionReport> finalSOATransactionReports = new ArrayList<SOATransactionReport>();
 
@@ -451,8 +450,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaTransactionReport.setCreditAmount(
 						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
 
-			}
-			else {
+			} else {
 				//AdvanceEMI credit entry with maturity date
 				soaTransactionReport.setFinReference(finReference);
 				soaTransactionReport.setCcyEditField(statementOfAccount.getCcyEditField());
@@ -549,7 +547,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			interestRateDetails.add(detail);
 		}
 
-
 		//Summary Reports List
 		statementOfAccount.setSoaSummaryReports(soaSummaryDetailsList);
 
@@ -577,7 +574,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * 
 	 */
 	private List<SOASummaryReport> getSOASummaryDetails(String finReference, FinanceMain finMain,
-			FinanceProfitDetail financeProfitDetail, Map<String, BigDecimal> taxPercmap, String taxRoundMode, int taxRoundingTarget) {
+			FinanceProfitDetail financeProfitDetail, Map<String, BigDecimal> taxPercmap, String taxRoundMode,
+			int taxRoundingTarget) {
 		logger.debug("Enetring");
 
 		SOASummaryReport soaSummaryReport = null;
@@ -589,7 +587,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
 			//FinanceProfitDetail financeProfitDetail = getFinanceProfitDetails(finReference);
-			
+
 			FeeType bounceFeeType = null;
 
 			BigDecimal due = BigDecimal.ZERO;
@@ -743,7 +741,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				soaSummaryReportsList.add(soaSummaryReport);
 
-
 				BigDecimal bounceDue = BigDecimal.ZERO;
 				BigDecimal bounceRecipt = BigDecimal.ZERO;
 
@@ -760,7 +757,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					BigDecimal bounceGreaterZeroAdviseAmount = BigDecimal.ZERO;
 					BigDecimal bounceZeroPaidAmount = BigDecimal.ZERO;
 					BigDecimal bounceGreaterZeroPaidAmount = BigDecimal.ZERO;
-					
+
 					for (ManualAdvise manualAdvise : manualAdviseList) {
 						if (manualAdvise.getAdviseType() == 2 && manualAdvise.getBalanceAmt() != null) {
 							adviseBalanceAmt = adviseBalanceAmt.add(manualAdvise.getBalanceAmt());
@@ -769,18 +766,24 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						if (manualAdvise.getAdviseType() == 1 && manualAdvise.getBounceID() == 0) {
 
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
-								
-								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
-									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), manualAdvise.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+								bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(manualAdvise.getAdviseAmount())
+										.subtract(manualAdvise.getWaivedAmount());
+
+								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
+										.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
+									BigDecimal gstAmount = calculateGST(taxPercmap,
+											manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
+											manualAdvise.getTaxComponent(), taxRoundMode, taxRoundingTarget);
 									bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(gstAmount);
 								}
 							}
 
 							if (manualAdvise.getPaidAmount() != null) {
-								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
-									bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount()).
-											add(manualAdvise.getPaidCGST()).add(manualAdvise.getPaidIGST()).add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidSGST());
+								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
+										.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
+									bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount())
+											.add(manualAdvise.getPaidCGST()).add(manualAdvise.getPaidIGST())
+											.add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidSGST());
 								} else {
 									bounceZeroPaidAmount = bounceZeroPaidAmount.add(manualAdvise.getPaidAmount());
 								}
@@ -792,22 +795,30 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							if (bounceFeeType == null) {
 								bounceFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
 							}
-							
+
 							if (manualAdvise.getAdviseAmount() != null) {
-								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
-								
-								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
-									BigDecimal gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()), bounceFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+								bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount
+										.add(manualAdvise.getAdviseAmount()).subtract(manualAdvise.getWaivedAmount());
+
+								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
+										.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
+									BigDecimal gstAmount = calculateGST(taxPercmap,
+											manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
+											bounceFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
 									bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 								}
 							}
 
 							if (manualAdvise.getPaidAmount() != null) {
-								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
-									bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount()).
-											add(manualAdvise.getPaidCGST()).add(manualAdvise.getPaidIGST()).add(manualAdvise.getPaidUGST()).add(manualAdvise.getPaidSGST());
+								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
+										.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
+									bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount
+											.add(manualAdvise.getPaidAmount()).add(manualAdvise.getPaidCGST())
+											.add(manualAdvise.getPaidIGST()).add(manualAdvise.getPaidUGST())
+											.add(manualAdvise.getPaidSGST());
 								} else {
-									bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount.add(manualAdvise.getPaidAmount());
+									bounceGreaterZeroPaidAmount = bounceGreaterZeroPaidAmount
+											.add(manualAdvise.getPaidAmount());
 								}
 							}
 						}
@@ -891,37 +902,42 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		return soaSummaryReportsList;
 	}
 
-	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent, String taxRoundMode, int taxRoundingTarget) {
-		
+	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent,
+			String taxRoundMode, int taxRoundingTarget) {
+
 		BigDecimal gstAmount = BigDecimal.ZERO;
 		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
 		BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
 		BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
-		
+
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 			if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal cgst = (feeAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal cgst = (feeAmount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9,
+						RoundingMode.HALF_DOWN);
 				cgst = CalculationUtil.roundAmount(cgst, taxRoundMode, taxRoundingTarget);
 				gstAmount = gstAmount.add(cgst);
 			}
 			if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal sgst = (feeAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal sgst = (feeAmount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9,
+						RoundingMode.HALF_DOWN);
 				sgst = CalculationUtil.roundAmount(sgst, taxRoundMode, taxRoundingTarget);
 				gstAmount = gstAmount.add(sgst);
 			}
 			if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal ugst = (feeAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal ugst = (feeAmount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9,
+						RoundingMode.HALF_DOWN);
 				ugst = CalculationUtil.roundAmount(ugst, taxRoundMode, taxRoundingTarget);
 				gstAmount = gstAmount.add(ugst);
 			}
 			if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal igst = (feeAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
+				BigDecimal igst = (feeAmount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9,
+						RoundingMode.HALF_DOWN);
 				igst = CalculationUtil.roundAmount(igst, taxRoundMode, taxRoundingTarget);
 				gstAmount = gstAmount.add(igst);
 			}
 		}
-		
+
 		return gstAmount;
 	}
 
@@ -934,7 +950,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * @throws IllegalAccessException
 	 */
 	public List<SOATransactionReport> getTransactionDetails(String finReference, StatementOfAccount statementOfAccount,
-			FinanceMain finMain, Map<String, BigDecimal> taxPercmap, String taxRoundMode, int taxRoundingTarget) throws IllegalAccessException, InvocationTargetException {
+			FinanceMain finMain, Map<String, BigDecimal> taxPercmap, String taxRoundMode, int taxRoundingTarget)
+			throws IllegalAccessException, InvocationTargetException {
 
 		logger.debug("Enetring");
 
@@ -962,7 +979,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String manualAdvFeeType = "- Payable"; //12
 		String manualAdvPrentmentNotIn = "FeeDesc or Bounce - Due "; //10
 		String manualAdvPrentmentIn = ""; // 11
-        
 
 		//Receipt Header
 		String rHEventExcess = "Payment Received vide ";//10
@@ -993,7 +1009,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		if (finMain != null) {
 
 			FeeType bounceFeeType = null;
-			
+
 			//Finance Schedule Details
 			List<FinanceScheduleDetail> finSchdDetList = getFinScheduleDetails(finReference);
 			Date maxSchDate = getMaxSchDate(finReference);
@@ -1024,22 +1040,23 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			List<FeeWaiverDetail> feeWaiverDetailList = getFeeWaiverDetail(finReference);
 
-			List<FinanceDisbursement> disbursements = soaReportGenerationDAO.getFinanceDisbursementByFinRef(finReference);
-			
+			List<FinanceDisbursement> disbursements = soaReportGenerationDAO
+					.getFinanceDisbursementByFinRef(finReference);
+
 			if (StringUtils.isBlank(finMain.getClosingStatus())
 					|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")
 							&& CollectionUtils.isNotEmpty(disbursements)) {
 				for (FinanceDisbursement financeDisbursement : disbursements) {
 					BigDecimal transactionAmount = BigDecimal.ZERO;
-					
+
 					if (financeDisbursement.getDisbAmount() != null) {
 						transactionAmount = financeDisbursement.getDisbAmount();
 					}
-					
+
 					if (DateUtility.compare(financeDisbursement.getDisbDate(), finMain.getFinStartDate()) == 0) {
 						transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
 					}
-					
+
 					soaTranReport = new SOATransactionReport();
 					soaTranReport.setEvent(finSchedulePayable);
 					soaTranReport.setTransactionDate(financeDisbursement.getDisbReqDate());
@@ -1047,11 +1064,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setCreditAmount(transactionAmount);
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(1);
-					
+
 					soaTransactionReports.add(soaTranReport);
 				}
-			}	
-			
+			}
+
 			//Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
@@ -1099,8 +1116,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTransactionReports.add(soaTranReport);
 					}
 				}
-
-
 
 				//fore closure Amount 
 				BigDecimal partialPaidAmt = finSchdDetail.getPartialPaidAmt();
@@ -1308,7 +1323,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTranReport = new SOATransactionReport();
 						String taxComponent = "";
 						BigDecimal gstAmount = BigDecimal.ZERO;
-						
+
 						if (manualAdvise.getFeeTypeID() > 0) {
 
 							manualAdvPrentmentNotIn = manualAdvise.getFeeTypeDesc() + " - Due";
@@ -1328,11 +1343,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							}
 							manualAdvPrentmentNotIn = "Bounce - Due";
 						}
-						
+
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-							gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount(), taxComponent, taxRoundMode, taxRoundingTarget);
+							gstAmount = calculateGST(taxPercmap, manualAdvise.getAdviseAmount(), taxComponent,
+									taxRoundMode, taxRoundingTarget);
 						}
-						
+
 						soaTranReport.setEvent(manualAdvPrentmentNotIn + finRef);
 						soaTranReport.setTransactionDate(manualAdvise.getPostDate());
 						soaTranReport.setValueDate(manualAdvise.getValueDate());
@@ -1796,7 +1812,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			//Advance EMI should be shown on transaction as total disbursement, advance emi debit entry.
 			if (finSchdDetList != null && !finSchdDetList.isEmpty()) {
 				for (FinanceScheduleDetail financeScheduleDetail : finSchdDetList) {
-					if (financeScheduleDetail.getDisbAmount() != null && BigDecimal.ZERO.compareTo(finMain.getAdvanceEMI()) != 0) {
+					if (financeScheduleDetail.getDisbAmount() != null
+							&& BigDecimal.ZERO.compareTo(finMain.getAdvanceEMI()) != 0) {
 						soaTranReport = new SOATransactionReport();
 						soaTranReport.setEvent(advEmiDebitEntry + finRef);
 						soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
@@ -1837,12 +1854,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		return soaReportGenerationDAO.getSOAFinTypes();
 	}
-	
+
 	public Map<String, BigDecimal> getTaxPercentages(FinanceMain finMain) {
-		
+
 		//FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finMain.FinReference(), "", false);
-		
-		FinanceDetail financeDetail = new FinanceDetail(); 
+
+		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinanceMain(finMain);
 		financeDetail.setFinScheduleData(finSchData);
@@ -1882,8 +1899,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode, custDftBranch,
-				highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
+		HashMap<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
+				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
 
 		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
@@ -1919,7 +1936,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		return taxPercMap;
 	}
-	
+
 	/**
 	 * Method for Processing of SQL Rule and get Executed Result
 	 * 
