@@ -295,10 +295,8 @@ public class ScheduleGenerator {
 						curSchd.setPftOnSchDate(true);
 					} else if (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, curSchd.getSchdMethod())
 							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCAP, curSchd.getSchdMethod())) {
-						if (FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(), financeMain.getGrcPeriodEndDate())) {
-							curSchd.setPftOnSchDate(true);
-							curSchd.setRepayOnSchDate(true);
-						}
+						curSchd.setPftOnSchDate(true);
+						curSchd.setRepayOnSchDate(true);
 					}
 
 					//Capitalize Flag
