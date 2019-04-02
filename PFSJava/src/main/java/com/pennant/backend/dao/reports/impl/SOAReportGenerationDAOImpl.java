@@ -109,21 +109,20 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		FinanceMain finMain = new FinanceMain();
 		finMain.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ClosingStatus, FinStartDate, FeeChargeAmt, FinCurrAssetValue, FInApprovedDate");
+		sql.append(", FinType, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
+		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId");
+		sql.append(", AdvType, GrcAdvType");
+		sql.append(" FROM FinanceMain Where FinReference = :FinReference");
 
-		selectSql.append(
-				" Select ClosingStatus,FinStartDate,FeeChargeAmt,FinCurrAssetValue,FInApprovedDate,FinType, FixedRateTenor,");
-		selectSql.append(
-				" FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate, FinCcy, RepaySpecialRate, RepayMargin, advemiterms,advanceemi,MaturityDate, CustId ");
-		selectSql.append(" FROM  FinanceMain Where FinReference = :FinReference");
-
-		logger.trace(Literal.SQL + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finMain);
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 
 		try {
-			finMain = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finMain = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			finMain = null;
 		}

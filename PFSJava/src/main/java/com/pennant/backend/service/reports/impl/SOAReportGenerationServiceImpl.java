@@ -104,6 +104,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
@@ -391,8 +392,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		statementOfAccount.setClosedlinkedFinRef(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getClosedlinkedFinRef(), ccyEditField));
 
-		statementOfAccount.setEmiReceivedPri(PennantApplicationUtil
-				.formateAmount(statementOfAccount.getEmiReceivedPri().add(finMain.getAdvanceEMI()), ccyEditField));
+		if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.getValue())) {
+			statementOfAccount.setEmiReceivedPri(PennantApplicationUtil
+					.formateAmount(statementOfAccount.getEmiReceivedPri().add(finMain.getAdvanceEMI()), ccyEditField));
+		} else {
+			statementOfAccount.setEmiReceivedPri(BigDecimal.ZERO);
+		}
+
 		statementOfAccount.setEmiReceivedPft(
 				PennantApplicationUtil.formateAmount(statementOfAccount.getEmiReceivedPft(), ccyEditField));
 
@@ -654,8 +660,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Principal Component");
-				soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
-				soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
+
+				if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+					soaSummaryReport.setDue(due.add(finMain.getAdvanceEMI()));
+					soaSummaryReport.setReceipt(receipt.add(finMain.getAdvanceEMI()));
+				} else {
+					soaSummaryReport.setDue(due);
+					soaSummaryReport.setReceipt(receipt);
+				}
 				soaSummaryReport.setOverDue(overDue);
 				soaSummaryReportsList.add(soaSummaryReport);
 
@@ -667,7 +679,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaSummaryReport = new SOASummaryReport();
 				soaSummaryReport.setComponent("Interest Component");
 				soaSummaryReport.setDue(due);
-				soaSummaryReport.setReceipt(receipt);
+				if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+					soaSummaryReport.setReceipt(receipt);
+				} else {
+					soaSummaryReport.setReceipt(BigDecimal.ZERO);
+				}
 				soaSummaryReport.setOverDue(overDue);
 
 				soaSummaryReportsList.add(soaSummaryReport);
@@ -1818,7 +1834,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTranReport.setEvent(advEmiDebitEntry + finRef);
 						soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
 						soaTranReport.setValueDate(finMain.getFinStartDate());
-						soaTranReport.setDebitAmount(finMain.getAdvanceEMI());
+						if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+							soaTranReport.setDebitAmount(finMain.getAdvanceEMI());
+						} else {
+							soaTranReport.setDebitAmount(BigDecimal.ZERO);
+						}
 						soaTranReport.setCreditAmount(BigDecimal.ZERO);
 						soaTranReport.setPriority(25);
 						soaTransactionReports.add(soaTranReport);
@@ -1833,7 +1853,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaTranReport.setTransactionDate(finMain.getMaturityDate());
 				soaTranReport.setValueDate(finMain.getMaturityDate());
 				soaTranReport.setEvent(advEmiCreditEntry + finRef);
-				soaTranReport.setCreditAmount(finMain.getAdvanceEMI());
+				if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+					soaTranReport.setCreditAmount(finMain.getAdvanceEMI());
+				}else{
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+				}
 				soaTranReport.setPriority(26);
 				soaTransactionReports.add(soaTranReport);
 			}
