@@ -413,7 +413,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	public void setFinOptionService(FinOptionService finOptionService) {
 		this.finOptionService = finOptionService;
 	}
-	
+
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -470,7 +470,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -488,8 +488,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			}
 		}
 
-		if (finMaintainInstruction.getFinOptions()!= null
-				&& finMaintainInstruction.getFinOptions().size() > 0) {
+		if (finMaintainInstruction.getFinOptions() != null && finMaintainInstruction.getFinOptions().size() > 0) {
 			auditDetailMap.put("FinOptions", setFinOptionAuditData(finMaintainInstruction, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinOptions"));
 		}
@@ -501,13 +500,13 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-	
-	private List<AuditDetail> setFinOptionAuditData(FinMaintainInstruction finMaintainInstruction,
-			String auditTranType, String method) {
+
+	private List<AuditDetail> setFinOptionAuditData(FinMaintainInstruction finMaintainInstruction, String auditTranType,
+			String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-	        FinOption finOption = new FinOption();
+		FinOption finOption = new FinOption();
 
 		String[] fields = PennantJavaUtil.getFieldDetails(finOption, finOption.getExcludeFields());
 
@@ -555,12 +554,12 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			finOptions.setLastMntOn(finMaintainInstruction.getLastMntOn());
 			finOptions.setLastMntBy(finMaintainInstruction.getLastMntBy());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finOptions.getBefImage(),
-					finOptions));
+			auditDetails.add(
+					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finOptions.getBefImage(), finOptions));
 		}
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
-	
+
 }

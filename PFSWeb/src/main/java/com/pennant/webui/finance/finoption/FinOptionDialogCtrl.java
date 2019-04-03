@@ -205,11 +205,6 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		}
 
 		if (module.equals("Maintanance")) {
-			/*
-			 * this.finOptionListWindow.setHeight("85%");
-			 * this.finOptionListWindow.setWidth("100%");
-			 * this.finOptionListWindow.doModal();
-			 */
 
 			setDialog(DialogType.EMBEDDED);
 		}
@@ -258,17 +253,15 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		List<Property> optionTypes = AppStaticList.getFinOptions();
 
-		if (option.isNew()) {
-			optionTypes = refreshOptionTypes(optionTypes);
-		}
-
 		listitem.setAttribute("option", option);
 		Cell listcell;
 
 		// Option
 		Combobox options = new Combobox();
 
-		if (!option.isNew()) {
+		if (StringUtils.equals(option.getUserAction(), "Save")) {
+			optionTypes = refreshOptionTypes(optionTypes);
+		} else {
 			options.setDisabled(true);
 		}
 
@@ -741,6 +734,50 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
+			}
+
+			boolean isNew = option.isNew();
+			String tranType = "";
+
+			if (isWorkFlowEnabled()) {
+				tranType = PennantConstants.TRAN_WF;
+				if (StringUtils.isBlank(option.getRecordType())) {
+					option.setVersion(option.getVersion() + 1);
+					if (isNew) {
+						option.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else {
+						option.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						option.setNewRecord(true);
+					}
+				}
+			} else {
+				if (isNewCustomer()) {
+					if (option.isNewRecord()) {
+						option.setVersion(1);
+						option.setRecordType(PennantConstants.RCD_ADD);
+					} else {
+						tranType = PennantConstants.TRAN_UPD;
+					}
+
+					if (StringUtils.isBlank(option.getRecordType())) {
+						option.setVersion(option.getVersion() + 1);
+						option.setRecordType(PennantConstants.RCD_UPD);
+					}
+
+					if (option.getRecordType().equals(PennantConstants.RCD_ADD) && option.isNewRecord()) {
+						tranType = PennantConstants.TRAN_ADD;
+					} else if (option.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						option.setVersion(option.getVersion() + 1);
+						tranType = PennantConstants.TRAN_UPD;
+					}
+				} else {
+					option.setVersion(option.getVersion() + 1);
+					if (isNew) {
+						tranType = PennantConstants.TRAN_ADD;
+					} else {
+						tranType = PennantConstants.TRAN_UPD;
+					}
+				}
 			}
 			option.setRecordStatus(this.recordStatus.getValue());
 			finoptions.add(option);
