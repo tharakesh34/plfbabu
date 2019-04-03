@@ -2946,16 +2946,4 @@
 			LEFT JOIN rmtbranches t16 ON t1.finbranch  = t16.branchcode
 		</createView>
 	</changeSet>
-	
-	<changeSet id="13.0" author="Nageswar.p">
-		<sql>
-		<![CDATA[
-		
-			INSERT INTO SMTparameters  VALUES ('LEGAL_DETAILS_DISPLAY_INACTIVE_RECORDS', 'Allow Legal Details for Inactive records.', 
-			'String', '1', 'N', 30, 0, NULL, NULL,'Allow Legal Details for Inactive records.', 1, 1000, CURRENT_TIMESTAMP,'Approved',
-			NULL, '', NULL, NULL, NULL,0);
-			
-		]]>
-		</sql>
-	</changeSet>
 </databaseChangeLog>

@@ -573,6 +573,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_advEMIMethod;
 	protected Checkbox putCallRequired;
 
+	// tasks # >>Start Advance EMI and DSF
 	protected Checkbox advIntersetReq;
 	protected Combobox advType;
 	protected Intbox advMinTerms;
@@ -587,6 +588,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox advStage;
 	protected Checkbox dsfReq;
 	protected Checkbox cashCollateralReq;
+	//tasks # >>End Advance EMI and DSF
 
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
 	FinanceType fintypeLTVCheck = null;
@@ -1654,6 +1656,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
 
+		// tasks # >>Start Advance EMI and DSF
 		this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
 		fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceType.getGrcAdvType());
 		this.grcAdvMaxTerms.setValue(aFinanceType.getGrcAdvMaxTerms());
@@ -1671,6 +1674,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.dsfReq.setChecked(aFinanceType.isDsfReq());
 		this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
+		// tasks # >>End Advance EMI and DSF
 
 		logger.debug("Leaving doWriteBeanToComponents()");
 	}
@@ -4092,6 +4096,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
 		}
 
+		// tasks # >>Start Advance EMI and DSF
 		if (this.advIntersetReq.isChecked()) {
 			if (!this.advType.isDisabled()) {
 				this.advType.setConstraint(new StaticListValidator(AdvanceType.getRepayList(),
@@ -4105,6 +4110,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
 			}
 		}
+		// tasks # >>End Advance EMI and DSF
 
 		logger.debug("Leaving");
 	}
@@ -4608,6 +4614,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.putCallRequired.setDisabled(isTrue);
 
+		// tasks # >>Start Advance EMI and DSF
 		this.advIntersetReq.setDisabled(isTrue);
 		this.advType.setDisabled(isTrue);
 		this.advMinTerms.setReadonly(isTrue);
@@ -4623,6 +4630,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.dsfReq.setDisabled(isTrue);
 		this.cashCollateralReq.setDisabled(isTrue);
+		// tasks # >>End Advance EMI and DSF
 
 		if (isTrue) {
 			this.space_finType.setSclass("");
@@ -7035,6 +7043,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving");
 	}
 
+	// tasks # >>Start Advance EMI and DSF
 	public void onCheck$grcAdvIntersetReq(Event event) {
 		doCheckGrcAdvIntersetReq();
 	}
@@ -7117,6 +7126,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.advStage.setDisabled(true);
 		}
 	}
+
+	// tasks # >>End Advance EMI and DSF
 
 	// ====================//
 	// ====Utilities=======//

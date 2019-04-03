@@ -1128,4 +1128,15 @@ UNION ALL
       </sql>
   </changeSet>
   
+   <changeSet id="43" author="Nageswar.p">
+		<sql>
+		<![CDATA[
+			delete from SMTparameters where SysParmCode = 'LEGAL_DETAILS_DISPLAY_INACTIVE_RECORDS';
+			INSERT INTO SMTparameters  VALUES ('LEGAL_DETAILS_DISPLAY_INACTIVE_RECORDS', 'Allow Legal Details for Inactive records.', 
+			'String', '1', 'N', 30, 0, NULL, NULL,'Allow Legal Details for Inactive records.', 1, 1000, CURRENT_TIMESTAMP,'Approved',
+			NULL, '', NULL, NULL, NULL,0);
+		]]>
+		</sql>
+	</changeSet>
+  
 </databaseChangeLog>

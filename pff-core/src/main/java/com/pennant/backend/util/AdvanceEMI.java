@@ -12,8 +12,10 @@ public class AdvanceEMI {
 	}
 
 	public enum AdvanceType {
-		AE("AE", "Advance EMI"), UF("UF", "Upfront Full Tenor"), UT("UT", "Upfront Few Terms"), AF("AF",
-				"Advance at Interest Frequency");
+		AE("AE", "Advance EMI"),
+		UF("UF", "Upfront Full Tenor"),
+		UT("UT", "Upfront Few Terms"),
+		AF("AF", "Advance at Interest Frequency");
 
 		private final String code;
 		private final String value;
@@ -50,7 +52,7 @@ public class AdvanceEMI {
 			}
 			return list;
 		}
-		
+
 		public static List<Property> getRepayList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceType type : values()) {
