@@ -655,14 +655,14 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				wve.add(we);
 			}
 			try {
-				Intbox alertDays = (Intbox) getComponent(listitem, 4);
-				option.setAlertDays(alertDays.getValue());
+				Intbox noticePeriodDays = (Intbox) getComponent(listitem, 4);
+				option.setNoticePeriodDays(noticePeriodDays.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				Intbox noticePeriodDays = (Intbox) getComponent(listitem, 5);
-				option.setNoticePeriodDays(noticePeriodDays.getValue());
+				Intbox alertDays = (Intbox) getComponent(listitem, 5);
+				option.setAlertDays(alertDays.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -900,7 +900,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 						true, false, 0, days));
 			}
 
-			if (!noticePeriodDays.isDisabled() || alertDays.getValue() == 0) {
+			if (!noticePeriodDays.isDisabled() || noticePeriodDays.getValue() == 0) {
 				noticePeriodDays.setConstraint(new PTNumberValidator(
 						Labels.getLabel("label_FinOptionDialog_NoticePeriodDays.value"), true, false, 0, days));
 			}
