@@ -7316,7 +7316,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							aFinanceMain.getRecordStatus(), getNextUserId());
 					Clients.showNotification(msg, "info", null, null, -1);
 				}
-				if (extendedFieldRenderList != null && financeDetail.getExtendedFieldHeader() != null) {
+				if (extendedFieldRenderList != null && financeDetail.getExtendedFieldHeader() != null && extendedFieldCtrl !=null) {
 					extendedFieldCtrl.deAllocateAuthorities();
 				}
 				closeDialog();

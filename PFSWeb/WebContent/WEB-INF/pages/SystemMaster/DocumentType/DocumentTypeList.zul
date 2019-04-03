@@ -63,10 +63,12 @@
 									<textbox id="docTypeDesc" width="350px" />
 								</row>
 								<row>
-									<label id="label_DocumentTypeSearch_DocIsMandatory" value="${c:l('label_DocumentTypeSearch_DocIsMandatory.value')}"
-										visible="false" />
-									<listbox id="sortOperator_docIsMandatory" width="43px" mold="select" rows="1" visible="false" />
-									<checkbox id="docIsMandatory" checked="false" visible="false" />
+									<label id="label_DocumentTypeSearch_DocTypeCategoty" value="${c:l('label_DocumentTypeSearch_DocTypeCategory.value')}" />
+									<listbox id="sortOperator_documentCategory" width="43px" mold="select" rows="1" />
+									<hbox>
+										<uppercasebox id="docTypeCategory" width="200px" />
+										<button id="btndocTypeCategory" image="/images/icons/LOVSearch.png"  tooltiptext="${c:l('label_DocumentTypes_btnSearchDocCategory.tooltiptext')}" />
+									</hbox>
 									<label id="label_DocumentTypeSearch_DocTypeIsActive" value="${c:l('label_DocumentTypeSearch_DocTypeIsActive.value')}" />
 									<listbox id="sortOperator_docTypeIsActive" width="43px" mold="select" rows="1" />
 									<checkbox id="docTypeIsActive" checked="false" />
@@ -87,6 +89,8 @@
 								<listheader id="listheader_DocTypeCode" label="${c:l('listheader_DocTypeCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_DocTypeDesc" label="${c:l('listheader_DocTypeDesc.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_DocumentCategory" label="${c:l('listheader_DocTypeCategory.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_DocIsMandatory" label="${c:l('listheader_DocIsMandatory.label')}" sort="auto"
 									hflex="min" visible="false" />
