@@ -416,7 +416,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		}
 
 		onChangeAlertTypes(listitem);
-
+		
+		this.recordStatus.setValue(option.getRecordStatus());
+		
 		this.finOptionRows.appendChild(listitem);
 	}
 
@@ -513,9 +515,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			alertRolesValue.setReadonly(true);
 		} else if ("User".equals(alertTypeValue)) {
 			customerTemplateValue.setReadonly(true);
+			customerTemplateValue.setValue("");
 		} else if ("Customer".equals(alertTypeValue)) {
 			userTemplateValue.setReadonly(true);
 			alertRolesValue.setReadonly(true);
+			userTemplateValue.setValue("");
+			alertRolesValue.setValue("");
 		}
 
 	}
