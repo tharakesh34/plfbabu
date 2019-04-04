@@ -96,7 +96,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1.2" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="GrcAdvIntersetReq" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="GrcAdvMinTerms" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
@@ -112,19 +112,19 @@
 		<addDefaultValue columnName="CashCollateralReq" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="1.3" author="shinde.b" >
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvIntersetReq" columnDataType="boolean"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMinTerms" columnDataType="int"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMaxTerms" columnDataType="int"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvDefaultTerms" columnDataType="int"/>
+	<changeSet id="1.3" author="shinde.b">
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMinTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMaxTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvDefaultTerms" columnDataType="int" />
 
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvIntersetReq" columnDataType="boolean"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMinTerms" columnDataType="int"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMaxTerms" columnDataType="int"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvDefaultTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMinTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMaxTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvDefaultTerms" columnDataType="int" />
 
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="DSFReq" columnDataType="boolean"/>
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="CashCollateralReq" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="DSFReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="CashCollateralReq" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="2" author="shinde.b">
@@ -162,8 +162,34 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="GrcAdvTerms" columnDataType="int"/>
-		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="AdvTerms" columnDataType="int"/>
+		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="GrcAdvTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="ADTFINANCEMAIN" columnName="AdvTerms" columnDataType="int" />
+	</changeSet>
+
+	<changeSet id="3" author="shinde.b">
+		<sql>
+			<![CDATA[
+				update adtrmtfinancetypes set AdvIntersetReq = alwAdvEMI, AdvMinTerms = AdvEmiMinTerms, AdvMaxTerms = AdvEmiMaxTerms, AdvDefaultTerms = AdvEmiDftTerms, AdvStage = 'FE' where alwAdvEMI = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3.1" author="shinde.b">
+		<sql>
+			<![CDATA[
+				update AdtFinanceMain set AdvTerms = AdvEMITerms, AdvType = 'AE', AdvStage = 'FE' where AdvEMITerms > 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3.2" author="shinde.b">
+		<addDefaultValue columnName="AlwAdvEMI" tableName="Adtrmtfinancetypes" defaultValue="0" />
+		<addDefaultValue columnName="AdvEmiMinTerms" tableName="Adtrmtfinancetypes" defaultValue="0" />
+		<addDefaultValue columnName="AdvEmiMaxTerms" tableName="Adtrmtfinancetypes" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="3.3" author="shinde.b">
+		<addDefaultValue columnName="AdvEMITerms" tableName="AdtFinanceMain" defaultValue="0" />
 	</changeSet>
 
 </databaseChangeLog>
