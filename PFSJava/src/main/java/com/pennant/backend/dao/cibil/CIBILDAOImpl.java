@@ -180,13 +180,13 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
+		sql.append(" select cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustDistrict, CustAddrcity,");
 		sql.append(" CustAddrLine1, CustAddrLine2, sm.code CustAddrProvince, CustAddrZIP , CustAddrCountry");
 		sql.append(" from CustomerAddresses ca");
 		sql.append(" left join cibil_address_types_mapping am on am.address_type = ca.custaddrtype");
 		sql.append(" and am.segment_type = :segment_type");
 		sql.append(" left join cibil_address_types cat on cat.code = am.Code and cat.segment_type = am.segment_type");
-		sql.append(" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE ");
+		sql.append(" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE  and sm.segment_type  = am.segment_type ");
 		sql.append(" where CUSTID = :CUSTID");
 		
 		if (!PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
@@ -206,7 +206,6 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-
 		return new ArrayList<>();
 	}
 

@@ -710,7 +710,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, rePayfrq);
 
 				/* Drawing Power */
-				addField(record, loan.getFinAmount());
+				addField(record, loan.getFinAssetValue());
 
 				/* Current Balance / Limit Utilized /Mark to Marketr */
 				int odDays = Integer.parseInt(getOdDays(loan.getOdDays()));
@@ -952,7 +952,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, "");
 
 				/* Transaction Type Code */
-				addField(record, "");
+				addField(record, "01");
 
 				/* Filler */
 				addField(record, "");
@@ -1399,10 +1399,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record) {
 		/* Address Line 1 */
-		addField(record, address.getCustAddrHNbr());
+		addField(record, StringUtils.trim(address.getCustAddrHNbr()));
 
 		/* Address Line 2 */
-		addField(record, address.getCustFlatNbr());
+		addField(record, StringUtils.trim(address.getCustFlatNbr()));
 
 		/* Address Line 3 */
 		addField(record, address.getCustAddrStreet());
