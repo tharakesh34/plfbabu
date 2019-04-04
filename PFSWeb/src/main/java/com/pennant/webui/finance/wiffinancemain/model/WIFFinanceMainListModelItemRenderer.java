@@ -102,7 +102,7 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(wIFFinanceMain.getScheduleMethod());
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(wIFFinanceMain.getCalTerms() + wIFFinanceMain.getAdvEMITerms()));
+		lc = new Listcell(String.valueOf(wIFFinanceMain.getCalTerms() + wIFFinanceMain.getAdvTerms()));
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getFinStartDate()));
 		lc.setParent(item);

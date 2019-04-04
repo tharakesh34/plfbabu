@@ -2046,7 +2046,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						true);
 
 				financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
-						+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms() + financeMain.getAdvEMITerms())
+						+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms() + financeMain.getAdvTerms())
 						+ " Payments");
 			}
 

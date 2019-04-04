@@ -303,8 +303,8 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row rpyFrqRow;
 	protected Datebox maturityDate;
 	protected Datebox maturityDate_two;
-	protected Row row_advEMITerms;
-	protected Intbox advEMITerms;
+	protected Row row_advTerms;
+	protected Intbox advTerms;
 	protected Row row_hybridRates;
 	protected Intbox fixedRateTenor;
 	protected Decimalbox fixedTenorRate;
@@ -782,11 +782,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finCurrentAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.finCurrentAssetValue.setScale(finFormatter);
 
-		if (financeType.isAlwAdvEMI()) {
-			this.row_advEMITerms.setVisible(true);
-			this.advEMITerms.setMaxlength(3);
-			this.advEMITerms.setStyle("text-align:right;");
-		}
+
 		if (financeType.isAlwHybridRate()) {
 			this.row_hybridRates.setVisible(true);
 			this.fixedRateTenor.setMaxlength(3);
@@ -1345,7 +1341,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finMaxRate.setValue(BigDecimal.ZERO);
 		}
 
-		this.advEMITerms.setValue(aFinanceMain.getAdvEMITerms());
+		this.advTerms.setValue(aFinanceMain.getAdvTerms());
 		this.fixedRateTenor.setValue(aFinanceMain.getFixedRateTenor());
 		this.fixedTenorRate.setValue(aFinanceMain.getFixedTenorRate());
 
@@ -2416,10 +2412,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			if (row_advEMITerms.isVisible()) {
-				int minTerms = financeType.getAdvEMIMinTerms();
-				int maxTerms = financeType.getAdvEMIMaxTerms();
-				int advEMITerms = this.advEMITerms.intValue();
+			if (row_advTerms.isVisible()) {
+				int minTerms = financeType.getAdvMinTerms();
+				int maxTerms = financeType.getAdvMaxTerms();
+				int advEMITerms = this.advTerms.intValue();
 				int loanTerms = this.numberOfTerms_two.intValue();
 				boolean validationRequired = true;
 
@@ -2429,7 +2425,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (validationRequired) {
 					if (advEMITerms < minTerms || advEMITerms > maxTerms) {
-						throw new WrongValueException(this.advEMITerms,
+						throw new WrongValueException(this.advTerms,
 								Labels.getLabel("NUMBER_RANGE_EQ",
 										new String[] { Labels.getLabel("label_FinanceMainDialog_AdvEMITerms.value"),
 												String.valueOf(minTerms), String.valueOf(maxTerms) }));
@@ -2437,11 +2433,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (advEMITerms > loanTerms) {
-					throw new WrongValueException(this.advEMITerms, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
+					throw new WrongValueException(this.advTerms, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
 							Labels.getLabel("label_FinanceMainDialog_AdvEMITerms.value"), String.valueOf(loanTerms) }));
 				}
 
-				aFinanceMain.setAdvEMITerms(advEMITerms);
+				aFinanceMain.setAdvTerms(advEMITerms);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

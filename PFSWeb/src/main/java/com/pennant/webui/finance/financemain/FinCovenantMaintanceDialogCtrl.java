@@ -191,7 +191,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
+				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			} else {
 				this.south.setHeight("0px");
 			}
@@ -321,9 +321,9 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 				FinCovenantType befImage = new FinCovenantType();
 				BeanUtils.copyProperties(covenantType, befImage);
 				covenantType.setBefImage(befImage);
+				this.recordStatus.setValue(covenantType.getRecordStatus());
 			}
 		}
-		this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
 
 		logger.debug("Leaving");
 	}

@@ -558,9 +558,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Hbox hbox_ScheduleMethod;
 	protected Row noOfTermsRow;
 
-	protected Row row_advEMITerms;
-	protected Intbox advEMITerms;
-
 	//Advised Profit Rates
 	protected RateBox rpyAdvRate;
 	protected Decimalbox rpyAdvPftRate;
@@ -1478,11 +1475,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (financeType.isAlwAdvEMI()) {
-			this.row_advEMITerms.setVisible(true);
-			this.advEMITerms.setMaxlength(3);
-			this.advEMITerms.setStyle("text-align:right;");
-		}
+		
 		
 		if (financeType.isAlwHybridRate()) {
 			this.row_hybridRates.setVisible(true);
@@ -3719,7 +3712,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.maturityDate.setValue(aFinanceMain.getMaturityDate());
 		}
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
-		this.advEMITerms.setValue(aFinanceMain.getAdvEMITerms());
 
 		this.fixedRateTenor.setValue(aFinanceMain.getFixedRateTenor());
 		this.fixedTenorRate.setValue(aFinanceMain.getFixedTenorRate());
@@ -11963,37 +11955,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		try {
-			if (row_advEMITerms.isVisible()) {
-				int minTerms = financeType.getAdvEMIMinTerms();
-				int maxTerms = financeType.getAdvEMIMaxTerms();
-				int advEMITerms = this.advEMITerms.intValue();
-				int loanTerms = this.numberOfTerms_two.intValue();
-				boolean validationRequired = true;
-
-				if (minTerms == 0 && maxTerms == 0 && advEMITerms >= 0) {
-					validationRequired = false;
-				}
-
-				if (validationRequired) {
-					if (advEMITerms < minTerms || advEMITerms > maxTerms) {
-						throw new WrongValueException(this.advEMITerms,
-								Labels.getLabel("NUMBER_RANGE_EQ",
-										new String[] { Labels.getLabel("label_FinanceMainDialog_AdvEMITerms.value"),
-												String.valueOf(minTerms), String.valueOf(maxTerms) }));
-					}
-				}
-
-				if (advEMITerms >= loanTerms) {
-					throw new WrongValueException(this.advEMITerms, Labels.getLabel("NUMBER_MAXVALUE", new String[] {
-							Labels.getLabel("label_FinanceMainDialog_AdvEMITerms.value"), String.valueOf(loanTerms) }));
-				}
-
-				aFinanceMain.setAdvEMITerms(advEMITerms);
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 		
 		// tasks # >>Start Advance EMI and DSF
 		String advTermsLabel = Labels.getLabel("label_financemainDialog_AdvanceTerms.value");
@@ -12732,7 +12693,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				int size = aFinanceSchData.getFinanceScheduleDetails().size();
 				// Resetting Maturity Terms & Summary details rendering incase of Reduce maturity cases
-				if (!isOverDraft && aFinanceMain.getAdvEMITerms() == 0) {
+				if (!isOverDraft && aFinanceMain.getAdvTerms() == 0) {
 					for (int i = size - 1; i >= 0; i--) {
 						FinanceScheduleDetail curSchd = aFinanceSchData.getFinanceScheduleDetails().get(i);
 						if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
@@ -14514,7 +14475,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_CpzAtUnPlannedEmi"), this.cpzAtUnPlannedEmi);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_CpzAtReAge"), this.cpzAtReAge);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_RoundingMode"), this.roundingMode);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_AdvEMITerms"), this.advEMITerms);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_FixedRateTenor"), this.fixedRateTenor);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_FixedTenorRate"), this.fixedTenorRate);
 
@@ -15150,7 +15110,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.unPlannedEmiHLockPeriod.setReadonly(true);
 		this.cpzAtReAge.setDisabled(true);
 		readOnlyComponent(true, this.roundingMode);
-		this.advEMITerms.setReadonly(true);
 
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(true, this.applyODPenalty);

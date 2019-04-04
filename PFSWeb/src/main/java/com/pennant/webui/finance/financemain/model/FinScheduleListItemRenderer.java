@@ -251,10 +251,10 @@ public class FinScheduleListItemRenderer implements Serializable {
 			isGrcBaseRate = false;
 			isRpyBaseRate = false;
 
-			int advanceEmiTerms = aFinanceMain.getAdvEMITerms();
-			if (advanceEmiTerms > 0) {
+			int advTerms = aFinanceMain.getAdvTerms();
+			if (advTerms > 0) {
 				lastRec = false;
-				BigDecimal eachAdvanceEMI = aFinanceMain.getAdvanceEMI().divide(BigDecimal.valueOf(advanceEmiTerms), 2,
+				BigDecimal eachAdvanceEMI = aFinanceMain.getAdvanceEMI().divide(BigDecimal.valueOf(advTerms), 2,
 						RoundingMode.HALF_DOWN);
 				FinanceScheduleDetail advEmiSch = new FinanceScheduleDetail();
 				try {
@@ -262,7 +262,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				} catch (Exception e) {
 					logger.warn(e);
 				}
-				for (int i = 0; i < advanceEmiTerms; i++) {
+				for (int i = 0; i < advTerms; i++) {
 					advEmiSch.setSchDate(FrequencyUtil
 							.getNextDate(aFinanceMain.getRepayFrq(), 1, advEmiSch.getSchDate(),
 									HolidayHandlerTypes.MOVE_NONE, true, financeType.getFddLockPeriod())
@@ -683,7 +683,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				}
 
 				if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0
-						&& aFinanceMain.getAdvEMITerms() > 0) {
+						&& aFinanceMain.getAdvTerms() > 0) {
 					isEditable = false;
 					isRate = false;
 					showZeroEndBal = false;
@@ -3168,7 +3168,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			 * } }
 			 */
 
-			if (aFinanceMain.getAdvEMITerms() > 0 && closingBal.compareTo(BigDecimal.ZERO) == 0) {
+			if (aFinanceMain.getAdvTerms() > 0 && closingBal.compareTo(BigDecimal.ZERO) == 0) {
 				break;
 			}
 
@@ -3176,7 +3176,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 		count = 1;
 
-		int advanceEmiTerms = aFinanceMain.getAdvEMITerms();
+		int advanceEmiTerms = aFinanceMain.getAdvTerms();
 		if (advanceEmiTerms > 0) {
 			BigDecimal eachAdvanceEMI = aFinanceMain.getAdvanceEMI().divide(BigDecimal.valueOf(advanceEmiTerms), 2,
 					RoundingMode.HALF_DOWN);

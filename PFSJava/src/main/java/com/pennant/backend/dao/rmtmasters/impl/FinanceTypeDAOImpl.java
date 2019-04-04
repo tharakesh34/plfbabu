@@ -129,7 +129,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" MaxUnplannedEmi, MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,alwMaxDisbCheckReq,quickDisb, ProfitCenterID, ProductCategory, DeveloperFinance, CostOfFunds,");
 		sql.append(
-				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode, AlwZeroIntAcc,");
+				" chequeCaptureReq, FinLTVCheck, PartiallySecured, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode, AlwZeroIntAcc,");
 		sql.append(" AutoRejectionDays, TaxNoMand, PutCallRequired");
 
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
@@ -185,12 +185,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsOpenNewFinAc, FinIsAlwMD, FinSchdMthd, FInIsAlwGrace, ");
 		sql.append(" EqualRepayment, FinRateType, FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, ");
-		sql.append(
-				" FinDftIntFrq, FinIsIntCpz, FinCpzFrq, FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, ");
-		sql.append(
-				" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate, FinGrcDftIntFrq, FinGrcIsIntCpz, ");
-		sql.append(
-				" FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm, FinMaxTerm, FinDftTerms, FinRpyFrq, ");
+		sql.append(" FinDftIntFrq, FinIsIntCpz, FinCpzFrq, FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, ");
+		sql.append(" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate, FinGrcDftIntFrq, FinGrcIsIntCpz, ");
+		sql.append(" FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm, FinMaxTerm, FinDftTerms, FinRpyFrq, ");
 		sql.append(
 				" FInRepayMethod, finIsalwpartialrpy, FinIsAlwDifferment, FinMaxDifferment, FinIsActive, StepFinance, SteppingMandatory, ");
 		sql.append(" AlwManualSteps, AlwdStepPolicies, DftStepPolicy, FinIsDwPayRequired, FinRvwRateApplFor, ");
@@ -198,34 +195,29 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" PlanDeferCount, PftPayAcType, FinIsOpenPftPayAcc, FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, ");
 		sql.append(" FinMargin, FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, ");
-		sql.append(
-				" FinBankContingentAcType, FinProvisionAcType, AllowRIAInvestment, OverrideLimit, LimitRequired, ");
-		sql.append(
-				" FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ");
+		sql.append(" FinBankContingentAcType, FinProvisionAcType, AllowRIAInvestment, OverrideLimit, LimitRequired, ");
+		sql.append(" FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ");
 		sql.append(" ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ");
-		sql
-				.append(" ODMaxWaiverPerc, ODMinCapAmount, FinDivision, FinSuspAcType, Product, StartDate, EndDate, AllowDownpayPgm, ");
+		sql.append(
+				" ODMaxWaiverPerc, ODMinCapAmount, FinDivision, FinSuspAcType, Product, StartDate, EndDate, AllowDownpayPgm, ");
 		sql.append(
 				" PastduePftCalMthd,PastduePftMargin,  AlwAdvanceRent, GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, ");
-		sql
-				.append(" RpyAdvMargin, RpyAdvPftRate, RollOverFinance, RollOverFrq, DownPayRule, AlwMultiPartyDisb, ");
-		sql.append(
-				" CollateralType, TDSApplicable,ApplyGrcPricing, ApplyRpyPricing, DroplineOD, DroppingMethod, ");
+		sql.append(" RpyAdvMargin, RpyAdvPftRate, RollOverFinance, RollOverFrq, DownPayRule, AlwMultiPartyDisb, ");
+		sql.append(" CollateralType, TDSApplicable,ApplyGrcPricing, ApplyRpyPricing, DroplineOD, DroppingMethod, ");
 		sql.append(" RateChgAnyDay, ManualSchedule, AlwBPI , BpiTreatment , PftDueSchOn , ");
 		sql.append(
 				" PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,PlanEMIHLockPeriod , PlanEMICpz , ");
-		sql.append(
-				" UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, ");
+		sql.append(" UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods, MaxUnplannedEmi, ");
 		sql.append(
 				" MaxReAgeHolidays, RoundingMode, RoundingTarget, FrequencyDays,AlwReage,AlwUnPlanEmiHoliday,alwMaxDisbCheckReq,quickDisb,ProductCategory,DeveloperFinance, CostOfFunds, ");
 		sql.append(
-				" chequeCaptureReq, FinLTVCheck, PartiallySecured, alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc,");
+				" chequeCaptureReq, FinLTVCheck, PartiallySecured, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc,");
 		sql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired");
-		
+
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
 		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms, AdvStage");
 		sql.append(", DsfReq, CashCollateralReq");
-		
+
 		if (type.contains("ORGView")) {
 			sql.append(
 					" ,DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
@@ -312,8 +304,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	/**
-	 * This method Deletes the Record from the RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
+	 * This method Deletes the Record from the RMTFinanceTypes or
+	 * RMTFinanceTypes_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
 	 * @param Finance
 	 *            Types (financeType)
@@ -350,7 +343,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	/**
-	 * This method insert new Records into RMTFinanceTypes or RMTFinanceTypes_Temp.
+	 * This method insert new Records into RMTFinanceTypes or
+	 * RMTFinanceTypes_Temp.
 	 * 
 	 * save Finance Types
 	 * 
@@ -402,8 +396,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
 		sql.append(
 				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate , RollOverFinance, RollOverFrq,");
-		sql.append(
-				" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
+		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
 		sql.append(
@@ -412,13 +405,12 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" PlanEMIHLockPeriod , PlanEMICpz , UnPlanEMIHLockPeriod , UnPlanEMICpz , ReAgeCpz, FddLockPeriod, AlwdRpyMethods,MaxUnplannedEmi, MaxReAgeHolidays, ");
 		sql.append(
 				" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck, PartiallySecured, ");
-		sql.append(
-				" alwAdvEMI, advEMIMinTerms, advEMIMaxTerms, advEMIDftTerms, advEMISchdMthd, bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc, ");
+		sql.append(" bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc, ");
 		sql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired  ");
 		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms, AdvStage");
 		sql.append(", DsfReq, CashCollateralReq ) ");
-		
+
 		sql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
 		sql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
@@ -432,8 +424,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" :FinGrcMaxRate,:FinGrcDftIntFrq,  :FinGrcIsIntCpz, :FinGrcCpzFrq,  :FinGrcIsRvwAlw, :FinGrcRvwFrq, :FinMinTerm,");
 		sql.append(
 				" :FinMaxTerm, :FinDftTerms, :FinRpyFrq,  :finRepayMethod,:FinIsAlwPartialRpy, :FinIsAlwDifferment, :FinMaxDifferment,");
-		sql.append(
-				" :AlwPlanDeferment, :PlanDeferCount,:FinIsAlwEarlyRpy, :FinIsAlwEarlySettle, :FinODRpyTries, ");
+		sql.append(" :AlwPlanDeferment, :PlanDeferCount,:FinIsAlwEarlyRpy, :FinIsAlwEarlySettle, :FinODRpyTries, ");
 		sql.append(" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, ");
 		sql.append(
 				" :FinSchCalCodeOnRvw,:FinAssetType ,:FinDepositRestrictedTo,:FinAEBuyOrInception,:FinAESellOrMaturity, ");
@@ -464,12 +455,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" :RoundingMode,:RoundingTarget, :FrequencyDays,:AlwMaxDisbCheckReq, :ProfitCenterID, :DeveloperFinance, :CostOfFunds, :FinLTVCheck, :PartiallySecured, ");
 		sql.append(
-				" :alwAdvEMI, :advEMIMinTerms, :advEMIMaxTerms, :advEMIDftTerms, :advEMISchdMthd, :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
+				" :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
 		sql.append(" :AutoRejectionDays, :TaxNoMand , :PutCallRequired");
 		sql.append(", :AdvIntersetReq, :AdvType, :AdvMinTerms, :AdvMaxTerms, :AdvDefaultTerms");
-		sql.append(", :GrcAdvIntersetReq, :GrcAdvType, :GrcAdvMinTerms, :GrcAdvMaxTerms, :GrcAdvDefaultTerms, :AdvStage");
+		sql.append(
+				", :GrcAdvIntersetReq, :GrcAdvType, :GrcAdvMinTerms, :GrcAdvMaxTerms, :GrcAdvDefaultTerms, :AdvStage");
 		sql.append(", :DsfReq, :CashCollateralReq) ");
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
@@ -479,8 +471,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	/**
-	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
+	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp.
+	 * if Record not updated then throws DataAccessException with error 41004.
+	 * update Finance Types by key FinType and Version
 	 * 
 	 * @param Finance
 	 *            Types (financeType)
@@ -504,8 +497,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" FinBankContingentAcType= :FinBankContingentAcType, FinProvisionAcType= :FinProvisionAcType,FinSuspAcType=:FinSuspAcType,");
 		sql.append(" FinIsGenRef = :FinIsGenRef, FinMaxAmount = :FinMaxAmount,FinMinAmount = :FinMinAmount,");
-		sql.append(
-				" FinIsOpenNewFinAc = :FinIsOpenNewFinAc, FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
+		sql.append(" FinIsOpenNewFinAc = :FinIsOpenNewFinAc, FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
 		sql.append(
 				" FinSchdMthd = :FinSchdMthd, FInIsAlwGrace = :FInIsAlwGrace, FinHistRetension = :FinHistRetension,");
 		sql.append(" EqualRepayment = :EqualRepayment,");
@@ -516,8 +508,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" FinIsIntCpz = :FinIsIntCpz, FinCpzFrq = :FinCpzFrq, FinIsRvwAlw = :FinIsRvwAlw,FinRvwFrq = :FinRvwFrq, ");
 		sql.append(
 				" FinGrcRateType = :FinGrcRateType, FinGrcBaseRate = :FinGrcBaseRate,FinGrcSplRate = :FinGrcSplRate,");
-		sql.append(
-				" FinGrcIntRate = :FinGrcIntRate, FInGrcMinRate = :FInGrcMinRate, FinGrcMaxRate = :FinGrcMaxRate,");
+		sql.append(" FinGrcIntRate = :FinGrcIntRate, FInGrcMinRate = :FInGrcMinRate, FinGrcMaxRate = :FinGrcMaxRate,");
 		sql.append(
 				" FinGrcDftIntFrq = :FinGrcDftIntFrq,  FinGrcIsIntCpz = :FinGrcIsIntCpz, FinGrcCpzFrq = :FinGrcCpzFrq,");
 		sql.append(" FinGrcIsRvwAlw = :FinGrcIsRvwAlw, FinGrcRvwFrq = :FinGrcRvwFrq,FinMinTerm = :FinMinTerm,");
@@ -561,11 +552,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" StepFinance=:StepFinance , SteppingMandatory=:SteppingMandatory , AlwManualSteps=:AlwManualSteps , AlwdStepPolicies=:AlwdStepPolicies , DftStepPolicy=:DftStepPolicy,");
 		sql.append(" StartDate=:StartDate, EndDate=:EndDate, ");
-		sql
-				.append(" AllowDownpayPgm=:AllowDownpayPgm, Remarks=:Remarks, AlwEarlyPayMethods=:AlwEarlyPayMethods,");
+		sql.append(" AllowDownpayPgm=:AllowDownpayPgm, Remarks=:Remarks, AlwEarlyPayMethods=:AlwEarlyPayMethods,");
 		sql.append("  PastduePftCalMthd=:PastduePftCalMthd,PastduePftMargin=:PastduePftMargin,");
-		sql.append(
-				" AlwAdvanceRent=:AlwAdvanceRent, RollOverFinance=:RollOverFinance, RollOverFrq = :RollOverFrq, ");
+		sql.append(" AlwAdvanceRent=:AlwAdvanceRent, RollOverFinance=:RollOverFinance, RollOverFrq = :RollOverFrq, ");
 		sql.append(" DownPayRule=:DownPayRule, ProductCategory=:ProductCategory,");
 		sql.append(
 				" FinSuspTrigger=:FinSuspTrigger, FinSuspRemarks=:FinSuspRemarks , AlwMultiPartyDisb = :AlwMultiPartyDisb , TDSApplicable=:TDSApplicable, CollateralType = :CollateralType, ");
@@ -581,14 +570,15 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" RoundingMode=:RoundingMode ,RoundingTarget=:RoundingTarget, FrequencyDays=:FrequencyDays,AlwMaxDisbCheckReq=:AlwMaxDisbCheckReq,QuickDisb=:QuickDisb, ProfitCenterID = :ProfitCenterID, DeveloperFinance = :DeveloperFinance, CostOfFunds = :CostOfFunds,");
 		sql.append(" FinLTVCheck = :FinLTVCheck, PartiallySecured = :PartiallySecured,");
-		sql.append(
-				" alwAdvEMI = :alwAdvEMI, advEMIMinTerms = :advEMIMinTerms, advEMIMaxTerms = :advEMIMaxTerms, advEMIDftTerms = :advEMIDftTerms, advEMISchdMthd = :advEMISchdMthd, bpiPftDaysBasis = :bpiPftDaysBasis, eligibilityMethods = :eligibilityMethods,");
+		sql.append(" bpiPftDaysBasis = :bpiPftDaysBasis, eligibilityMethods = :eligibilityMethods,");
 		sql.append(" alwHybridRate = :alwHybridRate, fixedRateTenor = :fixedRateTenor, ODRuleCode = :ODRuleCode, AlwZeroIntAcc = :AlwZeroIntAcc, ");
 		sql.append(" AutoRejectionDays = :AutoRejectionDays, TaxNoMand = :TaxNoMand ,");
 		sql.append(" PutCallRequired= :PutCallRequired ");
 
-		sql.append(", GrcAdvIntersetReq= :GrcAdvIntersetReq, GrcAdvType= :GrcAdvType, GrcAdvMinTerms= :GrcAdvMinTerms, GrcAdvMaxTerms= :GrcAdvMaxTerms, GrcAdvDefaultTerms= :GrcAdvDefaultTerms");
-		sql.append(", AdvIntersetReq= :AdvIntersetReq, AdvType= :AdvType, AdvMinTerms= :AdvMinTerms, AdvMaxTerms= :AdvMaxTerms, AdvDefaultTerms= :AdvDefaultTerms");
+		sql.append(
+				", GrcAdvIntersetReq= :GrcAdvIntersetReq, GrcAdvType= :GrcAdvType, GrcAdvMinTerms= :GrcAdvMinTerms, GrcAdvMaxTerms= :GrcAdvMaxTerms, GrcAdvDefaultTerms= :GrcAdvDefaultTerms");
+		sql.append(
+				", AdvIntersetReq= :AdvIntersetReq, AdvType= :AdvType, AdvMinTerms= :AdvMinTerms, AdvMaxTerms= :AdvMaxTerms, AdvDefaultTerms= :AdvDefaultTerms");
 		sql.append(", AdvStage= :AdvStage, DsfReq= :DsfReq, CashCollateralReq= :CashCollateralReq");
 		sql.append(" Where FinType =:FinType");
 
@@ -635,7 +625,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	/**
-	 * Method for get total number of records related to specific financeType(Promotion)
+	 * Method for get total number of records related to specific
+	 * financeType(Promotion)
 	 * 
 	 * @param finType
 	 */
@@ -829,7 +820,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	/**
-	 * Method for Checking Step Policy Code is already using in Existing FinType or not
+	 * Method for Checking Step Policy Code is already using in Existing FinType
+	 * or not
 	 */
 	@Override
 	public boolean isStepPolicyExists(String policyCode) {
@@ -853,7 +845,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 	}
 
 	/**
-	 * Method for get total number of records from RMtFianceTypes master table.<br>
+	 * Method for get total number of records from RMtFianceTypes master
+	 * table.<br>
 	 * 
 	 * @param divisionCode
 	 * 
@@ -958,7 +951,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		return finTypeDesc;
 
 	}
-	
+
 	/**
 	 * Method for get the AutoRejectionDays for all LoanTypes.
 	 * 

@@ -1602,5 +1602,30 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	<changeSet id="26" author="shinde.b">
+		<sql>
+			<![CDATA[
+				delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport');
+	            delete from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport';
+	            
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION), 'Excel:Covenant Details Report', 'Covenant Details Report', 1, 'CovenantDetailsReport', 'dataSource', 1, 'menu_Item_CovenantDetailsReport', 1, 1000, null, null, null, null, null, null, 0, current_timestamp, 0, 1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport'), 1, 'Reference', 'LOVSEARCH', 'Reference', 'T.KeyReference', null, 'FinanceMain', 'getFinReference', 'getFinReference', 1, 0, 0, 0, 1, 1, null, null, null, null, 150, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport'), 2, 'Cust CIF', 'LOVSEARCH', 'Customer Number', 't2.custcif', null, 'Customer', 'getCustCIF', 'getCustShrtName', 1, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="27" author="shinde.b">
+		<sql>
+			<![CDATA[
+	            delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport');
+	            delete from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport';
+	
+	            Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Put Call Report','Put Call Report',1,'PutCallReport','dataSource',1,'menu_Item_PutCallReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+	            Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport'),1,'Division','LOVSEARCH','Division','fincategory',null,'DivisionDetail','getDivisionCode','getDivisionCodeDesc',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	            Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport'),2,'FinType','LOVSEARCH','Loan Type','fintype',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	            Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport'),3,'CustCIF1','LOVSEARCH','Customer Number','custcif',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

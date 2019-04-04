@@ -313,17 +313,17 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				statementOfAccount.setPlrRate(plrRate + "/" + finMain.getRepayMargin());
 			}
 
-			if (finMain.getAdvEMITerms() > 0) {
+			if (finMain.getAdvTerms() > 0) {
 				statementOfAccount.setAdvEmiApplicable(true);
 			}
 
 			//Including advance EMI terms
 			int tenure = statementOfAccount.getTenure();
-			statementOfAccount.setTenure(tenure + finMain.getAdvEMITerms());
+			statementOfAccount.setTenure(tenure + finMain.getAdvTerms());
 
 			// Advance EMI Installments
 			statementOfAccount.setAdvInstAmt(PennantApplicationUtil.amountFormate(finMain.getAdvanceEMI(), ccyEditField)
-					+ " / " + finMain.getAdvEMITerms());
+					+ " / " + finMain.getAdvTerms());
 
 			//get the Customer Details
 			StatementOfAccount statementOfAccountCustDetails = getSOACustomerDetails(custId);

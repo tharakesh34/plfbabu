@@ -691,9 +691,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String connectorDesc;
 
 	@XmlElement
-	private int advEMITerms = 0;
-
-	@XmlElement
 	private int fixedRateTenor = 0;
 
 	@XmlElement
@@ -3928,14 +3925,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setConnectorDesc(String connectorDesc) {
 		this.connectorDesc = connectorDesc;
-	}
-
-	public int getAdvEMITerms() {
-		return advEMITerms;
-	}
-
-	public void setAdvEMITerms(int advEMITerms) {
-		this.advEMITerms = advEMITerms;
 	}
 
 	public BigDecimal getAdvanceEMI() {

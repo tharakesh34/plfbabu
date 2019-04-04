@@ -505,8 +505,8 @@ public class ScheduleGenerator {
 		finScheduleData.setScheduleMap(schedule);
 
 		Date derivedMDT = financeMain.getMaturityDate();
-		int advEMITerms = financeMain.getAdvEMITerms();
-		if (advEMITerms > 0) {
+		int advTerms = financeMain.getAdvTerms();
+		if (advTerms > 0) {
 			//derivedMDT = DateUtility.addMonths(derivedMDT, -advEMITerms);
 		}
 

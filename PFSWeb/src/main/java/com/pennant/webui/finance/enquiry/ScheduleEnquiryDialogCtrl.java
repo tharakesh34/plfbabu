@@ -331,7 +331,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 		logger.debug("Entering");
 
 		finRender = new FinScheduleListItemRenderer();
-		int advEMITerms = finScheduleData.getFinanceMain().getAdvEMITerms();
+		int advEMITerms = finScheduleData.getFinanceMain().getAdvTerms();
 		if (finScheduleData.getFinanceScheduleDetails() != null) {
 			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 			if (advEMITerms > 0) {

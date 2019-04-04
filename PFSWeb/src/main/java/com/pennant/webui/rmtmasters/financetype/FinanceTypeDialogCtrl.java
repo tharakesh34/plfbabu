@@ -562,15 +562,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row row_LTVCheck;
 	protected Checkbox finCollateralCheck;
 
-	// Advance EMI Details
-	protected Checkbox alwAdvEMI;
-	protected Row row_advEMITerms;
-	protected Intbox advEMIMinTerms;
-	protected Intbox advEMIMaxTerms;
-	protected Row row_advEMIMethod;
-	protected Intbox advEMIDftTerms;
-	protected Combobox cbAdvEMIMethod;
-	protected Space space_advEMIMethod;
+	
 	protected Checkbox putCallRequired;
 
 	// tasks # >>Start Advance EMI and DSF
@@ -1028,11 +1020,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finDivision.setButtonDisabled(true);
 		this.finDivision.setReadonly(false);
-
-		// Advance EMI Details
-		this.advEMIDftTerms.setMaxlength(3);
-		this.advEMIMaxTerms.setMaxlength(3);
-		this.advEMIMinTerms.setMaxlength(3);
 
 		// Allow Minimum Cap Amount
 		this.row_ODMinCapAmount.setVisible(ImplementationConstants.ALW_LPP_MIN_CAP_AMT);
@@ -1643,14 +1630,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
 
 		// Advance EMI Details
-
-		this.alwAdvEMI.setChecked(aFinanceType.isAlwAdvEMI());
-		this.advEMIDftTerms.setValue(aFinanceType.getAdvEMIDftTerms());
-		this.advEMIMinTerms.setValue(aFinanceType.getAdvEMIMinTerms());
-		this.advEMIMaxTerms.setValue(aFinanceType.getAdvEMIMaxTerms());
-		fillComboBox(this.cbAdvEMIMethod, aFinanceType.getAdvEMISchdMthd(),
-				PennantStaticListUtil.getAdvEMIScheduleMethods(), "");
-		doAlwEMICheckBoxChecked(aFinanceType.isAlwAdvEMI());
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
 
@@ -3233,85 +3212,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		// Advance EMI Details
-		try {
-			aFinanceType.setAlwAdvEMI(this.alwAdvEMI.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			if (this.alwAdvEMI.isChecked() && this.advEMIMinTerms.intValue() < 0) {
-				throw new WrongValueException(this.advEMIMinTerms, Labels.getLabel("FIELD_IS_GREATER",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_AdvEMIMinTerms.value"), "0" }));
-			}
-
-			aFinanceType.setAdvEMIMinTerms(this.advEMIMinTerms.intValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			int minTerms = this.finMinTerm.intValue();
-			int maxTerms = this.finMaxTerm.intValue();
-			int advEMIMax = this.advEMIMaxTerms.intValue();
-			boolean validationRequired = true;
-
-			if (advEMIMax == 0) {
-				validationRequired = false;
-			} else if (this.alwAdvEMI.isChecked() && this.advEMIMaxTerms.intValue() < 0) {
-				throw new WrongValueException(this.advEMIMaxTerms, Labels.getLabel("FIELD_IS_GREATER",
-						new String[] { Labels.getLabel("label_FinanceTypeDialog_AdvEMIMaxTerms.value"), "0" }));
-			}
-
-			if (validationRequired) {
-				if (advEMIMax < minTerms || advEMIMax > maxTerms) {
-					throw new WrongValueException(this.advEMIMaxTerms,
-							Labels.getLabel("NUMBER_RANGE_EQ",
-									new String[] { Labels.getLabel("label_FinanceTypeDialog_AdvEMIMaxTerms.value"),
-											String.valueOf(minTerms), String.valueOf(maxTerms) }));
-				}
-			}
-			aFinanceType.setAdvEMIMaxTerms(this.advEMIMaxTerms.intValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-
-			int minTerms = this.advEMIMinTerms.intValue();
-			int maxTerms = this.advEMIMaxTerms.intValue();
-			int dftTerms = this.advEMIDftTerms.intValue();
-			boolean validationRequired = true;
-
-			if (minTerms == 0 && maxTerms == 0 && dftTerms >= 0) {
-				validationRequired = false;
-			}
-
-			if (validationRequired) {
-				if (dftTerms < minTerms || dftTerms > maxTerms) {
-					throw new WrongValueException(this.advEMIDftTerms,
-							Labels.getLabel("NUMBER_RANGE_EQ",
-									new String[] { Labels.getLabel("label_FinanceTypeDialog_AdvEMIDftTerms.value"),
-											String.valueOf(minTerms), String.valueOf(maxTerms) }));
-				}
-			}
-
-			aFinanceType.setAdvEMIDftTerms(this.advEMIDftTerms.intValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			this.cbAdvEMIMethod.setErrorMessage("");
-			if (this.alwAdvEMI.isChecked()) {
-				isValidComboValue(this.cbAdvEMIMethod, Labels.getLabel("label_FinanceTypeDialog_AdvEMIMethod.value"));
-			}
-			aFinanceType.setAdvEMISchdMthd(getComboboxValue(this.cbAdvEMIMethod));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
+	
 		// tasks # >>Start Advance EMI and DSF
 		try {
 			aFinanceType.setAdvIntersetReq(this.advIntersetReq.isChecked());
@@ -4160,7 +4061,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.costOfFunds.setConstraint("");
 		this.alwdIRRDetails.setConstraint("");
 		this.finLTVCheck.setConstraint("");
-		this.cbAdvEMIMethod.setConstraint("");
 		this.lPPRule.setConstraint("");
 		this.autoRejectionDays.setConstraint("");
 		this.grcAdvMinTerms.setConstraint("");
@@ -4503,7 +4403,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.taxNoMand.setDisabled(isTrue);
 		readOnlyComponent(isTrue, this.finLTVCheck);
 		readOnlyComponent(isTrue, this.finCollateralCheck);
-		this.cbAdvEMIMethod.setDisabled(isTrue);
 		if (isOverdraft) {
 			this.lPPRule.setReadonly(isTrue);
 			this.lPPRule.setButtonDisabled(isTrue);
@@ -4701,7 +4600,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_startDate.setSclass("");
 			this.space_endDate.setSclass("");
 			this.space_finAssetType.setSclass("");
-			this.space_advEMIMethod.setClass("");
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -4735,12 +4633,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.finBankContingentAcType.setValue("");
 			this.finContingentAcType.setValue("");
 		}
-
-		this.alwAdvEMI.setChecked(false);
-		this.advEMIMinTerms.setValue(0);
-		this.advEMIMaxTerms.setValue(0);
-		this.advEMIDftTerms.setValue(0);
-		this.cbAdvEMIMethod.setSelectedIndex(0);
 
 		this.finType.setValue("");
 		this.finTypeDesc.setValue("");
@@ -6056,29 +5948,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving");
 	}
 
-	public void onCheck$alwAdvEMI(Event event) {
-		logger.debug("Entering" + event.toString());
-		doAlwEMICheckBoxChecked(this.alwAdvEMI.isChecked());
-		logger.debug("Leaving" + event.toString());
-	}
-
-	private void doAlwEMICheckBoxChecked(boolean checked) {
-		if (checked) {
-			this.advEMIDftTerms.setDisabled(isCompReadonly);
-			this.advEMIMinTerms.setDisabled(isCompReadonly);
-			this.advEMIMaxTerms.setDisabled(isCompReadonly);
-			this.cbAdvEMIMethod.setDisabled(isCompReadonly);
-		} else {
-			this.advEMIDftTerms.setValue(0);
-			this.advEMIMinTerms.setValue(0);
-			this.advEMIMaxTerms.setValue(0);
-			this.cbAdvEMIMethod.setSelectedIndex(0);
-			this.advEMIDftTerms.setDisabled(true);
-			this.advEMIMinTerms.setDisabled(true);
-			this.advEMIMaxTerms.setDisabled(true);
-			this.cbAdvEMIMethod.setDisabled(true);
-		}
-	}
 
 	public void onCheck$finGrcIsIntCpz(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -6995,10 +6864,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowedRpyMethods.setErrorMessage("");
 		this.roundingMode.setErrorMessage("");
 		this.roundingTarget.setErrorMessage("");
-		this.cbAdvEMIMethod.setErrorMessage("");
 
-		this.advEMIMinTerms.setErrorMessage("");
-		this.advEMIMaxTerms.setErrorMessage("");
 
 		// OverDue Details
 		this.oDChargeCalOn.setErrorMessage("");

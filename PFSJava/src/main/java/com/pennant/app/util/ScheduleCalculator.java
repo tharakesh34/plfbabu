@@ -257,13 +257,13 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_GETCALSCHD)) {
 
-			if (finScheduleData.getFinanceMain().getAdvEMITerms() > 0) {
+			if (finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 			}
 
 			setFinScheduleData(procGetCalSchd(finScheduleData));
 
-			if (finScheduleData.getFinanceMain().getAdvEMITerms() > 0) {
+			if (finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 			}
 		}
@@ -2920,7 +2920,7 @@ public class ScheduleCalculator {
 				RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(j);
 				if (DateUtility.compare(curInstruction.getRepayDate(), finMain.getGrcPeriodEndDate()) > 0) {
 					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
-						finMain.setAdvanceEMI(curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvEMITerms())));
+						finMain.setAdvanceEMI(curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvTerms())));
 					}
 					
 				}
@@ -3256,9 +3256,9 @@ public class ScheduleCalculator {
 				repayDateList.add(finScheduleDetail.getSchDate());
 
 				calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
-				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0 && finMain.getAdvEMITerms() > 0) {
+				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0 && finMain.getAdvTerms() > 0) {
 					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
-						calcAmount = calcAmount.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvEMITerms()))));
+						calcAmount = calcAmount.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvTerms()))));
 					}
 				}
 				calcAmount = calcAmount.multiply(new BigDecimal(-1));
@@ -3344,7 +3344,7 @@ public class ScheduleCalculator {
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 
 			/* Grace Schedule calculation */
-			if (finScheduleData.getFinanceMain().getAdvEMITerms() > 0) {
+			if (finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 				finScheduleData = graceSchdCal(finScheduleData);
 			}
@@ -3356,7 +3356,7 @@ public class ScheduleCalculator {
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
 				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
 
-			if (finMain.getAdvEMITerms() > 0 && isFirstRun) {
+			if (finMain.getAdvTerms() > 0 && isFirstRun) {
 				finMain.setAdjustClosingBal(true);
 			}
 
@@ -3788,7 +3788,7 @@ public class ScheduleCalculator {
 
 		BigDecimal calIntFraction = BigDecimal.ZERO;
 		BigDecimal calInt = BigDecimal.valueOf(0.0);
-		int advEMITerms = finMain.getAdvEMITerms();
+		int advEMITerms = finMain.getAdvTerms();
 
 		String repayRateBasis = finMain.getRepayRateBasis();
 
@@ -5577,7 +5577,7 @@ public class ScheduleCalculator {
 		int sdSize = finSchdDetails.size();
 
 		if (!isAdjustClosingBal) {
-			sdSize = finSchdDetails.size() - finMain.getAdvEMITerms();
+			sdSize = finSchdDetails.size() - finMain.getAdvTerms();
 		}
 
 		int riSize = repayInstructions.size();
@@ -5655,7 +5655,7 @@ public class ScheduleCalculator {
 		BigDecimal diff_Low_High = BigDecimal.ZERO;
 
 		for (int i = 0; i < 50; i++) {
-			int size = finSchdDetails.size() - 1 - finMain.getAdvEMITerms();
+			int size = finSchdDetails.size() - 1 - finMain.getAdvTerms();
 			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
 			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
 					finMain.getRoundingTarget());

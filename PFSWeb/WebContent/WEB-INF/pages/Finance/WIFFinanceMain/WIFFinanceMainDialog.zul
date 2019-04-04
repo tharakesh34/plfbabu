@@ -556,11 +556,18 @@
 														<checkbox id="finRepayPftOnFrq" checked="false" />
 													</hbox>
 												</row>
-												<row id="row_advEMITerms" visible="false">
+												<!-- <row id="row_advEMITerms" visible="false">
 													<label id="label_FinanceMainDialog_AdvEMITerms" value="${c:l('label_FinanceMainDialog_AdvEMITerms.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<intbox id="advEMITerms" width="45px" maxlength="3" style="text-align:right" />
+													</hbox>
+												</row> -->
+												<row id="row_advTerms" visible="false">
+													<label id="label_FinanceMainDialog_AdvEMITerms" value="${c:l('label_FinanceMainDialog_AdvEMITerms.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<intbox id="advTerms" width="45px" maxlength="3" style="text-align:right" />
 													</hbox>
 												</row>
 											</rows>

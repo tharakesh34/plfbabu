@@ -306,12 +306,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Collateral LTV Check Details
 	private String finLTVCheck;
 
-	// Advance EMI Details
-	private boolean alwAdvEMI = false;
-	private int advEMIMinTerms;
-	private int advEMIMaxTerms;
-	private int advEMIDftTerms;
-	private String advEMISchdMthd;
 
 	//Eligibility Method
 	private String eligibilityMethods;
@@ -2135,46 +2129,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setPartiallySecured(boolean partiallySecured) {
 		this.partiallySecured = partiallySecured;
-	}
-
-	public boolean isAlwAdvEMI() {
-		return alwAdvEMI;
-	}
-
-	public void setAlwAdvEMI(boolean alwAdvEMI) {
-		this.alwAdvEMI = alwAdvEMI;
-	}
-
-	public int getAdvEMIMinTerms() {
-		return advEMIMinTerms;
-	}
-
-	public void setAdvEMIMinTerms(int advEMIMinTerms) {
-		this.advEMIMinTerms = advEMIMinTerms;
-	}
-
-	public int getAdvEMIMaxTerms() {
-		return advEMIMaxTerms;
-	}
-
-	public void setAdvEMIMaxTerms(int advEMIMaxTerms) {
-		this.advEMIMaxTerms = advEMIMaxTerms;
-	}
-
-	public int getAdvEMIDftTerms() {
-		return advEMIDftTerms;
-	}
-
-	public void setAdvEMIDftTerms(int advEMIDftTerms) {
-		this.advEMIDftTerms = advEMIDftTerms;
-	}
-
-	public String getAdvEMISchdMthd() {
-		return advEMISchdMthd;
-	}
-
-	public void setAdvEMISchdMthd(String advEMISchdMthd) {
-		this.advEMISchdMthd = advEMISchdMthd;
 	}
 
 	public String getEligibilityMethods() {
