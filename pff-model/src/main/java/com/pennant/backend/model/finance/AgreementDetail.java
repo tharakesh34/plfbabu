@@ -6408,6 +6408,31 @@ public class AgreementDetail {
 		private String outStandingAmt = "";
 		private String finBranchName = "";
 
+		private String seqNo = "";
+		private String finType = "";
+		private String finTypeDesc = "";
+		private String finDate = "";
+		private String loanBank = "";
+		private String loanBankName = "";
+		private String rateOfInterest = "";
+		private String tenure = "";
+		private String originalAmount = "";
+		private String instalmentAmount = "";
+		private String outstandingBalance = "";
+		private String balanceTenure = "";
+		private String bounceInstalments = "";
+		private String principalOutStanding = "";
+		private String overDueAmount = "";
+		private String isFoir = "";
+		private String finStatus = "";
+		private String source = "";
+		private String checkedBy = "";
+		private String securityDetails = "";
+		private String loanpurpose = "";
+		private String repayBank = "";
+		private String repayBankName = "";
+		private String otherFinInstitute = "";
+
 		public String getFinBranchName() {
 			return finBranchName;
 		}
@@ -6489,6 +6514,198 @@ public class AgreementDetail {
 
 		public void setOutStandingAmt(String outStandingAmt) {
 			this.outStandingAmt = outStandingAmt;
+		}
+
+		public String getSeqNo() {
+			return seqNo;
+		}
+
+		public void setSeqNo(String seqNo) {
+			this.seqNo = seqNo;
+		}
+
+		public String getFinType() {
+			return finType;
+		}
+
+		public void setFinType(String finType) {
+			this.finType = finType;
+		}
+
+		public String getFinTypeDesc() {
+			return finTypeDesc;
+		}
+
+		public void setFinTypeDesc(String finTypeDesc) {
+			this.finTypeDesc = finTypeDesc;
+		}
+
+		public String getFinDate() {
+			return finDate;
+		}
+
+		public void setFinDate(String finDate) {
+			this.finDate = finDate;
+		}
+
+		public String getLoanBank() {
+			return loanBank;
+		}
+
+		public void setLoanBank(String loanBank) {
+			this.loanBank = loanBank;
+		}
+
+		public String getLoanBankName() {
+			return loanBankName;
+		}
+
+		public void setLoanBankName(String loanBankName) {
+			this.loanBankName = loanBankName;
+		}
+
+		public String getRateOfInterest() {
+			return rateOfInterest;
+		}
+
+		public void setRateOfInterest(String rateOfInterest) {
+			this.rateOfInterest = rateOfInterest;
+		}
+
+		public String getTenure() {
+			return tenure;
+		}
+
+		public void setTenure(String tenure) {
+			this.tenure = tenure;
+		}
+
+		public String getOriginalAmount() {
+			return originalAmount;
+		}
+
+		public void setOriginalAmount(String originalAmount) {
+			this.originalAmount = originalAmount;
+		}
+
+		public String getInstalmentAmount() {
+			return instalmentAmount;
+		}
+
+		public void setInstalmentAmount(String instalmentAmount) {
+			this.instalmentAmount = instalmentAmount;
+		}
+
+		public String getOutstandingBalance() {
+			return outstandingBalance;
+		}
+
+		public void setOutstandingBalance(String outstandingBalance) {
+			this.outstandingBalance = outstandingBalance;
+		}
+
+		public String getBalanceTenure() {
+			return balanceTenure;
+		}
+
+		public void setBalanceTenure(String balanceTenure) {
+			this.balanceTenure = balanceTenure;
+		}
+
+		public String getBounceInstalments() {
+			return bounceInstalments;
+		}
+
+		public void setBounceInstalments(String bounceInstalments) {
+			this.bounceInstalments = bounceInstalments;
+		}
+
+		public String getPrincipalOutStanding() {
+			return principalOutStanding;
+		}
+
+		public void setPrincipalOutStanding(String principalOutStanding) {
+			this.principalOutStanding = principalOutStanding;
+		}
+
+		public String getOverDueAmount() {
+			return overDueAmount;
+		}
+
+		public void setOverDueAmount(String overDueAmount) {
+			this.overDueAmount = overDueAmount;
+		}
+
+		public String getIsFoir() {
+			return isFoir;
+		}
+
+		public void setIsFoir(String isFoir) {
+			this.isFoir = isFoir;
+		}
+
+		public String getFinStatus() {
+			return finStatus;
+		}
+
+		public void setFinStatus(String finStatus) {
+			this.finStatus = finStatus;
+		}
+
+		public String getSource() {
+			return source;
+		}
+
+		public void setSource(String source) {
+			this.source = source;
+		}
+
+		public String getCheckedBy() {
+			return checkedBy;
+		}
+
+		public void setCheckedBy(String checkedBy) {
+			this.checkedBy = checkedBy;
+		}
+
+		public String getSecurityDetails() {
+			return securityDetails;
+		}
+
+		public void setSecurityDetails(String securityDetails) {
+			this.securityDetails = securityDetails;
+		}
+
+		public String getLoanpurpose() {
+			return loanpurpose;
+		}
+
+		public void setLoanpurpose(String loanpurpose) {
+			this.loanpurpose = loanpurpose;
+		}
+
+		public String getRepayBank() {
+			return repayBank;
+		}
+
+		public void setRepayBank(String repayBank) {
+			this.repayBank = repayBank;
+		}
+
+		public String getRepayBankName() {
+			return repayBankName;
+		}
+
+		public void setRepayBankName(String repayBankName) {
+			this.repayBankName = repayBankName;
+		}
+
+		public String getOtherFinInstitute() {
+			return otherFinInstitute;
+		}
+
+		public void setOtherFinInstitute(String otherFinInstitute) {
+			this.otherFinInstitute = otherFinInstitute;
 		}
 
 	}

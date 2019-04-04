@@ -745,6 +745,44 @@ public class AgreementGeneration implements Serializable {
 								PennantApplicationUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
 						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
+
+						externalLiabilityDetail.setSeqNo(String.valueOf(extLiability.getSeqNo()));
+						externalLiabilityDetail.setFinType(extLiability.getFinType());
+						externalLiabilityDetail.setFinTypeDesc(extLiability.getFinTypeDesc());
+						externalLiabilityDetail.setFinDate(DateUtility.formatToLongDate(extLiability.getFinDate()));
+						externalLiabilityDetail.setLoanBank(extLiability.getLoanBank());
+						externalLiabilityDetail.setLoanBankName(extLiability.getLoanBankName());
+						externalLiabilityDetail.setRateOfInterest(
+								PennantApplicationUtil.amountFormate(extLiability.getRateOfInterest(), formatter));
+						externalLiabilityDetail.setTenure(String.valueOf(extLiability.getTenure()));
+						externalLiabilityDetail.setOriginalAmount(
+								PennantApplicationUtil.amountFormate(extLiability.getOriginalAmount(), formatter));
+						externalLiabilityDetail.setInstalmentAmount(
+								PennantApplicationUtil.amountFormate(extLiability.getInstalmentAmount(), formatter));
+						externalLiabilityDetail.setOutstandingBalance(
+								PennantApplicationUtil.amountFormate(extLiability.getOutstandingBalance(), formatter));
+						externalLiabilityDetail.setBalanceTenure(String.valueOf(extLiability.getBalanceTenure()));
+						externalLiabilityDetail
+								.setBounceInstalments(String.valueOf(extLiability.getBounceInstalments()));
+						externalLiabilityDetail.setPrincipalOutStanding(
+								PennantApplicationUtil.amountFormate(extLiability.getPrincipalOutstanding(),
+										formatter));
+						externalLiabilityDetail.setOverDueAmount(
+								PennantApplicationUtil.amountFormate(extLiability.getOverdueAmount(), formatter));
+						externalLiabilityDetail.setIsFoir(String.valueOf(extLiability.isFoir()));
+						externalLiabilityDetail.setFinStatus(extLiability.getFinStatus());
+						externalLiabilityDetail.setSource(PennantApplicationUtil.getLabelDesc(
+								String.valueOf(extLiability.getSource()), PennantStaticListUtil.getSourceInfoList()));
+						externalLiabilityDetail
+								.setCheckedBy(
+										PennantApplicationUtil.getLabelDesc(String.valueOf(extLiability.getCheckedBy()),
+										PennantStaticListUtil.getTrackCheckList()));
+						externalLiabilityDetail.setSecurityDetails(extLiability.getSecurityDetails());
+						externalLiabilityDetail.setLoanpurpose(extLiability.getLoanPurpose());
+						externalLiabilityDetail.setRepayBank(extLiability.getRepayBank());
+						externalLiabilityDetail.setRepayBankName(extLiability.getRepayBankName());
+						externalLiabilityDetail.setOtherFinInstitute(extLiability.getOtherFinInstitute());
+
 						agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 					}
 				}
