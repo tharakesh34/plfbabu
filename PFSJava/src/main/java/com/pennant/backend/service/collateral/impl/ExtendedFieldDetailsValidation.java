@@ -481,12 +481,12 @@ public class ExtendedFieldDetailsValidation {
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_PERCENTAGE:
 			double percentage = 0;
-			if (fieldValue.length() > (exdConfigDetail.getFieldLength() - exdConfigDetail.getFieldPrec())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = fieldName;
-				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength() - exdConfigDetail.getFieldPrec());
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
-			}
+			/*
+			 * if (fieldValue.length() > (exdConfigDetail.getFieldLength() - exdConfigDetail.getFieldPrec())) { String[]
+			 * valueParm = new String[2]; valueParm[0] = fieldName; valueParm[1] =
+			 * String.valueOf(exdConfigDetail.getFieldLength() - exdConfigDetail.getFieldPrec());
+			 * errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm))); }
+			 */
 			try {
 				percentage = Double.valueOf(fieldValue);
 				if (percentage < 0 || percentage > 100) {
