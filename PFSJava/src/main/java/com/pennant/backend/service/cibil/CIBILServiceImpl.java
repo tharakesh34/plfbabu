@@ -30,9 +30,9 @@ public class CIBILServiceImpl implements CIBILService {
 			customer.setCustomerPhoneNumList(cibildao.getCustomerPhoneNumbers(customerId, segmentType));
 
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-				customer.setCustomerFinance(cibildao.getFinanceSummary(customerId, finreference));
+				customer.setCustomerFinance(cibildao.getFinanceSummary(customerId, finreference, segmentType));
 			} else {
-				customer.setCustomerFinances(cibildao.getFinanceSummary(customerId));
+				customer.setCustomerFinances(cibildao.getFinanceSummary(customerId, segmentType));
 			}
 
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {

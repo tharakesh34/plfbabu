@@ -29,9 +29,9 @@ public interface CIBILDAO {
 
 	List<CustomerAddres> getCustomerAddres(long customerId, String segmentType);
 
-	FinanceEnquiry getFinanceSummary(long customerId, String finReference);
+	FinanceEnquiry getFinanceSummary(long customerId, String finReference, String segmentType);
 	
-	List<FinanceEnquiry> getFinanceSummary(long customerId);
+	List<FinanceEnquiry> getFinanceSummary(long customerId, String segmentType);
 
 	void deleteDetails();
 

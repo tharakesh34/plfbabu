@@ -210,38 +210,40 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	}
 
 	@Override
-	public FinanceEnquiry getFinanceSummary(long customerId, String finReference) {
+	public FinanceEnquiry getFinanceSummary(long customerId, String finReference, String segmentType) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select  custid, finreference, finstartdate, finapproveddate, latestrpydate,");
-		sql.append("  curoddays as oddays, closingstatus, ");
-		sql.append("  future_schedule_prin, instalment_due, instalment_paid, bounce_due, bounce_paid, ");
-		sql.append(
-				"  late_payment_penalty_due, late_payment_penalty_paid, total_pri_schd, total_pri_paid, total_pft_schd, ");
-		sql.append("  total_pft_paid, excess_amount, excess_amt_paid, ");
-		sql.append("  ownership, fintype, finassetvalue, custincome");
-		sql.append("  from cibil_customer_loans_view cs");
-		sql.append("  where cs.finreference = :finreference and custid = :custid");
+		sql.append(" select  custid, finreference, finstartdate, finapproveddate, latestrpydate");
+		sql.append(", curoddays oddays, closingstatus");
+		sql.append(", future_schedule_prin, instalment_due, instalment_paid, bounce_due, bounce_paid");
+		sql.append(", late_payment_penalty_due, late_payment_penalty_paid, total_pri_schd, total_pri_paid");
+		sql.append(", total_pft_schd, total_pft_paid, excess_amount, excess_amt_paid");
+		sql.append(", ownership, fintype, finassetvalue, custincome");
+		sql.append(" from cibil_customer_loans_view cs");
+		sql.append(" where cs.finreference = :finreference and custid = :custid");
+		sql.append(" and cs.segment_type = :segment_type");
 
 		paramMap.addValue("finreference", finReference);
 		paramMap.addValue("custid", customerId);
+		paramMap.addValue("segment_type", segmentType);
 
 		RowMapper<FinanceEnquiry> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 		return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);
 	}
 
 	@Override
-	public List<FinanceEnquiry> getFinanceSummary(long customerId) {
+	public List<FinanceEnquiry> getFinanceSummary(long customerId, String segmentType) {
 		logger.trace(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from cibil_customer_loans_view cs");
 		sql.append(" inner join cibil_customer_extract cce on cce.finreference = cs.finreference");
 		sql.append(" and cs.custid = cce.custid");
-		sql.append(" where cs.custid = :custid");
+		sql.append(" where cs.custid = :custid  and cs.segment_type = :segment_type");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("custid", customerId);
+		paramMap.addValue("segment_type", segmentType);
 
 		RowMapper<FinanceEnquiry> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
 

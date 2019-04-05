@@ -717,7 +717,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				BigDecimal currentBalance = BigDecimal.ZERO;
 				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 
-				if (odDays != 0) {
+				if (odDays > 0) {
 					currentBalance = loan.getFutureSchedulePrin()
 							.add(loan.getInstalmentDue().subtract(loan.getInstalmentPaid())
 									.add(loan.getBounceDue().subtract(loan.getBouncePaid()).add(loan
@@ -791,7 +791,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				BigDecimal amountOverdue = BigDecimal.ZERO;
 
-				if (odDays != 0) {
+				if (odDays > 0) {
 					amountOverdue = (loan.getInstalmentDue().subtract(loan.getInstalmentPaid()))
 							.add(loan.getBounceDue().subtract(loan.getBouncePaid())
 									.add(loan.getLatePaymentPenaltyDue().subtract(loan.getLatePaymentPenaltyPaid())
