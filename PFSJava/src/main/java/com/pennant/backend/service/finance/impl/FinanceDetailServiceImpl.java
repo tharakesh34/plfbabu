@@ -107,6 +107,7 @@ import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
@@ -156,6 +157,7 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -237,6 +239,7 @@ import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -379,6 +382,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private NotificationService notificationService;
+	@Autowired
+	private FinExcessAmountDAO FinExcessAmountDAO;
+	
 	private long tempWorkflowId;
 
 	public FinanceDetailServiceImpl() {
@@ -3629,6 +3635,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String finReference = financeMain.getFinReference();
 
 		// process to send FIN-one request and create or update the cust data.
 		if (!isWIF && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
@@ -3644,7 +3652,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// gCDCustomerService.processGcdCustomer(financeDetail, "insert"); // inserting gcdcustomer.
 		// Execute Accounting Details Process
 		// =======================================
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String productCode = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
 
 		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
@@ -4713,6 +4720,34 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// =======================================
 				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 			}
+			
+			// tasks # >>Start Advance EMI and DSF
+			for (FinFeeDetail fee : financeDetail.getFinFeeDetails()) {
+				String advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+
+				if (advanceRuleCode == null) {
+					continue;
+				}
+
+				BigDecimal excessAmount = fee.getActualAmountOriginal();
+
+				if (excessAmount == null) {
+					excessAmount = BigDecimal.ZERO;
+				}
+
+				if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+					FinExcessAmount finExcessAmount = new FinExcessAmount();
+					finExcessAmount.setFinReference(finReference);
+					finExcessAmount.setAmountType(advanceRuleCode);
+					finExcessAmount.setAmount(excessAmount);
+					finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
+					finExcessAmount.setReservedAmt(BigDecimal.ZERO);
+					finExcessAmount.setBalanceAmt(excessAmount);
+					FinExcessAmountDAO.saveExcess(finExcessAmount);
+				}
+
+			}
+			// tasks # >>Start Advance EMI and DSF
 
 			// Mail Alert Notification for Customer/Dealer/Provider...etc
 			Notification notification = new Notification();

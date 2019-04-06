@@ -2974,10 +2974,30 @@
 		<addDefaultValue columnName="AdvEmiMinTerms" tableName="rmtfinancetypes_temp" defaultValue="0" />
 		<addDefaultValue columnName="AdvEmiMaxTerms" tableName="rmtfinancetypes_temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="13.3" author="shinde.b">
 		<addDefaultValue columnName="AdvEMITerms" tableName="FinanceMain" defaultValue="0" />
 		<addDefaultValue columnName="AdvEMITerms" tableName="FinanceMain_temp" defaultValue="0" />
 		<addDefaultValue columnName="AdvEMITerms" tableName="WIFFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="14_pre" author="vijaykumar.L" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'finexcessamount');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="shinde.b">
+		<modifyDataType tableName="FinExcessAmount" columnName="AmountType" newDataType="varchar(8)" />
+	</changeSet>
+
+	<changeSet id="14_post" author="vijaykumar.L" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'finexcessamount');
+			]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>
