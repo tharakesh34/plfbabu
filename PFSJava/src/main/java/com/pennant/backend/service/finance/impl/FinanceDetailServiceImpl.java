@@ -384,7 +384,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private NotificationService notificationService;
 	@Autowired
 	private FinExcessAmountDAO FinExcessAmountDAO;
-	
+
 	private long tempWorkflowId;
 
 	public FinanceDetailServiceImpl() {
@@ -629,10 +629,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		//Put-call
-		
+
 		financeDetail.setFinOptions(finOptionService.getFinOptions(finReference, TableType.VIEW));
-		
-		
+
 		// Asset Type Details
 		financeDetail.setFinAssetTypesList(getFinAssetTypeDAO().getFinAssetTypesByFinRef(finReference, "_TView"));
 
@@ -1381,7 +1380,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (ImplementationConstants.NEW_COVENANT_MODULE) {
 					financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 				}
-				
+
 				financeDetail.setFinOptions(finOptionService.getFinOptions(finReference, TableType.VIEW));
 
 				// Asset Evaluation Details
@@ -3462,7 +3461,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(), "",
 						auditHeader.getAuditTranType()));
 			}
-			
+
 			String auditTranType = auditHeader.getAuditTranType();
 			List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
 			if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
@@ -4214,15 +4213,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails
 							.addAll(getContractorAssetDetailService().doApprove(contractorAssetDetails, "", tranType));
 				}
-				
+
 				List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
 				if (CollectionUtils.isNotEmpty(documents)) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-					details = processingDocumentDetailsList(details, "", financeMain,
-							financeDetail.getModuleDefiner(), serviceUID);
+					details = processingDocumentDetailsList(details, "", financeMain, financeDetail.getModuleDefiner(),
+							serviceUID);
 					auditDetails.addAll(details);
 				}
-
 
 				// set Check list details Audit
 				// =======================================
@@ -4317,7 +4315,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (CollectionUtils.isNotEmpty(financeDetail.getCovenantTypeList())) {
 					finCovenantTypeService.doApprove(financeDetail.getCovenantTypeList(), "", tranType);
 				}
-				
+
 				List<Covenant> covenants = financeDetail.getCovenants();
 				if (CollectionUtils.isNotEmpty(covenants)) {
 					auditDetails.addAll(covenantsService.doApprove(covenants, TableType.MAIN_TAB, tranType));
@@ -4327,7 +4325,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (CollectionUtils.isNotEmpty(finOptions)) {
 					auditDetails.addAll(finOptionService.doApprove(finOptions, TableType.MAIN_TAB, tranType));
 				}
-				
+
 				// Collateral Assignments Details
 				// =======================================
 				if (financeDetail.getCollateralAssignmentList() != null
@@ -4572,7 +4570,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetailList.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),
 							"_Temp", auditHeader.getAuditTranType()));
 				}
-				
+
 				String auditTranType = auditHeader.getAuditTranType();
 				List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
 				if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
@@ -4592,7 +4590,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						listDocDeletion(financeDetail, "_Temp");
 					}
 				}
-				
+
 				if (financeDetail.getFinAssetEvaluation() != null) {
 					auditDetailList.add(getFinAssetEvaluationService().delete(financeDetail.getFinAssetEvaluation(),
 							"_Temp", auditHeader.getAuditTranType()));
@@ -4720,33 +4718,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// =======================================
 				getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, isWIF, true);
 			}
-			
+
 			// tasks # >>Start Advance EMI and DSF
-			for (FinFeeDetail fee : financeDetail.getFinFeeDetails()) {
-				String advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
-
-				if (advanceRuleCode == null) {
-					continue;
-				}
-
-				BigDecimal excessAmount = fee.getActualAmountOriginal();
-
-				if (excessAmount == null) {
-					excessAmount = BigDecimal.ZERO;
-				}
-
-				if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-					FinExcessAmount finExcessAmount = new FinExcessAmount();
-					finExcessAmount.setFinReference(finReference);
-					finExcessAmount.setAmountType(advanceRuleCode);
-					finExcessAmount.setAmount(excessAmount);
-					finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
-					finExcessAmount.setReservedAmt(BigDecimal.ZERO);
-					finExcessAmount.setBalanceAmt(excessAmount);
-					FinExcessAmountDAO.saveExcess(finExcessAmount);
-				}
-
-			}
+			advanceEMIExcessMovement(financeDetail, finReference);
 			// tasks # >>Start Advance EMI and DSF
 
 			// Mail Alert Notification for Customer/Dealer/Provider...etc
@@ -4811,6 +4785,37 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug("Leaving");
 
 		return auditHeader;
+	}
+
+	private void advanceEMIExcessMovement(FinanceDetail financeDetail, String finReference) {
+		List<FinFeeDetail> fees = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (fees == null) {
+			fees = new ArrayList<>();
+		}
+		for (FinFeeDetail fee : financeDetail.getFinFeeDetails()) {
+			String advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+
+			if (advanceRuleCode == null) {
+				continue;
+			}
+
+			BigDecimal excessAmount = fee.getActualAmountOriginal();
+
+			if (excessAmount == null) {
+				excessAmount = BigDecimal.ZERO;
+			}
+
+			if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
+				FinExcessAmount finExcessAmount = new FinExcessAmount();
+				finExcessAmount.setFinReference(finReference);
+				finExcessAmount.setAmountType(advanceRuleCode);
+				finExcessAmount.setAmount(excessAmount);
+				finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
+				finExcessAmount.setReservedAmt(BigDecimal.ZERO);
+				finExcessAmount.setBalanceAmt(excessAmount);
+				FinExcessAmountDAO.saveExcess(finExcessAmount);
+			}
+		}
 	}
 
 	public String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks,
@@ -5651,10 +5656,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),
 							"_Temp", auditHeader.getAuditTranType()));
 				}
-				
-				
+
 				String auditTranType = auditHeader.getAuditTranType();
-				
+
 				List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
 				if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
 					//auditDetails.addAll(getFinCovenantTypeService().delete(finCovenantTypes, "_Temp", auditTranType));
@@ -5666,7 +5670,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					//auditDetails.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
 					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
 				}
-				
+
 				List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
 				if (!financeDetail.isExtSource() && !isWIF) {
 					if (CollectionUtils.isNotEmpty(documents)) {
@@ -6149,7 +6153,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(getFinAdvancePaymentsService().delete(financeDetail.getAdvancePaymentsList(),
 						"_Temp", auditHeader.getAuditTranType()));
 			}
-			
+
 			String auditTranType = auditHeader.getAuditTranType();
 
 			List<FinCovenantType> finCovenantTyps = financeDetail.getCovenantTypeList();
@@ -6163,7 +6167,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				//auditDetails.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
 				covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
 			}
-			
+
 			List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
 			if (!financeDetail.isExtSource() && !isWIF) {
 				if (CollectionUtils.isNotEmpty(documents)) {
@@ -7290,7 +7294,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.getExtendedFieldRender() != null) {
 			auditDetailMap.put("LoanExtendedFieldDetails",
 					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
-							financeDetail.getExtendedFieldRender(), auditTranType, method, ExtendedFieldConstants.MODULE_LOAN));
+							financeDetail.getExtendedFieldRender(), auditTranType, method,
+							ExtendedFieldConstants.MODULE_LOAN));
 			auditDetails.addAll(auditDetailMap.get("LoanExtendedFieldDetails"));
 		}
 
@@ -9989,7 +9994,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return financeDetail;
 	}
-	
+
 	@Override
 	public FinanceDetail getFinanceDetailForFinOptions(FinanceMain financeMain) {
 		FinanceDetail financeDetail = new FinanceDetail();
@@ -10007,7 +10012,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return financeDetail;
 	}
-	
 
 	/**
 	 * Method for Add loan type Expense to the loan
@@ -10604,7 +10608,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setReAgeCpz(financeType.isReAgeCpz());
 
 		financeMain.setFixedRateTenor(financeType.getFixedRateTenor());
-		
+
 		// tasks # >>Start Advance EMI and DSF
 		if (financeType.isGrcAdvIntersetReq()) {
 			financeMain.setGrcAdvType(financeType.getGrcAdvType());
