@@ -213,13 +213,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	public FinanceEnquiry getFinanceSummary(long customerId, String finReference, String segmentType) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select  custid, finreference, finstartdate, finapproveddate, latestrpydate");
-		sql.append(", curoddays oddays, closingstatus");
-		sql.append(", future_schedule_prin, instalment_due, instalment_paid, bounce_due, bounce_paid");
-		sql.append(", late_payment_penalty_due, late_payment_penalty_paid, total_pri_schd, total_pri_paid");
-		sql.append(", total_pft_schd, total_pft_paid, excess_amount, excess_amt_paid");
-		sql.append(", ownership, fintype, finassetvalue, custincome");
-		sql.append(" from cibil_customer_loans_view cs");
+		sql.append(" select * from cibil_customer_loans_view cs");
 		sql.append(" where cs.finreference = :finreference and custid = :custid");
 		sql.append(" and cs.segment_type = :segment_type");
 

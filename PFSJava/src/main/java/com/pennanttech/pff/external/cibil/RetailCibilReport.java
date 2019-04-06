@@ -100,7 +100,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
 					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
-					
+
 					try {
 						CustomerDetails customer = cibilService.getCustomerDetails(customerId, finreference,
 								PennantConstants.PFF_CUSTCTG_INDIV);
@@ -486,16 +486,24 @@ public class RetailCibilReport extends BasicDao<Object> {
 				writeValue(builder, "09", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
 			}
 
-			int odDays = Integer.parseInt(getOdDays(loan.getOdDays()));
+			int odDays = Integer.parseInt(getOdDays(loan.getCurODDays()));
 			BigDecimal currentBalance = BigDecimal.ZERO;
 			String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 
-			if (odDays != 0) {
-				currentBalance = loan.getFutureSchedulePrin()
-						.add(loan.getInstalmentDue().subtract(loan.getInstalmentPaid())
-								.add(loan.getBounceDue().subtract(loan.getBouncePaid())
-										.add(loan.getLatePaymentPenaltyDue().subtract(loan.getLatePaymentPenaltyPaid())
-												.subtract(loan.getExcessAmount().subtract(loan.getExcessAmtPaid())))));
+			if (odDays > 0) {
+				BigDecimal futureSchedulePrincipal = getAmount(loan.getFutureSchedulePrin());
+				BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
+				BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
+				BigDecimal bounceDue = getAmount(loan.getBounceDue());
+				BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
+				BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
+				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
+				BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
+				BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
+
+				currentBalance = futureSchedulePrincipal
+						.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid).add(
+								penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
 			} else {
 				currentBalance = loan.getFutureSchedulePrin();
 			}
@@ -521,11 +529,19 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			BigDecimal amountOverdue = BigDecimal.ZERO;
 
-			if (odDays != 0) {
-				amountOverdue = (loan.getInstalmentDue().subtract(loan.getInstalmentPaid()))
-						.add(loan.getBounceDue().subtract(loan.getBouncePaid())
-								.add(loan.getLatePaymentPenaltyDue().subtract(loan.getLatePaymentPenaltyPaid())
-										.subtract(loan.getExcessAmount().subtract(loan.getExcessAmtPaid()))));
+			if (odDays > 0) {
+				BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
+				BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
+				BigDecimal bounceDue = getAmount(loan.getBounceDue());
+				BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
+				BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
+				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
+				BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
+				BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
+ 
+				amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
+						.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid))));
+
 			} else {
 				amountOverdue = BigDecimal.ZERO;
 			}
@@ -546,7 +562,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			if (amountOverdue.compareTo(BigDecimal.ZERO) <= 0) {
 				writeValue(builder, "15", "0", 3, "TL");
 			} else {
-				writeValue(builder, "15", getOdDays(loan.getOdDays()), 3, "TL");
+				writeValue(builder, "15", getOdDays(loan.getCurODDays()), 3, "TL");
 			}
 
 			if (closingstatus.equals("W")) {
@@ -598,7 +614,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				writeValue(builder, "TH", "H".concat(StringUtils.leftPad(String.valueOf(i), 2, "0")), "03");
 
 				writeValue(builder, "01", DateUtility.getAppDate(DATE_FORMAT), "08");
-				writeValue(builder, "02", getOdDays(loan.getOdDays()), "03");
+				writeValue(builder, "02", getOdDays(loan.getCurODDays()), "03");
 				writeValue(builder, "03", loan.getAmountOverdue(), 9, "TH");
 				writeValue(builder, "04", loan.getFinAssetValue(), 9, "TH");
 				writeValue(builder, "07", loan.getCurrentBalance(), 9, "TH");
@@ -727,6 +743,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 			odDays = 900;
 		}
 		return String.valueOf(odDays);
+	}
+
+	private BigDecimal getAmount(BigDecimal amount) {
+		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
 	private void writeCustomerName(StringBuilder writer, Customer customer) throws Exception {

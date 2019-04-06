@@ -124,7 +124,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 						if (customer == null) {
 							failedCount++;
-							cibilService.logFileInfoException(headerId, String.valueOf(customerId),	"Unable to fetch the details.");
+							cibilService.logFileInfoException(headerId, String.valueOf(customerId),
+									"Unable to fetch the details.");
 							return;
 						}
 
@@ -676,7 +677,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, finType);
 
 				/* Tenure / Weighted Average maturity period of Contracts */
-				addField(record,String.valueOf(loan.getNumberOfTerms()));
+				addField(record, String.valueOf(loan.getNumberOfTerms()));
 
 				/* Repayment Frequency */
 				String rePayfrq = StringUtils.trimToEmpty(loan.getRepayFrq());
@@ -713,16 +714,24 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, loan.getFinAssetValue());
 
 				/* Current Balance / Limit Utilized /Mark to Marketr */
-				int odDays = Integer.parseInt(getOdDays(loan.getOdDays()));
+				int odDays = Integer.parseInt(getOdDays(loan.getCurODDays()));
 				BigDecimal currentBalance = BigDecimal.ZERO;
 				String closingstatus = StringUtils.trimToEmpty(loan.getClosingStatus());
 
 				if (odDays > 0) {
-					currentBalance = loan.getFutureSchedulePrin()
-							.add(loan.getInstalmentDue().subtract(loan.getInstalmentPaid())
-									.add(loan.getBounceDue().subtract(loan.getBouncePaid()).add(loan
-											.getLatePaymentPenaltyDue().subtract(loan.getLatePaymentPenaltyPaid())
-											.subtract(loan.getExcessAmount().subtract(loan.getExcessAmtPaid())))));
+					BigDecimal futureSchedulePrincipal = getAmount(loan.getFutureSchedulePrin());
+					BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
+					BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
+					BigDecimal bounceDue = getAmount(loan.getBounceDue());
+					BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
+					BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
+					BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
+					BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
+					BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
+
+					currentBalance = futureSchedulePrincipal.add(installmentDue.subtract(installmentPaid).add(bounceDue
+							.subtract(bouncePaid)
+							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
 				} else {
 					currentBalance = loan.getFutureSchedulePrin();
 				}
@@ -792,10 +801,17 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				BigDecimal amountOverdue = BigDecimal.ZERO;
 
 				if (odDays > 0) {
-					amountOverdue = (loan.getInstalmentDue().subtract(loan.getInstalmentPaid()))
-							.add(loan.getBounceDue().subtract(loan.getBouncePaid())
-									.add(loan.getLatePaymentPenaltyDue().subtract(loan.getLatePaymentPenaltyPaid())
-											.subtract(loan.getExcessAmount().subtract(loan.getExcessAmtPaid()))));
+					BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
+					BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
+					BigDecimal bounceDue = getAmount(loan.getBounceDue());
+					BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
+					BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
+					BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
+					BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
+					BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
+
+					amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
+							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid))));
 				} else {
 					amountOverdue = BigDecimal.ZERO;
 				}
@@ -1395,6 +1411,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			odDays = 900;
 		}
 		return String.valueOf(odDays);
+	}
+
+	private BigDecimal getAmount(BigDecimal amount) {
+		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
 	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record) {

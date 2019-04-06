@@ -98,6 +98,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private BigDecimal amountOverdue;
 	private BigDecimal finAssetValue;
 	private int odDays;
+	private int curODDays;
 	private BigDecimal collateralValue;
 	private String collateralType;
 	private BigDecimal repayProfitRate;
@@ -140,6 +141,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 		excludeFields.add("amountOverdue");
 		excludeFields.add("finAssetValue");
 		excludeFields.add("odDays");
+		excludeFields.add("curODDays");
 		excludeFields.add("collateralValue");
 		excludeFields.add("collateralType");
 		excludeFields.add("repayProfitRate");
@@ -453,12 +455,20 @@ public class FinanceEnquiry implements java.io.Serializable {
 		this.finAssetValue = finAssetValue;
 	}
 
-	public int getOdDays() {
+	/*public int getOdDays() {
 		return odDays;
 	}
 
 	public void setOdDays(int odDays) {
 		this.odDays = odDays;
+	}*/
+	
+	public int getCurODDays() {
+		return curODDays;
+	}
+
+	public void setCurODDays(int curODDays) {
+		this.curODDays = curODDays;
 	}
 
 	public BigDecimal getCollateralValue() {
