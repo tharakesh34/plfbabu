@@ -3000,4 +3000,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="15" author="shinde.b">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'FinanceMainDialog_GrcAdvType', 'FinanceMainDialog', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'FinanceMainDialog_AdvType', 'FinanceMainDialog', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
