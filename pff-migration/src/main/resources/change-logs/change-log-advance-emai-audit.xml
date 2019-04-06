@@ -182,14 +182,32 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="3.2" author="shinde.b">
+	<changeSet id="3.2" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AlwAdvEMI" tableName="Adtrmtfinancetypes" defaultValue="0" />
 		<addDefaultValue columnName="AdvEmiMinTerms" tableName="Adtrmtfinancetypes" defaultValue="0" />
 		<addDefaultValue columnName="AdvEmiMaxTerms" tableName="Adtrmtfinancetypes" defaultValue="0" />
 	</changeSet>
+	
+	<changeSet id="3.2" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_ALWADVEMI DEFAULT 0 FOR ALWADVEMI;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_ADVEMIMINTERMS DEFAULT 0 FOR ADVEMIMINTERMS;
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_ADTRMTFINANCETYPES_ADVEMIMAXTERMS DEFAULT 0 FOR ADVEMIMAXTERMS;
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="3.3" author="shinde.b">
+	<changeSet id="3.3" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AdvEMITerms" tableName="AdtFinanceMain" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="3.3" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_ADTFINANCEMAIN_ADVEMITERMS DEFAULT 0 FOR ADVEMITERMS;
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>

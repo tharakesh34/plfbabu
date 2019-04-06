@@ -2965,7 +2965,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="13.2" author="shinde.b">
+	<changeSet id="13.2" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AlwAdvEMI" tableName="rmtfinancetypes" defaultValue="0" />
 		<addDefaultValue columnName="AdvEmiMinTerms" tableName="rmtfinancetypes" defaultValue="0" />
 		<addDefaultValue columnName="AdvEmiMaxTerms" tableName="rmtfinancetypes" defaultValue="0" />
@@ -2975,10 +2975,34 @@
 		<addDefaultValue columnName="AdvEmiMaxTerms" tableName="rmtfinancetypes_temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="13.3" author="shinde.b">
+	<changeSet id="13.2" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_ALWADVEMI DEFAULT 0 FOR ALWADVEMI;
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_ADVEMIMINTERMS DEFAULT 0 FOR ADVEMIMINTERMS;
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_ADVEMIMAXTERMS DEFAULT 0 FOR ADVEMIMAXTERMS;
+				
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_ALWADVEMI DEFAULT 0 FOR ALWADVEMI;
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_ADVEMIMINTERMS DEFAULT 0 FOR ADVEMIMINTERMS;
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_ADVEMIMAXTERMS DEFAULT 0 FOR ADVEMIMAXTERMS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="13.3" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AdvEMITerms" tableName="FinanceMain" defaultValue="0" />
 		<addDefaultValue columnName="AdvEMITerms" tableName="FinanceMain_temp" defaultValue="0" />
 		<addDefaultValue columnName="AdvEMITerms" tableName="WIFFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="13.3" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FINANCEMAIN_ADVEMITERMS DEFAULT 0 FOR ADVEMITERMS;
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FINANCEMAIN_TEMP_ADVEMITERMS DEFAULT 0 FOR ADVEMITERMS;
+				ALTER TABLE WIFFINANCEMAIN ADD CONSTRAINT DF_WIFFINANCEMAIN_ADVEMITERMS DEFAULT 0 FOR ADVEMITERMS;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="14_pre" author="vijaykumar.L" dbms="postgresql">
@@ -3000,7 +3024,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="shinde.b">
 		<sql>
 			<![CDATA[
