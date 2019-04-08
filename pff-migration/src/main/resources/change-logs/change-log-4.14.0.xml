@@ -929,4 +929,7 @@
 			     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
  	 	</createView>
  	 </changeSet>
+ 	 <changeSet  author="Varaprasad.k" id="04" dbms="postgresql">
+	    <createSequence sequenceName="SeqFinExpenseDetails" startValue="1" incrementBy="1" />
+     </changeSet>
 </databaseChangeLog>

@@ -1633,26 +1633,28 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
 
-		this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
-
-		// tasks # >>Start Advance EMI and DSF
-		this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
-		fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceType.getGrcAdvType());
-		this.grcAdvMaxTerms.setValue(aFinanceType.getGrcAdvMaxTerms());
-		this.grcAdvMinTerms.setValue(aFinanceType.getGrcAdvMinTerms());
-		this.grcAdvDefaultTerms.setValue(aFinanceType.getGrcAdvDefaultTerms());
-		doCheckGrcAdvIntersetReq();
-
-		this.advIntersetReq.setChecked(aFinanceType.isAdvIntersetReq());
-		fillList(this.advType, AdvanceType.getRepayList(), aFinanceType.getAdvType());
-		this.advMinTerms.setValue(aFinanceType.getAdvMinTerms());
-		this.advMaxTerms.setValue(aFinanceType.getAdvMaxTerms());
-		this.advDefaultTerms.setValue(aFinanceType.getAdvDefaultTerms());
-		fillList(this.advStage, AdvanceStage.getList(), aFinanceType.getAdvStage());
-		doCheckAdvIntersetReq();
-
-		this.dsfReq.setChecked(aFinanceType.isDsfReq());
-		this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
+		if (!isOverdraft) {
+			this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
+	
+			// tasks # >>Start Advance EMI and DSF
+			this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
+			fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceType.getGrcAdvType());
+			this.grcAdvMaxTerms.setValue(aFinanceType.getGrcAdvMaxTerms());
+			this.grcAdvMinTerms.setValue(aFinanceType.getGrcAdvMinTerms());
+			this.grcAdvDefaultTerms.setValue(aFinanceType.getGrcAdvDefaultTerms());
+			doCheckGrcAdvIntersetReq();
+	
+			this.advIntersetReq.setChecked(aFinanceType.isAdvIntersetReq());
+			fillList(this.advType, AdvanceType.getRepayList(), aFinanceType.getAdvType());
+			this.advMinTerms.setValue(aFinanceType.getAdvMinTerms());
+			this.advMaxTerms.setValue(aFinanceType.getAdvMaxTerms());
+			this.advDefaultTerms.setValue(aFinanceType.getAdvDefaultTerms());
+			fillList(this.advStage, AdvanceStage.getList(), aFinanceType.getAdvStage());
+			doCheckAdvIntersetReq();
+	
+			this.dsfReq.setChecked(aFinanceType.isDsfReq());
+			this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
+		}
 		// tasks # >>End Advance EMI and DSF
 
 		logger.debug("Leaving doWriteBeanToComponents()");
@@ -3216,7 +3218,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-	
+		if (!isOverdraft) {	
 		// tasks # >>Start Advance EMI and DSF
 		try {
 			aFinanceType.setAdvIntersetReq(this.advIntersetReq.isChecked());
@@ -3314,6 +3316,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setCashCollateralReq(cashCollateralReq.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
 		}
 		// tasks # >>End Advance EMI and DSF
 
@@ -3646,11 +3649,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (getFinTypeExpenseListCtrl() != null) {
 			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().doSave());
 		}
+		if(!isOverdraft){
 
-		try {
-			aFinanceType.setPutCallRequired(this.putCallRequired.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
+			try {
+				aFinanceType.setPutCallRequired(this.putCallRequired.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 
 		aFinanceType.setFinTypeAccounts(getFinTypeAccountList());
@@ -4000,19 +4005,20 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.autoRejectionDays.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
 		}
-
+		if (!isOverdraft) {
 		// tasks # >>Start Advance EMI and DSF
-		if (this.advIntersetReq.isChecked()) {
-			if (!this.advType.isDisabled()) {
-				this.advType.setConstraint(new StaticListValidator(AdvanceType.getRepayList(),
-						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
+			if (this.advIntersetReq.isChecked()) {
+				if (!this.advType.isDisabled()) {
+					this.advType.setConstraint(new StaticListValidator(AdvanceType.getRepayList(),
+							Labels.getLabel("label_FinanceTypeDialog_advType.value")));
+				}
 			}
-		}
-
-		if (this.grcAdvIntersetReq.isChecked()) {
-			if (!this.grcAdvType.isDisabled()) {
-				this.grcAdvType.setConstraint(new StaticListValidator(AdvanceType.getGrcList(),
-						Labels.getLabel("label_FinanceTypeDialog_advType.value")));
+	
+			if (this.grcAdvIntersetReq.isChecked()) {
+				if (!this.grcAdvType.isDisabled()) {
+					this.grcAdvType.setConstraint(new StaticListValidator(AdvanceType.getGrcList(),
+							Labels.getLabel("label_FinanceTypeDialog_advType.value")));
+				}
 			}
 		}
 		// tasks # >>End Advance EMI and DSF
@@ -4514,25 +4520,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
-
-		this.putCallRequired.setDisabled(isTrue);
-
-		// tasks # >>Start Advance EMI and DSF
-		this.advIntersetReq.setDisabled(isTrue);
-		this.advType.setDisabled(isTrue);
-		this.advMinTerms.setReadonly(isTrue);
-		this.advMaxTerms.setReadonly(isTrue);
-		this.advDefaultTerms.setReadonly(isTrue);
-
-		this.grcAdvIntersetReq.setDisabled(isTrue);
-		this.grcAdvType.setDisabled(isTrue);
-		this.grcAdvMinTerms.setReadonly(isTrue);
-		this.grcAdvMaxTerms.setReadonly(isTrue);
-		this.advStage.setDisabled(isTrue);
-		this.grcAdvDefaultTerms.setReadonly(isTrue);
-
-		this.dsfReq.setDisabled(isTrue);
-		this.cashCollateralReq.setDisabled(isTrue);
+		if (!isOverdraft) {
+	        	this.putCallRequired.setDisabled(isTrue);
+	        		// tasks # >>Start Advance EMI and DSF
+	        	this.advIntersetReq.setDisabled(isTrue);
+	        	this.advType.setDisabled(isTrue);
+	        	this.advMinTerms.setReadonly(isTrue);
+	        	this.advMaxTerms.setReadonly(isTrue);
+	        	this.advDefaultTerms.setReadonly(isTrue);
+	        	this.grcAdvIntersetReq.setDisabled(isTrue);
+	        	this.grcAdvType.setDisabled(isTrue);
+	        	this.grcAdvMinTerms.setReadonly(isTrue);
+				this.grcAdvMaxTerms.setReadonly(isTrue);
+				this.advStage.setDisabled(isTrue);
+				this.grcAdvDefaultTerms.setReadonly(isTrue);
+				this.dsfReq.setDisabled(isTrue);
+				this.cashCollateralReq.setDisabled(isTrue);
+		}
 		// tasks # >>End Advance EMI and DSF
 
 		if (isTrue) {
