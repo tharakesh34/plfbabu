@@ -138,7 +138,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		if (type.contains("View")) {
 			sql.append(
-					", FinCategoryDesc, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName");
+					", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc, lovDescFinContingentAcTypeName,lovDescFinBankContAcTypeName,lovDescFinProvisionAcTypeName,lovDescFinAcTypeName");
 			sql.append(
 					", lovDescPftPayAcTypeName, lovDescFinSuspAcTypeName, lovDescFinDivisionName,lovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode ");
 		}
@@ -220,7 +220,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		if (type.contains("ORGView")) {
 			sql.append(
-					" ,DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
+					" ,DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
 			sql.append(
 					" GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType, RpyHierarchy, LovDescEntityCode, LovDescEntityDesc");
 		}

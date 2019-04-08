@@ -127,6 +127,7 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.FinTypeAccount;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
@@ -878,13 +879,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finODRpyTries.setMaxlength(3);
 
-		this.downPayRule.setInputAllowed(false);
-		this.downPayRule.setDisplayStyle(3);
 		this.downPayRule.setMandatoryStyle(true);
 		this.downPayRule.setModuleName("Rule");
-		this.downPayRule.setValueColumn("RuleId");
-		this.downPayRule.setDescColumn("RuleCode");
-		this.downPayRule.setValidateColumns(new String[] { "RuleId" });
+		this.downPayRule.setValueColumn("RuleCode");
+		this.downPayRule.setDescColumn("RuleDesc");
+		this.downPayRule.setValidateColumns(new String[] { "RuleCode" });
 		this.downPayRule.setFilters(
 				new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE, Filter.OP_EQUAL) });
 
@@ -1161,7 +1160,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwEarlyPayMethods()));
 		this.alwEarlyPayMethods.setTooltiptext(getEarlypayMthdDescription(aFinanceType.getAlwEarlyPayMethods()));
 		this.finIsDwPayRequired.setChecked(aFinanceType.isFinIsDwPayRequired());
-		this.downPayRule.setValue(Long.toString(aFinanceType.getDownPayRule()));
+		this.downPayRule.setAttribute("RuleId",aFinanceType.getDownPayRule());
+		this.downPayRule.setValue(aFinanceType.getDownPayRuleCode());
 		this.downPayRule.setDescription(aFinanceType.getDownPayRuleDesc());
 		this.finIsGenRef.setChecked(aFinanceType.isFinIsGenRef());
 		this.fInIsAlwGrace.setChecked(aFinanceType.isFInIsAlwGrace());
@@ -2007,8 +2007,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			wve.add(we);
 		}
 		try {
-			aFinanceType.setDownPayRule(Long.valueOf(this.downPayRule.getValue()));
-			aFinanceType.setDownPayRuleDesc(this.downPayRule.getDescription());
+			Object ruleId = this.downPayRule.getAttribute("RuleId");
+			if (ruleId != null) {
+				aFinanceType.setDownPayRule((long) ruleId);
+			} else {
+				aFinanceType.setDownPayRule(Long.MIN_VALUE);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4659,7 +4663,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.financeBaserate.setMarginValue(BigDecimal.ZERO);
 		this.finAlwRateChangeAnyDate.setChecked(false);
 		this.finIsIntCpzAtGrcEnd.setChecked(false);
-		this.downPayRule.setValue("0");
+		this.downPayRule.setValue(null);
 		this.cbfinSchdMthd.setSelectedIndex(0);
 		this.cbfinDaysCalType.setSelectedIndex(0);
 		this.cbfinGrcRateType.setSelectedIndex(0);
@@ -5148,6 +5152,31 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	/**
+	 * To get the Rule LOV List From Rule Table
+	 */
+	public void onFulfill$downPayRule(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = downPayRule.getObject();
+		if (dataObject instanceof String) {
+			this.downPayRule.setValue(dataObject.toString());
+			this.downPayRule.setAttribute("RuleId", Long.MIN_VALUE);
+			this.downPayRule.setDescription("");
+		} else {
+			Rule details = (Rule) dataObject;
+			if (details != null) {
+				this.downPayRule.setAttribute("RuleId",details.getRuleId());
+				this.downPayRule.setValue(details.getRuleCode());
+				this.downPayRule.setDescription(details.getRuleCodeDesc());
+			}else{
+				this.downPayRule.setValue("");
+				this.downPayRule.setAttribute("RuleId", Long.MIN_VALUE);
+				this.downPayRule.setDescription("");
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
 	/**
 	 * To get the currency LOV List From RMTCurrencies Table And Amount is formatted based on the currency
 	 */
@@ -5669,7 +5698,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			this.downPayRule.setErrorMessage("");
 			this.downPayRule.setConstraint("");
-			this.downPayRule.setValue("0");
+			this.downPayRule.setValue(null);
 			this.downPayRule.setDescription("");
 			this.downPayRule.setReadonly(true);
 			this.downPayRule.setMandatoryStyle(false);
@@ -5931,7 +5960,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			this.downPayRule.setErrorMessage("");
 			this.downPayRule.setConstraint("");
-			this.downPayRule.setValue("0");
+			this.downPayRule.setValue(null);
 			this.downPayRule.setDescription("");
 			this.downPayRule.setReadonly(true);
 			this.downPayRule.setMandatoryStyle(false);

@@ -79,6 +79,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String finAssetType;
 	private boolean finIsDwPayRequired;
 	private long downPayRule;
+	private String downPayRuleCode;
 	private String downPayRuleDesc;
 	private boolean fInIsAlwGrace;
 	private String finRateType;
@@ -346,6 +347,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("finTypeAccountingList");
 		excludeFields.add("grcAdvBaseRateDesc");
 		excludeFields.add("rpyAdvBaseRateDesc");
+		excludeFields.add("downPayRuleCode");
 		excludeFields.add("downPayRuleDesc");
 		excludeFields.add("finSuspTrigger");
 		excludeFields.add("finSuspRemarks");
@@ -2297,5 +2299,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setGrcAdvMinTerms(int grcAdvMinTerms) {
 		this.grcAdvMinTerms = grcAdvMinTerms;
+	}
+
+	public String getDownPayRuleCode() {
+		return downPayRuleCode;
+	}
+
+	public void setDownPayRuleCode(String downPayRuleCode) {
+		this.downPayRuleCode = downPayRuleCode;
 	}
 }
