@@ -4792,8 +4792,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fees == null) {
 			fees = new ArrayList<>();
 		}
-		for (FinFeeDetail fee : financeDetail.getFinFeeDetails()) {
-			String advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+		
+		for (FinFeeDetail fee : fees) {
+			AdvanceRuleCode advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 
 			if (advanceRuleCode == null) {
 				continue;
@@ -4808,7 +4809,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 				FinExcessAmount finExcessAmount = new FinExcessAmount();
 				finExcessAmount.setFinReference(finReference);
-				finExcessAmount.setAmountType(advanceRuleCode);
+				finExcessAmount.setAmountType(advanceRuleCode.name());
 				finExcessAmount.setAmount(excessAmount);
 				finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
 				finExcessAmount.setReservedAmt(BigDecimal.ZERO);
