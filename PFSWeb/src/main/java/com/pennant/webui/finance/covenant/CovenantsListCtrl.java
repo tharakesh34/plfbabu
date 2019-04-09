@@ -569,6 +569,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				lc.setParent(item);
 				item.setAttribute("data", detail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onFinCovenantTypeItemDoubleClicked");
+				this.recordStatus.setValue(detail.getRecordStatus());
 				this.listBoxFinCovenantType.appendChild(item);
 			}
 		}
