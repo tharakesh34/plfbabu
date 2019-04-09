@@ -104,10 +104,10 @@ public class AdvanceEMI {
 	public enum AdvanceRuleCode {
 		ADVINT, ADVEMI, CASHCLT, DSF;
 
-		public static String getRule(String code) {
+		public static AdvanceRuleCode getRule(String code) {
 			for (AdvanceRuleCode type : values()) {
 				if (type.name().equals(code)) {
-					return type.name();
+					return type;
 				}
 			}
 			return null;
