@@ -1919,7 +1919,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(" CustEmpSts, CustSegment, CustSubSegment, CustAppDate, ");
 		selectSql.append(" CustParentCountry, CustResdCountry, CustRiskCountry, CustNationality, ");
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger ");
-		selectSql.append(" , CasteId, ReligionId, SubCategory");
+		selectSql.append(" , CasteId, ReligionId, SubCategory, CustShrtName");
 
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustID =:CustID");

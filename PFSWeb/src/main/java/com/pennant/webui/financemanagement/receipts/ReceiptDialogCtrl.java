@@ -159,6 +159,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -6269,35 +6270,6 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 					// UnAccrual Calculation
 					BigDecimal unaccrue = BigDecimal.ZERO;
-					/*
-					 * if(DateUtility.compare(curMonthStartDate, finMain.getFinStartDate()) <= 0){ curMonthStartDate =
-					 * finMain.getFinStartDate(); unaccrue =
-					 * lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid()); }else{ int curDays =
-					 * DateUtility.getDaysBetween(lastPrvSchd.getSchDate(), lastSchd.getSchDate()); int
-					 * daysTillTodayFromMS = DateUtility.getDaysBetween(curMonthStartDate, lastSchd.getSchDate());
-					 * 
-					 * // If Previous schedule date greater than current last installment month start date
-					 * if(DateUtility.compare(curMonthStartDate, lastPrvSchd.getSchDate()) < 0){
-					 * 
-					 * int daysFromMSToPrvInst = DateUtility.getDaysBetween(curMonthStartDate,
-					 * lastPrvSchd.getSchDate()); BigDecimal eachDayPft = lastPrvSchd.getProfitSchd().divide(new
-					 * BigDecimal(lastPrvSchd.getNoOfDays()), 9, RoundingMode.HALF_DOWN); BigDecimal totalPftFromPrvSchd
-					 * = eachDayPft.multiply(new BigDecimal(daysFromMSToPrvInst));
-					 * 
-					 * // If Last Previous Installment was paid already
-					 * if(lastPrvSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0){ BigDecimal balPrvSchdPft =
-					 * lastPrvSchd.getProfitSchd().subtract(lastPrvSchd.getSchdPftPaid());
-					 * if(totalPftFromPrvSchd.compareTo(balPrvSchdPft) > 0){ totalPftFromPrvSchd = balPrvSchdPft; } }
-					 * 
-					 * unaccrue = lastSchd.getProfitSchd().subtract(lastSchd.getSchdPftPaid()).add(totalPftFromPrvSchd);
-					 * }else{ unaccrue = (lastSchd.getProfitSchd().divide(new BigDecimal(curDays), 9,
-					 * RoundingMode.HALF_DOWN)).multiply(new BigDecimal(daysTillTodayFromMS));
-					 * if(lastSchd.getSchdPftPaid().compareTo(lastSchd.getProfitSchd().subtract(unaccrue)) > 0){
-					 * BigDecimal diff =
-					 * lastSchd.getSchdPftPaid().subtract(lastSchd.getProfitSchd().subtract(unaccrue)); unaccrue =
-					 * unaccrue.subtract(diff); } } unaccrue = CalculationUtil.roundAmount(unaccrue,
-					 * finMain.getCalRoundingMode(), finMain.getRoundingTarget()); }
-					 */
 
 					// Without Recalculation of Unaccrue to make exact value , subtracting total previous month accrual from actual total profit
 					//unaccrue = totalPftSchdNew.subtract(newProfitDetail.getPrvMthAmz());//IF UMFC EXISTS
@@ -6516,14 +6488,52 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					}
 
 					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);
-					aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+					
+					// Get LPP Receivable for Accounting
+					FinTaxReceivable taxRcv = getReceiptService().getTaxReceivable(this.finReference.getValue(), "LPP");
+					if(taxRcv != null){
+						
+						if(taxRcv.getReceivableAmount().compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0){
+							amountCodes.setPenaltyRcv(taxRcv.getReceivableAmount());
+						}else{
+							amountCodes.setPenaltyRcv(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived()));
+						}
+					}
 
+					aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+					
 					// LPP GST Amount setting
 					aeEvent.getDataMap().put("LPP_CGST_P", penaltyCGSTPaid);
 					aeEvent.getDataMap().put("LPP_SGST_P", penaltySGSTPaid);
 					aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
 					aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
-
+					
+					if(taxRcv != null){
+						if(taxRcv.getCGST().compareTo(penaltyCGSTPaid) < 0){
+							aeEvent.getDataMap().put("LPP_CGST_R", taxRcv.getCGST());
+						}else{
+							aeEvent.getDataMap().put("LPP_CGST_R", penaltyCGSTPaid);
+						}
+						
+						if(taxRcv.getSGST().compareTo(penaltySGSTPaid) < 0){
+							aeEvent.getDataMap().put("LPP_SGST_R", taxRcv.getSGST());
+						}else{
+							aeEvent.getDataMap().put("LPP_SGST_R", penaltySGSTPaid);
+						}
+						
+						if(taxRcv.getUGST().compareTo(penaltyUGSTPaid) < 0){
+							aeEvent.getDataMap().put("LPP_UGST_R", taxRcv.getUGST());
+						}else{
+							aeEvent.getDataMap().put("LPP_UGST_R", penaltyUGSTPaid);
+						}
+						
+						if(taxRcv.getIGST().compareTo(penaltyIGSTPaid) < 0){
+							aeEvent.getDataMap().put("LPP_IGST_R", taxRcv.getIGST());
+						}else{
+							aeEvent.getDataMap().put("LPP_IGST_R", penaltyIGSTPaid);
+						}
+					}
+					
 					aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 					returnSetEntries.addAll(aeEvent.getReturnDataSet());
 				}
@@ -6540,6 +6550,7 @@ public class ReceiptDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setInsWaived(BigDecimal.ZERO);
 				amountCodes.setPenaltyPaid(BigDecimal.ZERO);
 				amountCodes.setPenaltyWaived(BigDecimal.ZERO);
+				amountCodes.setPenaltyRcv(BigDecimal.ZERO);
 				amountCodes.setRpTds(BigDecimal.ZERO);
 				amountCodes.setAccruedPaid(BigDecimal.ZERO);
 				amountCodes.setUnAccruedPaid(BigDecimal.ZERO);

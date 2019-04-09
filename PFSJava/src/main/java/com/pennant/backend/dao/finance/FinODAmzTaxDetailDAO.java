@@ -43,8 +43,15 @@
 package com.pennant.backend.dao.finance;
 
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 
 public interface FinODAmzTaxDetailDAO {
 
 	long save(FinODAmzTaxDetail amzTaxDetail);
+
+	void saveTaxReceivable(FinTaxReceivable finTaxReceivable);
+
+	void updateTaxReceivable(FinTaxReceivable taxReceivable);
+
+	FinTaxReceivable getFinTaxReceivable(String finReference, String type);
 }

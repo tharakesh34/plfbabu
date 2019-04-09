@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -79,6 +78,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
+import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceRepayPriorityDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
@@ -118,6 +118,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -183,6 +184,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private BankDetailService bankDetailService;
 	private DepositDetailsDAO depositDetailsDAO;
 	private DepositChequesDAO depositChequesDAO;
+	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	
@@ -4853,6 +4855,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return getFinanceScheduleDetailDAO().getClosingBalance(finReference,valueDate);
 	}
 	
+	/**
+	 * Method for Fetching Tax Receivable for Accounting Purpose
+	 */
+	@Override
+	public FinTaxReceivable getTaxReceivable(String finReference, String taxFor){
+		return finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, taxFor);
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -5023,6 +5033,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setTempWorkflowId(long tempWorkflowId) {
 		this.tempWorkflowId = tempWorkflowId;
+	}
+
+	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
+		return finODAmzTaxDetailDAO;
+	}
+
+	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
+		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
 
 }

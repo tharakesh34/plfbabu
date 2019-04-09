@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
@@ -121,7 +122,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 					financeMain.setFinBranch(financeMainTemp.getFinBranch());
 				}
 			}
-			Branch fromBranch = getBranchDAO().getBranchById(financeMain.getFinBranch(), "");
+			Branch fromBranch = getBranchDAO().getBranchById(financeMain.getFinBranch(), "_AView");
 
 			if (fromBranch == null) {
 				return; // write this case as a error message
@@ -138,25 +139,52 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 					return; // write this case as a error message
 				}
 
-				gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
-				gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
-
 				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
 					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
 
-					if (StringUtils.isBlank(taxDetail.getHsnNumber())
-							|| StringUtils.isBlank(taxDetail.getNatureService())
-							|| StringUtils.isBlank(taxDetail.getPinCode())
-							|| StringUtils.isBlank(taxDetail.getAddressLine1())
-							|| StringUtils.isBlank(taxDetail.getTaxCode())) {
-						return; // write this case as a error message
+					if (ImplementationConstants.INVOICE_ADDRESS_ENTITY_BASIS) {
+
+						if (StringUtils.isBlank(taxDetail.getHsnNumber())
+								|| StringUtils.isBlank(taxDetail.getNatureService())
+								|| StringUtils.isBlank(taxDetail.getPinCode())
+								|| StringUtils.isBlank(taxDetail.getAddressLine1())
+								|| StringUtils.isBlank(taxDetail.getTaxCode())) {
+							return; // write this case as a error message
+						}
+						gstInvoiceTxn.setCompany_State_Code(companyProvince.getCPProvince());
+						gstInvoiceTxn.setCompany_State_Name(companyProvince.getCPProvinceName());
+						gstInvoiceTxn.setCompany_Address1(taxDetail.getAddressLine1());
+						gstInvoiceTxn.setCompany_PINCode(taxDetail.getPinCode());
+						gstInvoiceTxn.setCompany_Address2(taxDetail.getAddressLine2());
+						gstInvoiceTxn.setCompany_Address3(taxDetail.getAddressLine3());
+					} else {
+						if (StringUtils.isBlank(taxDetail.getHsnNumber())
+								|| StringUtils.isBlank(taxDetail.getNatureService())
+								|| StringUtils.isBlank(fromBranch.getPinCode())
+								|| StringUtils.isBlank(fromBranch.getBranchAddrHNbr())
+								|| StringUtils.isBlank(taxDetail.getTaxCode())
+								|| StringUtils.isBlank(fromBranch.getLovDescBranchProvinceName())) {
+							return; // write this case as a error message
+						}
+						
+						String address1 = fromBranch.getBranchAddrHNbr();
+						
+						if (StringUtils.isNotBlank(fromBranch.getBranchFlatNbr())) {
+							address1 = address1 + ", " + fromBranch.getBranchFlatNbr();
+						}
+						if (StringUtils.isNotBlank(fromBranch.getBranchAddrStreet())) {
+							address1 = address1 + ", " + fromBranch.getBranchAddrStreet();
+						}
+						
+						gstInvoiceTxn.setCompany_Address1(address1);
+						gstInvoiceTxn.setCompany_Address2(fromBranch.getBranchAddrLine1());
+						gstInvoiceTxn.setCompany_Address3(fromBranch.getBranchAddrLine2());					
+						gstInvoiceTxn.setCompany_PINCode(fromBranch.getPinCode());
+						gstInvoiceTxn.setCompany_State_Code(fromBranch.getBranchProvince());
+						gstInvoiceTxn.setCompany_State_Name(fromBranch.getLovDescBranchProvinceName());
 					}
 
 					gstInvoiceTxn.setCompany_GSTIN(taxDetail.getTaxCode());
-					gstInvoiceTxn.setCompany_Address1(taxDetail.getAddressLine1());
-					gstInvoiceTxn.setCompany_Address2(taxDetail.getAddressLine2());
-					gstInvoiceTxn.setCompany_Address3(taxDetail.getAddressLine3());
-					gstInvoiceTxn.setCompany_PINCode(taxDetail.getPinCode());
 					gstInvoiceTxn.setHsnNumber(taxDetail.getHsnNumber());
 					gstInvoiceTxn.setNatureService(taxDetail.getNatureService());
 				} else {

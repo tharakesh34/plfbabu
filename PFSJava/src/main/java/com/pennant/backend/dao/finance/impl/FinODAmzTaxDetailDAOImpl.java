@@ -45,12 +45,17 @@ package com.pennant.backend.dao.finance.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinFeeReceipt model</b> class.<br>
@@ -98,6 +103,67 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.debug("Leaving");
 		return finODAmzTaxDetail.getTaxSeqId();
+	}
+
+	@Override
+	public void saveTaxReceivable(FinTaxReceivable finTaxReceivable) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder insertSql = new StringBuilder();
+
+		insertSql.append(" INSERT INTO FinTaxReceivable");
+		insertSql.append(" (FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST ) ");
+		insertSql.append(" VALUES (:FinReference, :TaxFor, :ReceivableAmount, :CGST, :IGST, :UGST, :SGST) ");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTaxReceivable);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public FinTaxReceivable getFinTaxReceivable(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		FinTaxReceivable taxReceivable = new FinTaxReceivable();
+		taxReceivable.setFinReference(finReference);
+		taxReceivable.setTaxFor(type);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select FinReference, TaxFor, ReceivableAmount, CGST, IGST, UGST, SGST ");
+		selectSql.append(" FROM FinTaxReceivable");
+		selectSql.append(" WHERE  FinReference = :FinReference AND TaxFor=:TaxFor ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxReceivable);
+		RowMapper<FinTaxReceivable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTaxReceivable.class);
+
+		try {
+			taxReceivable = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			taxReceivable = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return taxReceivable;
+	}
+
+	@Override
+	public void updateTaxReceivable(FinTaxReceivable taxReceivable) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder updateSql = new StringBuilder("Update FinTaxReceivable");
+		updateSql.append(" Set ReceivableAmount = :ReceivableAmount, CGST = :CGST, IGST = :IGST, UGST = :UGST, SGST = :SGST ");
+		updateSql.append(" Where FinReference =:FinReference AND TaxFor=:TaxFor ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxReceivable);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 }

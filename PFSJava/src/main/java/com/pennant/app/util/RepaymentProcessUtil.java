@@ -1020,33 +1020,47 @@ public class RepaymentProcessUtil {
 
 		// preparing GST Invoice Report(Receivable Advises and Bounce Debit notes)
 		if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
-			List<ManualAdviseMovements> manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
-			for (ManualAdviseMovements movement : movements) {
-				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST())
-						.add(movement.getPaidUGST());
-				if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
-					ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(),
-							"_AView");
+			List<ManualAdviseMovements> movementList = new ArrayList<ManualAdviseMovements>();
+			FeeType bounceFee = null;
+			
+			// GST Invoice data resetting based on Accounting Process
+			String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
 
+			for (ManualAdviseMovements movement : movements) {
+				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
+				
+				if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
+					
+					ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+					boolean prepareInvoice = false;
 					if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
-						FeeType fee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
-						movement.setFeeTypeCode(fee.getFeeTypeCode());
-						movement.setFeeTypeDesc(fee.getFeeTypeDesc());
-						movement.setTaxApplicable(fee.isTaxApplicable());
-						movement.setTaxComponent(fee.getTaxComponent());
+						if (bounceFee == null) {
+							bounceFee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+						}
+						movement.setFeeTypeCode(bounceFee.getFeeTypeCode());
+						movement.setFeeTypeDesc(bounceFee.getFeeTypeDesc());
+						movement.setTaxApplicable(bounceFee.isTaxApplicable());
+						movement.setTaxComponent(bounceFee.getTaxComponent());
+						if (StringUtils.equals(isGSTInvOnDue, PennantConstants.NO)) {
+							prepareInvoice = true;
+						}
 					} else {
 						movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 						movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
 						movement.setTaxApplicable(manualAdvise.isTaxApplicable());
 						movement.setTaxComponent(manualAdvise.getTaxComponent());
+						prepareInvoice = true;
 					}
-					manualAdviseMovementsList.add(movement);
+					
+					if (prepareInvoice) {
+						movementList.add(movement);
+					}
 				}
 			}
 
-			if (CollectionUtils.isNotEmpty(manualAdviseMovementsList)) {
+			if (CollectionUtils.isNotEmpty(movementList)) {
 				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
-						manualAdviseMovementsList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
+						movementList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
 						financeMain.getFinReference(), false);
 			}
 		}

@@ -56,7 +56,6 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -71,6 +70,7 @@ import com.pennant.backend.dao.FinRepayQueue.FinRepayQueueDAO;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -79,26 +79,22 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinStatusDetail;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
-import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -127,8 +123,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	private LatePayBucketService latePayBucketService;
 	private AccrualService accrualService;
 	private ManualAdviseDAO manualAdviseDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private GSTInvoiceTxnService gstInvoiceTxnService;
+	private FeeTypeDAO feeTypeDAO;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -279,39 +274,74 @@ public class RepaymentPostingsUtil implements Serializable {
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		int count = 0;
-		List<ManualAdviseMovements> penalityMovements = new ArrayList<ManualAdviseMovements>();
-
+		ManualAdviseMovements movement = null;
+		FeeType feeType = null;
+		
 		for (int i = 0; i < finRepayQueueList.size(); i++) {
 
 			FinRepayQueue repayQueue = finRepayQueueList.get(i);
-			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0) {
+			if (repayQueue.getRpyDate().compareTo(dateValueDate) >= 0) {
+				continue;
+			}
 
-				aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, repayQueue,
-						dateValueDate, aeEvent, repayQueueHeader, count == 0, penalityMovements);
+			if(feeType == null){
+				feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+			}
 
-				count = count + 1;
-				if (!aeEvent.isPostingSucess()) {
-					return aeEvent;
+			if(movement == null){
+				movement = new ManualAdviseMovements();
+				movement.setFeeTypeCode(feeType.getFeeTypeCode());
+				movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
+				movement.setTaxApplicable(feeType.isTaxApplicable());
+				movement.setTaxComponent(feeType.getTaxComponent());
+			}
+
+			// GST Values
+			movement.setPaidCGST(movement.getPaidCGST().add(repayQueue.getPaidPenaltyCGST()));
+			movement.setPaidSGST(movement.getPaidSGST().add(repayQueue.getPaidPenaltySGST()));
+			movement.setPaidUGST(movement.getPaidUGST().add(repayQueue.getPaidPenaltyUGST()));
+			movement.setPaidIGST(movement.getPaidIGST().add(repayQueue.getPaidPenaltyIGST()));
+
+			// Paid and Waived Amounts 
+			movement.setMovementAmount(movement.getMovementAmount().add(repayQueue.getPenaltyPayNow()));
+			movement.setPaidAmount(movement.getPaidAmount().add(repayQueue.getPenaltyPayNow()));
+			movement.setWaivedAmount(movement.getWaivedAmount().add(repayQueue.getWaivedAmount()));
+
+		}
+
+		// GST Invoice Preparation for Penalty (Debt Note)
+		if (movement != null) {	
+
+			aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, movement,
+					dateValueDate, aeEvent, repayQueueHeader);
+
+			if (!aeEvent.isPostingSucess()) {
+				logger.debug("Leaving");
+				return aeEvent;
+			}
+			
+			//Overdue Details Updation for Paid Penalty
+			for (int i = 0; i < finRepayQueueList.size(); i++) {
+
+				FinRepayQueue repayQueue = finRepayQueueList.get(i);
+				if (repayQueue.getRpyDate().compareTo(dateValueDate) >= 0) {
+					continue;
 				}
+
+				FinODDetails detail = new FinODDetails();
+				detail.setFinReference(financeMain.getFinReference());
+				detail.setFinODSchdDate(repayQueue.getRpyDate());
+				detail.setFinODFor(repayQueue.getFinRpyFor());
+				detail.setTotPenaltyAmt(BigDecimal.ZERO);
+				detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
+				detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
+				detail.setTotWaived(repayQueue.getWaivedAmount());
+				getFinODDetailsDAO().updateTotals(detail);
+				
 			}
 		}
-
-		// GST Invoice Preparation for Penality (debit notes)
-		if (CollectionUtils.isNotEmpty(penalityMovements)) {
-			FinanceDetail financeDetail = new FinanceDetail();
-			FinScheduleData finScheduleData = new FinScheduleData();
-			finScheduleData.setFinanceMain(financeMain);
-			FinanceType financeType = this.financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "");
-			finScheduleData.setFinanceType(financeType);
-			financeDetail.setFinScheduleData(finScheduleData);
-			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
-					penalityMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
-					financeMain.getFinReference(), false);
-		}
-
+		
 		logger.debug("Leaving");
-
 		return aeEvent;
 	}
 
@@ -1776,20 +1806,10 @@ public class RepaymentPostingsUtil implements Serializable {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
 	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
-
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
-	}
-
-	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
-		this.gstInvoiceTxnService = gstInvoiceTxnService;
-	}
-
 }

@@ -89,6 +89,7 @@ public class AEAmountCodes {
 	private BigDecimal waiver = BigDecimal.ZERO;
 
 	private BigDecimal penaltyPaid = BigDecimal.ZERO;
+	private BigDecimal penaltyRcv = BigDecimal.ZERO;
 	private BigDecimal penaltyDue = BigDecimal.ZERO;
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal accrueTsfd = BigDecimal.ZERO;
@@ -1235,6 +1236,14 @@ public class AEAmountCodes {
 
 	public void setDealerCode(String dealerCode) {
 		this.dealerCode = dealerCode;
+	}
+
+	public BigDecimal getPenaltyRcv() {
+		return penaltyRcv;
+	}
+
+	public void setPenaltyRcv(BigDecimal penaltyRcv) {
+		this.penaltyRcv = penaltyRcv;
 	}
 
 	 

@@ -13,6 +13,7 @@ import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.core.TableType;
@@ -59,5 +60,7 @@ public interface ReceiptService {
 	//### 29-10-2018, Ticket id:124998
 	long CheckDedupSP(FinReceiptHeader receiptHeader, String purpose);
 	BigDecimal getClosingBalance(String finReference, Date valueDate);//## PSD Ticket id:124998,Receipt Upload
+
+	FinTaxReceivable getTaxReceivable(String finReference, String taxFor);
 	
 }

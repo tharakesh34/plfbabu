@@ -188,4 +188,7 @@ public class ImplementationConstants {
 	//If True, Makes Frequency Dates to empty for change gestation period
 	public static final boolean CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = false;
 
+	//GST Invoice Due basis/Receipt Basis
+	public static final boolean INVOICE_ADDRESS_ENTITY_BASIS = false; //Service Provider address should be on Entity basis
+
 }

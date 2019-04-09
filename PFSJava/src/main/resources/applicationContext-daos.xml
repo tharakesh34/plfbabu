@@ -5202,6 +5202,7 @@
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -6099,8 +6100,7 @@
 		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
-		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -6153,7 +6153,9 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="accountInterfaceService" ref="accountInterfaceService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<bean id="finODDetailsDAO"

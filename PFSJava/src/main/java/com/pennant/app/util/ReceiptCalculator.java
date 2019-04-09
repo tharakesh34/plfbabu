@@ -698,7 +698,6 @@ public class ReceiptCalculator implements Serializable {
 		if (penaltyBal.compareTo(BigDecimal.ZERO) > 0) {
 			receiptData.setPendingODC(penaltyBal);
 			receiptData.getAllocationMap().put(RepayConstants.ALLOCATION_ODC, penaltyBal);
-
 		}
 
 		// Fee Details

@@ -477,8 +477,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.hostFeeTypeCode.setMaxlength(50);
 
 		this.accountingSetID.setModuleName("AccountingSet");
-		this.accountingSetID.setValueColumn("EventCode");
-		this.accountingSetID.setDescColumn("lovDescEventCodeName");
+		this.accountingSetID.setValueColumn("AccountSetCode");
+		this.accountingSetID.setDescColumn("AccountSetCodeName");
 		this.accountingSetID.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.accountingSetID.setMandatoryStyle(false);
 
@@ -556,7 +556,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				this.row1.setVisible(false);
 			}
 			this.row2.setVisible(false);
-			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)) {
+			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC) &&
+					!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 				this.row3.setVisible(false);
 			}
 			if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)) {
@@ -945,12 +946,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.manualAdvice.setValue("");
 		this.accountingSetID.setValue("");
 		this.adviseType.setSelectedIndex(0);
-		this.active.setValue("");
+		this.active.setChecked(false);
 
 		this.taxApplicable.setChecked(false);
 		this.taxComponent.setSelectedIndex(0);
 
-		this.amortzReq.setValue("");
+		this.amortzReq.setChecked(false);
 		logger.debug("Leaving");
 	}
 
