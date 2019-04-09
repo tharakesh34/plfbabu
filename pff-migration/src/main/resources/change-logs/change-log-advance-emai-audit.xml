@@ -209,5 +209,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="4.0" author="Nageswar.p">
+		<addColumn tableName="adtloan_usl_org_ed">
+			<column name="instructionuid" type="number(18,0)"></column>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
