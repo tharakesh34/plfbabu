@@ -1933,7 +1933,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		List<JointAccountDetail> coApplist = financeDetail.getJountAccountDetailList();
 		for (JointAccountDetail jointAccountDetail : coApplist) {
-			jointAccountDetail.setCustomerDetails(customerDetail);
+			if (jointAccountDetail.getCustID() == customerDetail.getCustomer().getCustID()) {
+				jointAccountDetail.setCustomerDetails(customerDetail);
+				break;
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
