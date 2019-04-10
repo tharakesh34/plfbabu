@@ -57,9 +57,13 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinProfitDetail(getFinPftDetailRef(finReference, custpftDet));
 
 			// FINSCHDULE DETAILS
-			List<FinanceScheduleDetail> finSchdDetails = getFinanceScheduleDetailDAO()
-					.getFinScheduleDetails(finReference, TableType.MAIN_TAB.getSuffix(), false);
+			List<FinanceScheduleDetail> finSchdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
+					TableType.MAIN_TAB.getSuffix(), false);
 			finEODEvent.setFinanceScheduleDetails(finSchdDetails);
+
+			// Fin Excess Amounts
+			finEODEvent.setFinExcessAmounts(
+					finExcessAmountDAO.getAllExcessAmountsByRef(finReference, TableType.MAIN_TAB.getSuffix()));
 
 			setEventFlags(custEODEvent, finEODEvent);
 			custEODEvent.getFinEODEvents().add(finEODEvent);

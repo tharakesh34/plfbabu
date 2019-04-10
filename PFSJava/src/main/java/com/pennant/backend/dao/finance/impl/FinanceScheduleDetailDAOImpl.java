@@ -70,6 +70,7 @@ import com.pennant.backend.model.finance.ScheduleMapDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b> class.<br>
@@ -512,53 +513,53 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceScheduleDetail detail = new FinanceScheduleDetail();
 		detail.setId(id);
 
-		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
-		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
-		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
-		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ");
-		selectSql.append(" ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, ");
-		selectSql.append(" OrgPft , OrgPri, OrgEndBal,OrgPlanPft,");
-		selectSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt, ");
-		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
-		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
-		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
-		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
+		StringBuilder sql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
+		sql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
+		sql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
+		sql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ");
+		sql.append(" ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, ");
+		sql.append(" OrgPft , OrgPri, OrgEndBal,OrgPlanPft,");
+		sql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt, ");
+		sql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
+		sql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
+		sql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
+		sql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate, RecalLock ");
 
 		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-			selectSql.append(", AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
-			selectSql.append(" SuplRent , IncrCost , SuplRentPaid , IncrCostPaid, ");
-			selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
+			sql.append(", AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
+			sql.append(" SuplRent , IncrCost , SuplRentPaid , IncrCostPaid, ");
+			sql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
 		}
 
 		if (!isWIF) {
-			selectSql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
-			selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt ");
+			sql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
+			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt ");
 
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
-				selectSql.append(", WriteoffIncrCost, WriteoffSuplRent ");
+				sql.append(", WriteoffIncrCost, WriteoffSuplRent ");
 			}
 
-			selectSql.append(" From FinScheduleDetails");
+			sql.append(" From FinScheduleDetails");
 
 		} else {
-			selectSql.append(" From WIFFinScheduleDetails");
+			sql.append(" From WIFFinScheduleDetails");
 		}
 
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference  order by SchDate asc");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference  order by SchDate asc");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceScheduleDetail.class);
 
-		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(sql.toString(), beanParameters,
 				typeRowMapper);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finSchdDetails;
 	}
 

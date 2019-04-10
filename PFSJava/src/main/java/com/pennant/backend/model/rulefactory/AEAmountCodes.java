@@ -132,7 +132,7 @@ public class AEAmountCodes {
 	//For GL code
 	private String productCode;
 	private String dealerCode;
-	
+
 	// Late Payment Interest Fields
 	private BigDecimal lpi = BigDecimal.ZERO;
 	private BigDecimal lpiDue = BigDecimal.ZERO;
@@ -167,7 +167,15 @@ public class AEAmountCodes {
 	private String userBranch = "";
 	private String paymentType = "";
 
-	private BigDecimal imdAmount = BigDecimal.ZERO;;
+	private BigDecimal imdAmount = BigDecimal.ZERO;
+
+	// Advance EMI/Interest changes
+	private BigDecimal intAdjusted = BigDecimal.ZERO;
+	private BigDecimal intAdvAvailable = BigDecimal.ZERO;
+	private BigDecimal intDue = BigDecimal.ZERO;
+	private BigDecimal emiAdjusted = BigDecimal.ZERO;
+	private BigDecimal emiAdvAvailable = BigDecimal.ZERO;
+	private BigDecimal emiDue = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
@@ -669,6 +677,14 @@ public class AEAmountCodes {
 
 	public void setPenaltyPaid(BigDecimal penaltyPaid) {
 		this.penaltyPaid = penaltyPaid;
+	}
+
+	public BigDecimal getPenaltyRcv() {
+		return penaltyRcv;
+	}
+
+	public void setPenaltyRcv(BigDecimal penaltyRcv) {
+		this.penaltyRcv = penaltyRcv;
 	}
 
 	public BigDecimal getPenaltyDue() {
@@ -1222,6 +1238,7 @@ public class AEAmountCodes {
 	public void setInstTds(BigDecimal instTds) {
 		this.instTds = instTds;
 	}
+
 	public String getProductCode() {
 		return productCode;
 	}
@@ -1238,13 +1255,52 @@ public class AEAmountCodes {
 		this.dealerCode = dealerCode;
 	}
 
-	public BigDecimal getPenaltyRcv() {
-		return penaltyRcv;
+	public BigDecimal getIntAdjusted() {
+		return intAdjusted;
 	}
 
-	public void setPenaltyRcv(BigDecimal penaltyRcv) {
-		this.penaltyRcv = penaltyRcv;
+	public void setIntAdjusted(BigDecimal intAdjusted) {
+		this.intAdjusted = intAdjusted;
 	}
 
-	 
+	public BigDecimal getIntAdvAvailable() {
+		return intAdvAvailable;
+	}
+
+	public void setIntAdvAvailable(BigDecimal intAdvAvailable) {
+		this.intAdvAvailable = intAdvAvailable;
+	}
+
+	public BigDecimal getIntDue() {
+		return intDue;
+	}
+
+	public void setIntDue(BigDecimal intDue) {
+		this.intDue = intDue;
+	}
+
+	public BigDecimal getEmiAdjusted() {
+		return emiAdjusted;
+	}
+
+	public void setEmiAdjusted(BigDecimal emiAdjusted) {
+		this.emiAdjusted = emiAdjusted;
+	}
+
+	public BigDecimal getEmiAdvAvailable() {
+		return emiAdvAvailable;
+	}
+
+	public void setEmiAdvAvailable(BigDecimal emiAdvAvailable) {
+		this.emiAdvAvailable = emiAdvAvailable;
+	}
+
+	public BigDecimal getEmiDue() {
+		return emiDue;
+	}
+
+	public void setEmiDue(BigDecimal emiDue) {
+		this.emiDue = emiDue;
+	}
+
 }

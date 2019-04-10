@@ -81,6 +81,7 @@ import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
@@ -117,7 +118,7 @@ abstract public class ServiceHelper implements Serializable {
 	//Loan
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceMainDAO financeMainDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	protected FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RepayInstructionDAO repayInstructionDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
@@ -136,10 +137,11 @@ abstract public class ServiceHelper implements Serializable {
 	private FinODDetailsDAO finODDetailsDAO;
 	private ProvisionDAO provisionDAO;
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
-	private RuleExecutionUtil			ruleExecutionUtil;	
-	private RuleDAO						ruleDAO;
-	private FinanceProfitDetailDAO      profitDetailsDAO;
+	private RuleExecutionUtil ruleExecutionUtil;
+	private RuleDAO ruleDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	protected FinExcessAmountDAO finExcessAmountDAO;
 
 	@Autowired
 	private EODConfigDAO eodConfigDAO;
@@ -537,6 +539,7 @@ abstract public class ServiceHelper implements Serializable {
 	public RuleExecutionUtil getRuleExecutionUtil() {
 		return ruleExecutionUtil;
 	}
+
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
@@ -563,5 +566,9 @@ abstract public class ServiceHelper implements Serializable {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 }

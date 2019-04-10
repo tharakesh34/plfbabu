@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -446,6 +447,32 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			sql = null;
 		}
 	}
+	
+	@Override
+	public void updateUtilizedAndBalance(FinExcessAmount excessAmount) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append("Update FinExcessAmount");
+		sql.append(" set UtilisedAmt = :UtilisedAmt, BalanceAmt = :BalanceAmt");
+		sql.append(" Where ExcessID = :ExcessID");
+		logger.debug(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("UtilisedAmt", excessAmount.getUtilisedAmt());
+		source.addValue("BalanceAmt", excessAmount.getBalanceAmt());
+		source.addValue("ExcessID", excessAmount.getExcessID());
+
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+	}
 
 	@Override
 	public FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType) {
@@ -480,23 +507,27 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public List<FinExcessAmount> getAllExcessAmountsByRef(String finReference, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append(
-				" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmount.class);
 
-		List<FinExcessAmount> excessList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return excessList;
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 }

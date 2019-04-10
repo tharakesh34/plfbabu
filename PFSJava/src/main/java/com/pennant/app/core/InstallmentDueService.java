@@ -15,6 +15,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -27,9 +28,12 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
+import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -45,7 +49,7 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processDueDatePostings(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
@@ -64,10 +68,9 @@ public class InstallmentDueService extends ServiceHelper {
 
 			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
 			postInstallmentDues(finEODEvent, curSchd, custEODEvent, accountingID);
-
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -76,7 +79,7 @@ public class InstallmentDueService extends ServiceHelper {
 	 */
 	public void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, CustEODEvent custEODEvent,
 			long accountingID) throws Exception {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		String finReference = curSchd.getFinReference();
 
@@ -119,6 +122,10 @@ public class InstallmentDueService extends ServiceHelper {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
 
+		// tasks # >>Start Advance EMI and DSF
+		setAdvanceInterestOrEMI(amountCodes, finEODEvent, curSchd, valueDate);
+		// tasks # >>Start Advance EMI and DSF
+
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
@@ -146,15 +153,17 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
+
 		aeEvent = postAccountingEOD(aeEvent);
-		
+
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinanceMain(finEODEvent.getFinanceMain());
 			financeDetail.getFinScheduleData().setFinanceType(finEODEvent.getFinType());
 			financeDetail.setFinanceTaxDetail(null);
 			financeDetail.setCustomerDetails(null);
-			getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail, curSchd.getProfitSchd());
+			getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
+					curSchd.getProfitSchd());
 		}
 
 		//Accrual posted on the installment due postings
@@ -164,7 +173,85 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setAdvanceInterestOrEMI(AEAmountCodes amountCodes, FinEODEvent finEODEvent,
+			FinanceScheduleDetail curSchd, Date valueDate) {
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		AdvanceType advanceType;
+
+		if (valueDate.compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+			advanceType = AdvanceType.getType(fm.getGrcAdvType());
+		} else {
+			advanceType = AdvanceType.getType(fm.getAdvType());
+		}
+
+		if (advanceType == null) {
+			return;
+		}
+
+		BigDecimal intAdjusted = BigDecimal.ZERO;
+		BigDecimal emiAdjusted = BigDecimal.ZERO;
+		BigDecimal intAdvAvailable = BigDecimal.ZERO;
+		BigDecimal emiAdvAvailable = BigDecimal.ZERO;
+		BigDecimal intDue = BigDecimal.ZERO;
+		BigDecimal emiDue = BigDecimal.ZERO;
+		BigDecimal schdPriDue = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+		BigDecimal schdIntDue = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
+
+		switch (advanceType) {
+		case UT:
+		case UF:
+		case AF:
+			for (FinExcessAmount excessAmount : finEODEvent.getFinExcessAmounts()) {
+				if (AdvanceRuleCode.getRule(excessAmount.getAmountType()) == AdvanceRuleCode.ADVINT) {
+					intAdvAvailable = excessAmount.getBalanceAmt();
+					break;
+				}
+			}
+
+			intDue = schdIntDue;
+			if (intAdvAvailable.compareTo(intDue) >= 0) {
+				intAdjusted = intDue;
+			} else {
+				intAdjusted = intAdvAvailable;
+			}
+
+			intAdvAvailable = intAdvAvailable.subtract(intAdjusted);
+			intDue = intDue.subtract(intAdjusted);
+
+			amountCodes.setIntAdjusted(intAdjusted);
+			amountCodes.setIntAdvAvailable(intAdvAvailable);
+			amountCodes.setIntDue(intDue);
+			break;
+		case AE:
+			for (FinExcessAmount excessAmount : finEODEvent.getFinExcessAmounts()) {
+				if (AdvanceRuleCode.getRule(excessAmount.getAmountType()) == AdvanceRuleCode.ADVEMI) {
+					emiAdvAvailable = excessAmount.getBalanceAmt();
+					break;
+				}
+			}
+
+			emiDue = schdPriDue;
+			if (emiAdvAvailable.compareTo(emiDue) >= 0) {
+				emiAdjusted = emiDue;
+			} else {
+				emiAdjusted = emiAdvAvailable;
+			}
+
+			emiAdvAvailable = emiAdvAvailable.subtract(emiAdjusted);
+			emiDue = emiDue.subtract(emiAdjusted);
+
+			amountCodes.setEmiAdjusted(emiAdjusted);
+			amountCodes.setEmiAdvAvailable(emiAdvAvailable);
+			amountCodes.setEmiDue(emiDue);
+
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -176,7 +263,7 @@ public class InstallmentDueService extends ServiceHelper {
 	 */
 	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail financeDetail,
 			FinanceProfitDetail profiDetails, Date appDate, boolean post, String postBranch) throws InterfaceException {
-		logger.debug(" Entering ");
+		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
 		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
@@ -320,18 +407,19 @@ public class InstallmentDueService extends ServiceHelper {
 			if (post) {
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
-					getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail, curSchd.getProfitSchd());
+					getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
+							curSchd.getProfitSchd());
 				}
 			} else {
 				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);
 				datasets.addAll(aeEvent.getReturnDataSet());
 			}
-			
+
 		}
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 		return datasets;
 	}
-	
+
 	public GSTInvoiceTxnService getGstInvoiceTxnService() {
 		return gstInvoiceTxnService;
 	}

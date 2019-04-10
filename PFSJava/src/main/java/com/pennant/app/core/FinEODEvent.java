@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -27,18 +28,19 @@ public class FinEODEvent implements Serializable {
 
 	private FinanceMain financeMain = new FinanceMain();
 	private FinanceType finType = new FinanceType();
-	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>(1);
-	private List<RepayInstruction> RepayInstructions = new ArrayList<RepayInstruction>(1);
+	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<>(1);
+	private List<RepayInstruction> RepayInstructions = new ArrayList<>(1);
 	private FinanceProfitDetail finProfitDetail = new FinanceProfitDetail();
 	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(1);
-	private List<OverdueChargeRecovery> odcRecoveries = new ArrayList<OverdueChargeRecovery>(1);
+	private List<OverdueChargeRecovery> odcRecoveries = new ArrayList<>(1);
 	private FinODPenaltyRate penaltyrate;
-	private List<FinanceDisbursement> financeDisbursements = new ArrayList<FinanceDisbursement>(1);
-	private List<FinFeeScheduleDetail> finFeeScheduleDetails = new ArrayList<FinFeeScheduleDetail>(1);
-	private List<FinSchFrqInsurance> finSchFrqInsurances = new ArrayList<FinSchFrqInsurance>(1);
-	private List<PresentmentDetail> presentmentDetails = new ArrayList<PresentmentDetail>(1);
-	private List<ReturnDataSet> returnDataSet = new ArrayList<ReturnDataSet>(1);
-	private List<Provision> provisions = new ArrayList<Provision>(1);
+	private List<FinanceDisbursement> financeDisbursements = new ArrayList<>(1);
+	private List<FinFeeScheduleDetail> finFeeScheduleDetails = new ArrayList<>(1);
+	private List<FinSchFrqInsurance> finSchFrqInsurances = new ArrayList<>(1);
+	private List<PresentmentDetail> presentmentDetails = new ArrayList<>(1);
+	private List<ReturnDataSet> returnDataSet = new ArrayList<>(1);
+	private List<Provision> provisions = new ArrayList<>(1);
+	private List<FinExcessAmount> finExcessAmounts = new ArrayList<>(1);
 	private Date eventFromDate;
 	private Date eventToDate;
 	private Date recalFromDate;
@@ -394,6 +396,14 @@ public class FinEODEvent implements Serializable {
 
 	public void setProvisions(List<Provision> provisions) {
 		this.provisions = provisions;
+	}
+	
+	public List<FinExcessAmount> getFinExcessAmounts() {
+		return finExcessAmounts;
+	}
+
+	public void setFinExcessAmounts(List<FinExcessAmount> finExcessAmounts) {
+		this.finExcessAmounts = finExcessAmounts;
 	}
 
 	public String getAMZMethod() {

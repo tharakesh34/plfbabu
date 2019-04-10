@@ -1,10 +1,11 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.pennant.backend.model.Entity;
-
-public class FinExcessAmount implements Entity {
+public class FinExcessAmount implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private long excessID = 0;
 	private String finReference;
@@ -13,32 +14,32 @@ public class FinExcessAmount implements Entity {
 	private BigDecimal utilisedAmt = BigDecimal.ZERO;
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
+	private String rcdAction;
 
 	public FinExcessAmount() {
-
+		super();
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("rcdAction");
+		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	@Override
 	public boolean isNew() {
 		return false;
 	}
 
-	@Override
 	public long getId() {
 		return excessID;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.excessID = id;
 	}
 
 	public long getExcessID() {
-		return excessID;
+		return getId();
 	}
 
 	public void setExcessID(long excessID) {
@@ -93,4 +94,12 @@ public class FinExcessAmount implements Entity {
 		this.balanceAmt = balanceAmt;
 	}
 
+	public String getRcdAction() {
+		return rcdAction;
+	}
+
+	public void setRcdAction(String rcdAction) {
+		this.rcdAction = rcdAction;
+	}
+	
 }

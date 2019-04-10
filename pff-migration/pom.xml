@@ -110,7 +110,7 @@
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLFAuxilo</pfs.liquibase.username>
+				<pfs.liquibase.username>PLF_AUXILO_UAT</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
@@ -120,7 +120,7 @@
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.1.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>plfAuxiloAudit</pfs.liquibase.username>
+				<pfs.liquibase.username>PLF_AUXILO_UAT</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>

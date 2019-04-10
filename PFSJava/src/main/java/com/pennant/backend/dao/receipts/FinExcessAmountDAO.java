@@ -43,4 +43,6 @@ public interface FinExcessAmountDAO {
 
 	List<FinExcessAmount> getAllExcessAmountsByRef(String finReference, String type);
 
+	void updateUtilizedAndBalance(FinExcessAmount excessAmount);
+
 }
