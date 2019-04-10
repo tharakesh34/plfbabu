@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -119,7 +120,8 @@ import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 /**
- * This is the controller class for the /WEB-INF/pages/LMTMasters/FinCovenantTypeDetail/finCovenantTypesDetailDialog.zul
+ * This is the controller class for the
+ * /WEB-INF/pages/LMTMasters/FinCovenantTypeDetail/finCovenantTypesDetailDialog.zul
  * file.
  */
 public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
@@ -127,8 +129,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	private static final Logger logger = Logger.getLogger(CovenantsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding compoonent with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * compoonent with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window covenantDialogWindow;
 	protected Combobox category;
@@ -211,8 +214,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected FinCovenantTypeDetail object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected FinCovenantTypeDetail
+	 * object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -359,7 +363,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param aFinCovenantTypeDetail
 	 * @throws InterruptedException
@@ -535,7 +540,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
@@ -707,7 +713,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.documentRecievedDate.setValue(covenant.getDocumentReceivedDate());
 		}
 
-		//onCheckDocumentRecieved();
+		// onCheckDocumentRecieved();
 
 		if (covenant.getNextFrequencyDate() != null) {
 			this.covenantNextFrequencyDate.setValue(covenant.getNextFrequencyDate());
@@ -726,7 +732,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.alertsRequired.setChecked(false);
 		}
 
-		//onCheckAlertsRequired();
+		// onCheckAlertsRequired();
 
 		this.remarks.setValue(covenant.getAdditionalField1());
 		this.standardValue.setValue(covenant.getAdditionalField2());
@@ -1520,8 +1526,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.mandRole.setValue(dataObject.toString());
 			this.mandRole.setDescription("");
 			this.mandRole.setAttribute("MandRole", null);
-			//this.pdd.setDisabled(false);
-			//this.otc.setDisabled(false);
+			// this.pdd.setDisabled(false);
+			// this.otc.setDisabled(false);
 		} else {
 			SecurityRole secRole = (SecurityRole) dataObject;
 			if (secRole != null) {
@@ -1739,9 +1745,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				this.pdd.setDisabled(false);
 				this.otc.setDisabled(false);
 			}
-		}
-		else
-		{
+		} else {
 			this.pdd.setDisabled(false);
 			this.pdd.setChecked(false);
 			this.otc.setDisabled(false);
@@ -1801,9 +1805,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		if (this.documentRecieved.isChecked() && (this.pdd.isChecked() || this.otc.isChecked()
 				|| (this.mandRole.getValue() != null && !this.mandRole.getValue().equals("")))) {
-			//this.btnCovenantReceived.setDisabled(false);
+			// this.btnCovenantReceived.setDisabled(false);
 		} else {
-			//this.btnCovenantReceived.setDisabled(true);
+			// this.btnCovenantReceived.setDisabled(true);
 		}
 	}
 
@@ -1889,12 +1893,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	}
 
 	private void disablePDD() {
-		//this.covenantGraceDays.setDisabled(true);
+		// this.covenantGraceDays.setDisabled(true);
 		this.notifyTo.setButtonDisabled(true);
-		//this.alertDays.setDisabled(true);
-		//this.covenantGraceDays.setValue(0);
+		// this.alertDays.setDisabled(true);
+		// this.covenantGraceDays.setValue(0);
 		this.notifyTo.setValue(null);
-		//this.alertDays.setValue(0);
+		// this.alertDays.setValue(0);
 	}
 
 	public void onSelectFrequency(String frequencyType) {
@@ -2008,6 +2012,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		}
 
 		ArrayList<DocumentDetails> list = new ArrayList<>();
+		Map<String, DocumentDetails> map = new HashMap<>();
+
 		String finreference = financedetail.getFinScheduleData().getFinanceMain().getFinReference();
 
 		for (CovenantDocument covenantDocument : covenantDocuments) {
@@ -2019,18 +2025,53 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				details.setDocModule(FinanceConstants.MODULE_NAME);
 				details.setDocName(covenantDocument.getDocName());
 				details.setReferenceId(finreference);
+				details.setDocReceived(true);
 				list.add(covenantDocument.getDocumentDetail());
 			}
 		}
 
+		List<DocumentDetails> documents = null;
+
 		if (documentDetailDialogCtrl != null) {
-			List<DocumentDetails> documents = documentDetailDialogCtrl.getDocumentDetailsList();
-			if (documents == null) {
-				documents = new ArrayList<>();
+			documents = documentDetailDialogCtrl.getDocumentDetailsList();
+		}
+
+		if (documents == null) {
+			documents = new ArrayList<>();
+		}
+
+		for (DocumentDetails currentDoc : documents) {
+			if (!FinanceConstants.MODULE_NAME.equals(currentDoc.getDocModule())) {
+				continue;
 			}
 
-			documents.addAll(list);
+			DocumentDetails item = null;
+			for (DocumentDetails covenantDoc : list) {
+				if (StringUtils.equals(covenantDoc.getDocCategory(), currentDoc.getDocCategory())) {
+					item = currentDoc;
+					item.setRecordStatus(covenantDoc.getRecordStatus());
+					item.setRecordType(covenantDoc.getRecordType());
+					item.setVersion(covenantDoc.getVersion());
+					item.setDocModule(FinanceConstants.MODULE_NAME);
+					item.setDocName(covenantDoc.getDocName());
+					item.setReferenceId(finreference);
+				} else {
+					item = covenantDoc;
+				}
 
+				map.put(item.getDocCategory(), item);
+
+			}
+		}
+
+		if (map.isEmpty() && !list.isEmpty()) {
+			documents.addAll(list);
+		}
+		for (Entry<String, DocumentDetails> doc : map.entrySet()) {
+			documents.add(doc.getValue());
+		}
+
+		if (documentDetailDialogCtrl != null) {
 			documentDetailDialogCtrl.doFillDocumentDetails(documents);
 		} else {
 			this.covenant.setDocumentDetails(list);
@@ -2193,7 +2234,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.covenantGraceDueDate.setText(null);
 		}
 
-		
 	}
 
 	public void onSelect$alertType(Event event) {

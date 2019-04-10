@@ -455,13 +455,13 @@ public class FinanceEnquiry implements java.io.Serializable {
 		this.finAssetValue = finAssetValue;
 	}
 
-	/*public int getOdDays() {
+	public int getOdDays() {
 		return odDays;
 	}
 
 	public void setOdDays(int odDays) {
 		this.odDays = odDays;
-	}*/
+	}
 	
 	public int getCurODDays() {
 		return curODDays;
