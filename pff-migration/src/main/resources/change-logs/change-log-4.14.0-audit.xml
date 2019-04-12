@@ -39,11 +39,7 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	<changeSet id="02" author="Varaprasad K">
-		<addColumn tableName="AdtLOAN_PO_ORG_ED">
-			<column name="InstructionUID" type="bigint"/>
-		</addColumn>
-	</changeSet>
+	
 	
 	
 </databaseChangeLog>
