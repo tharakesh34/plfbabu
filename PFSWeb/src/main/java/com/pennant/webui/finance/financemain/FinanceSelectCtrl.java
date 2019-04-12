@@ -3165,7 +3165,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			this.searchObject.addTabelName("CovenantsMaintenance_View");
 		}
-		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
+		else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
 			this.searchObject.addTabelName("FinoptionsMaintenance_View");
 		}
 
