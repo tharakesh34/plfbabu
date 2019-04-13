@@ -29,6 +29,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
+import com.pennant.backend.util.AdvancePaymentUtil;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -187,7 +188,7 @@ public class InstallmentDueService extends ServiceHelper {
 		advancePayment.setSchdIntDue(schdIntDue);
 		advancePayment.setValueDate(valueDate);
 
-		AdvancePaymentCalculator.calculateDue(advancePayment);
+		AdvancePaymentUtil.calculateDue(advancePayment);
 
 		amountCodes.setIntAdjusted(advancePayment.getIntAdjusted());
 		amountCodes.setIntAdvAvailable(advancePayment.getIntAdvAvailable());
@@ -325,7 +326,10 @@ public class InstallmentDueService extends ServiceHelper {
 			}
 			
 			// tasks # >>Start Advance EMI and DSF
-			setAdvanceDuePostings(main, curSchd, amountCodes, appDate, new ArrayList<>());
+			// FIXME MUR>> Need to check the value date for back datted loans
+			List<FinExcessAmount> excessAmounts = AdvancePaymentUtil.getExcessAmounts(main.getFinReference(),
+					financeDetail.getFinScheduleData().getFinFeeDetailList());
+			setAdvanceDuePostings(main, curSchd, amountCodes, appDate, excessAmounts);
 			// tasks # >>Start Advance EMI and DSF
 
 			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
