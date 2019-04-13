@@ -116,7 +116,7 @@ import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
