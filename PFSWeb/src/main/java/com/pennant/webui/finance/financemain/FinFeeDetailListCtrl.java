@@ -439,7 +439,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
 
 		List<FinFeeDetail> finFeeDetailActualList = financeDetail.getFinScheduleData().getFinFeeDetailActualList();
-		
+
 		if (!financeDetail.isNewRecord()) {
 			if (CollectionUtils.isNotEmpty(finFeeDetailActualList)) {
 				for (FinFeeDetail finFee : finFeeDetailActualList) {
@@ -1836,13 +1836,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				} else {
 					paidBox.setDisabled(true);
 				}
-				
-				
+
 				if (AdvanceRuleCode.ADVEMI.name().equals(finFeeDetail.getFeeTypeCode())
 						|| AdvanceRuleCode.ADVINT.name().equals(finFeeDetail.getFeeTypeCode())) {
 					paidBox.setDisabled(true);
 				}
-				
+
 				paidBox.setId(getComponentId(FEE_UNIQUEID_PAID_AMOUNT, finFeeDetail));
 				paidBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmount(), formatter));
 				lc = new Listcell();
@@ -2229,13 +2228,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		//PSD Ticket : 133623 (Early Settlement Due Payment Details Refreshed any changes done on Fees)
 		// Can be utilized only on Receipts Process
-		/*if (isReceiptsProcess && this.financeMainDialogCtrl != null) {
-			try {
-				getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl());
-			} catch (Exception e) {
-				logger.info(e);
-			}
-		}*/
+		/*
+		 * if (isReceiptsProcess && this.financeMainDialogCtrl != null) { try {
+		 * getFinanceMainDialogCtrl().getClass().getMethod("onFeeAmountChange").invoke(getFinanceMainDialogCtrl()); }
+		 * catch (Exception e) { logger.info(e); } }
+		 */
 
 		logger.debug("Leaving");
 	}
@@ -2729,8 +2726,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving");
 	}
 
-	public void doExecuteFeeCharges(boolean isSchdCal, FinScheduleData finScheduleData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doExecuteFeeCharges(boolean isSchdCal, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
 		Clients.clearWrongValue(this.listBoxFeeDetail.getChildren());
@@ -2887,7 +2883,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		String custDftBranch = null;
 		String highPriorityState = null;
 		String highPriorityCountry = null;
-		
+
 		if (financeDetail.getCustomerDetails() != null) {
 			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
 
@@ -2903,7 +2899,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		}
-		
+
 		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
 				branch);
@@ -3177,7 +3173,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 2,
 				RoundingMode.HALF_DOWN);
-		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
+				financeMain.getRoundingTarget());
 		logger.debug("Leaving");
 
 		return calculatedAmt;
