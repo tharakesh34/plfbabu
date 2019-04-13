@@ -277,8 +277,8 @@ import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceStage;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceStage;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -6255,6 +6255,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
+		
+		if (StringUtils.isNotBlank(moduleDefiner)) {
+			List<FinServiceInstruction> finServiceInstructions = null;
+
+			if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				finServiceInstructions = getFinanceDetail().getFinScheduleData().getFinServiceInstructions();
+
+				if (CollectionUtils.isEmpty(finServiceInstructions)) {
+					MessageUtil.showError("There are no changes to save, so please close the window");
+					return;
+				}
+			}
+		}
 
 		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
 			String currUserId = getFinanceDetailService()
@@ -17546,9 +17559,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
 			chequeDetailDialogCtrl.setUpdatedFinanceSchedules(finScheduleData.getFinanceScheduleDetails());
 		}
-
+		
+		
+		// FIXME MUR>> CAN BE REMOVED 
 		if (finFeeDetailListCtrl != null) {
-			finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
+			//finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
 		}
 
 		logger.debug(Literal.LEAVING);
