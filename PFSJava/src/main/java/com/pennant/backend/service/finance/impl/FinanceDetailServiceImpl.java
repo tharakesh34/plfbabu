@@ -239,7 +239,7 @@ import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvancePaymentUtil;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -4720,7 +4720,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// tasks # >>Start Advance EMI and DSF
-			advanceEMIExcessMovement(financeDetail, finReference);
+			saveAdvancePayExcessAmounts(financeDetail, finReference);
 			// tasks # >>Start Advance EMI and DSF
 
 			// Mail Alert Notification for Customer/Dealer/Provider...etc
@@ -4786,37 +4786,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return auditHeader;
 	}
-
-	private void advanceEMIExcessMovement(FinanceDetail financeDetail, String finReference) {
+	
+	private void saveAdvancePayExcessAmounts(FinanceDetail financeDetail, String finReference) {
 		List<FinFeeDetail> fees = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		if (fees == null) {
-			fees = new ArrayList<>();
-		}
-		
-		for (FinFeeDetail fee : fees) {
-			AdvanceRuleCode advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
-
-			if (advanceRuleCode == null) {
-				continue;
-			}
-
-			BigDecimal excessAmount = fee.getActualAmountOriginal();
-
-			if (excessAmount == null) {
-				excessAmount = BigDecimal.ZERO;
-			}
-
-			if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-				FinExcessAmount finExcessAmount = new FinExcessAmount();
-				finExcessAmount.setFinReference(finReference);
-				finExcessAmount.setAmountType(advanceRuleCode.name());
-				finExcessAmount.setAmount(excessAmount);
-				finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
-				finExcessAmount.setReservedAmt(BigDecimal.ZERO);
-				finExcessAmount.setBalanceAmt(excessAmount);
+		for (FinExcessAmount finExcessAmount : AdvancePaymentUtil.getExcessAmounts(finReference, fees)) {
+			if (finExcessAmount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
 				FinExcessAmountDAO.saveExcess(finExcessAmount);
 			}
 		}
+
 	}
 
 	public String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks,
@@ -10769,6 +10747,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getNextUserId(finReference);
 	}
 
+	//FinAsset details
+	@Override
+	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
+		return getFinAssetTypeDAO().getFinAssetTypesByFinRef(reference, type);
+	}
+
+	@Override
+	public List<Integer> getFinanceDisbSeqs(String finReferecne, boolean isWIF) {
+		return getFinanceDisbursementDAO().getFinanceDisbSeqs(finReferecne, "", isWIF);
+	}
+
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
 	}
@@ -10855,12 +10844,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setHoldDisbursementDAO(HoldDisbursementDAO holdDisbursementDAO) {
 		this.holdDisbursementDAO = holdDisbursementDAO;
-	}
-
-	//FinAsset details
-	@Override
-	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
-		return getFinAssetTypeDAO().getFinAssetTypesByFinRef(reference, type);
 	}
 
 }

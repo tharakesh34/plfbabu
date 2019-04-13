@@ -97,8 +97,8 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -1480,8 +1480,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		String advType = fm.getAdvType();
 		int advTerms = fm.getAdvTerms();
 
-		if ((grcAdvType == null && advType == null) || !(advanceRuleCode.name().equals(finTypeCode)
-				&& AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent))) {
+		if ((grcAdvType == null && advType == null) || !(advanceRuleCode.name().equals(finTypeCode))) {
 			return;
 		}
 
@@ -1495,18 +1494,23 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		BigDecimal advanceIntrest = BigDecimal.ZERO;
 		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
 		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
+		
+		if(AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent)) {
+			List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+			if (fm.getGrcAdvType() != null) {
+				graceAdvanceIntrest = getAdvanceInterst("GRACE", grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
+			}
 
-		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
-
-		if (fm.getGrcAdvType() != null) {
-			graceAdvanceIntrest = getAdvanceInterst("GRACE", grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
+			if (fm.getAdvType() != null) {
+				repayAdvanceIntrest = getAdvanceInterst("REPAY", advTerms, gracePeriodEndDate, advanceType, schedules);
+			}
+		} else {
+			
+			// FIXME MUR Advance EMI
+			advanceIntrest = finScheduleData.getPftChg();
 		}
 
-		if (fm.getAdvType() != null) {
-			repayAdvanceIntrest = getAdvanceInterst("REPAY", advTerms, gracePeriodEndDate, advanceType, schedules);
-		}
-
-		advanceIntrest = graceAdvanceIntrest.add(repayAdvanceIntrest);
+		advanceIntrest = advanceIntrest.add(graceAdvanceIntrest).add(repayAdvanceIntrest);
 
 		fee.setActualAmount(advanceIntrest);
 		fee.setCalculatedAmount(advanceIntrest);
