@@ -15,6 +15,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.model.finance.AdvancePayment;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -28,8 +29,6 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -123,7 +122,7 @@ public class InstallmentDueService extends ServiceHelper {
 		}
 
 		// tasks # >>Start Advance EMI and DSF
-		setAdvanceInterestOrEMI(amountCodes, finEODEvent, curSchd, valueDate);
+		setAdvanceDuePostings(finEODEvent.getFinanceMain(), curSchd, amountCodes, valueDate, finEODEvent.getFinExcessAmounts());
 		// tasks # >>Start Advance EMI and DSF
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -176,82 +175,26 @@ public class InstallmentDueService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void setAdvanceInterestOrEMI(AEAmountCodes amountCodes, FinEODEvent finEODEvent,
-			FinanceScheduleDetail curSchd, Date valueDate) {
-		FinanceMain fm = finEODEvent.getFinanceMain();
-		AdvanceType advanceType;
+	private void setAdvanceDuePostings(FinanceMain fm, FinanceScheduleDetail curSchd, AEAmountCodes amountCodes, Date valueDate, List<FinExcessAmount> excessAmounts) {
+		AdvancePayment advancePayment = null;
 
-		if (valueDate.compareTo(fm.getGrcPeriodEndDate()) <= 0) {
-			advanceType = AdvanceType.getType(fm.getGrcAdvType());
-		} else {
-			advanceType = AdvanceType.getType(fm.getAdvType());
-		}
-
-		if (advanceType == null) {
-			return;
-		}
-
-		BigDecimal intAdjusted = BigDecimal.ZERO;
-		BigDecimal emiAdjusted = BigDecimal.ZERO;
-		BigDecimal intAdvAvailable = BigDecimal.ZERO;
-		BigDecimal emiAdvAvailable = BigDecimal.ZERO;
-		BigDecimal intDue = BigDecimal.ZERO;
-		BigDecimal emiDue = BigDecimal.ZERO;
 		BigDecimal schdPriDue = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
 		BigDecimal schdIntDue = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 
-		switch (advanceType) {
-		case UT:
-		case UF:
-		case AF:
-			for (FinExcessAmount excessAmount : finEODEvent.getFinExcessAmounts()) {
-				if (AdvanceRuleCode.getRule(excessAmount.getAmountType()) == AdvanceRuleCode.ADVINT) {
-					intAdvAvailable = excessAmount.getBalanceAmt();
-					break;
-				}
-			}
+		advancePayment = new AdvancePayment(fm.getGrcAdvType(), fm.getAdvType(), fm.getGrcPeriodEndDate());
+		advancePayment.setExcessAmounts(excessAmounts);
+		advancePayment.setSchdPriDue(schdPriDue);
+		advancePayment.setSchdIntDue(schdIntDue);
+		advancePayment.setValueDate(valueDate);
 
-			intDue = schdIntDue;
-			if (intAdvAvailable.compareTo(intDue) >= 0) {
-				intAdjusted = intDue;
-			} else {
-				intAdjusted = intAdvAvailable;
-			}
+		AdvancePaymentCalculator.calculateDue(advancePayment);
 
-			intAdvAvailable = intAdvAvailable.subtract(intAdjusted);
-			intDue = intDue.subtract(intAdjusted);
-
-			amountCodes.setIntAdjusted(intAdjusted);
-			amountCodes.setIntAdvAvailable(intAdvAvailable);
-			amountCodes.setIntDue(intDue);
-			break;
-		case AE:
-			for (FinExcessAmount excessAmount : finEODEvent.getFinExcessAmounts()) {
-				if (AdvanceRuleCode.getRule(excessAmount.getAmountType()) == AdvanceRuleCode.ADVEMI) {
-					emiAdvAvailable = excessAmount.getBalanceAmt();
-					break;
-				}
-			}
-
-			emiDue = schdPriDue;
-			if (emiAdvAvailable.compareTo(emiDue) >= 0) {
-				emiAdjusted = emiDue;
-			} else {
-				emiAdjusted = emiAdvAvailable;
-			}
-
-			emiAdvAvailable = emiAdvAvailable.subtract(emiAdjusted);
-			emiDue = emiDue.subtract(emiAdjusted);
-
-			amountCodes.setEmiAdjusted(emiAdjusted);
-			amountCodes.setEmiAdvAvailable(emiAdvAvailable);
-			amountCodes.setEmiDue(emiDue);
-
-			break;
-
-		default:
-			break;
-		}
+		amountCodes.setIntAdjusted(advancePayment.getIntAdjusted());
+		amountCodes.setIntAdvAvailable(advancePayment.getIntAdvAvailable());
+		amountCodes.setIntDue(advancePayment.getIntDue());
+		amountCodes.setEmiAdjusted(advancePayment.getEmiAdjusted());
+		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
+		amountCodes.setEmiDue(advancePayment.getEmiDue());
 	}
 
 	/**
@@ -380,6 +323,10 @@ public class InstallmentDueService extends ServiceHelper {
 			if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 				amountCodes.setPriSB(BigDecimal.ZERO);
 			}
+			
+			// tasks # >>Start Advance EMI and DSF
+			setAdvanceDuePostings(main, curSchd, amountCodes, appDate, new ArrayList<>());
+			// tasks # >>Start Advance EMI and DSF
 
 			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
