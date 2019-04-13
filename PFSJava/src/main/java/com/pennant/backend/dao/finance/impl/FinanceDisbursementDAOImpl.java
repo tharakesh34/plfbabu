@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -63,6 +64,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinanceDisbursement model</b> class.<br>
@@ -578,6 +580,33 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 				.newInstance(FinanceDisbursement.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
+	@Override
+	public List<Integer> getFinanceDisbSeqs(String finReferecne, String type, boolean isWIF) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT DisbSeq ");
+		if (isWIF) {
+			sql.append(" From WIFFinDisbursementDetails");
+		} else {
+			sql.append(" From FinDisbursementDetails");
+		}
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReferecne);
+
+		try {
+			return this.jdbcTemplate.queryForList(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<Integer>();
 	}
 
 }
