@@ -96,8 +96,8 @@ import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -634,7 +634,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		FinTypeFees finTypeFee = null;
-		String finEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		String orgFinEvent = AccountEventConstants.ACCEVENT_ADDDBSP;
+		String serFinEvent = AccountEventConstants.ACCEVENT_ADDDBSN;
 		boolean exist = false;
 		int orgFeeOrder = 0;
 		int servFeeOrder = 0;
@@ -658,14 +659,14 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq() && !financeType.getAdvType().equals(AdvanceType.AE)) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), finEvent, true);
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), orgFinEvent, true);
 				finTypeFee.setFeeOrder(++orgFeeOrder);
 				fees.add(finTypeFee);
 			}
 
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
 			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), finEvent, false);
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), serFinEvent, false);
 				finTypeFee.setFeeOrder(++servFeeOrder);
 				fees.add(finTypeFee);
 			}
@@ -695,7 +696,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.isAdvIntersetReq() && financeType.getAdvType().equals(AdvanceType.AE)) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), finEvent, true);
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), orgFinEvent, true);
 				finTypeFee.setFeeOrder(++orgFeeOrder);
 				fees.add(finTypeFee);
 			}
@@ -723,7 +724,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.isDsfReq()) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), finEvent, true);
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.DSF.name(), serFinEvent, true);
 				finTypeFee.setFeeOrder(++orgFeeOrder);
 				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
 				finTypeFee.setAlwModifyFee(true);
@@ -750,7 +751,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		if (financeType.isCashCollateralReq()) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
-				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), finEvent, true);
+				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.CASHCLT.name(), orgFinEvent, true);
 				finTypeFee.setFeeOrder(++orgFeeOrder);
 				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_RULE);
 				finTypeFee.setAlwModifyFee(true);
