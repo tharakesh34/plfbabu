@@ -61,7 +61,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.service.feetype.FeeTypeService;
-import com.pennant.backend.util.AdvanceEMI.AdvanceRuleCode;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.webui.feetype.feetype.model.FeeTypeListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
