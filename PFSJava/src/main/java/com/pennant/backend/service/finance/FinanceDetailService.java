@@ -305,5 +305,7 @@ public interface FinanceDetailService {
 	void executeAutoFinRejectProcess();
 
 	List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type);
+	
+	List<Integer> getFinanceDisbSeqs(String finReferecne, boolean isWIF);
 
 }
