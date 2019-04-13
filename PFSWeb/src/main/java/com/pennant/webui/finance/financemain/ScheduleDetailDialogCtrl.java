@@ -333,9 +333,15 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
-
-		this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
-				.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
+		
+		if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
+			setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
+		} else {
+			logger.warn("Replace the below buy using instanceof "+ financeMainDialogCtrl.getClass());
+			// FIXME MUR>> Replace me as above otherwise you don't know where i came.  
+			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
+					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
+		}
 
 		boolean isEnquiry = false;
 		if (arguments.containsKey("isEnquiry")) {
@@ -1087,6 +1093,16 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 
 		this.financeSchdDetailsTab.setSelected(true);
+		
+		if (finFeeDetailListCtrl == null) {
+			if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
+				setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
+			}
+		}  
+		
+		if (finFeeDetailListCtrl != null) {
+			finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
+		}
 		logger.debug("Leaving");
 	}
 

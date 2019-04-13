@@ -86,7 +86,7 @@ import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
-import com.pennant.backend.util.AdvanceEMI.AdvanceType;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -2301,6 +2301,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 				BigDecimal advEMi = BigDecimal.ZERO;
 				if (DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getFinStartDate()) == 0) {
 					advEMi = aFinanceMain.getAdvanceEMI();
+				}
+				if (!AdvanceType.AE.name().equals(aFinanceMain.getAdvType())) {
+					advEMi = BigDecimal.ZERO;
 				}
 
 				BigDecimal curTotDisbAmt = BigDecimal.ZERO;
