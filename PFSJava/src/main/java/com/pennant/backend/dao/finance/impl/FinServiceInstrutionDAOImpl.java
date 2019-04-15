@@ -1,12 +1,15 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -14,6 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstruction> implements FinServiceInstrutionDAO {
 	private static Logger logger = Logger.getLogger(FinServiceInstrutionDAOImpl.class);
@@ -131,27 +135,33 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			String finEvent) {
 		logger.debug("Entering");
 
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(finReference);
-		finServiceInstruction.setFinEvent(finEvent);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ServiceSeqId, FinEvent, FinReference, FromDate, ToDate");
+		sql.append(", PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
+		sql.append(", NextGrcRepayDate, RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
+		sql.append(", RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms");
+		sql.append(", ServiceReqNo, Remarks, PftChg, InstructionUID, LinkedTranID");
+		sql.append(" From FinServiceInstruction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference AND FinEvent =:FinEvent ");
 
-		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate,ToDate");
-		selectSql.append(
-				",PftDaysBasis,SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,NextGrcRepayDate");
-		selectSql.append(",RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
-		selectSql.append(
-				",RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms ,ServiceReqNo,Remarks, PftChg, InstructionUID, LinkedTranID ");
-		selectSql.append(" From FinServiceInstruction");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND FinEvent =:FinEvent ");
+		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinReference", finReference);
+		parameterSource.addValue("FinEvent", finEvent);
+
 		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinServiceInstruction.class);
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return new ArrayList<>();
 	}
 
 	/**

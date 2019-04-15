@@ -49,10 +49,6 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 
 public interface FinFeeDetailDAO {
 
-	FinFeeDetail getFinFeeDetail();
-
-	FinFeeDetail getNewFinFeeDetail();
-
 	FinFeeDetail getFinFeeDetailById(FinFeeDetail finFeeDetail, boolean isWIF, String type);
 
 	void update(FinFeeDetail finFeeDetailDAO, boolean isWIF, String type);

@@ -122,10 +122,6 @@ public class InstallmentDueService extends ServiceHelper {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
 
-		// tasks # >>Start Advance EMI and DSF
-		setAdvanceDuePostings(finEODEvent.getFinanceMain(), curSchd, amountCodes, valueDate, finEODEvent.getFinExcessAmounts());
-		// tasks # >>Start Advance EMI and DSF
-
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
@@ -174,28 +170,6 @@ public class InstallmentDueService extends ServiceHelper {
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void setAdvanceDuePostings(FinanceMain fm, FinanceScheduleDetail curSchd, AEAmountCodes amountCodes, Date valueDate, List<FinExcessAmount> excessAmounts) {
-		AdvancePayment advancePayment = null;
-
-		BigDecimal schdPriDue = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-		BigDecimal schdIntDue = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-
-		advancePayment = new AdvancePayment(fm.getGrcAdvType(), fm.getAdvType(), fm.getGrcPeriodEndDate());
-		advancePayment.setExcessAmounts(excessAmounts);
-		advancePayment.setSchdPriDue(schdPriDue);
-		advancePayment.setSchdIntDue(schdIntDue);
-		advancePayment.setValueDate(valueDate);
-
-		AdvancePaymentUtil.calculateDue(advancePayment);
-
-		amountCodes.setIntAdjusted(advancePayment.getIntAdjusted());
-		amountCodes.setIntAdvAvailable(advancePayment.getIntAdvAvailable());
-		amountCodes.setIntDue(advancePayment.getIntDue());
-		amountCodes.setEmiAdjusted(advancePayment.getEmiAdjusted());
-		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
-		amountCodes.setEmiDue(advancePayment.getEmiDue());
 	}
 
 	/**
@@ -325,13 +299,6 @@ public class InstallmentDueService extends ServiceHelper {
 				amountCodes.setPriSB(BigDecimal.ZERO);
 			}
 			
-			// tasks # >>Start Advance EMI and DSF
-			// FIXME MUR>> Need to check the value date for back datted loans
-			List<FinExcessAmount> excessAmounts = AdvancePaymentUtil.getExcessAmounts(main.getFinReference(),
-					financeDetail.getFinScheduleData().getFinFeeDetailList());
-			setAdvanceDuePostings(main, curSchd, amountCodes, appDate, excessAmounts);
-			// tasks # >>Start Advance EMI and DSF
-
 			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			if (feelist != null && !feelist.isEmpty()) {
