@@ -5,13 +5,13 @@ import java.math.BigDecimal;
 public class FinExcessMovement {
 
 	private long excessID = 0;
-	private long receiptID = 0;
+	private Long receiptID;
 	private String movementType;
 	private String tranType;
 	private BigDecimal amount = BigDecimal.ZERO;
 
 	public FinExcessMovement() {
-
+		super();
 	}
 
 	// ******************************************************//
@@ -26,11 +26,11 @@ public class FinExcessMovement {
 		this.excessID = excessID;
 	}
 
-	public long getReceiptID() {
+	public Long getReceiptID() {
 		return receiptID;
 	}
 
-	public void setReceiptID(long receiptID) {
+	public void setReceiptID(Long receiptID) {
 		this.receiptID = receiptID;
 	}
 

@@ -70,47 +70,34 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	private long feeID = Long.MIN_VALUE;
 	private int feeSeq;
-
 	private String finReference;
 	private boolean originationFee;
 	private String finEvent;
 	private long feeTypeID = Long.MIN_VALUE;
 	private BigDecimal calculatedAmount = BigDecimal.ZERO;
-
-	//Actual Amount
 	@XmlElement(name = "feeAmount")
 	private BigDecimal actualAmount = BigDecimal.ZERO;
 	private BigDecimal actualAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal actualAmountGST = BigDecimal.ZERO;
-
 	@XmlElement(name = "waiverAmount")
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
-
-	//Paid Amounts
 	private BigDecimal paidAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal paidAmountGST = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal paidAmount = BigDecimal.ZERO;
-
-	//Net Amounts
 	private BigDecimal netAmountOriginal = BigDecimal.ZERO;
 	private BigDecimal netAmountGST = BigDecimal.ZERO;
 	private BigDecimal netAmount = BigDecimal.ZERO;
-
 	@XmlElement(name = "scheduleTerms")
 	private int terms = 0;
-
-	//Remaining Fees
 	private BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
 	private BigDecimal remainingFeeGST = BigDecimal.ZERO;
 	@XmlElement(name = "feeBalance")
 	private BigDecimal remainingFee = BigDecimal.ZERO;
 	private BigDecimal taxPercent = BigDecimal.ZERO;
-
 	@XmlElement
 	private String feeCategory;
 	private String paymentRef;
-
 	private int feeOrder;
 	private String finEventDesc;
 	@XmlElement(name = "feeCode")
@@ -129,7 +116,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private boolean alwModifyFeeSchdMthd;
 	private String vasReference;
 	private String status;
-
 	private boolean dataModified = false;
 	private boolean rcdVisible = true;
 	@XmlElement
@@ -141,14 +127,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private Date postDate;
 	private String transactionId;
 	private boolean refundable;
-
 	private boolean alwPreIncomization;
-
 	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
-
-	private List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<FinFeeScheduleDetail>(1);
-
+	private transient List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<>(1);
 	private FinTaxDetails finTaxDetails = new FinTaxDetails();
 	private boolean taxApplicable;
 	private String taxComponent;
@@ -157,11 +139,10 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal ugst = BigDecimal.ZERO;
 	private BigDecimal sgst = BigDecimal.ZERO;
 	private BigDecimal cgst = BigDecimal.ZERO;
-
 	@XmlElement
-	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>(1);
-
-	private boolean feeModified = false; //Added for rule and percentage auto calculation
+	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<>(1);
+	private boolean feeModified = false;
+	private Long instructionUID;
 
 	public FinFeeDetail() {
 		super();
@@ -177,8 +158,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 
 		excludeFields.add("finEventDesc");
 		excludeFields.add("feeTypeCode");
@@ -710,4 +690,11 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.refundable = refundable;
 	}
 
+	public Long getInstructionUID() {
+		return instructionUID;
+	}
+
+	public void setInstructionUID(Long instructionUID) {
+		this.instructionUID = instructionUID;
+	}
 }
