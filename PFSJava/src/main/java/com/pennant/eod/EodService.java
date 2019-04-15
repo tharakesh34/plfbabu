@@ -23,7 +23,7 @@ import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.limitservice.LimitRebuild;
-import com.pennanttech.pff.advancepayment.service.AdvansePaymentService;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class EodService {
 
@@ -41,7 +41,7 @@ public class EodService {
 	private AutoDisbursementService autoDisbursementService;
 	private ReceiptPaymentService receiptPaymentService;
 	private InstallmentDueService installmentDueService;
-	private AdvansePaymentService  advancePaymentService;
+	private AdvancePaymentService  advancePaymentService;
 	@Autowired
 	private LimitRebuild limitRebuild;
 
@@ -175,7 +175,7 @@ public class EodService {
 		this.dateRollOverService = dateRollOverService;
 	}
 
-	public void setAdvancePaymentService(AdvansePaymentService advancePaymentService) {
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
 		this.advancePaymentService = advancePaymentService;
 	}
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {

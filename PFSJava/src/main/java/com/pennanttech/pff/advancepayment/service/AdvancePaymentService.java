@@ -22,9 +22,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 
-public class AdvansePaymentService extends ServiceHelper {
+public class AdvancePaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
-	private Logger logger = Logger.getLogger(AdvansePaymentService.class);
+	private Logger logger = Logger.getLogger(AdvancePaymentService.class);
 
 	/**
 	 * @param custId
