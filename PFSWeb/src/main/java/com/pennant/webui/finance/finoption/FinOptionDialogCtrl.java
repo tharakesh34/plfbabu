@@ -927,7 +927,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 					} else {
 
 						currentOption.setConstraint(
-								new PTDateValidator(receivableDateLabel, true, appDate, maturityDate, false));
+								new PTDateValidator(receivableDateLabel, true, loanStartDt, maturityDate, false));
 					}
 				}
 			}
