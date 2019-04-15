@@ -134,6 +134,9 @@
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
+	
+	<bean id="advansePaymentService" class="com.pennant.app.core.AdvansePaymentService" parent="serviceHelper"/>
+	
 	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData"
 		parent="serviceHelper">
 	</bean>
@@ -174,6 +177,7 @@
 		<property name="rateReviewService" ref="rateReviewService" />
 		<property name="dateRollOverService" ref="dateRollOverService" />
 		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="advansePaymentService" ref="advansePaymentService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="npaService" ref="npaService" />
 		<property name="autoDisbursementService" ref="autoDisbursementService" />
