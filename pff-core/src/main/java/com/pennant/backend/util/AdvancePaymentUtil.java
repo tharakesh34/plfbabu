@@ -2,12 +2,17 @@ package com.pennant.backend.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.AdvancePayment;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class AdvancePaymentUtil {
 
@@ -118,10 +123,18 @@ public class AdvancePaymentUtil {
 		}
 	}
 
+	/**
+	 * 
+	 * @param advancePayment
+	 */
 	public static void calculateDue(AdvancePayment advancePayment) {
 		calculate(advancePayment, false);
 	}
 
+	/**
+	 * 
+	 * @param advancePayment
+	 */
 	public static void calculatePresement(AdvancePayment advancePayment) {
 		calculate(advancePayment, true);
 	}
@@ -241,6 +254,135 @@ public class AdvancePaymentUtil {
 		}
 
 		return finExcessAmounts;
+	}
+
+	public static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
+		if (fee.getFeeTypeCode().equals(AdvanceRuleCode.ADVINT.name())) {
+			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVINT);
+		}
+		if (fee.getFeeTypeCode().equals(AdvanceRuleCode.ADVEMI.name())) {
+			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVEMI);
+		}
+	}
+
+	private static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee,
+			AdvanceRuleCode advanceRuleCode) {
+		String finTypeCode = fee.getFeeTypeCode();
+		String finEvent = fee.getFinEvent();
+
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
+		String grcAdvType = fm.getGrcAdvType();
+		int grcTerms = fm.getGrcAdvTerms();
+		String advType = fm.getAdvType();
+		int advTerms = fm.getAdvTerms();
+
+		if ((grcAdvType == null && advType == null) || !(advanceRuleCode.name().equals(finTypeCode))) {
+			return;
+		}
+
+		AdvanceType advanceType = AdvanceType.getType(advType);
+		AdvanceType grcadvanceType = AdvanceType.getType(grcAdvType);
+
+		if (advanceType == null && grcadvanceType == null) {
+			return;
+		}
+
+		BigDecimal advanceIntrest = BigDecimal.ZERO;
+		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
+		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
+
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+		if (fm.getGrcAdvType() != null) {
+			graceAdvanceIntrest = getAdvanceInterst("GRACE", grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
+		}
+
+		if (fm.getAdvType() != null) {
+			repayAdvanceIntrest = getAdvanceInterst("REPAY", advTerms, gracePeriodEndDate, advanceType, schedules);
+		}
+
+		/*
+		 * if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) { if (advanceRuleCode == AdvanceRuleCode.ADVINT)
+		 * { advanceIntrest = advanceIntrest.subtract(fm.getTotalGrossPft()); } else if (advanceRuleCode ==
+		 * AdvanceRuleCode.ADVEMI) { advanceIntrest =
+		 * advanceIntrest.subtract(fm.getTotalProfit().add(fm.getTotalPriAmt())); } }
+		 */
+
+		// FIXME MUR>> Need to validate Frequency and Number of Terms
+		if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
+			advanceIntrest = finScheduleData.getPftChg();
+			graceAdvanceIntrest = BigDecimal.ZERO;
+			repayAdvanceIntrest = BigDecimal.ZERO;
+		}
+
+		advanceIntrest = advanceIntrest.add(graceAdvanceIntrest).add(repayAdvanceIntrest);
+
+		fee.setActualAmount(advanceIntrest);
+		fee.setCalculatedAmount(advanceIntrest);
+		fee.setActualAmountOriginal(advanceIntrest);
+
+		// FIXME MUR>> Need to validate Frequency and Number of Terms
+		fm.setAdvanceEMI(advanceIntrest);
+	}
+
+	private static BigDecimal getAdvanceInterst(String type, int terms, Date gracePeriodEndDate,
+			AdvanceType advanceType, List<FinanceScheduleDetail> schedules) {
+
+		if (advanceType == null) {
+			return BigDecimal.ZERO;
+		}
+
+		BigDecimal advanceProfit;
+		switch (advanceType) {
+		case UF:
+			terms = -1;
+			break;
+		case AF:
+			terms = 1;
+			break;
+		case UT:
+		case AE:
+			break;
+		default:
+			break;
+		}
+
+		advanceProfit = getAdvanceProfit(advanceType, type, terms, gracePeriodEndDate, schedules);
+		return advanceProfit;
+	}
+
+	private static BigDecimal getAdvanceProfit(AdvanceType advanceType, String type, int terms, Date gracePeriodEndDate,
+			List<FinanceScheduleDetail> schedules) {
+		BigDecimal advanceProfit = BigDecimal.ZERO;
+
+		int term = 0;
+
+		for (FinanceScheduleDetail sd : schedules) {
+			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
+				Date schDate = sd.getSchDate();
+				BigDecimal profitSchd = sd.getProfitSchd();
+				if (schDate.compareTo(gracePeriodEndDate) <= 0 && "GRACE".equals(type)) {
+					advanceProfit = advanceProfit.add(profitSchd);
+					term++;
+				}
+
+				if (schDate.compareTo(gracePeriodEndDate) > 0 && "REPAY".equals(type)) {
+					if (advanceType == AdvanceType.AE) {
+						BigDecimal principalSchd = sd.getPrincipalSchd();
+						advanceProfit = advanceProfit.add(profitSchd).add(principalSchd);
+					} else {
+						advanceProfit = advanceProfit.add(profitSchd);
+					}
+					term++;
+				}
+			}
+
+			if (term == terms) {
+				break;
+			}
+		}
+
+		return advanceProfit;
 	}
 
 }

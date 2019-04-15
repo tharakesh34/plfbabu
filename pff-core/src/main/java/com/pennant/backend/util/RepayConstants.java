@@ -107,7 +107,14 @@ public class RepayConstants {
 	public static final String ALLOCATION_BOUNCE = "BOUNCE";
 
 	// Receipt Types
+	/**
+	 * Received
+	 */
 	public static final String RECEIPTTYPE_RECIPT = "R";
+	
+	/**
+	 * Paid
+	 */
 	public static final String RECEIPTTYPE_PAYABLE = "P";
 
 	// Receipt Types
@@ -130,6 +137,8 @@ public class RepayConstants {
 	public static final int CHEQUESTATUS_BOUNCE = 9;
 	public static final int CHEQUESTATUS_REALISE = 10;
 	public static final int CHEQUESTATUS_REALISED = 11;
+	public static final int PEXC_ADVINT = 12;
+	public static final int PEXC_ADVEMI = 13;
 
 	// Presentment Status Reasons
 	public static final int PEXC_EXTRACT = 1;
