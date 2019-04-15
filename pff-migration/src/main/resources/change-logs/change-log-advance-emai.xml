@@ -191,18 +191,25 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms"
+			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms"
+			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms"
+			columnDataType="int" />
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq"
+			columnDataType="boolean" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMinTerms" columnDataType="int" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms"
+			columnDataType="int" />
 
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="DSFReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="shinde.b">
@@ -3005,7 +3012,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="14_pre" author="vijaykumar.L" dbms="postgresql">
+	<changeSet id="14_pre" author="shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'finexcessamount');
@@ -3017,7 +3024,7 @@
 		<modifyDataType tableName="FinExcessAmount" columnName="AmountType" newDataType="varchar(8)" />
 	</changeSet>
 
-	<changeSet id="14_post" author="vijaykumar.L" dbms="postgresql">
+	<changeSet id="14_post" author="shinde.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'finexcessamount');
@@ -3057,5 +3064,433 @@
 				values ('INSTDATE', 0, 'ae_emiDue', 'EMI Due - Advance EMI', '1', 1, 1005, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="murthy.y">
+		<sql>
+		<![CDATA[ 
+			delete from BMTAMOUNTCODES where AMOUNTCODE in ('ae_intAdjusted',  'ae_intAdvAvailable', 'ae_intDue', 'ae_emiAdjusted', 'ae_emiAdvAvailable', 'ae_emiDue'); 
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18" author="murthy.y">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_intAdjusted', 'Adjusted Advance Interest', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_intAdvAvailable', 'Available Advance Interest', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_intDue', 'Interest Due - Advance Interest', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_emiAdjusted', 'Adjusted Advance EMI', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_emiAdvAvailable', 'Available Advance EMI', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_emiDue', 'EMI Due - Advance EMI', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19" author="murthy.y">
+		<addColumn tableName="FinFeeDetail">
+			<column name="InstructionUID" type="bigint" />
+		</addColumn>
+		<addColumn tableName="FinFeeDetail_Temp">
+			<column name="InstructionUID" type="bigint" />
+		</addColumn>
+		<addColumn tableName="WIFFinFeeDetail">
+			<column name="InstructionUID" type="bigint" />
+		</addColumn>
+		<addColumn tableName="WIFFinFeeDetail_Temp">
+			<column name="InstructionUID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="19.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE FINFEEDETAIL SET INSTRUCTIONUID = 0;
+				UPDATE FINFEEDETAIL_TEMP SET INSTRUCTIONUID = 0;
+				UPDATE WIFFINFEEDETAIL SET INSTRUCTIONUID = 0;
+				UPDATE WIFFINFEEDETAIL_TEMP SET INSTRUCTIONUID = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19.2" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINFEEDETAIL ADD CONSTRAINT DF_FINFEEDETAIL_INSTRUCTIONUID DEFAULT 0 FOR INSTRUCTIONUID;
+				ALTER TABLE FINFEEDETAIL_TEMP ADD CONSTRAINT DF_FINFEEDETAIL_TEMP_INSTRUCTIONUID DEFAULT 0 FOR INSTRUCTIONUID;
+				ALTER TABLE WIFFINFEEDETAIL ADD CONSTRAINT DF_WIFFINFEEDETAIL_INSTRUCTIONUID DEFAULT 0 FOR INSTRUCTIONUID;
+				ALTER TABLE WIFFINFEEDETAIL_TEMP ADD CONSTRAINT DF_WIFFINFEEDETAIL_TEMP_INSTRUCTIONUID DEFAULT 0 FOR INSTRUCTIONUID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19.3" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="InstructionUID" tableName="FinFeeDetail" defaultValue="0" />
+		<addDefaultValue columnName="InstructionUID" tableName="FinFeeDetail_Temp" defaultValue="0" />
+		<addDefaultValue columnName="InstructionUID" tableName="WIFFinFeeDetail" defaultValue="0" />
+		<addDefaultValue columnName="InstructionUID" tableName="WIFFinFeeDetail_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="20" author="murthy.y">
+		<createView viewName="FinFeeDetail_View" replaceIfExists="true">
+			select t1.feeid,
+			    t1.finreference,
+			    t1.originationfee,
+			    t1.finevent,
+			    t1.feetypeid,
+			    t1.feeseq,
+			    t1.feeorder,
+			    t1.calculatedamount,
+			    t1.actualamount,
+			    t1.waivedamount,
+			    t1.paidamount,
+			    t1.feeschedulemethod,
+			    t1.terms,
+			    t1.remainingfee,
+			    t1.paymentref,
+			    t1.calculationtype,
+			    t1.rulecode,
+			    t1.fixedamount,
+			    t1.percentage,
+			    t1.calculateon,
+			    t1.alwdeviation,
+			    t1.maxwaiverperc,
+			    t1.alwmodifyfee,
+			    t1.alwmodifyfeeschdmthd,
+			    t1.vasreference,
+			    t1.status,
+			    t1.taxapplicable,
+			    t1.taxcomponent,
+			    t1.paidamountoriginal,
+			    t1.paidamountgst,
+			    t1.netamountoriginal,
+			    t1.netamountgst,
+			    t1.netamount,
+			    t1.remainingfeeoriginal,
+			    t1.remainingfeegst,
+			    t1.actualamountoriginal,
+			    t1.actualamountgst,
+			    t1.feeamz,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.transactionid,
+			    t1.workflowid,
+			    t2.feetypecode,
+			    t2.feetypedesc,
+			    t1.Refundable,
+			    t1.InstructionUID
+			   FROM finfeedetail_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		UNION ALL
+		 select t1.feeid,
+		    t1.finreference,
+		    t1.originationfee,
+		    t1.finevent,
+		    t1.feetypeid,
+		    t1.feeseq,
+		    t1.feeorder,
+		    t1.calculatedamount,
+		    t1.actualamount,
+		    t1.waivedamount,
+		    t1.paidamount,
+		    t1.feeschedulemethod,
+		    t1.terms,
+		    t1.remainingfee,
+		    t1.paymentref,
+		    t1.calculationtype,
+		    t1.rulecode,
+		    t1.fixedamount,
+		    t1.percentage,
+		    t1.calculateon,
+		    t1.alwdeviation,
+		    t1.maxwaiverperc,
+		    t1.alwmodifyfee,
+		    t1.alwmodifyfeeschdmthd,
+		    t1.vasreference,
+		    t1.status,
+		    t1.taxapplicable,
+		    t1.taxcomponent,
+		    t1.paidamountoriginal,
+		    t1.paidamountgst,
+		    t1.netamountoriginal,
+		    t1.netamountgst,
+		    t1.netamount,
+		    t1.remainingfeeoriginal,
+		    t1.remainingfeegst,
+		    t1.actualamountoriginal,
+		    t1.actualamountgst,
+		    t1.feeamz,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.transactionid,
+		    t1.workflowid,
+		    t2.feetypecode,
+		    t2.feetypedesc,
+		    t1.Refundable,
+		    t1.InstructionUID
+		   FROM finfeedetail t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM finfeedetail_temp
+		          WHERE finfeedetail_temp.feeid = t1.feeid))
+		</createView>
+	</changeSet>
+
+	<changeSet id="20.1" author="murthy.y">
+		<createView viewName="FinFeeDetail_TView" replaceIfExists="true">
+			select t1.feeid,
+			    t1.finreference,
+			    t1.originationfee,
+			    t1.finevent,
+			    t1.feetypeid,
+			    t1.feeseq,
+			    t1.feeorder,
+			    t1.calculatedamount,
+			    t1.actualamount,
+			    t1.waivedamount,
+			    t1.paidamount,
+			    t1.feeschedulemethod,
+			    t1.terms,
+			    t1.remainingfee,
+			    t1.paymentref,
+			    t1.calculationtype,
+			    t1.rulecode,
+			    t1.fixedamount,
+			    t1.percentage,
+			    t1.calculateon,
+			    t1.alwdeviation,
+			    t1.maxwaiverperc,
+			    t1.alwmodifyfee,
+			    t1.alwmodifyfeeschdmthd,
+			    t1.vasreference,
+			    t1.status,
+			    t1.taxapplicable,
+			    t1.taxcomponent,
+			    t1.paidamountoriginal,
+			    t1.paidamountgst,
+			    t1.netamountoriginal,
+			    t1.netamountgst,
+			    t1.netamount,
+			    t1.remainingfeeoriginal,
+			    t1.remainingfeegst,
+			    t1.actualamountoriginal,
+			    t1.actualamountgst,
+			    t1.feeamz,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypecode,
+			    t2.feetypedesc,  
+			    t1.Refundable,
+			    t1.InstructionUID
+			   FROM finfeedetail_temp t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		</createView>
+	</changeSet>
+
+	<changeSet id="20.2" author="murthy.y">
+		<createView viewName="FinFeeDetail_AView" replaceIfExists="true">
+			select t1.feeid,
+			    t1.finreference,
+			    t1.originationfee,
+			    t1.finevent,
+			    t1.feetypeid,
+			    t1.feeseq,
+			    t1.feeorder,
+			    t1.calculatedamount,
+			    t1.actualamount,
+			    t1.waivedamount,
+			    t1.paidamount,
+			    t1.feeschedulemethod,
+			    t1.terms,
+			    t1.remainingfee,
+			    t1.paymentref,
+			    t1.calculationtype,
+			    t1.rulecode,
+			    t1.fixedamount,
+			    t1.percentage,
+			    t1.calculateon,
+			    t1.alwdeviation,
+			    t1.maxwaiverperc,
+			    t1.alwmodifyfee,
+			    t1.alwmodifyfeeschdmthd,
+			    t1.vasreference,
+			    t1.status,
+			    t1.taxapplicable,
+			    t1.taxcomponent,
+			    t1.paidamountoriginal,
+			    t1.paidamountgst,
+			    t1.netamountoriginal,
+			    t1.netamountgst,
+			    t1.netamount,
+			    t1.remainingfeeoriginal,
+			    t1.remainingfeegst,
+			    t1.actualamountoriginal,
+			    t1.actualamountgst,
+			    t1.feeamz,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.feetypecode,
+			    t2.feetypedesc,
+			    t1.Refundable,
+			    t1.InstructionUID
+			   FROM finfeedetail t1
+			     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		</createView>
+	</changeSet>
+
+	<changeSet id="20.3" author="murthy.y">
+		<createView viewName="WIFFinFeeDetail_View" replaceIfExists="true">
+			select t1.feeid,
+		    t1.finreference,
+		    t1.feeseq,
+		    t1.originationfee,
+		    t1.finevent,
+		    t1.feetypeid,
+		    t1.feeorder,
+		    t1.calculatedamount,
+		    t1.actualamount,
+		    t1.waivedamount,
+		    t1.paidamount,
+		    t1.feeschedulemethod,
+		    t1.terms,
+		    t1.remainingfee,
+		    t1.paymentref,
+		    t1.calculationtype,
+		    t1.rulecode,
+		    t1.fixedamount,
+		    t1.percentage,
+		    t1.calculateon,
+		    t1.alwdeviation,
+		    t1.maxwaiverperc,
+		    t1.alwmodifyfee,
+		    t1.alwmodifyfeeschdmthd,
+		    t1.vasreference,
+		    t1.status,
+		    t1.taxapplicable,
+		    t1.taxcomponent,
+		    t1.paidamountoriginal,
+		    t1.paidamountgst,
+		    t1.netamountoriginal,
+		    t1.netamountgst,
+		    t1.netamount,
+		    t1.remainingfeeoriginal,
+		    t1.remainingfeegst,
+		    t1.actualamountoriginal,
+		    t1.actualamountgst,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypecode,
+		    t2.feetypedesc,
+		    t1.Refundable,
+		    t1.InstructionUID
+		   FROM wiffinfeedetail_temp t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		UNION ALL
+		 select t1.feeid,
+		    t1.finreference,
+		    t1.feeseq,
+		    t1.originationfee,
+		    t1.finevent,
+		    t1.feetypeid,
+		    t1.feeorder,
+		    t1.calculatedamount,
+		    t1.actualamount,
+		    t1.waivedamount,
+		    t1.paidamount,
+		    t1.feeschedulemethod,
+		    t1.terms,
+		    t1.remainingfee,
+		    t1.paymentref,
+		    t1.calculationtype,
+		    t1.rulecode,
+		    t1.fixedamount,
+		    t1.percentage,
+		    t1.calculateon,
+		    t1.alwdeviation,
+		    t1.maxwaiverperc,
+		    t1.alwmodifyfee,
+		    t1.alwmodifyfeeschdmthd,
+		    t1.vasreference,
+		    t1.status,
+		    t1.taxapplicable,
+		    t1.taxcomponent,
+		    t1.paidamountoriginal,
+		    t1.paidamountgst,
+		    t1.netamountoriginal,
+		    t1.netamountgst,
+		    t1.netamount,
+		    t1.remainingfeeoriginal,
+		    t1.remainingfeegst,
+		    t1.actualamountoriginal,
+		    t1.actualamountgst,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypecode,
+		    t2.feetypedesc,
+		    t1.Refundable,
+		    t1.InstructionUID
+		   FROM wiffinfeedetail t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM wiffinfeedetail_temp
+		          WHERE wiffinfeedetail_temp.finreference = t1.finreference AND wiffinfeedetail_temp.originationfee = t1.originationfee AND wiffinfeedetail_temp.finevent = t1.finevent AND wiffinfeedetail_temp.feetypeid = t1.feetypeid))
+		</createView>
 	</changeSet>
 </databaseChangeLog>

@@ -113,10 +113,12 @@
 	</changeSet>
 
 	<changeSet id="1.3" author="shinde.b">
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvIntersetReq"
+			columnDataType="boolean" />
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMinTerms" columnDataType="int" />
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvDefaultTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="GrcAdvDefaultTerms"
+			columnDataType="int" />
 
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvIntersetReq" columnDataType="boolean" />
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvMinTerms" columnDataType="int" />
@@ -124,7 +126,8 @@
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="AdvDefaultTerms" columnDataType="int" />
 
 		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="DSFReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="CashCollateralReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTFINANCETYPES" columnName="CashCollateralReq"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="2" author="shinde.b">
@@ -187,7 +190,7 @@
 		<addDefaultValue columnName="AdvEmiMinTerms" tableName="Adtrmtfinancetypes" defaultValue="0" />
 		<addDefaultValue columnName="AdvEmiMaxTerms" tableName="Adtrmtfinancetypes" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="3.2" author="shinde.b" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -201,12 +204,38 @@
 	<changeSet id="3.3" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AdvEMITerms" tableName="AdtFinanceMain" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="3.3" author="shinde.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_ADTFINANCEMAIN_ADVEMITERMS DEFAULT 0 FOR ADVEMITERMS;
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="murthy.y">
+		<addColumn tableName="AdtFinFeeDetail">
+			<column name="InstructionUID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINFEEDETAIL SET INSTRUCTIONUID = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4.2" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINFEEDETAIL ADD CONSTRAINT DF_ADTFINFEEDETAIL_INSTRUCTIONUID DEFAULT 0 FOR INSTRUCTIONUID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4.2" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="InstructionUID" tableName="AdtFinFeeDetail" defaultValue="0" />
 	</changeSet>
 </databaseChangeLog>
