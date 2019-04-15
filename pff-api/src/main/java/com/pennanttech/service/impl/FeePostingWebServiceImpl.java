@@ -3,6 +3,7 @@ package com.pennanttech.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,9 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.fees.FeePostings;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.fees.feepostings.FeePostingService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
@@ -21,6 +24,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.FeePostingRestService;
 import com.pennanttech.pffws.FeePostingSoapService;
+import com.pennanttech.ws.model.manualAdvice.ManualAdviseResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
@@ -29,6 +33,7 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 	private FeePostingController feePostingController;
 	private ValidationUtility validationUtility;
 	private FeePostingService feePostingService;
+	private FinanceDetailService financeDetailService;
 
 	/**
 	 * Method for create FeePostings in PLF system.
@@ -64,6 +69,51 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 	}
 
 	/**
+	 * Create Payable/Receivable Advise
+	 */
+	@Override
+	public ManualAdviseResponse createAdvise(ManualAdvise advise) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		ManualAdviseResponse response = null;
+
+		//Validate FinReference
+		if (StringUtils.isBlank(advise.getFinReference())) {
+			response = new ManualAdviseResponse();
+			String[] param = new String[1];
+			param[0] = "FinReference ";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", param));
+			return response;
+		}
+		boolean isExist = financeDetailService.isFinReferenceExits(advise.getFinReference(), "", false);
+		if (!isExist) {
+			response = new ManualAdviseResponse();
+			String[] param = new String[1];
+			param[0] = advise.getFinReference();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", param));
+			return response;
+		}
+
+		//validate Manual Advise Detail
+		response = feePostingController.validateAdviseDetail(advise);
+		if (response != null && response.getReturnStatus() != null) {
+			return response;
+		}
+
+		//proceed Manual Advise Detail
+		response = feePostingController.doCreateAdvise(advise);
+		if (response != null && response.getReturnStatus() != null) {
+			return response;
+		}
+
+		//If there is no error set Success Return Status to response
+		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	/**
 	 * Get Audit Header Details
 	 * 
 	 * @param aFeePostings
@@ -89,6 +139,11 @@ public class FeePostingWebServiceImpl implements FeePostingRestService, FeePosti
 	@Autowired
 	public void setFeePostingService(FeePostingService feePostingService) {
 		this.feePostingService = feePostingService;
+	}
+
+	@Autowired
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

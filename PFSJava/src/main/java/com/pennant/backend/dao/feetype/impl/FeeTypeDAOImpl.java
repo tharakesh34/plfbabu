@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.feetype.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -392,6 +394,33 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		logger.debug("Leaving");
 		return taxType;
+	}
+
+	@Override
+	public List<FeeType> getManualAdviseFeeType(int adviceType, String type) {
+		logger.debug(Literal.ENTERING);
+
+		FeeType feeType = new FeeType();
+		feeType.setAdviseType(adviceType);
+		
+		StringBuilder selectSql = new StringBuilder("Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active,");
+		selectSql.append(" ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable,");
+		selectSql.append(" TaxComponent,refundable From FeeTypes");
+		selectSql.append(type);
+		selectSql.append(" Where AdviseType = :AdviseType AND ManualAdvice=1 AND Active=1");
+
+		logger.debug("sql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
+		RowMapper<FeeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeType.class);
+
+		try {
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

@@ -50,6 +50,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -61,20 +62,23 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ManualAdvise table</b>.<br>
  *
  */
-@XmlType(propOrder = { "adviseID", "adviseType", "finReference", "feeTypeID", "sequence", "adviseAmount", "paidAmount",
-		"waivedAmount", "remarks" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "finReference","adviseType", "feeTypeCode", "adviseAmount", "valueDate", "remarks" })
+@XmlAccessorType(XmlAccessType.NONE)
 public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private long adviseID = Long.MIN_VALUE;
+	@XmlElement
 	private int adviseType;
 	private String adviseTypeName;
+	@XmlElement
 	private String finReference;
 	private long feeTypeID;
 	private String feeTypeDesc;
+	@XmlElement
 	private String feeTypeCode;
 	private int sequence;
+	@XmlElement
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
@@ -88,7 +92,9 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal paidUGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
 
+	@XmlElement
 	private String remarks;
+	@XmlElement
 	private Date valueDate;
 	private Date postDate;
 	@XmlTransient
@@ -107,6 +113,11 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	//GST fields
 	private boolean taxApplicable;
 	private String taxComponent;
+
+	//API fields
+	@XmlElement
+	private boolean stp;
+	private String finSourceId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -133,6 +144,8 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("taxPercent");
 		excludeFields.add("taxApplicable");
 		excludeFields.add("taxComponent");
+		excludeFields.add("stp");
+		excludeFields.add("finSourceId");
 
 		return excludeFields;
 	}
@@ -395,6 +408,22 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setPaidIGST(BigDecimal paidIGST) {
 		this.paidIGST = paidIGST;
+	}
+
+	public boolean isStp() {
+		return stp;
+	}
+
+	public void setStp(boolean stp) {
+		this.stp = stp;
+	}
+
+	public String getFinSourceId() {
+		return finSourceId;
+	}
+
+	public void setFinSourceId(String finSourceId) {
+		this.finSourceId = finSourceId;
 	}
 
 }

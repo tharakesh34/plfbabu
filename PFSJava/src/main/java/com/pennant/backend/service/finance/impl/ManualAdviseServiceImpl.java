@@ -44,6 +44,7 @@ package com.pennant.backend.service.finance.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -234,7 +235,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		ManualAdvise manualAdvise = new ManualAdvise();
 		BeanUtils.copyProperties((ManualAdvise) auditHeader.getAuditDetail().getModelData(), manualAdvise);
 
-		getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
+		if (!StringUtils.equals(manualAdvise.getFinSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
+		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(manualAdvise.getRecordType())) {
 			auditHeader.getAuditDetail()

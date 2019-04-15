@@ -1,9 +1,20 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
+@XmlType(propOrder = { "gstType", "adviseAmount", "netCGST", "netSGST", "netIGST", "netUGST", "netTGST", "total" })
+@XmlRootElement(name = "FinTaxDetails")
+@XmlAccessorType(XmlAccessType.NONE)
 public class FinTaxDetails extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -25,11 +36,24 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 	private BigDecimal paidTGST = BigDecimal.ZERO;
 
 	//NET GST
+	@XmlElement
 	private BigDecimal netCGST = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal netIGST = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal netUGST = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal netSGST = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal netTGST = BigDecimal.ZERO;
+
+	//API Specific Field
+	@XmlElement
+	private BigDecimal adviseAmount = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal total = BigDecimal.ZERO;
+	@XmlElement
+	private String gstType;
 
 	//Remaining Fee GST
 	private BigDecimal remFeeCGST = BigDecimal.ZERO;
@@ -40,6 +64,14 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 
 	private boolean newRecord;
 
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("adviseAmount");
+		excludeFields.add("total");
+		excludeFields.add("gstType");
+
+		return excludeFields;
+	}
 	public FinTaxDetails() {
 		super();
 	}
@@ -238,5 +270,28 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
+	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
+	}
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
+	public String getGstType() {
+		return gstType;
+	}
+
+	public void setGstType(String gstType) {
+		this.gstType = gstType;
 	}
 }

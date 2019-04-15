@@ -42,6 +42,8 @@
  */
 package com.pennant.backend.dao.feetype;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennanttech.pff.core.TableType;
@@ -72,4 +74,11 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 
 	String getTaxCompByCode(String feeTypeCode);
 
+	/**
+	 * Get List of ManualAdvise FeeType details by AdviseType
+	 * 
+	 * @param adviceType
+	 * @return
+	 */
+	List<FeeType> getManualAdviseFeeType(int adviceType, String type);
 }
