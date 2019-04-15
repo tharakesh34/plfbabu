@@ -140,7 +140,7 @@ public class FeeDetailService {
 
 		// Calculating GST
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData.getFinanceMain(), gstExecutionMap);
 		}
 
 		// add vas recording fees into actual list
@@ -194,7 +194,7 @@ public class FeeDetailService {
 
 		// Calculating GST
 		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData.getFinanceMain(), gstExecutionMap);
 		}
 
 		// Insurance Amounts calculation
@@ -457,7 +457,7 @@ public class FeeDetailService {
 
 		// Calculating GST
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 		}
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
@@ -515,7 +515,7 @@ public class FeeDetailService {
 
 		//Calculating GST
 		for (FinFeeDetail finFeeDetail : finScheduleData.getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
 		}
 
 		logger.debug("Leaving");
@@ -1103,7 +1103,7 @@ public class FeeDetailService {
 					finFeeDetail.setPaidAmountGST(netGst);
 				}
 				//this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
-				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
+				this.finFeeDetailService.calculateFees(finFeeDetail, finMain, gstExecutionMap);
 			} else {
 				finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
 				finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
