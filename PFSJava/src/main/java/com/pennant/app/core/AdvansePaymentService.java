@@ -108,6 +108,10 @@ public class AdvansePaymentService extends ServiceHelper {
 		aeEvent = postAccountingEOD(aeEvent);
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		
+		
+		// Create Receipt 
+		
 		logger.debug(Literal.LEAVING);
 	}
 

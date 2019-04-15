@@ -4767,6 +4767,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		BigDecimal reservedAmt = excess.getReservedAmt();
 		
 		excess.setFinReference(finReference);
+		excess.setAmountType(adviceType);
 		excess.setAmount(amount);
 		excess.setUtilisedAmt(utilisedAmt);
 		excess.setReservedAmt(reservedAmt);
@@ -4789,7 +4790,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		movement.setAmount(excess.getAmount());
 		finExcessAmountDAO.saveExcessMovement(movement);
-
 	}
 
 	public String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks,
