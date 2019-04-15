@@ -45,4 +45,8 @@ public interface FinExcessAmountDAO {
 
 	void updateUtilizedAndBalance(FinExcessAmount excessAmount);
 
+	void updateExcess(FinExcessAmount excess);
+
+	FinExcessAmount getFinExcessAmount(String finreference, String amountType);
+
 }

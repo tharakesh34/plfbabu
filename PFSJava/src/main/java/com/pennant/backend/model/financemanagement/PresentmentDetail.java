@@ -101,6 +101,10 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	private FinanceDetail financeDetail;
 
+	private String grcAdvType;
+	private String advType;
+	private Date grcPeriodEndDate;
+
 	public String getMandateStatus() {
 		return mandateStatus;
 	}
@@ -115,6 +119,9 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("acType");
 		excludeFields.add("bounceReason");
 		excludeFields.add("financeDetail");
+		excludeFields.add("grcAdvType");
+		excludeFields.add("advType");
+		excludeFields.add("grcPeriodEndDate");
 		return excludeFields;
 	}
 
@@ -464,10 +471,35 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	}
 
 	/**
-	 * @param financeDetail the financeDetail to set
+	 * @param financeDetail
+	 *            the financeDetail to set
 	 */
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public String getGrcAdvType() {
+		return grcAdvType;
+	}
+
+	public void setGrcAdvType(String grcAdvType) {
+		this.grcAdvType = grcAdvType;
+	}
+
+	public String getAdvType() {
+		return advType;
+	}
+
+	public void setAdvType(String advType) {
+		this.advType = advType;
+	}
+
+	public Date getGrcPeriodEndDate() {
+		return grcPeriodEndDate;
+	}
+
+	public void setGrcPeriodEndDate(Date grcPeriodEndDate) {
+		this.grcPeriodEndDate = grcPeriodEndDate;
 	}
 
 }
