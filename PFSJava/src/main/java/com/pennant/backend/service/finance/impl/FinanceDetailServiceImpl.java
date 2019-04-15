@@ -4749,10 +4749,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
-	private void excessAmountMovement(String finRefernce, String adviceType, BigDecimal reqAmount, String receiptType) {
+	private void excessAmountMovement(String finReference, String adviceType, BigDecimal reqAmount, String receiptType) {
 		FinExcessAmount existingExcessAmt = null;
 
-		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finRefernce, adviceType);
+		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finReference, adviceType);
 
 		if (reqAmount == null) {
 			reqAmount = BigDecimal.ZERO;
@@ -4765,7 +4765,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		BigDecimal amount = excess.getAmount().add(reqAmount);
 		BigDecimal utilisedAmt = excess.getUtilisedAmt();
 		BigDecimal reservedAmt = excess.getReservedAmt();
-
+		
+		excess.setFinReference(finReference);
 		excess.setAmount(amount);
 		excess.setUtilisedAmt(utilisedAmt);
 		excess.setReservedAmt(reservedAmt);

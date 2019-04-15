@@ -111,6 +111,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -2913,42 +2914,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
 		}
+		
+		
+		FeeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData.getFinanceMain(),
+				getFinFeeDetailList());
 
-		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
-		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
-
-		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-				deductFeeFromDisbTot = deductFeeFromDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-				feeAddToDisbTot = feeAddToDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
-					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
-				}
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
-				if (finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
-					finFeeDetail.setWaivedAmount(finFeeDetail.getActualAmount());
-				}
-			}
-
-			if (finFeeDetail.isNewRecord() && !finFeeDetail.isOriginationFee()) {
-				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
-			}
-
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-					.subtract(finFeeDetail.getWaivedAmount()));
-		}
-
-		//FIXME as discussed should be added in finance main table
-		if (StringUtils.isBlank(getFinanceDetail().getModuleDefiner())
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, getFinanceDetail().getModuleDefiner())) {
-			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
-			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
-		}
 
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
