@@ -8921,7 +8921,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 	
-	<bean id="advansePaymentService" class="com.pennant.app.core.AdvansePaymentService" parent="serviceHelper"/>
+	<bean id="advancePaymentService" class="com.pennanttech.pff.advancepayment.service.AdvancePaymentService" parent="serviceHelper"/>
 
 	<!-- Late Pay Buckets -->
 	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService"

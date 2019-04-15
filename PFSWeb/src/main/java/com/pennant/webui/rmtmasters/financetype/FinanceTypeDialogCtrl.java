@@ -131,8 +131,6 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceStage;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -156,6 +154,8 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**

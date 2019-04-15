@@ -72,12 +72,12 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 
 public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 

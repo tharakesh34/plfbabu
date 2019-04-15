@@ -1,10 +1,12 @@
-package com.pennant.backend.model.finance;
+package com.pennanttech.pff.advancepayment.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.pennant.backend.model.finance.FinExcessAmount;
 
 public class AdvancePayment implements Serializable {
 	private static final long serialVersionUID = 1L;

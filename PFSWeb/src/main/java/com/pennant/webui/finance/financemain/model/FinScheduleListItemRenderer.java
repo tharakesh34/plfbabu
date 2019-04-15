@@ -86,12 +86,12 @@ import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class FinScheduleListItemRenderer implements Serializable {
 

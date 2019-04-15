@@ -19,17 +19,17 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.model.finance.AdvancePayment;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.util.AdvancePaymentUtil;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.core.TableType;
 
 public class PresentmentDetailExtractService {

@@ -1,4 +1,4 @@
-package com.pennant.app.core;
+package com.pennanttech.pff.advancepayment.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -8,16 +8,19 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.core.CustEODEvent;
+import com.pennant.app.core.FinEODEvent;
+import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.backend.model.finance.AdvancePayment;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.util.AdvancePaymentUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 
 public class AdvansePaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;

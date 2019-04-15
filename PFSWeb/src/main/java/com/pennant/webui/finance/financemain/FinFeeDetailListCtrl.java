@@ -116,7 +116,6 @@ import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rulefactory.RuleService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -129,6 +128,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.rits.cloning.Cloner;
 
 /**

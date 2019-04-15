@@ -96,13 +96,13 @@ import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.service.rmtmasters.FinTypeInsurancesService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.TableType;
 
 /**

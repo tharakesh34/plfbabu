@@ -91,7 +91,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -113,6 +112,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 

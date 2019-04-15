@@ -94,7 +94,6 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.util.AdvancePaymentUtil;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -103,6 +102,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**

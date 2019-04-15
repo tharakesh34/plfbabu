@@ -9,7 +9,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.core.AdvansePaymentService;
 import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
@@ -24,6 +23,7 @@ import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.limitservice.LimitRebuild;
+import com.pennanttech.pff.advancepayment.service.AdvansePaymentService;
 
 public class EodService {
 
@@ -41,7 +41,7 @@ public class EodService {
 	private AutoDisbursementService autoDisbursementService;
 	private ReceiptPaymentService receiptPaymentService;
 	private InstallmentDueService installmentDueService;
-	private AdvansePaymentService  advansePaymentService;
+	private AdvansePaymentService  advancePaymentService;
 	@Autowired
 	private LimitRebuild limitRebuild;
 
@@ -154,7 +154,7 @@ public class EodService {
 		//installment
 		if (custEODEvent.isDueExist()) {
 			installmentDueService.processDueDatePostings(custEODEvent);
-			advansePaymentService.processAdvansePayments(custEODEvent);
+			advancePaymentService.processAdvansePayments(custEODEvent);
 		}
 
 	}
@@ -175,8 +175,8 @@ public class EodService {
 		this.dateRollOverService = dateRollOverService;
 	}
 
-	public void setAdvansePaymentService(AdvansePaymentService advansePaymentService) {
-		this.advansePaymentService = advansePaymentService;
+	public void setAdvancePaymentService(AdvansePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
 	}
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;

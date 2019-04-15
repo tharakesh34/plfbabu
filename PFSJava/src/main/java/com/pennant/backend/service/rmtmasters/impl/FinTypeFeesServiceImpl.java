@@ -58,10 +58,10 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 
 /**
  * Service implementation for methods that depends on <b>FinTypeFees</b>.<br>

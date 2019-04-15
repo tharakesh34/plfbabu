@@ -104,7 +104,6 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
@@ -114,6 +113,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
 		implements SOAReportGenerationService {

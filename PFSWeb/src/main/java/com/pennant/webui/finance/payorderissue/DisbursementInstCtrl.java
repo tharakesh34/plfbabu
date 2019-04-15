@@ -74,7 +74,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -84,6 +83,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class DisbursementInstCtrl {
 	private static final Logger logger = Logger.getLogger(DisbursementInstCtrl.class);

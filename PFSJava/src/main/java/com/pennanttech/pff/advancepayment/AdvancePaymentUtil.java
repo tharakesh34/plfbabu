@@ -1,4 +1,4 @@
-package com.pennant.backend.util;
+package com.pennanttech.pff.advancepayment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,12 +7,12 @@ import java.util.List;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.Property;
-import com.pennant.backend.model.finance.AdvancePayment;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 
 public class AdvancePaymentUtil {
 
