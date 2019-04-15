@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +19,12 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.model.finance.AdvancePayment;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.util.AdvancePaymentUtil;
+import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -218,6 +222,10 @@ public class PresentmentDetailExtractService {
 				pDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				pDetail.setWorkflowId(0);
 				pDetail.setEntityCode(rs.getString("ENTITYCODE"));
+
+				pDetail.setGrcAdvType(rs.getString("GRCADVTYPE"));
+				pDetail.setAdvType(rs.getString("ADVTYPE"));
+				pDetail.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
 
 				doCalculations(pDetail, presentmentHeader);
 
@@ -424,5 +432,59 @@ public class PresentmentDetailExtractService {
 
 	protected void updateChequeStatus(long chequeDetailsId, String status) {
 		chequeDetailDAO.updateChequeStatus(chequeDetailsId, status);
+	}
+
+	private boolean isPresentmentAmtFromAdvance(PresentmentDetail pd) {
+		AdvancePayment advancePayment = null;
+
+		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRef(pd.getFinReference());
+
+		List<FinExcessAmount> excessAmounts = new ArrayList<>();
+
+		for (FinExcessAmount finExcessAmount : list) {
+			if (AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVINT
+					|| AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVINT) {
+				excessAmounts.add(finExcessAmount);
+			}
+		}
+
+		if (excessAmounts.isEmpty()) {
+			return false;
+		}
+
+		advancePayment = new AdvancePayment(pd.getGrcAdvType(), pd.getAdvType(), pd.getGrcPeriodEndDate());
+		advancePayment.setExcessAmounts(excessAmounts);
+		advancePayment.setSchdPriDue(pd.getSchPriDue());
+		advancePayment.setSchdIntDue(pd.getSchPftDue());
+		advancePayment.setValueDate(DateUtility.getAppValueDate());
+
+		AdvancePaymentUtil.calculatePresement(advancePayment);
+
+		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
+			if (advancePayment.getIntDue().compareTo(pd.getSchAmtDue()) >= 0) {
+				pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
+				pd.setPresentmentAmt(BigDecimal.ZERO);
+				pd.setAdvanceAmt(advancePayment.getIntDue());
+			} else {
+				pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advancePayment.getIntDue()));
+				pd.setAdvanceAmt(advancePayment.getIntDue());
+			}
+			pd.setExcludeReason(RepayConstants.PEXC_ADVINT);
+		} else {
+			if (advancePayment.getEmiDue().compareTo(pd.getSchAmtDue()) >= 0) {
+				pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
+				pd.setPresentmentAmt(BigDecimal.ZERO);
+				pd.setAdvanceAmt(advancePayment.getEmiDue());
+			} else {
+				pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advancePayment.getEmiDue()));
+				pd.setAdvanceAmt(advancePayment.getEmiDue());
+			}
+			pd.setExcludeReason(RepayConstants.PEXC_ADVEMI);
+		}
+
+		finExcessAmountDAO.updateUtilizedAndBalance(advancePayment.getFinExcessAmount());
+
+		return true;
+
 	}
 }

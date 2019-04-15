@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinancePurposeDetailServiceImpl.java                                 * 	  
+ * FileName    		:  FinFeeDetailServiceImpl.java                                 		* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -47,7 +47,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -88,7 +86,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -97,8 +94,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceRuleCode;
-import com.pennant.backend.util.AdvancePaymentUtil.AdvanceType;
+import com.pennant.backend.util.AdvancePaymentUtil;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -240,148 +236,148 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return auditDetails;
 	}
 
-	private List<AuditDetail> processFinFeeDetails(List<FinFeeDetail> finFeeDetails, String tableType,
-			String auditTranType, boolean isApproveRcd, boolean isWIF) {
+	private List<AuditDetail> processFinFeeDetails(List<FinFeeDetail> fees, String tableType, String auditTranType,
+			boolean isApproveRcd, boolean isWIF) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			int i = 0;
-			boolean saveRecord = false;
-			boolean updateRecord = false;
-			boolean deleteRecord = false;
-			boolean approveRec = false;
-
-			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-
-				if (!isApproveRcd && (finFeeDetail.isRcdVisible() && !finFeeDetail.isDataModified())) {
-					continue;
-				}
-
-				if (StringUtils.equals(finFeeDetail.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)) {
-					continue;
-				}
-
-				saveRecord = false;
-				updateRecord = false;
-				deleteRecord = false;
-				approveRec = isApproveRcd;
-				String rcdType = "";
-				String recordStatus = "";
-				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
-
-				if (StringUtils.isEmpty(tableType)
-						|| StringUtils.equals(tableType, PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
-					approveRec = true;
-					finFeeDetail.setRoleCode("");
-					finFeeDetail.setNextRoleCode("");
-					finFeeDetail.setTaskId("");
-					finFeeDetail.setNextTaskId("");
-					finFeeDetail.setWorkflowId(0);
-				}
-
-				if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					deleteRecord = true;
-				} else if (finFeeDetail.isNewRecord()) {
-					saveRecord = true;
-					if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					}
-
-				} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					if (approveRec) {
-						saveRecord = true;
-					} else {
-						updateRecord = true;
-					}
-				} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-					updateRecord = true;
-				} else if (finFeeDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-					if (approveRec) {
-						deleteRecord = true;
-					} else if (finFeeDetail.isNew()) {
-						saveRecord = true;
-					} else {
-						updateRecord = true;
-					}
-				}
-				if (approveRec) {
-					rcdType = finFeeDetail.getRecordType();
-					recordStatus = finFeeDetail.getRecordStatus();
-					finFeeDetail.setRecordType("");
-					finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				}
-
-				if (saveRecord) {
-					if (finFeeDetail.isNewRecord() && !approveRec) {
-						finFeeDetail.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(finFeeDetail, isWIF, tableType) + 1);
-					}
-
-					if ((finFeeDetail.isAlwPreIncomization())
-							&& (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
-						FinFeeDetail finFeeDtl = getFinFeeDetailDAO().getFeeDetailByExtReference(
-								finFeeDetail.getTransactionId(), finFeeDetail.getFeeTypeID(), "");
-						if (finFeeDtl != null) {
-							finFeeDetail.setFeeID(finFeeDtl.getFeeID());
-							finFeeDetail.setFeeSeq(finFeeDtl.getFeeSeq());
-							getFinFeeDetailDAO().update(finFeeDetail, false, "");
-						}
-					} else {
-						finFeeDetail.setFeeID(getFinFeeDetailDAO().save(finFeeDetail, isWIF, tableType));
-					}
-
-					finTaxDetails.setFeeID(finFeeDetail.getFeeID());
-
-					getFinTaxDetailsDAO().save(finTaxDetails, tableType);
-
-					if (!finFeeDetail.getFinFeeScheduleDetailList().isEmpty()) {
-						for (FinFeeScheduleDetail finFeeSchDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
-							finFeeSchDetail.setFeeID(finFeeDetail.getFeeID());
-						}
-						getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(finFeeDetail.getFinFeeScheduleDetailList(),
-								isWIF, tableType);
-					}
-				}
-
-				if (updateRecord) {
-					getFinFeeDetailDAO().update(finFeeDetail, isWIF, tableType);
-
-					if (finTaxDetails.getFinTaxID() != 0 && finTaxDetails.getFinTaxID() != Long.MIN_VALUE) {
-						getFinTaxDetailsDAO().update(finTaxDetails, tableType);
-					}
-
-					getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
-					if (!finFeeDetail.getFinFeeScheduleDetailList().isEmpty()) {
-						for (FinFeeScheduleDetail finFeeSchDetail : finFeeDetail.getFinFeeScheduleDetailList()) {
-							finFeeSchDetail.setFeeID(finFeeDetail.getFeeID());
-						}
-						getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(finFeeDetail.getFinFeeScheduleDetailList(),
-								isWIF, tableType);
-					}
-				}
-
-				if (deleteRecord) {
-					getFinTaxDetailsDAO().deleteByFeeID(finFeeDetail.getFeeID(), tableType);
-					getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
-					getFinFeeDetailDAO().delete(finFeeDetail, isWIF, tableType);
-				}
-
-				if (approveRec) {
-					finFeeDetail.setRecordType(rcdType);
-					finFeeDetail.setRecordStatus(recordStatus);
-				}
-
-				String[] fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finFeeDetail.getBefImage(),
-						finFeeDetail));
-				i++;
-			}
+		if (CollectionUtils.isEmpty(fees)) {
+			return auditDetails;
 		}
+
+		int i = 0;
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (FinFeeDetail fee : fees) {
+			if (!isApproveRcd && (fee.isRcdVisible() && !fee.isDataModified())) {
+				continue;
+			}
+
+			if (StringUtils.equals(fee.getStatus(), FinanceConstants.FEE_STATUS_CANCEL)) {
+				continue;
+			}
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = isApproveRcd;
+			String rcdType = "";
+			String recordStatus = "";
+			FinTaxDetails finTaxDetails = fee.getFinTaxDetails();
+
+			if (StringUtils.isEmpty(tableType)
+					|| StringUtils.equals(tableType, PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
+				approveRec = true;
+				fee.setRoleCode("");
+				fee.setNextRoleCode("");
+				fee.setTaskId("");
+				fee.setNextTaskId("");
+				fee.setWorkflowId(0);
+			}
+
+			if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (fee.isNewRecord()) {
+				saveRecord = true;
+				if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					fee.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					fee.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (fee.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (fee.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = fee.getRecordType();
+				recordStatus = fee.getRecordStatus();
+				fee.setRecordType("");
+				fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			if (saveRecord) {
+				if (fee.isNewRecord() && !approveRec) {
+					fee.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(fee, isWIF, tableType) + 1);
+				}
+
+				if ((fee.isAlwPreIncomization()) && (fee.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
+					FinFeeDetail finFeeDtl = getFinFeeDetailDAO().getFeeDetailByExtReference(fee.getTransactionId(),
+							fee.getFeeTypeID(), "");
+					if (finFeeDtl != null) {
+						fee.setFeeID(finFeeDtl.getFeeID());
+						fee.setFeeSeq(finFeeDtl.getFeeSeq());
+						getFinFeeDetailDAO().update(fee, false, "");
+					}
+				} else {
+					fee.setFeeID(getFinFeeDetailDAO().save(fee, isWIF, tableType));
+				}
+
+				finTaxDetails.setFeeID(fee.getFeeID());
+
+				getFinTaxDetailsDAO().save(finTaxDetails, tableType);
+
+				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
+					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
+						finFeeSchDetail.setFeeID(fee.getFeeID());
+					}
+					getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(fee.getFinFeeScheduleDetailList(), isWIF,
+							tableType);
+				}
+			}
+
+			if (updateRecord) {
+				getFinFeeDetailDAO().update(fee, isWIF, tableType);
+
+				if (finTaxDetails.getFinTaxID() != 0 && finTaxDetails.getFinTaxID() != Long.MIN_VALUE) {
+					getFinTaxDetailsDAO().update(finTaxDetails, tableType);
+				}
+
+				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
+				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
+					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
+						finFeeSchDetail.setFeeID(fee.getFeeID());
+					}
+					getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(fee.getFinFeeScheduleDetailList(), isWIF,
+							tableType);
+				}
+			}
+
+			if (deleteRecord) {
+				getFinTaxDetailsDAO().deleteByFeeID(fee.getFeeID(), tableType);
+				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
+				getFinFeeDetailDAO().delete(fee, isWIF, tableType);
+			}
+
+			if (approveRec) {
+				fee.setRecordType(rcdType);
+				fee.setRecordStatus(recordStatus);
+			}
+
+			String[] fields = PennantJavaUtil.getFieldDetails(fee, fee.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], fee.getBefImage(), fee));
+			i++;
+		}
+
 		logger.debug("Leaving");
 		return auditDetails;
 	}
@@ -1469,127 +1465,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return result;
 	}
 
-	private void setAdvanceProfit(AdvanceRuleCode advanceRuleCode, FinScheduleData finScheduleData, FinFeeDetail fee) {
-		String finTypeCode = fee.getFeeTypeCode();
-		String finEvent = fee.getFinEvent();
-
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
-		String grcAdvType = fm.getGrcAdvType();
-		int grcTerms = fm.getGrcAdvTerms();
-		String advType = fm.getAdvType();
-		int advTerms = fm.getAdvTerms();
-
-		if ((grcAdvType == null && advType == null) || !(advanceRuleCode.name().equals(finTypeCode))) {
-			return;
-		}
-
-		AdvanceType advanceType = AdvanceType.getType(advType);
-		AdvanceType grcadvanceType = AdvanceType.getType(grcAdvType);
-
-		if (advanceType == null && grcadvanceType == null) {
-			return;
-		}
-
-		BigDecimal advanceIntrest = BigDecimal.ZERO;
-		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
-		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
-		
-		if(AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent)) {
-			List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
-			if (fm.getGrcAdvType() != null) {
-				graceAdvanceIntrest = getAdvanceInterst("GRACE", grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
-			}
-
-			if (fm.getAdvType() != null) {
-				repayAdvanceIntrest = getAdvanceInterst("REPAY", advTerms, gracePeriodEndDate, advanceType, schedules);
-			}
-		} else {
-			
-			// FIXME MUR Advance EMI
-			advanceIntrest = finScheduleData.getPftChg();
-		}
-
-		advanceIntrest = advanceIntrest.add(graceAdvanceIntrest).add(repayAdvanceIntrest);
-
-		fee.setActualAmount(advanceIntrest);
-		fee.setCalculatedAmount(advanceIntrest);
-		fee.setActualAmountOriginal(advanceIntrest);
-
-		fm.setAdvanceEMI(advanceIntrest);
-	}
-
-	private BigDecimal getAdvanceInterst(String type, int Terms, Date gracePeriodEndDate, AdvanceType advanceType,
-			List<FinanceScheduleDetail> schedules) {
-
-		if (advanceType == null) {
-			return BigDecimal.ZERO;
-		}
-
-		BigDecimal advanceProfit;
-		switch (advanceType) {
-		case UF:
-			Terms = -1;
-			break;
-		case AF:
-			Terms = 1;
-			break;
-		case UT:
-		case AE:
-			break;
-		default:
-			break;
-		}
-
-		advanceProfit = getAdvanceProfit(advanceType, type, Terms, gracePeriodEndDate, schedules);
-		return advanceProfit;
-	}
-
-	private BigDecimal getAdvanceProfit(AdvanceType advanceType, String type, int terms, Date gracePeriodEndDate,
-			List<FinanceScheduleDetail> schedules) {
-		BigDecimal advanceProfit = BigDecimal.ZERO;
-
-		int term = 0;
-
-		for (FinanceScheduleDetail sd : schedules) {
-			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
-				Date schDate = sd.getSchDate();
-				BigDecimal profitSchd = sd.getProfitSchd();
-				if (schDate.compareTo(gracePeriodEndDate) <= 0 && "GRACE".equals(type)) {
-					advanceProfit = advanceProfit.add(profitSchd);
-					term++;
-				}
-
-				if (schDate.compareTo(gracePeriodEndDate) > 0 && "REPAY".equals(type)) {
-					if (advanceType == AdvanceType.AE) {
-						BigDecimal principalSchd = sd.getPrincipalSchd();
-						advanceProfit = advanceProfit.add(profitSchd).add(principalSchd);
-					} else {
-						advanceProfit = advanceProfit.add(profitSchd);
-					}
-					term++;
-				}
-			}
-
-			if (term == terms) {
-				break;
-			}
-		}
-
-		return advanceProfit;
-	}
-
 	@Override
-	public void calculateFees(FinFeeDetail finFeeDetail, FinScheduleData finScheduleData,
-			Map<String, Object> gstExecutionMap) {
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		if (StringUtils.equals(finFeeDetail.getFeeTypeCode(), AdvanceRuleCode.ADVINT.name())) {
-			setAdvanceProfit(AdvanceRuleCode.ADVINT, finScheduleData, finFeeDetail);
-		}
-		if (StringUtils.equals(finFeeDetail.getFeeTypeCode(), AdvanceRuleCode.ADVEMI.name())) {
-			setAdvanceProfit(AdvanceRuleCode.ADVEMI, finScheduleData, finFeeDetail);
-		}
-		calculateFees(finFeeDetail, financeMain, gstExecutionMap);
+	public void calculateFees(FinFeeDetail fee, FinScheduleData scheduleData, Map<String, Object> gstExecutionMap) {
+		FinanceMain financeMain = scheduleData.getFinanceMain();
+
+		AdvancePaymentUtil.setAdvancePayment(scheduleData, fee);
+
+		calculateFees(fee, financeMain, gstExecutionMap);
 	}
 
 	@Override

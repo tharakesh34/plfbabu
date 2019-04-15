@@ -273,7 +273,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private BundledProductsDetailService bundledProductsDetailService;
 	private FinAssetEvaluationService finAssetEvaluationService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
-	private FinFeeDetailService finFeeDetailService;
+	protected FinFeeDetailService finFeeDetailService;
 	protected FinCovenantTypeService finCovenantTypeService;
 	private RepaymentPostingsUtil repayPostingUtil;
 	private SecondaryAccountDAO secondaryAccountDAO;
