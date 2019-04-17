@@ -260,7 +260,6 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 				recordStatus = covenant.getRecordStatus();
 				covenant.setRecordType("");
 				covenant.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				covenantsDAO.delete(covenant, TableType.TEMP_TAB);
 			}
 			if (saveRecord) {
 				covenantsDAO.save(covenant, tableType);

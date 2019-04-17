@@ -374,10 +374,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			for (Covenant covenantType : getCovenants()) {
 				Covenant befImage = new Covenant();
 				BeanUtils.copyProperties(covenantType, befImage);
-				if(finMaintainInstruction.getRecordStatus()==null){
-					this.recordStatus.setValue(PennantConstants.RCD_STATUS_APPROVED);
-				}else{
-					this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
+				if (finMaintainInstruction != null) {
+					if (finMaintainInstruction.getRecordStatus() == null) {
+						this.recordStatus.setValue(PennantConstants.RCD_STATUS_APPROVED);
+					} else {
+						this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
+					}
 				}
 			}
 		}
