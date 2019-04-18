@@ -258,15 +258,15 @@ public class AdvancePaymentUtil {
 
 	public static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
 		if (fee.getFeeTypeCode().equals(AdvanceRuleCode.ADVINT.name())) {
-			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVINT);
+			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVINT,"GRACE");
 		}
 		if (fee.getFeeTypeCode().equals(AdvanceRuleCode.ADVEMI.name())) {
-			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVEMI);
+			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVEMI,"REPAY");
 		}
 	}
 
 	private static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee,
-			AdvanceRuleCode advanceRuleCode) {
+			AdvanceRuleCode advanceRuleCode,String type) {
 		String finTypeCode = fee.getFeeTypeCode();
 		String finEvent = fee.getFinEvent();
 
@@ -289,16 +289,16 @@ public class AdvancePaymentUtil {
 		}
 
 		BigDecimal advanceIntrest = BigDecimal.ZERO;
-		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
-		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
+//		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
+//		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
 
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 		if (fm.getGrcAdvType() != null) {
-			graceAdvanceIntrest = getAdvanceInterst("GRACE", grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
+			advanceIntrest = getAdvanceInterst(type, grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
 		}
 
 		if (fm.getAdvType() != null) {
-			repayAdvanceIntrest = getAdvanceInterst("REPAY", advTerms, gracePeriodEndDate, advanceType, schedules);
+			advanceIntrest = getAdvanceInterst(type, advTerms, gracePeriodEndDate, advanceType, schedules);
 		}
 
 		/*
@@ -311,18 +311,18 @@ public class AdvancePaymentUtil {
 		// FIXME MUR>> Need to validate Frequency and Number of Terms
 		if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
 			advanceIntrest = finScheduleData.getPftChg();
-			graceAdvanceIntrest = BigDecimal.ZERO;
-			repayAdvanceIntrest = BigDecimal.ZERO;
+//			graceAdvanceIntrest = BigDecimal.ZERO;
+//			repayAdvanceIntrest = BigDecimal.ZERO;
 		}
 
-		advanceIntrest = advanceIntrest.add(graceAdvanceIntrest).add(repayAdvanceIntrest);
+		//advanceIntrest = advanceIntrest.add(graceAdvanceIntrest).add(repayAdvanceIntrest);
 
 		fee.setActualAmount(advanceIntrest);
 		fee.setCalculatedAmount(advanceIntrest);
 		fee.setActualAmountOriginal(advanceIntrest);
 
 		// FIXME MUR>> Need to validate Frequency and Number of Terms
-		fm.setAdvanceEMI(advanceIntrest);
+		//fm.setAdvanceEMI(advanceIntrest);
 	}
 
 	private static BigDecimal getAdvanceInterst(String type, int terms, Date gracePeriodEndDate,
