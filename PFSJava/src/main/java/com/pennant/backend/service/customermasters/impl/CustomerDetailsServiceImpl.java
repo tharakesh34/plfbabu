@@ -2203,6 +2203,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						valueParm[0] = custIncome.getCustCif();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90113", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
 					}
 					if (incomeType != null && (custIncome.getMargin() == null
 							|| custIncome.getMargin().compareTo(BigDecimal.ZERO) == 0)) {
