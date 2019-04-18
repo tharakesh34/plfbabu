@@ -505,7 +505,7 @@ public class ScheduleCalculator {
 			List<FinanceScheduleDetail> finSchdlDetailList = finScheduleData.getFinanceScheduleDetails();
 			int size = finScheduleData.getFinanceScheduleDetails().size();
 			Date eventToDate = finMain.getMaturityDate();
-			if(!StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)){
+			if (!StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)) {
 				for (int i = size - 1; i >= 0; i--) {
 					FinanceScheduleDetail schDetail = finSchdlDetailList.get(i);
 					if ((schDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
@@ -2920,9 +2920,10 @@ public class ScheduleCalculator {
 				RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(j);
 				if (DateUtility.compare(curInstruction.getRepayDate(), finMain.getGrcPeriodEndDate()) > 0) {
 					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
-						finMain.setAdvanceEMI(curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvTerms())));
+						finMain.setAdvanceEMI(
+								curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvTerms())));
 					}
-					
+
 				}
 			}
 		}
@@ -3239,8 +3240,7 @@ public class ScheduleCalculator {
 					continue;
 				}
 				calFeeAmount = fee.getActualAmount().subtract(fee.getWaivedAmount());
-				calFeeAmount = (calFeeAmount.multiply(feePerc)).divide(new BigDecimal(100), 0,
-						RoundingMode.HALF_DOWN);
+				calFeeAmount = (calFeeAmount.multiply(feePerc)).divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 				feeAmount = feeAmount.add(calFeeAmount);
 
 				if (fee.isRefundable()) {
@@ -3256,9 +3256,11 @@ public class ScheduleCalculator {
 				repayDateList.add(finScheduleDetail.getSchDate());
 
 				calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
-				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0 && finMain.getAdvTerms() > 0) {
+				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0
+						&& finMain.getAdvTerms() > 0) {
 					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
-						calcAmount = calcAmount.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvTerms()))));
+						calcAmount = calcAmount
+								.subtract((finMain.getAdvanceEMI().multiply(new BigDecimal(finMain.getAdvTerms()))));
 					}
 				}
 				calcAmount = calcAmount.multiply(new BigDecimal(-1));
@@ -3271,8 +3273,8 @@ public class ScheduleCalculator {
 				schAmountListWithFee.add(calcAmount);
 			}
 
-			if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0 &&
-					DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) != 0) {
+			if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0
+					&& DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) != 0) {
 				schAmountList.add(finScheduleDetail.getRepayAmount());
 				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getMaturityDate()) == 0) {
 					schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd())
@@ -3285,10 +3287,8 @@ public class ScheduleCalculator {
 		}
 
 		/*
-		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int
-		 * termsPerYear =
-		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq());
-		 * calculated_IRR = calculated_IRR.multiply(new
+		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
+		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
 		 * BigDecimal(termsPerYear));
 		 */
 
@@ -3620,9 +3620,8 @@ public class ScheduleCalculator {
 			if (finMain.isAdjustClosingBal()) {
 				curSchd.setClosingBalance(curSchd.getClosingBalance().subtract(finMain.getAdvanceEMI()));
 				finMain.setAdjustClosingBal(false);
-			}	
+			}
 		}
-		
 
 		curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
 
