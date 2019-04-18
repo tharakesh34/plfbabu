@@ -1,7 +1,6 @@
 package com.pennant.backend.model.FinRepayQueue;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +9,9 @@ public class FinRepayQueueHeader {
 	private BigDecimal principal = BigDecimal.ZERO;
 	private BigDecimal profit = BigDecimal.ZERO;
 	private BigDecimal tds = BigDecimal.ZERO;
+	private BigDecimal futPrincipal = BigDecimal.ZERO;
+	private BigDecimal futProfit = BigDecimal.ZERO;
+	private BigDecimal futTds = BigDecimal.ZERO;
 	private BigDecimal lateProfit = BigDecimal.ZERO;
 	private BigDecimal penalty = BigDecimal.ZERO;
 	private BigDecimal fee = BigDecimal.ZERO;
@@ -17,8 +19,12 @@ public class FinRepayQueueHeader {
 	private BigDecimal suplRent = BigDecimal.ZERO;
 	private BigDecimal incrCost = BigDecimal.ZERO;
 
+	private BigDecimal partialPaid = BigDecimal.ZERO;
+
 	private BigDecimal priWaived = BigDecimal.ZERO;
 	private BigDecimal pftWaived = BigDecimal.ZERO;
+	private BigDecimal futPriWaived = BigDecimal.ZERO;
+	private BigDecimal futPftWaived = BigDecimal.ZERO;
 	private BigDecimal latePftWaived = BigDecimal.ZERO;
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal feeWaived = BigDecimal.ZERO;
@@ -26,15 +32,26 @@ public class FinRepayQueueHeader {
 	private BigDecimal suplRentWaived = BigDecimal.ZERO;
 	private BigDecimal incrCostWaived = BigDecimal.ZERO;
 
+	private BigDecimal manAdvPaid = BigDecimal.ZERO;
+	private BigDecimal manAdvWaived = BigDecimal.ZERO;
+	
+	private BigDecimal paidPenaltyCGST = BigDecimal.ZERO;
+	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
+	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
+	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
+
 	private String payType;
 	private String postBranch;
+	private String cashierBranch;
 	private String partnerBankAc;
 	private String partnerBankAcType;
 	private boolean pftChgAccReq;
 	private long receiptId;
+	private boolean cashTranExecuted = false;
+	private boolean stageAccExecuted = false;
 
 	private Map<String, BigDecimal> extDataMap = null;
-	private HashMap<String, Object> gstExecutionMap = null;
+	private Map<String, Object> gstExecutionMap = null;
 	private List<FinRepayQueue> queueList = null;
 
 	public FinRepayQueueHeader() {
@@ -237,6 +254,22 @@ public class FinRepayQueueHeader {
 		this.extDataMap = extDataMap;
 	}
 
+	public BigDecimal getManAdvPaid() {
+		return manAdvPaid;
+	}
+
+	public void setManAdvPaid(BigDecimal manAdvPaid) {
+		this.manAdvPaid = manAdvPaid;
+	}
+
+	public BigDecimal getManAdvWaived() {
+		return manAdvWaived;
+	}
+
+	public void setManAdvWaived(BigDecimal manAdvWaived) {
+		this.manAdvWaived = manAdvWaived;
+	}
+
 	public long getReceiptId() {
 		return receiptId;
 	}
@@ -245,12 +278,108 @@ public class FinRepayQueueHeader {
 		this.receiptId = receiptId;
 	}
 
-	public HashMap<String, Object> getGstExecutionMap() {
+	public String getCashierBranch() {
+		return cashierBranch;
+	}
+
+	public void setCashierBranch(String cashierBranch) {
+		this.cashierBranch = cashierBranch;
+	}
+
+	public boolean isStageAccExecuted() {
+		return stageAccExecuted;
+	}
+
+	public void setStageAccExecuted(boolean stageAccExecuted) {
+		this.stageAccExecuted = stageAccExecuted;
+	}
+
+	public BigDecimal getPartialPaid() {
+		return partialPaid;
+	}
+
+	public void setPartialPaid(BigDecimal partialPaid) {
+		this.partialPaid = partialPaid;
+	}
+
+	public BigDecimal getFutPrincipal() {
+		return futPrincipal;
+	}
+
+	public void setFutPrincipal(BigDecimal futPrincipal) {
+		this.futPrincipal = futPrincipal;
+	}
+
+	public BigDecimal getFutProfit() {
+		return futProfit;
+	}
+
+	public void setFutProfit(BigDecimal futProfit) {
+		this.futProfit = futProfit;
+	}
+
+	public BigDecimal getFutTds() {
+		return futTds;
+	}
+
+	public void setFutTds(BigDecimal futTds) {
+		this.futTds = futTds;
+	}
+
+	public BigDecimal getFutPriWaived() {
+		return futPriWaived;
+	}
+
+	public void setFutPriWaived(BigDecimal futPriWaived) {
+		this.futPriWaived = futPriWaived;
+	}
+
+	public BigDecimal getFutPftWaived() {
+		return futPftWaived;
+	}
+
+	public void setFutPftWaived(BigDecimal futPftWaived) {
+		this.futPftWaived = futPftWaived;
+	}
+	
+	public Map<String, Object> getGstExecutionMap() {
 		return gstExecutionMap;
 	}
 
-	public void setGstExecutionMap(HashMap<String, Object> gstExecutionMap) {
+	public void setGstExecutionMap(Map<String, Object> gstExecutionMap) {
 		this.gstExecutionMap = gstExecutionMap;
+	}
+
+	public BigDecimal getPaidPenaltyCGST() {
+		return paidPenaltyCGST;
+	}
+
+	public void setPaidPenaltyCGST(BigDecimal paidPenaltyCGST) {
+		this.paidPenaltyCGST = paidPenaltyCGST;
+	}
+
+	public BigDecimal getPaidPenaltySGST() {
+		return paidPenaltySGST;
+	}
+
+	public void setPaidPenaltySGST(BigDecimal paidPenaltySGST) {
+		this.paidPenaltySGST = paidPenaltySGST;
+	}
+
+	public BigDecimal getPaidPenaltyUGST() {
+		return paidPenaltyUGST;
+	}
+
+	public void setPaidPenaltyUGST(BigDecimal paidPenaltyUGST) {
+		this.paidPenaltyUGST = paidPenaltyUGST;
+	}
+
+	public BigDecimal getPaidPenaltyIGST() {
+		return paidPenaltyIGST;
+	}
+
+	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
+		this.paidPenaltyIGST = paidPenaltyIGST;
 	}
 
 }

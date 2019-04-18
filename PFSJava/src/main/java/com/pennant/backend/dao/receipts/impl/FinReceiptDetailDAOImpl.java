@@ -60,6 +60,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -89,12 +90,12 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 				"Select ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , ");
 		selectSql.append(
 				" Amount  , FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
-		selectSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey ");
+		selectSql.append(
+				" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey, ValueDate ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
-					" ,BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType, FeeTypeCode ");
+			selectSql.append(" ,BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType  ");
 			if (StringUtils.trimToEmpty(type).contains("AView")) {
-				selectSql.append(" ,FeeTypeDesc ");
+				selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
 			}
 		}
 		selectSql.append(" From FinReceiptDetail");
@@ -190,24 +191,29 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReference) {
+	public List<FinReceiptDetail> getFinReceiptDetailByFinRef(String finReference, long custId) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("Status", "C");
 		source.addValue("ReceiptPurpose", "FeePayment");
+		source.addValue("RECAGAINST1", RepayConstants.RECEIPTTO_FINANCE);
+		source.addValue("RECAGAINST2", RepayConstants.RECEIPTTO_CUSTOMER);
+		source.addValue("CustId", String.valueOf(custId));
 
 		List<FinReceiptDetail> finReceiptDetailsList;
 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(
-				" select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT ");
+				" Select T1.RECEIPTID, T2.TRANSACTIONREF, T2.FAVOURNUMBER ,T1.RECEIPTMODE PaymentType, T2.AMOUNT ");
 		selectSql.append(" From FINRECEIPTHEADER T1 ");
 		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status");
+		selectSql.append(" And ((RECAGAINST = :RECAGAINST1 and T1.Reference = :FinReference) OR ");
 		selectSql.append(
-				" where ReceiptPurpose = :ReceiptPurpose And T2.Status <> :Status And T1.Reference = :FinReference");
+				" (RECAGAINST = :RECAGAINST2 and T1.Reference = :CustId And T1.RECEIPTID Not In (Select Distinct ReceiptId from FINFEERECEIPTS_View where FinReference <> :FinReference)))");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 
@@ -240,6 +246,71 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		Date maxReceivedDate = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 		logger.debug("Leaving");
 		return maxReceivedDate;
+	}
+
+	@Override
+	public List<RepayScheduleDetail> fetchRepaySchduleList(long receiptSeqId) {
+		StringBuilder selectSql = new StringBuilder();
+		selectSql
+				.append("select  a.SCHDATE,a.WAIVEDAMT from FINREPAYSCHEDULEDETAIL  a,FINREPAYHEADER b where a.repayID=b.REPAYID and b.RECEIPTSEQID="
+						+ receiptSeqId);
+
+		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<RepayScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(RepayScheduleDetail.class);
+		logger.debug("Leaving");
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
+	}
+
+	@Override
+	public List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
+		selectSql.append(" From FINRECEIPTHEADER T1");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(" where Reference = '" + finReference + "'");
+
+		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinReceiptDetail.class);
+		logger.debug("Leaving");
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
+	}
+
+	/**
+	 * Method for fetching Summing up of all Disbursed Amounts by Date
+	 */
+	@Override
+	public BigDecimal getReceiptAmountPerDay(String product, Date receiptDate, String receiptMode, long custID) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("PRODUCTCATEGORY", product);
+		source.addValue("RECEIVEDDATE", receiptDate);
+		source.addValue("PAYMENTTYPE", receiptMode);
+		source.addValue("CustID", custID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT SUM(AMOUNT) from FINRECEIPTDETAIL RD ");
+		selectSql.append(" INNER JOIN FINRECEIPTHEADER RH ON RH.RECEIPTID = RD.RECEIPTID ");
+		selectSql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = RH.REFERENCE ");
+		selectSql.append(
+				" WHERE RD.STATUS NOT IN ('C','B') AND RD.RECEIVEDDATE = :RECEIVEDDATE AND FM.PRODUCTCATEGORY = :PRODUCTCATEGORY AND FM.CUSTID = :CustID ");
+		selectSql.append(" AND RD.PAYMENTTYPE = :PAYMENTTYPE ");
+		logger.debug("selectSql: " + selectSql.toString());
+		BigDecimal amount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		if (amount == null) {
+			amount = BigDecimal.ZERO;
+		}
+		logger.debug("Leaving");
+		return amount;
 	}
 
 	@Override
@@ -304,27 +375,6 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetailByFinReference(String finReference) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" Select T1.Reference,T2.PaymentType,T1.ReceiptPurpose, T2.TRANSACTIONREF, T2.AMOUNT, T2.ReceivedDate");
-		selectSql.append(" From FINRECEIPTHEADER T1");
-		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(" where Reference = '" + finReference + "'");
-
-		BeanPropertySqlParameterSource beanParamSource = new BeanPropertySqlParameterSource(new FinReceiptDetail());
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinReceiptDetail.class);
-		logger.debug("Leaving");
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParamSource, typeRowMapper);
-	}
-
-	@Override
 	public List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type) {
 		logger.debug("Entering");
 
@@ -361,11 +411,198 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		} catch (EmptyResultDataAccessException e) {
 			finReceiptDetailsList = new ArrayList<FinReceiptDetail>();
 		}
+		logger.debug("Leaving");
+		return finReceiptDetailsList;
+	}
 
+	/**
+	 * 29-10-2018, Ticket id:124998 get receipt ID at receipt mode status A and at schd purpose return boolean condition
+	 */
+	@Override
+	public long getReceiptIdByReceiptDetails(FinReceiptHeader receiptHeader, String purpose) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select T1.receiptid ");
+		selectSql.append(" From FINRECEIPTHEADER T1");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(
+				" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
+		selectSql.append(
+				" and  T2.FundingAc = :FundingAc and T2.FAVOURNUMBER = :FAVOURNUMBER and T1.RECEIPTMODESTATUS = :RECEIPTMODESTATUS  ");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Finreference", receiptHeader.getReference());
+		source.addValue("ReceiptPurpose", purpose);
+		source.addValue("RECEIPTMODE", receiptHeader.getReceiptMode());
+		source.addValue("FundingAc", receiptHeader.getReceiptDetails().get(0).getFundingAc());
+		source.addValue("FAVOURNUMBER", receiptHeader.getReceiptDetails().get(0).getFavourNumber());
+		source.addValue("RECEIPTMODESTATUS", RepayConstants.PAYSTATUS_APPROVED);
+
+		logger.debug("selectSql: " + selectSql.toString());
 		logger.debug("Leaving");
 
-		return finReceiptDetailsList;
+		long count = 0;
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (DataAccessException e) {
+			logger.debug(e);
+			count = 0;
+		}
+		return count;
+	}
 
+	/**
+	 * 29-10-2018, Ticket id:124998 check receipt details exits with given by favour number return boolean condition
+	 */
+	@Override
+	public boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select count(*) ");
+		selectSql.append(" From FINRECEIPTHEADER T1");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(
+				" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
+		selectSql.append(" and  T2.BANKCODE = :BANKCODE and T2.FAVOURNUMBER = :FAVOURNUMBER ");
+		selectSql.append(" and  T1.receiptmodeStatus not in ('C')");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Finreference", receiptHeader.getReference());
+		source.addValue("ReceiptPurpose", purpose);
+		source.addValue("RECEIPTMODE", receiptHeader.getReceiptMode());
+		source.addValue("BANKCODE", receiptHeader.getReceiptDetails().get(0).getBankCode());
+		source.addValue("FAVOURNUMBER", receiptHeader.getReceiptDetails().get(0).getFavourNumber());
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+
+		int count = 0;
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.debug(e);
+			count = 0;
+		}
+
+		if (count > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * 29-10-2018, Ticket id:124998 check receipt details exits with given by Transaction Ref return boolean condition
+	 */
+	@Override
+	public boolean isFinReceiptDetailExitsByTransactionRef(FinReceiptHeader receiptHeader, String purpose) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select count(*) ");
+		selectSql.append(" From FINRECEIPTHEADER T1");
+		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
+		selectSql.append(
+				" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
+		selectSql.append(" and  T2.TRANSACTIONREF = :TRANSACTIONREF ");
+		selectSql.append(" and  T1.receiptmodeStatus not in ('C')");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Finreference", receiptHeader.getReference());
+		source.addValue("ReceiptPurpose", purpose);
+		source.addValue("RECEIPTMODE", receiptHeader.getReceiptMode());
+		source.addValue("TRANSACTIONREF", receiptHeader.getReceiptDetails().get(0).getTransactionRef());
+
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+
+		int count = 0;
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.debug(e);
+			count = 0;
+		}
+
+		if (count > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * updating status Ticket id:124998
+	 */
+	@Override
+	public void updateReceiptStatusByReceiptId(long receiptID, String status) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("Status", status);
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
+		updateSql.append(" Set Status=:Status ");
+		updateSql.append(" Where ReceiptID =:ReceiptID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public boolean isDuplicateReceipt(String finReference, String txnReference, BigDecimal receiptAmount) {
+		StringBuilder selectSql = new StringBuilder();
+		boolean isDuplicate = false;
+		selectSql.append(" Select count(*) ");
+		selectSql.append(" From FINRECEIPTHEADER T1 Inner Join FINRECEIPTDETAIL T2 ON ");
+		selectSql.append(" T1.ReceiptID = T2.RECEIPTID where Reference = :Reference AND ");
+		selectSql.append(" TransactionRef = :TransactionRef AND ReceiptAmount = :ReceiptAmount");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+		source.addValue("TransactionRef", txnReference);
+		source.addValue("ReceiptAmount", receiptAmount);
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			if (count > 0) {
+				isDuplicate = true;
+				logger.debug("Duplcate Receipt Transaction");
+			}
+		} catch (DataAccessException e) {
+			logger.debug(e);
+		}
+
+		return isDuplicate;
+	}
+
+	@Override
+	public BigDecimal getReceiptAmountPerDay(Date receiptDate, String receiptMode, long custID) {
+
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("RECEIVEDDATE", receiptDate);
+		source.addValue("PAYMENTTYPE", receiptMode);
+		source.addValue("CustID", custID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT SUM(AMOUNT) from FINRECEIPTDETAIL_VIEW RD ");
+		selectSql.append(" INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE = RD.REFERENCE ");
+		selectSql.append(
+				" WHERE RD.STATUS NOT IN ('C','B') AND RD.RECEIVEDDATE = :RECEIVEDDATE AND FM.CUSTID = :CustID ");
+		selectSql.append(" AND RD.PAYMENTTYPE = :PAYMENTTYPE ");
+		logger.debug("selectSql: " + selectSql.toString());
+		BigDecimal amount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		if (amount == null) {
+			amount = BigDecimal.ZERO;
+		}
+		logger.debug("Leaving");
+		return amount;
 	}
 
 	@Override
@@ -403,150 +640,6 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		logger.debug("Leaving");
 
 		return totalAmount;
-	}
-	
-	/**
-	 * 29-10-2018, Ticket id:124998
-	 * check receipt details exits with given by favour number
-	 * return boolean condition
-	 */
-	@Override
-	public boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select count(*) ");
-		selectSql.append(" From FINRECEIPTHEADER T1");
-		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
-		selectSql.append(" and  T2.BANKCODE = :BANKCODE and T2.FAVOURNUMBER = :FAVOURNUMBER ");
-		selectSql.append(" and  T1.receiptmodeStatus not in ('C')");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Finreference", receiptHeader.getReference());
-		source.addValue("ReceiptPurpose", purpose);
-		source.addValue("RECEIPTMODE", receiptHeader.getReceiptMode());
-		source.addValue("BANKCODE", receiptHeader.getReceiptDetails().get(0).getBankCode());
-		source.addValue("FAVOURNUMBER", receiptHeader.getReceiptDetails().get(0).getFavourNumber());
-		
-
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-
-		int count = 0;
-		try{
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.debug(e);
-			count = 0 ;
-		}
-		
-		if(count > 0){
-			return true;
-		}
-		
-		return false;
-	}
-
-	/**
-	 * 29-10-2018, Ticket id:124998
-	 * check receipt details exits with given by Transaction Ref
-	 * return boolean condition
-	 */
-	@Override
-	public boolean isFinReceiptDetailExitsByTransactionRef(FinReceiptHeader receiptHeader, String purpose) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select count(*) ");
-		selectSql.append(" From FINRECEIPTHEADER T1");
-		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
-		selectSql.append(" and  T2.TRANSACTIONREF = :TRANSACTIONREF ");
-		selectSql.append(" and  T1.receiptmodeStatus not in ('C')");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Finreference", receiptHeader.getReference());
-		source.addValue("ReceiptPurpose", purpose);
-		source.addValue("RECEIPTMODE", receiptHeader.getReceiptMode());
-		source.addValue("TRANSACTIONREF", receiptHeader.getReceiptDetails().get(0).getTransactionRef());
-		
-
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-
-		int count = 0;
-		try{
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.debug(e);
-			count = 0 ;
-		}
-		
-		if(count > 0){
-			return true;
-		}
-		
-		return false;
-	}
-
-	/**
-	 * 29-10-2018, Ticket id:124998
-	 * get receipt ID at receipt mode status A and at schd purpose
-	 * return boolean condition
-	 */
-	@Override
-	public long getReceiptIdByReceiptDetails(FinReceiptHeader receiptHeader, String purpose) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select T1.receiptid ");
-		selectSql.append(" From FINRECEIPTHEADER T1");
-		selectSql.append(" Inner Join FINRECEIPTDETAIL T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
-		selectSql.append(" and  T2.FundingAc = :FundingAc and T2.FAVOURNUMBER = :FAVOURNUMBER and T1.RECEIPTMODESTATUS = :RECEIPTMODESTATUS  ");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("Finreference", receiptHeader.getReference());
-		source.addValue("ReceiptPurpose", purpose);
-		source.addValue("RECEIPTMODE", receiptHeader.getReceiptMode());
-		source.addValue("FundingAc", receiptHeader.getReceiptDetails().get(0).getFundingAc());
-		source.addValue("FAVOURNUMBER", receiptHeader.getReceiptDetails().get(0).getFavourNumber());
-		source.addValue("RECEIPTMODESTATUS", RepayConstants.PAYSTATUS_APPROVED);
-		
-
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-
-		long count = 0;
-		try{
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
-		} catch (DataAccessException e) {
-			logger.debug(e);
-			count = 0 ;
-		}
-		return count;
-	}
-
-	/**
-	 * updating status 
-	 * Ticket id:124998
-	 */
-	@Override
-	public void updateReceiptStatusByReceiptId(long receiptID, String status) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ReceiptID", receiptID);
-		source.addValue("Status", status);
-
-		StringBuilder updateSql = new StringBuilder("Update FinReceiptDetail");
-		updateSql.append(" Set Status=:Status ");
-		updateSql.append(" Where ReceiptID =:ReceiptID");
-
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
 	}
 
 	@Override

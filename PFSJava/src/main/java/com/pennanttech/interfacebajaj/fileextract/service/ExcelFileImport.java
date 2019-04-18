@@ -3,12 +3,21 @@ package com.pennanttech.interfacebajaj.fileextract.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.DataFormatException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.util.media.Media;
 
@@ -22,6 +31,8 @@ public class ExcelFileImport {
 	private Workbook workbook = null;
 	private Media media = null;
 	private File file = null;
+	private DataFormatter objDefaultFormat = new DataFormatter();// for cell value formating
+	private FormulaEvaluator formulaEvaluator = null; // for cell value formating
 
 	/**
 	 * create the object using the Media and Upload location
@@ -69,6 +80,12 @@ public class ExcelFileImport {
 				this.workbook = new XSSFWorkbook(fis);
 			}
 
+			if (this.workbook instanceof HSSFWorkbook) {
+				this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) this.workbook);
+			} else if (this.workbook instanceof XSSFWorkbook) {
+				this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) this.workbook);
+			}
+
 		} catch (Exception e) {
 			logger.error(e);
 			throw e;
@@ -107,4 +124,20 @@ public class ExcelFileImport {
 
 		logger.debug("Leaving");
 	}
+
+	public List<String> getRowValuesByIndex(Workbook workbook, int sheetIndex, int rowindex, int columns) {
+
+		List<String> rowValues = new ArrayList<String>();
+		Sheet sheet = workbook.getSheetAt(sheetIndex);
+		Row row = sheet.getRow(rowindex);
+
+		for (int i = 0; i < columns; i++) {
+			Cell cell = row.getCell(i);
+			String cellValue = this.objDefaultFormat.formatCellValue(cell, this.formulaEvaluator);
+			rowValues.add(cellValue.trim());
+		}
+
+		return rowValues;
+	}
+
 }

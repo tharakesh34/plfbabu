@@ -43,6 +43,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1420,11 +1422,12 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	/**
 	 * retrive last schdate be present appDate
+	 * 
 	 * @param finReference
 	 * @param appDate
 	 */
 	@Override
-	public Date getPrevSchdDate(String finReference , Date appDate) {
+	public Date getPrevSchdDate(String finReference, Date appDate) {
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder();
@@ -1433,16 +1436,15 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append("  SchDate <= :schdate");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		
+
 		mapSqlParameterSource.addValue("FinReference", finReference);
 		mapSqlParameterSource.addValue("schdate", appDate);
-		
-		
+
 		Date prevSchdDate = null;
 		try {
-			prevSchdDate = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource,Date.class);
+			prevSchdDate = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Date.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			prevSchdDate = null;
@@ -1451,31 +1453,30 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * method return true if given date is Installment schedule
-	 * or it will consider as schedule change date
+	 * method return true if given date is Installment schedule or it will consider as schedule change date
 	 */
 	@Override
 	public boolean isInstallSchd(String finReference, Date lastPrevDate) {
-         logger.debug("Entering");
-		
+		logger.debug("Entering");
+
 		MapSqlParameterSource detail = new MapSqlParameterSource();
 		detail.addValue("FinReference", finReference);
 		detail.addValue("schDate", lastPrevDate);
-		
+
 		StringBuilder selectSql = new StringBuilder(" Select (REPAYAMOUNT -PARTIALPAIDAMT) ");
 		selectSql.append(" From FinScheduleDetails");
 		selectSql.append(" Where FinReference = :FinReference AND SchDate = :schDate");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
-		
-		BigDecimal repayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(),detail, BigDecimal.class);
+
+		BigDecimal repayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, BigDecimal.class);
 		if (repayAmount == null) {
 			repayAmount = BigDecimal.ZERO;
 		}
-		
+
 		logger.debug("Leaving");
-		
-		if(repayAmount.compareTo(BigDecimal.ZERO)>0){
+
+		if (repayAmount.compareTo(BigDecimal.ZERO) > 0) {
 			return true;
 		} else {
 			return false;
@@ -1484,8 +1485,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Ticket id:124998,receipt upload
-	 * Retrieve closing balance for given schedule date
+	 * Ticket id:124998,receipt upload Retrieve closing balance for given schedule date
+	 * 
 	 * @param finReference
 	 * @param valueDate
 	 */
@@ -1496,20 +1497,163 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		MapSqlParameterSource detail = new MapSqlParameterSource();
 		detail.addValue("FinReference", finReference);
 		detail.addValue("schDate", valueDate);
-	
+
 		StringBuilder selectSql = new StringBuilder("SELECT CLOSINGBALANCE FROM FINSCHEDULEDETAILS ");
-		selectSql.append(" Where FinReference = :FinReference AND SCHDATE =(SELECT  MAX(SCHDATE) FROM FINSCHEDULEDETAILS ");
+		selectSql.append(
+				" Where FinReference = :FinReference AND SCHDATE =(SELECT  MAX(SCHDATE) FROM FINSCHEDULEDETAILS ");
 		selectSql.append("WHERE FINREFERENCE=:FinReference AND SCHDATE <=:schDate)");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
-		BigDecimal closingBal = this.jdbcTemplate.queryForObject(selectSql.toString(), detail,
-				BigDecimal.class);
+		BigDecimal closingBal = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, BigDecimal.class);
 		if (closingBal == null) {
 			closingBal = BigDecimal.ZERO;
 		}
 
 		logger.debug("Leaving");
 		return closingBal;
+	}
+
+	@Override
+	public List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey) {
+		logger.debug("Entering");
+
+		FinanceScheduleDetail detail = new FinanceScheduleDetail();
+		detail.setId(finReference);
+
+		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
+		selectSql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
+		selectSql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
+		selectSql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ");
+		selectSql.append(" ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance, ");
+		selectSql.append(" OrgPft , OrgPri, OrgEndBal,OrgPlanPft,");
+		selectSql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt, ");
+		selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
+		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
+		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
+		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate");
+		selectSql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
+		selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt ");
+		selectSql.append(" From FinScheduleDetails");
+
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference = :FinReference");
+		if (logKey > 0) {
+			detail.setLogKey(logKey);
+			selectSql.append(" And LogKey = :LogKey");
+		}
+		selectSql.append(" Order by SchDate asc");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
+		logger.debug("Leaving");
+		return finSchdDetails;
+	}
+
+	@Override
+	public void updateTDS(List<FinanceScheduleDetail> schdList) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update FinScheduleDetails SET ");
+		updateSql.append(" tDSApplicable=:tDSApplicable,TDSAmount=:TDSAmount ");
+		updateSql.append(" Where FinReference =:FinReference AND SchDate = :SchDate ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(schdList.toArray());
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public List<FinanceScheduleDetail> getFirstRepayAmt(String finReference) {
+		logger.debug("Entering");
+
+		List<FinanceScheduleDetail> finSchdDetails = new ArrayList<FinanceScheduleDetail>();
+
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select SchDate, PrincipalSchd,ProfitSchd, RepayAmount,PartialPaidAmt, InstNumber");
+		selectSql.append(" From FinScheduleDetails");
+		selectSql.append(" Where FinReference = :FinReference order by SchDate ASC");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		try {
+			finSchdDetails = this.jdbcTemplate.query(selectSql.toString(), detail, typeRowMapper);
+		} catch (EmptyResultDataAccessException dae) {
+			return Collections.emptyList();
+		}
+
+		logger.debug("Leaving");
+		return finSchdDetails;
+	}
+
+	@Override
+	public FinanceScheduleDetail getFinScheduleDetailForCOf(String finReference, Date appDate) {
+
+		logger.debug("Entering");
+
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("FinReference", finReference);
+		detail.addValue("SchDate", appDate);
+
+		StringBuilder selectSql = new StringBuilder(" Select ClosingBalance,DisbAmount");
+		selectSql.append(
+				" FROM FinScheduleDetails Where  FinReference =:FinReference and SchDate<=:SchDate ORDER BY SchDate DESC FETCH FIRST 1 ROW ONLY ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+		FinanceScheduleDetail financeScheduleDetail = null;
+		try {
+			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), detail, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeScheduleDetail = null;
+		}
+
+		logger.debug("Leaving");
+		return financeScheduleDetail;
+
+	}
+
+	@Override
+	public FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate) {
+		logger.debug("Entering");
+
+		FinanceScheduleDetail financeScheduleDetail = new FinanceScheduleDetail();
+		financeScheduleDetail.setFinReference(finReference);
+		financeScheduleDetail.setSchDate(curBussDate);
+
+		StringBuilder selectSql = new StringBuilder(" select SchDate, REPAYAMOUNT, PARTIALPAIDAMT ");
+		selectSql.append("from FinScheduleDetails where FinReference = :FinReference AND ");
+		selectSql.append(
+				" SchDate = (select max(SchDate) from FinScheduleDetails where FinReference = :FinReference and schdate <= :SchDate ) ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeScheduleDetail);
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		try {
+			financeScheduleDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+					typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeScheduleDetail = null;
+		}
+
+		logger.debug("Leaving");
+		return financeScheduleDetail;
 	}
 }

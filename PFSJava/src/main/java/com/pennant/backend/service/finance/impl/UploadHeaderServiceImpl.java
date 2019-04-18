@@ -57,6 +57,7 @@ import com.pennant.backend.dao.finance.UploadFinTypeExpenseDAO;
 import com.pennant.backend.dao.finance.UploadHeaderDAO;
 import com.pennant.backend.dao.finance.UploadTaxPercentDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.model.assignmentupload.AssignmentUpload;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
@@ -307,5 +308,53 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 
 	public void setUploadFinTypeExpenseDAO(UploadFinTypeExpenseDAO uploadFinTypeExpenseDAO) {
 		this.uploadFinTypeExpenseDAO = uploadFinTypeExpenseDAO;
+	}
+
+	@Override
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UploadHeader getApprovedUploadHeaderById(long academicID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AuditHeader delete(AuditHeader auditHeader) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AuditHeader doApproveFinTypeExpense(AuditHeader auditHeader) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UploadHeader getUploadHeaderById(long uploadId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void validateAssignmentScreenLevel(AssignmentUpload assignmentUpload, String entityCode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateFileDownload(long uploadId, boolean fileDownload, String type) {
+		// TODO Auto-generated method stub
+		
 	}
 }

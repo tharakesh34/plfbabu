@@ -44,6 +44,7 @@
 
 package com.pennant.backend.service.finance.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -73,8 +74,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FinancePurposeDetail</b>.<br>
+ * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
  * 
  */
 public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUploadHeader>
@@ -111,12 +111,20 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public ReceiptUploadHeader getUploadHeaderById(long id) {
+	public ReceiptUploadHeader getUploadHeaderById(long id, boolean getsuccessRecords) {
 		logger.debug(Literal.ENTERING);
 
 		ReceiptUploadHeader receiptUploadHeader = getReceiptUploadHeaderDAO().getReceiptHeaderById(id, "_view");
-		List<ReceiptUploadDetail> receiptUploadDetailList = getReceiptUploadDetailDAO()
-				.getUploadReceiptDetails(receiptUploadHeader.getUploadHeaderId());
+
+		List<ReceiptUploadDetail> receiptUploadDetailList = new ArrayList<>();
+
+		if (getsuccessRecords) {
+			receiptUploadDetailList = getReceiptUploadDetailDAO()
+					.getUploadReceiptDetails(receiptUploadHeader.getUploadHeaderId(), getsuccessRecords);
+		} else {
+			receiptUploadDetailList = getReceiptUploadDetailDAO()
+					.getUploadReceiptDetails(receiptUploadHeader.getUploadHeaderId(), getsuccessRecords);
+		}
 
 		receiptUploadHeader.setReceiptUploadList(receiptUploadDetailList);
 
@@ -155,7 +163,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			receiptUploadHeader.setNextTaskId("");
 			receiptUploadHeader.setWorkflowId(0);
 
-			if (receiptUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (PennantConstants.RECORD_TYPE_NEW.equals(receiptUploadHeader.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				receiptUploadHeader.setRecordType("");
 				getReceiptUploadHeaderDAO().save(receiptUploadHeader, TableType.MAIN_TAB);
@@ -258,7 +266,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		ReceiptUploadHeader receiptUploadHeader = (ReceiptUploadHeader) auditHeader.getAuditDetail().getModelData();
 		getReceiptUploadHeaderDAO().delete(receiptUploadHeader, TableType.MAIN_TAB);
 
-		// child
+		//child
 		getReceiptUploadDetailDAO().delete(receiptUploadHeader.getUploadHeaderId());
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -266,12 +274,10 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
 		return auditHeader;
 	}
 
@@ -307,8 +313,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public void updateStatusOFList(List<ReceiptUploadDetail> receiptUploadDetailList) {
-		getReceiptUploadDetailDAO().updateStatusOFList(receiptUploadDetailList);
+	public void updateStatus(ReceiptUploadDetail receiptUploadDetail) {
+		getReceiptUploadDetailDAO().updateStatus(receiptUploadDetail);
 	}
 
 	@Override

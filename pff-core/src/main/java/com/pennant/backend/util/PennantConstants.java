@@ -703,6 +703,11 @@ public class PennantConstants {
 	public static final String FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL = "OUTSPL";
 	public static final String FEE_CALCULATEDON_PAYAMOUNT = "PAYAMT";
 	public static final String FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE = "PRINCFU";
+	public static final String FEE_CALCULATEDON_DROPLINEPOS = "DRPLNPOS";
+	public static final String FEE_CALCULATEDON_TOTLOANAMOUNT = "TOTLAM";
+	public static final String FEE_CALCULATEDON_OUTSTANDINGAMOUNT = "OUTSAM";
+	public static final String FEE_CALCULATEDON_OUTSTANDINGINTEREST = "OUTSIN";
+
 	// Validation Groups
 	public static final String VLD_CRT_SCHD = "CRTSCHD";
 	public static final String VLD_CRT_LOAN = "CRTLOAN";
@@ -796,20 +801,20 @@ public class PennantConstants {
 	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";
 
 	public static final boolean ALLOW_LOAN_APP_LOCK = false;
-	
-	public static final int     RECEIPT_DEFAULT                                 = 0;
-	public static final int		RECEIPT_DOWNLOADED								= 1;
-	public static final int		RECEIPT_APPROVED								= 2;
-	public static final int		RECEIPT_REJECTED								= 3;
+
+	public static final int RECEIPT_DEFAULT = 0;
+	public static final int RECEIPT_DOWNLOADED = 1;
+	public static final int RECEIPT_APPROVED = 2;
+	public static final int RECEIPT_REJECTED = 3;
 
 	//active and inactive
 	public static final boolean ACTIVE = true;
 	public static final boolean INACTIVE = false;
-	
+
 	public static final String AVERAGE = "AVG";
 	public static final String GOOD = "GOOD";
 	public static final String VERYGOOD = "VGOOD";
-	
+
 	public static final String DSA = "DSA";
 	public static final String PSF = "PSF";
 	public static final String ONLINE = "ONL";
@@ -820,10 +825,10 @@ public class PennantConstants {
 	public static final String DEFAULT = "DEFAULT";
 
 	public static final String REC_ON_APPR = "REC_ON_APPROVAL";
-	
+
 	public static final String ORIGINAL = "O";
 	public static final String PHOTOSTAT = "P";
-	
+
 	// Template Notification constants
 	public static final String PRESENTMENT_BOUNCE_MAIL_NOTIFICATION = "PRESENTMENT_BOUNCE_MAIL_NOTIFICATION";
 	public static final String CREATE_LOAN_API_MAIL_NOTIFICATION = "CREATE_LOAN_NSTP_API_TEMP";
@@ -831,4 +836,16 @@ public class PennantConstants {
 	public static final String ACCESSTYPE_ENTITY = "ENTITY";
 	public static final String ACCESSTYPE_CLUSTER = "CLUSTER";
 	public static final String ACCESSTYPE_BRANCH = "BRANCH";
+
+	// Opex Fees Type
+	public static final String OPEX_FEE_TYPE_FIXED = "Fixed";
+	public static final String OPEX_FEE_TYPE_FLOATING = "Floating";
+
+	public static final String DROPLINE_CALCON_DISB = "D";
+	public static final String DROPLINE_CALCON_SANCTION = "S";
+
+	public static final String FLEXI_PURE = "P";
+	public static final String FLEXI_DROPLINE = "D";
+	public static final String FLEXI_HYBRID = "H";
+	public static final String TERM_LOAN = "TL";
 }

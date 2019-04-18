@@ -381,4 +381,31 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		return unionterrotory;
 	}
 
+	@Override
+	public String getBranchDesc(String id, String type) {
+		logger.debug(Literal.ENTERING);
+
+		Branch branch = new Branch();
+		branch.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("SELECT  BranchDesc ");
+		selectSql.append(" FROM  RMTBranches");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where BranchCode =:BranchCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(branch);
+
+		String branchDesc = null;
+		try {
+			branchDesc = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			branchDesc = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return branchDesc;
+	}
+
 }

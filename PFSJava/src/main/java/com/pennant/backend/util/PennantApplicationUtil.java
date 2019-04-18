@@ -415,6 +415,8 @@ public class PennantApplicationUtil {
 					+ (StringUtils.isBlank(roleCodeDesc) ? "" : roleCodeDesc) + " successfully.";
 		}
 	}
+	
+	
 
 	public static String getSavingStatus(String roleCode, String nextRoleCode, String reference, String moduleCode,
 			String recordStatus) {
@@ -851,5 +853,27 @@ public class PennantApplicationUtil {
 		}
 
 		return defaultCountry;
+	}
+	
+	public static String getCashPosition(BigDecimal reOrderLimit, BigDecimal cashPositon, BigDecimal cashLimit) {
+		if (reOrderLimit == null) {
+			reOrderLimit = new BigDecimal(0);
+		}
+
+		if (cashPositon == null) {
+			cashPositon = new BigDecimal(0);
+		}
+
+		if (cashLimit == null) {
+			cashLimit = new BigDecimal(0);
+		}
+
+		if (cashPositon.compareTo(reOrderLimit) < 0) {
+			return CashManagementConstants.Cash_Position_Low_Desc;
+		} else if (cashPositon.compareTo(cashLimit) > 0) {
+			return CashManagementConstants.Cash_Position_Excess_Desc;
+		} else {
+			return CashManagementConstants.Cash_Position_Sufficient_Desc;
+		}
 	}
 }

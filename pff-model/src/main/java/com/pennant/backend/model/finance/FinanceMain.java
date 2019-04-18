@@ -87,7 +87,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
 		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod",
 		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate",
-		"stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate","eligibilityMethod","connector","legalRequired" })
+		"stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
+		"legalRequired" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -704,17 +705,32 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String entityCode;
 	//### 10-09-2018,Ticket id:124998
 	private String entityDesc;
-	
+
 	// tasks #1152 Business Vertical Tagged with Loan
 	private Long businessVertical;
 	private String businessVerticalCode;
 	private String businessVerticalDesc;
-	
+
 	private String grcAdvType;
 	private int grcAdvTerms;
 	private String advType;
 	private int advTerms;
 	private String advStage;
+
+	private boolean alwFlexi;
+	private BigDecimal flexiAmount = BigDecimal.ZERO;
+	private boolean chgDropLineSchd = false;
+	private Long assignmentId;
+	private Long promotionSeqId;
+	private String loanCategory;
+	private boolean allowSubvention;
+	private Map<String, Object> glSubHeadCodes = new HashMap<>();
+	private Date closedDate;
+	private int recalIdx = -1;
+	private boolean alwStrtPrdHday;
+	private int maxStrtPrdHdays;
+	private int strtPrdHdays;
+	private String strtprdCpzMethod;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -884,10 +900,27 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		//Payment type check
 		excludeFields.add("chequeOrDDAvailable");
 		excludeFields.add("neftAvailable");
-		
+
 		// tasks #1152 Business Vertical Tagged with Loan
 		excludeFields.add("businessVerticalCode");
 		excludeFields.add("businessVerticalDesc");
+
+		// As part of receipt merging 
+		excludeFields.add("alwFlexi");
+		excludeFields.add("flexiAmount");
+		excludeFields.add("chgDropLineSchd");
+		excludeFields.add("assignmentId");
+		excludeFields.add("promotionSeqId");
+		excludeFields.add("loanCategory");
+		excludeFields.add("allowSubvention");
+		excludeFields.add("glSubHeadCodes");
+		excludeFields.add("closedDate");
+		excludeFields.add("recalIdx");
+		excludeFields.add("alwStrtPrdHday");
+		excludeFields.add("maxStrtPrdHdays");
+		excludeFields.add("strtPrdHdays");
+		excludeFields.add("strtprdCpzMethod");
+
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -4049,7 +4082,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setFinBranchContact(String finBranchContact) {
 		this.finBranchContact = finBranchContact;
 	}
-	
+
 	public BigDecimal getRepayAmount() {
 		return repayAmount;
 	}
@@ -4136,5 +4169,117 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setAdvStage(String advStage) {
 		this.advStage = advStage;
+	}
+
+	public boolean isAlwFlexi() {
+		return alwFlexi;
+	}
+
+	public void setAlwFlexi(boolean alwFlexi) {
+		this.alwFlexi = alwFlexi;
+	}
+
+	public BigDecimal getFlexiAmount() {
+		return flexiAmount;
+	}
+
+	public void setFlexiAmount(BigDecimal flexiAmount) {
+		this.flexiAmount = flexiAmount;
+	}
+
+	public boolean isChgDropLineSchd() {
+		return chgDropLineSchd;
+	}
+
+	public void setChgDropLineSchd(boolean chgDropLineSchd) {
+		this.chgDropLineSchd = chgDropLineSchd;
+	}
+
+	public Long getAssignmentId() {
+		return assignmentId;
+	}
+
+	public void setAssignmentId(Long assignmentId) {
+		this.assignmentId = assignmentId;
+	}
+
+	public Long getPromotionSeqId() {
+		return promotionSeqId;
+	}
+
+	public void setPromotionSeqId(Long promotionSeqId) {
+		this.promotionSeqId = promotionSeqId;
+	}
+
+	public String getLoanCategory() {
+		return loanCategory;
+	}
+
+	public void setLoanCategory(String loanCategory) {
+		this.loanCategory = loanCategory;
+	}
+
+	public boolean isAllowSubvention() {
+		return allowSubvention;
+	}
+
+	public void setAllowSubvention(boolean allowSubvention) {
+		this.allowSubvention = allowSubvention;
+	}
+
+	public Map<String, Object> getGlSubHeadCodes() {
+		return glSubHeadCodes;
+	}
+
+	public void setGlSubHeadCodes(Map<String, Object> glSubHeadCodes) {
+		this.glSubHeadCodes = glSubHeadCodes;
+	}
+
+	public Date getClosedDate() {
+		return closedDate;
+	}
+
+	public void setClosedDate(Date closedDate) {
+		this.closedDate = closedDate;
+	}
+
+	public int getRecalIdx() {
+		return recalIdx;
+	}
+
+	public void setRecalIdx(int recalIdx) {
+		this.recalIdx = recalIdx;
+	}
+
+	public boolean isAlwStrtPrdHday() {
+		return alwStrtPrdHday;
+	}
+
+	public void setAlwStrtPrdHday(boolean alwStrtPrdHday) {
+		this.alwStrtPrdHday = alwStrtPrdHday;
+	}
+
+	public int getMaxStrtPrdHdays() {
+		return maxStrtPrdHdays;
+	}
+
+	public void setMaxStrtPrdHdays(int maxStrtPrdHdays) {
+		this.maxStrtPrdHdays = maxStrtPrdHdays;
+	}
+
+	public int getStrtPrdHdays() {
+		return strtPrdHdays;
+	}
+
+	public void setStrtPrdHdays(int strtPrdHdays) {
+		this.strtPrdHdays = strtPrdHdays;
+	}
+
+	public String getStrtprdCpzMethod() {
+		return strtprdCpzMethod;
+	}
+
+	public void setStrtprdCpzMethod(String strtprdCpzMethod) {
+		this.strtprdCpzMethod = strtprdCpzMethod;
 	}
 }

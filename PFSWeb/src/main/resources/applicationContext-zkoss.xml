@@ -1793,9 +1793,9 @@
 		<property name="agreementGeneration" ref="agreementGeneration" />
 		<property name="ddaControllerService" ref="ddaControllerService" />
 	</bean>
-	
+
 	<bean id="agreementGeneration" class="com.pennant.util.AgreementGeneration">
-	    <property name="masterDefService" ref="masterDefService" />
+		<property name="masterDefService" ref="masterDefService" />
 	</bean>
 
 	<!--============ Indicative Term Sheet Detail ============== -->
@@ -2482,30 +2482,19 @@
 	<!--============ Manual Receipt Details ============== -->
 	<!-- (Schedule Repayment /Partial Settlement / Early Settlement ) -->
 
-	<bean id="receiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl" parent="financeBaseCtrl"
+	<bean id="receiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl" parent="basisCtrl"
 		scope="prototype">
-		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
-		<property name="accountInterfaceService" ref="accountInterfaceService" />
-		<property name="provisionService" ref="provisionService" />
-		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="receiptService" ref="receiptService" />
-		<property name="accountsService" ref="accountsService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="commitmentService" ref="commitmentService" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
-		<property name="notificationService" ref="notificationService" />
 		<property name="accrualService" ref="accrualService" />
-		<property name="financeReferenceDetailService" ref="financeReferenceDetailService" />
-		<property name="manualAdviseService" ref="manualAdviseService" />
-		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="partnerBankService" ref="partnerBankService" />
-		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
-		<property name="branchService" ref="branchService" />
+		<property name="notificationService" ref="notificationService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->
@@ -5051,9 +5040,10 @@
 	<bean id="covenantDocumentDialogCtrl" class="com.pennant.webui.finance.covenant.CovenantDocumentDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-	
+
 	<!-- Fin Option -->
-	<bean id="finoptionListCtrl" class="com.pennant.webui.finance.finoption.FinOptionDialogCtrl" parent="basisCtrl" scope="prototype">
+	<bean id="finoptionListCtrl" class="com.pennant.webui.finance.finoption.FinOptionDialogCtrl" parent="basisCtrl"
+		scope="prototype">
 	</bean>
 
 	<bean id="alertListctrl" class="com.pennant.webui.alerts.AlertListCtrl" parent="basisListCtrl" scope="prototype">
@@ -5061,6 +5051,38 @@
 		<property name="finOptionDAO" ref="finOptionDAO" />
 	</bean>
 
+	<bean id="receiptListCtrl" class="com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="receiptService" ref="receiptService" />
+	</bean>
+	<bean id="selectReceiptPaymentDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.SelectReceiptPaymentDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="customerService" ref="customerServiceTarget" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="securityUserDAO" ref="securityUserDAO" />
+	</bean>
 
+	<bean id="receiptsEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptsEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="ruleService" ref="ruleService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="commitmentService" ref="commitmentService" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="accrualService" ref="accrualService" />
+		<property name="partnerBankService" ref="partnerBankService" />
+		<property name="notificationService" ref="notificationService" />
+	</bean>
 
+	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+
+	<bean id="bounceDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>

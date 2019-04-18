@@ -443,4 +443,37 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
+	@Override
+	public BankBranch getBankBrachByIFSCandMICR(String ifsc, String micr, String type) {
+		logger.debug("Entering");
+
+		BankBranch bankBranch = getBankBranch();
+		bankBranch.setIFSC(ifsc);
+		bankBranch.setMICR(micr);
+
+		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
+		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(",BankName");
+		}
+		selectSql.append(" From BankBranches");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where IFSC =:IFSC And MICR = :MICR");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
+		RowMapper<BankBranch> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankBranch.class);
+
+		try {
+			bankBranch = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			bankBranch = null;
+		}
+
+		logger.debug("Leaving");
+		return bankBranch;
+	}
+
 }

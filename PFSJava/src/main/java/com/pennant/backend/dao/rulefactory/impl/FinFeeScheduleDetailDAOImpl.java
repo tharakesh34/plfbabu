@@ -43,11 +43,13 @@
 
 package com.pennant.backend.dao.rulefactory.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -60,6 +62,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements FinFeeScheduleDetailDAO {
 	private static Logger logger = Logger.getLogger(FinFeeScheduleDetailDAOImpl.class);
@@ -189,29 +192,34 @@ public class FinFeeScheduleDetailDAOImpl extends BasicDao<FeeRule> implements Fi
 	 */
 	@Override
 	public List<FinFeeScheduleDetail> getFeeScheduleByFinID(List<Long> feeID, boolean isWIF, String tableType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
+		StringBuilder sql = new StringBuilder();
+		sql.append(
 				" SELECT FeeID, SchDate, SchAmount, PaidAmount, OsAmount, WaiverAmount, WriteoffAmount, CGST, SGST, UGST, IGST ");
 		if (isWIF) {
-			selectSql.append(" FROM WIFFinFeeScheduleDetail");
+			sql.append(" FROM WIFFinFeeScheduleDetail");
 		} else {
-			selectSql.append(" FROM FinFeeScheduleDetail");
+			sql.append(" FROM FinFeeScheduleDetail");
 		}
-		selectSql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(StringUtils.trimToEmpty(tableType));
 
-		selectSql.append(" WHERE  FeeID IN(:FeeID) ");
+		sql.append(" WHERE  FeeID IN(:FeeID) ");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FeeID", feeID);
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<FinFeeScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinFeeScheduleDetail.class);
-		List<FinFeeScheduleDetail> feeSchdList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return feeSchdList;
+
+		logger.debug(Literal.LEAVING);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		return new ArrayList<>();
 	}
 
 	@Override

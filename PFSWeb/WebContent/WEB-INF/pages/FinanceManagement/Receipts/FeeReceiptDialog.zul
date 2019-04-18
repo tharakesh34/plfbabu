@@ -51,7 +51,7 @@
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
-							<groupbox style="border:0px;">
+							<groupbox id="groupbox_Finance" style="border:0px;" visible="false">
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
 									<columns>
 										<column width="200px" />
@@ -83,6 +83,59 @@
 												<space spacing="2px" />
 												<textbox id="custName" width="144px" readonly="true" />
 											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="groupbox_Customer" style="border:0px;" visible="false">
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label value="${c:l('label_FeeReceiptDialog_CustID.value')}" />
+											<extendedcombobox id="custID" />
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox id="groupbox_Other" style="border:0px;" visible="false">
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label value="${c:l('label_FeeReceiptDialog_Reference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="reference" width="144px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox style="border:0px;">
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label id="label_FeeReceiptList_PostBranch" value="${c:l('label_FeeReceiptDialog_PostBranch.value')}" />
+											<extendedcombobox id="postBranch" />
+											<label id="label_FeeReceiptList_FinDivision" value="${c:l('label_FeeReceiptDialog_FinDivision.value')}" />
+											<extendedcombobox id="finDivision" />
+										</row>
+										<row>
+											<label id="label_FeeReceiptList_CashierBranch" value="${c:l('label_FeeReceiptDialog_CashierBranch.value')}" />
+											<extendedcombobox id="cashierBranch" />
 										</row>
 									</rows>
 								</grid>
@@ -209,13 +262,13 @@
 											<accountSelectionBox id="chequeAcNo" width="180px" />
 										</row>
 										<row id="row_fundingAcNo" visible="false">
-											<label id="label_FeeReceiptDialog_FundingAccount" value="${c:l('label_FeeReceiptDialog_FundingAccount.value')}" />
-											<extendedcombobox id="fundingAccount" width="180px" />
 											<label id="label_FeeReceiptDialog_ReceivedDate" value="${c:l('label_FeeReceiptDialog_ReceivedDate.value')}" />
 											<hbox id="hbox_FeeReceiptDialog_ReceivedDate">
 												<space spacing="2px" sclass="mandatory" />
 												<datebox id="receivedDate" width="100px" />
 											</hbox>
+											<label id="label_FeeReceiptDialog_FundingAccount" value="${c:l('label_FeeReceiptDialog_FundingAccount.value')}" />
+											<extendedcombobox id="fundingAccount" width="180px" />
 										</row>
 										<row id="row_remarks" visible="false">
 											<label id="label_FeeReceiptDialog_paymentReference" value="${c:l('label_FeeReceiptDialog_paymentReference.value')}" />

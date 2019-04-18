@@ -80,6 +80,8 @@ public interface FinFeeDetailDAO {
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
 	List<FinFeeDetail> getAMZFinFeeDetails(String finRef, String type);
+	
+	long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference, String type);
 
 	FinFeeDetail getFeeDetailByExtReference(String loanReference, long feeTypeId, String tableType);
 

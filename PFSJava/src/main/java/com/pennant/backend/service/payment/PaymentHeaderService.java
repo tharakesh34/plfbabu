@@ -69,4 +69,6 @@ public interface PaymentHeaderService {
 	List<FinExcessAmount> getfinExcessAmount(String finReference);
 
 	List<ManualAdvise> getManualAdvise(String finReference);
+	
+	boolean getPaymentHeadersByFinReference(String finReference, String type);
 }

@@ -78,28 +78,28 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * This is the controller class for the /WEB-INF/pages/SystemMaster/ReceiptDialog/ReceiptDialogDialog.zul file.
  */
 public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHeader> {
-	private static final long			serialVersionUID	= 3184249234920071313L;
-	private static final Logger			logger				= Logger.getLogger(ReceiptUploadHeaderDialogCtrl.class);
+	private static final long serialVersionUID = 3184249234920071313L;
+	private static final Logger logger = Logger.getLogger(ReceiptUploadHeaderDialogCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window					window_ReceiptUploadDialog;												// autoWired
-	protected Textbox					txtFileName;															// autoWired
-	protected Listbox					listBoxUploadDetais;
-	protected Listbox					listBoxUploadFailedDetais;
-	protected Paging    				pagingSuccessRecordList;
-	protected Paging					pagingFailedRecordList;
-	private Grid						grid_basicDetails;
-	
-	private boolean						enqModule			= false;
-	private ReceiptUploadHeader			receiptUploadHeader;
-	private ReceiptUploadHeaderService	receiptUploadHeaderService;
-	private ReceiptUploadHeaderListCtrl		receiptUploadListCtrl;
+	protected Window window_ReceiptUploadDialog; // autoWired
+	protected Textbox txtFileName; // autoWired
+	protected Listbox listBoxUploadDetais;
+	protected Listbox listBoxUploadFailedDetais;
+	protected Paging pagingSuccessRecordList;
+	protected Paging pagingFailedRecordList;
+	private Grid grid_basicDetails;
 
-	private PagedListWrapper<ReceiptUploadDetail>	receiptSuccessPagedListWrapper;
-	private PagedListWrapper<ReceiptUploadDetail>	receiptFailedPagedListWrapper;
+	private boolean enqModule = false;
+	private ReceiptUploadHeader receiptUploadHeader;
+	private ReceiptUploadHeaderService receiptUploadHeaderService;
+	private ReceiptUploadHeaderListCtrl receiptUploadListCtrl;
+
+	private PagedListWrapper<ReceiptUploadDetail> receiptSuccessPagedListWrapper;
+	private PagedListWrapper<ReceiptUploadDetail> receiptFailedPagedListWrapper;
 
 	/**
 	 * default constructor.<br>
@@ -131,7 +131,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 
 		/* set components visible dependent of the users rights */
 		try {
-			
+
 			this.receiptUploadHeader = (ReceiptUploadHeader) arguments.get("uploadReceiptHeader");
 
 			ReceiptUploadHeader befImage = new ReceiptUploadHeader();
@@ -153,23 +153,23 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 
 			setReceiptFailedUploadPageList();
 			setReceiptSuccessUploadPageList();
-			
-			getUserWorkspace().allocateAuthorities( super.pageRightName, getRole()); 
+
+			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
 			doCheckRights();
-			
+
 			getBorderLayoutHeight();
 			int dialogHeight = grid_basicDetails.getRows().getVisibleItemCount() * 20 + 170;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listBoxUploadDetais.setHeight(listboxHeight + "px");
 			int listRows = Math.round(listboxHeight / 24) - 1;
 			pagingSuccessRecordList.setPageSize(listRows);
-			
-			listBoxUploadFailedDetais.setHeight(listboxHeight+ "px");
+
+			listBoxUploadFailedDetais.setHeight(listboxHeight + "px");
 			pagingFailedRecordList.setPageSize(listRows);
-			
+
 			// set Field Properties
 			doSetFieldProperties();
-			
+
 			getBorderLayoutHeight();
 			this.listBoxUploadDetais.setHeight(borderLayoutHeight - 130 + "px");
 			this.listBoxUploadFailedDetais.setHeight(borderLayoutHeight - 130 + "px");
@@ -306,32 +306,32 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	 */
 	public void doWriteBeanToComponents(ReceiptUploadHeader aReceiptUploadheader) {
 		logger.debug("Entering");
-		
+
 		List<ReceiptUploadDetail> successReceiptUploadList = new ArrayList<>();
 		List<ReceiptUploadDetail> failReceiptUploadList = new ArrayList<>();
-		
+
 		this.txtFileName.setValue(aReceiptUploadheader.getFileName());
 		this.recordStatus.setValue(aReceiptUploadheader.getRecordStatus());
-		for(ReceiptUploadDetail receiptUploadDetail:aReceiptUploadheader.getReceiptUploadList()){
-			if(receiptUploadDetail.getUploadStatus().equals(PennantConstants.UPLOAD_STATUS_SUCCESS)){
+		for (ReceiptUploadDetail receiptUploadDetail : aReceiptUploadheader.getReceiptUploadList()) {
+			if (receiptUploadDetail.getUploadStatus().equals(PennantConstants.UPLOAD_STATUS_SUCCESS)) {
 				successReceiptUploadList.add(receiptUploadDetail);
 			} else {
 				failReceiptUploadList.add(receiptUploadDetail);
 			}
 		}
 
-		//setting success records in success tab
+		// setting success records in success tab
 		this.pagingSuccessRecordList.setDetailed(true);
-		getReceiptSuccessPagedListWrapper().initList(successReceiptUploadList, 
-				this.listBoxUploadDetais, this.pagingSuccessRecordList);
+		getReceiptSuccessPagedListWrapper().initList(successReceiptUploadList, this.listBoxUploadDetais,
+				this.pagingSuccessRecordList);
 		this.listBoxUploadDetais.setItemRenderer(new ReceiptDetailHeaderListModelItemRenderer());
 
-		//setting failed records in failed tab
+		// setting failed records in failed tab
 		this.pagingFailedRecordList.setDetailed(true);
-		getReceiptFailedPagedListWrapper().initList(failReceiptUploadList, 
-				this.listBoxUploadFailedDetais, this.pagingFailedRecordList);
+		getReceiptFailedPagedListWrapper().initList(failReceiptUploadList, this.listBoxUploadFailedDetais,
+				this.pagingFailedRecordList);
 		this.listBoxUploadFailedDetais.setItemRenderer(new ReceiptDetailHeaderListModelItemRenderer());
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -341,12 +341,9 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	 * @param aReceiptUploadHeader
 	 */
 	public void doWriteComponentsToBean(ReceiptUploadHeader aReceiptUploadHeader) {
-		logger.debug("Entering");
-
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		aReceiptUploadHeader.setTransactionDate(DateUtility.getAppDate());
 
-		//count
+		// count
 		int sucess = 0;
 		int failed = 0;
 
@@ -364,17 +361,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		aReceiptUploadHeader.setTotalRecords(sucess + failed);
 		aReceiptUploadHeader.setFailedCount(failed);
 		aReceiptUploadHeader.setSuccessCount(sucess);
-
-		if (wve.size() > 0) {
-			WrongValueException[] wvea = new WrongValueException[wve.size()];
-			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
-			}
-			throw new WrongValuesException(wvea);
-		}
-
 		aReceiptUploadHeader.setRecordStatus(this.recordStatus.getValue());
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -411,7 +398,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aReceiptUploadHeader);
-			
+
 			if (enqModule) {
 				this.btnNew.setVisible(false);
 				this.btnEdit.setVisible(false);
@@ -499,7 +486,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 			}
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
-			//btnCancel.setVisible(true);
+			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -555,7 +542,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 			MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_NoSucessRecords"));
 			return;
 		}
-		
+
 		// check if file is save already
 		if (aReceiptUploadHeader.isNewRecord()) {
 			boolean fileExist = this.receiptUploadHeaderService.isFileNameExist(aReceiptUploadHeader.getFileName());
@@ -627,8 +614,6 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		aReceiptUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aReceiptUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aReceiptUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
-		
-		
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
@@ -695,7 +680,8 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 			// to make it as single user marking workflow enable false
 			// remove it need for two user
 			// ### 7/9/2018,Ticket id:124998
-			//remove setting  of record status and change doprocess method type to null,if need two user workflow
+			// remove setting of record status and change doprocess method type
+			// to null,if need two user workflow
 			aReceiptUploadHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			aReceiptUploadHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			auditHeader = getAuditHeader(aReceiptUploadHeader, tranType);
@@ -850,6 +836,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	public ReceiptUploadHeaderService getReceiptUploadHeaderService() {
 		return receiptUploadHeaderService;
 	}
+
 	public void setReceiptUploadHeaderService(ReceiptUploadHeaderService receiptUploadHeaderService) {
 		this.receiptUploadHeaderService = receiptUploadHeaderService;
 	}
@@ -857,6 +844,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	public ReceiptUploadHeaderListCtrl getReceiptUploadListCtrl() {
 		return receiptUploadListCtrl;
 	}
+
 	public void setReceiptUploadListCtrl(ReceiptUploadHeaderListCtrl receiptUploadListCtrl) {
 		this.receiptUploadListCtrl = receiptUploadListCtrl;
 	}
@@ -864,6 +852,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	public PagedListWrapper<ReceiptUploadDetail> getReceiptSuccessPagedListWrapper() {
 		return receiptSuccessPagedListWrapper;
 	}
+
 	@SuppressWarnings("unchecked")
 	public void setReceiptSuccessUploadPageList() {
 		if (this.receiptSuccessPagedListWrapper == null) {
@@ -875,6 +864,7 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	public PagedListWrapper<ReceiptUploadDetail> getReceiptFailedPagedListWrapper() {
 		return receiptFailedPagedListWrapper;
 	}
+
 	@SuppressWarnings("unchecked")
 	public void setReceiptFailedUploadPageList() {
 		if (this.receiptFailedPagedListWrapper == null) {
@@ -882,10 +872,11 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 					.getBean("pagedListWrapper");
 		}
 	}
-	
+
 	public ReceiptUploadHeader getReceiptUploadHeader() {
 		return receiptUploadHeader;
 	}
+
 	public void setReceiptUploadHeader(ReceiptUploadHeader receiptUploadHeader) {
 		this.receiptUploadHeader = receiptUploadHeader;
 	}

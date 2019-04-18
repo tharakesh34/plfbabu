@@ -1,4 +1,4 @@
-	<!DOCTYPE XMLRootMenu>
+<!DOCTYPE XMLRootMenu>
 <ns2:XMLRootMenu xmlns:ns2="http://www.pennant.com/menu">
 	<menuItem id="menu_Item_MessageInputBox" zulNavigation="/WEB-INF/pages/Messages/SendMessageDialog.zul" />
 
@@ -410,6 +410,25 @@
 		<menu id="menu_Category_LmsCancellation">
 			<menuItem id="menu_Item_CancelFinance" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_CancelFinance" />
 		</menu>
+	</menu>
+
+	<!-- Menu for Receipts -->
+	<menu id="menu_Category_Receipts">
+		<menuItem id="menu_Item_InitMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPT_MAKER" />
+		<menuItem id="menu_Item_ForeClosureDepositMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=DEPOSIT_MAKER" />
+		<menuItem id="menu_Item_ForeClosureDepositApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=DEPOSIT_APPROVER" />
+		<menuItem id="menu_Item_ForeClosureRealizationMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=REALIZATION_MAKER" />
+		<menuItem id="menu_Item_ForeClosureRealizationApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=REALIZATION_APPROVER" />
+		<menuItem id="menu_Item_KnockoffMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFF_MAKER" />
+		<menuItem id="menu_Item_KnockoffApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFF_APPROVER" />
+		<menuItem id="menu_Item_closureMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_MAKER" />
+		<menuItem id="menu_Item_closureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_APPROVER" />
+		<!-- <menuItem id="menu_Item_closureMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_MAKER" rightName="menuItem_Receipts_KnockoffApprover"/> 
+			<menuItem id="menu_Item_closureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_APPROVER" rightName="menuItem_Receipts_KnockoffApprover"/> -->
+		<menuItem id="menu_Item_ReceiptEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?enqiryModule=Y" />
+		<!-- <menuItem id="menu_Item_clousureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_APPROVER" rightName="menuItem_Receipts_ClosureApprover"/> 
+			<menuItem id="menu_Item_BounceMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=BM" rightName="menuItem_Receipts_BounceMaker"/> 
+			<menuItem id="menu_Item_BounceApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/Pa ymentMode/ReceiptList.zul?module=RECEIPTBOUNCE_APPROVER" rightName="menuItem_Receipts_BounceApprover"/> -->
 	</menu>
 
 	<!-- End of Day -->

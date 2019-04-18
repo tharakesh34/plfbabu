@@ -296,6 +296,109 @@ public class CalculationUtil implements Serializable {
 		return interest;
 	}
 
+	public static int calNoOfDays(Date dtStart, Date dtEnd, String strDaysBasis) {
+		strDaysBasis = StringUtils.trimToEmpty(strDaysBasis);
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(dtStart);
+
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(dtEnd);
+
+		if (startCalendar.compareTo(endCalendar) == 0) {
+			return 0;
+		}
+
+		if (startCalendar.after(endCalendar)) {
+			Calendar tempCalendar = startCalendar;
+			startCalendar = (Calendar) endCalendar.clone();
+			endCalendar = tempCalendar;
+		}
+
+		int dayOfStart = startCalendar.get(Calendar.DAY_OF_MONTH);
+		int dayOfEnd = endCalendar.get(Calendar.DAY_OF_MONTH);
+		int monthOfStart = startCalendar.get(Calendar.MONTH);
+		int monthOfEnd = endCalendar.get(Calendar.MONTH);
+		int yearOfStart = startCalendar.get(Calendar.YEAR);
+		int yearOfEnd = endCalendar.get(Calendar.YEAR);
+
+		if (strDaysBasis.equals(CalculationConstants.IDB_30U360)) {
+
+			boolean isLastDayOfFebStart = dayOfStart == startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+					&& monthOfStart == Calendar.FEBRUARY;
+			boolean isLastDayOfFebEnd = dayOfEnd == startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+					&& monthOfEnd == Calendar.FEBRUARY;
+
+			if (isLastDayOfFebStart && isLastDayOfFebEnd) {
+				dayOfEnd = 30;
+			}
+
+			if (isLastDayOfFebStart) {
+				dayOfStart = 30;
+			}
+
+			if (dayOfEnd == 31 && dayOfStart >= 30) {
+				dayOfEnd = 30;
+			}
+
+			if (dayOfStart == 31) {
+				dayOfStart = 30;
+			}
+
+			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
+
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360)) {
+			if (dayOfEnd == 31) {
+				dayOfEnd = 30;
+			}
+
+			if (dayOfStart == 31) {
+				dayOfStart = 30;
+			}
+
+			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
+
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360I)) {
+			if (monthOfStart == 2 && dayOfStart > 27) {
+				dayOfStart = 30;
+			}
+
+			if (monthOfEnd == 2 && dayOfEnd > 27) {
+				dayOfStart = 30;
+			}
+
+			if (dayOfEnd == 31) {
+				dayOfEnd = 30;
+			}
+
+			if (dayOfStart == 31) {
+				dayOfStart = 30;
+			}
+			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
+
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_30EP360)) {
+			if (dayOfStart == 31) {
+				dayOfStart = 30;
+			}
+
+			if (dayOfEnd == 31) {
+				monthOfEnd = monthOfEnd + 1;
+				dayOfEnd = 1;
+			}
+
+			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
+
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_ISDA)) {
+			//return getIDB_ACT_ISDA(startCalendar, endCalendar);
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365FIXED)
+				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_360)
+				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)
+				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAPS)) {
+			return (int) DateUtility.getDaysBetween(startCalendar, endCalendar);
+		}
+
+		return 0;
+	}
+
 	public static BigDecimal calInstallment(BigDecimal principle, BigDecimal rate, String paymentFrequency,
 			int noOfTerms) {
 		/*

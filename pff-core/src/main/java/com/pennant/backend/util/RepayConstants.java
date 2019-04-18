@@ -72,6 +72,8 @@ public class RepayConstants {
 	public static final String EXCESSADJUSTTO_EXCESS = "E";
 	public static final String EXCESSADJUSTTO_EMIINADV = "A";
 	public static final String EXCESSADJUSTTO_PAYABLE = "P";
+	public static final String EXCESSADJUSTTO_BOUNCE = "B";
+	public static final String EXCESSADJUSTTO_SETTLEMENT = "S";
 	public static final String EXCESSADJUSTTO_PARTPAY = "S";
 
 	// Receipt Modes
@@ -82,14 +84,27 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_NEFT = "NEFT";
 	public static final String RECEIPTMODE_RTGS = "RTGS";
 	public static final String RECEIPTMODE_IMPS = "IMPS";
+	public static final String RECEIPTMODE_PAYTM = "PAYTM";
+	public static final String RECEIPTMODE_EXPERIA = "EXPERIA";
+	public static final String RECEIPTMODE_PORTAL = "PORTAL";
+	public static final String RECEIPTMODE_PAYU = "PAYU";
 	public static final String RECEIPTMODE_EXCESS = "EXCESS";
 	public static final String RECEIPTMODE_ESCROW = "ESCROW";
-	/*public static final String RECEIPTMODE_NACH = "NACH";*/
+	public static final String RECEIPTMODE_REPLEDGE = "REPLEDGE";
+	public static final String RECEIPTMODE_ONLINE = "ONLINE";
+	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";
 	public static final String RECEIPTMODE_PRESENTMENT = "PRESENT";
-	
+
+	public static final String ALLOCATION_PP = "PP";
+	public static final String ALLOCATION_EMI = "EMI";
+	public static final String ALLOCATION_FUT_PRI = "FUTPRI";
+	public static final String ALLOCATION_FUT_PFT = "FUTPFT";
+	public static final String ALLOCATION_FUT_NPFT = "FUTNPFT";
+	public static final String ALLOCATION_FUT_TDS = "FUTTDS";
+
 	// Allocation Methods
 	public static final String ALLOCATIONTYPE_AUTO = "A";
 	public static final String ALLOCATIONTYPE_MANUAL = "M";
@@ -120,6 +135,7 @@ public class RepayConstants {
 	// Receipt Types
 	public static final String RECEIPTTO_FINANCE = "F";
 	public static final String RECEIPTTO_CUSTOMER = "C";
+	public static final String RECEIPTTO_OTHER = "O";
 
 	// Receipt Payment Type
 	public static final String PAYTYPE_PRESENTMENT = "PRESENT";
@@ -160,6 +176,8 @@ public class RepayConstants {
 	public static final String PAYSTATUS_REALIZED = "R";
 	public static final String PAYSTATUS_BOUNCE = "B";
 	public static final String PAYSTATUS_CANCEL = "C";
+	public static final String PAYSTATUS_DEPOSITED = "D";
+	public static final String PAYSTATUS_INITIATED = "I";
 
 	// Receipt Payment Statuses
 	public static final String MODULETYPE_BOUNCE = "B";
@@ -181,7 +199,15 @@ public class RepayConstants {
 	public static final String PRES_LOANCLOSED = "PR005";
 	public static final String PRES_HOLD_DAYS = "PR006";
 	public static final String PRES_FAILED = "PR007";
-	
+
 	public static final String PAYTYPE_EMIINADV = "EMIINADV";
+
+	// Release Type Constants in Gold Release
+	public static final String RELEASETYPE_THIRD_PARTY = "T";
+	public static final String RELEASETYPE_SELF = "S";
+
+	//Received from
+	public static final String RECEIVED_CUSTOMER = "Customer";
+	public static final String RECEIVED_GOVT = "GOVERMENT";
 
 }

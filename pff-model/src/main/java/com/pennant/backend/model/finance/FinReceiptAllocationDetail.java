@@ -1,9 +1,10 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class FinReceiptAllocationDetail {
-
+public class FinReceiptAllocationDetail implements Serializable {
+	private static final long serialVersionUID = 7207155628282757977L;
 	private long repayID = 0;
 	private int allocationID = 0;
 	private String allocationType;
@@ -12,12 +13,8 @@ public class FinReceiptAllocationDetail {
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 
 	public FinReceiptAllocationDetail() {
-
+		super();
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public long getRepayID() {
 		return repayID;
@@ -66,5 +63,4 @@ public class FinReceiptAllocationDetail {
 	public void setWaivedAmount(BigDecimal waivedAmount) {
 		this.waivedAmount = waivedAmount;
 	}
-
 }

@@ -42,6 +42,7 @@
  */
 package com.pennant.backend.service.finance.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -50,6 +51,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
  * Service implementation for methods that depends on <b>FinanceMain</b>.
@@ -198,5 +200,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	public String getFinanceTypeFinReference(String reference, String type) {
 		return financeMainDAO.getFinanceTypeFinReference(reference, type);
 
+	}
+
+	@Override
+	public ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

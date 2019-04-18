@@ -181,7 +181,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		StringBuilder sql = new StringBuilder("delete from FinTaxDetail");
 		sql.append(tableType.getSuffix());
 		sql.append(" where finReference = :finReference ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -255,4 +255,56 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		}
 		return false;
 	}
+
+	@Override
+	public void deleteFinTaxDetails(FinanceTaxDetail financeTaxDetail, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from FinTaxDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" where finReference = :finReference ");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public int getFinTaxDetailsCount(String finReference) {
+
+		logger.debug(Literal.ENTERING);
+
+		int recordCount = 0;
+
+		StringBuilder countQuery = new StringBuilder("SELECT COUNT(*) FROM fintaxdetail_temp ");
+		countQuery.append("WHERE finReference = :finReference");
+		logger.trace(Literal.SQL + countQuery.toString());
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("finReference", finReference);
+
+		try {
+			recordCount = jdbcTemplate.queryForObject(countQuery.toString(), paramSource, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return recordCount;
+	}
+
 }

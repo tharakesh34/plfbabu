@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance;
 
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -22,4 +23,6 @@ public interface ReceiptCancellationService {
 	List<ReturnDataSet> getPostingsByPostRef(long postRef);
 
 	PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode) throws Exception;
+
+	Map<String, Object> getGLSubHeadCodes(String reference);
 }

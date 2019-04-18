@@ -2190,4 +2190,33 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		return recordCount;
 	}
 
+	@Override
+	public Customer checkCustomerByID(long custID, String type) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustID(custID);
+
+		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF, CustShrtname");
+		selectSql.append(" FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID=:CustID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+
+		try {
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			if (!type.equals(TableType.TEMP_TAB.getSuffix())) {
+				logger.debug("Leaving - Customer ID with " + String.valueOf(custID) + " Not Found");
+			}
+			customer = null;
+			return customer;
+		}
+
+		logger.debug("Leaving");
+		return customer;
+	}
+
 }

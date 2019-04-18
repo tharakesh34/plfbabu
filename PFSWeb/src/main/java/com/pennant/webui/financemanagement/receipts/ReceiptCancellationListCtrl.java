@@ -35,6 +35,7 @@ import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -42,6 +43,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptCancellationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -88,6 +90,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Combobox allocationType;
 	protected Textbox finType;
 	protected Textbox finBranch;
+	protected Uppercasebox transactionRef;
 
 	protected Listbox sortOperator_ReceiptCancellationReference;
 	protected Listbox sortOperator_ReceiptCancellationCustomer;
@@ -96,6 +99,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	protected Listbox sortOperator_ReceiptCancellationAllocationType;
 	protected Listbox sortOperator_ReceiptCancellationFinType;
 	protected Listbox sortOperator_ReceiptCancellationFinBranch;
+	protected Listbox sortOperator_ReceiptCancellationTranRef;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -103,7 +107,14 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 	private transient ReceiptCancellationService receiptCancellationService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private transient FinanceDetailService financeDetailService;
+
 	private String module;
+
+	//Adding Promotion Details to the List Header
+	protected Listheader listheader_ReceiptCancellation_ReceiptRef;
+	protected Listheader listheader_ReceiptCancellation_PromotionCode;
+	protected Listheader listheader_ReceiptCancellation_ReceiptDate;
 
 	/**
 	 * The default constructor.
@@ -128,9 +139,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		}
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			super.tableName = "FinReceiptHeader_FCView";
-			super.queueTableName = "FinReceiptHeader_FCView";
-			super.enquiryTableName = "FinReceiptHeader_FCView";
+			super.tableName = "FinReceiptHeader_FCDView";
+			super.queueTableName = "FinReceiptHeader_FCDView";
+			super.enquiryTableName = "FinReceiptHeader_FCDView";
 		} else {
 			super.tableName = "FinReceiptHeader_View";
 			super.queueTableName = "FinReceiptHeader_View";
@@ -172,7 +183,11 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 				sortOperator_ReceiptCancellationFinType, Operators.STRING);
 		registerField("finBranch", listheader_ReceiptCancellationFinBranch, SortOrder.NONE, finBranch,
 				sortOperator_ReceiptCancellationFinBranch, Operators.STRING);
-		registerField("receiptDate", listheader_ReceiptCancellationReceivedDate, SortOrder.NONE);
+		registerField("transactionRef", listheader_ReceiptCancellation_ReceiptRef, SortOrder.NONE, transactionRef,
+				sortOperator_ReceiptCancellationTranRef, Operators.STRING);
+		registerField("promotionCode", listheader_ReceiptCancellation_PromotionCode, SortOrder.NONE);
+		registerField("receiptDate", listheader_ReceiptCancellation_ReceiptDate, SortOrder.NONE);
+		registerField("productCategory");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -225,7 +240,8 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		} else if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 
 			StringBuilder whereClause = new StringBuilder();
-			whereClause = whereClause.append(" FinIsActive = 1 AND  ReceiptPurpose = '");
+			whereClause = whereClause.append(" ((RECAGAINST In ('C','O') And FinIsActive = 0) OR(FinIsActive = 1))");
+			whereClause = whereClause.append("  AND  ReceiptPurpose = '");
 			whereClause = whereClause.append(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 			whereClause = whereClause.append("' AND ((ReceiptModeStatus = '");
 			whereClause = whereClause.append(RepayConstants.PAYSTATUS_FEES);

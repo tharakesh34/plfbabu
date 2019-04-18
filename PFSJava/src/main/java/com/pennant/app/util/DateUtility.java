@@ -794,4 +794,30 @@ public final class DateUtility extends DateUtil {
 		return convert(new GregorianCalendar(year - 1, month, day));
 
 	}
+	
+	public static java.util.Date getDerivedAppDate() {
+		java.util.Date appDate = SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_DATE.getCode());
+
+		java.util.Date sysDate = null;
+		String prodEnv = SysParamUtil.getValueAsString("IS_PROD_ENV");
+		if (StringUtils.equals(prodEnv, PennantConstants.YES)) {
+			sysDate = getSysDate();
+		} else {
+			sysDate = SysParamUtil.getValueAsDate("SYS_DATE");
+		}
+
+		if (compare(getMonthEndDate(appDate), appDate) == 0 && DateUtility.compare(sysDate, appDate) > 0) {
+			appDate = sysDate;
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(appDate);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			appDate = calendar.getTime();
+		}
+
+		return appDate;
+	}
 }

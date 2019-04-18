@@ -17,6 +17,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -163,6 +164,11 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(advanceAmt);
+			receiptDetail.setDueAmount(advanceAmt);
+			XcessPayables xcessPayable = new XcessPayables();
+			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			xcessPayable.setAmount(advanceAmt);
+			header.getXcessPayables().add(xcessPayable);
 			receiptDetail.setValueDate(schDate);
 			receiptDetail.setReceivedDate(businessDate);
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
@@ -179,6 +185,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(presentmentAmt);
+			receiptDetail.setDueAmount(presentmentAmt);
 			receiptDetail.setValueDate(schDate);
 			receiptDetail.setReceivedDate(businessDate);
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
@@ -189,7 +196,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 		header.setReceiptDetails(receiptDetails);
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
-				finEODEvent.getFinType(), businessDate, businessDate);
+				repayHeirarchy, businessDate, businessDate);
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			getPresentmentDetailDAO().updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}

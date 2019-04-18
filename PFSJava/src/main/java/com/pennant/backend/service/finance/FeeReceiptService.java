@@ -2,7 +2,9 @@ package com.pennant.backend.service.finance;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -25,4 +27,10 @@ public interface FeeReceiptService {
 	List<FinFeeDetail> getPaidFinFeeDetails(String finReference);
 
 	List<ErrorDetail> processFeePayment(FinServiceInstruction finServInst) throws Exception;
+
+	Map<String, Object> getGLSubHeadCodes(String finRef);
+
+	Long getAccountingSetId(String eventCode, String accSetCode);
+
+	SecurityUser getSecurityUserById(long userId, String type);
 }

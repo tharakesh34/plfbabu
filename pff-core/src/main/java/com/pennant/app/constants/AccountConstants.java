@@ -139,4 +139,8 @@ public class AccountConstants {
 	// Cash Management Constants
 	public static final String ACCOUNT_EVENT_POSTINGTYPE_LOAN = "LOAN";
 	public static final String ACCOUNT_EVENT_POSTINGTYPE_BRANCH = "BRANCH";
+
+	//Assignment Constants
+	public static final String POSTINGS_EXCLUDE_FEES = "POSTINGS_EXCLUDE_FEES"; //Fees which are excluding the Assignment Accounting
+	public static final String ASSIGNMENT_PECENTAGE_KEY = "ae_assignmentPerc"; // Assignment Percentage which is configured in Assignments(This is used in Postings dataMap)
 }

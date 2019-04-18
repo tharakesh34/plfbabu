@@ -166,7 +166,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (event.getTarget().getParent() != null) {
 				parent = event.getTarget().getParent();
 			}
-			
+
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
 				financeMainDialogCtrl.setFinCovenantTypeListCtrl(this);
@@ -203,7 +203,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (arguments.containsKey("moduleCode")) {
 				this.moduleCode = (String) arguments.get("moduleCode");
 				finMaintainInstruction = (FinMaintainInstruction) arguments.get("finMaintainInstruction");
-				
+
 				financeSelectCtrl = (FinanceSelectCtrl) arguments.get("financeSelectCtrl");
 
 				// Store the before image.
@@ -506,7 +506,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private void createComponents(Covenant aCovenant) {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
-		
+
 		if (!enqiryModule) {
 			map.put("roleCode", roleCode);
 			map.put("financeMainDialogCtrl", this.financeMainDialogCtrl);
@@ -519,7 +519,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		map.put("covenantsListCtrl", this);
 		map.put("enqiryModule", enqiryModule);
 		map.put("module", module);
-		
+
 		if (isNotFinanceProcess) {
 			map.put("legalDetail", legalDetail);
 		} else {
@@ -527,7 +527,6 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		map.put("isNotFinanceProcess", isNotFinanceProcess);
-
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -952,12 +951,11 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		// List
 		finMaintainInstruction.setCovenants(getCovenants());
-		
-		List<Covenant> covenants=getCovenants();
+
+		List<Covenant> covenants = getCovenants();
 		for (Covenant covenant : covenants) {
 			finMaintainInstruction.setRecordStatus(covenant.getRecordStatus());
 		}
-
 
 		logger.debug("Leaving");
 	}

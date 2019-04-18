@@ -49,7 +49,7 @@
 		</div>
 
 		<borderlayout id="borderlayout_Realization">
-			<center border="none" autoscroll="true">
+			<center border="none">
 				<groupbox>
 					<groupbox style="border:0px;">
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px" width="100%">
@@ -61,15 +61,27 @@
 							</columns>
 							<rows>
 								<row>
-									<label value="${c:l('label_ReceiptRealizationDialog_FinType.value')}" />
+									<label value="${c:l('label_ReceiptRealizationDialog_ReceiptId.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="finType" readonly="true" width="180px" />
+										<textbox id="receiptId" readonly="true" width="180px" />
 									</hbox>
 									<label value="${c:l('label_ReceiptRealizationDialog_FinReference.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="finReference" width="180px" readonly="true" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ReceiptRealizationDialog_PromotionCode.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="promotionCode" width="180px" readonly="true" />
+									</hbox>
+									<label value="${c:l('label_ReceiptRealizationDialog_FinType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="finType" readonly="true" width="180px" />
 									</hbox>
 								</row>
 								<row>

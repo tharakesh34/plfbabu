@@ -43,6 +43,7 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -58,17 +59,21 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.cashmanagement.BranchCashDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
@@ -86,9 +91,12 @@ import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
-import com.pennant.backend.dao.receipts.ReceiptTaxDetailDAO;
+import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
+import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -96,7 +104,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
@@ -104,6 +111,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -115,7 +123,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
-import com.pennant.backend.model.finance.ReceiptTaxDetail;
+import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
@@ -163,18 +171,26 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinInsurancesDAO finInsurancesDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 	private BounceReasonDAO bounceReasonDAO;
+	private RuleDAO ruleDAO;
+	private RuleExecutionUtil ruleExecutionUtil;
 	private LimitManagement limitManagement;
 	private CustomerDAO customerDAO;
 	private FinFeeReceiptDAO finFeeReceiptDAO;
 	private LatePayMarkingService latePayMarkingService;
+	private BranchCashDetailDAO branchCashDetailDAO;
+	private PromotionDAO promotionDAO;
+	private FinanceProfitDetailDAO profitDetailDAO;
+	private ReceiptCalculator receiptCalculator;
+	private FinanceTypeDAO financeTypeDAO;
+	private RepaymentProcessUtil repayProcessUtil;
+	private AccrualService accrualService;
 	private FinStageAccountingLogDAO finStageAccountingLogDAO;
+	private ReceiptAllocationDetailDAO allocationDetailDAO;
 	private CustomerDetailsService customerDetailsService;
 
-	//GST Invoice Report
+	// GST Invoice Report
 	private FinanceDetailService financeDetailService;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
-	private ReceiptTaxDetailDAO receiptTaxDetailDAO;
-
 	private DepositChequesDAO depositChequesDAO;
 	private DepositDetailsDAO depositDetailsDAO;
 
@@ -230,7 +246,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			for (FinReceiptDetail receiptDetail : receiptDetailList) {
 				for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 					if (finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()) {
-						receiptDetail.getRepayHeaders().add(finRepayHeader);
+						receiptDetail.setRepayHeader(finRepayHeader);
 					}
 				}
 			}
@@ -248,7 +264,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * Method for fetching List of Postings details which are executed for the Transaction
+	 * Method for fetching List of Postings details which are executed for the
+	 * Transaction
 	 */
 	@Override
 	public List<ReturnDataSet> getPostingsByTranIdList(List<Long> tranIdList) {
@@ -261,12 +278,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's
+	 * save method b) Update the Record in the table. based on the module
+	 * workFlow Configuration. by using FinReceiptHeaderDAO's update method 3)
+	 * Audit the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -288,28 +308,27 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (receiptHeader.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-
+		receiptHeader.setRcdMaintainSts("R");
 		// Receipt Header Details Save And Update
 		// =======================================
 		if (receiptHeader.isNew()) {
 			getFinReceiptHeaderDAO().save(receiptHeader, tableType);
-
-			// Bounce reason Code
-			if (receiptHeader.getManualAdvise() != null) {
-				getManualAdviseDAO().save(receiptHeader.getManualAdvise(), tableType);
-			}
-
 		} else {
 			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
+		}
 
-			// Bounce reason Code
-			if (receiptHeader.getManualAdvise() != null) {
+		// Bounce reason Code
+		if (receiptHeader.getManualAdvise() != null) {
+			if (receiptHeader.getManualAdvise().isNew()) {
+				getManualAdviseDAO().save(receiptHeader.getManualAdvise(), tableType);
+			} else {
 				getManualAdviseDAO().update(receiptHeader.getManualAdvise(), tableType);
 			}
 		}
@@ -319,17 +338,20 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				receiptHeader.getBefImage(), receiptHeader));
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters finReceiptHeader,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getFinReceiptHeaderDAO().delete with
+	 * parameters finReceiptHeader,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -366,10 +388,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * doApprove method do the following steps. Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. based on the Record type do
-	 * following actions Update record in the main table by using getFinReceiptHeaderDAO().update with parameters
-	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * doApprove method do the following steps. Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. based on the Record type do
+	 * following actions Update record in the main table by using
+	 * getFinReceiptHeaderDAO().update with parameters FinReceiptHeader. Audit
+	 * the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
@@ -392,15 +416,44 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+		FinReceiptData receiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 
 		// Finance Repayment Cancellation Posting Process Execution
 		// =====================================
 		String errorCode = "";
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
+		boolean isGoldLoanProcess = false;
+		if (FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
 			errorCode = procFeeReceiptCancellation(receiptHeader);
+			if (StringUtils.isBlank(errorCode)) {
+				tranType = PennantConstants.TRAN_UPD;
+				receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				receiptHeader.setRecordType("");
+				receiptHeader.setRoleCode("");
+				receiptHeader.setNextRoleCode("");
+				receiptHeader.setTaskId("");
+				receiptHeader.setNextTaskId("");
+				receiptHeader.setWorkflowId(0);
+				receiptHeader.setRcdMaintainSts(null);
+				getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+			}
 		} else {
-			errorCode = procReceiptCancellation(receiptHeader, auditHeader.getAuditBranchCode());
+
+			// For Gold Product Category Loans. Total schedule Should be
+			// reversed(Partial Settlement)
+			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(receiptHeader.getReference());
+			if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
+				isGoldLoanProcess = true;
+			}
+
+			// For Gold Loan Process total Future Payment should be reversed and
+			// Paid
+			// allocations should happen based on schedule recalculation
+			if (isGoldLoanProcess) {
+				errorCode = procGoldReceiptCancellation(receiptHeader, auditHeader.getAuditBranchCode());
+			} else {
+				errorCode = procReceiptCancellation(receiptHeader, auditHeader.getAuditBranchCode(), financeMain);
+			}
 		}
 		if (StringUtils.isNotBlank(errorCode)) {
 			throw new InterfaceException("9999", errorCode);
@@ -408,25 +461,60 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Receipt Header Updation
 		// =======================================
-		tranType = PennantConstants.TRAN_UPD;
-		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		receiptHeader.setRecordType("");
-		receiptHeader.setRoleCode("");
-		receiptHeader.setNextRoleCode("");
-		receiptHeader.setTaskId("");
-		receiptHeader.setNextTaskId("");
-		receiptHeader.setWorkflowId(0);
-		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+
+		if (!FinanceConstants.FINSER_EVENT_FEEPAYMENT.equals(receiptHeader.getReceiptPurpose())) {
+
+			tranType = PennantConstants.TRAN_UPD;
+			receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			receiptHeader.setRecordType("");
+			receiptHeader.setRoleCode("");
+			receiptHeader.setNextRoleCode("");
+			receiptHeader.setTaskId("");
+			receiptHeader.setNextTaskId("");
+			receiptHeader.setWorkflowId(0);
+			receiptHeader.setRcdMaintainSts(null);
+			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptHeader.getReceiptPurpose())) {
+				getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+			} else {
+				getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
+				for (FinReceiptDetail finRecpt : receiptHeader.getReceiptDetails()) {
+					getFinReceiptDetailDAO().save(finRecpt, TableType.MAIN_TAB);
+
+				}
+			}
+
+			List<FinReceiptDetail> finRcptDtlList = getFinReceiptDetailDAO()
+					.getReceiptHeaderByID(receiptHeader.getReceiptID(), "");
+
+			for (FinReceiptDetail finRecpt : finRcptDtlList) {
+				List<RepayScheduleDetail> repaySchdList = getFinReceiptDetailDAO()
+						.fetchRepaySchduleList(finRecpt.getReceiptSeqID());
+
+				for (RepayScheduleDetail rpySchd : repaySchdList) {
+					if (rpySchd.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0) {
+						getFinODDetailsDAO().updateWaiverAmount(receiptHeader.getReference(), rpySchd.getSchDate(),
+								rpySchd.getWaivedAmt());
+					}
+				}
+			}
+		}
 
 		// Bounce Reason Code
 		if (receiptHeader.getManualAdvise() != null) {
-			getManualAdviseDAO().delete(receiptHeader.getManualAdvise(), TableType.TEMP_TAB);
+			getManualAdviseDAO().deleteByAdviseId(receiptHeader.getManualAdvise(), TableType.TEMP_TAB);
 		}
 
+		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+
+		// Receipt Allocation Details
+		getAllocationDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+
+		// Delete Manual Advise Movements
+		getManualAdviseDAO().deleteMovementsByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB.getSuffix());
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
-		if (ImplementationConstants.LIMIT_INTERNAL) {
+		if (ImplementationConstants.LIMIT_INTERNAL && !isGoldLoanProcess) {
 			BigDecimal priAmt = BigDecimal.ZERO;
 
 			for (FinReceiptDetail finReceiptDetail : receiptHeader.getReceiptDetails()) {
@@ -450,24 +538,26 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				receiptHeader.getBefImage(), receiptHeader));
 
 		// Adding audit as deleted from TEMP table
-		getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
 
 		// Adding audit as Insert/Update/deleted into main table
-		getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID
-	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation. 5) for any mismatch conditions Fetch the error details from
+	 * getFinReceiptHeaderDAO().getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -497,7 +587,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug("Entering");
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditDetail.getModelData();
+		FinReceiptData receiptData = (FinReceiptData) auditDetail.getModelData();
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 
 		FinReceiptHeader tempReceiptHeader = null;
 		if (receiptHeader.isWorkflow()) {
@@ -512,11 +603,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		valueParm[0] = String.valueOf(receiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
-		if (receiptHeader.isNew()) { // for New record or new record into work flow
+		if (receiptHeader.isNew()) { // for New record or new record into work
+										// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
-				if (beFinReceiptHeader != null) { // Record Already Exists in the
+				if (beFinReceiptHeader != null) { // Record Already Exists in
+													// the
 					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -542,7 +635,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			if (!receiptHeader.isWorkflow()) { // With out Work flow for update
 				// and delete
 
-				if (beFinReceiptHeader == null) { // if records not exists in the
+				if (beFinReceiptHeader == null) { // if records not exists in
+													// the
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
@@ -577,12 +671,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 
-		// Fee Payment Cancellation or Bounce cancellation stopped When Loan is not in Workflow Process
+		// Fee Payment Cancellation or Bounce cancellation stopped When Loan is
+		// not in Workflow Process
 		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
 			String finReference = receiptHeader.getReference();
-			boolean rcdAvailable = getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp", false);
-			if (!rcdAvailable) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null), usrLanguage));
+
+			if (RepayConstants.RECEIPTTO_FINANCE.equals(receiptHeader.getRecAgainst())) {
+				boolean rcdAvailable = getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp", false);
+				if (!rcdAvailable) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null), usrLanguage));
+				}
 			}
 			boolean rcdAssigned = getFinFeeReceiptDAO().isFinFeeReceiptAllocated(receiptHeader.getReceiptID(), "_View");
 			if (rcdAssigned) {
@@ -590,30 +688,77 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 
-		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
-			if (!PennantConstants.method_doReject.equals(method)
-					&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
-					&& RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
+		/*
+		 * =====================================================================
+		 * ======================================== ================ // For Gold
+		 * Loans, Not allowed to cancel when finance is in Other Maintenance
+		 * if(StringUtils.equals(receiptHeader.getProductCategory(),
+		 * FinanceConstants.PRODUCT_GOLD)){ String finReference =
+		 * receiptHeader.getReference(); boolean rcdAvailable =
+		 * getFinanceMainDAO().isFinReferenceExists(finReference, "_Temp",
+		 * false); if (rcdAvailable) {
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
+		 * ErrorDetails("60213", null),usrLanguage)); }else{
+		 * 
+		 * // If any receipt after cancellation receipt and including that
+		 * having Waiver amount // then should not allow for cancellation Date
+		 * cancelReqDate =
+		 * receiptHeader.getReceiptDetails().get(0).getReceivedDate();
+		 * 
+		 * FinanceMain financeMain =
+		 * getFinanceMainDAO().getFinanceMainById(receiptHeader.getReference(),
+		 * "", false); int minPftPeriod =
+		 * getPromotionDAO().getPromtionMinPftPeriod(financeMain.
+		 * getPromotionSeqId(), ""); Date maxAlwCancelRcptDate =
+		 * DateUtility.addDays(financeMain.getFinStartDate(), minPftPeriod);
+		 * 
+		 * if(DateUtility.compare(cancelReqDate, maxAlwCancelRcptDate) <= 0){
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
+		 * ErrorDetails("60215", null),usrLanguage)); }else{
+		 * List<ReceiptCancelDetail> cancelReceipts =
+		 * getFinReceiptHeaderDAO().getReceiptCancelDetailList(cancelReqDate,
+		 * finReference);
+		 * 
+		 * boolean waiverExists = false; sortReceipts(cancelReceipts); for (int
+		 * i = cancelReceipts.size() - 1; i >= 0; i--) {
+		 * 
+		 * ReceiptCancelDetail receipt = cancelReceipts.get(i);
+		 * if(receipt.getReceiptId() <= receiptHeader.getReceiptID()){ continue;
+		 * } if(receipt.getWaviedAmt() != null &&
+		 * receipt.getWaviedAmt().compareTo(BigDecimal.ZERO) > 0){ waiverExists
+		 * = true; } }
+		 * 
+		 * // If waiver exists not allowed to do cancellation if(waiverExists){
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
+		 * ErrorDetails("60214", null),usrLanguage)); } } }
+		 * 
+		 * }
+		 * =====================================================================
+		 * ======================================== ================
+		 */
 
-				DepositMovements movement = getDepositDetailsDAO()
-						.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
-				if (movement != null) {
-					// Find Amount of Deposited Request
-					BigDecimal reqAmount = BigDecimal.ZERO;
-					for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
-						if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
-							reqAmount = reqAmount.add(rcptDetail.getAmount());
-						}
-					}
-					//getDepositDetailsById
-					DepositDetails depositDetails = getDepositDetailsDAO()
-							.getDepositDetailsById(movement.getDepositId(), "");
+		if (!PennantConstants.method_doReject.equals(method)
+				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
+				&& RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
-					//if deposit Details amount is less than Requested amount throw an error
-					if (depositDetails != null && reqAmount.compareTo(depositDetails.getActualAmount()) > 0) {
-						auditDetail
-								.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65036", null), usrLanguage));
+			DepositMovements movement = getDepositDetailsDAO()
+					.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+			if (movement != null) {
+				// Find Amount of Deposited Request
+				BigDecimal reqAmount = BigDecimal.ZERO;
+				for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+					if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+						reqAmount = reqAmount.add(rcptDetail.getAmount());
 					}
+				}
+				// getDepositDetailsById
+				DepositDetails depositDetails = getDepositDetailsDAO().getDepositDetailsById(movement.getDepositId(),
+						"");
+
+				// if deposit Details amount is less than Requested amount throw
+				// an error
+				if (depositDetails != null && reqAmount.compareTo(depositDetails.getActualAmount()) > 0) {
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65036", null), usrLanguage));
 				}
 			}
 		}
@@ -680,23 +825,24 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_BOUNCE);
 		receiptHeader.setBounceDate(DateUtility.getAppDate());
 
+		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(receiptHeader.getReference());
+
 		// Receipts Cancellation Process
-		String errorMsg = procReceiptCancellation(receiptHeader, PennantConstants.APP_PHASE_EOD);
+		String errorMsg = procReceiptCancellation(receiptHeader, PennantConstants.APP_PHASE_EOD, financeMain);
 
 		if (StringUtils.trimToNull(errorMsg) == null) {
 
-			// Update ReceiptHeader 
+			// Update ReceiptHeader
 			getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
 
-			// Limits update against PresentmentCancellation 
+			// Limits update against PresentmentCancellation
 			if (ImplementationConstants.LIMIT_INTERNAL) {
 
 				BigDecimal priAmt = BigDecimal.ZERO;
 				for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-					for (FinRepayHeader header : receiptDetail.getRepayHeaders()) {
-						for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
-							priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
-						}
+					FinRepayHeader header = receiptDetail.getRepayHeader();
+					for (RepayScheduleDetail rpySchd : header.getRepayScheduleDetails()) {
+						priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
 					}
 				}
 				if (priAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -736,11 +882,25 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		Rule rule = getRuleDAO().getRuleByID(bounceReason.getRuleID(), "");
 		BigDecimal bounceAmt = BigDecimal.ZERO;
 
+		Map<String, Object> eventMapping = null;
 		HashMap<String, Object> fieldsAndValues = finReceiptDetail.getDeclaredFieldValues();
 		bounceReason.getDeclaredFieldValues(fieldsAndValues);
 
+		eventMapping = financeMainDAO.getGLSubHeadCodes(receiptHeader.getReference());
+
 		if (rule != null) {
 			fieldsAndValues.put("br_finType", receiptHeader.getFinType());
+			if (eventMapping != null) {
+				fieldsAndValues.put("emptype", eventMapping.get("Emptype"));
+				fieldsAndValues.put("branchcity", eventMapping.get("Branchcity"));
+				fieldsAndValues.put("fincollateralreq", eventMapping.get("fincollateralreq"));
+				fieldsAndValues.put("btloan", eventMapping.get("btloan"));
+				fieldsAndValues.put("ae_businessvertical", eventMapping.get("Businessvertical"));
+				fieldsAndValues.put("ae_alwflexi", eventMapping.get("AlwFlexi"));
+				fieldsAndValues.put("ae_finbranch", eventMapping.get("FinBranch"));
+				fieldsAndValues.put("ae_entitycode", eventMapping.get("Entitycode"));
+			}
+
 			bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), fieldsAndValues,
 					receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
 		}
@@ -774,16 +934,18 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	@SuppressWarnings("unused")
-	private String procReceiptCancellation(FinReceiptHeader receiptHeader, String postBranch) throws Exception {
+	private String procReceiptCancellation(FinReceiptHeader receiptHeader, String postBranch, FinanceMain financeMain)
+			throws Exception {
 		logger.debug("Entering");
 
 		boolean alwSchdReversalByLog = false;
 		long postingId = getPostingsDAO().getPostingId();
+		String curStatus = getFinReceiptHeaderDAO().getReceiptModeStatus(receiptHeader.getReceiptID(), "");
 
-		// Valid Check for Finance Reversal On Active Finance Or not with ValueDate CheckUp
+		// Valid Check for Finance Reversal On Active Finance Or not with
+		// ValueDate CheckUp
 		String finReference = receiptHeader.getReference();
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
+
 		if (!financeMain.isFinIsActive()) {
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60204", "", null),
 					PennantConstants.default_Language);
@@ -791,7 +953,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			return errorDetail.getMessage();
 		}
 
-		FeeType boucneFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 		boolean isRcdFound = false;
 		boolean isBounceProcess = false;
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
@@ -805,15 +966,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
-		//getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
-		long postingSeqId = 0;
-		FinanceDetail financeDetailTemp = null;
-		FeeType penalityFeeType = null;
-		List<ReturnDataSet> returnDataSets = getPostingsPreparationUtil()
-				.postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
-		if (CollectionUtils.isNotEmpty(returnDataSets)) {
-			postingSeqId = returnDataSets.get(0).getLinkedTranId();
-		}
+		// getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
+		getPostingsPreparationUtil().postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
 
 		if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
@@ -838,68 +992,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		BigDecimal unRealizeLpiGst = BigDecimal.ZERO;
 		BigDecimal unRealizeLpp = BigDecimal.ZERO;
 		BigDecimal unRealizeLppGst = BigDecimal.ZERO;
-
-		List<ManualAdviseMovements> payableMovements = new ArrayList<>();
 		if (receiptDetails != null && !receiptDetails.isEmpty()) {
 			for (int i = receiptDetails.size() - 1; i >= 0; i--) {
 
 				FinReceiptDetail receiptDetail = receiptDetails.get(i);
-
-				// GST Invoice debit note for Payable Advise Usage
-				if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
-					BigDecimal payableAmt = receiptDetail.getAmount();
-					boolean gstExist = false;
-					long payAgainstID = receiptDetail.getPayAgainstID();
-
-					// Payable Advise Amount make utilization
-					if (payAgainstID != 0) {
-						if (receiptDetail.getReceiptTaxDetail() == null) {
-							ReceiptTaxDetail taxDetail = getReceiptTaxDetailDAO()
-									.getTaxDetailByID(receiptDetail.getReceiptSeqID(), "");
-							receiptDetail.setReceiptTaxDetail(taxDetail);
-						}
-						ReceiptTaxDetail receiptTaxDetail = null;
-						boolean exclusiveGST = false;
-						if (receiptDetail.getReceiptTaxDetail() != null) {
-							receiptTaxDetail = receiptDetail.getReceiptTaxDetail();
-							gstExist = true;
-							if (StringUtils.equals(receiptDetail.getReceiptTaxDetail().getTaxComponent(),
-									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-								exclusiveGST = true;
-								payableAmt = payableAmt.subtract(receiptDetail.getReceiptTaxDetail().getTotalGST());
-							}
-						}
-
-						if (gstExist) {
-
-							ManualAdviseMovements movement = new ManualAdviseMovements();
-							movement.setAdviseID(payAgainstID);
-							movement.setReceiptID(receiptDetail.getReceiptID());
-							movement.setReceiptSeqID(receiptDetail.getReceiptSeqID());
-							movement.setMovementDate(DateUtility.getAppDate());
-							if (exclusiveGST) {
-								movement.setMovementAmount(
-										payableAmt.add(receiptDetail.getReceiptTaxDetail().getTotalGST()));
-							} else {
-								movement.setMovementAmount(payableAmt);
-							}
-							movement.setPaidAmount(payableAmt);
-
-							ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(),
-									"_AView");
-							finReference = manualAdvise.getFinReference();
-							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
-							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
-							movement.setTaxComponent(manualAdvise.getTaxComponent());
-							movement.setPaidCGST(receiptTaxDetail.getPaidCGST());
-							movement.setPaidSGST(receiptTaxDetail.getPaidSGST());
-							movement.setPaidIGST(receiptTaxDetail.getPaidIGST());
-							movement.setPaidUGST(receiptTaxDetail.getPaidUGST());
-							payableMovements.add(movement);
-						}
-					}
-				}
 
 				if (isBounceProcess && (StringUtils.equals(receiptDetail.getPaymentType(),
 						RepayConstants.RECEIPTMODE_EXCESS)
@@ -908,8 +1004,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					continue;
 				}
 
-				// Fetch Log Entry Details Greater than this Repayments Entry , which are having Schedule Recalculation
-				// If Any Exist Case after this Repayments with Schedule Recalculation then Stop Process
+				// Fetch Log Entry Details Greater than this Repayments Entry ,
+				// which are having Schedule Recalculation
+				// If Any Exist Case after this Repayments with Schedule
+				// Recalculation then Stop Process
 				// ============================================
 				if (alwSchdReversalByLog) {
 					List<FinLogEntryDetail> list = getFinLogEntryDetailDAO().getFinLogEntryDetailList(finReference,
@@ -923,31 +1021,48 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Finance Repayments Amount Updation if Principal Amount Exists
 				long linkedTranId = 0;
-				List<FinRepayHeader> rpyHeaders = receiptDetail.getRepayHeaders();
-				for (int j = rpyHeaders.size() - 1; j >= 0; j--) {
-
-					FinRepayHeader rpyHeader = rpyHeaders.get(j);
+				FinRepayHeader rpyHeader = receiptDetail.getRepayHeader();
+				isRcdFound = true;
+				if (rpyHeader != null) {
 					linkedTranId = rpyHeader.getLinkedTranId();
 
-					if (!StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_SCHDRPY)
-							&& !StringUtils.equals(rpyHeader.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)
-							&& !StringUtils.equals(rpyHeader.getFinEvent(),
-									FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+					if (rpyHeader.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 						// Fetch Excess Amount Details
 						FinExcessAmount excess = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
 								receiptHeader.getExcessAdjustTo());
 
-						// Update Reserve Amount in FinExcessAmount
-						if (excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getRepayAmount()) < 0) {
-							ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
-									PennantConstants.default_Language);
-							return errorDetail.getMessage();
+						if ((StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))
+								&& StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
+							if (excess == null || excess.getReservedAmt().compareTo(rpyHeader.getExcessAmount()) < 0) {
+								ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
+										PennantConstants.default_Language);
+								return errorDetail.getMessage();
+							}
+
+						} else {
+
+							if (excess == null || excess.getBalanceAmt().compareTo(rpyHeader.getExcessAmount()) < 0) {
+								ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60205", "", null),
+										PennantConstants.default_Language);
+								return errorDetail.getMessage();
+							}
 						}
 
+						// Update Reserve Amount in FinExcessAmount
+
 						// Excess Amounts reversal Updations
-						getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
-								rpyHeader.getRepayAmount().negate());
+						if ((StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
+								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))
+								&& StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
+							getFinExcessAmountDAO().deductExcessReserve(excess.getExcessID(),
+									rpyHeader.getExcessAmount());
+						} else {
+
+							getFinExcessAmountDAO().updateExcessBal(excess.getExcessID(),
+									rpyHeader.getExcessAmount().negate());
+						}
 
 						isRcdFound = true;
 						continue;
@@ -961,13 +1076,17 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 					// Remove Repayments Terms based on Linked Transaction ID
 					// ============================================
-					getFinanceRepaymentsDAO().deleteRpyDetailbyLinkedTranId(linkedTranId, finReference);
+					if (linkedTranId > 0) {
+						getFinanceRepaymentsDAO().deleteRpyDetailbyLinkedTranId(linkedTranId, finReference);
+					}
 
 					// Remove FinRepay Header Details
-					// getFinanceRepaymentsDAO().deleteFinRepayHeaderByTranId(finReference, linkedTranId, "");
+					// getFinanceRepaymentsDAO().deleteFinRepayHeaderByTranId(finReference,
+					// linkedTranId, "");
 
 					// Remove Repayment Schedule Details
-					// getFinanceRepaymentsDAO().deleteFinRepaySchListByTranId(finReference, linkedTranId, "");
+					// getFinanceRepaymentsDAO().deleteFinRepaySchListByTranId(finReference,
+					// linkedTranId, "");
 
 					// Gathering All repayments Schedule List
 					if (rpyHeader.getRepayScheduleDetails() != null && !rpyHeader.getRepayScheduleDetails().isEmpty()) {
@@ -984,7 +1103,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// Update Profit Details for UnRealized LPP
 					unRealizeLpp = unRealizeLpp.add(rpyHeader.getRealizeUnLPP());
 					unRealizeLppGst = unRealizeLppGst.add(rpyHeader.getRealizeUnLPPGst());
-
 				}
 
 				// Update Log Entry Based on FinPostDate and Reference
@@ -1002,17 +1120,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					getFinLogEntryDetailDAO().updateLogEntryStatus(detail);
 				}
 
-				// Manual Advise Movements Reversal for receivable advises/bounce
-				int advisetype = Integer.valueOf(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+				// Manual Advise Movements Reversal
 				List<ManualAdviseMovements> advMovements = getManualAdviseDAO().getAdvMovementsByReceiptSeq(
-						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), advisetype, "_AView");
-
+						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "_AView");
 				List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
 				if (advMovements != null && !advMovements.isEmpty()) {
 					isRcdFound = true;
 					for (ManualAdviseMovements movement : advMovements) {
 
-						if ((movement.getPaidAmount().add(movement.getWaivedAmount())).compareTo(BigDecimal.ZERO) == 0) {
+						if ((movement.getPaidAmount().add(movement.getWaivedAmount()))
+								.compareTo(BigDecimal.ZERO) == 0) {
 							continue;
 						}
 
@@ -1024,29 +1141,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						advise.setPaidSGST(movement.getPaidSGST().negate());
 						advise.setPaidIGST(movement.getPaidIGST().negate());
 						advise.setPaidUGST(movement.getPaidUGST().negate());
-
-						ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");						
-						
-						boolean prepareInvoice = false;
-						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
-							movement.setFeeTypeCode(boucneFeeType.getFeeTypeCode());
-							movement.setFeeTypeDesc(boucneFeeType.getFeeTypeDesc());
-							movement.setTaxApplicable(boucneFeeType.isTaxApplicable());
-							movement.setTaxComponent(boucneFeeType.getTaxComponent());
-							if (!boucneFeeType.isAmortzReq()) {
-								 prepareInvoice = true;
-							 }							
-						} else {
-							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
-							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
-							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
-							movement.setTaxComponent(manualAdvise.getTaxComponent());
-							prepareInvoice = true;
-						}
-						
-						if (prepareInvoice) {
-							advMovementsTemp.add(movement);
-						}
+						advMovementsTemp.add(movement);
 
 						getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 					}
@@ -1055,21 +1150,19 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					getManualAdviseDAO().updateMovementStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus(), "");
 
-					if (CollectionUtils.isNotEmpty(advMovementsTemp)) {
-						if (financeDetailTemp == null) {
-							financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
-						}
-
-						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
-								advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
-					}
+					// GST Invoice Preparation
+					long postingSeqId = 0; // TODO should be pass linkedTranId
+					FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
+					this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetail, null, advMovementsTemp,
+							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
 				}
 
 			}
 
 			if (!rpySchdList.isEmpty()) {
 
-				// Making Single Set of Repay Schedule Details and sent to Rendering
+				// Making Single Set of Repay Schedule Details and sent to
+				// Rendering
 				Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 				for (RepayScheduleDetail rpySchd : rpySchdList) {
 
@@ -1091,7 +1184,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						curRpySchd = rpySchd;
 					}
 
-					// Adding New Repay Schedule Object to Map after Summing data
+					// Adding New Repay Schedule Object to Map after Summing
+					// data
 					rpySchdMap.put(rpySchd.getSchDate(), curRpySchd);
 				}
 
@@ -1108,8 +1202,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					scheduleData = new FinScheduleData();
 					scheduleData.setFinanceScheduleDetails(
 							getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", false));
-
-					scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 
 					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
 						schdMap.put(DateUtility.formatDate(schd.getSchDate(), PennantConstants.DBDateFormat), schd);
@@ -1128,7 +1220,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							curSchd = schdMap
 									.get(DateUtility.formatDate(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
 
-							// Principal Payment 
+							// Principal Payment
 							if (rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
 								curSchd.setSchdPriPaid(
 										curSchd.getSchdPriPaid().subtract(rpySchd.getPrincipalSchdPayNow()));
@@ -1136,7 +1228,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 								schdUpdated = true;
 							}
 
-							// Profit Payment 
+							// Profit Payment
 							if (rpySchd.getProfitSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
 								curSchd.setSchdPftPaid(
 										curSchd.getSchdPftPaid().subtract(rpySchd.getProfitSchdPayNow()));
@@ -1144,19 +1236,19 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 								schdUpdated = true;
 							}
 
-							// TDS Payment 
+							// TDS Payment
 							if (rpySchd.getTdsSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
 								curSchd.setTDSPaid(curSchd.getTDSPaid().subtract(rpySchd.getTdsSchdPayNow()));
 								schdUpdated = true;
 							}
 
-							// Fee Detail Payment 
+							// Fee Detail Payment
 							if (rpySchd.getSchdFeePayNow().compareTo(BigDecimal.ZERO) > 0) {
 								curSchd.setSchdFeePaid(curSchd.getSchdFeePaid().subtract(rpySchd.getSchdFeePayNow()));
 								schdUpdated = true;
 							}
 
-							// Insurance Detail Payment 
+							// Insurance Detail Payment
 							if (rpySchd.getSchdInsPayNow().compareTo(BigDecimal.ZERO) > 0) {
 								curSchd.setSchdInsPaid(curSchd.getSchdInsPaid().subtract(rpySchd.getSchdInsPayNow()));
 								schdUpdated = true;
@@ -1169,7 +1261,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						}
 					}
 
-					// Overdue Recovery Details Reset Back to Original State , If any penalties Paid On this Repayments
+					// Overdue Recovery Details Reset Back to Original State ,
+					// If any penalties Paid On this Repayments
 					// Process
 					// ============================================
 					if (rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
@@ -1244,43 +1337,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 				}
 
-				// prepare GST Invoice Report for Penalty reversal 
-				if (CollectionUtils.isNotEmpty(rpySchdList)) {//!ImplementationConstants.GST_INVOICE_DUE_BASIS && 
-					List<ManualAdviseMovements> penalityList = new ArrayList<ManualAdviseMovements>();
-					for (RepayScheduleDetail rpySchd : rpySchdList) {
-						BigDecimal gstAmount = BigDecimal.ZERO;
-						gstAmount = rpySchd.getPaidPenaltyCGST().add(rpySchd.getPaidPenaltySGST())
-								.add(rpySchd.getPaidPenaltyUGST()).add(rpySchd.getPaidPenaltyIGST());
-						if (BigDecimal.ZERO.compareTo(gstAmount) >= 0) {
-							continue;
-						}
-						if (penalityFeeType == null) {
-							penalityFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
-						}
-						ManualAdviseMovements penalities = new ManualAdviseMovements();
-						penalities.setPaidCGST(rpySchd.getPaidPenaltyCGST());
-						penalities.setPaidSGST(rpySchd.getPaidPenaltySGST());
-						penalities.setPaidUGST(rpySchd.getPaidPenaltyUGST());
-						penalities.setPaidIGST(rpySchd.getPaidPenaltyIGST());
-						penalities.setFeeTypeCode(penalityFeeType.getFeeTypeCode());
-						penalities.setFeeTypeDesc(penalityFeeType.getFeeTypeDesc());
-						penalities.setTaxApplicable(penalityFeeType.isTaxApplicable());
-						penalities.setTaxComponent(penalityFeeType.getTaxComponent());
-						penalities.setMovementAmount(rpySchd.getPenaltyPayNow());
-						penalities.setPaidAmount(rpySchd.getPenaltyPayNow());
-						penalityList.add(penalities);
-					}
-					
-					if (CollectionUtils.isNotEmpty(penalityList)) {
-						if (financeDetailTemp == null) {
-							financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
-						}
-						
-						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null, penalityList,
-								PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
-					}
-				}
-
 				// Schedule Details Updation
 				if (!updateSchdList.isEmpty()) {
 					getFinanceScheduleDetailDAO().updateListForRpy(updateSchdList);
@@ -1310,11 +1366,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 					// Fetching Last Log Entry Finance Details
 					scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
+					scheduleData.setFinanceMain(financeMain);
 
-					// Re-Insert Log Entry Data before Repayments Process Recalculations
+					// Re-Insert Log Entry Data before Repayments Process
+					// Recalculations
 					listSave(scheduleData, "", 0);
 
-					// Delete Data from Log Entry Tables After Inserting into Main Tables
+					// Delete Data from Log Entry Tables After Inserting into
+					// Main Tables
 					for (int i = 0; i < receiptDetails.size(); i++) {
 						listDeletion(finReference, "_Log", false, receiptDetails.get(i).getLogKey());
 					}
@@ -1327,7 +1386,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				pftDetail.setGstLpiAmount(receiptHeader.getGstLpiAmount());
 				pftDetail.setGstLppAmount(receiptHeader.getGstLppAmount());
 
-				// Update Profit Details for UnRealized Income & Late Payment Difference
+				// Update Profit Details for UnRealized Income & Late Payment
+				// Difference
 				pftDetail.setAmzTillLBD(pftDetail.getAmzTillLBD().subtract(unRealizeAmz));
 				pftDetail.setLpiTillLBD(pftDetail.getLpiTillLBD().subtract(unRealizeLpi));
 				pftDetail.setGstLpiTillLBD(pftDetail.getGstLpiTillLBD().subtract(unRealizeLpiGst));
@@ -1338,22 +1398,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				pftDetail = getAccrualService().calProfitDetails(financeMain, scheduleData.getFinanceScheduleDetails(),
 						pftDetail, DateUtility.getAppDate());
 				if (unRealizeLpi.compareTo(BigDecimal.ZERO) > 0 || unRealizeLpp.compareTo(BigDecimal.ZERO) > 0) {
-					pftDetail = postReceiptCanAdjust(scheduleData, pftDetail);
+					pftDetail = postReceiptCanAdjust(scheduleData, pftDetail, 0);
 				}
 
 				// Check Current Finance Max Status For updation
 				// ============================================
 
 				Date valueDate = DateUtility.getAppDate();
-				if (!ImplementationConstants.LPP_CALC_SOD) {
+				if (!ImplementationConstants.LPP_CALC_SOD && !StringUtils
+						.equals(scheduleData.getFinanceMain().getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
 				List<FinODDetails> overdueList = getFinODDetailsDAO()
 						.getFinODBalByFinRef(financeMain.getFinReference());
 				List<FinanceRepayments> repayments = getFinanceRepaymentsDAO()
 						.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
-
-				scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 				overdueList = getLatePayMarkingService().calPDOnBackDatePayment(financeMain, overdueList, valueDate,
 						scheduleData.getFinanceScheduleDetails(), repayments, true, true);
 
@@ -1361,7 +1420,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				getRepaymentPostingsUtil().updateStatus(financeMain, valueDate,
 						scheduleData.getFinanceScheduleDetails(), pftDetail, overdueList, null);
 
-				// Overdue Details Updation after Recalculation with Current Data
+				// Overdue Details Updation after Recalculation with Current
+				// Data
 				if (overdueList != null && !overdueList.isEmpty()) {
 					getFinODDetailsDAO().updateList(overdueList);
 				}
@@ -1379,15 +1439,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 
-		if (CollectionUtils.isNotEmpty(payableMovements)) {
-			long linkedTranId = 0;
-			if (financeDetailTemp == null) {
-				financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
-			}
-			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null, payableMovements,
-					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
-		}
-
 		if (!isRcdFound) {
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60208", "", null),
 					PennantConstants.default_Language);
@@ -1401,72 +1452,34 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 					FinanceDetail financeDetail = new FinanceDetail();
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-					
-					ManualAdvise advise = receiptHeader.getManualAdvise();
-					boolean prepareInvoice = false;
-					
-					if (boucneFeeType.isAmortzReq()) {
-						
-						String invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
-						
-						AEEvent aeEvent = executeDueAccounting(financeDetail, receiptHeader.getBounceDate(),
-								receiptHeader.getManualAdvise().getAdviseAmount(), postBranch,
-								RepayConstants.ALLOCATION_BOUNCE);
-						
-						if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
-							logger.debug("Leaving");
-							return aeEvent.getErrorMessage();
-						}
-						
-						// GST Invoice Preparation for Receivable Advise/ Bounce
-						if (aeEvent != null) {
-							long linkedTranId = aeEvent.getLinkedTranId();
-							ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
-							
-							adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
-							adviseMovements.setFeeTypeDesc(advise.getFeeTypeDesc());
-							adviseMovements.setMovementAmount(advise.getAdviseAmount());
-							
-							BigDecimal gstAmount = advise.getPaidCGST().add(advise.getPaidSGST()).add(advise.getPaidIGST()).add(advise.getPaidUGST());
-							adviseMovements.setFeeTypeCode(boucneFeeType.getFeeTypeCode());
-							adviseMovements.setFeeTypeDesc(boucneFeeType.getFeeTypeDesc());
-							adviseMovements.setTaxApplicable(boucneFeeType.isTaxApplicable());
-							adviseMovements.setTaxComponent(boucneFeeType.getTaxComponent());
-							
-							if (BigDecimal.ZERO.compareTo(gstAmount) == 0) {
-								HashMap<String, Object> dataMap = aeEvent.getDataMap();
-								adviseMovements.setPaidAmount(advise.getAdviseAmount());
-								adviseMovements.setPaidCGST((BigDecimal)dataMap.get("bounceCharge_CGST"));
-								adviseMovements.setPaidSGST((BigDecimal)dataMap.get("bounceCharge_SGST"));
-								adviseMovements.setPaidIGST((BigDecimal)dataMap.get("bounceCharge_IGST"));
-								adviseMovements.setPaidUGST((BigDecimal)dataMap.get("bounceCharge_UGST"));
-								gstAmount = adviseMovements.getPaidCGST().add(adviseMovements.getPaidSGST()).add(adviseMovements.getPaidIGST()).add(adviseMovements.getPaidUGST());
-							} else {
-								adviseMovements.setPaidCGST(advise.getPaidCGST());
-								adviseMovements.setPaidSGST(advise.getPaidSGST());
-								adviseMovements.setPaidIGST(advise.getPaidIGST());
-								adviseMovements.setPaidUGST(advise.getPaidUGST());
-								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(adviseMovements.getTaxComponent())) {
-									adviseMovements.setPaidAmount(advise.getAdviseAmount().subtract(gstAmount));
-								} else {
-									adviseMovements.setPaidAmount(advise.getAdviseAmount());
-								}
-							}
-							
-							// GST Invoice data resetting based on Accounting Process
-							String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-							if (gstAmount.compareTo(BigDecimal.ZERO) > 0 &&
-									StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
-								
-								List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
-								advMovements.add(adviseMovements);
-								if (financeDetailTemp == null) {
-									financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
-								}
-								
-								this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null, advMovements, invoiceType, finReference, false);
-							}
-						}
+
+					AEEvent aeEvent = executeDueAccounting(financeDetail, receiptHeader.getBounceDate(),
+							receiptHeader.getManualAdvise().getAdviseAmount(), postBranch,
+							RepayConstants.ALLOCATION_BOUNCE);
+					if (aeEvent != null && StringUtils.isNotEmpty(aeEvent.getErrorMessage())) {
+						logger.debug("Leaving");
+						return aeEvent.getErrorMessage();
+					}
+
+					// GST Invoice Preparation
+					if (aeEvent != null) {
+						long postingSeqId = aeEvent.getLinkedTranId();
+						ManualAdviseMovements adviseMovements = new ManualAdviseMovements();
+						ManualAdvise advise = receiptHeader.getManualAdvise();
+						adviseMovements.setFeeTypeCode(advise.getFeeTypeCode());
+						adviseMovements.setFeeTypeDesc(advise.getFeeTypeDesc());
+						adviseMovements.setMovementAmount(advise.getAdviseAmount());
+						adviseMovements.setPaidCGST(advise.getPaidCGST());
+						adviseMovements.setPaidSGST(advise.getPaidSGST());
+						adviseMovements.setPaidIGST(advise.getPaidIGST());
+						adviseMovements.setPaidUGST(advise.getPaidUGST());
+						List<ManualAdviseMovements> advMovementsTemp = new ArrayList<ManualAdviseMovements>();
+						advMovementsTemp.add(adviseMovements);
+						FinanceDetail financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "",
+								false);
+						this.gstInvoiceTxnService.gstInvoicePreparation(postingSeqId, financeDetailTemp, null,
+								advMovementsTemp, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference,
+								false);
 					}
 				}
 
@@ -1479,10 +1492,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
 				if (!isBounceProcess
 						|| (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
-								|| StringUtils.equals(receiptDetail.getPaymentType(),
-										RepayConstants.RECEIPTMODE_PRESENTMENT)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))) {
-
 					getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
 							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus());
 
@@ -1509,83 +1519,131 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 
 			// Accounting Execution Process for Deposit Reversal for CASH
-			if (ImplementationConstants.DEPOSIT_PROC_REQ) {
-				if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
+			if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
+				DepositMovements movement = getDepositDetailsDAO()
+						.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+				if (movement != null) {
+					// Find Amount of Deposited Request
+					BigDecimal reqAmount = BigDecimal.ZERO;
+					for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
+						if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+							reqAmount = reqAmount.add(rcptDetail.getAmount());
+						}
+					}
+
+					// need to check accounting should be reversal or not for
+					// Bank To Cash
+					/*
+					 * AEEvent aeEvent =
+					 * this.cashManagementAccounting.generateAccounting(
+					 * AccountEventConstants.ACCEVENT_BANKTOCASH,
+					 * movement.getBranchCode(), movement.getBranchCode(),
+					 * movement.getReservedAmount(),
+					 * movement.getPartnerBankId(), movement.getMovementId(),
+					 * null);
+					 */
+
+					if (reqAmount.compareTo(BigDecimal.ZERO) > 0) {
+						// DECRESE Available amount in Deposit Details
+						getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
+
+						// Movement update by Transaction Type to Reversal
+						getDepositDetailsDAO().reverseMovementTranType(movement.getMovementId());
+					}
+				}
+			}
+
+			// Accounting Execution Process for Deposit Reversal for Cheque / DD
+			if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptHeader.getReceiptMode())
+					|| RepayConstants.RECEIPTMODE_DD.equals(receiptHeader.getReceiptMode())) {
+
+				// Verify Cheque or DD Details exists in Deposited Cheques
+				DepositCheques depositCheque = getDepositChequesDAO()
+						.getDepositChequeByReceiptID(receiptHeader.getReceiptID());
+
+				if (depositCheque != null) {
+					if (depositCheque.getLinkedTranId() > 0) {
+						// Postings Reversal
+						getPostingsPreparationUtil().postReversalsByLinkedTranID(depositCheque.getLinkedTranId());
+						// Make Deposit Cheque to Reversal Status
+						getDepositChequesDAO().reverseChequeStatus(depositCheque.getMovementId(),
+								receiptHeader.getReceiptID(), depositCheque.getLinkedTranId());
+					} else {
+						logger.info("Postings Id is not available in deposit cheques");
+						throw new InterfaceException("CHQ001", "Issue with deposit details postings prepartion.");
+					}
+				} else {
+					// Available Decrease
 					DepositMovements movement = getDepositDetailsDAO()
 							.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
 					if (movement != null) {
+
 						// Find Amount of Deposited Request
 						BigDecimal reqAmount = BigDecimal.ZERO;
 						for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
-							if (RepayConstants.RECEIPTMODE_CASH.equals(rcptDetail.getPaymentType())) { // CASH
+							if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rcptDetail.getPaymentType())
+									|| RepayConstants.RECEIPTMODE_DD.equals(rcptDetail.getPaymentType())) { // Cheque/DD
 								reqAmount = reqAmount.add(rcptDetail.getAmount());
 							}
 						}
 
-						//need to check accounting should be reversal or not for Bank To Cash
-						/*
-						 * AEEvent aeEvent =
-						 * this.cashManagementAccounting.generateAccounting(AccountEventConstants.ACCEVENT_BANKTOCASH,
-						 * movement.getBranchCode(), movement.getBranchCode(), movement.getReservedAmount(),
-						 * movement.getPartnerBankId(), movement.getMovementId(), null);
-						 */
+						// DECRESE Available amount in Deposit Details
+						getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
 
-						if (reqAmount.compareTo(BigDecimal.ZERO) > 0) {
-							// DECRESE Available amount in Deposit Details
-							getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
-
-							// Movement update by Transaction Type to Reversal
-							getDepositDetailsDAO().reverseMovementTranType(movement.getMovementId());
-						}
-					}
-				}
-
-				// Accounting Execution Process for Deposit Reversal for Cheque / DD
-				if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptHeader.getReceiptMode())
-						|| RepayConstants.RECEIPTMODE_DD.equals(receiptHeader.getReceiptMode())) {
-
-					// Verify Cheque or DD Details exists in Deposited Cheques 
-					DepositCheques depositCheque = getDepositChequesDAO()
-							.getDepositChequeByReceiptID(receiptHeader.getReceiptID());
-
-					if (depositCheque != null) {
-						if (depositCheque.getLinkedTranId() > 0) {
-							//Postings Reversal
-							getPostingsPreparationUtil().postReversalsByLinkedTranID(depositCheque.getLinkedTranId());
-							// Make Deposit Cheque to Reversal Status
-							getDepositChequesDAO().reverseChequeStatus(depositCheque.getMovementId(),
-									receiptHeader.getReceiptID(), depositCheque.getLinkedTranId());
-						} else {
-							logger.info("Postings Id is not available in deposit cheques");
-							throw new InterfaceException("CHQ001", "Issue with deposit details postings prepartion.");
-						}
-					} else {
-						// Available Decrease 
-						DepositMovements movement = getDepositDetailsDAO()
-								.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
-						if (movement != null) {
-
-							// Find Amount of Deposited Request
-							BigDecimal reqAmount = BigDecimal.ZERO;
-							for (FinReceiptDetail rcptDetail : receiptHeader.getReceiptDetails()) {
-								if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rcptDetail.getPaymentType())
-										|| RepayConstants.RECEIPTMODE_DD.equals(rcptDetail.getPaymentType())) { // Cheque/DD
-									reqAmount = reqAmount.add(rcptDetail.getAmount());
-								}
-							}
-
-							// DECRESE Available amount in Deposit Details
-							getDepositDetailsDAO().updateActualAmount(movement.getDepositId(), reqAmount, false, "");
-
-							// Movement update by Transaction Type to Reversal
-							getDepositDetailsDAO().reverseMovementTranType(movement.getDepositId());
-						}
+						// Movement update by Transaction Type to Reversal
+						getDepositDetailsDAO().reverseMovementTranType(movement.getDepositId());
 					}
 				}
 			}
 		}
 
+		return null;
+	}
+
+	/**
+	 * Method for Processing Fee Payments Cancellation Based on Event and
+	 * Reference
+	 * 
+	 * @param receiptHeader
+	 * @throws InterfaceException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) {
+		logger.debug("Entering");
+
+		long linkedTranId = 0;
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			FinRepayHeader rpyHeader = receiptDetail.getRepayHeader();
+			linkedTranId = rpyHeader.getLinkedTranId();
+			break;
+		}
+
+		// Posting Reversal Case Program Calling in Equation
+		// ============================================
+		getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
+
+		// Update Receipt Detail Status
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),
+					receiptHeader.getReceiptModeStatus());
+		}
+
+		return null;
+	}
+
+	/**
+	 * Method for Processing Cancellation for the Gold Loan Receipt
+	 * 
+	 * @param cancelRequestedReceipt
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	private String procGoldReceiptCancellation(FinReceiptHeader cancelRequestedReceipt, String postBranch)
+			throws Exception {
+		// FIXME Enable Gold Loan module
 		return null;
 	}
 
@@ -1598,22 +1656,22 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * @return
 	 * @throws Exception
 	 */
-	private FinanceProfitDetail postReceiptCanAdjust(FinScheduleData scheduleData, FinanceProfitDetail profitDetail)
-			throws Exception {
+	private FinanceProfitDetail postReceiptCanAdjust(FinScheduleData scheduleData, FinanceProfitDetail profitDetail,
+			long oldLinkedTranId) throws Exception {
 
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		// Accrual Difference Postings
 		long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
 				AccountEventConstants.ACCEVENT_AMZ, FinanceConstants.MODULEID_FINTYPE);
 
-		Date derivedAppDate = DateUtility.getAppDate();
+		Date derivedAppDate = DateUtility.getDerivedAppDate();
 		if (accountingID != Long.MIN_VALUE) {
 
 			AEEvent aeEvent = AEAmounts.procCalAEAmounts(profitDetail, scheduleData.getFinanceScheduleDetails(),
 					AccountEventConstants.ACCEVENT_AMZ, derivedAppDate, derivedAppDate);
 
 			// UnAccrual amount should not be zero in case of "UMFC" accounting
-			aeEvent.getAeAmountCodes().setdAmz(BigDecimal.ZERO);
+			// aeEvent.getAeAmountCodes().setdAmz(BigDecimal.ZERO);
 
 			BigDecimal unAmz = aeEvent.getAeAmountCodes().getdAmz();
 			BigDecimal unLPIAmz = aeEvent.getAeAmountCodes().getdLPIAmz();
@@ -1630,7 +1688,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				String highPriorityState = null;
 				String highPriorityCountry = null;
 
-				// Customer Details			
+				// Customer Details
 				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(),
 						true, "_View");
 
@@ -1682,36 +1740,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return profitDetail;
 	}
 
-	/**
-	 * Method for Processing Fee Payments Cancellation Based on Event and Reference
-	 * 
-	 * @param receiptHeader
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) {
-		logger.debug("Entering");
-
-		long linkedTranId = 0;
-		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-			for (FinRepayHeader rpyHeader : receiptDetail.getRepayHeaders()) {
-				linkedTranId = rpyHeader.getLinkedTranId();
-				break;
-			}
-		}
-
-		// Posting Reversal Case Program Calling in Equation
-		// ============================================
-		getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranId);
-
-		// Update Receipt Detail Status
-		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-			getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),
-					receiptHeader.getReceiptModeStatus());
-		}
-
-		return null;
+	private Date getPostDate() {
+		Calendar cal = Calendar.getInstance();
+		Calendar appCal = Calendar.getInstance();
+		cal.setTime(DateUtility.getSysDate());
+		appCal.setTime(DateUtility.getAppDate());
+		cal.set(Calendar.YEAR, appCal.get(Calendar.YEAR));
+		cal.set(Calendar.MONTH, appCal.get(Calendar.MONTH));
+		cal.set(Calendar.DATE, appCal.get(Calendar.DATE));
+		return cal.getTime();
 	}
 
 	/**
@@ -1732,6 +1769,25 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		return rpySchdList;
+	}
+
+	public List<ReceiptCancelDetail> sortReceipts(List<ReceiptCancelDetail> receipts) {
+
+		if (receipts != null && receipts.size() > 0) {
+			Collections.sort(receipts, new Comparator<ReceiptCancelDetail>() {
+				@Override
+				public int compare(ReceiptCancelDetail detail1, ReceiptCancelDetail detail2) {
+					if (detail1.getReceiptId() > detail2.getReceiptId()) {
+						return 1;
+					} else if (detail1.getReceiptId() < detail2.getReceiptId()) {
+						return -1;
+					}
+					return 0;
+				}
+			});
+		}
+
+		return receipts;
 	}
 
 	/**
@@ -1835,20 +1891,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		getRepayInstructionDAO().saveList(finDetail.getRepayInstructions(), tableType, false);
 
 		logger.debug("Leaving ");
-	}
-
-	private List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
-
-		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
-			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
-				@Override
-				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
-				}
-			});
-		}
-
-		return financeScheduleDetail;
 	}
 
 	// ******************************************************//
@@ -2007,6 +2049,22 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		this.bounceReasonDAO = bounceReasonDAO;
 	}
 
+	public RuleDAO getRuleDAO() {
+		return ruleDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
 	public LimitManagement getLimitManagement() {
 		return limitManagement;
 	}
@@ -2037,14 +2095,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
-	}
-
-	public FinStageAccountingLogDAO getFinStageAccountingLogDAO() {
-		return finStageAccountingLogDAO;
-	}
-
-	public void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
-		this.finStageAccountingLogDAO = finStageAccountingLogDAO;
 	}
 
 	// GST Development
@@ -2088,11 +2138,80 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		this.customerDetailsService = customerDetailsService;
 	}
 
-	public ReceiptTaxDetailDAO getReceiptTaxDetailDAO() {
-		return receiptTaxDetailDAO;
+	public BranchCashDetailDAO getBranchCashDetailDAO() {
+		return branchCashDetailDAO;
 	}
 
-	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
-		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
+	public void setBranchCashDetailDAO(BranchCashDetailDAO branchCashDetailDAO) {
+		this.branchCashDetailDAO = branchCashDetailDAO;
+	}
+
+	public PromotionDAO getPromotionDAO() {
+		return promotionDAO;
+	}
+
+	public void setPromotionDAO(PromotionDAO promotionDAO) {
+		this.promotionDAO = promotionDAO;
+	}
+
+	public FinanceProfitDetailDAO getProfitDetailDAO() {
+		return profitDetailDAO;
+	}
+
+	public void setProfitDetailDAO(FinanceProfitDetailDAO profitDetailDAO) {
+		this.profitDetailDAO = profitDetailDAO;
+	}
+
+	public ReceiptCalculator getReceiptCalculator() {
+		return receiptCalculator;
+	}
+
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public RepaymentProcessUtil getRepayProcessUtil() {
+		return repayProcessUtil;
+	}
+
+	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
+		this.repayProcessUtil = repayProcessUtil;
+	}
+
+	public AccrualService getAccrualService() {
+		return accrualService;
+	}
+
+	public void setAccrualService(AccrualService accrualService) {
+		this.accrualService = accrualService;
+	}
+
+	public FinStageAccountingLogDAO getFinStageAccountingLogDAO() {
+		return finStageAccountingLogDAO;
+	}
+
+	public void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
+		this.finStageAccountingLogDAO = finStageAccountingLogDAO;
+	}
+
+	@Override
+	public Map<String, Object> getGLSubHeadCodes(String reference) {
+		return this.financeMainDAO.getGLSubHeadCodes(reference);
+	}
+
+	public ReceiptAllocationDetailDAO getAllocationDetailDAO() {
+		return allocationDetailDAO;
+	}
+
+	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
+		this.allocationDetailDAO = allocationDetailDAO;
 	}
 }

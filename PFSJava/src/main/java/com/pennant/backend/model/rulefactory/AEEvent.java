@@ -1,5 +1,6 @@
 package com.pennant.backend.model.rulefactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,9 +8,10 @@ import java.util.List;
 
 import com.pennant.app.constants.AccountConstants;
 
-public class AEEvent {
+public class AEEvent implements Serializable {
+	private static final long serialVersionUID = 853801780166711631L;
 
-	private AEAmountCodes aeAmountCodes;
+	private AEAmountCodes aeAmountCodes = new AEAmountCodes();
 	private String moduleDefiner;
 	private HashMap<String, Object> dataMap = new HashMap<>();
 
@@ -47,6 +49,7 @@ public class AEEvent {
 	private String accountingEvent;
 	private String disbAccountID;
 	private String postingUserBranch;
+	private String entityCode;
 
 	//VAS
 	private String vasPostAgainst;
@@ -55,10 +58,9 @@ public class AEEvent {
 
 	private boolean uAmzExists = false;
 	private boolean uLpiExists = false;
+	private boolean cpzChgExists = false;
 	private boolean uLppExists = false;
 	private boolean bpiIncomized = false;
-
-	private String entityCode;
 
 	//Cash Management
 	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
@@ -389,6 +391,14 @@ public class AEEvent {
 
 	public void setuLpiExists(boolean uLpiExists) {
 		this.uLpiExists = uLpiExists;
+	}
+
+	public boolean isCpzChgExists() {
+		return cpzChgExists;
+	}
+
+	public void setCpzChgExists(boolean cpzChgExists) {
+		this.cpzChgExists = cpzChgExists;
 	}
 
 	public boolean isuLppExists() {

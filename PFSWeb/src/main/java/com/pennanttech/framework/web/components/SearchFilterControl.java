@@ -26,6 +26,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Textbox;
 
 import com.pennant.ExtendedCombobox;
@@ -170,6 +171,8 @@ public class SearchFilterControl implements Serializable {
 			return ((Datebox) component).getValue();
 		} else if (component instanceof Checkbox) {
 			return ((Checkbox) component).isChecked() ? 1 : 0;
+		} else if (component instanceof Longbox) {
+			return ((Longbox) component).getValue();
 		}
 
 		return "";
@@ -192,6 +195,8 @@ public class SearchFilterControl implements Serializable {
 			((Datebox) component).setValue(null);
 		} else if (component instanceof Checkbox) {
 			((Checkbox) component).setChecked(false);
+		} else if (component instanceof Longbox) {
+			((Longbox) component).setText("");
 		}
 	}
 

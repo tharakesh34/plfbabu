@@ -92,6 +92,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
@@ -3000,13 +3001,19 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 
-			if (getFinanceMainDialogCtrl() instanceof ReceiptDialogCtrl) {
-				ReceiptDialogCtrl receiptDialogCtrl = (ReceiptDialogCtrl) getFinanceMainDialogCtrl();
-				executionMap.putAll(receiptDialogCtrl.getFeeParmMap());
-			}
+			//FIXME: PV. CODE RELATED TO RECEIPT DAILOG CTRL DELETED FROM HERE
 
 			String finCcy = financeMain.getFinCcy();
 			int formatter = CurrencyUtil.getFormat(finCcy);
+			
+			//FIXME: MURTHY Commented the below since there is no SourcingBranch in FM
+			/*if (StringUtils.isNotBlank(financeMain.getSourcingBranch())) {
+				Branch sourcingBranch = this.finFeeDetailService.getBranchById(financeMain.getSourcingBranch(), "");
+				if (sourcingBranch != null) {
+					executionMap.put("branchcity", sourcingBranch.getBranchCity());
+					executionMap.put("branchstate", sourcingBranch.getBranchProvince());
+				}
+			}*/
 
 			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 				if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
@@ -3130,7 +3137,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
 			try {
 				ReceiptDialogCtrl rec = (ReceiptDialogCtrl) getFinanceMainDialogCtrl();
-				calculatedAmt = rec.getTotalReceiptAmount(false);
+				// FIXME: PV. CODE RELATED TO RECEIPT DAILOG CTRL DELETED FROM HERE
+				//calculatedAmt = rec.getTotalReceiptAmount(false);
 				//calculatedAmt = (BigDecimal) getFinanceMainDialogCtrl().getClass().getMethod("getTotalReceiptAmount", Boolean.class).invoke(getFinanceMainDialogCtrl(), false);
 			} catch (Exception e) {
 				logger.info(e);

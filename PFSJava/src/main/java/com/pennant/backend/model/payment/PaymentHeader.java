@@ -56,10 +56,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.pennant.app.util.DateFormatterAdapter;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennanttech.model.adapter.DateFormatterAdapter;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -94,7 +95,10 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 
 	private List<PaymentDetail> paymentDetailList;
 	private PaymentInstruction paymentInstruction;
+	private Beneficiary defaultBeneficiary;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+	private String finSource;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -114,6 +118,7 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("paymentDetail");
 		excludeFields.add("paymentInstruction");
 		excludeFields.add("paymentInstrType");
+		excludeFields.add("defaultBeneficiary");
 		return excludeFields;
 	}
 
@@ -255,6 +260,22 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public Beneficiary getDefaultBeneficiary() {
+		return defaultBeneficiary;
+	}
+
+	public void setDefaultBeneficiary(Beneficiary defaultBeneficiary) {
+		this.defaultBeneficiary = defaultBeneficiary;
+	}
+
+	public String getFinSource() {
+		return finSource;
+	}
+
+	public void setFinSource(String finSource) {
+		this.finSource = finSource;
 	}
 
 }

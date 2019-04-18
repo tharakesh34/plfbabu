@@ -21,7 +21,6 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Property;
@@ -201,6 +200,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> excessAdjustTo;
 	private static ArrayList<ValueLabel> receiptModes;
 	private static ArrayList<ValueLabel> receiptModeStatus;
+	private static List<ValueLabel> enqReceiptModeStatus;
 	private static ArrayList<ValueLabel> allocationMethods;
 	private static ArrayList<ValueLabel> manualAdviseTypes;
 	private static List<Property> manualAdvisePropertyTypes;
@@ -287,7 +287,21 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> medicalStatusList;
 	private static ArrayList<ValueLabel> templateEvents;
 	private static List<Property> listCategory;
-	private static List<Property> listAlertType;
+	private static List<ValueLabel> opexFeeTypeList;
+	private static List<ValueLabel> receiptPaymentModes;
+	private static List<ValueLabel> subReceiptPaymentModes;
+	private static List<ValueLabel> receivedFroms;
+	private static List<ValueLabel> receiptChannels;
+	private static List<ValueLabel> knockOffFrom;
+	private static List<ValueLabel> knockOffPurpose;
+	private static List<ValueLabel> loanClosurePurpose;
+	private static List<String> excessList;
+	private static List<ValueLabel> cashPosition;
+	private static List<ValueLabel> cashRequestStatus;
+	private static List<ValueLabel> custStatus;
+	private static ArrayList<String> dueList;
+	private static List<ValueLabel> receiptAgainstList;
+	private static List<String> noWaiverList;
 
 	/**
 	 * Gets the list of applications.
@@ -358,6 +372,23 @@ public class PennantStaticListUtil {
 			fieldSelection.add(new ValueLabel("City", Labels.getLabel("label_City")));
 		}
 		return fieldSelection;
+	}
+	
+	public static ArrayList<String> getExcludeDues() {
+
+		if (dueList == null) {
+
+			dueList = new ArrayList<String>(7);
+			dueList.add(RepayConstants.ALLOCATION_PFT);
+			dueList.add(RepayConstants.ALLOCATION_PRI);
+			dueList.add(RepayConstants.ALLOCATION_TDS);
+			dueList.add(RepayConstants.ALLOCATION_NPFT);
+			dueList.add(RepayConstants.ALLOCATION_FUT_TDS);
+			dueList.add(RepayConstants.ALLOCATION_FUT_PFT);
+			dueList.add(RepayConstants.ALLOCATION_PFT);
+			
+		}
+		return dueList;
 	}
 
 	public static ArrayList<ValueLabel> getFrequencyDays() {
@@ -1811,16 +1842,12 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PartOfDisburse")));
 			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
 					Labels.getLabel("label_PartOfSalePrice")));
-			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
-					Labels.getLabel("label_ScheduleToFirstInstallment")));
-			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
-					Labels.getLabel("label_ScheduleToEntireTenor")));
-			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
-					Labels.getLabel("label_ScheduleToNinstalments")));
+			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, Labels.getLabel("label_ScheduleToFirstInstallment")));
+			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, Labels.getLabel("label_ScheduleToEntireTenor")));
+			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, Labels.getLabel("label_ScheduleToNinstalments")));
 			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
 					Labels.getLabel("label_RemFee_PaidByCustomer")));
-			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
-					Labels.getLabel("label_RemFee_WaivedByBank")));
+			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK, Labels.getLabel("label_RemFee_WaivedByBank")));
 		}
 		return remFeeSchdMethodList;
 	}
@@ -2260,7 +2287,13 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_FeeWaivers"), "FWO"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_FINOPTION,
 					Labels.getLabel("label_FinSerEvent_FinOption"), "FINO"));
-			
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTKNOCKOFF,
+					Labels.getLabel("label_FinSerEvent_ReceiptKnockOff"), "RKNOF"));
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTFORECLOSURE,
+					Labels.getLabel("label_FinSerEvent_ReceiptForeClosure"), "RFC"));
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTKNOCKOFF_CAN,
+					Labels.getLabel("label_FinSerEvent_ReceiptKnockOffCancel"), "RKNC"));
+
 
 		}
 		return events;
@@ -2817,21 +2850,7 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getStatusTypeList(String customMandateStatus) {
 		if (statusTypeList == null) {
-			statusTypeList = new ArrayList<ValueLabel>(7);
-			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_APPROVED, Labels.getLabel("label_Mandate_APPROVED")));
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_REJECTED, Labels.getLabel("label_Mandate_REJECTED")));
-			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD, Labels.getLabel("label_Mandate_HOLD")));
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_RELEASE, Labels.getLabel("label_Mandate_RELEASE")));
-			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN, Labels.getLabel("label_Mandate_FINANCE")));
-			statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL, Labels.getLabel("label_Mandate_CANCEL")));
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_INPROCESS, Labels.getLabel("label_Mandate_INPROCESS")));
+			statusTypeList = getStatusTypeList();
 			// Added custom mandate status to the list if sysprams contains
 			// custom mandate Status.
 			if (StringUtils.isNotBlank(customMandateStatus)) {
@@ -2839,6 +2858,25 @@ public class PennantStaticListUtil {
 						new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
 			}
 		}
+		return statusTypeList;
+	}
+	
+	public static ArrayList<ValueLabel>  getStatusTypeList() {
+		statusTypeList = new ArrayList<ValueLabel>(7);
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
+		statusTypeList
+				.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
+		statusTypeList
+				.add(new ValueLabel(MandateConstants.STATUS_APPROVED, Labels.getLabel("label_Mandate_APPROVED")));
+		statusTypeList
+				.add(new ValueLabel(MandateConstants.STATUS_REJECTED, Labels.getLabel("label_Mandate_REJECTED")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD, Labels.getLabel("label_Mandate_HOLD")));
+		statusTypeList
+				.add(new ValueLabel(MandateConstants.STATUS_RELEASE, Labels.getLabel("label_Mandate_RELEASE")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN, Labels.getLabel("label_Mandate_FINANCE")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL, Labels.getLabel("label_Mandate_CANCEL")));
+		statusTypeList
+				.add(new ValueLabel(MandateConstants.STATUS_INPROCESS, Labels.getLabel("label_Mandate_INPROCESS")));
 		return statusTypeList;
 	}
 
@@ -3367,7 +3405,7 @@ public class PennantStaticListUtil {
 		return receiptModes;
 	}
 
-	public static ArrayList<ValueLabel> getReceiptModeStatus() {
+	public static List<ValueLabel> getReceiptModeStatus() {
 		if (receiptModeStatus == null) {
 			receiptModeStatus = new ArrayList<ValueLabel>(3);
 			receiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_REALIZED,
@@ -3376,8 +3414,26 @@ public class PennantStaticListUtil {
 					new ValueLabel(RepayConstants.PAYSTATUS_BOUNCE, Labels.getLabel("label_ReceiptModeStatus_Bounce")));
 			receiptModeStatus.add(
 					new ValueLabel(RepayConstants.PAYSTATUS_CANCEL, Labels.getLabel("label_ReceiptModeStatus_Cancel")));
+
 		}
 		return receiptModeStatus;
+	}
+
+	public static List<ValueLabel> getEnquiryReceiptModeStatus() {
+		if (enqReceiptModeStatus == null) {
+			enqReceiptModeStatus = new ArrayList<ValueLabel>(3);
+			enqReceiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_REALIZED,
+					Labels.getLabel("label_ReceiptModeStatus_Realize")));
+			enqReceiptModeStatus.add(
+					new ValueLabel(RepayConstants.PAYSTATUS_BOUNCE, Labels.getLabel("label_ReceiptModeStatus_Bounce")));
+			enqReceiptModeStatus.add(
+					new ValueLabel(RepayConstants.PAYSTATUS_CANCEL, Labels.getLabel("label_ReceiptModeStatus_Cancel")));
+			enqReceiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_INITIATED,
+					Labels.getLabel("label_ReceiptModeStatus_Initiated")));
+			enqReceiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_DEPOSITED,
+					Labels.getLabel("label_ReceiptModeStatus_Deposited")));
+		}
+		return enqReceiptModeStatus;
 	}
 
 	public static ArrayList<ValueLabel> getAllocationMethods() {
@@ -4074,6 +4130,16 @@ public class PennantStaticListUtil {
 		return payments;
 	}
 
+	public static List<ValueLabel> getPaymentTypes(boolean addSwitchTransfer, boolean bttpReq) {
+		List<ValueLabel> payments = getPaymentTypes(addSwitchTransfer);
+
+		if (bttpReq) {
+			paymentTypes.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_BTTP, Labels.getLabel("label_PaymentType_BTTP")));
+		}
+		return payments;
+	}
+
 	public static ArrayList<ValueLabel> getDmsDocumentStatusTypes() {
 		return dmsDocumentStatus;
 	}
@@ -4299,10 +4365,13 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getInvoiceTypes() {
 		if (invoiceTypes == null) {
 			invoiceTypes = new ArrayList<ValueLabel>();
-			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, Labels.getLabel("Invoice_Type_Debit")));
-			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, Labels.getLabel("Invoice_Type_Credit")));
+			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
+					Labels.getLabel("Invoice_Type_Debit")));
+			invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT,
+					Labels.getLabel("Invoice_Type_Credit")));
 			if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
-				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED, Labels.getLabel("Invoice_Type_Exempted")));
+				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED,
+						Labels.getLabel("Invoice_Type_Exempted")));
 			}
 			if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
 				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED,
@@ -4620,6 +4689,192 @@ public class PennantStaticListUtil {
 			listCategory.add(new Property("NFC", Labels.getLabel("label_NonFinancialCovenants")));
 		}
 		return listCategory;
+	}
+
+	public static List<ValueLabel> getOpexFeeTypes() {
+		if (opexFeeTypeList == null) {
+			opexFeeTypeList = new ArrayList<>(2);
+			opexFeeTypeList.add(new ValueLabel(PennantConstants.OPEX_FEE_TYPE_FIXED,
+					Labels.getLabel("label_AssignmentDialog_OpexFeeType_Fixed.value")));
+			opexFeeTypeList.add(new ValueLabel(PennantConstants.OPEX_FEE_TYPE_FLOATING,
+					Labels.getLabel("label_AssignmentDialog_OpexFeeType_Floating.value")));
+		}
+		return opexFeeTypeList;
+	}
+
+	public static List<ValueLabel> getReceiptPaymentModes() {
+		if (receiptPaymentModes == null) {
+			receiptPaymentModes = new ArrayList<>(4);
+
+			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH,
+					Labels.getLabel("label_ReceiptPaymentMode_Cash")));
+			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CHEQUE,
+					Labels.getLabel("label_ReceiptPaymentMode_Cheque")));
+			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_DD,
+					Labels.getLabel("label_ReceiptPaymentMode_DD")));
+			receiptPaymentModes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ONLINE,
+					Labels.getLabel("label_ReceiptPaymentMode_ONLINE")));
+		}
+		return receiptPaymentModes;
+	}
+
+	public static List<ValueLabel> getSubReceiptPaymentModes() {
+		if (subReceiptPaymentModes == null) {
+			subReceiptPaymentModes = new ArrayList<>(6);
+
+			subReceiptPaymentModes
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_NEFT, Labels.getLabel("label_SubReceiptMode_NEFT")));
+			subReceiptPaymentModes
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_RTGS, Labels.getLabel("label_SubReceiptMode_RTGS")));
+			subReceiptPaymentModes
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_IMPS, Labels.getLabel("label_SubReceiptMode_IMPS")));
+			subReceiptPaymentModes.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_PAYTM, Labels.getLabel("label_SubReceiptMode_PAYTM")));
+			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXPERIA,
+					Labels.getLabel("label_SubReceiptMode_EXPERIA")));
+			subReceiptPaymentModes
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYU, Labels.getLabel("label_SubReceiptMode_PAYU")));
+			subReceiptPaymentModes.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
+		}
+		return subReceiptPaymentModes;
+	}
+
+	public static List<ValueLabel> getReceivedFrom() {
+
+		if (receivedFroms == null) {
+			receivedFroms = new ArrayList<>(2);
+
+			receivedFroms.add(new ValueLabel(RepayConstants.RECEIVED_CUSTOMER,
+					Labels.getLabel("label_Receipt_ReceivedFrom_Customer")));
+			receivedFroms.add(new ValueLabel(RepayConstants.RECEIVED_GOVT,
+					Labels.getLabel("label_Receipt_ReceivedFrom_Goverment")));
+		}
+		return receivedFroms;
+	}
+
+	public static List<ValueLabel> getReceiptChannels() {
+		if (receiptChannels == null) {
+			receiptChannels = new ArrayList<>(2);
+
+			receiptChannels.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_MOB,
+					Labels.getLabel("label_ReceiptChannelMode_mobile")));
+			receiptChannels.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_OTC,
+					Labels.getLabel("label_ReceiptChannelMode_otc")));
+		}
+		return receiptChannels;
+	}
+
+	public static List<ValueLabel> getKnockOffFromVlaues() {
+		if (knockOffFrom == null) {
+			knockOffFrom = new ArrayList<>(3);
+			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_Excess")));
+			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EMIINADV, Labels.getLabel("label_EMI_Advance")));
+			knockOffFrom
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
+
+		}
+		return knockOffFrom;
+	}
+
+	public static List<ValueLabel> getKnockOffPurpose() {
+		if (knockOffPurpose == null) {
+			knockOffPurpose = new ArrayList<>(3);
+			knockOffPurpose.add(new ValueLabel("Part_Payment", Labels.getLabel("lable_Part_Payment")));
+			knockOffPurpose.add(new ValueLabel("Schedule_Payment", Labels.getLabel("label_Schedule_Payment")));
+			knockOffPurpose.add(new ValueLabel("ForeClosure", Labels.getLabel("label_ForeClosure")));
+
+		}
+		return knockOffPurpose;
+	}
+
+	public static List<ValueLabel> getLoanClosurePurpose() {
+		if (loanClosurePurpose == null) {
+			loanClosurePurpose = new ArrayList<>(5);
+			loanClosurePurpose.add(new ValueLabel("Schedule_Payment", Labels.getLabel("lable_Part_Payment")));
+			loanClosurePurpose.add(new ValueLabel("Part_prepayment", Labels.getLabel("label_Schedule_Payment")));
+			loanClosurePurpose.add(new ValueLabel("Foreclosure", Labels.getLabel("label_ForeClosure")));
+			loanClosurePurpose.add(new ValueLabel("Settlement", Labels.getLabel("label_Settlement")));
+			loanClosurePurpose
+					.add(new ValueLabel("Advance_against_Bounce", Labels.getLabel("label_AdvanceAgainstBonus")));
+
+		}
+		return loanClosurePurpose;
+	}
+
+	public static List<String> getExcessList() {
+		if (excessList == null) {
+			excessList = new ArrayList<>(3);
+			excessList.add(RepayConstants.RECEIPTMODE_EXCESS);
+			excessList.add(RepayConstants.RECEIPTMODE_EMIINADV);
+			excessList.add(RepayConstants.RECEIPTMODE_PAYABLE);
+
+		}
+		return excessList;
+	}
+
+	public static List<ValueLabel> getCashPositionStatusList() {
+		if (cashPosition == null) {
+			cashPosition = new ArrayList<>(3);
+			cashPosition.add(new ValueLabel(CashManagementConstants.Cash_Position_Low,
+					CashManagementConstants.Cash_Position_Low_Desc));
+			cashPosition.add(new ValueLabel(CashManagementConstants.Cash_Position_Sufficient,
+					CashManagementConstants.Cash_Position_Sufficient_Desc));
+			cashPosition.add(new ValueLabel(CashManagementConstants.Cash_Position_Excess,
+					CashManagementConstants.Cash_Position_Excess_Desc));
+		}
+		return cashPosition;
+	}
+
+	public static List<ValueLabel> getCashRequestStatus() {
+		if (cashRequestStatus == null) {
+			cashRequestStatus = new ArrayList<>(3);
+			cashRequestStatus.add(
+					new ValueLabel(CashManagementConstants.Request_Init, CashManagementConstants.Request_Init_Desc));
+			cashRequestStatus.add(new ValueLabel(CashManagementConstants.Request_DownLoad,
+					CashManagementConstants.Request_DownLoad_Desc));
+			cashRequestStatus.add(new ValueLabel(CashManagementConstants.Request_Transit,
+					CashManagementConstants.Request_Transit_Desc));
+			cashRequestStatus.add(new ValueLabel(CashManagementConstants.Request_Reject,
+					CashManagementConstants.Request_Reject_Desc));
+			cashRequestStatus.add(new ValueLabel(CashManagementConstants.Request_Accept,
+					CashManagementConstants.Request_Accept_Desc));
+		}
+		return cashRequestStatus;
+	}
+
+	public static List<ValueLabel> getCustStatusList() {
+		if (custStatus == null) {
+			custStatus = new ArrayList<>();
+			custStatus.add(new ValueLabel("Live", Labels.getLabel("label_CustStatus_Live")));
+			custStatus.add(new ValueLabel("Expired", Labels.getLabel("label_CustStatus_Expired")));
+		}
+		return custStatus;
+	}
+
+	public static List<ValueLabel> getReceiptAgainstList() {
+		if (receiptAgainstList == null) {
+			receiptAgainstList = new ArrayList<ValueLabel>(3);
+			receiptAgainstList.add(
+					new ValueLabel(RepayConstants.RECEIPTTO_FINANCE, Labels.getLabel("label_ReceiptAgainst_Finance")));
+			receiptAgainstList.add(new ValueLabel(RepayConstants.RECEIPTTO_CUSTOMER,
+					Labels.getLabel("label_ReceiptAgainst_Customer")));
+			//receiptAgainstList.add(new ValueLabel(RepayConstants.RECEIPTTO_OTHER, Labels.getLabel("label_ReceiptAgainst_Other")));
+		}
+		return receiptAgainstList;
+	}
+
+	public static List<String> getNoWaiverList() {
+		if (noWaiverList == null) {
+			noWaiverList = new ArrayList<String>(3);
+			noWaiverList.add(RepayConstants.ALLOCATION_FUT_NPFT);
+			noWaiverList.add(RepayConstants.ALLOCATION_FUT_TDS);
+			noWaiverList.add(RepayConstants.ALLOCATION_TDS);
+			noWaiverList.add(RepayConstants.ALLOCATION_EMI);
+			noWaiverList.add(RepayConstants.ALLOCATION_NPFT);
+
+		}
+		return noWaiverList;
 	}
 
 }

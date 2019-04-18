@@ -112,6 +112,8 @@ public class RepayScheduleDetail implements Serializable {
 	private long repayID = 0;// Only setting from Repay Header
 	private int repaySchID = 0;
 
+	private Date valueDate;
+
 	public RepayScheduleDetail() {
 
 	}
@@ -602,6 +604,14 @@ public class RepayScheduleDetail implements Serializable {
 
 	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
 		this.paidPenaltyIGST = paidPenaltyIGST;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 
 }

@@ -307,7 +307,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Collateral LTV Check Details
 	private String finLTVCheck;
 
-
 	//Eligibility Method
 	private String eligibilityMethods;
 	private boolean putCallRequired = false;
@@ -317,16 +316,30 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private int grcAdvMinTerms;
 	private int grcAdvMaxTerms;
 	private int grcAdvDefaultTerms;
-	
+
 	private boolean advIntersetReq;
 	private String advType;
 	private int advMinTerms;
 	private int advMaxTerms;
 	private int advDefaultTerms;
 	private String advStage;
-	
+
 	private boolean dsfReq;
 	private boolean cashCollateralReq;
+
+	// FIXME MUR>>
+	private int minGrcTerms;
+	private int maxGrcTerms;
+	private int defaultGrcTerms;
+	private boolean alwChgGrcTerms;
+
+	private int minPureTerms;
+	private int maxPureTerms;
+	private int defaultPureTerms;
+	private boolean alwChgPureTerms;
+	private boolean alwCloBefDUe;
+	private String finTypeClassification;
+	private boolean allowPftBal;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -342,7 +355,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finTypeAccounts");
 		excludeFields.add("finTypeAccountingList");
 		excludeFields.add("grcAdvBaseRateDesc");
@@ -369,6 +382,21 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("finCategoryDesc");
 		excludeFields.add("finOptionTypeCode");
 		excludeFields.add("finOptionTypeDesc");
+
+		// As part of Receipts
+		excludeFields.add("minGrcTerms");
+		excludeFields.add("maxGrcTerms");
+		excludeFields.add("defaultGrcTerms");
+		excludeFields.add("alwChgGrcTerms");
+
+		excludeFields.add("minPureTerms");
+		excludeFields.add("maxPureTerms");
+		excludeFields.add("defaultPureTerms");
+		excludeFields.add("alwChgPureTerms");
+		excludeFields.add("alwCloBefDUe");
+		excludeFields.add("finTypeClassification");
+		excludeFields.add("allowPftBal");
+
 		return excludeFields;
 	}
 
@@ -2299,6 +2327,94 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setGrcAdvMinTerms(int grcAdvMinTerms) {
 		this.grcAdvMinTerms = grcAdvMinTerms;
+	}
+
+	public int getMinGrcTerms() {
+		return minGrcTerms;
+	}
+
+	public void setMinGrcTerms(int minGrcTerms) {
+		this.minGrcTerms = minGrcTerms;
+	}
+
+	public int getMaxGrcTerms() {
+		return maxGrcTerms;
+	}
+
+	public void setMaxGrcTerms(int maxGrcTerms) {
+		this.maxGrcTerms = maxGrcTerms;
+	}
+
+	public int getDefaultGrcTerms() {
+		return defaultGrcTerms;
+	}
+
+	public void setDefaultGrcTerms(int defaultGrcTerms) {
+		this.defaultGrcTerms = defaultGrcTerms;
+	}
+
+	public boolean isAlwChgGrcTerms() {
+		return alwChgGrcTerms;
+	}
+
+	public void setAlwChgGrcTerms(boolean alwChgGrcTerms) {
+		this.alwChgGrcTerms = alwChgGrcTerms;
+	}
+
+	public int getMinPureTerms() {
+		return minPureTerms;
+	}
+
+	public void setMinPureTerms(int minPureTerms) {
+		this.minPureTerms = minPureTerms;
+	}
+
+	public int getMaxPureTerms() {
+		return maxPureTerms;
+	}
+
+	public void setMaxPureTerms(int maxPureTerms) {
+		this.maxPureTerms = maxPureTerms;
+	}
+
+	public int getDefaultPureTerms() {
+		return defaultPureTerms;
+	}
+
+	public void setDefaultPureTerms(int defaultPureTerms) {
+		this.defaultPureTerms = defaultPureTerms;
+	}
+
+	public boolean isAlwChgPureTerms() {
+		return alwChgPureTerms;
+	}
+
+	public void setAlwChgPureTerms(boolean alwChgPureTerms) {
+		this.alwChgPureTerms = alwChgPureTerms;
+	}
+
+	public boolean isAlwCloBefDUe() {
+		return alwCloBefDUe;
+	}
+
+	public void setAlwCloBefDUe(boolean alwCloBefDUe) {
+		this.alwCloBefDUe = alwCloBefDUe;
+	}
+
+	public String getFinTypeClassification() {
+		return finTypeClassification;
+	}
+
+	public void setFinTypeClassification(String finTypeClassification) {
+		this.finTypeClassification = finTypeClassification;
+	}
+
+	public boolean isAllowPftBal() {
+		return allowPftBal;
+	}
+
+	public void setAllowPftBal(boolean allowPftBal) {
+		this.allowPftBal = allowPftBal;
 	}
 
 	public String getDownPayRuleCode() {

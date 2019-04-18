@@ -56,9 +56,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.constants.CashManagementConstants;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.model.finance.DepositCheques;
+import com.pennant.backend.util.CashManagementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;

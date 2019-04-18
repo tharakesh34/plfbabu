@@ -276,12 +276,11 @@ public interface FinanceDetailService {
 	BigDecimal getOutStandingBalFromFees(String finReference);
 
 	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
-	
+
 	public FinanceDetail getFinanceDetailForFinOptions(FinanceMain financeMain);
-	
+
 	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction,
 			WorkflowEngine engine) throws AppException, JaxenException, Exception;
-
 
 	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
 
@@ -307,5 +306,12 @@ public interface FinanceDetailService {
 	List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type);
 	
 	List<Integer> getFinanceDisbSeqs(String finReferecne, boolean isWIF);
+
+	//Linked Loans
+	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList);
+
+	List<FinanceMain> getFinanceMainForLinkedLoans(String finReference);
+
+	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
 }

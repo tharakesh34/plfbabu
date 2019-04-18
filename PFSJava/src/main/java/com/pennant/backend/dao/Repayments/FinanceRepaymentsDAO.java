@@ -28,6 +28,8 @@ public interface FinanceRepaymentsDAO {
 
 	List<RepayScheduleDetail> getRpySchdList(String finReference, String type);
 
+	List<RepayScheduleDetail> getRpySchdList(long repayId, String type);
+
 	void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, String type);
 
 	void deleteRpySchdList(String finReference, String type);
@@ -44,13 +46,22 @@ public interface FinanceRepaymentsDAO {
 
 	List<FinanceRepayments> getByFinRefAndSchdDate(String finReference, Date finSchdDate);
 
+	List<FinanceRepayments> getFinRepayments(String finReference, List<Long> receiptList);
+
 	// Receipts : Repay Header List & Repayment Schedule Detail list
 	List<FinRepayHeader> getFinRepayHeadersByRef(String finReference, String type);
 
-	void deleteByRef(String finReference, TableType tableType);
+	FinRepayHeader getFinRepayHeadersByReceipt(long receiptId, String type);
 
-	void updateFinReference(String finReference, String extReference, String type);
+	void deleteByRef(String finReference, TableType tableType);
 
 	List<RepayScheduleDetail> getDMRpySchdList(String finReference, String type);
 
+	void deleteByReceiptId(long receiptId, TableType tableType);
+
+	List<RepayScheduleDetail> getRpySchedulesForDate(String finReference, Date schDate);
+
+	void updateFinReference(String finReference, String extReference, String type);
+
+	List<FinanceRepayments> getInProcessRepaymnets(String finReference, List<Long> receiptList);
 }

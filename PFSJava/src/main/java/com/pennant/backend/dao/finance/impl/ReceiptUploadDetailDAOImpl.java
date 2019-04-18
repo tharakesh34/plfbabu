@@ -43,12 +43,12 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -58,6 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -70,12 +71,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail> implements ReceiptUploadDetailDAO {
 
 	private static Logger logger = Logger.getLogger(ReceiptUploadDetailDAOImpl.class);
-	
+
 	public ReceiptUploadDetailDAOImpl() {
 		super();
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param id
@@ -83,25 +83,66 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 	 *
 	 */
 	@Override
-	public List<ReceiptUploadDetail> getUploadReceiptDetails(long id) {
+	public List<ReceiptUploadDetail> getUploadReceiptDetails(long id, boolean getsucessrcdOnly) {
 		logger.debug("Entering");
-		
+
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT UPLOADHEADERID, UPLOADDETAILID, ROOTID, REFERENCE, RECEIPTPURPOSE, RECEIPTAMOUNT, ALLOCATIONTYPE, UPLOADSTATUS, RECEIVEDDATE, REASON,JSONOBJECT" );
+		selectSql.append(" SELECT UPLOADHEADERID, UPLOADDETAILID, ROOTID, REFERENCE, RECEIPTPURPOSE, RECEIPTAMOUNT, ");
+		selectSql.append(" ALLOCATIONTYPE, UPLOADSTATUS, RECEIVEDDATE, REASON");
 		selectSql.append(" from RECEIPTUPLOADDETAILS ");
-		selectSql.append(" Where uploadHeaderid = :uploadHeaderId order by UPLOADDETAILID");
-		
+		selectSql.append(" Where uploadHeaderid = :uploadHeaderId");
+
+		if (getsucessrcdOnly) {
+			selectSql.append(" and UPLOADSTATUS = '" + PennantConstants.UPLOAD_STATUS_SUCCESS + "'");
+		}
+		selectSql.append(" order by UPLOADDETAILID");
+
 		logger.debug("selectSql: " + selectSql.toString());
-		MapSqlParameterSource beanParameters=new MapSqlParameterSource();
+		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
 		beanParameters.addValue("uploadHeaderId", id);
-		
-		RowMapper<ReceiptUploadDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptUploadDetail.class);
+
+		RowMapper<ReceiptUploadDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptUploadDetail.class);
 		logger.debug("Leaving");
-		
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);	
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	
+	@Override
+	public ReceiptUploadDetail getUploadReceiptDetail(long headerID, long detailID) {
+		logger.debug("Entering");
+
+		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+		rud.setUploadheaderId(headerID);
+		rud.setUploadDetailId(detailID);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT UPLOADHEADERID, UPLOADDETAILID, ROOTID, REFERENCE, RECEIPTPURPOSE, RECEIPTAMOUNT, ");
+		selectSql.append(" ALLOCATIONTYPE, UPLOADSTATUS, REASON, EXCESSADJUSTTO, EFFECTSCHDMETHOD, ");
+		selectSql.append(" REMARKS, VALUEDATE, RECEIVEDDATE, RECEIPTMODE, FUNDINGAC, PAYMENTREF, FAVOURNUMBER, ");
+		selectSql.append(
+				" BANKCODE, CHEQUEACNO, TRANSACTIONREF, STATUS, DEPOSITDATE, REALIZATIONDATE, INSTRUMENTDATE, ");
+		selectSql.append(" EXTREFERENCE, SUBRECEIPTMODE, RECEIPTCHANNEL, RECEIVEDFROM, PANNUMBER, COLLECTIONAGENTID ");
+		selectSql.append(" from RECEIPTUPLOADDETAILS ");
+		selectSql.append(" Where UploadheaderId = :UploadheaderId AND UploadDetailId = :UploadDetailId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rud);
+		RowMapper<ReceiptUploadDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptUploadDetail.class);
+
+		try {
+			rud = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			rud = null;
+		}
+
+		logger.debug("Leaving");
+		return rud;
+	}
+
 	/**
 	 * This method insert new Records into UploadHeader or UploadHeader_Temp.
 	 * 
@@ -120,32 +161,36 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		logger.debug("Entering");
 
 		StringBuilder sql = new StringBuilder();
-		
+
 		if (receiptUploadDetail.getUploadDetailId() == Long.MIN_VALUE) {
 			receiptUploadDetail.setUploadDetailId(getNextValue("SeqReceiptUploadDetail"));
 			logger.debug("get NextID:" + receiptUploadDetail.getUploadDetailId());
 		}
-		
+
 		sql.append(" Insert Into ReceiptUploaddetails");
-		sql.append(" (UploadheaderId, UploadDetailId, Reference, receiptPurpose, receiptamount, allocationType, uploadStatus, reason,jsonobject, ");
-        sql.append(" ROOTID,EXCESSADJUSTTO,EFFECTSCHDMETHOD,REMARKS,VALUEDATE,RECEIVEDDATE,RECEIPTMODE,FUNDINGAC,PAYMENTREF,FAVOURNUMBER,BANKCODE, ");
-        sql.append(" CHEQUEACNO,TRANSACTIONREF,STATUS,DEPOSITDATE,REALIZATIONDATE,INSTRUMENTDATE)");
-		sql.append(" Values (:UploadheaderId, :UploadDetailId, :reference, :receiptPurpose, :receiptAmount, :allocationType, :uploadStatus, :reason,:jsonObject,");
-		sql.append(" :rootId,:excessAdjustTo,:effectSchdMethod,:remarks,:valueDate,:receivedDate,:receiptMode,:fundingAc,:paymentRef,:favourNumber,:bankCode, ");
-        sql.append(" :chequeNo,:transactionRef,:status,:depositDate,:realizationDate,:instrumentDate)");
+		sql.append(
+				" (UploadheaderId, UploadDetailId, Reference, receiptPurpose, receiptamount, allocationType, uploadStatus, reason, ");
+		sql.append(
+				" ROOTID,EXCESSADJUSTTO,EFFECTSCHDMETHOD,REMARKS,VALUEDATE,RECEIVEDDATE,RECEIPTMODE,FUNDINGAC,PAYMENTREF,FAVOURNUMBER,BANKCODE, ");
+		sql.append(
+				" CHEQUEACNO,TRANSACTIONREF,STATUS,DEPOSITDATE,REALIZATIONDATE,INSTRUMENTDATE,EXTREFERENCE,SUBRECEIPTMODE,RECEIPTCHANNEL,RECEIVEDFROM,PANNUMBER,COLLECTIONAGENTID)");
+		sql.append(
+				" Values (:UploadheaderId, :UploadDetailId, :reference, :receiptPurpose, :receiptAmount, :allocationType, :uploadStatus, :reason,");
+		sql.append(
+				" :rootId,:excessAdjustTo,:effectSchdMethod,:remarks,:valueDate,:receivedDate,:receiptMode,:fundingAc,:paymentRef,:favourNumber,:bankCode, ");
+		sql.append(
+				" :chequeNo,:transactionRef,:status,:depositDate,:realizationDate,:instrumentDate,:extReference,:subReceiptMode,:receiptChannel,:receivedFrom,:panNumber,:collectionAgentId)");
 
 		logger.debug("sql: " + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptUploadDetail);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 		return receiptUploadDetail.getUploadDetailId();
-		
+
 	}
-	
-	
-	
+
 	@Override
 	public void delete(long receiptHeaderId) {
 		logger.debug(Literal.ENTERING);
@@ -158,7 +203,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		logger.trace(Literal.SQL + sql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("UploadHeaderId", receiptHeaderId);
-		
+
 		int recordCount = 0;
 
 		try {
@@ -174,40 +219,40 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
-	public void updateStatusOFList(List<ReceiptUploadDetail> receiptUploadDetailList) {
+	public void updateStatus(ReceiptUploadDetail receiptUploadDetail) {
 		logger.debug(Literal.ENTERING);
-		for (ReceiptUploadDetail receiptUploadDetail : receiptUploadDetailList) {
 
-			MapSqlParameterSource spMapSqlParameterSource = new MapSqlParameterSource();
-			spMapSqlParameterSource.addValue("UploadDetailId", receiptUploadDetail.getUploadDetailId());
-			spMapSqlParameterSource.addValue("uploadStatus", receiptUploadDetail.getUploadStatus());
-			spMapSqlParameterSource.addValue("reason", receiptUploadDetail.getReason());
-			spMapSqlParameterSource.addValue("ReceiptID", receiptUploadDetail.getReceiptId());
+		MapSqlParameterSource spMapSqlParameterSource = new MapSqlParameterSource();
+		spMapSqlParameterSource.addValue("UploadDetailId", receiptUploadDetail.getUploadDetailId());
+		spMapSqlParameterSource.addValue("uploadStatus", receiptUploadDetail.getUploadStatus());
+		spMapSqlParameterSource.addValue("reason", receiptUploadDetail.getReason().length() > 1000
+				? receiptUploadDetail.getReason().substring(0, 999) : receiptUploadDetail.getReason());
+		spMapSqlParameterSource.addValue("ReceiptID", receiptUploadDetail.getReceiptId());
 
-			StringBuilder updateSql = new StringBuilder("Update ReceiptUploaddetails");
-			updateSql.append(" Set uploadStatus = :uploadStatus,  reason = :reason");
-			updateSql.append(" Where UploadDetailId =:UploadDetailId");
+		StringBuilder updateSql = new StringBuilder("Update ReceiptUploaddetails");
+		updateSql.append(" Set uploadStatus = :uploadStatus,  reason = :reason");
+		updateSql.append(" Where UploadDetailId =:UploadDetailId");
 
-			logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("updateSql: " + updateSql.toString());
 
-			try {
-				this.jdbcTemplate.update(updateSql.toString(), spMapSqlParameterSource);
-			} catch (DataAccessException e) {
-				logger.error("EXception" + e.getMessage());
-			}
+		try {
+			this.jdbcTemplate.update(updateSql.toString(), spMapSqlParameterSource);
+		} catch (DataAccessException e) {
+			logger.error("EXception" + e.getMessage());
 		}
 
 		logger.debug(Literal.LEAVING);
 
 	}
 
-    /**
-     * update receipt id
-     * @param uploadDetailId
-     * @param receiptID
-     */
+	/**
+	 * update receipt id
+	 * 
+	 * @param uploadDetailId
+	 * @param receiptID
+	 */
 	@Override
 	public void updateReceiptId(long uploadDetailId, long receiptID) {
 		logger.debug(Literal.ENTERING);
@@ -231,11 +276,12 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		logger.debug(Literal.LEAVING);
 	}
 
-    /**
-     * update reason message for all rejected files
-     * @param id
-     * @param errorMsg
-     */
+	/**
+	 * update reason message for all rejected files
+	 * 
+	 * @param id
+	 * @param errorMsg
+	 */
 	@Override
 	public void updateRejectStatusById(String id, String errorMsg) {
 		logger.debug(Literal.ENTERING);
@@ -260,32 +306,31 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 
 	}
 
-
 	/**
 	 * 
 	 * Get Loan Reference if it is present in Temp table
 	 */
 	@Override
-	public String getLoanReferenc(String finReference,String receiptFileName) {
+	public String getLoanReferenc(String finReference, String receiptFileName) {
 		logger.debug(Literal.ENTERING);
-
 
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" SELECT DISTINCT REFERENCE FROM RECEIPTUPLOADDETAILS ");
 		selectSql.append(" WHERE UPLOADHEADERID IN (SELECT UploadHeaderId FROM RECEIPTUPLOADHEADER_view ");
-		selectSql.append(" where FileName not in ( :FileName) and uploadprogress in ("+PennantConstants.RECEIPT_DEFAULT+","+PennantConstants.RECEIPT_DOWNLOADED+") )");
-		selectSql.append(" AND REFERENCE = :Reference and uploadstatus in ('"+PennantConstants.UPLOAD_STATUS_SUCCESS+"')");
+		selectSql.append(" where FileName not in ( :FileName) and uploadprogress in ("
+				+ ReceiptUploadConstants.RECEIPT_DEFAULT + "," + ReceiptUploadConstants.RECEIPT_DOWNLOADED + ") )");
+		selectSql.append(
+				" AND REFERENCE = :Reference and uploadstatus in ('" + PennantConstants.UPLOAD_STATUS_SUCCESS + "')");
 
 		logger.trace(Literal.SQL + selectSql.toString());
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", finReference);
 		source.addValue("FileName", receiptFileName);
-		
+
 		String reference = null;
-		
-		
+
 		try {
 			reference = jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 		} catch (DataAccessException e) {
@@ -295,12 +340,12 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 
 		logger.debug(Literal.LEAVING);
 		return reference;
-		
+
 	}
-	
 
 	/**
 	 * get list of receipt uploadid
+	 * 
 	 * @param receiptUploadHeaderId
 	 * @param tableType
 	 * @return

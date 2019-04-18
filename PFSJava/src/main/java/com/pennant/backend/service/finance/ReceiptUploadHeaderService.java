@@ -52,9 +52,8 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 
 public interface ReceiptUploadHeaderService {
-	
-	
-	ReceiptUploadHeader getUploadHeaderById(long id);
+
+	ReceiptUploadHeader getUploadHeaderById(long id, boolean getSucessRecords);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
@@ -66,7 +65,7 @@ public interface ReceiptUploadHeaderService {
 
 	boolean isFileNameExist(String value);
 
-	void updateStatusOFList(List<ReceiptUploadDetail> receiptUploadDetailList);
+	void updateStatus(ReceiptUploadDetail receiptUploadDetail);
 
 	void uploadHeaderStatusCnt(long receiptUploadId, int sucessCount, int failedCount);
 

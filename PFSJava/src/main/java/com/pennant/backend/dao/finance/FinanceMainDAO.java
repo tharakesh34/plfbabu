@@ -223,7 +223,7 @@ public interface FinanceMainDAO {
 
 	int getFinanceCountById(String finReference, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateID, String repayMethod,String type);
+	int loanMandateSwapping(String finReference, long newMandateID, String repayMethod, String type);
 
 	FinanceMain getFinanceDetailsForService(String finReference, String type, boolean isWIF);
 
@@ -310,10 +310,11 @@ public interface FinanceMainDAO {
 
 	Map<String, Date> getUnApprovedFinanceList(String fintype);
 
-	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type, String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
+	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
+			String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
 
-	boolean isFinReferenceExitsWithEntity(String finReference,String type, String entity);//### 12-07-2018 Ticket ID : 12499
-	
+	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);//### 12-07-2018 Ticket ID : 12499
+
 	//### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
 
@@ -321,12 +322,42 @@ public interface FinanceMainDAO {
 
 	//### 10-10-2018,Ticket id:124998
 	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
+
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
-	
+
 	FinanceMain getFinanceDetailsByFinRefence(String reference, String type);
-	
-	List<String> getFinanceMainbyCustId(long custId,String type);
+
+	List<String> getFinanceMainbyCustId(long custId, String type);
 
 	String getFinanceTypeFinReference(String reference, String type);
-	
+
+	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
+
+	void updateFinAssetValue(FinanceMain finMain);
+
+	FinanceMain getFinanceForAssignments(String finReference);
+
+	// Income Amortization
+	FinanceMain getFinanceForIncomeAMZ(String finReference);
+
+	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
+
+	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
+
+	void updateAssignmentId(String finReference, long assignmentId);
+
+	Map<String, Object> getGLSubHeadCodes(String finRef);
+
+	int getCountByBlockedFinances(String finReference);
+
+	void updateFromReceipt(FinanceMain financeMain, TableType tableType);
+
+	FinanceMain isFlexiLoan(String finReference);
+
+	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);//### 17-07-2018 Ticket ID : 127950
+
+	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
+
+	List<FinanceMain> getFinanceMainForLinkedLoans(String finReference);
+
 }

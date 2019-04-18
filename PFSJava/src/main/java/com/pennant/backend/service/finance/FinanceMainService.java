@@ -42,11 +42,13 @@
  */
 package com.pennant.backend.service.finance;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinanceMainService {
 	FinanceMain getFinanceMainById(String id, boolean isWIF);
@@ -78,4 +80,6 @@ public interface FinanceMainService {
 	FinanceMain getFinanceByFinReference(String reference, String type);
 
 	String getFinanceTypeFinReference(String reference, String type);
+	
+	ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate);
 }

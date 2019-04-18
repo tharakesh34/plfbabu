@@ -14,6 +14,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -28,6 +29,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -50,6 +52,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox listBoxReceipt;
 	protected Paging pagingReceiptList;
 
+	protected Listheader listheader_ReceiptReceiptId;
 	protected Listheader listheader_ReceiptReference;
 	protected Listheader listheader_ReceiptPurpose;
 	protected Listheader listheader_ReceiptMode;
@@ -60,10 +63,13 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_ReceiptCusomer;
 	protected Listheader listheader_ReceiptCustName;
 	protected Listheader listheader_ReceiptStatus;
-
+	protected Listheader listheader_PromotionCode;
+	protected Listheader listheader_ReceiptRef;
+	protected Listheader listheader_ReceiptDate;
 	protected Button btnNew;
 	protected Button btnSearch;
 
+	protected Longbox receiptId;
 	protected Textbox receiptReference;
 	protected Textbox customer;
 	protected Combobox purpose;
@@ -71,7 +77,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Combobox allocationType;
 	protected Textbox finType;
 	protected Textbox finBranch;
+	protected Uppercasebox transactionRef;
 
+	protected Listbox sortOperator_ReceiptReceiptId;
 	protected Listbox sortOperator_ReceiptReference;
 	protected Listbox sortOperator_ReceiptCustomer;
 	protected Listbox sortOperator_ReceiptPurpose;
@@ -79,6 +87,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_ReceiptAllocationType;
 	protected Listbox sortOperator_ReceiptFinType;
 	protected Listbox sortOperator_ReceiptFinBranch;
+	protected Listbox sortOperator_ReceiptTranRef;
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -87,6 +96,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private transient ReceiptService receiptService;
 	private String module;
+	private String product;
 
 	/**
 	 * The default constructor.
@@ -99,11 +109,12 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected void doSetProperties() {
 
 		this.module = getArgument("module");
+		this.product = getArgument("product");
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "FeeReceipt";
-			super.tableName = "FinReceiptHeader_FEView";
-			super.queueTableName = "FinReceiptHeader_FEView";
-			super.enquiryTableName = "FinReceiptHeader_FEView";
+			super.tableName = "FINRECEIPTHEADER_FEDVIEW";
+			super.queueTableName = "FINRECEIPTHEADER_FEDVIEW";
+			super.enquiryTableName = "FINRECEIPTHEADER_FEDVIEW";
 		} else {
 			super.moduleCode = "FinReceiptHeader";
 			super.tableName = "FinReceiptHeader_View";
@@ -127,7 +138,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerButton(btnSearch);
 
 		registerField("finCcy");
-		registerField("receiptID");
+		registerField("receiptId", listheader_ReceiptReceiptId, SortOrder.ASC, receiptId, sortOperator_ReceiptReceiptId,
+				Operators.DEFAULT);
 		registerField("reference", listheader_ReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_ReceiptReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptCusomer, SortOrder.NONE, customer, sortOperator_ReceiptCustomer,
@@ -147,6 +159,10 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerField("finBranch", listheader_ReceiptFinBranch, SortOrder.NONE, finBranch,
 				sortOperator_ReceiptFinBranch, Operators.STRING);
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
+		registerField("transactionRef", listheader_ReceiptRef, SortOrder.NONE, transactionRef,
+				sortOperator_ReceiptTranRef, Operators.STRING);
+		registerField("promotionCode", listheader_PromotionCode, SortOrder.NONE);
+		registerField("receiptDate", listheader_ReceiptDate, SortOrder.NONE);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -164,13 +180,20 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		super.doAddFilters();
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
-			whereClause.append("AND ( ");
-			whereClause.append(getUsrFinAuthenticationQry(false));
-			whereClause.append(")");
+			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '"
+					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
+			//whereClause.append("AND ( ");
+			//whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
+			//whereClause.append(")");
 			this.searchObject.addWhereClause(whereClause.toString());
 		} else {
-			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND (RecordType IS NULL   OR RecordType='' )");
+			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT
+					+ "' AND (RecordType IS NULL   OR RecordType='' )");
+		}
+
+		if (StringUtils.equals(FinanceConstants.PRODUCT_GOLD, this.product)) {
+			this.searchObject.addWhereClause(" ProductCategory = '" + FinanceConstants.PRODUCT_GOLD
+					+ "' AND RecordType IS NULL AND ReceiptModeStatus IN('A','R') ");
 		}
 	}
 
@@ -262,6 +285,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("receiptHeader", header);
 		arg.put("module", module);
+		arg.put("product", product);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptEnquiryDialog.zul", null,
@@ -358,20 +382,17 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	public void onClick$btnSearchBranch(Event event) {
 		logger.debug("Entering  " + event.toString());
 
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
-		
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptEnquiryList, "Branch",
-					this.finBranch.getValue(), filters);
+					this.finBranch.getValue(), new Filter[] {});
 			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
 		} else {
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Branch", this.finBranch.getValue(), filters);
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Branch");
 			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
 			} else {

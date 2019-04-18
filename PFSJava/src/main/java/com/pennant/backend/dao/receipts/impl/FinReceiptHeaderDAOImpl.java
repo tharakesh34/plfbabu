@@ -58,6 +58,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -84,16 +85,20 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		header.setRcdMaintainSts(rcdMaintainSts);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts,InstructionUID, ");
+				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
 		selectSql.append(
-				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, ");
+				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
 		selectSql.append(
-				" CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, DepositProcess, DepositBranch,LpiAmount, LppAmount,GstLpiAmount, GstLppAmount, ");
+				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount, CashierBranch,InitiateDate,  ");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive ");
+					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, ProductCategory, ");
+			selectSql.append(
+					" collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
 		}
 		selectSql.append(" From FinReceiptHeader");
 		selectSql.append(StringUtils.trim(type));
@@ -115,19 +120,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		return header;
 	}
 
-	/**
-	 * @param receiptHeader
-	 * @return
-	 */
-	@Override
-	public long generatedReceiptID(FinReceiptHeader receiptHeader) {
-		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
-			receiptHeader.setId(getNextValue("SeqFinReceiptHeader"));
-			logger.debug("get NextID:" + receiptHeader.getId());
-		}
-		return receiptHeader.getId();
-	}
-
 	@Override
 	public long save(FinReceiptHeader receiptHeader, TableType tableType) {
 		logger.debug("Entering");
@@ -139,21 +131,27 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder insertSql = new StringBuilder("Insert Into FinReceiptHeader");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(
-				" (ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, InstructionUID, ");
+				" (ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
 		insertSql.append(
-				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, ");
+				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate,CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
 		insertSql.append(
-				" CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, DepositProcess, DepositBranch,LpiAmount, LppAmount,GstLpiAmount, GstLppAmount,");
+				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
 		insertSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,ExtReference,Module )");
+				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId,");
+		insertSql.append(" FinDivision, PostBranch,");
 		insertSql.append(
-				" Values(:ReceiptID, :ReceiptDate , :ReceiptType, :RecAgainst, :Reference , :ReceiptPurpose,:RcdMaintainSts, :InstructionUID,  ");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
 		insertSql.append(
-				" :ReceiptMode, :ExcessAdjustTo , :AllocationType , :ReceiptAmount, :EffectSchdMethod, :ReceiptModeStatus, :RealizationDate, ");
+				" Values(:ReceiptID, :ReceiptDate , :ReceiptType, :RecAgainst, :Reference , :ReceiptPurpose,:RcdMaintainSts, ");
 		insertSql.append(
-				" :CancelReason, :WaviedAmt, :TotFeeAmount, :BounceDate, :Remarks, :DepositProcess, :DepositBranch, :LpiAmount, :LppAmount,:GstLpiAmount, :GstLppAmount,");
+				" :ReceiptMode, :ExcessAdjustTo , :AllocationType , :ReceiptAmount, :EffectSchdMethod, :ReceiptModeStatus, :RealizationDate, :CancelReason, :WaviedAmt, :TotFeeAmount, :BounceDate, :Remarks,");
 		insertSql.append(
-				" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ExtReference, :Module )");
+				" :GDRAvailable, :ReleaseType, :ThirdPartyName, :ThirdPartyMobileNum, :LpiAmount,:CashierBranch,:InitiateDate, ");
+		insertSql.append(
+				" :DepositProcess, :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module, :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId,");
+		insertSql.append(" :FinDivision, :PostBranch,");
+		insertSql.append(
+				" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -170,19 +168,24 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
 		updateSql.append(tableType.getSuffix());
 		updateSql.append(
-				" Set ReceiptID=:ReceiptID, ReceiptDate=:ReceiptDate , ReceiptType=:ReceiptType, RecAgainst=RecAgainst,InstructionUID=:InstructionUID,  ");
+				" Set ReceiptID=:ReceiptID, ReceiptDate=:ReceiptDate , ReceiptType=:ReceiptType, RecAgainst=RecAgainst, ");
 		updateSql.append(
 				" Reference=:Reference , ReceiptPurpose=:ReceiptPurpose , ReceiptMode=:ReceiptMode, ExcessAdjustTo=:ExcessAdjustTo , ");
 		updateSql.append(
-				" AllocationType=:AllocationType , ReceiptAmount=:ReceiptAmount, EffectSchdMethod=:EffectSchdMethod,RcdMaintainSts=:RcdMaintainSts, ");
+				" AllocationType=:AllocationType , ReceiptAmount=:ReceiptAmount, EffectSchdMethod=:EffectSchdMethod,RcdMaintainSts=:RcdMaintainSts, InitiateDate=:InitiateDate,");
 		updateSql.append(
 				" ReceiptModeStatus=:ReceiptModeStatus, RealizationDate=:RealizationDate,CancelReason=:CancelReason, WaviedAmt=:WaviedAmt, TotFeeAmount=:TotFeeAmount, BounceDate=:BounceDate, Remarks=:Remarks,");
 		updateSql.append(
-				" DepositProcess = :DepositProcess, DepositBranch = :DepositBranch, LpiAmount=:LpiAmount, LppAmount =:LppAmount,GstLpiAmount=:GstLpiAmount, GstLppAmount=:GstLppAmount, "); // for Cash Management
+				" GDRAvailable = :GDRAvailable, ReleaseType = :ReleaseType, ThirdPartyName = :ThirdPartyName, ThirdPartyMobileNum = :ThirdPartyMobileNum,LpiAmount=:LpiAmount,CashierBranch=:CashierBranch,");
+		updateSql.append(
+				" DepositProcess = :DepositProcess, DepositBranch = :DepositBranch, LppAmount =:LppAmount, GstLpiAmount=:GstLpiAmount, GstLppAmount=:GstLppAmount, "); // for Cash Management
 		updateSql.append(
 				" Version =:Version, LastMntOn=:LastMntOn, LastMntBy=:LastMntBy, RecordStatus=:RecordStatus, RoleCode=:RoleCode, ");
 		updateSql.append(
-				" NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId  ");
+				" SubReceiptMode=:SubReceiptMode, ReceiptChannel=:ReceiptChannel, ReceivedFrom=:ReceivedFrom, PanNumber=:PanNumber, CollectionAgentId=:CollectionAgentId,");
+		updateSql.append(
+				" NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId,");
+		updateSql.append(" FinDivision = :FinDivision, PostBranch = :PostBranch");
 		updateSql.append(" Where ReceiptID =:ReceiptID");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -222,20 +225,25 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		header.setReceiptID(receiptID);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, InstructionUID=:InstructionUID, ");
+				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
 		selectSql.append(
-				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, ");
+				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
 		selectSql.append(
-				" CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, DepositProcess, DepositBranch, LpiAmount, LppAmount,GstLpiAmount, GstLppAmount, ");
+				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive ");
+					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, ");
+			selectSql.append(
+					" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate, collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID ");
-			} else if (StringUtils.trimToEmpty(type).equalsIgnoreCase("_View")) {
-				selectSql.append(" ,CustCRCPR, PhoneNumber ");
+				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName");
+			}
+			if (StringUtils.trimToEmpty(type).contains("FEView") || StringUtils.trimToEmpty(type).contains("FCView")) {
+				selectSql.append(" , CustID, CustomerCIF, CustomerName");
 			}
 		}
 		selectSql.append(" From FinReceiptHeader");
@@ -286,6 +294,99 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug("Leaving");
 
 		return count;
+	}
+
+	@Override
+	public FinReceiptHeader getServicingFinanceHeader(long receiptID, String userRole, String type) {
+		logger.debug("Entering");
+
+		FinReceiptHeader header = new FinReceiptHeader();
+		header.setReceiptID(receiptID);
+		header.setNextRoleCode(userRole);
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
+		selectSql.append(
+				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
+		selectSql.append(
+				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId, ");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			selectSql.append(
+					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, ");
+			selectSql.append(
+					"collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
+		}
+		selectSql.append(" From FinReceiptHeader");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" Where ReceiptID =:ReceiptID AND NextRoleCode = :NextRoleCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinReceiptHeader.class);
+
+		try {
+			header = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			header = null;
+		}
+
+		logger.debug("Leaving");
+		return header;
+	}
+
+	@Override
+	public List<ReceiptCancelDetail> getReceiptCancelDetailList(Date cancelReqDate, String finReference) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+		source.addValue("ReceivedDate", cancelReqDate);
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select RH.ReceiptID ReceiptId , RD.ReceivedDate ValueDate, (RH.ReceiptAmount + Rh.WaviedAmt ) Amount, Rh.WaviedAmt ");
+		selectSql.append(" From FinReceiptHeader RH INNER JOIN FinReceiptDetail RD ON RH.ReceiptID = RD.ReceiptID ");
+		selectSql.append(
+				" Where RH.Reference =:Reference AND  RD.ReceivedDate >= :ReceivedDate AND RH.ReceiptModeStatus NOT IN('C','B') ORDER BY RH.ReceiptID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReceiptCancelDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptCancelDetail.class);
+		List<ReceiptCancelDetail> rcptCancelDetails = this.jdbcTemplate.query(selectSql.toString(), source,
+				typeRowMapper);
+		logger.debug("Leaving");
+		return rcptCancelDetails;
+	}
+
+	@Override
+	public void updateReceiptStatus(long receiptID, String status) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+		source.addValue("ReceiptModeStatus", status);
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
+		updateSql.append(" Set ReceiptModeStatus=:ReceiptModeStatus ");
+		updateSql.append(" Where ReceiptID =:ReceiptID  ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public long generatedReceiptID(FinReceiptHeader receiptHeader) {
+		logger.debug("Entering");
+		if (receiptHeader.getId() == 0 || receiptHeader.getId() == Long.MIN_VALUE) {
+			receiptHeader.setId(getNextValue("SeqFinReceiptHeader"));
+			logger.debug("get NextID:" + receiptHeader.getId());
+		}
+		logger.debug("Leaving");
+		return receiptHeader.getId();
 	}
 
 	@Override
@@ -409,19 +510,20 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, InstructionUID, ");
+				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
 		selectSql.append(
 				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
 		selectSql.append(
-				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
+				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, ");
-			selectSql.append(" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate ");
+			selectSql.append(
+					" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate, collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID ");
+				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName ");
 			}
 		}
 		selectSql.append(" From FinReceiptHeader");
@@ -471,19 +573,21 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts,InstructionUID, ");
+				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
 		selectSql.append(
 				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, ");
 		selectSql.append(
-				" CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, DepositProcess, DepositBranch, LpiAmount, LppAmount,GstLpiAmount, GstLppAmount, ");
+				" CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, DepositProcess, DepositBranch, LpiAmount, LppAmount,GstLpiAmount, GstLppAmount,");
+		selectSql.append("subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,ExtReference,Module");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,ExtReference,Module, FinDivision, PostBranch");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, ");
-			selectSql.append(" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate ");
+			selectSql.append(
+					" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate, collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID ");
+				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName ");
 			}
 		}
 		selectSql.append(" From FinReceiptHeader");
@@ -567,29 +671,30 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean checkInProcessPresentments(String reference) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = null;
-		int count = 0;
+		boolean isPresentmentFound = false;
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select count(*)  from PresentmentDetails where Id In (select PresentmentId from finScheduleDetails where ");
-		selectSql.append(
-				" FinReference = :Reference and presentmentId !=0 ) AND status in ('A','I') and excludereason=0 and FinReference =:Reference");
+		StringBuilder selectSql = new StringBuilder("Select count(*)  from PresentmentDetails ");
+		selectSql.append(" where Id In (select PresentmentId from finScheduleDetails ");
+		selectSql.append("  where FinReference = :Reference and presentmentId !=0 ) ");
+		selectSql.append(" AND status in ('A','I') and FinReference =:Reference");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			if (count > 0) {
+				isPresentmentFound = true;
+			}
+
+			logger.debug("Presentment Found");
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
 
-		logger.debug("Leaving");
-
-		return count > 0;
+		return isPresentmentFound;
 	}
 
 	@Override
@@ -600,14 +705,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		header.setReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts,InstructionUID, ");
+				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
 		selectSql.append(
 				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive ");
+					" , FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
 		}
 		selectSql.append(" From FinReceiptHeader");
 		selectSql.append(StringUtils.trim(type));
@@ -627,10 +732,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public boolean checkInProcessReceipts(String reference) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = null;
-		int count = 0;
+		boolean isReceiptsInProcess = false;
 
 		StringBuilder selectSql = new StringBuilder("Select count(*)  from FinReceiptHeader_Temp where ");
 		selectSql.append(" Reference = :Reference");
@@ -640,14 +743,18 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		source.addValue("Reference", reference);
 
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+			if (count > 0) {
+				isReceiptsInProcess = true;
+			}
+
+			logger.debug("Some other Receipts are in Process");
 		} catch (DataAccessException e) {
 			logger.error(e);
 		}
 
-		logger.debug("Leaving");
-
-		return count > 0;
+		return isReceiptsInProcess;
 	}
 
 	/**
@@ -667,7 +774,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptheader_temp t ");
 		selectSql.append(" inner join finreceiptdetail_temp t1 on t1.receiptid=t.receiptid ");
-		selectSql.append(" where REFERENCE= :REFERENCE and RECEIPTMODE= :RECEIPTMODE and T1.FAVOURNUMBER= :FAVOURNUMBER and T1.CHEQUEACNO = :CHEQUEACNO ");
+		selectSql.append(
+				" where REFERENCE= :REFERENCE and RECEIPTMODE= :RECEIPTMODE and T1.FAVOURNUMBER= :FAVOURNUMBER and T1.CHEQUEACNO = :CHEQUEACNO ");
 		selectSql.append(" and (T.RECEIPTMODESTATUS in ('A') or T.RECEIPTMODESTATUS is null)");
 		logger.debug("selectSql: " + selectSql.toString());
 
@@ -681,7 +789,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.error(e);
-			count = 0 ;
+			count = 0;
 		}
 
 		logger.debug("Leaving");
@@ -690,21 +798,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 		return false;
 	}
-	
+
 	/**
-	 * 29-10-2018, Ticket id:124998
-	 * update receipt mode status and realization date
-	 * return boolean condition
+	 * 29-10-2018, Ticket id:124998 update receipt mode status and realization date return boolean condition
 	 */
 	@Override
 	public void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
 		source.addValue("ReceiptModeStatus", status);
 		source.addValue("RealizationDate", realizationDate);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
 		updateSql.append(" Set ReceiptModeStatus=:ReceiptModeStatus,REALIZATIONDATE = :RealizationDate ");
 		updateSql.append(" Where ReceiptID =:ReceiptID  ");
@@ -714,4 +820,88 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public List<FinReceiptHeader> getInProcessReceipts(String Reference) {
+		StringBuilder selectSql = new StringBuilder("");
+		selectSql.append(" Select ReceiptID, AllocationType , ReceiptAmount ");
+		selectSql.append(" From FinReceiptHeader_Temp");
+		selectSql.append(" Where Reference =:Reference ");
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", Reference);
+
+		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinReceiptHeader.class);
+		List<FinReceiptHeader> rchList = null;
+
+		try {
+			rchList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		return rchList;
+	}
+
+	@Override
+	public String getReceiptModeStatus(long receiptID, String type) {
+		logger.debug("Entering");
+		String modeStatus = "";
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptID);
+
+		StringBuilder selectSql = new StringBuilder(" Select ReceiptModeStatus from FinReceiptHeader ");
+		selectSql.append(StringUtils.trim(type));
+		selectSql.append(" Where ReceiptID =:ReceiptID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			modeStatus = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			modeStatus = "";
+		}
+
+		logger.debug("Leaving");
+		return modeStatus;
+	}
+
+	@Override
+	public List<Long> getInProcessReceiptId(String finReference) {
+		StringBuilder selectSql = new StringBuilder("");
+		selectSql.append(" Select ReceiptID");
+		selectSql.append(" From FinReceiptHeader");
+		selectSql.append(" Where Reference =:Reference and ReceiptModeStatus ='D' and receiptPurpose='SchdlRepayment'");
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+
+		List<Long> receiptList = null;
+
+		try {
+			receiptList = this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		return receiptList;
+	}
+
+	@Override
+	public void updateLoanInActive(long receiptId) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", receiptId);
+		source.addValue("LoanActive", 0);
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptHeader");
+		updateSql.append(" Set LoanActive=:LoanActive");
+		updateSql.append(" Where ReceiptID =:ReceiptID  ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
 }

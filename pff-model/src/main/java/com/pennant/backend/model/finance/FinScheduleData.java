@@ -51,6 +51,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -75,7 +76,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 @XmlType(propOrder = { "finReference", "financeMain", "repayInstructions", "rateInstruction", "finFeeDetailList",
 		"feeDues", "foreClosureFees", "insuranceList", "stepPolicyDetails", "financeScheduleDetails",
 		"finODPenaltyRate", "apiPlanEMIHmonths", "apiPlanEMIHDates", "finODDetails", "financeSummary",
-		"vasRecordingList", "outstandingPri", "returnStatus" })
+		"vasRecordingList", "outstandingPri", "subventionDetail", "returnStatus" })
 @XmlRootElement(name = "financeSchedule")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinScheduleData implements Serializable {
@@ -85,7 +86,6 @@ public class FinScheduleData implements Serializable {
 	private String finReference = null;
 	private boolean schduleGenerated = false;
 
-	@XmlElement(name = "financeType")
 	private FinanceType financeType;
 
 	@XmlElement(name = "financeDetail")
@@ -99,8 +99,6 @@ public class FinScheduleData implements Serializable {
 	@XmlElement(name = "schedule")
 	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>(1);
 
-	@XmlElementWrapper(name = "odlimitschedules")
-	@XmlElement(name = "odlimitschedule")
 	private List<OverdraftScheduleDetail> overdraftScheduleDetails = new ArrayList<OverdraftScheduleDetail>(1);
 	private List<FinanceDisbursement> disbursementDetails = new ArrayList<FinanceDisbursement>(1);
 
@@ -164,14 +162,31 @@ public class FinScheduleData implements Serializable {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 
+	//SubventionDetail
+	@XmlElement
+	private SubventionDetail subventionDetail;
+
+	private boolean quickDisb;
+
 	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<FinReceiptDetail>();
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>();
 	private List<FinIRRDetails> iRRDetails = new ArrayList<FinIRRDetails>();
+
+	private List<ExposureLinking> exposureLinkings = new ArrayList<ExposureLinking>();
+	private List<SanctionCondition> sanctionConditions = new ArrayList<SanctionCondition>();
 
 	@XmlElement
 	private String externalReference;
 	@XmlElement
 	private boolean isUpfrontAuto;
+
+	// AddFlexiDisbursement
+	private boolean isFlexiDisb;
+
+	private FinanceProfitDetail finPftDeatil;
+
+	//GST Tax Map
+	private Map<String, Object> gstExecutionMap = new HashMap<>();
 
 	public FinScheduleData() {
 		super();
@@ -307,12 +322,12 @@ public class FinScheduleData implements Serializable {
 		this.errorDetails = errorDetails;
 	}
 
-	public FinanceType getFinanceType() {
-		return financeType;
-	}
-
 	public void setFinanceType(FinanceType financeType) {
 		this.financeType = financeType;
+	}
+
+	public FinanceType getFinanceType() {
+		return financeType;
 	}
 
 	public FinanceSummary getFinanceSummary() {
@@ -467,8 +482,8 @@ public class FinScheduleData implements Serializable {
 		return overdraftScheduleDetails;
 	}
 
-	public void setOverdraftScheduleDetails(List<OverdraftScheduleDetail> overdraftScheduleDetails) {
-		this.overdraftScheduleDetails = overdraftScheduleDetails;
+	public void setOverdraftScheduleDetails(List<OverdraftScheduleDetail> overdraftScheduleDetail) {
+		this.overdraftScheduleDetails = overdraftScheduleDetail;
 	}
 
 	public List<Integer> getPlanEMIHmonths() {
@@ -583,6 +598,14 @@ public class FinScheduleData implements Serializable {
 		this.finFeeReceipts = finFeeReceipts;
 	}
 
+	public SubventionDetail getSubventionDetail() {
+		return subventionDetail;
+	}
+
+	public void setSubventionDetail(SubventionDetail subventionDetail) {
+		this.subventionDetail = subventionDetail;
+	}
+
 	public List<FinIRRDetails> getiRRDetails() {
 		return iRRDetails;
 	}
@@ -615,4 +638,59 @@ public class FinScheduleData implements Serializable {
 		this.pftChg = pftChg;
 	}
 
+	public boolean isQuickDisb() {
+		return quickDisb;
+	}
+
+	public void setQuickDisb(boolean quickDisb) {
+		this.quickDisb = quickDisb;
+	}
+
+	public boolean isFlexiDisb() {
+		return isFlexiDisb;
+	}
+
+	public void setFlexiDisb(boolean isFlexiDisb) {
+		this.isFlexiDisb = isFlexiDisb;
+	}
+
+	public List<SanctionCondition> getSanctionConditions() {
+		return sanctionConditions;
+	}
+
+	public void setSanctionConditions(List<SanctionCondition> sanctionConditions) {
+		this.sanctionConditions = sanctionConditions;
+	}
+
+	public List<ExposureLinking> getExposureLinkings() {
+		return exposureLinkings;
+	}
+
+	public void setExposureLinkings(List<ExposureLinking> exposureLinkings) {
+		this.exposureLinkings = exposureLinkings;
+	}
+
+	public FinanceProfitDetail getFinPftDeatil() {
+		return finPftDeatil;
+	}
+
+	public void setFinPftDeatil(FinanceProfitDetail finPftDeatil) {
+		this.finPftDeatil = finPftDeatil;
+	}
+
+	public Map<String, Object> getGstExecutionMap() {
+		return gstExecutionMap;
+	}
+
+	public void setGstExecutionMap(Map<String, Object> gstExecutionMap) {
+		this.gstExecutionMap = gstExecutionMap;
+	}
+
+	public FinServiceInstruction getFinServiceInstruction() {
+		FinServiceInstruction finServiceInstruction = null;
+		if (finServiceInstructions != null && !finServiceInstructions.isEmpty()) {
+			finServiceInstruction = finServiceInstructions.get(0);
+		}
+		return finServiceInstruction;
+	}
 }

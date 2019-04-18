@@ -37,7 +37,12 @@ public class FinRepayHeader implements Serializable {
 	private BigDecimal realizeUnLPIGst = BigDecimal.ZERO;
 	private BigDecimal realizeUnLPP = BigDecimal.ZERO;
 	private BigDecimal realizeUnLPPGst = BigDecimal.ZERO;
-
+	private BigDecimal cpzChg = BigDecimal.ZERO;
+	private BigDecimal adviseAmount = BigDecimal.ZERO;
+	private BigDecimal feeAmount = BigDecimal.ZERO;
+	private BigDecimal excessAmount = BigDecimal.ZERO;
+	private BigDecimal tdsAmount = BigDecimal.ZERO;
+	private BigDecimal lpiAmount = BigDecimal.ZERO;
 	private List<RepayScheduleDetail> repayScheduleDetails = new ArrayList<>(1);
 
 	public FinRepayHeader() {
@@ -240,6 +245,14 @@ public class FinRepayHeader implements Serializable {
 		this.totalPenalty = totalPenalty;
 	}
 
+	public BigDecimal getCpzChg() {
+		return cpzChg;
+	}
+
+	public void setCpzChg(BigDecimal cpzChg) {
+		this.cpzChg = cpzChg;
+	}
+
 	public BigDecimal getRealizeUnAmz() {
 		return realizeUnAmz;
 	}
@@ -278,6 +291,46 @@ public class FinRepayHeader implements Serializable {
 
 	public void setRealizeUnLPPGst(BigDecimal realizeUnLPPGst) {
 		this.realizeUnLPPGst = realizeUnLPPGst;
+	}
+
+	public BigDecimal getAdviseAmount() {
+		return adviseAmount;
+	}
+
+	public void setAdviseAmount(BigDecimal adviseAmount) {
+		this.adviseAmount = adviseAmount;
+	}
+
+	public BigDecimal getFeeAmount() {
+		return feeAmount;
+	}
+
+	public void setFeeAmount(BigDecimal feeAmount) {
+		this.feeAmount = feeAmount;
+	}
+
+	public BigDecimal getExcessAmount() {
+		return excessAmount;
+	}
+
+	public void setExcessAmount(BigDecimal excessAmount) {
+		this.excessAmount = excessAmount;
+	}
+
+	public BigDecimal getTdsAmount() {
+		return tdsAmount;
+	}
+
+	public void setTdsAmount(BigDecimal tdsAmount) {
+		this.tdsAmount = tdsAmount;
+	}
+
+	public BigDecimal getLpiAmount() {
+		return lpiAmount;
+	}
+
+	public void setLpiAmount(BigDecimal lpiAmount) {
+		this.lpiAmount = lpiAmount;
 	}
 
 }

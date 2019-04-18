@@ -125,13 +125,25 @@ public interface FinanceScheduleDetailDAO {
 
 	BigDecimal getOutStandingBalFromFees(String finReference);
 
+	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey);
+
+	void updateTDS(List<FinanceScheduleDetail> schdList);
+
+	// Mandate Registration Request
+	List<FinanceScheduleDetail> getFirstRepayAmt(String finReference);
+
+	FinanceScheduleDetail getFinScheduleDetailForCOf(String finReference, Date appDate);
+
+	// ## Ticket id:124998(receipt upload) 16/8/2018
+	BigDecimal getClosingBalance(String finReference, Date valueDate);
+
 	List<FinanceScheduleDetail> getDMFinScheduleDetails(String id, String type);
-	
+
+	FinanceScheduleDetail getPrvSchd(String finReference, Date curBussDate);
+
 	//Ticket id:124998(receipt upload)
-	Date getPrevSchdDate(String finReference , Date appDate);
+	Date getPrevSchdDate(String finReference, Date appDate);
 
 	boolean isInstallSchd(String finReference, Date lastPrevDate); //## Ticket id:124998(receipt upload) 16/8/2018
-
-	BigDecimal getClosingBalance(String finReference, Date valueDate);//## Ticket id:124998(receipt upload) 16/8/2018
 
 }

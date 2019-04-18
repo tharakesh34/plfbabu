@@ -209,27 +209,27 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private AuditHeaderDAO auditHeaderDAO;
 
 	private CustomerStatusCodeDAO customerStatusCodeDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private RepayInstructionDAO repayInstructionDAO;
-	private FinODPenaltyRateDAO finODPenaltyRateDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private DocumentDetailsDAO documentDetailsDAO;
+	protected FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	protected FinanceDisbursementDAO financeDisbursementDAO;
+	protected RepayInstructionDAO repayInstructionDAO;
+	protected FinODPenaltyRateDAO finODPenaltyRateDAO;
+	protected FinanceTypeDAO financeTypeDAO;
+	protected DocumentDetailsDAO documentDetailsDAO;
 	private CustomerDocumentDAO customerDocumentDAO;
 	private CommitmentDAO commitmentDAO;
 	private PostingsDAO postingsDAO;
-	private FinanceProfitDetailDAO profitDetailsDAO;
+	protected FinanceProfitDetailDAO profitDetailsDAO;
 	private CommitmentMovementDAO commitmentMovementDAO;
 	private FinLogEntryDetailDAO finLogEntryDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
-	private FinanceMainDAO financeMainDAO;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
+	protected FinanceMainDAO financeMainDAO;
+	protected FinanceRepaymentsDAO financeRepaymentsDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
-	private TransactionEntryDAO transactionEntryDAO;
+	protected TransactionEntryDAO transactionEntryDAO;
 	private FinFeeChargesDAO finFeeChargesDAO;
-	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	private FinanceStepDetailDAO financeStepDetailDAO;
+	protected FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
+	protected FinanceStepDetailDAO financeStepDetailDAO;
 	private BlackListCustomerDAO blacklistCustomerDAO;
 	private FinanceDedupeDAO financeDedupeDAO;
 	private PoliceCaseDAO policeCaseDAO;
@@ -238,7 +238,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinCollateralsDAO finCollateralsDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private FinPlanEmiHolidayDAO finPlanEmiHolidayDAO;
-	private FinFeeDetailDAO finFeeDetailDAO;
+	protected FinFeeDetailDAO finFeeDetailDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 
@@ -251,7 +251,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private AccountEngineExecution engineExecution;
 	private CustomerDAO customerDAO;
 	private AccountProcessUtil accountProcessUtil;
-	private PostingsPreparationUtil postingsPreparationUtil;
+	protected PostingsPreparationUtil postingsPreparationUtil;
 	private FinStatusDetailDAO finStatusDetailDAO;
 	private SuspensePostingUtil suspensePostingUtil;
 	private OverDueRecoveryPostingsUtil recoveryPostingsUtil;
@@ -263,12 +263,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private EligibilityDetailService eligibilityDetailService;
 	private GuarantorDetailService guarantorDetailService;
 	private JointAccountDetailService jointAccountDetailService;
-	private AgreementDetailService agreementDetailService;
+	protected AgreementDetailService agreementDetailService;
 	private ScoringDetailService scoringDetailService;
-	private CheckListDetailService checkListDetailService;
+	protected CheckListDetailService checkListDetailService;
 	private ContractorAssetDetailService contractorAssetDetailService;
-	private CustomerDetailsService customerDetailsService;
-	private FinCollateralService finCollateralService;
+	protected CustomerDetailsService customerDetailsService;
+	protected FinCollateralService finCollateralService;
 	private EtihadCreditBureauDetailService etihadCreditBureauDetailService;
 	private BundledProductsDetailService bundledProductsDetailService;
 	private FinAssetEvaluationService finAssetEvaluationService;
@@ -279,9 +279,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private SecondaryAccountDAO secondaryAccountDAO;
 	private AgreementFieldsDetailService agreementFieldsDetailService;
 	private FinFlagDetailsDAO finFlagDetailsDAO;
-	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	private CollateralAssignmentValidation collateralAssignmentValidation;
-	private CollateralAssignmentDAO collateralAssignmentDAO;
+	protected CollateralAssignmentDAO collateralAssignmentDAO;
 	private FinInsurancesDAO finInsurancesDAO;
 	private FinInsuranceValidation finInsuranceValidation;
 	private FinAssetTypesValidation finAssetTypesValidation;
@@ -292,17 +292,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private VehicleDealerService vehicleDealerService;
 
 	// EOD Process Checking
-	private CustomerQueuingDAO customerQueuingDAO;
+	protected CustomerQueuingDAO customerQueuingDAO;
 
 	//GST
-	private GSTInvoiceTxnService gstInvoiceTxnService;
+	protected GSTInvoiceTxnService gstInvoiceTxnService;
 
 	// Query Management
 	private QueryDetailService queryDetailService;
 
 	// Bounce Due Postings
 	private FeeTypeDAO feeTypeDAO;
-	private ReceiptCalculator receiptCalculator;
+	protected ReceiptCalculator receiptCalculator;
 
 	//Stage Accounting
 	private RuleExecutionUtil ruleExecutionUtil;

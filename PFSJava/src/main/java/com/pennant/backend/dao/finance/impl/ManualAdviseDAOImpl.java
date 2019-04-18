@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -984,26 +985,28 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	/**
 	 * Get manual advise list by feetype code
+	 * 
 	 * @param finReference
 	 * @param feeTypeCode
 	 * @param type
 	 * 
-	 * Ticket id:12499
+	 *            Ticket id:12499
 	 */
 	@Override
 	public List<ManualAdvise> getManualAdviseByRef(String finReference, String feeTypeCode, String type) {
 
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId " );
+		StringBuilder sql = new StringBuilder(
+				" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc ");
 		}
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where FinReference = :FinReference AND FeeTypeCode =:FeeTypeCode  order by adviseid");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -1017,35 +1020,33 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return adviseList;
-	
+
 	}
 
-	
 	@Override
 	public List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeID) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("");
 		sql.append(
 				" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
-		sql.append(
-				" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,");
+		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(" Where  AdviseType = :AdviseType And FeeTypeID = :FeeTypeID");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseType(adviseType);
 		manualAdvise.setFeeTypeID(feeTypeID);
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
-		
+
 		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
 		logger.debug(Literal.LEAVING);
 		return adviseList;
@@ -1075,7 +1076,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public List<ManualAdvise> getManualAdviseByRefAndFeeCode(String finReference, int adviseType, String feeTypeCode) {
 		logger.debug(Literal.ENTERING);
@@ -1107,5 +1108,132 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.LEAVING);
 		return adviseList;
 	}
-	
+
+	@Override
+	public List<ManualAdvise> getManualAdviseByRef(String finReference, int adviseType, String type, Date valuDate) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder(
+				" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId,");
+		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST  ");
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent ");
+		}
+		sql.append(" From ManualAdvise");
+		sql.append(type);
+		sql.append(" Where FinReference = :FinReference AND AdviseType =:AdviseType ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setFinReference(finReference);
+		manualAdvise.setAdviseType(adviseType);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(manualAdvise);
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		List<ManualAdvise> adviseList = jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		logger.debug(Literal.LEAVING);
+		return adviseList;
+	}
+
+	@Override
+	public Date getManualAdviseDate(String finReference, Date valueDate, String type, int adviseType) {
+		StringBuilder selectSql = new StringBuilder();
+		Date manAdvDate = null;
+
+		selectSql.append("select MAX(ValueDate) from MANUALADVISE ");
+		selectSql.append(type);
+		selectSql.append(" Where  FinReference = :FinReference AND AdviseType =:AdviseType and ValueDate>:ValueDate  ");
+		selectSql.append(" AND (AdviseAmount - PaidAmount - WaivedAmount) > 0");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("FinReference", finReference);
+		paramMap.addValue("ValueDate", new SimpleDateFormat("dd-MMM-yy").format(valueDate));
+		paramMap.addValue("AdviseType", adviseType);
+
+		manAdvDate = jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Date.class);
+		return manAdvDate;
+	}
+
+	@Override
+	public List<ManualAdviseMovements> getInProcManualAdvMovmnts(List<Long> receiptList) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		source = new MapSqlParameterSource();
+		source.addValue("ReceiptId", receiptList);
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select  AdviseID, SUM( PaidAmount) PaidAmount,SUM( WaivedAmount) WaivedAmount ");
+		selectSql.append(" From ManualAdviseMovements");
+		selectSql.append(" Where ReceiptID IN (:ReceiptID)  GROUP BY AdviseID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseMovements.class);
+
+		List<ManualAdviseMovements> list = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug("Leaving");
+		return list;
+	}
+
+	@Override
+	public boolean isManualAdviceExitsInManualMovements(long manualAdviseId) {
+
+		StringBuilder selectSql = new StringBuilder();
+		boolean adviceCondition = false;
+		long adviceId = 0;
+
+		selectSql.append("select adviseid from MANUALADVISEMOVEMENTS_Temp ");
+		selectSql.append(" WHERE adviseid= :adviseid");
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("adviseid", manualAdviseId);
+
+		try {
+			adviceId = jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Long.class);
+		} catch (EmptyResultDataAccessException er) {
+			adviceId = 0;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		if (adviceId > 0) {
+			adviceCondition = true;
+		} else {
+			adviceCondition = false;
+		}
+		return adviceCondition;
+	}
+
+	@Override
+	public List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String type) {
+		logger.debug("Entering");
+
+		ManualAdviseMovements movements = new ManualAdviseMovements();
+		movements.setReceiptID(receiptID);
+		movements.setReceiptSeqID(receiptSeqID);
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
+		selectSql.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID, PaidCGST, PaidSGST, PaidUGST, PaidIGST ");
+		if (StringUtils.contains(type, "View")) {
+			selectSql.append(" , FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent ");
+		}
+		selectSql.append(" From ManualAdviseMovements");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ReceiptID = :ReceiptID AND ReceiptSeqID = :ReceiptSeqID ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movements);
+		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ManualAdviseMovements.class);
+
+		List<ManualAdviseMovements> list = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		logger.debug("Leaving");
+		return list;
+	}
+
 }

@@ -55,6 +55,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -316,6 +317,45 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		}
 		logger.debug("Leaving");
 		return assignedCount;
+	}
+
+	@Override
+	public FinTypePartnerBank getFinTypePartnerBankByPartnerBankCode(String partnerBankCode, String finType,
+			String paymentMode) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(
+				"ID, FinType, Purpose, PaymentMode, PARTNERBANKID, PartnerBankCode, PARTNERBANKNAME, ACTIVE, ACCOUNTNO, ACCOUNTTYPE, ENTITYCODE,");
+		sql.append(
+				"VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID");
+		sql.append(" From FinTypePartnerBanks_AView");
+		sql.append(
+				" Where PartnerBankCode = :PartnerBankCode and FinType = :FinType And Purpose = :Purpose And PaymentMode = :PaymentMode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		FinTypePartnerBank finTypePartnerBank = new FinTypePartnerBank();
+		finTypePartnerBank.setPartnerBankCode(partnerBankCode);
+		finTypePartnerBank.setFinType(finType);
+		finTypePartnerBank.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
+		finTypePartnerBank.setPaymentMode(paymentMode);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finTypePartnerBank);
+		RowMapper<FinTypePartnerBank> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTypePartnerBank.class);
+
+		try {
+			finTypePartnerBank = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			finTypePartnerBank = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finTypePartnerBank;
 	}
 
 }

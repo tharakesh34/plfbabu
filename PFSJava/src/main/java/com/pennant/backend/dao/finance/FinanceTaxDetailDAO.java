@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinanceTaxDetailDAO.java                                                   * 	  
+ * FileName    		:  FinanceTaxDetailDAO.java                                             * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -44,6 +44,7 @@ package com.pennant.backend.dao.finance;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
 
@@ -61,5 +62,9 @@ public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
 	int getGSTNumberCount(long taxCustId, String taxNumber, String string);
 
 	boolean isReferenceExists(String finReference, String custCif);
+
+	void deleteFinTaxDetails(FinanceTaxDetail financeTaxDetail, TableType tableType);
+
+	int getFinTaxDetailsCount(String finReference);
 
 }

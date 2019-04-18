@@ -49,12 +49,46 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal totFeeAmount = BigDecimal.ZERO;
 	private Date bounceDate;
 	private String rcdMaintainSts;
-	private long instructionUID = Long.MIN_VALUE;
+	private String cashierBranch;
+	private Date initiateDate;
+	private String partnerBankCode;
+	private String KnockoffId;
+	private String KnockoffFrom;
+	private Date KnockoffRefDate;
+	private String KnockoffAmount;
+	private String slipNo;
+	private String RealizeStatus;
+	private String BounceReason;
+	private String RealizeRemarks;
+	private String extReference;
+	private String module;
+	private String subReceiptMode;
+	private String receiptChannel;
+	private long collectionAgentId;
+	private String collectionAgentCode;
+	private String collectionAgentDesc;
+	private String receivedFrom;
+	private String panNumber;
+	private String paymentType;
+	private String feeTypeCode;
+
+	private String loanClosure_custCIF;
+	protected String loanClosure_finReference;
+	protected String loanClosure_knockOffFrom;
+	protected String loanClosure_refId;
+	protected Date LoanClosure_receiptDate;
+	protected Date LoanClosure_intTillDate;
+
+	private Date depositeDate;
+	private String depositBank;
+	private Date CancelDate;
+	private String lovDescRequestStage;
 
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
 	private BigDecimal lppAmount = BigDecimal.ZERO;
 	private BigDecimal gstLpiAmount = BigDecimal.ZERO;
 	private BigDecimal gstLppAmount = BigDecimal.ZERO;
+	private BigDecimal waivedAmt = BigDecimal.ZERO;
 
 	private String remarks;
 	private boolean depositProcess = false; // added for Cash Management 
@@ -67,25 +101,72 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String postBranch;
 	private boolean logSchInPresentment;
 
-	private String extReference;
-	private String module;
+	private boolean gDRAvailable = false;
+	private String releaseType;
+	private String thirdPartyName;
+	private String thirdPartyMobileNum;
+	private String transactionRef;
+	private String promotionCode;
+	private String productCategory;
+	private Date nextRepayRvwDate;
+	private long knockOffRefId = 0;
 
-	private String custCRCPR;
-	private String phoneNumber;
+	//Upfront Fees
+	private String finDivision;
+	private String customerCIF;
+	private String customerName;
+	private String postBranchDesc;
+	private String cashierBranchDesc;
+	private String finDivisionDesc;
+	private String entityCode;
 
 	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
 	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
 	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
 	private List<ManualAdvise> payableAdvises = new ArrayList<ManualAdvise>(1);
+	private List<ManualAdvise> receivableAdvises = new ArrayList<ManualAdvise>(1);
 	private List<ManualAdviseReserve> payableReserves = new ArrayList<ManualAdviseReserve>(1);
 	private List<ReceiptAllocationDetail> allocations = new ArrayList<ReceiptAllocationDetail>(1);
+	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<ReceiptAllocationDetail>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
 	private List<FinFeeDetail> paidFeeList; // Paid Fee Detail List for Fee Receipt
+	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(1);
+	private List<ManualAdviseMovements> payablesMovements = new ArrayList<ManualAdviseMovements>(1);
+	private List<FinExcessMovement> finExcessMovements = new ArrayList<FinExcessMovement>(1);
+	private FinRepayHeader repayHeader = new FinRepayHeader();
+
+	private List<XcessPayables> xcessPayables = new ArrayList<XcessPayables>(1);
+	private BigDecimal balAmount = BigDecimal.ZERO;
+	private BigDecimal partPayAmount = BigDecimal.ZERO;
+	private BigDecimal tds = BigDecimal.ZERO;
+	private int schdIdx = 0;
+	private int odIdx = 0;
+	private int pftIdx = 0;
+	private int futPftIdx = 0;
+	private int tdsIdx = 0;
+	private int futTdsIdx = 0;
+	private int nPftIdx = 0;
+	private int futNPftIdx = 0;
+	private int priIdx = 0;
+	private int futPriIdx = 0;
+	private int lpiIdx = 0;
+	private int lppIdx = 0;
+	private int emiIdx = 0;
+	private int ppIdx = 0;
+	private boolean isPenalSeparate = false;
+	private Date valueDate;
+	private ReceiptAllocationDetail totalPastDues = new ReceiptAllocationDetail();
+	private ReceiptAllocationDetail totalRcvAdvises = new ReceiptAllocationDetail();
+	private ReceiptAllocationDetail totalXcess = new ReceiptAllocationDetail();
+	private ReceiptAllocationDetail totalFees = new ReceiptAllocationDetail();
+	private ReceiptAllocationDetail totalBounces = new ReceiptAllocationDetail();
+	private boolean loanInActive = false;
+
+	private long payAgainstId = 0;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("receiptDetails");
@@ -99,7 +180,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
 		excludeFields.add("excessReserves");
-		excludeFields.add("postBranch");
+		//excludeFields.add("postBranch");
 		excludeFields.add("logSchInPresentment");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("finBranchDesc");
@@ -110,8 +191,82 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("pftDaysBasis");
 		excludeFields.add("payableAdvises");
 		excludeFields.add("payableReserves");
-		excludeFields.add("custCRCPR");
-		excludeFields.add("phoneNumber");
+		excludeFields.add("transactionRef");
+		excludeFields.add("promotionCode");
+		excludeFields.add("productCategory");
+		excludeFields.add("nextRepayRvwDate");
+		excludeFields.add("xcessPayables");
+		excludeFields.add("balAmount");
+		excludeFields.add("tds");
+		excludeFields.add("schdIdx");
+		excludeFields.add("lpiIdx");
+		excludeFields.add("lppIdx");
+		excludeFields.add("isPenalSeparate");
+		excludeFields.add("valueDate");
+		excludeFields.add("totalPastDues");
+		excludeFields.add("totalAdvises");
+		excludeFields.add("totalXcess");
+		excludeFields.add("totalFees");
+		excludeFields.add("partPayAmount");
+		excludeFields.add("pftIdx");
+		excludeFields.add("tdsIdx");
+		excludeFields.add("nPftIdx");
+		excludeFields.add("priIdx");
+		excludeFields.add("finODDetails");
+		excludeFields.add("odIdx");
+		excludeFields.add("payablesMovements");
+		excludeFields.add("finExcessMovements");
+		excludeFields.add("receivableAdvises");
+		excludeFields.add("repayHeader");
+		excludeFields.add("emiIdx");
+		excludeFields.add("futPftIdx");
+		excludeFields.add("futTdsIdx");
+		excludeFields.add("futNPftIdx");
+		excludeFields.add("futPriIdx");
+		excludeFields.add("subReceiptMode");
+		excludeFields.add("payAgainstId");
+		excludeFields.add("ppIdx");
+		excludeFields.add("paymentType");
+		excludeFields.add("feeTypeCode");
+		excludeFields.add("knockOffRefId");
+		excludeFields.add("repayHeader");
+		excludeFields.add("loanInActive");
+		excludeFields.add("customerCIF");
+		excludeFields.add("customerName");
+		excludeFields.add("postBranchDesc");
+		excludeFields.add("cashierBranchDesc");
+		excludeFields.add("finDivisionDesc");
+		excludeFields.add("entityCode");
+		excludeFields.add("collectionAgentDesc");
+		excludeFields.add("collectionAgentCode");
+		excludeFields.add("loanClosure_custCIF");
+		excludeFields.add("loanClosure_finReference");
+		excludeFields.add("loanClosure_knockOffFrom");
+		excludeFields.add("loanClosure_refId");
+		excludeFields.add("LoanClosure_receiptDate");
+		excludeFields.add("LoanClosure_intTillDate");
+		excludeFields.add("depositeDate");
+		excludeFields.add("depositBank");
+		excludeFields.add("CancelDate");
+		excludeFields.add("partnerBankCode");
+		excludeFields.add("waivedAmt");
+		excludeFields.add("KnockoffId");
+		excludeFields.add("KnockoffFrom");
+		excludeFields.add("KnockoffRefDate");
+		excludeFields.add("KnockoffAmount");
+		excludeFields.add("slipNo");
+		excludeFields.add("RealizeStatus");
+		excludeFields.add("BounceReason");
+		excludeFields.add("RealizeRemarks");
+		excludeFields.add("allocationsSummary");
+		excludeFields.add("totalRcvAdvises");
+		excludeFields.add("totalBounces");
+		excludeFields.add("cashierBranch");
+		excludeFields.add("initiateDate");
+		excludeFields.add("gDRAvailable");
+		excludeFields.add("releaseType");
+		excludeFields.add("thirdPartyName");
+		excludeFields.add("thirdPartyMobileNum");
 
 		return excludeFields;
 	}
@@ -449,6 +604,10 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		return waviedAmt;
 	}
 
+	public BigDecimal getWaivedAmt() {
+		return waviedAmt;
+	}
+
 	public void setWaviedAmt(BigDecimal waviedAmt) {
 		this.waviedAmt = waviedAmt;
 	}
@@ -509,6 +668,30 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.rcdMaintainSts = rcdMaintainSts;
 	}
 
+	public boolean isGDRAvailable() {
+		return gDRAvailable;
+	}
+
+	public void setGDRAvailable(boolean gDRAvailable) {
+		this.gDRAvailable = gDRAvailable;
+	}
+
+	public String getReleaseType() {
+		return releaseType;
+	}
+
+	public void setReleaseType(String releaseType) {
+		this.releaseType = releaseType;
+	}
+
+	public String getThirdPartyName() {
+		return thirdPartyName;
+	}
+
+	public void setThirdPartyName(String thirdPartyName) {
+		this.thirdPartyName = thirdPartyName;
+	}
+
 	public boolean isDepositProcess() {
 		return depositProcess;
 	}
@@ -523,14 +706,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setDepositBranch(String depositBranch) {
 		this.depositBranch = depositBranch;
-	}
-
-	public BigDecimal getLpiAmount() {
-		return lpiAmount;
-	}
-
-	public void setLpiAmount(BigDecimal lpiAmount) {
-		this.lpiAmount = lpiAmount;
 	}
 
 	public BigDecimal getLppAmount() {
@@ -573,28 +748,618 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.extReference = extReference;
 	}
 
-	public long getInstructionUID() {
-		return instructionUID;
+	public String getThirdPartyMobileNum() {
+		return thirdPartyMobileNum;
 	}
 
-	public void setInstructionUID(long instructionUID) {
-		this.instructionUID = instructionUID;
+	public void setThirdPartyMobileNum(String thirdPartyMobileNum) {
+		this.thirdPartyMobileNum = thirdPartyMobileNum;
 	}
 
-	public String getCustCRCPR() {
-		return custCRCPR;
+	public String getTransactionRef() {
+		return transactionRef;
 	}
 
-	public void setCustCRCPR(String custCRCPR) {
-		this.custCRCPR = custCRCPR;
+	public void setTransactionRef(String transactionRef) {
+		this.transactionRef = transactionRef;
 	}
 
-	public String getPhoneNumber() {
-		return phoneNumber;
+	public String getPromotionCode() {
+		return promotionCode;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void setPromotionCode(String promotionCode) {
+		this.promotionCode = promotionCode;
+	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
+	}
+
+	public Date getNextRepayRvwDate() {
+		return nextRepayRvwDate;
+	}
+
+	public void setNextRepayRvwDate(Date nextRepayRvwDate) {
+		this.nextRepayRvwDate = nextRepayRvwDate;
+	}
+
+	public String getCashierBranch() {
+		return cashierBranch;
+	}
+
+	public void setCashierBranch(String cashierBranch) {
+		this.cashierBranch = cashierBranch;
+	}
+
+	public Date getInitiateDate() {
+		return initiateDate;
+	}
+
+	public void setInitiateDate(Date initiateDate) {
+		this.initiateDate = initiateDate;
+	}
+
+	public BigDecimal getLpiAmount() {
+		return lpiAmount;
+	}
+
+	public void setLpiAmount(BigDecimal lpiAmount) {
+		this.lpiAmount = lpiAmount;
+	}
+
+	public List<XcessPayables> getXcessPayables() {
+		return xcessPayables;
+	}
+
+	public void setXcessPayables(List<XcessPayables> xcessPayables) {
+		this.xcessPayables = xcessPayables;
+	}
+
+	public BigDecimal getBalAmount() {
+		return balAmount;
+	}
+
+	public void setBalAmount(BigDecimal balAmount) {
+		this.balAmount = balAmount;
+	}
+
+	public int getSchdIdx() {
+		return schdIdx;
+	}
+
+	public void setSchdIdx(int schdIdx) {
+		this.schdIdx = schdIdx;
+	}
+
+	public boolean isPenalSeparate() {
+		return isPenalSeparate;
+	}
+
+	public void setPenalSeparate(boolean isPenalSeparate) {
+		this.isPenalSeparate = isPenalSeparate;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public BigDecimal getTds() {
+		return tds;
+	}
+
+	public void setTds(BigDecimal tds) {
+		this.tds = tds;
+	}
+
+	public int getLpiIdx() {
+		return lpiIdx;
+	}
+
+	public void setLpiIdx(int lpiIdx) {
+		this.lpiIdx = lpiIdx;
+	}
+
+	public int getLppIdx() {
+		return lppIdx;
+	}
+
+	public void setLppIdx(int lppIdx) {
+		this.lppIdx = lppIdx;
+	}
+
+	public List<ManualAdvise> getReceivableAdvises() {
+		return receivableAdvises;
+	}
+
+	public void setReceivableAdvises(List<ManualAdvise> receivableAdvises) {
+		this.receivableAdvises = receivableAdvises;
+	}
+
+	public ReceiptAllocationDetail getTotalPastDues() {
+		return totalPastDues;
+	}
+
+	public void setTotalPastDues(ReceiptAllocationDetail totalPastDues) {
+		this.totalPastDues = totalPastDues;
+	}
+
+	public ReceiptAllocationDetail getTotalRcvAdvises() {
+		return totalRcvAdvises;
+	}
+
+	public void setTotalRcvAdvises(ReceiptAllocationDetail totalRcvAdvises) {
+		this.totalRcvAdvises = totalRcvAdvises;
+	}
+
+	public ReceiptAllocationDetail getTotalXcess() {
+		return totalXcess;
+	}
+
+	public void setTotalXcess(ReceiptAllocationDetail totalXcess) {
+		this.totalXcess = totalXcess;
+	}
+
+	public ReceiptAllocationDetail getTotalFees() {
+		return totalFees;
+	}
+
+	public void setTotalFees(ReceiptAllocationDetail totalFees) {
+		this.totalFees = totalFees;
+	}
+
+	public BigDecimal getPartPayAmount() {
+		return partPayAmount;
+	}
+
+	public void setPartPayAmount(BigDecimal partPayAmount) {
+		this.partPayAmount = partPayAmount;
+	}
+
+	public int getPftIdx() {
+		return pftIdx;
+	}
+
+	public void setPftIdx(int pftIdx) {
+		this.pftIdx = pftIdx;
+	}
+
+	public int getTdsIdx() {
+		return tdsIdx;
+	}
+
+	public void setTdsIdx(int tdsIdx) {
+		this.tdsIdx = tdsIdx;
+	}
+
+	public int getNPftIdx() {
+		return nPftIdx;
+	}
+
+	public void setNPftIdx(int nPftIdx) {
+		this.nPftIdx = nPftIdx;
+	}
+
+	public int getPriIdx() {
+		return priIdx;
+	}
+
+	public void setPriIdx(int priIdx) {
+		this.priIdx = priIdx;
+	}
+
+	public List<FinODDetails> getFinODDetails() {
+		return finODDetails;
+	}
+
+	public void setFinODDetails(List<FinODDetails> finODDetails) {
+		this.finODDetails = finODDetails;
+	}
+
+	public List<ManualAdviseMovements> getPayablesMovements() {
+		return payablesMovements;
+	}
+
+	public void setPayablesMovements(List<ManualAdviseMovements> payablesMovements) {
+		this.payablesMovements = payablesMovements;
+	}
+
+	public List<FinExcessMovement> getFinExcessMovements() {
+		return finExcessMovements;
+	}
+
+	public void setFinExcessMovements(List<FinExcessMovement> finExcessMovements) {
+		this.finExcessMovements = finExcessMovements;
+	}
+
+	public int getOdIdx() {
+		return odIdx;
+	}
+
+	public void setOdIdx(int odIdx) {
+		this.odIdx = odIdx;
+	}
+
+	public int getEmiIdx() {
+		return emiIdx;
+	}
+
+	public void setEmiIdx(int emiIdx) {
+		this.emiIdx = emiIdx;
+	}
+
+	public int getFutPftIdx() {
+		return futPftIdx;
+	}
+
+	public void setFutPftIdx(int futPftIdx) {
+		this.futPftIdx = futPftIdx;
+	}
+
+	public int getFutTdsIdx() {
+		return futTdsIdx;
+	}
+
+	public void setFutTdsIdx(int futTdsIdx) {
+		this.futTdsIdx = futTdsIdx;
+	}
+
+	public int getFutNPftIdx() {
+		return futNPftIdx;
+	}
+
+	public void setFutNPftIdx(int futNPftIdx) {
+		this.futNPftIdx = futNPftIdx;
+	}
+
+	public int getFutPriIdx() {
+		return futPriIdx;
+	}
+
+	public void setFutPriIdx(int futPriIdx) {
+		this.futPriIdx = futPriIdx;
+	}
+
+	public Date getDepositeDate() {
+		return depositeDate;
+	}
+
+	public void setDepositeDate(Date depositeDate) {
+		this.depositeDate = depositeDate;
+	}
+
+	public String getDepositBank() {
+		return depositBank;
+	}
+
+	public void setDepositBank(String depositBank) {
+		this.depositBank = depositBank;
+	}
+
+	public Date getCancelDate() {
+		return CancelDate;
+	}
+
+	public void setCancelDate(Date cancelDate) {
+		CancelDate = cancelDate;
+	}
+
+	public String getLovDescRequestStage() {
+		return lovDescRequestStage;
+	}
+
+	public void setLovDescRequestStage(String lovDescRequestStage) {
+		this.lovDescRequestStage = lovDescRequestStage;
+	}
+
+	public String getReceiptChannel() {
+		return receiptChannel;
+	}
+
+	public void setReceiptChannel(String receiptChannel) {
+		this.receiptChannel = receiptChannel;
+	}
+
+	public long getCollectionAgentId() {
+		return collectionAgentId;
+	}
+
+	public void setCollectionAgentId(long collectionAgentId) {
+		this.collectionAgentId = collectionAgentId;
+	}
+
+	public String getReceivedFrom() {
+		return receivedFrom;
+	}
+
+	public void setReceivedFrom(String receivedFrom) {
+		this.receivedFrom = receivedFrom;
+	}
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public String getKnockoffId() {
+		return KnockoffId;
+	}
+
+	public void setKnockoffId(String knockoffId) {
+		KnockoffId = knockoffId;
+	}
+
+	public String getKnockoffFrom() {
+		return KnockoffFrom;
+	}
+
+	public void setKnockoffFrom(String knockoffFrom) {
+		KnockoffFrom = knockoffFrom;
+	}
+
+	public Date getKnockoffRefDate() {
+		return KnockoffRefDate;
+	}
+
+	public void setKnockoffRefDate(Date knockoffRefDate) {
+		KnockoffRefDate = knockoffRefDate;
+	}
+
+	public String getKnockoffAmount() {
+		return KnockoffAmount;
+	}
+
+	public void setKnockoffAmount(String knockoffAmount) {
+		KnockoffAmount = knockoffAmount;
+	}
+
+	public String getSlipNo() {
+		return slipNo;
+	}
+
+	public void setSlipNo(String slipNo) {
+		this.slipNo = slipNo;
+	}
+
+	public String getRealizeStatus() {
+		return RealizeStatus;
+	}
+
+	public void setRealizeStatus(String realizeStatus) {
+		RealizeStatus = realizeStatus;
+	}
+
+	public String getBounceReason() {
+		return BounceReason;
+	}
+
+	public void setBounceReason(String bounceReason) {
+		BounceReason = bounceReason;
+	}
+
+	public String getSubReceiptMode() {
+		return subReceiptMode;
+	}
+
+	public void setSubReceiptMode(String subReceiptMode) {
+		this.subReceiptMode = subReceiptMode;
+	}
+
+	public int getPpIdx() {
+		return ppIdx;
+	}
+
+	public void setPpIdx(int ppIdx) {
+		this.ppIdx = ppIdx;
+	}
+
+	public String getRealizeRemarks() {
+		return RealizeRemarks;
+	}
+
+	public void setRealizeRemarks(String realizeRemarks) {
+		RealizeRemarks = realizeRemarks;
+	}
+
+	public ReceiptAllocationDetail getTotalBounces() {
+		return totalBounces;
+	}
+
+	public void setTotalBounces(ReceiptAllocationDetail totalBounces) {
+		this.totalBounces = totalBounces;
+	}
+
+	public long getPayAgainstId() {
+		return payAgainstId;
+	}
+
+	public void setPayAgainstId(long payAgainstId) {
+		this.payAgainstId = payAgainstId;
+	}
+
+	public String getPartnerBankCode() {
+		return partnerBankCode;
+	}
+
+	public void setPartnerBankCode(String partnerBankCode) {
+		this.partnerBankCode = partnerBankCode;
+	}
+
+	public List<ReceiptAllocationDetail> getAllocationsSummary() {
+		return allocationsSummary;
+	}
+
+	public void setAllocationsSummary(List<ReceiptAllocationDetail> allocationsSummary) {
+		this.allocationsSummary = allocationsSummary;
+	}
+
+	public String getLoanClosure_custCIF() {
+		return loanClosure_custCIF;
+	}
+
+	public void setLoanClosure_custCIF(String loanClosure_custCIF) {
+		this.loanClosure_custCIF = loanClosure_custCIF;
+	}
+
+	public String getLoanClosure_finReference() {
+		return loanClosure_finReference;
+	}
+
+	public void setLoanClosure_finReference(String loanClosure_finReference) {
+		this.loanClosure_finReference = loanClosure_finReference;
+	}
+
+	public String getLoanClosure_knockOffFrom() {
+		return loanClosure_knockOffFrom;
+	}
+
+	public void setLoanClosure_knockOffFrom(String loanClosure_knockOffFrom) {
+		this.loanClosure_knockOffFrom = loanClosure_knockOffFrom;
+	}
+
+	public String getLoanClosure_refId() {
+		return loanClosure_refId;
+	}
+
+	public void setLoanClosure_refId(String loanClosure_refId) {
+		this.loanClosure_refId = loanClosure_refId;
+	}
+
+	public Date getLoanClosure_receiptDate() {
+		return LoanClosure_receiptDate;
+	}
+
+	public void setLoanClosure_receiptDate(Date loanClosure_receiptDate) {
+		LoanClosure_receiptDate = loanClosure_receiptDate;
+	}
+
+	public Date getLoanClosure_intTillDate() {
+		return LoanClosure_intTillDate;
+	}
+
+	public void setLoanClosure_intTillDate(Date loanClosure_intTillDate) {
+		LoanClosure_intTillDate = loanClosure_intTillDate;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
+	}
+
+	public long getKnockOffRefId() {
+		return knockOffRefId;
+	}
+
+	public void setKnockOffRefId(long knockOffRefId) {
+		this.knockOffRefId = knockOffRefId;
+	}
+
+	/*
+	 * public FinRepayHeader getRepayHeader() { return repayHeader; }
+	 * 
+	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader = repayHeader; }
+	 */
+
+	public String getCollectionAgentCode() {
+		return collectionAgentCode;
+	}
+
+	public void setCollectionAgentCode(String collectionAgentCode) {
+		this.collectionAgentCode = collectionAgentCode;
+	}
+
+	public String getCollectionAgentDesc() {
+		return collectionAgentDesc;
+	}
+
+	public void setCollectionAgentDesc(String collectionAgentDesc) {
+		this.collectionAgentDesc = collectionAgentDesc;
+	}
+
+	public String getCustomerCIF() {
+		return customerCIF;
+	}
+
+	public void setCustomerCIF(String customerCIF) {
+		this.customerCIF = customerCIF;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getFinDivision() {
+		return finDivision;
+	}
+
+	public void setFinDivision(String finDivision) {
+		this.finDivision = finDivision;
+	}
+
+	public String getCashierBranchDesc() {
+		return cashierBranchDesc;
+	}
+
+	public void setCashierBranchDesc(String cashierBranchDesc) {
+		this.cashierBranchDesc = cashierBranchDesc;
+	}
+
+	public String getPostBranchDesc() {
+		return postBranchDesc;
+	}
+
+	public void setPostBranchDesc(String postBranchDesc) {
+		this.postBranchDesc = postBranchDesc;
+	}
+
+	public String getFinDivisionDesc() {
+		return finDivisionDesc;
+	}
+
+	public void setFinDivisionDesc(String finDivisionDesc) {
+		this.finDivisionDesc = finDivisionDesc;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
+	}
+	
+	public boolean isLoanInActive() {
+		return loanInActive;
+	}
+
+	public void setLoanInActive(boolean loanInActive) {
+		this.loanInActive = loanInActive;
 	}
 
 }

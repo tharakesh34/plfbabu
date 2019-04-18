@@ -76,6 +76,13 @@ public class CalculationConstants {
 	public static final String RATE_BASIS_C = "C";
 	public static final String RATE_BASIS_M = "M";
 	public static final String RATE_BASIS_D = "D";
+	public static final String RATE_BASIS_T = "T";
+	public static final String RATE_BASIS_S = "S";
+
+	// Scheme Scopes
+	public static final String SCH_SCOPE_ALL_BRANCHES = "A";
+	public static final String SCH_SCOPE_SELECTED_BRANCHES = "B";
+	public static final String SCH_SCOPE_SELECTED_STATES = "S";
 
 	public static final String SCH_SPECIFIER_REPAY = "R";
 	public static final String SCH_SPECIFIER_GRACE = "G";
@@ -131,6 +138,7 @@ public class CalculationConstants {
 	public static final String PDPFTCAL_NOTAPP = "N";
 	public static final String PDPFTCAL_SCHRATE = "S";
 	public static final String PDPFTCAL_SCHRATEMARGIN = "M";
+	public static final String PDPFTCAL_FIXED = "F";
 
 	public static final String FIN_STATE_NORMAL = "N";
 	public static final String FIN_STATE_PD = "PD";
@@ -160,4 +168,10 @@ public class CalculationConstants {
 
 	// ADVANCE EMI METHODS
 	public static final String SCHMTHD_START = "START";
+
+	// Start period Capitalization Methods
+	public static final String STRTPRDCPZ_NOCPZ = "NO";
+	public static final String STRTPRDCPZ_CPZONFRQ = "FRQ";
+	public static final String STRTPRDCPZ_CPZATEND = "END";
+
 }

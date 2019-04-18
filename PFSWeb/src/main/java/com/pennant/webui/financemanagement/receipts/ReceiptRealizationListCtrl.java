@@ -24,6 +24,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -40,6 +41,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -62,6 +64,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Listbox listBoxReceiptRealization;
 	protected Paging pagingReceiptRealizationList;
 
+	protected Listheader listheader_ReceiptRealizationReceiptId;
 	protected Listheader listheader_ReceiptRealizationReference;
 	protected Listheader listheader_ReceiptRealizationPurpose;
 	protected Listheader listheader_ReceiptRealizationMode;
@@ -75,6 +78,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Button btnNew;
 	protected Button btnSearch;
 
+	protected Longbox receiptId;
 	protected Textbox receiptReference;
 	protected Textbox customer;
 	protected Combobox purpose;
@@ -83,6 +87,7 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 	protected Textbox finType;
 	protected Textbox finBranch;
 
+	protected Listbox sortOperator_receiptRealizationReceiptId;
 	protected Listbox sortOperator_receiptRealizationReference;
 	protected Listbox sortOperator_receiptRealizationCustomer;
 	protected Listbox sortOperator_receiptRealizationPurpose;
@@ -97,6 +102,13 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 
 	private transient ReceiptRealizationService receiptRealizationService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
+	//Added Promotion details promotionCode
+	protected Uppercasebox transactionRef;
+	protected Listbox sortOperator_ReceiptRealizationTranRef;
+	protected Listheader listheader_ReceiptRealization_PromotionCode;
+	protected Listheader listheader_ReceiptRealization_ReceiptRef;
+	protected Listheader listheader_ReceiptRealization_ReceiptDate;
 
 	/**
 	 * The default constructor.
@@ -128,8 +140,9 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 		registerButton(btnNew, "button_AcademicList_NewAcademic", false);
 		registerButton(btnSearch);
 
-		registerField("receiptID");
 		registerField("finCcy");
+		registerField("receiptId", listheader_ReceiptRealizationReceiptId, SortOrder.ASC, receiptId,
+				sortOperator_receiptRealizationReceiptId, Operators.DEFAULT);
 		registerField("reference", listheader_ReceiptRealizationReference, SortOrder.ASC, receiptReference,
 				sortOperator_receiptRealizationReference, Operators.STRING);
 		registerField("custCIF", listheader_ReceiptRealizationCusomer, SortOrder.NONE, customer,
@@ -150,6 +163,10 @@ public class ReceiptRealizationListCtrl extends GFCBaseListCtrl<FinReceiptHeader
 				sortOperator_receiptRealizationFinType, Operators.STRING);
 		registerField("finBranch", listheader_ReceiptRealizationFinBranch, SortOrder.NONE, finBranch,
 				sortOperator_receiptRealizationFinBranch, Operators.STRING);
+		registerField("transactionRef", listheader_ReceiptRealization_ReceiptRef, SortOrder.NONE, transactionRef,
+				sortOperator_ReceiptRealizationTranRef, Operators.STRING);
+		registerField("promotionCode", listheader_ReceiptRealization_PromotionCode, SortOrder.NONE);
+		registerField("receiptDate", listheader_ReceiptRealization_ReceiptDate, SortOrder.NONE);
 
 		// Render the page and display the data.
 		doRenderPage();

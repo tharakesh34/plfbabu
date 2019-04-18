@@ -47,6 +47,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -641,8 +642,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb,FinRepayMethod, ");
 		sql.append(
 				" FeeChargeAmt, BpiAmount, DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,");
-		sql.append(
-				" FinCategory, ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,");
+		sql.append(" FinCategory, ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,");
 		sql.append(" BusinessVertical ");
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage ");
 
@@ -690,8 +690,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :PlanEMIHLockPeriod , :PlanEMICpz , :CalRoundingMode ,:RoundingTarget, :AlwMultiDisb,:FinRepayMethod, ");
 		sql.append(
 				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb,:RvwRateApplFor ,:SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin,");
-		sql.append(
-				" :FinCategory, :ProductCategory, :AdvanceEMI, :BpiPftDaysBasis, :FixedTenorRate,:FixedRateTenor, ");
+		sql.append(" :FinCategory, :ProductCategory, :AdvanceEMI, :BpiPftDaysBasis, :FixedTenorRate,:FixedRateTenor, ");
 		sql.append(" :BusinessVertical ");
 		sql.append(", :GrcAdvType, :GrcAdvTerms, :AdvType, :AdvTerms, :AdvStage ");
 		if (!wif) {
@@ -2204,6 +2203,24 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
+	public void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive) {
+		logger.debug("Entering");
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinReference(finReference);
+		financeMain.setClosingStatus(closingStatus);
+		financeMain.setFinIsActive(finIsActive);
+
+		StringBuilder updateSql = new StringBuilder("Update finpftdetails ");
+		updateSql.append(" Set FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus ");
+		updateSql.append(" Where FinReference = :FinReference ");
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+	@Override
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("schdChangeReq", schdChangeReq);
@@ -2395,7 +2412,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * 
 	 */
 	@Override
-	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod,String type) {
+	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod, String type) {
 		logger.debug("Entering");
 
 		int recordCount = 0;
@@ -2412,7 +2429,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			updateSql.append(" ,FinRepayMethod =:FinRepayMethod");
 		}
 		updateSql.append(" Where FinReference =:FinReference");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
@@ -2777,7 +2794,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" MigratedFinance, ScheduleMaintained, ScheduleRegenerated, MandateID, ");
 		sql.append(" FinStatus, DueBucket, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
 		sql.append(" FinCategory, ProductCategory, ReAgeBucket,TDSApplicable,BpiTreatment,FinRepaymentAmount");
-		sql.append(", GrcAdvType, AdvType");		
+		sql.append(", GrcAdvType, AdvType");
 		sql.append(" FROM FinanceMain Where CustID=:CustID");
 
 		if (isActive) {
@@ -3391,7 +3408,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	}
 
-	public int getActiveCount(String finType,long custID) {
+	public int getActiveCount(String finType, long custID) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = new FinanceMain();
@@ -3439,7 +3456,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return 0;
 		}
 	}
-	
+
 	@Override
 	public Map<String, Date> getUnApprovedFinanceList(String fintype) {
 		logger.debug(Literal.ENTERING);
@@ -3504,34 +3521,33 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.LEAVING);
 		return nextUserId;
 	}
-	
-	public FinanceMain getEntityNEntityDesc(String finreference, String type, boolean wif){
+
+	public FinanceMain getEntityNEntityDesc(String finreference, String type, boolean wif) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finreference);
-		StringBuilder sql = new StringBuilder("SELECT t4.ENTITYCODE,t4.ENTITYDESC From ");
+
+		StringBuilder sql = new StringBuilder("SELECT t4.ENTITYCODE,t4.ENTITYDESC From");
 		if (wif) {
-			sql.append("WifFinanceMain");
+			sql.append(" WifFinanceMain");
 		} else {
-			sql.append("FinanceMain");
+			sql.append(" FinanceMain");
 		}
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" FM");
-		
-		sql.append(" inner JOIN");
-		sql.append(" RMTFinanceTypes  T2 ON T1.FinType = T2.FinType  inner JOIN");
-		sql.append(" SMTDIVISIONDETAIL T3 ON T2.FinDivision=T3.DIVISIONCODE inner join");
-		sql.append(" ENTITY t4 on t4.entitycode = t4.entitycode");
+
+		sql.append(" INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE");
+		sql.append(" INNER JOIN SMTDIVISIONDETAIL T3 ON T2.FINDIVISION=T3.DIVISIONCODE");
+		sql.append(" INNER JOIN ENTITY T4 ON T4.ENTITYCODE = T4.ENTITYCODE");
 
 		sql.append(" Where FinReference = :FinReference");
 		logger.debug("selectSql: " + sql.toString());
 
 		try {
 			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source,
-					typeRowMapper);
+			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeMain = null;
@@ -3540,7 +3556,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.LEAVING);
 		return financeMain;
 	}
-	
+
 	@Override
 	public FinanceType getFinTypeDetailsByFinreferene(String finReference, String type, boolean wif) {
 		logger.debug("Entering");
@@ -3548,7 +3564,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		FinanceType financeType = new FinanceType();
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		StringBuilder sql = new StringBuilder("SELECT FT.DEVELOPERFINANCE,FT.FinTypeClassification,FT.FinScheduleOn,FT.AlwEarlyPayMethods From ");
+		StringBuilder sql = new StringBuilder(
+				"SELECT FT.DEVELOPERFINANCE,FT.FinTypeClassification,FT.FinScheduleOn,FT.AlwEarlyPayMethods From ");
 		if (wif) {
 			sql.append("WifFinanceMain FM");
 		} else {
@@ -3571,9 +3588,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return financeType;
 
 	}
-	
+
 	/**
 	 * getting closing status for perticular loan reference
+	 * 
 	 * @param finReference
 	 * @param tempTab
 	 * @param wif
@@ -3613,16 +3631,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * //### 18-07-2018 Ticket ID : 124998,receipt upload
 	 */
 	@Override
-	public long getPartnerBankIdByReference(String finReference, String paymentMode, String fundingAc, String type,String purpose, boolean wif) {
+	public long getPartnerBankIdByReference(String finReference, String paymentMode, String fundingAc, String type,
+			String purpose, boolean wif) {
 		logger.debug("Entering");
-		long partnerBankId=0;
-		
+		long partnerBankId = 0;
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("Purpose", purpose);
 		source.addValue("PARTNERBANKCODE", fundingAc);
 		source.addValue("PAYMENTMODE", paymentMode);
-		
+
 		StringBuilder sql = new StringBuilder("SELECT FP.PARTNERBANKID From ");
 		if (wif) {
 			sql.append("WifFinanceMain");
@@ -3631,7 +3650,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" FM ");
-		
+
 		sql.append(" INNER JOIN FINTYPEPARTNERBANKS FP ON FP.FINTYPE =FM.FINTYPE ");
 		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID =FP.PARTNERBANKID ");
 
@@ -3639,44 +3658,44 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" and FP.PURPOSE = :Purpose");
 		sql.append(" and PB.PARTNERBANKCODE = :PARTNERBANKCODE");
 		sql.append(" and FP.PAYMENTMODE = :PAYMENTMODE");
-		
-		
+
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		try {
 			partnerBankId = this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			partnerBankId = 0;
 		}
-		
+
 		logger.debug("Leaving");
-		return partnerBankId; 
+		return partnerBankId;
 	}
-	
+
 	/**
 	 * //### 12-07-2018 Ticket ID : 12499
 	 * 
 	 * check whether loan reference with entity code is present
+	 * 
 	 * @param finReference
 	 * @param type
 	 * @param entity
 	 */
 	@Override
-	public boolean isFinReferenceExitsWithEntity(String finReference,String type, String entity) {
+	public boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity) {
 		logger.debug("Entering");
-		
+
 		int entityCount = 0;
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FINREFERENCE", finReference);
 		source.addValue("ENTITYCODE", entity);
-		
+
 		StringBuilder sql = new StringBuilder("SELECT COUNT(t4.ENTITYCODE) FROM ");
 		sql.append("FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" t1");
-		
+
 		sql.append(" inner JOIN");
 		sql.append(" RMTFinanceTypes  T2 ON T1.FinType = T2.FinType  inner JOIN");
 		sql.append(" SMTDIVISIONDETAIL T3 ON T2.FinDivision=T3.DIVISIONCODE inner join");
@@ -3684,37 +3703,38 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		sql.append(" Where t1.FINREFERENCE = :FINREFERENCE");
 		sql.append(" and t4.ENTITYCODE = :ENTITYCODE");
-		
+
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		try {
-			entityCount= this.jdbcTemplate.queryForObject(sql.toString(), source,Integer.class);
+			entityCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			entityCount = 0;
 		}
-		
-		if(entityCount>0){
+
+		if (entityCount > 0) {
 			return true;
 		}
-		
+
 		logger.debug("Leaving");
 		return false;
 	}
-	
+
 	/**
 	 * 
 	 * check whether loan reference is developer or not
+	 * 
 	 * @param finReference
 	 * @param type
 	 * @param wif
 	 */
 	@Override
 	public boolean isDeveloperFinance(String finReference, String type, boolean wif) {
-		
+
 		logger.debug("Entering");
-		
-		boolean isdeveloperFinance =false;
+
+		boolean isdeveloperFinance = false;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		StringBuilder sql = new StringBuilder("SELECT ft.DEVELOPERFINANCE From ");
@@ -3727,45 +3747,44 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = :FinReference");
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		try {
-			isdeveloperFinance = this.jdbcTemplate.queryForObject(sql.toString(), source,
-					Boolean.class);
+			isdeveloperFinance = this.jdbcTemplate.queryForObject(sql.toString(), source, Boolean.class);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			isdeveloperFinance = false;
 		}
-		
+
 		logger.debug("Leaving");
 		return isdeveloperFinance;
-		
+
 	}
 
 	@Override
 	public FinanceMain getFinanceDetailsByFinRefence(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceMain financeMain = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		
+
 		StringBuilder sql = new StringBuilder("SELECT * From ");
 		sql.append("FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinReference = :FinReference");
 		sql.append(" ORDER BY FinReference ASC,FinType ASC");
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-		try	{
+		try {
 			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch(Exception e)	{
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.log(Level.ERROR, e.getCause(), e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return financeMain;
 	}
 
@@ -3825,6 +3844,577 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug("Leaving");
 		return financeType;
-	
+
+	}
+
+	@Override
+	public void updateFinAssetValue(FinanceMain finMain) {
+
+		StringBuilder sql = new StringBuilder("Update FinanceMain SET");
+		sql.append(" LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, FinAssetValue = :FinAssetValue ");
+		sql.append(" Where FinReference = :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(finMain);
+
+		jdbcTemplate.update(sql.toString(), paramSource);
+	}
+
+	@Override
+	public FinanceMain getFinanceForAssignments(String finReference) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" SELECT FinReference, FinStartDate, MaturityDate, FinCurrAssetValue, FinAssetValue, AlwFlexi, FinType, FinIsActive, EntityCode, FinCcy, CustID, FinBranch, PromotionCode, PromotionSeqId, AssignmentId");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where FinReference = :FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		return null;
+	}
+
+	@Override
+	public FinanceMain getFinanceForIncomeAMZ(String finReference) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql
+				.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
+
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where FinReference = :FinReference ");
+
+		// logger.debug("selectSql: " + selectSql.toString());
+		try {
+			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
+		logger.debug("Entering");
+
+		List<FinanceMain> finMains = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("MaturityDate", curMonthStart);
+
+		StringBuilder selectSql = new StringBuilder(
+				" Select FinReference, FinStartDate, FinApprovedDate, ClosingStatus, FinIsActive, ClosedDate From FinanceMain ");
+		selectSql.append(" Where MaturityDate >= :MaturityDate ");
+		selectSql.append(" ORDER BY FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+			finMains = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			return Collections.emptyList();
+		}
+
+		logger.debug("Leaving");
+		return finMains;
+	}
+
+	@Override
+	public List<FinanceMain> getFinListForAMZ(Date monthEndDate) {
+		logger.debug("Entering");
+
+		// get the finances list
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("MonthStartDate", DateUtility.getMonthStartDate(monthEndDate));
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FinReference, FinType, FinCcy, CustID, FinBranch, ");
+		selectSql.append(" FinStartDate, FinApprovedDate, MaturityDate, FinAssetValue, FinCurrAssetValue, FinAmount, ");
+		selectSql.append(" FinCategory, ProductCategory, FinStatus, ");
+		selectSql.append(" CalRoundingMode, RoundingTarget, ProfitDaysBasis, ");
+		selectSql.append(" ClosingStatus, FinIsActive, EntityCode, ClosedDate ");
+
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" WHERE MaturityDate >= :MonthStartDate ");
+
+		logger.debug("selectSql : " + selectSql.toString());
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public void updateAssignmentId(String finReference, long assignmentId) {
+		int recordCount = 0;
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinReference(finReference);
+		financeMain.setAssignmentId(assignmentId);
+
+		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
+		updateSql.append(" Set AssignmentId = :AssignmentId ");
+		updateSql.append(" Where FinReference = :FinReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public Map<String, Object> getGLSubHeadCodes(String finRef) {
+		logger.trace(Literal.ENTERING);
+
+		MapSqlParameterSource sqlScource = new MapSqlParameterSource();
+		sqlScource.addValue("FinReference", finRef);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("select FinReference, Entitycode, AlwFlexi, FinBranch, btloan, Businessvertical");
+		selectSql.append(", Emptype, Branchcity, fincollateralreq, FinDivision");
+		selectSql.append(" FROM  GL_SubHeadCodes_View Where FinReference = :FinReference");
+
+		try {
+			return this.jdbcTemplate.queryForMap(selectSql.toString(), sqlScource);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return new HashMap<String, Object>();
+
+	}
+
+	@Override
+	public int getCountByBlockedFinances(String finReference) {
+		logger.debug("Entering");
+
+		int count = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		StringBuilder sql = new StringBuilder("Select Count(*) from BlockedFinances");
+		sql.append(" Where FinReference = :FinReference ");
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (Exception e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+		return count;
+	}
+
+	@Override
+	public void updateFromReceipt(FinanceMain financeMain, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("update ");
+		sql.append(" FinanceMain");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set");
+		sql.append(" BankName = :BankName");
+		sql.append(", StepFinance = :StepFinance");
+		sql.append(", RepayAccountId = :RepayAccountId");
+		sql.append(", AccountsOfficer = :AccountsOfficer");
+		//sql.append(", DevName = :DevName");
+		sql.append(", PlanEMIHMax = :PlanEMIHMax");
+		sql.append(", ShariaStatus = :ShariaStatus");
+		sql.append(", RepayCpzFrq = :RepayCpzFrq");
+		sql.append(", WorkflowId = :WorkflowId");
+		sql.append(", UnPlanEMIHLockPeriod = :UnPlanEMIHLockPeriod");
+		sql.append(", NextRoleCode = :NextRoleCode");
+		sql.append(", GrcPftRate = :GrcPftRate");
+		sql.append(", AllowGrcRepay = :AllowGrcRepay");
+		sql.append(", GrcCpzFrq = :GrcCpzFrq");
+		sql.append(", NextRolloverDate = :NextRolloverDate");
+		sql.append(", LastRepayPftDate = :LastRepayPftDate");
+		sql.append(", NextGrcPftDate = :NextGrcPftDate");
+		sql.append(", RecalType = :RecalType");
+		sql.append(", AllowedDefRpyChange = :AllowedDefRpyChange");
+		//sql.append(", Rsa = :Rsa");
+		sql.append(", MinDownPayPerc = :MinDownPayPerc");
+		sql.append(", CustDSR = :CustDSR");
+		sql.append(", RvwRateApplFor = :RvwRateApplFor");
+		sql.append(", RateChgAnyDay = :RateChgAnyDay");
+		sql.append(", DownPayAccount = :DownPayAccount");
+		sql.append(", RcdMaintainSts = :RcdMaintainSts");
+		sql.append(", MaxReAgeHolidays = :MaxReAgeHolidays");
+		sql.append(", FinAccount = :FinAccount");
+		sql.append(", DepreciationFrq = :DepreciationFrq");
+		sql.append(", CustID = :CustID");
+		//sql.append(", CofRate = :CofRate");
+		sql.append(", RpyAdvPftRate = :RpyAdvPftRate");
+		sql.append(", CalTerms = :CalTerms");
+		//sql.append(", DropLineCalcOn = :DropLineCalcOn");
+		//sql.append(", ReqloanTenor = :ReqloanTenor");
+		sql.append(", FinAmount = :FinAmount");
+		sql.append(", UnPlanEMICpz = :UnPlanEMICpz");
+		sql.append(", PlanDeferCount = :PlanDeferCount");
+		sql.append(", PlanEMIHAlw = :PlanEMIHAlw");
+		sql.append(", CalMaturity = :CalMaturity");
+		sql.append(", DsaCode = :DsaCode");
+		sql.append(", Defferments = :Defferments");
+		//sql.append(", ProjectName = :ProjectName");
+		sql.append(", BpiAmount = :BpiAmount");
+		sql.append(", ApplicationNo = :ApplicationNo");
+		sql.append(", LegalRequired = :LegalRequired");
+		sql.append(", RoleCode = :RoleCode");
+		sql.append(", FinPurpose = :FinPurpose");
+		sql.append(", FinCurrAssetValue = :FinCurrAssetValue");
+		sql.append(", FinStsReason = :FinStsReason");
+		sql.append(", NextTaskId = :NextTaskId");
+		//sql.append(", SourChannelCategory = :SourChannelCategory");
+		sql.append(", GrcRateBasis = :GrcRateBasis");
+		sql.append(", LastRepayRvwDate = :LastRepayRvwDate");
+		sql.append(", RecordStatus = :RecordStatus");
+		//sql.append(", ReqLoanAmt = :ReqLoanAmt");
+		sql.append(", TotalGraceCpz = :TotalGraceCpz");
+		sql.append(", RpyMaxRate = :RpyMaxRate");
+		//sql.append(", AdvEMITerms = :AdvEMITerms");
+		sql.append(", RpyMinRate = :RpyMinRate");
+		sql.append(", AlwMultiDisb = :AlwMultiDisb");
+		sql.append(", NextRepayCpzDate = :NextRepayCpzDate");
+		sql.append(", FinRepaymentAmount = :FinRepaymentAmount");
+		sql.append(", GrcAdvPftRate = :GrcAdvPftRate");
+		sql.append(", DmaCode = :DmaCode");
+		sql.append(", ReqRepayAmount = :ReqRepayAmount");
+		sql.append(", MaxUnplannedEmi = :MaxUnplannedEmi");
+		sql.append(", ScheduleRegenerated = :ScheduleRegenerated");
+		sql.append(", GrcAdvMargin = :GrcAdvMargin");
+		sql.append(", FixedRateTenor = :FixedRateTenor");
+		sql.append(", DisbAccountId = :DisbAccountId");
+		sql.append(", GrcProfitDaysBasis = :GrcProfitDaysBasis");
+		sql.append(", DownPayBank = :DownPayBank");
+		sql.append(", LastDepDate = :LastDepDate");
+		sql.append(", DroplineFrq = :DroplineFrq");
+		sql.append(", FinStatus = :FinStatus");
+		sql.append(", NumberOfTerms = :NumberOfTerms");
+		//sql.append(", AlwAutoRateRvw = :AlwAutoRateRvw");
+		sql.append(", OverrideLimit = :OverrideLimit");
+		sql.append(", Version = :Version");
+		sql.append(", ScheduleMethod = :ScheduleMethod");
+		sql.append(", RpyAdvBaseRate = :RpyAdvBaseRate");
+		//sql.append(", PromotionSeqId = :PromotionSeqId");
+		//sql.append(", BaseProduct = :BaseProduct");
+		sql.append(", FirstRepay = :FirstRepay");
+		sql.append(", RepayProfitRate = :RepayProfitRate");
+		sql.append(", FinIsActive = :FinIsActive");
+		sql.append(", GrcPeriodEndDate = :GrcPeriodEndDate");
+		//sql.append(", Psl = :Psl");
+		//sql.append(", BureauTimeSeries = :BureauTimeSeries");
+		sql.append(", RpyAdvMargin = :RpyAdvMargin");
+		sql.append(", RepayRvwFrq = :RepayRvwFrq");
+		sql.append(", FinLimitRef = :FinLimitRef");
+		sql.append(", ProductCategory = :ProductCategory");
+		sql.append(", FinCustPftAccount = :FinCustPftAccount");
+		sql.append(", FinRepayPftOnFrq = :FinRepayPftOnFrq");
+		sql.append(", EmployeeName = :EmployeeName");
+		sql.append(", TDSApplicable = :TDSApplicable");
+		sql.append(", IncreasedCost = :IncreasedCost");
+		//sql.append(", EndGrcPeriodAftrFullDisb = :EndGrcPeriodAftrFullDisb");
+		sql.append(", Connector = :Connector");
+		sql.append(", AvailedDefRpyChange = :AvailedDefRpyChange");
+		sql.append(", ScheduleMaintained = :ScheduleMaintained");
+		sql.append(", LastRepayDate = :LastRepayDate");
+		sql.append(", LastRepay = :LastRepay");
+		sql.append(", ReqMaturity = :ReqMaturity");
+		//sql.append(", PMay = :PMay");
+		sql.append(", PastduePftMargin = :PastduePftMargin");
+		sql.append(", RepayFrq = :RepayFrq");
+		sql.append(", TotalCpz = :TotalCpz");
+		sql.append(", TotalGrossPft = :TotalGrossPft");
+		sql.append(", SecurityDeposit = :SecurityDeposit");
+		sql.append(", FinRepayMethod = :FinRepayMethod");
+		sql.append(", AllowRepayRvw = :AllowRepayRvw");
+		//sql.append(", TypeOfFacility = :TypeOfFacility");
+		sql.append(", TotalProfit = :TotalProfit");
+		//sql.append(", AlwStrtPrdHday = :AlwStrtPrdHday");
+		sql.append(", AvailedUnPlanEmi = :AvailedUnPlanEmi");
+		sql.append(", FinCategory = :FinCategory");
+		sql.append(", GrcPftRvwFrq = :GrcPftRvwFrq");
+		sql.append(", FinCommitmentRef = :FinCommitmentRef");
+		sql.append(", TotalGrossGrcPft = :TotalGrossGrcPft");
+		sql.append(", DownPaySupl = :DownPaySupl");
+		sql.append(", AllowGrcPeriod = :AllowGrcPeriod");
+		sql.append(", SalesDepartment = :SalesDepartment");
+		sql.append(", PlanEMICpz = :PlanEMICpz");
+		sql.append(", GrcMaxRate = :GrcMaxRate");
+		sql.append(", FirstDroplineDate = :FirstDroplineDate");
+		sql.append(", Iban = :Iban");
+		sql.append(", MandateID = :MandateID");
+		sql.append(", AvailedDefFrqChange = :AvailedDefFrqChange");
+		//sql.append(", StrtprdCpzMethod = :StrtprdCpzMethod");
+		sql.append(", CpzAtGraceEnd = :CpzAtGraceEnd");
+		sql.append(", StepPolicy = :StepPolicy");
+		sql.append(", AllowGrcCpz = :AllowGrcCpz");
+		//sql.append(", AlwFlexi = :AlwFlexi");
+		//sql.append(", CofCode = :CofCode");
+		sql.append(", NextRepayPftDate = :NextRepayPftDate");
+		sql.append(", AllowGrcPftRvw = :AllowGrcPftRvw");
+		//sql.append(", AllowSubvention = :AllowSubvention");
+		sql.append(", NextGrcPftRvwDate = :NextGrcPftRvwDate");
+		sql.append(", FinContractDate = :FinContractDate");
+		sql.append(", InvestmentRef = :InvestmentRef");
+		//sql.append(", OfferAmount = :OfferAmount");
+		sql.append(", PromotionCode = :PromotionCode");
+		sql.append(", FinPreApprovedRef = :FinPreApprovedRef");
+		sql.append(", LimitValid = :LimitValid");
+		sql.append(", NoOfSteps = :NoOfSteps");
+		sql.append(", FeeAccountId = :FeeAccountId");
+		sql.append(", DdaReferenceNo = :DdaReferenceNo");
+		sql.append(", SupplementRent = :SupplementRent");
+		sql.append(", RoundingTarget = :RoundingTarget");
+		sql.append(", LastRepayCpzDate = :LastRepayCpzDate");
+		//sql.append(", EndUse = :EndUse");
+		sql.append(", NextGrcCpzDate = :NextGrcCpzDate");
+		sql.append(", PlanEMIHMethod = :PlanEMIHMethod");
+		//sql.append(", PoSource = :PoSource");
+		sql.append(", AdvanceEMI = :AdvanceEMI");
+		sql.append(", AnualizedPercRate = :AnualizedPercRate");
+		sql.append(", FinCcy = :FinCcy");
+		sql.append(", TaskId = :TaskId");
+		sql.append(", BpiPftDaysBasis = :BpiPftDaysBasis");
+		sql.append(", StepType = :StepType");
+		sql.append(", WifReference = :WifReference");
+		sql.append(", InitiateDate = :InitiateDate");
+		//sql.append(", ProcessType = :ProcessType");
+		//sql.append(", OfferProduct = :OfferProduct");
+		sql.append(", FinApprovedDate = :FinApprovedDate");
+		sql.append(", GrcAdvBaseRate = :GrcAdvBaseRate");
+		//sql.append(", SourcingBranch = :SourcingBranch");
+		sql.append(", BpiTreatment = :BpiTreatment");
+		sql.append(", NextRepayDate = :NextRepayDate");
+		sql.append(", NextDepDate = :NextDepDate");
+		sql.append(", DroppingMethod = :DroppingMethod");
+		sql.append(", RepayBaseRate = :RepayBaseRate");
+		sql.append(", SchCalOnRvw = :SchCalOnRvw");
+		sql.append(", AvailedReAgeH = :AvailedReAgeH");
+		sql.append(", FeeChargeAmt = :FeeChargeAmt");
+		sql.append(", MigratedFinance = :MigratedFinance");
+		//sql.append(", Verification = :Verification");
+		sql.append(", FixedTenorRate = :FixedTenorRate");
+		sql.append(", LastMntOn = :LastMntOn");
+		//sql.append(", SurrogateType = :SurrogateType");
+		sql.append(", GrcMaxAmount = :GrcMaxAmount");
+		sql.append(", PlanEMIHLockPeriod = :PlanEMIHLockPeriod");
+		sql.append(", InitiateUser = :InitiateUser");
+		sql.append(", RepayPftFrq = :RepayPftFrq");
+		sql.append(", ProfitDaysBasis = :ProfitDaysBasis");
+		sql.append(", JointAccount = :JointAccount");
+		sql.append(", FinBranch = :FinBranch");
+		//sql.append(", StrtPrdHdays = :StrtPrdHdays");
+		sql.append(", GrcPftFrq = :GrcPftFrq");
+		sql.append(", FinSourceID = :FinSourceID");
+		sql.append(", EligibilityMethod = :EligibilityMethod");
+		sql.append(", CalRoundingMode = :CalRoundingMode");
+		//sql.append(", CustSegmentation = :CustSegmentation");
+		sql.append(", DeductFeeDisb = :DeductFeeDisb");
+		sql.append(", FinType = :FinType");
+		sql.append(", EffectiveRateOfReturn = :EffectiveRateOfReturn");
+		sql.append(", GraceTerms = :GraceTerms");
+		sql.append(", DownPayment = :DownPayment");
+		sql.append(", FinAssetValue = :FinAssetValue");
+		sql.append(", RolloverFrq = :RolloverFrq");
+		//sql.append(", AlwUnderConstruction = :AlwUnderConstruction");
+		sql.append(", InsuranceAmt = :InsuranceAmt");
+		sql.append(", FinRemarks = :FinRemarks");
+		sql.append(", Priority = :Priority");
+		//sql.append(", Rog = :Rog");
+		//sql.append(", ParentRef = :ParentRef");
+		sql.append(", AllowedDefFrqChange = :AllowedDefFrqChange");
+		sql.append(", DeviationApproval = :DeviationApproval");
+		sql.append(", ManualSchedule = :ManualSchedule");
+		//sql.append(", LeadSource = :LeadSource");
+		sql.append(", GraceBaseRate = :GraceBaseRate");
+		sql.append(", ReferralId = :ReferralId");
+		sql.append(", SamplingRequired = :SamplingRequired");
+		//sql.append(", ExistingLanRefNo = :ExistingLanRefNo");
+		sql.append(", AlwBPI = :AlwBPI");
+		sql.append(", AlwManualSteps = :AlwManualSteps");
+		sql.append(", GrcMargin = :GrcMargin");
+		sql.append(", RepayMargin = :RepayMargin");
+		sql.append(", RepayRateBasis = :RepayRateBasis");
+		sql.append(", LinkedFinRef = :LinkedFinRef");
+		//sql.append(", CampaignName = :CampaignName");
+		sql.append(", TotalRepayAmt = :TotalRepayAmt");
+		sql.append(", JointCustId = :JointCustId");
+		sql.append(", TakeOverFinance = :TakeOverFinance");
+		sql.append(", TotalGracePft = :TotalGracePft");
+		//sql.append(", LoanCategory = :LoanCategory");
+		sql.append(", RepaySpecialRate = :RepaySpecialRate");
+		sql.append(", RecordType = :RecordType");
+		sql.append(", FinCancelAc = :FinCancelAc");
+		sql.append(", ReAgeCpz = :ReAgeCpz");
+		sql.append(", GraceSpecialRate = :GraceSpecialRate");
+		//sql.append(", AlwRateChangeAnyDate = :AlwRateChangeAnyDate");
+		sql.append(", AllowRepayCpz = :AllowRepayCpz");
+		sql.append(", NextRepayRvwDate = :NextRepayRvwDate");
+		sql.append(", PlanEMIHMaxPerYear = :PlanEMIHMaxPerYear");
+		//sql.append(", FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw");
+		sql.append(", GrcSchdMthd = :GrcSchdMthd");
+		sql.append(", LastMntBy = :LastMntBy");
+		sql.append(", NextUserId = :NextUserId");
+		sql.append(", FinStartDate = :FinStartDate");
+		sql.append(", MaturityDate = :MaturityDate");
+		sql.append(", ClosingStatus = :ClosingStatus");
+		sql.append(", AccountType = :AccountType");
+		sql.append(", PftServicingODLimit = :PftServicingODLimit");
+		sql.append(", QuickDisb = :QuickDisb");
+		//sql.append(", FlexiType = :FlexiType");
+		//sql.append(", AutoIncGrcEndDate = :AutoIncGrcEndDate");
+		sql.append(", GrcMinRate = :GrcMinRate");
+		sql.append(", PastduePftCalMthd = :PastduePftCalMthd");
+		sql.append(", MMAId = :MMAId");
+		sql.append(", ReAgeBucket = :ReAgeBucket");
+		sql.append(" where FinReference = :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public FinanceMain isFlexiLoan(String finReference) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("SELECT FinReference, FinType, AlwFlexi, FlexiType From FinanceMain");
+		sql.append(" Where FinReference = :FinReference");
+
+		logger.debug("selectSql: " + sql.toString());
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif) {
+		logger.debug("Entering");
+
+		int count = 0;
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder("SELECT count(*) From ");
+		if (wif) {
+			sql.append("WifFinanceMain");
+		} else {
+			sql.append("FinanceMain");
+		}
+		sql.append(StringUtils.trimToEmpty(tempTab.getSuffix()));
+		sql.append(" Where FinReference = :FinReference");
+		sql.append(" and RCDMAINTAINSTS is null");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+
+		if (count > 0) {
+			return true;
+		}
+
+		logger.debug("Leaving");
+		return false;
+	}
+
+	@Override
+	public List<FinanceMain> getFinanceMainForLinkedLoans(long custId) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" Select T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
+		selectSql.append(" From FinanceMain T1");
+		selectSql.append(" where T1.CustId = :CustId");
+
+		source.addValue("CustId", custId);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		List<FinanceMain> finMains = new ArrayList<>();
+		try {
+			finMains = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			finMains = new ArrayList<>();
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return finMains;
+	}
+
+	@Override
+	public List<FinanceMain> getFinanceMainForLinkedLoans(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" Select T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
+		selectSql.append(" From FinanceMain T1");
+		selectSql.append(" Inner Join CollateralAssignment T2 On T2.Reference = T1.FinReference");
+		selectSql.append(" Where T2.COLLATERALREF In (select collateralref from COLLATERALASSIGNMENT ");
+		selectSql.append(" Where Reference = :Reference )");
+
+		source.addValue("Reference", finReference);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		List<FinanceMain> finMains = new ArrayList<>();
+		try {
+			finMains = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			finMains = new ArrayList<>();
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return finMains;
 	}
 }

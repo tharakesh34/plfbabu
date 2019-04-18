@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinanceRepaymentsDAOImpl.java                                                   * 	  
+ * FileName    		:  FinanceRepaymentsDAOImpl.java                                        * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -46,6 +46,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -77,7 +78,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		source.addValue("ReceiptID", receiptID);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount ,PaidGST, WaivedAmount ");
+				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,TypeDesc ");
 		}
@@ -125,9 +126,9 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		insertSql.append("Insert Into ReceiptAllocationDetail");
 		insertSql.append(tableType.getSuffix());
 		insertSql.append(
-				" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , PaidGST, WaivedAmount)");
+				" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST,TotalDue)");
 		insertSql.append(
-				" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount ,:PaidGST, :WaivedAmount)");
+				" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount, :WaiverAccepted, :PaidGST,:TotalDue)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -148,7 +149,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 		StringBuilder selectSql = new StringBuilder(" Select ");
 		selectSql.append(" T2.ReceiptAllocationid, T2.ReceiptID, T2.AllocationID, T2.AllocationType,");
-		selectSql.append(" T2.AllocationTo, T2.PaidAmount, T2.PaidGST, T2.WaivedAmount ");
+		selectSql.append(" T2.AllocationTo, T2.PaidAmount, T2.PaidGST, T2.WaivedAmount,T2.TotalDue");
 		selectSql.append(" From FINRECEIPTHEADER");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" T1");
@@ -169,7 +170,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 					.newInstance(ReceiptAllocationDetail.class);
 			allocations = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
-			//
+			logger.error(e);
 		}
 
 		logger.debug("Leaving");
@@ -177,4 +178,34 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 	}
 
+	@Override
+	public List<ReceiptAllocationDetail> getManualAllocationsByRef(String finReference, long curReceiptID) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+		source.addValue("ReceiptID", curReceiptID);
+
+		StringBuilder selectSql = new StringBuilder("");
+		selectSql.append(" Select RAD.AllocationType AllocationType, SUM(RAD.PaidAmount) PaidAmount, ");
+		selectSql.append(" SUM(RAD.WaivedAmount) WaivedAmount, SUM(RAD.PaidGST) PaidGST ");
+		selectSql.append(" FROM RECEIPTALLOCATIONDETAIL_TEMP RAD ");
+		selectSql.append(" INNER JOIN FINRECEIPTHEADER_TEMP RCH ON RAD.RECEIPTID = RCH.RECEIPTID ");
+		selectSql.append(" Where RCH.Reference = :Reference AND RCH.ReceiptID <> :ReceiptID");
+		selectSql.append(" AND RCH.ALLOCATIONTYPE = 'M' AND RCH.CANCELREASON IS NULL ");
+		selectSql.append(" GROUP BY RAD.AllocationType ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptAllocationDetail.class);
+
+		List<ReceiptAllocationDetail> radList = null;
+
+		try {
+			radList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		logger.debug("Leaving");
+		return radList;
+	}
 }

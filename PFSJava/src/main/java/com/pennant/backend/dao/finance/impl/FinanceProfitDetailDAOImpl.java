@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.MonthlyAccumulateDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -964,6 +966,190 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public Date getFirstRePayDateByFinRef(String finReference) {
+		logger.debug("Entering");
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		Date accruedAmount = null;
+
+		StringBuilder selectSql = new StringBuilder(" SELECT FIRSTREPAYDATE FROM FINPFTDETAILS");
+		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
+
+		paramMap.addValue("FINREFERENCE", finReference);
+		logger.debug("selectSql: " + selectSql.toString());
+
+		try {
+			accruedAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), paramMap, Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return accruedAmount;
+	}
+
+	@Override
+	public BigDecimal getMaxRpyAmount(String finReference) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT MaxRpyAmount  FROM  Finpftdetails");
+		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
+		source.addValue("FINREFERENCE", finReference);
+
+		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+	}
+
+	@Override
+	public BigDecimal getGoldPOSByCustCif(String custCif, String promotionCode, String repledgeRef) {
+		logger.debug("Entering");
+
+		BigDecimal posBal = null;
+
+		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
+		beanParameters.addValue("CustCIF", custCif);
+		beanParameters.addValue("ProductCategory", FinanceConstants.PRODUCT_GOLD);
+		beanParameters.addValue("PromotionCode", promotionCode);
+		beanParameters.addValue("FinReference", repledgeRef);
+
+		StringBuilder selectSql = new StringBuilder("Select SUM(P.TotalPriBal) POSBAL ");
+		selectSql.append(" From FinPftDetails P INNER JOIN FINANCEMAIN F ON P.FinReference = F.FinReference ");
+		selectSql.append("  Where P.CustCIF =:CustCIF AND F.ProductCategory = :ProductCategory AND F.FinIsActive = 1 ");
+		if (StringUtils.isNotBlank(promotionCode)) {
+			selectSql.append(" AND F.PromotionCode=:PromotionCode ");
+		}
+		if (StringUtils.isNotBlank(repledgeRef)) {
+			selectSql.append(" AND F.FinReference!=:FinReference ");
+		}
+
+		logger.debug("selectSql: " + selectSql.toString());
+		try {
+			posBal = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			posBal = BigDecimal.ZERO;
+		}
+
+		if (posBal == null) {
+			posBal = BigDecimal.ZERO;
+		}
+
+		logger.debug("Leaving");
+		return posBal;
+	}
+
+	@Override
+	public List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder("Select FinReference, NSCHDPRI , NSCHDPFT, CURODDAYS");
+		selectSql.append(" From FinPftDetails");
+		selectSql.append(" WHERE FinReference IN (:FinReference) ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finRefList);
+
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceProfitDetail.class);
+
+		List<FinanceProfitDetail> finPftDetails = new ArrayList<>();
+		try {
+			finPftDetails = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			finPftDetails = new ArrayList<>();
+		}
+
+		logger.debug("Leaving");
+
+		return finPftDetails;
+	}
+
+	@Override
+	public void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails) {
+
+		StringBuilder updateSql = new StringBuilder("Update FinPftDetails Set");
+		updateSql.append(" AssignBPI1 = :AssignBPI1, AssignBPI2 = :AssignBPI2 ");
+		updateSql.append(" Where FinReference = :FinReference");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+	}
+
+	@Override
+	public List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart) {
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, ");
+		selectSql.append(" TotalPriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, ");
+		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, ");
+		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp, ");
+		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ");
+		selectSql.append(" ClosingStatus, FinCategory, TotalWriteoff, ");
+		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, MaturityDate, LatestRpyDate ");
+
+		selectSql.append(" From FinPftDetails");
+		selectSql.append(" Where MaturityDate >= :MaturityDate ");
+
+		//logger.debug("selectSql: " + selectSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("MaturityDate", curMonthStart);
+
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceProfitDetail.class);
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
+
+		FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
+		finProfitDetails.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select FinReference, CustId, FinBranch, FinType, FinCcy, LastMdfDate, FinIsActive, ");
+		selectSql.append(" TotalPriSchd, TotalPftSchd, TotalPftCpz, TotalPftPaid, TotalPftBal, ");
+		selectSql.append(" TotalPriPaid, TotalPriBal, TdSchdPft, TdPftCpz, TdSchdPftPaid, ");
+		selectSql.append(" TdSchdPftBal, PftAccrued, PftAccrueSusp, PftAmz, PftAmzSusp, ");
+		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ");
+		selectSql.append(" ClosingStatus, FinCategory, TotalWriteoff, ");
+		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, MaturityDate, LatestRpyDate ");
+
+		selectSql.append(" From FinPftDetails");
+		selectSql.append(" Where FinReference = :FinReference");
+
+		//logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
+		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceProfitDetail.class);
+
+		try {
+			finProfitDetails = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			finProfitDetails = null;
+		}
+		return finProfitDetails;
+	}
+
+	@Override
+	public void updateAMZMethod(String finReference, String amzMethod) {
+
+		StringBuilder updateSql = new StringBuilder(" Update FinPftDetails");
+		updateSql.append(" Set AMZMethod = :AMZMethod Where FinReference = :FinReference");
+		logger.debug("updateSql: " + updateSql.toString());
+
+		MapSqlParameterSource beanParameters = new MapSqlParameterSource();
+		beanParameters.addValue("FinReference", finReference);
+		beanParameters.addValue("AMZMethod", amzMethod);
+
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 	}
 
 }

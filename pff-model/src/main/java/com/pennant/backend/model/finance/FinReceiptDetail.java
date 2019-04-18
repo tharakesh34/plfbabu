@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,11 +13,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.pennant.backend.model.Entity;
-
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinReceiptDetail implements Entity {
-
+public class FinReceiptDetail implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private long receiptID = 0; // Only setting from Receipt Header
 	private long receiptSeqID = 0; // Auto Generated
 	private String receiptType;
@@ -62,7 +61,10 @@ public class FinReceiptDetail implements Entity {
 	private String receiptPurpose;
 	private ReceiptTaxDetail receiptTaxDetail;
 	private List<FinRepayHeader> repayHeaders = new ArrayList<FinRepayHeader>(1);
+	private FinRepayHeader repayHeader = new FinRepayHeader();
 	private List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>(1);
+	private BigDecimal partialPaidAMount = BigDecimal.ZERO;
+	private BigDecimal dueAmount = BigDecimal.ZERO;
 
 	public HashMap<String, Object> getDeclaredFieldValues() {
 		HashMap<String, Object> receiptDetailMap = new HashMap<String, Object>();
@@ -90,6 +92,23 @@ public class FinReceiptDetail implements Entity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("noReserve");
 		excludeFields.add("receiptPurpose");
+		excludeFields.add("bankCodeDesc");
+		excludeFields.add("delRecord");
+		excludeFields.add("feeTypeCode");
+		excludeFields.add("feeTypeDesc");
+		excludeFields.add("fundingAcCode");
+		excludeFields.add("fundingAcDesc");
+		excludeFields.add("logKey");
+		excludeFields.add("partialPaidAMount");
+		excludeFields.add("partnerBankAc");
+		excludeFields.add("partnerBankAcType");
+		excludeFields.add("reference");
+		excludeFields.add("receiptTaxDetail");
+		excludeFields.add("repayHeaders");
+		excludeFields.add("repayHeader");
+		excludeFields.add("advMovements");
+		excludeFields.add("dueAmount");
+		excludeFields.add("payOrder");
 		return excludeFields;
 	}
 
@@ -97,17 +116,14 @@ public class FinReceiptDetail implements Entity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	@Override
 	public boolean isNew() {
 		return false;
 	}
 
-	@Override
 	public long getId() {
 		return receiptSeqID;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.receiptSeqID = id;
 	}
@@ -400,4 +416,27 @@ public class FinReceiptDetail implements Entity {
 		this.receiptTaxDetail = receiptTaxDetail;
 	}
 
+	public BigDecimal getPartialPaidAMount() {
+		return partialPaidAMount;
+	}
+
+	public void setPartialPaidAMount(BigDecimal partialPaidAMount) {
+		this.partialPaidAMount = partialPaidAMount;
+	}
+
+	public BigDecimal getDueAmount() {
+		return dueAmount;
+	}
+
+	public void setDueAmount(BigDecimal dueAmount) {
+		this.dueAmount = dueAmount;
+	}
+
+	public FinRepayHeader getRepayHeader() {
+		return repayHeader;
+	}
+
+	public void setRepayHeader(FinRepayHeader repayHeader) {
+		this.repayHeader = repayHeader;
+	}
 }

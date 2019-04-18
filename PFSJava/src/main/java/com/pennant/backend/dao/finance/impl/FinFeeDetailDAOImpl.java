@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +56,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
@@ -194,7 +196,13 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		logger.debug(Literal.LEAVING);
 
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return new ArrayList<FinFeeDetail>();
 	}
 
 	/**
@@ -606,6 +614,33 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			throw new ConcurrencyException();
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference, String type) {
+		logger.debug("Entering");
+
+		long feeTypeId = Long.MIN_VALUE;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT feeTypeID From FinFeeDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode and FinReference =:FinReference and FinEvent != :FinEvent");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FeeTypeCode", feeTypeCode);
+		source.addValue("FinReference", finReference);
+		source.addValue("FinEvent", AccountEventConstants.ACCEVENT_VAS_FEE);
+
+		try {
+			feeTypeId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			feeTypeId = Long.MIN_VALUE;
+		}
+
+		logger.debug("Leaving");
+
+		return feeTypeId;
 	}
 
 	@Override

@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -75,7 +76,7 @@ public interface FinFeeDetailService {
 	List<AuditDetail> validate(List<FinFeeDetail> finFeeDetails, long workflowId, String method, String auditTranType,
 			String usrLanguage, boolean isWIF);
 
-	List<FinReceiptDetail> getFinReceiptDetais(String finReference);
+	List<FinReceiptDetail> getFinReceiptDetais(String finReference, long custId);
 
 	List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type);
 
@@ -86,11 +87,13 @@ public interface FinFeeDetailService {
 			String auditTranType);
 
 	List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType,
-			String finReference);
+			String finReference, long custId);
 
 	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String auditTranType);
 
-	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map);
+	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map, long custId);
+
+	long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference);
 
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
@@ -121,5 +124,9 @@ public interface FinFeeDetailService {
 	HashMap<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
 
 	boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee);
+
+	BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId);
+
+	Branch getBranchById(String branchCode, String type);
 
 }

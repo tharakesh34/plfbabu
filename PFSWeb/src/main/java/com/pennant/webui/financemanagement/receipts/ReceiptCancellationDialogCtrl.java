@@ -88,6 +88,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -95,10 +96,9 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.rulefactory.RuleService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -118,7 +118,6 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 /**
@@ -142,6 +141,9 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Textbox finCcy;
 	protected Textbox finBranch;
 	protected Textbox custCIF;
+	protected Datebox nextInstResetDate;
+	protected Label label_ReceiptCancellationDialog_NextInstResetDate;
+	protected Hbox hbox_ReceiptCancellationDialog_NextInstResetDate;
 
 	protected Combobox receiptPurpose;
 	protected Combobox excessAdjustTo;
@@ -167,10 +169,10 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Uppercasebox transactionRef;
 	protected AccountSelectionBox chequeAcNo;
 	protected ExtendedCombobox fundingAccount;
+	protected Label label_ReceiptCancellationDialog_FundingAccount;
 	protected Datebox receivedDate;
 	protected Textbox remarks;
 	protected Label label_ReceiptCancellationDialog_BounceDate;
-	protected Label label_ReceiptCancellationDialog_FundingAccount;
 	protected Hbox hbox_ReceiptCancellationDialog_BounceDate;
 	protected Datebox bounceDate;
 
@@ -220,12 +222,25 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	private FinReceiptHeader receiptHeader = null;
 	private ReceiptCancellationListCtrl receiptCancellationListCtrl;
 	private ReceiptCancellationService receiptCancellationService;
-	private CustomerDetailsService customerDetailsService;
-	private FinanceDetailService financeDetailService;
 	private RuleService ruleService;
 	private RuleExecutionUtil ruleExecutionUtil;
-	private NotificationService notificationService;
 	private String module;
+
+	protected Textbox receiptId;
+	protected Textbox promotionCode;
+	protected Textbox payment_receiptId;
+	protected Textbox payment_promotionCode;
+	protected Textbox posting_receiptId;
+	protected Textbox posting_promotionCode;
+
+	protected Groupbox groupbox_Finance;
+	protected Groupbox groupbox_Customer;
+	protected Groupbox groupbox_Other;
+	protected ExtendedCombobox custID;
+	protected Textbox reference;
+	protected ExtendedCombobox postBranch;
+	protected ExtendedCombobox cashierBranch;
+	protected ExtendedCombobox finDivision;
 
 	/**
 	 * default constructor.<br>
@@ -313,6 +328,10 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			doReadonly();
 			if (StringUtils.isNotBlank(receiptHeader.getRecordType())) {
 				this.btnNotes.setVisible(true);
+			}
+			if (StringUtils.equals(FinanceConstants.PRODUCT_GOLD, receiptHeader.getProductCategory())) {
+				this.label_ReceiptCancellationDialog_NextInstResetDate.setVisible(true);
+				this.hbox_ReceiptCancellationDialog_NextInstResetDate.setVisible(true);
 			}
 
 			//Reset Finance Repay Header Details
@@ -410,14 +429,66 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		this.bounceCode.setModuleName("BounceReason");
 		this.bounceCode.setMandatoryStyle(true);
-		this.bounceCode.setValueColumn("BounceCode");
-		this.bounceCode.setValueType(DataType.STRING);
+		this.bounceCode.setValueColumn("BounceID");
+		this.bounceCode.setValueType(DataType.LONG);
 		this.bounceCode.setDescColumn("Reason");
 		this.bounceCode.setDisplayStyle(2);
-		this.bounceCode.setValidateColumns(new String[] { "BounceCode", "Lovdesccategory", "Reason" });
+		this.bounceCode.setValidateColumns(new String[] { "BounceID", "BounceCode", "Lovdesccategory", "Reason" });
 
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
+
+		this.nextInstResetDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.custID.setModuleName("Customer");
+		this.custID.setMandatoryStyle(true);
+		this.custID.setValueColumn("CustCIF");
+		this.custID.setDescColumn("CustShrtName");
+		this.custID.setDisplayStyle(2);
+		this.custID.setValidateColumns(new String[] { "CustCIF" });
+
+		if (RepayConstants.RECEIPTTO_FINANCE.equals(this.receiptHeader.getRecAgainst())) {
+			this.fundingAccount.setModuleName("FinTypePartner");
+			this.fundingAccount.setMandatoryStyle(true);
+			this.fundingAccount.setValueColumn("PartnerBankID");
+			this.fundingAccount.setDescColumn("PartnerBankCode");
+			this.fundingAccount.setValueType(DataType.LONG);
+			this.fundingAccount.setDisplayStyle(2);
+			this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
+			this.groupbox_Finance.setVisible(true);
+		} else {
+			this.fundingAccount.setModuleName("PartnerBank");
+			this.fundingAccount.setValueColumn("PartnerBankId");
+			this.fundingAccount.setDescColumn("PartnerBankCode");
+			this.fundingAccount.setValidateColumns(
+					new String[] { "PartnerBankId", "PartnerBankCode", "PartnerBankName", "BankCode" });
+			this.fundingAccount.setMandatoryStyle(true);
+
+			if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
+				this.groupbox_Customer.setVisible(true);
+			} else if (RepayConstants.RECEIPTTO_OTHER.equals(this.receiptHeader.getRecAgainst())) {
+				this.groupbox_Other.setVisible(true);
+				this.reference.setMaxlength(20);
+			}
+		}
+
+		//Post Branch
+		this.postBranch.setModuleName("Branch");
+		this.postBranch.setValueColumn("BranchCode");
+		this.postBranch.setDescColumn("BranchDesc");
+		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		//Cashier Branch
+		this.cashierBranch.setModuleName("Branch");
+		this.cashierBranch.setValueColumn("BranchCode");
+		this.cashierBranch.setDescColumn("BranchDesc");
+		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		//Fin Division
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
 
 		logger.debug("Leaving");
 	}
@@ -449,6 +520,12 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		readOnlyComponent(true, this.transactionRef);
 		readOnlyComponent(true, this.receivedDate);
 		readOnlyComponent(true, this.remarks);
+
+		readOnlyComponent(true, this.custID);
+		readOnlyComponent(true, this.reference);
+		readOnlyComponent(true, this.cashierBranch);
+		readOnlyComponent(true, this.postBranch);
+		readOnlyComponent(true, this.finDivision);
 
 		logger.debug("Leaving");
 	}
@@ -520,8 +597,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-				this.fundingAccount.setVisible(false);
-				this.label_ReceiptCancellationDialog_FundingAccount.setVisible(false);
 
 			} else {
 				this.row_favourNo.setVisible(false);
@@ -606,11 +681,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			}
 			bounce.setReceiptID(aReceiptHeader.getReceiptID());
 			try {
-				//if bouncode is empty
-				if (!StringUtils.isEmpty(this.bounceCode.getValidatedValue())) {
-					bounce.setBounceID((Long) this.bounceCode.getAttribute("id"));
-				}
-
+				bounce.setBounceID(Long.valueOf(this.bounceCode.getValue()));
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
@@ -670,42 +741,25 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				if (StringUtils.isBlank(aReceiptHeader.getNextTaskId())) {
 					aReceiptHeader.setNextRoleCode("");
 				}
+
+				/*
+				 * boolean isCancel = false; if (!StringUtils.equals(PennantConstants.RCD_STATUS_SAVED,
+				 * aReceiptHeader.getRecordStatus()) && StringUtils.equals(this.module,
+				 * RepayConstants.MODULETYPE_CANCEL)) { isCancel = true; }
+				 */
+
+				String ref = null;
+				if (this.groupbox_Customer.isVisible()) {
+					ref = this.custID.getValue();
+				} else if (this.groupbox_Other.isVisible()) {
+					ref = this.reference.getValue();
+				} else if (this.groupbox_Finance.isVisible()) {
+					ref = this.finReference.getValue();
+				}
+
 				String msg = PennantApplicationUtil.getSavingStatus(aReceiptHeader.getRoleCode(),
-						aReceiptHeader.getNextRoleCode(), aReceiptHeader.getReference(), " Finance ",
-						aReceiptHeader.getRecordStatus());
+						aReceiptHeader.getNextRoleCode(), ref, " Finance ", aReceiptHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
-
-				//Mail Alert Notification for Customer/Dealer/Provider...etc
-				/*if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-					Notification notification = new Notification();
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
-
-					notification.setModule(FinanceConstants.FINSER_EVENT_RECEIPT);
-					notification.setSubModule(FinanceConstants.FINSER_EVENT_RECEIPT);
-					notification.setKeyReference(aReceiptHeader.getReference());
-					notification.setStage(aReceiptHeader.getRoleCode());
-					notification.setReceivedBy(getUserWorkspace().getUserId());
-					
-					FinanceDetail detail = new FinanceDetail();
-					// Finance Main Details
-					detail.getFinScheduleData().setFinanceMain(getFinanceDetailService().getFinanceMain(aReceiptHeader.getReference(), "_AView"));
-					// Customer Details
-					detail.setCustomerDetails(getCustomerDetailsService().getCustomerById(aReceiptHeader.getCustID()));
-					
-					FinReceiptData receiptData = new FinReceiptData();
-					receiptData.setFinanceDetail(detail);
-					receiptData.setReceiptHeader(aReceiptHeader);
-					try {
-						notificationService.sendNotifications(notification, receiptData, aReceiptHeader.getFinType(),
-								null);
-					} catch (Exception e) {
-						logger.debug(Literal.EXCEPTION, e);
-
-					}
-
-				}*/
 
 				refreshList();
 				closeDialog();
@@ -729,7 +783,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			BounceReason bounceReason = (BounceReason) dataObject;
 			if (bounceReason != null) {
 				HashMap<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
-				this.bounceCode.setAttribute("id", bounceReason.getBounceID());
+
 				if (this.receiptHeader != null) {
 					if (this.receiptHeader.getReceiptDetails() != null
 							&& !this.receiptHeader.getReceiptDetails().isEmpty()) {
@@ -743,10 +797,24 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					}
 				}
 
+				Map<String, Object> eventMapping = null;
 				Rule rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
 				BigDecimal bounceAmt = BigDecimal.ZERO;
 				int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
+				eventMapping = receiptCancellationService.getGLSubHeadCodes(receiptHeader.getReference());
 				if (rule != null) {
+
+					if (eventMapping != null) {
+						executeMap.put("emptype", eventMapping.get("Emptype"));
+						executeMap.put("branchcity", eventMapping.get("Branchcity"));
+						executeMap.put("fincollateralreq", eventMapping.get("fincollateralreq"));
+						executeMap.put("btloan", eventMapping.get("btloan"));
+						executeMap.put("ae_businessvertical", eventMapping.get("Businessvertical"));
+						BigDecimal alwFlexi = (BigDecimal) eventMapping.get("AlwFlexi");
+						executeMap.put("ae_alwflexi", alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+						executeMap.put("ae_finbranch", eventMapping.get("FinBranch"));
+						executeMap.put("ae_entitycode", eventMapping.get("Entitycode"));
+					}
 					executeMap.put("br_finType", getReceiptHeader().getFinType());
 					bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
 							getReceiptHeader().getFinCcy(), RuleReturnType.DECIMAL);
@@ -781,9 +849,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		}
 
 		if (!this.bounceDate.isDisabled()) {
-			this.bounceDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_ReceiptCancellationDialog_BounceDate.value"), true,
-							getReceiptHeader().getReceiptDate(), true, true));
+			this.bounceDate.setConstraint(new PTDateValidator(
+					Labels.getLabel("label_ReceiptCancellationDialog_BounceDate.value"), true, null, null, true));
 		}
 
 		logger.debug("Leaving");
@@ -823,6 +890,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		;
 		this.custCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 		int finFormatter = CurrencyUtil.getFormat(header.getFinCcy());
+		this.nextInstResetDate.setValue(header.getNextRepayRvwDate());
 		this.remarks.setValue(header.getRemarks());
 
 		fillComboBox(this.receiptPurpose, header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(), "");
@@ -846,8 +914,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		}
 		ManualAdvise bounceReason = header.getManualAdvise();
 		if (bounceReason != null) {
-			this.bounceCode.setAttribute("id", bounceReason.getBounceID());
-			this.bounceCode.setValue(bounceReason.getBounceCode(), bounceReason.getBounceCodeDesc());
+			this.bounceCode.setValue(String.valueOf(bounceReason.getBounceID()), bounceReason.getBounceCode());
 			this.bounceCharge
 					.setValue(PennantApplicationUtil.formateAmount(bounceReason.getAdviseAmount(), finFormatter));
 			this.bounceRemarks.setValue(bounceReason.getRemarks());
@@ -908,6 +975,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					this.receivedDate.setValue(receiptDetail.getReceivedDate());
 
 					isReceiptModeDetail = true;
+				}
+				if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_CASH, receiptDetail.getPaymentType())
+						&& StringUtils.equals(FinanceConstants.PRODUCT_GOLD, receiptHeader.getProductCategory())) {
+					this.fundingAccount.setVisible(false);
+					this.label_ReceiptCancellationDialog_FundingAccount.setVisible(false);
 				}
 
 				// If Bounce Process and not a Receipt Mode Record then Continue process
@@ -970,6 +1042,25 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			// Posting Details
 			this.postingDetailsTab.addForward(Events.ON_SELECT, this.window_ReceiptCancellationDialog,
 					"onSelectPostingsTab");
+		}
+		this.receiptId.setValue(String.valueOf(header.getReceiptID()));
+		this.promotionCode.setValue(header.getPromotionCode());
+
+		this.payment_receiptId.setValue(String.valueOf(header.getReceiptID()));
+		this.payment_promotionCode.setValue(header.getPromotionCode());
+
+		this.postBranch.setValue(header.getPostBranch(), header.getPostBranchDesc());
+		this.cashierBranch.setValue(header.getCashierBranch(), header.getCashierBranchDesc());
+		this.finDivision.setValue(header.getFinDivision(), header.getFinDivisionDesc());
+
+		if (this.groupbox_Finance.isVisible()) {
+			readOnlyComponent(true, this.postBranch);
+			readOnlyComponent(true, this.finDivision);
+		} else if (this.groupbox_Customer.isVisible()) {
+			this.custID.setAttribute("custID", header.getReference());
+			this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
+		} else if (this.groupbox_Other.isVisible()) {
+			this.reference.setValue(header.getReference());
 		}
 
 		this.recordStatus.setValue(header.getRecordStatus());
@@ -1038,12 +1129,49 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		this.posting_finReference.setValue(header.getReference());
 		this.posting_finCcy.setValue(header.getFinCcy() + "-" + header.getFinCcyDesc());
 		this.posting_finBranch.setValue(header.getFinBranch() + "-" + header.getFinBranchDesc());
-		;
 		this.posting_CustCIF.setValue(header.getCustCIF() + "-" + header.getCustShrtName());
 
+		this.posting_receiptId.setValue(String.valueOf(header.getReceiptID()));
+		this.posting_promotionCode.setValue(header.getPromotionCode());
+
+		boolean isBounceProcess = false;
+		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_BOUNCE)) {
+			isBounceProcess = true;
+		}
+
+		// Identifying Transaction List
+		List<Long> tranIdList = new ArrayList<>();
+		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
+			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+
+				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
+				boolean isReceiptModeDetail = false;
+
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+
+					isReceiptModeDetail = true;
+				}
+
+				// If Bounce Process and not a Receipt Mode Record then Continue process
+				if (isBounceProcess && !isReceiptModeDetail) {
+					continue;
+				}
+
+				// List out all Transaction Id's
+				List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
+				for (int j = 0; j < repayHeaderList.size(); j++) {
+					tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
+				}
+			}
+		}
+
 		// Posting Details Rendering
-		List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByPostRef(header.getReceiptID());
-		doFillPostings(postings);
+		if (!tranIdList.isEmpty()) {
+			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByTranIdList(tranIdList);
+			doFillPostings(postings);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1495,6 +1623,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		FinReceiptHeader aReceiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
+		FinReceiptData receiptData = new FinReceiptData();
+		receiptData.setReceiptHeader(aReceiptHeader);
+
+		auditHeader.getAuditDetail().setModelData(receiptData);
+
 		try {
 
 			while (retValue == PennantConstants.porcessOVERIDE) {
@@ -1611,26 +1744,6 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
 	}
 
 }

@@ -54,6 +54,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -74,6 +75,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -177,6 +179,9 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	Date dateValueDate = DateUtility.getAppValueDate();
 	private boolean isInquiry = false;
 	private transient BigDecimal paidAmount = new BigDecimal(0);
+	
+	@Autowired
+	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * default constructor.<br>
@@ -1336,8 +1341,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 		try {
 
-			FinanceMain financeMain = getRecoveryPostingsUtil().getFinanceMainDAO()
-					.getFinanceMainById(getOverdueChargeRecovery().getFinReference(), "", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(getOverdueChargeRecovery().getFinReference(),
+					"", false);
 			Date dateValueDate = DateUtility.getAppValueDate();
 			Date SchdDate = getOverdueChargeRecovery().getFinODSchdDate();
 			String finODFor = getOverdueChargeRecovery().getFinODFor();

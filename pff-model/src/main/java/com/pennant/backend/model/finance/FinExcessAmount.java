@@ -19,7 +19,7 @@ public class FinExcessAmount implements java.io.Serializable {
 	public FinExcessAmount() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("rcdAction");
@@ -101,5 +101,5 @@ public class FinExcessAmount implements java.io.Serializable {
 	public void setRcdAction(String rcdAction) {
 		this.rcdAction = rcdAction;
 	}
-	
+
 }

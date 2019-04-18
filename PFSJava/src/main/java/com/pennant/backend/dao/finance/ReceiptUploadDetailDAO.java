@@ -48,20 +48,22 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 
 public interface ReceiptUploadDetailDAO {
 
-	long save(ReceiptUploadDetail receiptUploadDetail );
+	long save(ReceiptUploadDetail receiptUploadDetail);
 
 	void delete(long id);
-	
-	List<ReceiptUploadDetail> getUploadReceiptDetails(long id);
-	
-	void updateStatusOFList(List<ReceiptUploadDetail> receiptUploadDetailList);
+
+	List<ReceiptUploadDetail> getUploadReceiptDetails(long id, boolean getsuccessRecords);
+
+	void updateStatus(ReceiptUploadDetail receiptUploadDetailList);
 
 	void updateReceiptId(long uploadDetailId, long receiptID);
 
 	void updateRejectStatusById(String id, String errorMsg);
 
 	String getLoanReferenc(String finReference, String fileName);
-	
+
 	List<Long> getListofReceiptUploadDetails(long uploadHeaderId);
+
+	ReceiptUploadDetail getUploadReceiptDetail(long headerID, long detailID);
 
 }

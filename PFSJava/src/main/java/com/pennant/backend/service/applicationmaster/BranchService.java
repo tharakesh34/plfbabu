@@ -69,4 +69,6 @@ public interface BranchService {
 	List<Branch> getBrachDetailsByBranchCode(List<String> finBranches);
 
 	boolean getUnionTerrotory(String cpProvince);
+
+	String getBranchDesc(String id);
 }

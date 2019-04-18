@@ -1,3 +1,50 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ *******************************************************************************************************
+ *                                 FILE HEADER                                              			*
+ *******************************************************************************************************
+ *
+ * FileName    		:  FeeDetailService.java															*                           
+ *                                                                    
+ * Author      		:  PENNANT TECHONOLOGIES															*
+ *                                                                  
+ * Creation Date    :  11-07-2017																		*
+ *                                                                  
+ * Modified Date    :  11-07-2018																		*
+ *                                                                  
+ * Description 		:												 									*                                 
+ *                                                                                          
+ ********************************************************************************************************
+ * Date             Author                   Version      Comments                          			*
+ ********************************************************************************************************
+ * 11-07-2018       Pennant	                 0.1                                            			*	 
+ *                                                                                          			* 
+ * 11-07-2018       Satya	                 0.2          PSD - Ticket : 127846							*
+ * 														  Changes related to Fees calculation for the 	*
+ * 														  selection type DropLinePOS.			 		*
+ * 																										* 
+ *                                                                                          			* 
+ *                                                                                          			* 
+ *                                                                                          			* 
+ *                                                                                          			* 
+ *                                                                                          			* 
+ *                                                                                   					*
+ *                                                                                          			*
+ *                                                                                          			* 
+ ********************************************************************************************************
+ */
 package com.pennant.backend.service.fees;
 
 import java.lang.reflect.InvocationTargetException;
@@ -551,7 +598,7 @@ public class FeeDetailService {
 
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
-		setFinFeeDetailList(convertToFinanceFees(financeDetail, finReference, gstExecutionMap));
+		setFinFeeDetailList(convertToFinanceFees(financeDetail.getFinTypeFeesList(), finReference));
 		List<FinFeeDetail> finTypeFees = getFinFeeDetailList();
 		List<FinFeeDetail> actualFinFeeList = prepareActualFinFees(finTypeFees, finScheduleData.getFinFeeDetailList());
 		setFinFeeDetailList(actualFinFeeList);
@@ -574,11 +621,11 @@ public class FeeDetailService {
 
 		// Execute fee rules if exists
 		if (feeRuleCodes.size() > 0) {
-			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes, enquiry, gstExecutionMap);
+			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes, enquiry, new HashMap<>());
 		}
 
 		// calculate fee percentage if exists
-		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry, gstExecutionMap);
+		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry, new HashMap<>());
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
@@ -1129,6 +1176,54 @@ public class FeeDetailService {
 			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
 		return finFeeDetail;
+	}
+
+	private List<FinFeeDetail> convertToFinanceFees(List<FinTypeFees> finTypeFeesList, String reference) {
+		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
+		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+			FinFeeDetail finFeeDetail = null;
+			for (FinTypeFees finTypeFee : finTypeFeesList) {
+				finFeeDetail = new FinFeeDetail();
+				finFeeDetail.setNewRecord(true);
+				finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
+				finFeeDetail.setFinEvent(finTypeFee.getFinEvent());
+				finFeeDetail.setFinEventDesc(finTypeFee.getFinEventDesc());
+				finFeeDetail.setFeeTypeID(finTypeFee.getFeeTypeID());
+				finFeeDetail.setFeeOrder(finTypeFee.getFeeOrder());
+				finFeeDetail.setFeeTypeCode(finTypeFee.getFeeTypeCode());
+				finFeeDetail.setFeeTypeDesc(finTypeFee.getFeeTypeDesc());
+
+				finFeeDetail.setFeeScheduleMethod(finTypeFee.getFeeScheduleMethod());
+				finFeeDetail.setCalculationType(finTypeFee.getCalculationType());
+				finFeeDetail.setRuleCode(finTypeFee.getRuleCode());
+				finFeeDetail.setFixedAmount(finTypeFee.getAmount());
+				finFeeDetail.setPercentage(finTypeFee.getPercentage());
+				finFeeDetail.setCalculateOn(finTypeFee.getCalculateOn());
+				finFeeDetail.setAlwDeviation(finTypeFee.isAlwDeviation());
+				finFeeDetail.setMaxWaiverPerc(finTypeFee.getMaxWaiverPerc());
+				finFeeDetail.setAlwModifyFee(finTypeFee.isAlwModifyFee());
+				finFeeDetail.setAlwModifyFeeSchdMthd(finTypeFee.isAlwModifyFeeSchdMthd());
+
+				finFeeDetail.setCalculatedAmount(finTypeFee.getAmount());
+				finFeeDetail.setActualAmount(finTypeFee.getAmount());
+				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+					finFeeDetail.setPaidAmount(finTypeFee.getAmount());
+				}
+				if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+					finFeeDetail.setWaivedAmount(finTypeFee.getAmount());
+				}
+				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount())
+						.subtract(finFeeDetail.getPaidAmount()));
+
+				finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
+				finFeeDetail.setFinReference(reference);
+				finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				finFeeDetails.add(finFeeDetail);
+			}
+		}
+		return finFeeDetails;
 	}
 
 	/**

@@ -3,9 +3,9 @@ package com.pennant.backend.model.finance;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 
 public class FinanceProfitDetail implements Serializable {
-
 	private static final long serialVersionUID = 6601637251967752181L;
 
 	private String finReference;
@@ -169,6 +169,9 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal emiInAdvanceBal = BigDecimal.ZERO;
 	private BigDecimal receivableAdviseBal = BigDecimal.ZERO;
 	private BigDecimal payableAdviseBal = BigDecimal.ZERO;
+	private BigDecimal maxRpyAmount = BigDecimal.ZERO;
+	private BigDecimal cpzPosted = BigDecimal.ZERO;
+	private BigDecimal curCpzBalance = BigDecimal.ZERO;
 
 	// External Fields For Amortization Purpose
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
@@ -176,8 +179,40 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal lppAmount = BigDecimal.ZERO;
 	private BigDecimal gstLppAmount = BigDecimal.ZERO;
 
-	public FinanceProfitDetail() {
+	//Gold Loan Paid Status (For Report Purpose and avoid multiple queries)
+	private String glPaymentSts;
 
+	//Subvention Details
+	private BigDecimal svnAcrTillLBD = BigDecimal.ZERO;
+	private BigDecimal svnPftAmount = BigDecimal.ZERO;
+	private boolean svnAcrCalReq = true;
+
+	// Number of Auto Increments Grace End
+	private int NOAutoIncGrcEnd = 0;
+
+	//Assignments (For Reporting purpose we are saving)
+	private BigDecimal assignBPI1 = BigDecimal.ZERO;
+	private BigDecimal assignBPI2 = BigDecimal.ZERO;
+
+	private String baseRateCode;
+	private String splRateCode;
+	private BigDecimal baseRate = BigDecimal.ZERO;
+	private BigDecimal splRate = BigDecimal.ZERO;
+	private BigDecimal mrgRate = BigDecimal.ZERO;
+
+	private BigDecimal tdTdsAmount = BigDecimal.ZERO;
+	private BigDecimal tdTdsPaid = BigDecimal.ZERO;
+	private BigDecimal tdTdsBal = BigDecimal.ZERO;
+	private BigDecimal tdsAccrued = BigDecimal.ZERO;
+
+	private BigDecimal totalSvnAmount = BigDecimal.ZERO;
+	private int noInstEarlyStl;
+
+	// IND AS Amortization
+	private String aMZMethod;
+
+	public FinanceProfitDetail() {
+		super();
 	}
 
 	// ******************************************************//
@@ -1312,6 +1347,30 @@ public class FinanceProfitDetail implements Serializable {
 		this.actualODDays = actualODDays;
 	}
 
+	public BigDecimal getMaxRpyAmount() {
+		return maxRpyAmount;
+	}
+
+	public void setMaxRpyAmount(BigDecimal maxRpyAmount) {
+		this.maxRpyAmount = maxRpyAmount;
+	}
+
+	public BigDecimal getCpzPosted() {
+		return cpzPosted;
+	}
+
+	public void setCpzPosted(BigDecimal cpzPosted) {
+		this.cpzPosted = cpzPosted;
+	}
+
+	public BigDecimal getCurCpzBalance() {
+		return curCpzBalance;
+	}
+
+	public void setCurCpzBalance(BigDecimal curCpzBalance) {
+		this.curCpzBalance = curCpzBalance;
+	}
+
 	public BigDecimal getLpiTillLBD() {
 		return lpiTillLBD;
 	}
@@ -1384,4 +1443,179 @@ public class FinanceProfitDetail implements Serializable {
 		this.advanceEMI = advanceEMI;
 	}
 
+	public String getGlPaymentSts() {
+		return glPaymentSts;
+	}
+
+	public void setGlPaymentSts(String glPaymentSts) {
+		this.glPaymentSts = glPaymentSts;
+	}
+
+	public BigDecimal getSvnAcrTillLBD() {
+		return svnAcrTillLBD;
+	}
+
+	public void setSvnAcrTillLBD(BigDecimal svnAcrTillLBD) {
+		this.svnAcrTillLBD = svnAcrTillLBD;
+	}
+
+	public boolean isSvnAcrCalReq() {
+		return svnAcrCalReq;
+	}
+
+	public void setSvnAcrCalReq(boolean svnAcrCalReq) {
+		this.svnAcrCalReq = svnAcrCalReq;
+	}
+
+	public BigDecimal getSvnPftAmount() {
+		return svnPftAmount;
+	}
+
+	public void setSvnPftAmount(BigDecimal svnPftAmount) {
+		this.svnPftAmount = svnPftAmount;
+	}
+
+	public int getNOAutoIncGrcEnd() {
+		return NOAutoIncGrcEnd;
+	}
+
+	public void setNOAutoIncGrcEnd(int nOAutoIncGrcEnd) {
+		NOAutoIncGrcEnd = nOAutoIncGrcEnd;
+	}
+
+	public HashMap<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> fieldsAndValuesMap = new HashMap<String, Object>();
+
+		getDeclaredFieldValues(fieldsAndValuesMap);
+
+		return fieldsAndValuesMap;
+	}
+
+	/**
+	 * 
+	 * @param fieldsAndValuesMap
+	 */
+	public void getDeclaredFieldValues(HashMap<String, Object> fieldsAndValuesMap) {
+		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
+			try {
+				//"fpt_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				fieldsAndValuesMap.put("fpt_" + this.getClass().getDeclaredFields()[i].getName(),
+						this.getClass().getDeclaredFields()[i].get(this));
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				// Nothing TO DO
+			}
+		}
+	}
+
+	public BigDecimal getAssignBPI1() {
+		return assignBPI1;
+	}
+
+	public void setAssignBPI1(BigDecimal assignBPI1) {
+		this.assignBPI1 = assignBPI1;
+	}
+
+	public BigDecimal getAssignBPI2() {
+		return assignBPI2;
+	}
+
+	public void setAssignBPI2(BigDecimal assignBPI2) {
+		this.assignBPI2 = assignBPI2;
+	}
+
+	public String getBaseRateCode() {
+		return baseRateCode;
+	}
+
+	public void setBaseRateCode(String baseRateCode) {
+		this.baseRateCode = baseRateCode;
+	}
+
+	public String getSplRateCode() {
+		return splRateCode;
+	}
+
+	public void setSplRateCode(String splRateCode) {
+		this.splRateCode = splRateCode;
+	}
+
+	public BigDecimal getSplRate() {
+		return splRate;
+	}
+
+	public void setSplRate(BigDecimal splRate) {
+		this.splRate = splRate;
+	}
+
+	public BigDecimal getMrgRate() {
+		return mrgRate;
+	}
+
+	public void setMrgRate(BigDecimal mrgRate) {
+		this.mrgRate = mrgRate;
+	}
+
+	public BigDecimal getTdTdsAmount() {
+		return tdTdsAmount;
+	}
+
+	public void setTdTdsAmount(BigDecimal tdTdsAmount) {
+		this.tdTdsAmount = tdTdsAmount;
+	}
+
+	public BigDecimal getTdTdsPaid() {
+		return tdTdsPaid;
+	}
+
+	public void setTdTdsPaid(BigDecimal tdTdsPaid) {
+		this.tdTdsPaid = tdTdsPaid;
+	}
+
+	public BigDecimal getTdTdsBal() {
+		return tdTdsBal;
+	}
+
+	public void setTdTdsBal(BigDecimal tdTdsBal) {
+		this.tdTdsBal = tdTdsBal;
+	}
+
+	public BigDecimal getTdsAccrued() {
+		return tdsAccrued;
+	}
+
+	public void setTdsAccrued(BigDecimal tdsAccrued) {
+		this.tdsAccrued = tdsAccrued;
+	}
+
+	public int getNoInstEarlyStl() {
+		return noInstEarlyStl;
+	}
+
+	public void setNoInstEarlyStl(int noInstEarlyStl) {
+		this.noInstEarlyStl = noInstEarlyStl;
+	}
+
+	public BigDecimal getBaseRate() {
+		return baseRate;
+	}
+
+	public void setBaseRate(BigDecimal baseRate) {
+		this.baseRate = baseRate;
+	}
+
+	public BigDecimal getTotalSvnAmount() {
+		return totalSvnAmount;
+	}
+
+	public void setTotalSvnAmount(BigDecimal totalSvnAmount) {
+		this.totalSvnAmount = totalSvnAmount;
+	}
+
+	public String getAMZMethod() {
+		return aMZMethod;
+	}
+
+	public void setAMZMethod(String aMZMethod) {
+		this.aMZMethod = aMZMethod;
+	}
 }

@@ -48,9 +48,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
@@ -137,6 +139,25 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<UploadAlloctionDetail> getUploadedAllocatations(long ulDetailID) {
+
+		UploadAlloctionDetail ulAlocDetail = new UploadAlloctionDetail();
+		ulAlocDetail.setUploadDetailId(ulDetailID);
+
+		StringBuilder selectSql = new StringBuilder(" Select UploadDetailId, UploadAlloctionDetailId,rootId,");
+		selectSql.append(" AllocationType, ReferenceCode, PaidAmount, WaivedAmount");
+		selectSql.append(" From UploadAlloctionDetails");
+		selectSql.append(" Where UploadDetailId =:UploadDetailId order by UploadAlloctionDetailId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(ulAlocDetail);
+		RowMapper<UploadAlloctionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(UploadAlloctionDetail.class);
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 	
 }

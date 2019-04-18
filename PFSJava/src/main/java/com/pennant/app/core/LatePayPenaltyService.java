@@ -74,10 +74,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		super();
 	}
 
-
-	public void computeLPP(FinODDetails fod, Date valueDate, String idb,
-			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments, String roundingMode,
-			FinanceMain financeMain) {
+	public void computeLPP(FinODDetails fod, Date valueDate, FinanceMain financeMain, List<FinanceScheduleDetail> finScheduleDetails,
+			List<FinanceRepayments> repayments) {
 		logger.debug("Entering");
 		BigDecimal penalty = BigDecimal.ZERO;
 		//Late Payment Penalty. Do not apply LPP
@@ -125,7 +123,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
 						.divide(new BigDecimal(100));
 			}
-			
+
 			//On Due Days (or) Rule Fixed amount by Due Days
 		} else {
 			String finReference = fod.getFinReference();
@@ -133,15 +131,15 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (repayments == null) {
 				repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 			}
-			prepareDueDateData(fod, valueDate, idb, repayments, financeMain);
+			prepareDueDateData(fod, valueDate, financeMain.getProfitDaysBasis(), repayments, financeMain);
 			penalty = fod.getTotPenaltyAmt();
 		}
 
-		penalty = CalculationUtil.roundAmount(penalty, roundingMode, financeMain.getRoundingTarget());
-		
+		penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+
 		// Check Whether Min cap Amount reached or not
-		if(ImplementationConstants.ALW_LPP_MIN_CAP_AMT){
-			if(penalty.compareTo(BigDecimal.ZERO) > 0 && penalty.compareTo(fod.getoDMinCapAmount()) < 0){
+		if (ImplementationConstants.ALW_LPP_MIN_CAP_AMT) {
+			if (penalty.compareTo(BigDecimal.ZERO) > 0 && penalty.compareTo(fod.getoDMinCapAmount()) < 0) {
 				penalty = fod.getoDMinCapAmount();
 			}
 		}
@@ -165,7 +163,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		return balanceForCal;
 	}
 
-	private void prepareDueDateData(FinODDetails fod, Date valueDate, String idb, List<FinanceRepayments> repayments,FinanceMain financeMain) {
+	private void prepareDueDateData(FinODDetails fod, Date valueDate, String idb, List<FinanceRepayments> repayments,
+			FinanceMain financeMain) {
 
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
@@ -198,12 +197,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
 				continue;
 			}
-			
+
 			Date grcDate = DateUtility.addDays(repayment.getFinSchdDate(), fod.getODGraceDays());
 
 			//MAx OD amounts is same as repayments balance amounts
-			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0 ||
-					DateUtility.compare(grcDate, repayment.getFinValueDate()) > 0) {
+			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0
+					|| DateUtility.compare(grcDate, repayment.getFinValueDate()) > 0) {
 				continue;
 			}
 
@@ -260,48 +259,49 @@ public class LatePayPenaltyService extends ServiceHelper {
 			//As same field is used to store both amount and percentage the value is stored in minor units without decimals
 			Date dateCur = odcrCur.getMovementDate();
 			Date dateNext = odcrNext.getMovementDate();
-			
+
 			BigDecimal penalty = BigDecimal.ZERO;
 			// If charge calculation Type is Rule Fixed amount by Due Days
-			if(FinanceConstants.PENALTYTYPE_RULEFXDD.equals(fod.getODChargeType())){
-				
+			if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(fod.getODChargeType())) {
+
 				int dueDays = DateUtility.getDaysBetween(dateCur, dateNext);
 				FinanceProfitDetail finPftDetails = getFinanceProfitDetailDAO().getFinProfitDetailsById(finReference);
-				 List<ExtendedField> extData = getExtendedFieldDetailsService().getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
-							financeMain.getFinCategory(),FinanceConstants.FINSER_EVENT_ORG, finReference);
+				List<ExtendedField> extData = getExtendedFieldDetailsService().getExtndedFieldDetails(
+						ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
+						FinanceConstants.FINSER_EVENT_ORG, finReference);
 
-				
 				Map<String, Object> datamap = new HashMap<>();
 				datamap.put("fm_finType", fod.getFinType()); // Finance Type
 				datamap.put("fm_finBranch", fod.getFinBranch()); // Branch
 				datamap.put("fin_ODDays", dueDays); // Due days
 				datamap.put("fin_curODAmt", fod.getFinCurODAmt()); // Due Amount
-				if(finPftDetails != null){
+				if (finPftDetails != null) {
 					datamap.put("fpd_tdSchdPriBal", finPftDetails.getTdSchdPriBal()); // Principal Balance
 					datamap.put("fpd_tdSchdPftBal", finPftDetails.getTdSchdPftBal()); // Profit Balance
 				}
 				datamap.put("fm_productCategory", financeMain.getProductCategory()); // Product Category
 				datamap.put("ft_product", financeMain.getFinCategory()); // Product
-				if(extData != null && !extData.isEmpty()){
+				if (extData != null && !extData.isEmpty()) {
 					for (ExtendedField extendedField : extData) {
 						for (ExtendedFieldData extendedFieldData : extendedField.getExtendedFieldDataList()) {
-							
+
 							datamap.put("LOAN_LOC_STOREID", extendedFieldData.getFieldValue()); // Store ID
 						}
 					}
 				}
 				// Fetch Rule Query
-				String sqlRule = getRuleDAO().getAmountRule(fod.getODRuleCode(), RuleConstants.MODULE_LPPRULE, RuleConstants.MODULE_LPPRULE);
+				String sqlRule = getRuleDAO().getAmountRule(fod.getODRuleCode(), RuleConstants.MODULE_LPPRULE,
+						RuleConstants.MODULE_LPPRULE);
 				BigDecimal fixedAmt = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(sqlRule)) {
 
-					fixedAmt = (BigDecimal) getRuleExecutionUtil().executeRule(sqlRule, datamap, 
+					fixedAmt = (BigDecimal) getRuleExecutionUtil().executeRule(sqlRule, datamap,
 							SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY), RuleReturnType.DECIMAL);
 				}
-				if(fixedAmt.compareTo(BigDecimal.ZERO) > 0){
+				if (fixedAmt.compareTo(BigDecimal.ZERO) > 0) {
 					penalty = fixedAmt.multiply(new BigDecimal(dueDays));
 				}
-			}else{
+			} else {
 				//Due Days accrual calculation
 				BigDecimal penaltyRate = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
 				penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);

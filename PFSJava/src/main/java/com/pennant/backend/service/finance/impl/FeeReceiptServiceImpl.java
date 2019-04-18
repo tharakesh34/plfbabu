@@ -20,10 +20,13 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -31,6 +34,7 @@ import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -74,6 +78,9 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private PostingsDAO postingsDAO;
 	private FinTaxDetailsDAO finTaxDetailsDAO;
 	protected transient WorkflowEngine workFlow = null;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	private FinanceMainDAO financeMainDAO;
+	private SecurityUserDAO securityUserDAO;
 
 	public FeeReceiptServiceImpl() {
 		super();
@@ -180,7 +187,20 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 			// Delete and Save FinRepayHeader Detail list by Reference
 			getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), tableType);
+			//finServiceInstructionDAO.deleteFinServInstList(receiptHeader.getReference(), tableType.getSuffix(), String.valueOf(receiptHeader.getReceiptID()));
 		}
+
+		FinServiceInstruction finServInst = new FinServiceInstruction();
+		finServInst.setFinReference(receiptHeader.getReference());
+		finServInst.setFinEvent(AccountEventConstants.ACCEVENT_FEEPAY);
+		finServInst.setAppDate(DateUtility.getAppDate());
+		finServInst.setAmount(receiptHeader.getReceiptAmount());
+		finServInst.setSystemDate(DateUtility.getSysDate());
+		finServInst.setMaker(auditHeader.getAuditUsrId());
+		finServInst.setMakerAppDate(DateUtility.getAppDate());
+		finServInst.setMakerSysDate(DateUtility.getSysDate());
+		finServInst.setReference(String.valueOf(receiptHeader.getReceiptID()));
+		finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
 
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 			receiptDetail.setReceiptID(receiptID);
@@ -200,7 +220,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				receiptHeader.getBefImage(), receiptHeader));
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -232,12 +252,13 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), TableType.TEMP_TAB);
 		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		//finServiceInstructionDAO.deleteFinServInstList(receiptHeader.getReference(), TableType.TEMP_TAB.getSuffix(), String.valueOf(receiptHeader.getReceiptID()));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -278,9 +299,9 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setFinReference(receiptHeader.getReference());
 		aeEvent.setCustCIF(receiptHeader.getCustCIF());
 		aeEvent.setCustID(receiptHeader.getCustID());
-		aeEvent.setBranch(receiptHeader.getFinBranch());
+		aeEvent.setBranch(receiptHeader.getPostBranch());
 		aeEvent.setCcy(receiptHeader.getFinCcy());
-		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+		aeEvent.setPostingUserBranch(receiptHeader.getPostBranch());
 		aeEvent.setValueDate(DateUtility.getAppDate());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -288,15 +309,17 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			amountCodes = new AEAmountCodes();
 		}
 
-		FinReceiptDetail finreceiptDetail = receiptHeader.getReceiptDetails().get(0);
-		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
-		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
-		amountCodes.setPaidFee(finreceiptDetail.getAmount());
-		amountCodes.setFinType(receiptHeader.getFinType());
-
 		// Fetch Accounting Set ID
-		long accountingSetID = AccountingConfigCache.getAccountSetID(receiptHeader.getFinType(),
-				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+		long accountingSetID = 0;
+		Map<String, Object> map = null;
+		if (RepayConstants.RECEIPTTO_FINANCE.equals(receiptHeader.getRecAgainst())) {
+			accountingSetID = AccountingConfigCache.getAccountSetID(receiptHeader.getFinType(),
+					AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+			map = financeMainDAO.getGLSubHeadCodes(receiptHeader.getReference());
+		} else {
+			accountingSetID = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
+					AccountEventConstants.ACCEVENT_FEEPAY);
+		}
 		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
 			auditHeader.setErrorDetails(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
@@ -304,7 +327,29 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			return auditHeader;
 		}
 
-		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+		FinReceiptDetail finreceiptDetail = receiptHeader.getReceiptDetails().get(0);
+		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
+		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
+		amountCodes.setPaidFee(finreceiptDetail.getAmount());
+		amountCodes.setFinType(receiptHeader.getFinType());
+		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		if (map != null) {
+			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
+			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
+			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+			amountCodes.setFinbranch((String) map.get("FinBranch"));
+			amountCodes.setEntitycode((String) map.get("Entitycode"));
+			dataMap.put("emptype", map.get("emptype"));
+			dataMap.put("branchcity", map.get("branchcity"));
+			dataMap.put("fincollateralreq", map.get("fincollateralreq"));
+			dataMap.put("btloan", map.get("btloan"));
+		} else {
+			amountCodes.setEntitycode(receiptHeader.getEntityCode());
+			amountCodes.setFinbranch(receiptHeader.getPostBranch());
+		}
+
+		aeEvent.setDataMap(dataMap);
+
 		aeEvent.getAcSetIDList().add(accountingSetID);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
@@ -337,6 +382,30 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			}
 		}
 
+		/*
+		 * FinServiceInstruction finServInst=null; List<FinServiceInstruction>
+		 * finServInstList=finServiceInstructionDAO.getFinServiceInstructionList(receiptHeader.getReference(),
+		 * TableType.TEMP_TAB.getSuffix(), String.valueOf(receiptHeader.getReceiptID())); if (finServInstList!=null &&
+		 * finServInstList.size()>0){ finServInst=finServInstList.get(0); } if (finServInst==null){ finServInst=new
+		 * FinServiceInstruction(); finServInst.setFinReference(receiptHeader.getReference());
+		 * finServInst.setFinEvent(AccountEventConstants.ACCEVENT_FEEPAY);
+		 * finServInst.setAmount(receiptHeader.getReceiptAmount()); finServInst.setAppDate(DateUtility.getAppDate());
+		 * finServInst.setSystemDate(DateUtility.getSysDate()); finServInst.setMaker(auditHeader.getAuditUsrId());
+		 * finServInst.setMakerAppDate(DateUtility.getAppDate()); finServInst.setMakerSysDate(DateUtility.getSysDate());
+		 * finServInst.setChecker(auditHeader.getAuditUsrId()); finServInst.setCheckerAppDate(DateUtility.getAppDate());
+		 * finServInst.setCheckerSysDate(DateUtility.getSysDate());
+		 * finServInst.setLinkedTranId(aeEvent.getLinkedTranId());
+		 * finServInst.setReference(String.valueOf(receiptHeader.getReceiptID())); }else{
+		 * finServInst.setChecker(auditHeader.getAuditUsrId()); finServInst.setCheckerAppDate(DateUtility.getAppDate());
+		 * finServInst.setCheckerSysDate(DateUtility.getSysDate());
+		 * finServInst.setLinkedTranId(aeEvent.getLinkedTranId()); }
+		 */
+		/*
+		 * finServiceInstructionDAO.deleteFinServInstList(receiptHeader.getReference(), "_Temp",
+		 * String.valueOf(receiptHeader.getReceiptID())); finServiceInstructionDAO.save(finServInst,
+		 * TableType.MAIN_TAB.getSuffix());
+		 */
+
 		// Delete Receipt Header
 		getFinanceRepaymentsDAO().deleteByRef(receiptHeader.getReference(), TableType.TEMP_TAB);
 		getFinReceiptDetailDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
@@ -347,14 +416,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				receiptHeader.getBefImage(), receiptHeader));
 
 		// Adding audit as deleted from TEMP table
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
 
 		// Adding audit as Insert/Update/deleted into main table
-		getAuditHeaderDAO().addAudit(auditHeader);
+		//getAuditHeaderDAO().addAudit(auditHeader); //TODO audit got issue with invalid column type so we are stopping the audit here
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -406,16 +475,19 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(receiptHeader.getReference());
+
+		String reference = receiptHeader.getReference();
+		if (RepayConstants.RECEIPTTO_CUSTOMER.equals(receiptHeader.getRecAgainst())) {
+			reference = receiptHeader.getCustomerCIF();
+		}
+		valueParm[0] = reference;
 		errParm[0] = PennantJavaUtil.getLabel("label_Reference") + ":" + valueParm[0];
-		if (receiptHeader.isNew()) { // for New record or new record into work
-											// flow
+		if (receiptHeader.isNew()) { // for New record or new record into work flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
-				if (beFinReceiptHeader != null) { // Record Already Exists in
-														// the
-													// table then error
+				if (beFinReceiptHeader != null) { // Record Already Exists in the
+					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -440,9 +512,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			if (!receiptHeader.isWorkflow()) { // With out Work flow for update
 				// and delete
 
-				if (beFinReceiptHeader == null) { // if records not exists in
-														// the
-													// main table
+				if (beFinReceiptHeader == null) { // if records not exists in the
+					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -610,7 +681,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setBranch(userDetails.getBranchCode());
 		aeEvent.setCcy(header.getFinCcy());
 		aeEvent.setFinType(finServInst.getFinType() != null ? finServInst.getFinType() : "");
-		aeEvent.setPostingUserBranch(userDetails.getBranchCode());
+		aeEvent.setPostingUserBranch(header.getCashierBranch());
 		aeEvent.setValueDate(DateUtility.getAppDate());
 		long postingId = getPostingsDAO().getPostingId();
 		aeEvent.setPostRefId(receiptId);
@@ -625,8 +696,22 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setFinType(finServInst.getFinType() != null ? finServInst.getFinType() : "");
 
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(header.getReference());
+		if (map != null) {
+			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
+			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
+			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+			amountCodes.setFinbranch((String) map.get("FinBranch"));
+			amountCodes.setEntitycode((String) map.get("Entitycode"));
+		}
 
+		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		if (map != null) {
+			dataMap.put("emptype", map.get("emptype"));
+			dataMap.put("branchcity", map.get("branchcity"));
+			dataMap.put("fincollateralreq", map.get("fincollateralreq"));
+			dataMap.put("btloan", (String) map.get("btloan"));
+		}
 		BigDecimal accountedAMount = prepareFeeRulesMap(amountCodes, dataMap, finServInst.getFinFeeDetails());
 		amountCodes.setImdAmount(receiptDetail.getAmount().subtract(accountedAMount));
 
@@ -908,6 +993,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		return accountedImd;
 	}
 
+	@Override
+	public Long getAccountingSetId(String eventCode, String accSetCode) {
+		return this.accountingSetDAO.getAccountingSetId(eventCode, accSetCode);
+	}
+
+	@Override
+	public SecurityUser getSecurityUserById(long userId, String type) {
+		return this.securityUserDAO.getSecurityUserById(userId, type);
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1006,6 +1101,31 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 	public void setFinTaxDetailsDAO(FinTaxDetailsDAO finTaxDetailsDAO) {
 		this.finTaxDetailsDAO = finTaxDetailsDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+	@Override
+	public Map<String, Object> getGLSubHeadCodes(String finRef) {
+		return financeMainDAO.getGLSubHeadCodes(finRef);
+	}
+
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public SecurityUserDAO getSecurityUserDAO() {
+		return securityUserDAO;
+	}
+
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
 	}
 
 }

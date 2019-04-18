@@ -55,6 +55,11 @@ public class DisbursementConstants {
 	public static final String PAYMENT_TYPE_NACH = "NACH";
 	public static final String PAYMENT_TYPE_IFT = "IFT";
 	public static final String PAYMENT_TYPE_IST = "IST";
+	public static final String PAYMENT_TYPE_ONLINE = "ONLINE";
+	public static final String PAYMENT_TYPE_BILLDESK = "BILLDESK";
+	public static final String PAYMENT_TYPE_MOB = "MOB";
+	public static final String PAYMENT_TYPE_OTC = "OTC";
+	public static final String PAYMENT_TYPE_BTTP = "BTTP";
 
 	// Disbursement Status
 	public static final String STATUS_NEW = "NEW";
@@ -64,10 +69,15 @@ public class DisbursementConstants {
 	public static final String STATUS_CANCEL = "CANCELED";
 	public static final String STATUS_PAID = "PAID";
 	public static final String STATUS_REALIZED = "REALIZED";
+	public static final String STATUS_REVERSED = "REVERSED";
 
 	// Payment Channels
 	public static final String CHANNEL_PAYMENT = "P";
 	public static final String CHANNEL_DISBURSEMENT = "D";
 	public static final String CHANNEL_INSURANCE = "I";
 
+	// Auto Disbursement Status
+	public static final String AUTODISB_STATUS_PENDING = "P";
+	public static final String AUTODISB_STATUS_SUCCESS = "S";
+	public static final String AUTODISB_STATUS_FAILED = "F";
 }

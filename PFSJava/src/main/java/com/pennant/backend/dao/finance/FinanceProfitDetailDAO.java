@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinanceProfitDetailDAO.java                                                   * 	  
+ * FileName    		:  FinanceProfitDetailDAO.java											* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -113,6 +113,23 @@ public interface FinanceProfitDetailDAO {
 	BigDecimal getTotalCustomerExposre(long custId);
 
 	BigDecimal getTotalCoApplicantsExposre(String finReferece);
+
+	Date getFirstRePayDateByFinRef(String finReference);
+
+	BigDecimal getMaxRpyAmount(String finReference);
+
+	BigDecimal getGoldPOSByCustCif(String custCif, String promotionCode, String repledgeRef);
+
+	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList); // Linked Loans
+
+	void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails); //Assignments
+
+	// IND AS One Time Activity
+	List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart);
+
+	FinanceProfitDetail getFinProfitForAMZ(String finReference);
+
+	void updateAMZMethod(String finReference, String amzMethod);
 	
 	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
 }

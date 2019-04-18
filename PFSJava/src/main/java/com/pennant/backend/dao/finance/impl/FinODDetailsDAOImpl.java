@@ -950,4 +950,24 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		return null;
 	}
 
+	@Override
+	public void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinODSchdDate", odDate);
+		source.addValue("WaivedAmount", waivedAmount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set TOTWAIVED= TOTWAIVED - :WaivedAmount");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+
+	}
+
 }

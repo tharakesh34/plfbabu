@@ -1,6 +1,8 @@
 package com.pennant.backend.model.receiptupload;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,28 +11,30 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 @XmlType(propOrder = { "allocationType", "referenceCode", "paidAmount", "waivedAmount" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Entity {
 
-	private static final long	serialVersionUID		= -4601315178356280082L;
+	private static final long serialVersionUID = -4601315178356280082L;
 
-	private long				UploadDetailId	= Long.MIN_VALUE;
-	private long				uploadAlloctionDetailId	= Long.MIN_VALUE;
+	private long UploadDetailId = Long.MIN_VALUE;
+	private long uploadAlloctionDetailId = Long.MIN_VALUE;
 
-	private String              rootId;
+	private String rootId;
 	@XmlElement
-	private String				allocationType;
+	private String allocationType;
 	@XmlElement
-	private String				referenceCode;
+	private String referenceCode;
 	@XmlElement
-	private BigDecimal			paidAmount = BigDecimal.ZERO;
+	private BigDecimal paidAmount = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal			waivedAmount = BigDecimal.ZERO;
+	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>(1);
 
-	//Getter and Setter
+	// Getter and Setter
 
 	public String getAllocationType() {
 		return allocationType;
@@ -103,7 +107,25 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Ent
 	@Override
 	public void setId(long id) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
+	public List<ErrorDetail> getErrorDetails() {
+		return errorDetails;
+	}
+
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
+		this.errorDetails = errorDetails;
+	}
+
+	public void setErrorDetail(ErrorDetail errorDetail) {
+
+		if (errorDetail != null) {
+			if (errorDetails == null) {
+				errorDetails = new ArrayList<ErrorDetail>();
+			}
+			this.errorDetails.add(errorDetail);
+		}
+	}
+
 }

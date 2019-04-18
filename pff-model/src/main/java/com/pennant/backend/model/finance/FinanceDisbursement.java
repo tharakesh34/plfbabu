@@ -46,6 +46,7 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -107,7 +108,11 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private FinanceDisbursement befImage;
 	private LoggedInUser userDetails;
 	private boolean posted = false;
-	private long  instructionUID =  Long.MIN_VALUE;
+	private long instructionUID = Long.MIN_VALUE;
+
+	//Subvention
+	private List<SubventionScheduleDetail> subventionSchedules = null;
+	private BigDecimal subventionAmount = BigDecimal.ZERO;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -123,8 +128,11 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("posted");
+
+		excludeFields.add("subventionSchedules");
+		excludeFields.add("subventionAmount");
 		return excludeFields;
 	}
 
@@ -428,4 +436,19 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 		this.instructionUID = instructionUID;
 	}
 
+	public List<SubventionScheduleDetail> getSubventionSchedules() {
+		return subventionSchedules;
+	}
+
+	public void setSubventionSchedules(List<SubventionScheduleDetail> subventionSchedules) {
+		this.subventionSchedules = subventionSchedules;
+	}
+
+	public BigDecimal getSubventionAmount() {
+		return subventionAmount;
+	}
+
+	public void setSubventionAmount(BigDecimal subventionAmount) {
+		this.subventionAmount = subventionAmount;
+	}
 }

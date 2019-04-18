@@ -15,21 +15,21 @@
  ********************************************************************************************
  *                                 FILE HEADER                                              *
  ********************************************************************************************
- *
- * FileName    		:  CashManagementConstants.java											*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  19-07-2018															*
- *                                                                  
- * Modified Date    :  19-07-2018															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ *																							*
+ * FileName    		:  BranchCashLimitDAO.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  29-01-2018    														*
+ *                                                                  						*
+ * Modified Date    :  29-01-2018    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 19-07-2018       Pennant	                 0.1                                            * 
+ * 29-01-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,25 +39,34 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
- */
-package com.pennant.app.constants;
+*/
+package com.pennant.backend.dao.cashmanagement;
 
-public class CashManagementConstants {
+import java.util.List;
 
-	public CashManagementConstants() {
-		super();
-	}
+import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.cashmanagement.BranchCashLimit;
+import com.pennanttech.pff.core.TableType;
 
-	// Deposit Movement Transaction Types
-	public static final String DEPOSIT_MOVEMENT_CREDIT = "C";
-	public static final String DEPOSIT_MOVEMENT_DEBIT = "D";
-	public static final String DEPOSIT_MOVEMENT_REVERSE = "R";
+public interface BranchCashLimitDAO extends BasicCrudDao<BranchCashLimit> {
 
-	// Cheque/DD process Accounting Status
-	public static final String DEPOSIT_CHEQUE_STATUS_APPROVE = "A";
-	public static final String DEPOSIT_CHEQUE_STATUS_REVERSE = "R";
+	/**
+	 * Fetch the Record BranchCashLimit Details by key field
+	 * 
+	 * @param branchCode
+	 *            branchCode of the BranchCashLimit.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return BranchCashLimit
+	 */
+	BranchCashLimit getBranchCashLimit(String branchCode, String type);
 
-	// Deposit Details Events
-	public static final String ACCEVENT_DEPOSIT_TYPE_CASH = "CASH";
-	public static final String ACCEVENT_DEPOSIT_TYPE_CHEQUE_DD = "CHQDD";
+	boolean isDuplicateKey(String branchCode, TableType tableType);
+
+	/**
+	 * Fetch all Approved BranchCashLimit Details
+	 * 
+	 * @return List of BranchCashLimit
+	 */
+	List<BranchCashLimit> getAutoReplenishmentLimitList(String branchCode);
 }

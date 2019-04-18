@@ -20,6 +20,7 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -75,12 +76,15 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's
+	 * save method b) Update the Record in the table. based on the module
+	 * workFlow Configuration. by using FinReceiptHeaderDAO's update method 3)
+	 * Audit the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -111,7 +115,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		}
 
 		// Receipt Header Details Save And Update
-		//=======================================
+		// =======================================
 		if (receiptHeader.isNew()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			getFinReceiptHeaderDAO().save(receiptHeader, tableType);
@@ -131,10 +135,13 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters finReceiptHeader,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getFinReceiptHeaderDAO().delete with
+	 * parameters finReceiptHeader,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -166,10 +173,12 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * doApprove method do the following steps. Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. based on the Record type do
-	 * following actions Update record in the main table by using getFinReceiptHeaderDAO().update with parameters
-	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * doApprove method do the following steps. Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. based on the Record type do
+	 * following actions Update record in the main table by using
+	 * getFinReceiptHeaderDAO().update with parameters FinReceiptHeader. Audit
+	 * the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
@@ -192,10 +201,11 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
 
 		// Receipt Header Updation
-		//=======================================
+		// =======================================
 		tranType = PennantConstants.TRAN_UPD;
 		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		receiptHeader.setRecordType("");
@@ -206,7 +216,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		receiptHeader.setWorkflowId(0);
 		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
 
-		// Update Receipt Details based on Receipt Mode 
+		// Update Receipt Details based on Receipt Mode
 		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
 			FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
 			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
@@ -256,7 +266,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * @return
 	 */
 	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails) {
-		//Check Total Finance profit Amount
+		// Check Total Finance profit Amount
 		boolean fullyPaid = true;
 		for (int i = 1; i < scheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
@@ -316,10 +326,12 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID
-	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation. 5) for any mismatch conditions Fetch the error details from
+	 * getFinReceiptHeaderDAO().getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -349,7 +361,8 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		logger.debug("Entering");
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditDetail.getModelData();
+		FinReceiptData finReceiptData = (FinReceiptData) auditDetail.getModelData();
+		FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
 
 		FinReceiptHeader tempReceiptHeader = null;
 		if (receiptHeader.isWorkflow()) {
@@ -364,11 +377,13 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		valueParm[0] = String.valueOf(receiptHeader.getReceiptID());
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
-		if (receiptHeader.isNew()) { // for New record or new record into work flow
+		if (receiptHeader.isNew()) { // for New record or new record into work
+										// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
-				if (beFinReceiptHeader != null) { // Record Already Exists in the
+				if (beFinReceiptHeader != null) { // Record Already Exists in
+													// the
 					// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -394,7 +409,8 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 			if (!receiptHeader.isWorkflow()) { // With out Work flow for update
 				// and delete
 
-				if (beFinReceiptHeader == null) { // if records not exists in the
+				if (beFinReceiptHeader == null) { // if records not exists in
+													// the
 					// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));

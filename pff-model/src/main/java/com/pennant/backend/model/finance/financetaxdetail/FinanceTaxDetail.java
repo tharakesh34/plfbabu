@@ -52,6 +52,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -59,16 +60,18 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>FinanceTaxDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "applicableFor", "custCIF", "taxNumber", "addrLine1", "addrLine2", "addrLine3", "addrLine4",
-		"country", "province", "city", "pinCode" })
+@XmlType(propOrder = { "finReference", "taxExempted", "applicableFor", "custCIF", "taxNumber", "addrLine1", "addrLine2",
+		"addrLine3", "addrLine4", "country", "province", "city", "pinCode", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	@XmlElement
 	private String finReference;
 	@XmlElement(name = "applicableFor")
 	private String applicableFor;
 	private long taxCustId;
+	@XmlElement(name = "gstExempted")
 	private boolean taxExempted;
 	@XmlElement(name = "gstNumber")
 	private String taxNumber;
@@ -100,6 +103,11 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	private FinanceTaxDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+
+	private String sourceId;
+
 	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
@@ -124,7 +132,9 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		excludeFields.add("cityName");
 		excludeFields.add("pinCodeName");
 		excludeFields.add("custCIF");
+		excludeFields.add("sourceId");
 		excludeFields.add("custShrtName");
+		excludeFields.add("returnStatus");
 		return excludeFields;
 	}
 
@@ -322,6 +332,22 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	public void setTaxCustId(long taxCustId) {
 		this.taxCustId = taxCustId;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
 	}
 
 }

@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
@@ -16,6 +16,7 @@ import org.zkoss.zul.Caption;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -34,12 +35,12 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
-import com.pennant.backend.model.reports.ReceiptReport;
+import com.pennant.backend.model.reports.CashierReceipt;
 import com.pennant.backend.service.applicationmaster.BranchService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -49,6 +50,7 @@ import com.pennant.util.AgreementEngine;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
@@ -86,7 +88,6 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Groupbox gb_ReceiptDetails;
 	protected Caption caption_receiptDetail;
 	protected Label label_ReceiptDialog_favourNo;
-	protected Label label_ReceiptDialog_FundingAccount;
 	protected Uppercasebox favourNo;
 	protected Datebox valueDate;
 	protected ExtendedCombobox bankCode;
@@ -121,14 +122,21 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Listbox listBoxManualAdvises;
 	protected Tab allocationDetailsTab;
 
-	protected Button btnPrint;
+	protected Groupbox groupbox_Finance;
+	protected Groupbox groupbox_Customer;
+	protected Groupbox groupbox_Other;
+	protected ExtendedCombobox custID;
+	protected Textbox reference;
+	protected ExtendedCombobox postBranch;
+	protected ExtendedCombobox cashierBranch;
+	protected ExtendedCombobox finDivision;
 
 	private FinReceiptHeader receiptHeader = null;
-	private BranchService branchService = null;
 	private String module = "";
-
-
-
+	private String product = "";
+	protected Button btnPrint;
+	private transient BranchService branchService;
+	Date derivedAppDate = DateUtility.getDerivedAppDate();
 
 	/**
 	 * default constructor.<br>
@@ -172,6 +180,9 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (arguments.containsKey("module")) {
 				module = (String) arguments.get("module");
 			}
+			if (arguments.containsKey("product")) {
+				product = (String) arguments.get("product");
+			}
 			if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 				this.allocationDetailsTab.setVisible(false);
 			}
@@ -180,6 +191,12 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			// set Field Properties
 			doSetFieldProperties();
 			doReadonly();
+
+			if (StringUtils.equals(FinanceConstants.PRODUCT_GOLD, this.product)) {
+				this.btnPrint.setVisible(true);
+			} else {
+				this.btnPrint.setVisible(false);
+			}
 
 			//Reset Finance Repay Header Details
 			doWriteBeanToComponents();
@@ -240,6 +257,56 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			setStatusDetails();
 		}
 
+		this.custID.setModuleName("Customer");
+		this.custID.setMandatoryStyle(true);
+		this.custID.setValueColumn("CustCIF");
+		this.custID.setDescColumn("CustShrtName");
+		this.custID.setDisplayStyle(2);
+		this.custID.setValidateColumns(new String[] { "CustCIF" });
+
+		if (RepayConstants.RECEIPTTO_FINANCE.equals(this.receiptHeader.getRecAgainst())) {
+			this.fundingAccount.setModuleName("FinTypePartner");
+			this.fundingAccount.setMandatoryStyle(true);
+			this.fundingAccount.setValueColumn("PartnerBankID");
+			this.fundingAccount.setDescColumn("PartnerBankCode");
+			this.fundingAccount.setValueType(DataType.LONG);
+			this.fundingAccount.setDisplayStyle(2);
+			this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
+			this.groupbox_Finance.setVisible(true);
+		} else {
+			this.fundingAccount.setModuleName("PartnerBank");
+			this.fundingAccount.setValueColumn("PartnerBankId");
+			this.fundingAccount.setDescColumn("PartnerBankCode");
+			this.fundingAccount.setValidateColumns(
+					new String[] { "PartnerBankId", "PartnerBankCode", "PartnerBankName", "BankCode" });
+			this.fundingAccount.setMandatoryStyle(true);
+
+			if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
+				this.groupbox_Customer.setVisible(true);
+			} else if (RepayConstants.RECEIPTTO_OTHER.equals(this.receiptHeader.getRecAgainst())) {
+				this.groupbox_Other.setVisible(true);
+				this.reference.setMaxlength(20);
+			}
+		}
+
+		//Post Branch
+		this.postBranch.setModuleName("Branch");
+		this.postBranch.setValueColumn("BranchCode");
+		this.postBranch.setDescColumn("BranchDesc");
+		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		//Cashier Branch
+		this.cashierBranch.setModuleName("Branch");
+		this.cashierBranch.setValueColumn("BranchCode");
+		this.cashierBranch.setDescColumn("BranchDesc");
+		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		//Fin Division
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+
 		logger.debug("Leaving");
 	}
 
@@ -272,6 +339,13 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.receivedDate);
 		readOnlyComponent(true, this.remarks);
 
+		//Upfront fees changes
+		readOnlyComponent(true, this.custID);
+		readOnlyComponent(true, this.reference);
+		readOnlyComponent(true, this.cashierBranch);
+		readOnlyComponent(true, this.postBranch);
+		readOnlyComponent(true, this.finDivision);
+
 		logger.debug("Leaving");
 	}
 
@@ -283,131 +357,6 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
-	}
-
-	// Printer integration starts
-	public void onClick$btnPrint(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		try {
-
-			String reportName = "Receipt";
-			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
-			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
-			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
-			engine.setTemplate(templateName);
-			engine.loadTemplate();
-			reportName = "Receipt_" + getReceiptHeader().getReference() + "_" + getReceiptHeader().getReceiptID();
-
-			ReceiptReport receipt = new ReceiptReport();
-			receipt.setUserName(getUserWorkspace().getLoggedInUser().getUserName() + " - "
-					+ getUserWorkspace().getLoggedInUser().getFullName());
-			receipt.setFinReference(getReceiptHeader().getReference());
-			receipt.setCustName(getReceiptHeader().getCustShrtName());
-
-			BigDecimal totalReceiptAmt = getReceiptHeader().getReceiptAmount();
-			int finFormatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
-			receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
-			receipt.setReceiptAmountInWords(NumberToEnglishWords
-					.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), "")
-					.toUpperCase());
-			receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
-
-			Date eventFromDate = this.receivedDate.getValue();
-			if (eventFromDate == null) {
-				eventFromDate = DateUtility.getAppDate();
-			}
-			receipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
-			receipt.setReceiptNo(this.paymentRef.getValue());
-			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
-			receipt.setFundingAc(this.fundingAccount.getValue() + " - " + this.fundingAccount.getDescription());
-
-			if (StringUtils.equals(getComboboxValue(this.receiptMode), RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(getComboboxValue(this.receiptMode), RepayConstants.RECEIPTMODE_DD)) {
-				receipt.setTransactionRef(this.favourNo.getValue());
-			} else {
-				receipt.setTransactionRef(this.transactionRef.getValue() == null ? "" : this.transactionRef.getValue());
-			}
-
-			receipt.setMobileNo(getReceiptHeader().getPhoneNumber());
-			receipt.setPanNumber(getReceiptHeader().getCustCRCPR());
-			receipt.setFinType(getReceiptHeader().getFinType());
-			receipt.setFinTypeDesc(getReceiptHeader().getFinTypeDesc());
-			receipt.setBankCode(this.bankCode.getValue());
-			receipt.setBankName(this.fundingAccount.getDescription());
-			receipt.setBranchCode(getReceiptHeader().getFinBranch());
-			receipt.setBranchName(getReceiptHeader().getFinBranchDesc());
-			receipt.setFeeCharges(getReceiptHeader().getTotFeeAmount().toString());
-			if (getReceiptHeader().getAllocations() != null) {
-				BigDecimal othersPaid = BigDecimal.ZERO;
-				for (ReceiptAllocationDetail aloc : getReceiptHeader().getAllocations()) {
-
-					if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_NPFT)
-							|| StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
-						continue;
-					}
-
-					if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
-						receipt.setPftPaid(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
-					} else if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
-						receipt.setPriPaid(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
-					} else if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)) {
-						receipt.setBounceCharges(
-								PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
-					} else if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
-						receipt.setLppAmount(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
-					} else if (StringUtils.equals(aloc.getAllocationType(), RepayConstants.ALLOCATION_LPFT)) {
-						receipt.setLpiAmount(PennantApplicationUtil.amountFormate(aloc.getPaidAmount(), finFormatter));
-					} else {
-						othersPaid = othersPaid.add(aloc.getPaidAmount());
-					}
-				}
-				receipt.setOthers(PennantApplicationUtil.amountFormate(othersPaid, finFormatter));
-			}
-			receipt.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
-
-			Branch branch = getBranchService()
-					.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
-			if (branch != null) {
-				receipt.setBranchAddrLine1(branch.getBranchAddrLine1());
-				receipt.setBranchAddrLine2(branch.getBranchAddrLine2());
-				receipt.setBranchAddrHNbr(branch.getBranchAddrHNbr());
-				receipt.setBranchAddrFlatNo(branch.getBranchFlatNbr());
-				receipt.setBranchAddrStreet(branch.getBranchAddrStreet());
-				receipt.setBranchAddrCountry(branch.getBranchCountry());
-				receipt.setBranchAddrCity(branch.getBranchCity());
-				receipt.setBranchAddrProvince(branch.getBranchProvince());
-				receipt.setBranchAddrDistrict("");
-				receipt.setBranchAddrPincode(branch.getPinCode());
-				receipt.setBranchPhone(branch.getBranchTel());
-			}
-
-			engine.mergeFields(receipt);
-
-			boolean isDirectPrint = false;
-			try {
-				if (isDirectPrint) {
-					try {
-						byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
-						String encodedString = Base64.encodeBase64String(documentByteArray);
-						Clients.evalJavaScript(
-								"PrinterUtil.print('window_ReceiptDialog','onPrintSuccess','" + encodedString + "')");
-
-					} catch (Exception e) {
-						logger.error(Labels.getLabel("message.error.printerNotImpl"));
-						engine.showDocument(this.window_ReceiptEnquiryDialog, reportName, SaveFormat.PDF);
-					}
-				} else {
-					engine.showDocument(this.window_ReceiptEnquiryDialog, reportName, SaveFormat.PDF);
-				}
-			} catch (Exception e) {
-				logger.error(Labels.getLabel("message.error.agreementNotFound"));
-			}
-
-		} catch (Exception e) {
-			logger.error(Labels.getLabel("message.error.agreementNotFound"));
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -458,8 +407,6 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-				this.fundingAccount.setVisible(false);
-				this.label_ReceiptDialog_FundingAccount.setVisible(false);
 
 			} else {
 				this.row_favourNo.setVisible(false);
@@ -518,6 +465,10 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.row_RealizationDate.setVisible(true);
 		}
 
+		if ((StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) && header.getRealizationDate() != null) {
+			this.row_RealizationDate.setVisible(true);
+		}
+
 		// Separating Receipt Amounts based on user entry, if exists
 		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
@@ -548,6 +499,20 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Allocations Adjustment
 		if (!StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			doFillAllocationDetail(header.getAllocations(), finFormatter);
+		}
+
+		this.postBranch.setValue(header.getPostBranch(), header.getPostBranchDesc());
+		this.cashierBranch.setValue(header.getCashierBranch(), header.getCashierBranchDesc());
+		this.finDivision.setValue(header.getFinDivision(), header.getFinDivisionDesc());
+
+		if (this.groupbox_Finance.isVisible()) {
+			readOnlyComponent(true, this.postBranch);
+			readOnlyComponent(true, this.finDivision);
+		} else if (this.groupbox_Customer.isVisible()) {
+			this.custID.setAttribute("custID", header.getReference());
+			this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
+		} else if (this.groupbox_Other.isVisible()) {
+			this.reference.setValue(header.getReference());
 		}
 
 		this.recordStatus.setValue(header.getRecordStatus());
@@ -750,6 +715,88 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		lc.setParent(item);
 		this.listBoxReceipts.appendChild(item);
 		logger.debug("Leaving");
+	}
+
+	// Printer integration starts
+
+	public void onClick$btnPrint(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		int finFormatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
+		doClearMessage();
+		try {
+
+			String reportName = "GOLDLOAN_CashierReceipt";
+			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
+			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
+			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
+			engine.setTemplate(templateName);
+			engine.loadTemplate();
+			reportName = "CashierReceipt";
+
+			CashierReceipt cashierReceipt = new CashierReceipt();
+			cashierReceipt.setUserName(getUserWorkspace().getLoggedInUser().getUserName() + " - "
+					+ getUserWorkspace().getLoggedInUser().getFullName());
+
+			String branchDesc = getBranchService().getBranchDesc(getUserWorkspace().getLoggedInUser().getBranchCode());
+			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
+			if (StringUtils.isNotEmpty(branchDesc)) {
+				branch = branch + " - " + branchDesc;
+			}
+
+			cashierReceipt.setUserBranch(branch);
+			cashierReceipt.setFinReference(this.finReference.getValue());
+			cashierReceipt.setCustName(this.custCIF.getValue());
+			cashierReceipt.setReceiptAmount(PennantApplicationUtil.amountFormate(
+					PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), finFormatter),
+					finFormatter));
+			cashierReceipt.setReceiptAmountInWords(
+					NumberToEnglishWords.getAmountInText(this.receiptAmount.getActualValue(), ""));
+			cashierReceipt.setAppDate(DateUtility.formatToLongDate(derivedAppDate));
+
+			Date eventFromDate = this.receivedDate.getValue();
+			if (this.realizationDate.getValue() != null
+					&& DateUtility.compare(this.realizationDate.getValue(), eventFromDate) > 0) {
+				eventFromDate = this.realizationDate.getValue();
+			}
+			cashierReceipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
+
+			cashierReceipt.setReceiptNo(this.paymentRef.getValue());
+			if (StringUtils.equals(getComboboxValue(receiptMode), RepayConstants.RECEIPTMODE_CASH)) {
+				cashierReceipt.setFundingAc(getUserWorkspace().getLoggedInUser().getBranchCode() + "CASH");
+			} else {
+				cashierReceipt
+						.setFundingAc(this.fundingAccount.getValue() + " - " + this.fundingAccount.getDescription());
+			}
+			cashierReceipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
+
+			boolean isDirectPrint = true;
+			try {
+				if (isDirectPrint) {
+					try {
+						engine.mergeFields(cashierReceipt);
+						byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+						String encodedString = java.util.Base64.getEncoder().encodeToString(documentByteArray);
+						Clients.evalJavaScript("PrinterUtil.print('window_ReceiptEnquiryDialog','onPrintSuccess','"
+								+ encodedString + "')");
+
+					} catch (Exception e) {
+						MessageUtil.showError(Labels.getLabel("message.error.printerNotImpl"));
+					}
+				} else {
+					engine.mergeFields(cashierReceipt);
+					byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+
+					// Downloading Document including print
+					Filedownload.save(new AMedia(reportName, "pdf", "application/pdf", documentByteArray));
+				}
+			} catch (Exception e) {
+				MessageUtil.showError(Labels.getLabel("message.error.agreementNotFound"));
+			}
+
+		} catch (Exception e) {
+			MessageUtil.showError(Labels.getLabel("message.error.agreementNotFound"));
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//

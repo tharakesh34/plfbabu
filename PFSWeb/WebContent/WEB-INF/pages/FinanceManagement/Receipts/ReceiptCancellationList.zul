@@ -55,7 +55,7 @@
 									<hbox>
 										<uppercasebox id="customer" width="150px" />
 										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_ReceiptCancellationSearch_btnSearchCustCIF.tooltiptext')}"
-											image="/images/icons/more.png" />
+											image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 								<row>
@@ -88,6 +88,9 @@
 										<button id="btnSearchBranch" tooltiptext="${c:l('label_ReceiptCancellationSearch_btnSearchBranch.tooltiptext')}"
 											image="/images/icons/LOVSearch.png" />
 									</hbox>
+									<label id="label_ReceiptCancellationSearch_ReceiptCancellationTranRef" value="${c:l('label_ReceiptCancellationSearch_ReceiptCancellationTranRef.value')}" />
+									<listbox id="sortOperator_ReceiptCancellationTranRef" width="43px" mold="select" rows="1" />
+									<uppercasebox id="transactionRef" width="150px" />
 								</row>
 								<row>
 									<label id="label_ReceiptCancellationSearch_RecordStatus" value="${c:l('label.RecordStatus')}" />
@@ -115,9 +118,15 @@
 							<listhead sizable="true">
 								<listheader id="listheader_ReceiptCancellationReference" label="${c:l('listheader_ReceiptCancellationReference.label')}"
 									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellation_PromotionCode" label="${c:l('listheader_ReceiptCancellation_PromotionCode')}"
+									sort="auto" hflex="min" visible="false" />
 								<listheader id="listheader_ReceiptCancellationPurpose" label="${c:l('listheader_ReceiptCancellationPurpose.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptCancellationMode" label="${c:l('listheader_ReceiptCancellationMode.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellation_ReceiptRef" label="${c:l('listheader_ReceiptCancellation_ReceiptRef')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellation_ReceiptDate" label="${c:l('listheader_ReceiptCancellation_ReceiptDate')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptCancellationAmount" align="right"
 									label="${c:l('listheader_ReceiptCancellationAmount.label')}" sort="auto" hflex="min" />

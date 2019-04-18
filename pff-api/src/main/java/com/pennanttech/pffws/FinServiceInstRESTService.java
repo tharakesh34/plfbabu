@@ -7,12 +7,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
-import com.pennant.backend.model.finance.DisbursementServiceReq;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.ZIPCodeDetails;
+import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.ws.exception.ServiceException;
 
 @Produces("application/json")
@@ -51,23 +49,6 @@ public interface FinServiceInstRESTService {
 	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 	@POST
-	@Path("/loanInstructionService/cancelDisbursement")
-	public FinanceDetail cancelDisbursement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-
-	@GET
-	@Path("/loanInstructionService/getZIPCodeDetail/{pincode}")
-	public ZIPCodeDetails getZIPCodeDetail(@PathParam("pincode") String pinCode) throws ServiceException;
-
-	@GET
-	@Path("/loanInstructionService/getBankDetail/{iFSCCode}")
-	public BankDetail getBankDetail(@PathParam("iFSCCode") String iFSCCode) throws ServiceException;
-
-	@POST
-	@Path("/loanInstructionService/getDisbursementServiceReq")
-	public DisbursementServiceReq getDisbursementServiceReq(DisbursementServiceReq inquiryDetails)
-			throws ServiceException;
-
-	@POST
 	@Path("/loanInstructionService/partialSettlement")
 	public FinanceDetail partialSettlement(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
@@ -96,10 +77,6 @@ public interface FinServiceInstRESTService {
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
 	@POST
-	@Path("/loanInstructionService/getOverDraftMaintenance")
-	public FinanceDetail getOverDraftMaintenance(FinServiceInstruction finServiceInstRequest) throws ServiceException;
-
-	@POST
 	@Path("/loanInstructionService/scheduleMethodChange")
 	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
@@ -107,9 +84,25 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/feePayment")
 	public FinanceDetail feePayment(FinServiceInstruction finServiceInstRequest) throws ServiceException;
 
+	@POST
+	@Path("/loanInstructionService/changeGestationPeriod")
+	public FinanceDetail changeGestationPeriod(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+
 	@GET
 	@Path("/loanInstructionService/getLoanPendingDetailsByUserName/{userName}")
 	public LoanPendingDetails getLoanPendingDetailsByUserName(@PathParam("userName") String userName)
 			throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getGSTDetails/{finReference}")
+	public FinanceTaxDetail fetchGSTDetails(@PathParam("finReference") String finReference) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/addGSTDetails")
+	public WSReturnStatus addGSTDetails(FinanceTaxDetail financeTaxDetail) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/updateGSTDetails")
+	public WSReturnStatus updateGSTDetails(FinanceTaxDetail financeTaxDetail) throws ServiceException;
 
 }

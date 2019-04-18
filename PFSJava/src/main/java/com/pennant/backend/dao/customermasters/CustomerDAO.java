@@ -182,4 +182,6 @@ public interface CustomerDAO {
 	boolean isReligionExist(long religionId, String type);
 
 	int getCustomerCountByCustID(long custID, String type);
+
+	Customer checkCustomerByID(long custID, String type);
 }

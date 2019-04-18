@@ -68,15 +68,27 @@
 									</columns>
 									<rows>
 										<row>
-											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<label value="${c:l('label_ReceiptCancellationDialog_ReceiptId.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="finType" readonly="true" width="180px" />
+												<textbox id="receiptId" readonly="true" width="180px" />
 											</hbox>
 											<label value="${c:l('label_ReceiptCancellationDialog_FinReference.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<textbox id="finReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_ReceiptCancellationDialog_PromotionCode.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="promotionCode" width="180px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="finType" readonly="true" width="180px" />
 											</hbox>
 										</row>
 										<row>
@@ -96,6 +108,12 @@
 											<hbox>
 												<space spacing="2px" />
 												<textbox id="custCIF" width="180px" readonly="true" />
+											</hbox>
+											<label id="label_ReceiptCancellationDialog_NextInstResetDate" value="${c:l('label_ReceiptCancellationDialog_NextInstResetDate.value')}"
+												visible="false" />
+											<hbox id="hbox_ReceiptCancellationDialog_NextInstResetDate" visible="false">
+												<space spacing="2px" />
+												<datebox id="nextInstResetDate" width="180px" disabled="true" readonly="true" />
 											</hbox>
 										</row>
 									</rows>
@@ -239,13 +257,13 @@
 											<accountSelectionBox id="chequeAcNo" width="180px" />
 										</row>
 										<row id="row_fundingAcNo" visible="false">
+											<label id="label_ReceiptCancellationDialog_FundingAccount" value="${c:l('label_ReceiptCancellationDialog_FundingAccount.value')}" />
+											<extendedcombobox id="fundingAccount" width="180px" />
 											<label id="label_ReceiptCancellationDialog_ReceivedDate" value="${c:l('label_ReceiptCancellationDialog_ReceivedDate.value')}" />
 											<hbox id="hbox_ReceiptCancellationDialog_ReceivedDate">
 												<space spacing="2px" sclass="mandatory" />
 												<datebox id="receivedDate" width="100px" />
 											</hbox>
-											<label id="label_ReceiptCancellationDialog_FundingAccount" value="${c:l('label_ReceiptCancellationDialog_FundingAccount.value')}" />
-											<extendedcombobox id="fundingAccount" width="180px" />
 										</row>
 										<row id="row_remarks" visible="false">
 											<label id="label_ReceiptCancellationDialog_paymentReference" value="${c:l('label_ReceiptCancellationDialog_paymentReference.value')}" />
@@ -274,15 +292,27 @@
 									</columns>
 									<rows>
 										<row>
-											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<label value="${c:l('label_ReceiptCancellationDialog_ReceiptId.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="payment_finType" readonly="true" width="180px" />
+												<textbox id="payment_receiptId" readonly="true" width="180px" />
 											</hbox>
 											<label value="${c:l('label_ReceiptCancellationDialog_FinReference.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<textbox id="payment_finReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_ReceiptCancellationDialog_PromotionCode.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="payment_promotionCode" width="180px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="payment_finType" readonly="true" width="180px" />
 											</hbox>
 										</row>
 										<row>
@@ -348,15 +378,27 @@
 									</columns>
 									<rows>
 										<row>
-											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<label value="${c:l('label_ReceiptCancellationDialog_ReceiptId.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="posting_finType" readonly="true" width="180px" />
+												<textbox id="posting_receiptId" readonly="true" width="180px" />
 											</hbox>
 											<label value="${c:l('label_ReceiptCancellationDialog_FinReference.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<textbox id="posting_finReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_ReceiptCancellationDialog_PromotionCode.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_promotionCode" width="180px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_ReceiptCancellationDialog_FinType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="posting_finType" readonly="true" width="180px" />
 											</hbox>
 										</row>
 										<row>

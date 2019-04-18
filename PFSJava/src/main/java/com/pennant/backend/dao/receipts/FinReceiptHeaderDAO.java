@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptHeaderDAO {
@@ -13,6 +14,8 @@ public interface FinReceiptHeaderDAO {
 
 	long save(FinReceiptHeader receiptHeader, TableType tableType);
 
+	String getReceiptModeStatus(long receiptID, String type);
+
 	void update(FinReceiptHeader receiptHeader, TableType tableType);
 
 	void deleteByReceiptID(long receiptID, TableType tableType);
@@ -20,6 +23,12 @@ public interface FinReceiptHeaderDAO {
 	FinReceiptHeader getReceiptHeaderByID(long receiptID, String type);
 
 	int geFeeReceiptCount(String reference, String receiptPurpose, long receiptID);
+
+	FinReceiptHeader getServicingFinanceHeader(long receiptID, String userRole, String type);
+
+	List<ReceiptCancelDetail> getReceiptCancelDetailList(Date cancelReqDate, String finReference);
+
+	void updateReceiptStatus(long receiptID, String status);
 
 	long generatedReceiptID(FinReceiptHeader receiptHeader);
 
@@ -48,9 +57,15 @@ public interface FinReceiptHeaderDAO {
 	public boolean isExtRefAssigned(String finReference);
 
 	List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type);
-	
+
 	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber);
+
 	//### 29-10-2018, Ticket id:124998
 	void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate);
+
+	List<FinReceiptHeader> getInProcessReceipts(String Reference);
+
+	List<Long> getInProcessReceiptId(String finReference);
 	
+	void updateLoanInActive(long receiptId);
 }

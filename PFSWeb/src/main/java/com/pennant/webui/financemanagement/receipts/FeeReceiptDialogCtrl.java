@@ -89,18 +89,21 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
-import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.AssetConstants;
@@ -122,8 +125,10 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -201,6 +206,17 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private AccountEngineExecution engineExecution;
 	private EventManager eventManager;
 	private boolean feesExists = false;
+
+	private Label label_FeeReceiptDialog_FundingAccount;
+
+	protected Groupbox groupbox_Finance;
+	protected Groupbox groupbox_Customer;
+	protected Groupbox groupbox_Other;
+	protected ExtendedCombobox custID;
+	protected Textbox reference;
+	protected ExtendedCombobox postBranch;
+	protected ExtendedCombobox cashierBranch;
+	protected ExtendedCombobox finDivision;
 
 	/**
 	 * default constructor.<br>
@@ -324,14 +340,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptAmount.setProperties(true, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
-		this.fundingAccount.setModuleName("FinTypePartner");
-		this.fundingAccount.setMandatoryStyle(true);
-		this.fundingAccount.setValueColumn("PartnerBankID");
-		this.fundingAccount.setDescColumn("PartnerBankCode");
-		this.fundingAccount.setValueType(DataType.LONG);
-		this.fundingAccount.setDisplayStyle(2);
-		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
-
 		this.chequeAcNo.setButtonVisible(false);
 		this.chequeAcNo.setMandatory(false);
 		this.chequeAcNo.setAcountDetails("", "", true);
@@ -354,6 +362,61 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
 
+		this.custID.setModuleName("Customer");
+		this.custID.setMandatoryStyle(true);
+		this.custID.setValueColumn("CustCIF");
+		this.custID.setDescColumn("CustShrtName");
+		this.custID.setDisplayStyle(2);
+		this.custID.setValidateColumns(new String[] { "CustCIF" });
+
+		if (RepayConstants.RECEIPTTO_FINANCE.equals(this.receiptHeader.getRecAgainst())) {
+			this.fundingAccount.setModuleName("FinTypePartner");
+			this.fundingAccount.setMandatoryStyle(true);
+			this.fundingAccount.setValueColumn("PartnerBankID");
+			this.fundingAccount.setDescColumn("PartnerBankCode");
+			this.fundingAccount.setValueType(DataType.LONG);
+			this.fundingAccount.setDisplayStyle(2);
+			this.fundingAccount.setValidateColumns(new String[] { "PartnerBankID" });
+			this.groupbox_Finance.setVisible(true);
+		} else {
+			this.fundingAccount.setModuleName("PartnerBank");
+			this.fundingAccount.setValueColumn("PartnerBankId");
+			this.fundingAccount.setDescColumn("PartnerBankCode");
+			this.fundingAccount.setValidateColumns(
+					new String[] { "PartnerBankId", "PartnerBankCode", "PartnerBankName", "BankCode" });
+			this.fundingAccount.setMandatoryStyle(true);
+
+			if (RepayConstants.RECEIPTTO_CUSTOMER.equals(this.receiptHeader.getRecAgainst())) {
+				this.groupbox_Customer.setVisible(true);
+				this.gb_FeeDetail.setVisible(false);
+			} else if (RepayConstants.RECEIPTTO_OTHER.equals(this.receiptHeader.getRecAgainst())) {
+				this.groupbox_Other.setVisible(true);
+				this.gb_FeeDetail.setVisible(false);
+				this.reference.setMaxlength(20);
+			}
+		}
+
+		//Post Branch
+		this.postBranch.setModuleName("Branch");
+		this.postBranch.setValueColumn("BranchCode");
+		this.postBranch.setDescColumn("BranchDesc");
+		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
+		this.postBranch.setMandatoryStyle(true);
+
+		//Cashier Branch
+		this.cashierBranch.setModuleName("Branch");
+		this.cashierBranch.setValueColumn("BranchCode");
+		this.cashierBranch.setDescColumn("BranchDesc");
+		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
+		this.cashierBranch.setMandatoryStyle(true);
+
+		//Fin Division
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+		this.finDivision.setMandatoryStyle(true);
+
 		logger.debug("Leaving");
 	}
 
@@ -365,8 +428,18 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (this.receiptHeader.isNewRecord()) {
 			this.finReference.setReadonly(false);
+			readOnlyComponent(false, this.custID);
+			readOnlyComponent(false, this.reference);
+			readOnlyComponent(false, this.cashierBranch);
+			readOnlyComponent(false, this.postBranch);
+			readOnlyComponent(false, this.finDivision);
 		} else {
 			this.finReference.setReadonly(true);
+			readOnlyComponent(true, this.custID);
+			readOnlyComponent(true, this.reference);
+			readOnlyComponent(true, this.cashierBranch);
+			readOnlyComponent(true, this.postBranch);
+			readOnlyComponent(true, this.finDivision);
 		}
 
 		this.finType.setReadonly(true);
@@ -411,6 +484,23 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		doClose(this.btnReceipt.isVisible());
 	}
 
+	public void onFulfill$custID(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = custID.getObject();
+
+		if (dataObject instanceof String) {
+			this.custID.setValue(dataObject.toString());
+		} else {
+			Customer details = (Customer) dataObject;
+			if (details != null) {
+				this.custID.setAttribute("custID", details.getCustID());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
 	public void onFulfill$bankCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -444,6 +534,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.finBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
 				this.custCIF.setValue(main.getLovDescCustCIF());
 				this.custName.setValue(main.getLovDescCustShrtName());
+				this.finDivision.setValue(main.getLovDescFinDivision());
+				this.postBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
 
 				// Fee Details Fetching only for display
 				List<FinFeeDetail> feelist = getFeeReceiptService().getPaidFinFeeDetails(main.getFinReference());
@@ -460,6 +552,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.finBranch.setValue("", "");
 			this.custCIF.setValue("");
 			this.custName.setValue("");
+			this.finDivision.setValue("", "");
+			this.postBranch.setValue("", "");
 
 			this.gb_FeeDetail.setVisible(false);
 		}
@@ -556,6 +650,67 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	}
 
 	/**
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$postBranch(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = postBranch.getObject();
+
+		if (dataObject instanceof String) {
+			this.postBranch.setValue(dataObject.toString(), "");
+		} else {
+			Branch branchDetails = (Branch) dataObject;
+
+			if (branchDetails != null) {
+				this.postBranch.setValue(branchDetails.getBranchCode(), branchDetails.getBranchDesc());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$cashierBranch(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = cashierBranch.getObject();
+
+		if (dataObject instanceof String) {
+			this.cashierBranch.setValue(dataObject.toString(), "");
+		} else {
+			Branch branchDetails = (Branch) dataObject;
+
+			if (branchDetails != null) {
+				this.cashierBranch.setValue(branchDetails.getBranchCode(), branchDetails.getBranchDesc());
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$finDivision(Event event) {
+		logger.debug("Entering");
+
+		Object dataObject = finDivision.getObject();
+
+		if (dataObject instanceof String) {
+			this.finDivision.setValue(dataObject.toString(), "");
+		} else {
+			DivisionDetail details = (DivisionDetail) dataObject;
+			if (details != null) {
+				this.finDivision.setValue(details.getDivisionCode(), details.getDivisionCodeDesc());
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	/**
 	 * Method for Setting Fields based on Receipt Mode selected
 	 * 
 	 * @param recMode
@@ -597,12 +752,14 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.receiptAmount.setMandatory(true);
 			readOnlyComponent(isReadOnly("FeeReceiptDialog_receiptAmount"), this.receiptAmount);
 
-			Filter fundingAcFilters[] = new Filter[3];
-			fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
-			fundingAcFilters[1] = new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
-			fundingAcFilters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
-			Filter.and(fundingAcFilters);
-			this.fundingAccount.setFilters(fundingAcFilters);
+			if (this.groupbox_Finance.isVisible()) {
+				Filter fundingAcFilters[] = new Filter[3];
+				fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
+				fundingAcFilters[1] = new Filter("FinType", this.finType.getValue(), Filter.OP_EQUAL);
+				fundingAcFilters[2] = new Filter("PaymentMode", recMode, Filter.OP_EQUAL);
+				Filter.and(fundingAcFilters);
+				this.fundingAccount.setFilters(fundingAcFilters);
+			}
 			this.row_fundingAcNo.setVisible(true);
 			this.row_remarks.setVisible(true);
 
@@ -649,12 +806,15 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.row_DepositDate.setVisible(false);
 				this.row_ChequeAcNo.setVisible(false);
 				this.row_PaymentRef.setVisible(false);
-
+				this.label_FeeReceiptDialog_FundingAccount.setVisible(false);
+				this.fundingAccount.setVisible(false);
 				if (isUserAction) {
 					this.receivedDate.setValue(DateUtility.getAppDate());
 				}
 
 			} else {
+				this.label_FeeReceiptDialog_FundingAccount.setVisible(true);
+				this.fundingAccount.setVisible(true);
 				this.row_favourNo.setVisible(false);
 				this.row_BankCode.setVisible(false);
 				this.bankCode.setMandatoryStyle(false);
@@ -722,21 +882,24 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					receiptDetail.setPaymentRef(this.paymentRef.getValue());
 					receiptDetail.setTransactionRef(this.transactionRef.getValue());
 					receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-					receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+					if (!this.fundingAccount.getValue().isEmpty()) {
+						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+					}
 					receiptDetail.setReceivedDate(this.receivedDate.getValue());
 
-					if (receiptDetail.getRepayHeaders().isEmpty()) {
-						FinRepayHeader repayHeader = new FinRepayHeader();
-						repayHeader.setFinReference(this.finReference.getValue());
-						repayHeader.setValueDate(this.receivedDate.getValue());
-						repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
-						repayHeader.setRepayAmount(header.getReceiptAmount());
-
-						receiptDetail.getRepayHeaders().add(repayHeader);
-					} else {
-						receiptDetail.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
-						receiptDetail.getRepayHeaders().get(0).setRepayAmount(header.getReceiptAmount());
-					}
+					//For Upfront Fees we don't want to save the FinRepay Headers
+					//					if (receiptDetail.getRepayHeaders().isEmpty()) {
+					//						FinRepayHeader repayHeader = new FinRepayHeader();
+					//						repayHeader.setFinReference(this.finReference.getValue());
+					//						repayHeader.setValueDate(this.receivedDate.getValue());
+					//						repayHeader.setFinEvent(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
+					//						repayHeader.setRepayAmount(header.getReceiptAmount());
+					//
+					//						receiptDetail.getRepayHeaders().add(repayHeader);
+					//					} else {
+					//						receiptDetail.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
+					//						receiptDetail.getRepayHeaders().get(0).setRepayAmount(header.getReceiptAmount());
+					//					}
 				}
 			}
 
@@ -765,7 +928,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Receipt Header Details workflow fields
 		FinReceiptHeader receiptHeader = getReceiptHeader();
-		receiptHeader.setReference(this.finReference.getValue());
 		receiptHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		receiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
@@ -802,9 +964,16 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (StringUtils.isBlank(aReceiptHeader.getNextTaskId())) {
 					aReceiptHeader.setNextRoleCode("");
 				}
+				String ref = null;
+				if (this.groupbox_Customer.isVisible()) {
+					ref = this.custID.getValue();
+				} else if (this.groupbox_Other.isVisible()) {
+					ref = this.reference.getValue();
+				} else if (this.groupbox_Finance.isVisible()) {
+					ref = this.finReference.getValue();
+				}
 				String msg = PennantApplicationUtil.getSavingStatus(aReceiptHeader.getRoleCode(),
-						aReceiptHeader.getNextRoleCode(), this.finReference.getValue(), " Fee Receipt ",
-						aReceiptHeader.getRecordStatus());
+						aReceiptHeader.getNextRoleCode(), ref, " Fee Receipt ", aReceiptHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// User Notifications Message/Alert
@@ -820,11 +989,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							String[] to = nextRoleCodes.split(",");
 							if (StringUtils.isNotEmpty(aReceiptHeader.getReference())) {
 
-								String reference = aReceiptHeader.getReference();
 								if (!PennantConstants.RCD_STATUS_CANCELLED
 										.equalsIgnoreCase(aReceiptHeader.getRecordStatus())) {
-									getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference"
-											+ ":" + reference, notify, to);
+									getEventManager().publish(
+											Labels.getLabel("REC_PENDING_MESSAGE") + " with Reference" + ":" + ref,
+											notify, to);
 								}
 							} else {
 								getEventManager().publish(Labels.getLabel("REC_PENDING_MESSAGE"), notify, to);
@@ -876,6 +1045,22 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.finBranch.setValue(header.getFinBranch(), header.getFinBranchDesc());
 			this.custCIF.setValue(header.getCustCIF());
 			this.custName.setValue(header.getCustShrtName());
+
+			this.postBranch.setValue(header.getPostBranch(), header.getPostBranchDesc());
+			this.cashierBranch.setValue(header.getCashierBranch(), header.getCashierBranchDesc());
+			this.finDivision.setValue(header.getFinDivision(), header.getFinDivisionDesc());
+		} else {
+			this.postBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode(),
+					getUserWorkspace().getLoggedInUser().getBranchName());
+			this.cashierBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode(),
+					getUserWorkspace().getLoggedInUser().getBranchName());
+			SecurityUser securityUser = getFeeReceiptService()
+					.getSecurityUserById(getUserWorkspace().getLoggedInUser().getUserId(), "");
+			if (securityUser != null && securityUser.isAccessToAllBranches()) {
+				readOnlyComponent(false, this.cashierBranch);
+			} else {
+				readOnlyComponent(true, this.cashierBranch);
+			}
 		}
 
 		String allocateMthd = header.getAllocationType();
@@ -913,8 +1098,20 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		// Fee Details
-		doFillFeeDetails(header.getPaidFeeList());
+		if (this.groupbox_Finance.isVisible()) {
+			// Fee Details
+			doFillFeeDetails(header.getPaidFeeList());
+
+			readOnlyComponent(true, this.postBranch);
+			readOnlyComponent(true, this.finDivision);
+		} else if (this.groupbox_Customer.isVisible()) {
+			this.custID.setAttribute("custID", header.getReference());
+			if (!header.isNewRecord()) {
+				this.custID.setValue(header.getCustomerCIF(), header.getCustomerName());
+			}
+		} else if (this.groupbox_Other.isVisible()) {
+			this.reference.setValue(header.getReference());
+		}
 
 		//Show Accounting Tab Details Based upon Role Condition using Work flow
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
@@ -1063,9 +1260,20 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_FEEPAY);
 		aeEvent.setFinReference(getReceiptHeader().getReference());
 		aeEvent.setCustCIF(getReceiptHeader().getCustCIF());
-		aeEvent.setBranch(getReceiptHeader().getFinBranch());
+		aeEvent.setBranch(getReceiptHeader().getPostBranch());
 		aeEvent.setCcy(getReceiptHeader().getFinCcy());
 		aeEvent.setCustID(getReceiptHeader().getCustID());
+
+		Map<String, Object> map = null;
+		long accountingSetID = 0;
+		if (this.groupbox_Finance.isVisible()) {
+			map = getFeeReceiptService().getGLSubHeadCodes(getReceiptHeader().getReference());
+			accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
+					AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+		} else {
+			accountingSetID = getFeeReceiptService().getAccountingSetId(AccountEventConstants.ACCEVENT_FEEPAY,
+					AccountEventConstants.ACCEVENT_FEEPAY);
+		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -1077,18 +1285,41 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
 		amountCodes.setFinType(getReceiptHeader().getFinType());
+		if (map != null) {
+			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
+			amountCodes.setFinbranch((String) map.get("FinBranch"));
+			amountCodes.setEntitycode((String) map.get("Entitycode"));
+			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
+			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+		} else {
+			amountCodes.setEntitycode(getReceiptHeader().getEntityCode());
+			amountCodes.setFinbranch(getReceiptHeader().getPostBranch());
+		}
 
-		// Fetch Accounting Set ID
-		long accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
-				AccountEventConstants.ACCEVENT_FEEPAY, FinanceConstants.MODULEID_FINTYPE);
 		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
-			aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+
+			if (map != null) {
+				dataMap.put("emptype", map.get("emptype"));
+				dataMap.put("branchcity", map.get("branchcity"));
+				dataMap.put("fincollateralreq", map.get("fincollateralreq"));
+				dataMap.put("btloan", map.get("btloan"));
+			} else {
+				dataMap.put("emptype", "");
+				dataMap.put("branchcity", "");
+				dataMap.put("fincollateralreq", false);
+				dataMap.put("btloan", "");
+			}
+			aeEvent.setDataMap(dataMap);
+
+			//execute accounting
 			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
 		} else {
 			Clients.showNotification(Labels.getLabel("label_FeeReceiptDialog_NoAccounting.value"), "warning", null,
 					null, -1);
 		}
+
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
@@ -1136,7 +1367,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (!StringUtils.equals(recptMode, RepayConstants.RECEIPTMODE_EXCESS)) {
-			if (!this.fundingAccount.isReadonly()) {
+			if (!this.fundingAccount.isReadonly() && this.fundingAccount.isVisible()) {
 				this.fundingAccount.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FeeReceiptDialog_FundingAccount.value"), null, true));
 			}
@@ -1215,6 +1446,33 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
+		if (this.groupbox_Customer.isVisible()) {
+			if (!this.custID.isReadonly()) {
+				this.custID.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_CustID.value"), null, true));
+			}
+		} else if (this.groupbox_Other.isVisible()) {
+			if (!this.reference.isReadonly()) {
+				this.reference.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_FeeReceiptDialog_Reference.value"), null, true));
+			}
+		}
+
+		if (!this.postBranch.isReadonly()) {
+			this.postBranch.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FeeReceiptDialog_PostBranch.value"), null, true, true));
+		}
+
+		if (!this.cashierBranch.isReadonly()) {
+			this.cashierBranch.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FeeReceiptDialog_CashierBranch.value"), null, true, true));
+		}
+
+		if (!this.finDivision.isReadonly()) {
+			this.finDivision.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FeeReceiptDialog_FinDivision.value"), null, true, true));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1242,6 +1500,11 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setConstraint("");
 		this.receivedDate.setConstraint("");
 		this.remarks.setConstraint("");
+		this.custID.setConstraint("");
+		this.reference.setConstraint("");
+		this.postBranch.setConstraint("");
+		this.cashierBranch.setConstraint("");
+		this.finDivision.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -1272,6 +1535,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receivedDate.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 
+		this.custID.setErrorMessage("");
+		this.reference.setErrorMessage("");
+		this.postBranch.setErrorMessage("");
+		this.cashierBranch.setErrorMessage("");
+		this.finDivision.setErrorMessage("");
+
 		logger.debug("Leaving");
 	}
 
@@ -1289,8 +1558,49 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinReceiptHeader header = getReceiptHeader();
 		header.setReceiptDate(DateUtility.getAppDate());
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReference(this.finReference.getValue());
+
+		if (this.groupbox_Finance.isVisible()) {
+			header.setReference(this.finReference.getValue());
+		} else if (this.groupbox_Customer.isVisible()) {
+			// Cust ID
+			try {
+				this.custID.getValidatedValue();
+				String custid = String.valueOf(this.custID.getAttribute("custID"));
+				header.setCustID(Long.valueOf((custid)));
+				header.setCustomerCIF(this.custID.getValue()); // Customer CIF
+				header.setReference(custid);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		} else if (this.groupbox_Other.isVisible()) {
+			try {
+				header.setReference(this.reference.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
+		//Post Branch Code
+		try {
+			receiptHeader.setPostBranch(this.postBranch.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//Cashier Branch Code
+		try {
+			receiptHeader.setCashierBranch(this.cashierBranch.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//FinDivision
+		try {
+			receiptHeader.setFinDivision(this.finDivision.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 		try {
 			header.setReceiptMode(getComboboxValue(receiptMode));
@@ -1549,6 +1859,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			MessageUtil.showError(e);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("Exception: ", e);
+		} catch (AppException e) {
+			MessageUtil.showError(e);
 		}
 
 		logger.debug("return Value:" + processCompleted);

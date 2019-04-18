@@ -100,6 +100,9 @@ public class RepayMain implements java.io.Serializable {
 	private Date refundCalStartDate;
 	private String payApportionment;
 
+	private BigDecimal profitPaid = BigDecimal.ZERO;
+	private BigDecimal principalPaid = BigDecimal.ZERO;
+
 	public RepayMain() {
 
 	}
@@ -498,6 +501,22 @@ public class RepayMain implements java.io.Serializable {
 
 	public void setPayApportionment(String payApportionment) {
 		this.payApportionment = payApportionment;
+	}
+
+	public BigDecimal getProfitPaid() {
+		return profitPaid;
+	}
+
+	public void setProfitPaid(BigDecimal profitPaid) {
+		this.profitPaid = profitPaid;
+	}
+
+	public BigDecimal getPrincipalPaid() {
+		return principalPaid;
+	}
+
+	public void setPrincipalPaid(BigDecimal principalPaid) {
+		this.principalPaid = principalPaid;
 	}
 
 }

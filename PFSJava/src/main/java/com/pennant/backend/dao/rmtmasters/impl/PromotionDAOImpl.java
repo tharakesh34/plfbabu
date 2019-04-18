@@ -62,6 +62,7 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Promotion model</b> class.<br>
@@ -369,5 +370,48 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+	}
+
+	@Override
+	public Promotion getPromotionByCode(String promotionCode, String type) {
+		logger.debug(Literal.ENTERING);
+
+		Promotion promotion = new Promotion();
+		promotion.setPromotionCode(promotionCode);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT PromotionId, promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
+		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
+		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
+		sql.append(" finMaxRate,active, SchemeScope, RePledge, Ltv, SchemeWiseLimit, Tenor, InterestType,");
+		sql.append(
+				" MinInterestPeriod, MonthlyCompounding, PenalInterestType, PenalRate, Module, ReferenceId, Remarks, ");
+		sql.append(
+				" ApplyODPenalty, ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ");
+
+		if (type.contains("View")) {
+			sql.append(" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc, ");
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From Promotions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PromotionCode =:PromotionCode");
+
+		logger.debug("sql: " + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
+		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+
+		try {
+			promotion = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			promotion = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return promotion;
 	}
 }

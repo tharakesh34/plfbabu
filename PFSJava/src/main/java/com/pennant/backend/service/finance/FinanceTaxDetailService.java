@@ -51,6 +51,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceTaxDetailService {
 
@@ -75,4 +77,12 @@ public interface FinanceTaxDetailService {
 	Customer getCustomerByID(long id);
 
 	AuditDetail gstNumbeValidation(AuditDetail auditDetail, FinanceTaxDetail financeTaxDetail);
+
+	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ### 17-07-2018 - Ticket ID : 127950
+
+	List<ErrorDetail> doGSTValidations(FinanceTaxDetail financeTaxDetail);
+
+	List<ErrorDetail> verifyCoApplicantDetails(FinanceTaxDetail financeTaxDetail);
+
+	int getFinanceTaxDetailsByCount(String finReference);
 }

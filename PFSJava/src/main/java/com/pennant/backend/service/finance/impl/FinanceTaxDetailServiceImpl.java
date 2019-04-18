@@ -50,13 +50,18 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.JountAccountDetailDAO;
+import com.pennant.backend.dao.smtmasters.CountryDAO;
+import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -64,11 +69,15 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -79,6 +88,8 @@ import com.pennanttech.pff.core.TableType;
 public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail> implements FinanceTaxDetailService {
 	private static final Logger logger = Logger.getLogger(FinanceTaxDetailServiceImpl.class);
 
+	private CustomerDetailsService customerDetailsService;
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private GuarantorDetailDAO guarantorDetailDAO;
@@ -86,6 +97,9 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	private CustomerDAO customerDAO;
 	private ProvinceDAO provinceDAO;
 	private FinanceMainDAO financeMainDAO;
+	private PinCodeDAO pinCodeDAO;
+	private CountryDAO countryDAO;
+	private CityDAO cityDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -211,7 +225,9 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		FinanceTaxDetail financeTaxDetail = new FinanceTaxDetail();
 		BeanUtils.copyProperties((FinanceTaxDetail) auditHeader.getAuditDetail().getModelData(), financeTaxDetail);
 
-		getFinanceTaxDetailDAO().delete(financeTaxDetail, TableType.TEMP_TAB);
+		if (!StringUtils.equals(financeTaxDetail.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			getFinanceTaxDetailDAO().delete(financeTaxDetail, TableType.TEMP_TAB);
+		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(financeTaxDetail.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -248,6 +264,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
+
 		return auditHeader;
 
 	}
@@ -331,34 +348,20 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		valueParm[0] = String.valueOf(financeTaxDetail.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (financeTaxDetail.isNew()) { // for New record or new record into
-											// work flow
+		if (financeTaxDetail.isNew()) { // for New record or new record into work flow
 
-			if (!financeTaxDetail.isWorkflow()) {// With out Work flow only new
-														// records
-				if (befMandate != null) { // Record Already Exists in the table
-												// then error
+			if (!financeTaxDetail.isWorkflow()) {// With out Work flow only new records  
+				if (befMandate != null) { // Record Already Exists in the table then error  
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (financeTaxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																										// records
-																									// type
-																									// is
-																									// new
-					if (befMandate != null || tempMandate != null) { // if
-																			// records
-																		// already
-																		// exists
-																		// in
-																		// the
-																		// main
-																		// table
+				if (financeTaxDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
+					if (befMandate != null || tempMandate != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				} else { // if records not exists in the Main flow table
+				} else { // if records not exists in the Main flow table				
 					if (befMandate == null || tempMandate != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -366,13 +369,10 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!financeTaxDetail.isWorkflow()) { // With out Work flow for
-														// update and delete
+			// for work flow process records or (Record to update or Delete with out work flow)
+			if (!financeTaxDetail.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befMandate == null) { // if records not exists in the main
-												// table
+				if (befMandate == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -391,8 +391,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				}
 			} else {
 
-				if (tempMandate == null) { // if records not exists in the Work
-												// flow table
+				if (tempMandate == null) { // if records not exists in the Work flow table 
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -415,6 +414,240 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	public List<ErrorDetail> doGSTValidations(final FinanceTaxDetail financeTaxDetail) {
+
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		int count = financeMainDAO.getFinanceCountById(financeTaxDetail.getFinReference(), "", false);
+		if (count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "finReference";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30556", valueParm)));
+
+			return errorsList;
+		}
+
+		Customer customer = customerDetailsService.getCheckCustomerByCIF(financeTaxDetail.getCustCIF());
+		if (customer == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeTaxDetail.getCustCIF();
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90304", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(financeTaxDetail.getApplicableFor())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "ApplicableFor";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return errorsList;
+		}
+
+		List<ValueLabel> applicableForValues = PennantStaticListUtil.getTaxApplicableFor();
+		boolean applicableForFlag = false;
+		for (ValueLabel valueLabel : applicableForValues) {
+			if (StringUtils.equals(financeTaxDetail.getApplicableFor(), valueLabel.getValue())) {
+				applicableForFlag = true;
+				break;
+			}
+		}
+		if (!applicableForFlag) {
+			String[] valueParm = new String[2];
+			valueParm[0] = financeTaxDetail.getApplicableFor();
+			valueParm[1] = PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER + ", "
+					+ PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT;
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(financeTaxDetail.getAddrLine1())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "AddrLine1";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(financeTaxDetail.getProvince())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Province";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(financeTaxDetail.getCountry())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "country";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(financeTaxDetail.getCity())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "city";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isEmpty(financeTaxDetail.getPinCode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "pincode";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return errorsList;
+		}
+
+		if (StringUtils.isNotBlank(financeTaxDetail.getTaxNumber())
+				&& (!(StringUtils.length(financeTaxDetail.getTaxNumber()) == 15))) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "gstNumber";
+			valueParm[1] = "15";
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", valueParm)));
+
+			return errorsList;
+		}
+
+		PinCode validPincode = pinCodeDAO.getPinCode(financeTaxDetail.getPinCode(), "_AView");
+		if (validPincode != null) {
+			/* validate country, state, city */
+			Country validCountry = countryDAO.getCountryById(financeTaxDetail.getCountry(), "");
+			if (validCountry != null) {
+				if (!StringUtils.equals(validCountry.getCountryCode(), financeTaxDetail.getCountry())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = financeTaxDetail.getCountry();
+					valueParm[1] = "Country";
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+
+					return errorsList;
+				}
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Country";
+				valueParm[1] = financeTaxDetail.getCountry();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+
+				return errorsList;
+			}
+
+			Province validProvince = provinceDAO.getProvinceById(financeTaxDetail.getCountry(),
+					financeTaxDetail.getProvince(), "");
+			if (validProvince != null) {
+				if (!StringUtils.equals(validProvince.getCPProvince(), financeTaxDetail.getProvince())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = financeTaxDetail.getProvince();
+					valueParm[1] = "State";
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+
+					return errorsList;
+				}
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = "State";
+				valueParm[1] = financeTaxDetail.getProvince();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+
+				return errorsList;
+			}
+
+			City validCity = cityDAO.getCityById(financeTaxDetail.getCountry(), financeTaxDetail.getProvince(),
+					financeTaxDetail.getCity(), "");
+			if (validCity != null) {
+				if (!StringUtils.equals(validCity.getPCCity(), financeTaxDetail.getCity())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = financeTaxDetail.getCity();
+					valueParm[1] = "City";
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)));
+
+					return errorsList;
+				}
+			} else {
+				String[] valueParm = new String[2];
+				valueParm[0] = "City";
+				valueParm[1] = financeTaxDetail.getCity();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+
+				return errorsList;
+			}
+		} else {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Pincode";
+			valueParm[1] = financeTaxDetail.getPinCode();
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+
+			return errorsList;
+		}
+
+		return errorsList;
+	}
+
+	public List<ErrorDetail> verifyCoApplicantDetails(FinanceTaxDetail financeTaxDetail) {
+
+		List<ErrorDetail> errorsList = new ArrayList<>();
+
+		Customer customer = customerDetailsService.getCustomerByCIF(financeTaxDetail.getCustCIF());
+		if (customer == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeTaxDetail.getCustCIF();
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
+
+			return errorsList;
+		}
+
+		switch (financeTaxDetail.getApplicableFor()) {
+		case PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER:
+			/* business logic */
+			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(financeTaxDetail.getFinReference(),
+					"_AView", false);
+			if (!(finMain.getCustID() == customer.getCustID())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Customer";
+				valueParm[1] = "Loan : " + financeTaxDetail.getFinReference();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+
+				return errorsList;
+			}
+			financeTaxDetail.setTaxCustId(customer.getCustID());
+			break;
+		case PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT:
+			JointAccountDetail jointAccountDetail = jountAccountDetailDAO.getJountAccountDetailByRef(
+					financeTaxDetail.getFinReference(), financeTaxDetail.getCustCIF(), "_AView");
+			if (null == jointAccountDetail) {
+				String[] valueParm = new String[1];
+				valueParm[0] = financeTaxDetail.getCustCIF();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
+
+				return errorsList;
+			} else {
+				if (!(customer.getCustID() == jointAccountDetail.getCustID())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = financeTaxDetail.getCustCIF();
+					errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90102", valueParm)));
+
+					return errorsList;
+				}
+			}
+			financeTaxDetail.setTaxCustId(customer.getCustID());
+			break;
+		default:
+			String[] valueParm = new String[1];
+			valueParm[0] = financeTaxDetail.getApplicableFor();
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+			break;
+		}
+
+		return errorsList;
+	}
+
+	@Override
+	public int getFinanceTaxDetailsByCount(String finReference) {
+		return financeTaxDetailDAO.getFinTaxDetailsCount(finReference);
 	}
 
 	@Override
@@ -463,7 +696,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 			String gstStateCode = "";
 
 			if (StringUtils.isNotBlank(taxNumber)) {
-				// if GST Number is already exist or not
+				//if GST Number is already exist or not
 				int count = getFinanceTaxDetailDAO().getGSTNumberCount(custId, taxNumber, "_View");
 				if (count != 0) {
 					String[] parameters = new String[2];
@@ -480,17 +713,14 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 				}
 				panNumber = this.customerDAO.getCustCRCPRById(custId, "");
 
-				if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code
-																// is not available
+				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
 					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxNumber.substring(0, 2))) {
 						auditDetail.setErrorDetail(ErrorUtil
 								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65023", null, null)));
 					}
 				}
 
-				if (StringUtils.isNotBlank(panNumber)) { // if PAN number is not
-																// available in GST
-															// Number
+				if (StringUtils.isNotBlank(panNumber)) { //if PAN number is not available in GST Number
 					if (!StringUtils.equalsIgnoreCase(panNumber, taxNumber.substring(2, 12))) {
 						auditDetail.setErrorDetail(ErrorUtil
 								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65024", null, null)));
@@ -502,6 +732,15 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 		logger.debug(Literal.LEAVING);
 
 		return auditDetail;
+	}
+
+	/**
+	 *
+	 * Ticket id:127950
+	 */
+	@Override
+	public boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif) {
+		return this.financeMainDAO.isFinReferenceExitsinLQ(finReference, tempTab, wif);
 	}
 
 	// ******************************************************//
@@ -560,6 +799,22 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
+	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	public void setCityDAO(CityDAO cityDAO) {
+		this.cityDAO = cityDAO;
+	}
+
+	public void setCountryDAO(CountryDAO countryDAO) {
+		this.countryDAO = countryDAO;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
 	}
 
 }

@@ -46,6 +46,7 @@ package com.pennant.backend.service.finance;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.assignmentupload.AssignmentUpload;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
@@ -107,5 +108,21 @@ public interface UploadHeaderService {
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
 	void updateRecord(UploadHeader uploadHeader);
+	
+	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+	
+	UploadHeader getApprovedUploadHeaderById(long academicID);
+
+	AuditHeader delete(AuditHeader auditHeader);
+
+	AuditHeader doReject(AuditHeader auditHeader);
+
+	AuditHeader doApproveFinTypeExpense(AuditHeader auditHeader);
+
+	UploadHeader getUploadHeaderById(long uploadId);
+	
+	void validateAssignmentScreenLevel(AssignmentUpload assignmentUpload, String entityCode);
+	
+	void updateFileDownload(long uploadId, boolean fileDownload, String type);
 
 }

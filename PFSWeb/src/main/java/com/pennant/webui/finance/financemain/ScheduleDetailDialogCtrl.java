@@ -114,6 +114,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
+import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil;
@@ -333,11 +334,20 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (arguments.containsKey("financeMainDialogCtrl")) {
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
-		
+
+		if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)) {
+			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
+					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
+		}
+
 		if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
 			setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
+		}
+
+		if (financeMainDialogCtrl instanceof ReceiptDialogCtrl) {
+			//
 		} else {
-			logger.warn("Replace the below buy using instanceof "+ financeMainDialogCtrl.getClass());
+			logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
 			// FIXME MUR>> Replace me as above otherwise you don't know where i came.  
 			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
 					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
@@ -675,7 +685,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				doOpenChildWindow();
 			}
 
-			if (getFinanceMainDialogCtrl() != null) {
+			if (getFinanceMainDialogCtrl() != null && !(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)) {
 				try {
 					Class[] paramType = { this.getClass() };
 					Object[] stringParameter = { this };
@@ -1076,8 +1086,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						aFinSchData.getFinanceMain().setGraceTerms(totGrcTerms);
 						aFinSchData.getFinanceMain().setNumberOfTerms(totRepayTerms);
 					}
-					if (financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms",
-							FinScheduleData.class) != null) {
+
+					if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl) && financeMainDialogCtrl.getClass()
+							.getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)
 								.invoke(financeMainDialogCtrl, aFinSchData);
 					}
@@ -1093,13 +1104,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 
 		this.financeSchdDetailsTab.setSelected(true);
-		
+
 		if (finFeeDetailListCtrl == null) {
 			if (financeMainDialogCtrl instanceof ConvFinanceMainDialogCtrl) {
 				setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
 			}
-		}  
-		
+		}
+
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.doExecuteFeeCharges(true, finScheduleData);
 		}

@@ -1,26 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. All
- * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
- * Technologies.
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
  * 
- * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
- * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
- * violation of copyright law.
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
  */
 
 /**
- ******************************************************************************************** 
- * FILE HEADER *
- ******************************************************************************************** 
- * * FileName : WIFFinanceScheduleDetail.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
- * Modified Date : 12-11-2011 * * Description : * *
- ******************************************************************************************** 
- * Date Author Version Comments *
- ******************************************************************************************** 
- * 12-11-2011 Pennant 0.1 * * * * * * * * *
- ******************************************************************************************** 
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  FinanceScheduleDetail.java                                           * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  13-08-2012    														*
+ *                                                                  						*
+ * Modified Date    :  13-08-2012    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 16-03-2012       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
  */
 package com.pennant.backend.model.finance;
 
@@ -43,7 +61,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "schDate", "profitCalc", "profitSchd", "schdPftPaid", "principalSchd", "schdPriPaid", "feeSchd",
-		"tDSAmount", "repayAmount", "closingBalance" })
+		"tDSAmount", "repayAmount", "closingBalance", "limitDrop", "dropLineLimit", "availableLimit" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -90,6 +108,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	private BigDecimal refundOrWaiver = BigDecimal.ZERO;
 	private BigDecimal cpzAmount = BigDecimal.ZERO;
+	private BigDecimal cpzBalance = BigDecimal.ZERO;
 	@XmlElement(name = "endBal")
 	private BigDecimal closingBalance = BigDecimal.ZERO;
 
@@ -162,6 +181,17 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	//GST
 	private BigDecimal feeTax = BigDecimal.ZERO;
 	private BigDecimal subventionAmount = BigDecimal.ZERO;
+
+	//Is TDS Applicable
+	private boolean tDSApplicable = false;
+
+	// HybridFlexi
+	@XmlElement(name = "limitDrop")
+	private BigDecimal limitDrop = BigDecimal.ZERO;
+	@XmlElement(name = "dropLineLimit")
+	private BigDecimal oDLimit = BigDecimal.ZERO;
+	@XmlElement(name = "availableLimit")
+	private BigDecimal availableLimit = BigDecimal.ZERO;
 
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {
 		super();
@@ -903,6 +933,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		this.partialPaidAmt = partialPaidAmt;
 	}
 
+	public BigDecimal getLimitDrop() {
+		return limitDrop;
+	}
+
+	public void setLimitDrop(BigDecimal limitDrop) {
+		this.limitDrop = limitDrop;
+	}
+
 	//GST
 	public BigDecimal getFeeTax() {
 		return feeTax;
@@ -926,6 +964,38 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setRecalLock(boolean recalLock) {
 		this.recalLock = recalLock;
+	}
+
+	public BigDecimal getODLimit() {
+		return oDLimit;
+	}
+
+	public void setODLimit(BigDecimal oDLimit) {
+		this.oDLimit = oDLimit;
+	}
+
+	public BigDecimal getAvailableLimit() {
+		return availableLimit;
+	}
+
+	public void setAvailableLimit(BigDecimal availableLimit) {
+		this.availableLimit = availableLimit;
+	}
+
+	public BigDecimal getCpzBalance() {
+		return cpzBalance;
+	}
+
+	public void setCpzBalance(BigDecimal cpzBalance) {
+		this.cpzBalance = cpzBalance;
+	}
+
+	public boolean isTDSApplicable() {
+		return tDSApplicable;
+	}
+
+	public void setTDSApplicable(boolean tDSApplicable) {
+		this.tDSApplicable = tDSApplicable;
 	}
 
 }

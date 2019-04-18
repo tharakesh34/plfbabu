@@ -93,6 +93,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
@@ -262,9 +263,12 @@ public class FinanceDetail implements java.io.Serializable {
 	private FinBeneficiary finBeneficiary;
 	private boolean upFrentFee;
 	private FinOption finOption;
-	private List<FinOption> finOptions = new ArrayList<FinOption>();
+	private List<FinOption> finOptions = new ArrayList<>();
+	@XmlElementWrapper(name = "interfaceDetailList")
+	@XmlElement(name = "interfaceDetailList")
+	private List<InterfaceServiceDetails> interfaceDetailList = new ArrayList<>();
+	private boolean validateUpfrontFees;
 
-	
 	public FinanceDetail() {
 		super();
 	}
@@ -1270,7 +1274,7 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setUpFrentFee(boolean upFrentFee) {
 		this.upFrentFee = upFrentFee;
 	}
-		
+
 	public Covenant getCovenant() {
 		return covenant;
 	}
@@ -1302,7 +1306,20 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setFinOption(FinOption finOption) {
 		this.finOption = finOption;
 	}
-	
-	
 
+	public List<InterfaceServiceDetails> getInterfaceDetailList() {
+		return interfaceDetailList;
+	}
+
+	public void setInterfaceDetailList(List<InterfaceServiceDetails> interfaceDetailList) {
+		this.interfaceDetailList = interfaceDetailList;
+	}
+
+	public boolean isValidateUpfrontFees() {
+		return validateUpfrontFees;
+	}
+
+	public void setValidateUpfrontFees(boolean validateUpfrontFees) {
+		this.validateUpfrontFees = validateUpfrontFees;
+	}
 }

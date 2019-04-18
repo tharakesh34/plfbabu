@@ -123,7 +123,8 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", lovDescUsrDftAppCode, lovDescUsrDftAppCodeName, lovDescUsrDeptCodeName");
-			sql.append(", lovDescUsrBranchCodeName, LovDescUsrLanguage, lovDescUsrDesg, businessVerticalCode,businessVerticalDesc");
+			sql.append(
+					", lovDescUsrBranchCodeName, LovDescUsrLanguage, lovDescUsrDesg, businessVerticalCode,businessVerticalDesc");
 
 		}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -600,7 +601,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(" where e.EntityCode = :entitycode");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("entitycode", entity);
 
@@ -615,7 +616,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
-	
+
 	@Override
 	public long getUserByName(String userName) {
 		logger.debug("Entering ");
@@ -673,5 +674,29 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
+	}
+
+	@Override
+	public SecurityUser getSecurityUserAccessToAllBranches(long id) {
+		logger.debug("Entering ");
+		SecurityUser securityUser = new SecurityUser();
+		securityUser.setId(id);
+
+		StringBuilder selectSql = new StringBuilder(
+				"Select AccessToAllBranches, LovDescUsrBranchCodeName From SecUsers_AVIEW ");
+		selectSql.append(" Where UsrID = :UsrID");
+
+		logger.debug("selectSql:" + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
+		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+
+		try {
+			securityUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			securityUser.setUsrID(0);
+		}
+		logger.debug("Leaving ");
+		return securityUser;
 	}
 }

@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PaymentInstruction.java                                                   * 	  
+ * FileName    		:  PaymentInstruction.java                                              * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -53,7 +53,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -65,7 +64,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"favourName", "favourNumber", "payableLoc", "printingLoc", "valueDate", "postDate", "bankBranchId",
 		"acctHolderName", "accountNo", "phoneCountryCode", "phoneNumber", "clearingdate", "active", "paymentCCy" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentInstruction extends AbstractWorkflowEntity implements Entity {
+public class PaymentInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long paymentInstructionId = Long.MIN_VALUE;
@@ -101,6 +100,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 	private String status;
 
 	private Date clearingdate;
+	private Date realizationDate;
 	private boolean active;
 
 	private String finReference;
@@ -119,6 +119,8 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 	private PaymentInstruction befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+
+	private boolean apiRequest = false; //for Refund Upload
 
 	public long getPartnerBankId() {
 		return partnerBankId;
@@ -166,6 +168,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("partnerBankAc");
 		excludeFields.add("partnerBankAcType");
 		excludeFields.add("linkedTranId");
+		excludeFields.add("apiRequest");
 		return excludeFields;
 	}
 
@@ -491,6 +494,22 @@ public class PaymentInstruction extends AbstractWorkflowEntity implements Entity
 
 	public void setLinkedTranId(long linkedTranId) {
 		this.linkedTranId = linkedTranId;
+	}
+
+	public Date getRealizationDate() {
+		return realizationDate;
+	}
+
+	public void setRealizationDate(Date realizationDate) {
+		this.realizationDate = realizationDate;
+	}
+
+	public boolean isApiRequest() {
+		return apiRequest;
+	}
+
+	public void setApiRequest(boolean apiRequest) {
+		this.apiRequest = apiRequest;
 	}
 
 }

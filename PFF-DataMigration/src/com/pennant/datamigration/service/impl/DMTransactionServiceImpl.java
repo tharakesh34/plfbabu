@@ -3209,9 +3209,11 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 			if (ImplementationConstants.LPP_CALC_SOD) {
 				penaltyCalDate = DateUtility.addDays(rid.getAppDate(), 1);
 			}
+			
+			// FIXME MUR>> Receipt Merging issue.
 
-			getLatePayMarkingService().latePayMarking(finMain, fod, finSchdDetails, repayments, curSchd,
-					rid.getAppDate(), penaltyCalDate, false);
+			/*getLatePayMarkingService().latePayMarking(finMain, fod, finSchdDetails, repayments, curSchd,
+					rid.getAppDate(), penaltyCalDate, false);*/
 
 			if (fod.getTotPenaltyAmt().compareTo(BigDecimal.ZERO) > 0
 					|| fod.getLPIAmt().compareTo(BigDecimal.ZERO) > 0) {

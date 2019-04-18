@@ -167,12 +167,12 @@ public class ImplementationConstants {
 	public static final boolean ALW_AUTO_SCHD_BUILD = false;
 	//Allow approved mandate in Loan Pending State trough approve mandate API
 	public static final boolean ALW_APPROVED_MANDATE_IN_ORG = false;
-	
+
 	public static final boolean NEW_COVENANT_MODULE = false;
 
 	//Allow profit schedule invoice
-	public static final boolean	ALW_PROFIT_SCHD_INVOICE	= false;
-	
+	public static final boolean ALW_PROFIT_SCHD_INVOICE = false;
+
 	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
 	public static final boolean NEGATE_SIGN_TB = false;
 
@@ -187,6 +187,15 @@ public class ImplementationConstants {
 
 	//If True, Makes Frequency Dates to empty for change gestation period
 	public static final boolean CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = false;
+
+	//The below variable is set to show the Reporting manager list,Branch Details tab if set false 
+	//else User Hierarchy tab if set true.
+	public static final boolean ALLOW_ACCESS_CONTROL_TYPE = true;
+
+	public static final boolean APPLY_FDDLOCKPERIOD_AFTERGRACE = false;
+
+	public static final boolean ALW_FLEXI = false;
+	public static final boolean ALW_SUBVENSION = false;
 
 	//GST Invoice Due basis/Receipt Basis
 	public static final boolean INVOICE_ADDRESS_ENTITY_BASIS = false; //Service Provider address should be on Entity basis

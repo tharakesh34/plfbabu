@@ -521,4 +521,9 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 
 		return this.branchDAO.getUnionTerrotory(cpProvince);
 	}
+
+	@Override
+	public String getBranchDesc(String id) {
+		return getBranchDAO().getBranchDesc(id, "_View");
+		}
 }

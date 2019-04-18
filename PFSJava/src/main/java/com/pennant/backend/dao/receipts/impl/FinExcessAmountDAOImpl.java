@@ -571,4 +571,68 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		return new ArrayList<>();
 	}
 
+	@Override
+	public void deductExcessReserve(long excessID, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExcessID", excessID);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		updateSql.append(" Set ReservedAmt = ReservedAmt - :PaidNow,Amount = Amount - :PaidNow ");
+		updateSql.append(" Where ExcessID =:ExcessID");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public int updateExcessReserveByRef(String reference, String amountType, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", reference);
+		source.addValue("AmountType", amountType);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, Amount = Amount + :PaidNow");
+		updateSql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+		return recordCount;
+	}
+
+	@Override
+	public int updExcessAfterRealize(String reference, String amountType, BigDecimal amount) {
+		logger.debug("Entering");
+
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", reference);
+		source.addValue("AmountType", amountType);
+		source.addValue("PaidNow", amount);
+
+		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		updateSql.append(" Set  BalanceAmt = BalanceAmt + :PaidNow, ReservedAmt = ReservedAmt - :PaidNow ");
+		updateSql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+
+		logger.debug("Leaving");
+		return recordCount;
+	}
+
 }

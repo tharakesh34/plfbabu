@@ -222,7 +222,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			sql.append(
 					" ,DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName , lovDescPromoFinTypeDesc, lovDescDftStepPolicyName, ");
 			sql.append(
-					" GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType, RpyHierarchy, LovDescEntityCode, LovDescEntityDesc");
+					" GrcPricingMethodDesc, RpyPricingMethodDesc, DftStepPolicyType, RpyHierarchy, LovDescEntityCode, LovDescEntityDesc,alwEarlyPayMethods");
 		}
 		sql.append(" FROM RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));

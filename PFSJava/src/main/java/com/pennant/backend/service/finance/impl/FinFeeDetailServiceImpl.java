@@ -157,10 +157,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetais(String finReference) {
+	public List<FinReceiptDetail> getFinReceiptDetais(String finReference, long custId) {
 		logger.debug("Entering");
 
-		List<FinReceiptDetail> finReceiptDetails = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference);
+		List<FinReceiptDetail> finReceiptDetails = getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference,
+				custId);
 
 		logger.debug("Leaving");
 
@@ -521,7 +522,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	@Override
 	public List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
-			String auditTranType, String finReference) {
+			String auditTranType, String finReference, long custId) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -541,12 +542,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
-				createPayableAdvises(finReference, map);
+				createPayableAdvises(finReference, map, custId);
 			}
 		}
 
 		if (!ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
-			createExcessAmounts(finReference, map);
+			createExcessAmounts(finReference, map, custId);
 		}
 
 		auditDetails.addAll(processFinFeeReceipts(finFeeReceipts, tableType, auditTranType, true));
@@ -555,26 +556,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return auditDetails;
 	}
 
-	public void createExcessAmounts(String finReference, Map<Long, List<FinFeeReceipt>> map) {
+	public void createExcessAmounts(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
 
 		logger.debug("Entering");
 		FinExcessAmount finExcessAmount;
-
-		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
-				.getFinReceiptDetailByFinRef(finReference);
-		BigDecimal excessAmount = BigDecimal.ZERO;
-		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
-			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
-				List<FinFeeReceipt> finFeeReceiptList = map.get(finReceiptDetail.getReceiptID());
-				BigDecimal feePaidAmount = BigDecimal.ZERO;
-				for (FinFeeReceipt feeReceipt : finFeeReceiptList) {
-					feePaidAmount = feePaidAmount.add(feeReceipt.getPaidAmount());
-				}
-				excessAmount = excessAmount.add(finReceiptDetail.getAmount().subtract(feePaidAmount));
-			} else {
-				excessAmount = excessAmount.add(finReceiptDetail.getAmount());
-			}
-		}
+		BigDecimal excessAmount = getExcessAmount(finReference, map, custId);
 
 		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finExcessAmount = new FinExcessAmount();
@@ -591,14 +577,35 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	}
 
-	private void createPayableAdvises(String finReference, Map<Long, List<FinFeeReceipt>> map) {
+	@Override
+	public BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
+
+		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
+				.getFinReceiptDetailByFinRef(finReference, custId);
+		BigDecimal excessAmount = BigDecimal.ZERO;
+		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
+			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
+				List<FinFeeReceipt> finFeeReceiptList = map.get(finReceiptDetail.getReceiptID());
+				BigDecimal feePaidAmount = BigDecimal.ZERO;
+				for (FinFeeReceipt feeReceipt : finFeeReceiptList) {
+					feePaidAmount = feePaidAmount.add(feeReceipt.getPaidAmount());
+				}
+				excessAmount = excessAmount.add(finReceiptDetail.getAmount().subtract(feePaidAmount));
+			} else {
+				excessAmount = excessAmount.add(finReceiptDetail.getAmount());
+			}
+		}
+		return excessAmount;
+	}
+
+	private void createPayableAdvises(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
 		logger.debug("Entering");
 
 		PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("MANUALADVISE_FEETYPEID");
 		long feeTypeId = Long.valueOf(pfsParameter.getSysParmValue());
 		ManualAdvise manualAdvise = null;
 		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
-				.getFinReceiptDetailByFinRef(finReference);
+				.getFinReceiptDetailByFinRef(finReference, custId);
 
 		for (FinReceiptDetail finRecDetail : finReceiptDetailsList) {
 			List<FinFeeReceipt> finFeeRecList = map.get(finRecDetail.getReceiptID());
@@ -694,14 +701,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map) {
+	public void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map, long custId) {
 		logger.debug("Entering");
 
 		FinFeeReceipt feeReceipt;
 		FinExcessAmount finExcessAmount;
 
 		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
-				.getFinReceiptDetailByFinRef(finReference);
+				.getFinReceiptDetailByFinRef(finReference, custId);
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
 			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
@@ -905,7 +912,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		List<FinFeeReceipt> finFeeReceipts = finScheduleData.getFinFeeReceipts();
 		AuditDetail detail = new AuditDetail();
-		if (finFeeReceipts != null) {
+		if (finFeeReceipts != null && finFeeReceipts.size() > 0) {
 			finFeeAuditDetails = getFinFeeReceiptAuditDetail(finFeeReceipts, auditTranType, method, workflowId);
 
 			for (AuditDetail auditDetail : finFeeAuditDetails) {
@@ -1865,6 +1872,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	@Override
 	public boolean getFeeTypeId(long feeTypeId, String finType, int moduleId, boolean originationFee) {
 		return finFeeDetailDAO.isFinTypeFeeExists(feeTypeId, finType, moduleId, originationFee);
+	}
+
+	@Override
+	public long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference) {
+		return finFeeDetailDAO.getFinFeeTypeIdByFeeType(feeTypeCode, finReference, "_AView");
+	}
+
+	@Override
+	public Branch getBranchById(String branchCode, String type) {
+		return getBranchDAO().getBranchById(branchCode, type);
 	}
 
 	// ******************************************************//

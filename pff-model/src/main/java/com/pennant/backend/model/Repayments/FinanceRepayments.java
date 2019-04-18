@@ -6,7 +6,6 @@ import java.util.Date;
 import com.pennant.backend.model.Entity;
 
 public class FinanceRepayments implements java.io.Serializable, Entity {
-
 	private static final long serialVersionUID = -2866729395743867717L;
 
 	private String finReference;
@@ -20,6 +19,9 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private String finBranch;
 	private String finType;
 	private long finCustID;
+	private long receiptId = 0L;
+	private BigDecimal penaltyPaid = BigDecimal.ZERO;
+	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal finSchdPriPaid = BigDecimal.ZERO;
 	private BigDecimal finSchdPftPaid = BigDecimal.ZERO;
 	private BigDecimal finSchdTdsPaid = BigDecimal.ZERO;
@@ -306,6 +308,30 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	public void setFinSchdTdsPaid(BigDecimal finSchdTdsPaid) {
 		this.finSchdTdsPaid = finSchdTdsPaid;
+	}
+
+	public long getReceiptId() {
+		return receiptId;
+	}
+
+	public void setReceiptId(long receiptId) {
+		this.receiptId = receiptId;
+	}
+
+	public BigDecimal getPenaltyPaid() {
+		return penaltyPaid;
+	}
+
+	public void setPenaltyPaid(BigDecimal penaltyPaid) {
+		this.penaltyPaid = penaltyPaid;
+	}
+
+	public BigDecimal getPenaltyWaived() {
+		return penaltyWaived;
+	}
+
+	public void setPenaltyWaived(BigDecimal penaltyWaived) {
+		this.penaltyWaived = penaltyWaived;
 	}
 
 }

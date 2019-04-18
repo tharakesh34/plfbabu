@@ -61,14 +61,13 @@ public class LatePayInterestService extends ServiceHelper {
 		super();
 	}
 
-	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, String idb,
-			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments,
-			BigDecimal pastduePftMargin, String roundingMode, FinanceMain financeMain) {
+	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, FinanceMain financeMain,
+			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments) {
 		logger.debug(" Entering ");
 
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
-		BigDecimal lpiMargin = pastduePftMargin.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
+		BigDecimal lpiMargin = financeMain.getPastduePftMargin().divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
 
 		BigDecimal odPri = fod.getFinMaxODPri();
 		BigDecimal odPft = fod.getFinMaxODPft();
@@ -148,9 +147,9 @@ public class LatePayInterestService extends ServiceHelper {
 			Date dateNext = odcrNext.getMovementDate();
 
 			BigDecimal penaltyRate = getPenaltyRate(finScheduleDetails, dateCur, lpiMargin);
-			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), idb,
+			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), financeMain.getProfitDaysBasis(),
 					penaltyRate);
-			penalty = CalculationUtil.roundAmount(penalty, roundingMode, financeMain.getRoundingTarget());
+			penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
 
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
@@ -160,7 +159,7 @@ public class LatePayInterestService extends ServiceHelper {
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
 
-		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, financeMain.getRoundingTarget()));
+		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), financeMain.getCalRoundingMode(), financeMain.getRoundingTarget()));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 
 		//if the record added for calculation it should not be displayed in screen.

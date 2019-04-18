@@ -64,35 +64,35 @@ import com.pennant.util.PennantAppUtil;
 public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRenderer<ReceiptUploadDetail>, Serializable {
 
 	private static final long serialVersionUID = 6906998807263283546L;
-	
+
 	public ReceiptDetailHeaderListModelItemRenderer() {
-		
+
 	}
 
 	@Override
 	public void render(Listitem item, ReceiptUploadDetail rcptDtl, int count) throws Exception {
 
 		Listcell lc;
-		
+
 		lc = new Listcell(rcptDtl.getRootId());
 		lc.setParent(item);
-		
+
 		String reference = rcptDtl.getReference();
-		
-		if(StringUtils.isNotBlank(reference)){
+
+		if (StringUtils.isNotBlank(reference)) {
 			reference = reference.toUpperCase();
 		}
-		
+
 		lc = new Listcell(reference);
 		lc.setParent(item);
 
 		String receiptPurpose = rcptDtl.getReceiptPurpose();
 		lc = new Listcell();
-		if(StringUtils.equalsIgnoreCase(rcptDtl.getReceiptPurpose(), "SP")){
+		if (StringUtils.equalsIgnoreCase(rcptDtl.getReceiptPurpose(), "SP")) {
 			receiptPurpose = Labels.getLabel("label_ReceiptPurpose_SchedulePayment");
-		}else if(StringUtils.equalsIgnoreCase(rcptDtl.getReceiptPurpose(), "EP")){
+		} else if (StringUtils.equalsIgnoreCase(rcptDtl.getReceiptPurpose(), "EP")) {
 			receiptPurpose = Labels.getLabel("label_ReceiptPurpose_PartialSettlement");
-		}else if(StringUtils.equalsIgnoreCase(rcptDtl.getReceiptPurpose(), "ES")){
+		} else if (StringUtils.equalsIgnoreCase(rcptDtl.getReceiptPurpose(), "ES")) {
 			receiptPurpose = Labels.getLabel("label_ReceiptPurpose_EarlySettlement");
 			lc.setStyle("font-weight:bold;");
 		}
@@ -102,16 +102,16 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(PennantAppUtil.amountFormate(rcptDtl.getReceiptAmount(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		
+
 		String alocType = rcptDtl.getAllocationType();
-		if(StringUtils.equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_AUTO, rcptDtl.getAllocationType())){
+		if (StringUtils.equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_AUTO, rcptDtl.getAllocationType())) {
 			alocType = Labels.getLabel("label_AllocationMethod_Auto");
-		}else if(StringUtils.equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_MANUAL, rcptDtl.getAllocationType())){
+		} else if (StringUtils.equalsIgnoreCase(RepayConstants.ALLOCATIONTYPE_MANUAL, rcptDtl.getAllocationType())) {
 			alocType = Labels.getLabel("label_AllocationMethod_Manual");
 		}
 		lc = new Listcell(alocType);
 		lc.setParent(item);
-		
+
 		lc = new Listcell(DateUtility.formatToLongDate(rcptDtl.getReceivedDate()));
 		lc.setParent(item);
 
@@ -120,6 +120,6 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 
 		lc = new Listcell(rcptDtl.getReason());
 		lc.setParent(item);
-		
+
 	}
 }

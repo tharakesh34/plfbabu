@@ -43,7 +43,9 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,6 +62,7 @@ import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinFeeReceipt model</b> class.<br>
@@ -170,8 +173,9 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	}
 
 	/**
-	 * This method Deletes the Record from the FinFeeReceipt or FinFeeReceipt_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
+	 * This method Deletes the Record from the FinFeeReceipt or
+	 * FinFeeReceipt_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete Goods Details by key LoanRefNumber
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeReceipt)
@@ -243,8 +247,9 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 	}
 
 	/**
-	 * This method updates the Record FinFeeReceipt or FinFeeReceipt_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinFeeReceipt or FinFeeReceipt_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
+	 * update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeReceipt)
@@ -315,4 +320,50 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 
 	}
 
+	@Override
+	public BigDecimal getUpfrontFee(long feeId, String tableType) {
+
+		BigDecimal upFrontFee = BigDecimal.ZERO;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" select sum(paidamount) from finfeereceipts");
+		selectSql.append(tableType);
+		selectSql.append(" WHERE  feeid = :feeId");
+		selectSql.append(" group by feeid");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("feeId", feeId);
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			return upFrontFee;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return upFrontFee;
+		}
+	}
+
+	// Getting FinFee and Receipt details for Disbursement Memo Report.
+	@Override
+	public List<Map<String, Object>> getFeeDetails(String finReference) {
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				"select ffd.feeid,frh.receiptid,ffd.vasreference,frh.receiptdate,ffd.actualamount,ft.feetypedesc,ffd.feeschedulemethod");
+		selectSql.append(" from finfeedetail_temp ffd");
+		selectSql.append(" left join  finfeereceipts ffr on ffr.feeid = ffd.feeid");
+		selectSql.append(" left join  finreceiptheader frh on frh.receiptid = ffr.receiptid");
+		selectSql.append(" left join FEETYPES ft on ft.FEETYPEID = ffd.feetypeid");
+		selectSql.append(" where ffd.finreference=:finReference");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finReference", finReference);
+		try {
+			return this.jdbcTemplate.queryForList(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return null;
+		}
+
+	}
 }

@@ -110,6 +110,8 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private List<ReportingManager> reportingManagersList;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private String lovDescFirstName;
+	
+	private boolean accessToAllBranches;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -547,5 +549,13 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public void setLovDescFirstName(String lovDescFirstName) {
 		this.lovDescFirstName = lovDescFirstName;
+	}
+
+	public boolean isAccessToAllBranches() {
+		return accessToAllBranches;
+	}
+
+	public void setAccessToAllBranches(boolean accessToAllBranches) {
+		this.accessToAllBranches = accessToAllBranches;
 	}
 }

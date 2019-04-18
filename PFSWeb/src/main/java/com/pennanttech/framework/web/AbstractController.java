@@ -52,6 +52,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.QueryBuilder;
 import com.pennant.UserWorkspace;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -1377,6 +1378,49 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 		logger.debug("Leaving");
 		return false;
+	}
+	
+	/*
+	 * Method For Getting UsrFinAuthentication By Branch and Division
+	 */
+	public String getUsrFinAuthenticationQry(boolean isForReports, String tableName) {
+		StringBuilder wherQuery = new StringBuilder();
+
+		long userId = getUserWorkspace().getLoggedInUser().getUserId();
+
+		if (ImplementationConstants.ALLOW_ACCESS_CONTROL_TYPE) {
+			//String tableName="";
+			wherQuery.append(" exists (select 1 from secuserhierarchydetail t");
+			wherQuery.append(" where t.usrid = ");
+			wherQuery.append(userId);
+			wherQuery.append(" and t.division = ");
+			wherQuery.append(tableName);
+			wherQuery.append(".lovdescfindivision");
+			wherQuery.append(" and t.businessvertical = ");
+			wherQuery.append(tableName);
+			wherQuery.append(".businessvertical");
+			wherQuery.append(" and t.fintype = ");
+			wherQuery.append(tableName);
+			wherQuery.append(".fintype");
+			wherQuery.append(" and t.branch = ");
+			wherQuery.append(tableName);
+			wherQuery.append(".finbranch");
+			wherQuery.append(" )");
+		} else {
+			String divisionField = "";
+			if (isForReports) {
+				divisionField = "FinDivision";
+			} else {
+				divisionField = "lovDescFinDivision";
+			}
+			wherQuery.append(" FinBranch In(select UserBranch from SecurityUserDivBranch where userDivision =");
+			wherQuery.append(divisionField);
+			wherQuery.append(" and usrid =");
+			wherQuery.append(userId);
+			wherQuery.append(")");
+		}
+
+		return wherQuery.toString();
 	}
 
 }

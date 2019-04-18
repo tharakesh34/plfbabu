@@ -42,7 +42,9 @@
 */
 package com.pennant.backend.dao.finance;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.finance.FinFeeReceipt;
 
@@ -61,4 +63,8 @@ public interface FinFeeReceiptDAO {
 	boolean isFinFeeReceiptAllocated(long receiptID, String type);
 
 	List<FinFeeReceipt> getFinFeeReceiptByFeeId(long feeId, String type);
+	
+	BigDecimal getUpfrontFee(long feeId, String tableType);
+	
+	List<Map<String, Object>> getFeeDetails(String finReference);
 }

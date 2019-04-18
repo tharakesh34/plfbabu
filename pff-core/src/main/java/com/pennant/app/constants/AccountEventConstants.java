@@ -110,16 +110,22 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_FEEPAY = "FEEPAY";
 	public static final String ACCEVENT_MANFEE = "MANFEE";
 	public static final String ACCEVENT_PAYMTINS = "PAYMTINS";
-
-	// Deposit Details Events
+	public static final String ACCEVENT_CASHTOPENNANT = "C2P";
 	public static final String ACCEVENT_CASHTOBANK = "C2B";
+	public static final String ACCEVENT_CASHINTRANSIT = "CIT";
+	public static final String ACCEVENT_BANKTOCASH = "B2C";
+	public static final String ACCEVENT_CHANGETDSAPPICABLE = "CHANGETDS";
+	public static final String ACCEVENT_CASHDISBTOCUST = "D2C";
 	public static final String ACCEVENT_CHEQUETOBANK = "CHQ2B";
+	public static final String ACCEVENT_ASSIGNMENT = "ASSIGN";
 	public static final String ACCEVENT_INSADJ = "INSADJ";
 	public static final String ACCEVENT_INSPAY = "INSPAY";
 	public static final String ACCEVENT_CANINS = "CANINS";
+	public static final String ACCEVENT_RECIP = "RECIP";
 
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";
 	public static final String EVENTCTG_GOLD = "G";
+
 }

@@ -110,7 +110,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingDepositMovementsList" />
+					<paging id="pagingDepositMovementsList" height="35px" />
 				</south>
 
 			</borderlayout>

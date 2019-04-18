@@ -52,11 +52,13 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -73,13 +75,22 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 	public void render(Listitem item, FinReceiptHeader header, int count) throws Exception {
 
 		Listcell lc;
+
+		lc = new Listcell(String.valueOf(header.getReceiptID()));
+		lc.setParent(item);
 		lc = new Listcell(header.getReference());
+		lc.setParent(item);
+		lc = new Listcell(header.getPromotionCode());
 		lc.setParent(item);
 		lc = new Listcell(
 				PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
 		lc = new Listcell(
 				PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+		lc.setParent(item);
+		lc = new Listcell(header.getTransactionRef());
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.formatDate(header.getReceiptDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.amountFormate(header.getReceiptAmount(),
 				CurrencyUtil.getFormat(header.getFinCcy())));

@@ -365,6 +365,27 @@
 				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>Receipts_SQL</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:sqlserver://192.168.1.28:1433;database=PLFReceipts</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFReceiptsAdmin</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>ReceiptsAudit_SQL</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:sqlserver://192.168.1.28:1433;database=PLFReceiptsAudit</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFReceiptsAdmin</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>

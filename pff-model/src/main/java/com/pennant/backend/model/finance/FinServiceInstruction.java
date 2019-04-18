@@ -18,6 +18,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinServiceInstruction extends AbstractWorkflowEntity implements Entity {
@@ -37,7 +38,6 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String module;
 	@XmlElement
 	private Date valueDate;
-
 	@XmlElement
 	private Date fromDate;
 	@XmlElement
@@ -74,9 +74,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	@XmlElement
 	private String allocationType;
 	@XmlElement(name = "fundingAccount")
-	private long fundingAc	= 0;
-	@XmlElementWrapper(name="allocationDetails")
-	@XmlElement(name="allocationDetail")
+	private long fundingAc = 0;
+	@XmlElementWrapper(name = "allocationDetails")
+	@XmlElement(name = "allocationDetail")
 	private List<UploadAlloctionDetail> uploadAllocationDetails;
 	@XmlElement
 	private String receiptPurpose;
@@ -164,51 +164,91 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private List<FinAdvancePayments> disbursementDetails;
 	@XmlElementWrapper(name = "fees")
 	@XmlElement(name = "fee")
-	private List<FinFeeDetail> finFeeDetails;
+	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
 	@XmlElement(name = "overdue")
 	private FinODPenaltyRate finODPenaltyRate;
 	private String moduleDefiner;
 	private boolean newRecord;
 	private boolean wif;
 	private BigDecimal remPartPayAmt = BigDecimal.ZERO;
-
 	@XmlElement
 	private long UploadDetailId;//### 18-07-2018 Ticket ID : 124998,receipt upload
-	
+
 	//### 27-07-2018 Ticket id:124998
 	@XmlElement
 	private String receiptFileName;
-	
-	
+
 	@XmlElement
 	private String entity;
-	
+
 	@XmlElement
 	private String entityDesc;
-	
-	@XmlElement(name="depositAccount")
+
+	@XmlElement
+	private String restructuringType;
+
+	private boolean quickDisb;
+
+	private int strtPrdHdays;
+
+	@XmlElement
+	private String subReceiptMode;
+	@XmlElement
+	private String receiptChannel;
+	@XmlElement
+	private long collectionAgentId = 0;
+	@XmlElement
+	private String receivedFrom;
+	@XmlElement
+	private String panNumber;
+
+	public String getRestructuringType() {
+		return restructuringType;
+	}
+
+	public void setRestructuringType(String restructuringType) {
+		this.restructuringType = restructuringType;
+	}
+
+	@XmlElement(name = "depositAccount")
 	private String depositAcc;
 
 	//### 16-08-2018 Ticket ID : 124998,receipt upload
-	private BigDecimal closingBal = BigDecimal.ZERO;	
+	private BigDecimal closingBal = BigDecimal.ZERO;
 
 	@XmlElement
 	private String rootId;
-	
+
+	@XmlElement
+	private int grcTerms;
+
+	public int getGrcTerms() {
+		return grcTerms;
+	}
+
+	public void setGrcTerms(int grcTerms) {
+		this.grcTerms = grcTerms;
+	}
+
 	@XmlElement
 	private boolean receiptResponse;
-	
-	
+
 	private Map<String, BigDecimal> manualAllocMap = new HashMap<>();
-	
-	private Map<String, BigDecimal>		manualWaiverMap = new HashMap<>();
-	
+
+	private Map<String, BigDecimal> manualWaiverMap = new HashMap<>();
+
 	// Bean validation purpose
+	@SuppressWarnings("unused")
 	private FinServiceInstruction validateAddRateChange = this;
 
-	@XmlElement(name="isUpload")
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
+	}
+
+	@XmlElement(name = "isUpload")
 	private boolean isReceiptUpload;
-	
+
+	@SuppressWarnings("unused")
 	private FinServiceInstruction validateChangeRepayment = this;
 
 	@XmlElement
@@ -223,13 +263,34 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String fromBranch;
 	@XmlElement
 	private String toBranch;
-
-	private long  instructionUID =  Long.MIN_VALUE;
-	private long linkedTranID = 0;
 	
+	private long instructionUID = Long.MIN_VALUE;
+	private long linkedTranID = 0;
+
+	@XmlElement
+	private String reqFrom;
+
+	private Date appDate;
+	private Date systemDate;
+	private Date makerAppDate;
+	private Date makerSysDate;
+	private Date checkerAppDate;
+
+	private Date checkerSysDate;
+	private long linkedTranId = 0l;
+	private String reference;
+	private long maker = Long.MIN_VALUE;
+	private long checker = Long.MIN_VALUE;;
+
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")
 	private List<ExtendedField> extendedDetails;
+
+	private LoggedInUser loggedInUser;
+
+	// AddFlexiDisbursement
+	@XmlElement
+	private boolean isFlexiDisb;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -292,7 +353,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	public String getRecalType() {
-		return recalType;
+		return recalType == null ? "" : recalType;
 	}
 
 	public void setRecalType(String recalType) {
@@ -578,7 +639,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	public String getPaymentMode() {
-		return paymentMode;
+		return paymentMode == null ? "" : paymentMode;
 	}
 
 	public void setPaymentMode(String paymentMode) {
@@ -586,7 +647,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	public String getExcessAdjustTo() {
-		return excessAdjustTo;
+		return excessAdjustTo == null ? "" : excessAdjustTo;
 	}
 
 	public void setExcessAdjustTo(String excessAdjustTo) {
@@ -784,7 +845,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setExtendedDetails(List<ExtendedField> extendedDetails) {
 		this.extendedDetails = extendedDetails;
 	}
-	
+
 	public long getInstructionUID() {
 		return instructionUID;
 	}
@@ -792,6 +853,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setInstructionUID(long instructionUID) {
 		this.instructionUID = instructionUID;
 	}
+
 	public String getPaymentRef() {
 		return paymentRef;
 	}
@@ -833,7 +895,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	public String getStatus() {
-		return status;
+		return status == null ? "" : status;
 	}
 
 	public void setStatus(String status) {
@@ -871,7 +933,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setReceivedDate(Date receivedDate) {
 		this.receivedDate = receivedDate;
 	}
-	
+
 	public boolean isReceiptdetailExits() {
 		return receiptdetailExits;
 	}
@@ -985,7 +1047,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	}
 
 	public String getAllocationType() {
-		return allocationType;
+		return allocationType == null ? "" : allocationType;
 	}
 
 	public void setAllocationType(String allocationType) {
@@ -1031,5 +1093,161 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	public void setLinkedTranID(long linkedTranID) {
 		this.linkedTranID = linkedTranID;
 	}
-	
+
+	public boolean isQuickDisb() {
+		return quickDisb;
+	}
+
+	public void setQuickDisb(boolean quickDisb) {
+		this.quickDisb = quickDisb;
+	}
+
+	public int getStrtPrdHdays() {
+		return strtPrdHdays;
+	}
+
+	public void setStrtPrdHdays(int strtPrdHdays) {
+		this.strtPrdHdays = strtPrdHdays;
+	}
+
+	public Date getSystemDate() {
+		return systemDate;
+	}
+
+	public void setSystemDate(Date systemDate) {
+		this.systemDate = systemDate;
+	}
+
+	public Date getMakerAppDate() {
+		return makerAppDate;
+	}
+
+	public void setMakerAppDate(Date makerAppDate) {
+		this.makerAppDate = makerAppDate;
+	}
+
+	public Date getMakerSysDate() {
+		return makerSysDate;
+	}
+
+	public void setMakerSysDate(Date makerSysDate) {
+		this.makerSysDate = makerSysDate;
+	}
+
+	public Date getCheckerAppDate() {
+		return checkerAppDate;
+	}
+
+	public void setCheckerAppDate(Date checkerAppDate) {
+		this.checkerAppDate = checkerAppDate;
+	}
+
+	public Date getCheckerSysDate() {
+		return checkerSysDate;
+	}
+
+	public void setCheckerSysDate(Date checkerSysDate) {
+		this.checkerSysDate = checkerSysDate;
+	}
+
+	public long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(long linkedTranId) {
+		this.linkedTranId = linkedTranId;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public String getReqFrom() {
+		return reqFrom;
+	}
+
+	public void setReqFrom(String reqFrom) {
+		this.reqFrom = reqFrom;
+	}
+
+	public long getMaker() {
+		return maker;
+	}
+
+	public void setMaker(long maker) {
+		this.maker = maker;
+	}
+
+	public long getChecker() {
+		return checker;
+	}
+
+	public void setChecker(long checker) {
+		this.checker = checker;
+	}
+
+	public String getSubReceiptMode() {
+		return subReceiptMode;
+	}
+
+	public void setSubReceiptMode(String subReceiptMode) {
+		this.subReceiptMode = subReceiptMode;
+	}
+
+	public String getReceiptChannel() {
+		return receiptChannel;
+	}
+
+	public void setReceiptChannel(String receiptChannel) {
+		this.receiptChannel = receiptChannel;
+	}
+
+	public long getCollectionAgentId() {
+		return collectionAgentId;
+	}
+
+	public void setCollectionAgentId(long collectionAgentId) {
+		this.collectionAgentId = collectionAgentId;
+	}
+
+	public String getReceivedFrom() {
+		return receivedFrom;
+	}
+
+	public void setReceivedFrom(String receivedFrom) {
+		this.receivedFrom = receivedFrom;
+	}
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public LoggedInUser getLoggedInUser() {
+		return loggedInUser;
+	}
+
+	public void setLoggedInUser(LoggedInUser loggedInUser) {
+		this.loggedInUser = loggedInUser;
+	}
+
+	public boolean isFlexiDisb() {
+		return isFlexiDisb;
+	}
+
+	public void setFlexiDisb(boolean isFlexiDisb) {
+		this.isFlexiDisb = isFlexiDisb;
+	}
+
 }

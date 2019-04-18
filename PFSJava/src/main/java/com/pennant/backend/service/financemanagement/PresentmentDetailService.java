@@ -74,6 +74,8 @@ public interface PresentmentDetailService {
 
 	long getSeqNumber(String tableNme);
 
+	void processReceipts(PresentmentDetail detail, LoggedInUser userDetails) throws Exception;
+
 	String getPaymenyMode(String presentmentRef);
 
 	PresentmentDetail getPresentmentDetailsByMode(String presentmentRef, String paymentMode);

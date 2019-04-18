@@ -85,8 +85,8 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 	private String feeTypeDesc;
 	private boolean taxApplicable = false;
 	private String taxComponent;
-
 	private PaymentTaxDetail paymentTaxDetail;
+	private boolean apiRequest = false; //Refund Uploads
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -109,9 +109,10 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("reserveAmount");
 		excludeFields.add("feeTypeDesc");
 		excludeFields.add("feeTypeCode");
-		excludeFields.add("taxApplicable");
-		excludeFields.add("taxComponent");
+		excludeFields.add("apiRequest");
 		excludeFields.add("paymentTaxDetail");
+		excludeFields.add("taxComponent");
+		excludeFields.add("taxApplicable");
 		return excludeFields;
 	}
 
@@ -263,4 +264,11 @@ public class PaymentDetail extends AbstractWorkflowEntity implements Entity {
 		this.paymentTaxDetail = paymentTaxDetail;
 	}
 
+	public boolean isApiRequest() {
+		return apiRequest;
+	}
+
+	public void setApiRequest(boolean apiRequest) {
+		this.apiRequest = apiRequest;
+	}
 }

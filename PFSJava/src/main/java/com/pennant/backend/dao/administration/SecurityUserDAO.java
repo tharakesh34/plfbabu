@@ -85,4 +85,6 @@ public interface SecurityUserDAO {
 	void saveDivBranchDetails(List<SecurityUserDivBranch> securityUserDivBranchList, String type);
 	
 	List<SecurityUser> getSecUsersByRoles(String[] roles);
+	
+	SecurityUser getSecurityUserAccessToAllBranches(long id);
 }

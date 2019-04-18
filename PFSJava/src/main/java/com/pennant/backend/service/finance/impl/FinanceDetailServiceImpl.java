@@ -103,6 +103,7 @@ import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
+import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
@@ -193,6 +194,7 @@ import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.finance.RolledoverFinanceHeader;
+import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennant.backend.model.finance.TATDetail;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -279,6 +281,7 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
@@ -386,6 +389,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	private NotificationService notificationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private SubventionDetailDAO subventionDetailDAO;
+	private AdvancePaymentService advancePaymentService;
 
 	private long tempWorkflowId;
 
@@ -501,7 +506,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.setFinFeeDetailList(getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView"));
 
 		// Finance Receipt Details
-		scheduleData.setFinReceiptDetails(getFinFeeDetailService().getFinReceiptDetais(finReference));
+		scheduleData.setFinReceiptDetails(
+				getFinFeeDetailService().getFinReceiptDetais(finReference, financeMain.getCustID()));
 		List<Long> feeIds = new ArrayList<Long>();
 		for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
 			feeIds.add(finFeeDetail.getFeeID());
@@ -630,7 +636,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		//Put-call
+		// Put-call
 
 		financeDetail.setFinOptions(finOptionService.getFinOptions(finReference, TableType.VIEW));
 
@@ -680,10 +686,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					.getSamplingDetails(financeDetail.getFinScheduleData().getFinReference(), "_aview"));
 		}
 
-		//PSL details
+		// PSL details
 		financeDetail.setPslDetail(pSLDetailService.getPSLDetail((finReference)));
 
-		//Legal details
+		// Legal details
 		List<LegalDetail> ligelDetailsList = legalDetailService.getLegalDetailByFinreference(finReference);
 		if (CollectionUtils.isNotEmpty(ligelDetailsList)) {
 			financeDetail.setLegalDetailsList(ligelDetailsList);
@@ -793,7 +799,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Extended FieldDetails
 		for (FinAssetTypes assetType : assetTypes) {
 
-			// If Duplicate asset types with multiple record , to avoid multiple DB callings
+			// If Duplicate asset types with multiple record , to avoid multiple
+			// DB callings
 			if (renderedAssetTypes.contains(assetType.getAssetType())) {
 				continue;
 			}
@@ -878,7 +885,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Extended FieldDetails
 		for (VASRecording recording : vasRecordingsList) {
 
-			// If Duplicate asset types with multiple record , to avoid multiple DB callings
+			// If Duplicate asset types with multiple record , to avoid multiple
+			// DB callings
 			if (renderedVasProducts.contains(recording.getProductCode())) {
 				continue;
 			}
@@ -1045,13 +1053,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView", eventCodeRef)));
 
 		/*
-		 * // Finance Receipt Details
-		 * scheduleData.setFinReceiptDetails(getFinFeeDetailService().getFinReceiptDetais(finReference)); List<Long>
-		 * feeIds = new ArrayList<Long>(); for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
-		 * feeIds.add(finFeeDetail.getFeeID()); }
+		 * // Finance Receipt Details scheduleData.setFinReceiptDetails(getFinFeeDetailService().
+		 * getFinReceiptDetais(finReference)); List<Long> feeIds = new ArrayList<Long>(); for (FinFeeDetail finFeeDetail
+		 * : scheduleData.getFinFeeDetailList()) { feeIds.add(finFeeDetail.getFeeID()); }
 		 * 
-		 * if (!feeIds.isEmpty()) {
-		 * scheduleData.setFinFeeReceipts(getFinFeeDetailService().getFinFeeReceiptsById(feeIds, "_TView")); }
+		 * if (!feeIds.isEmpty()) { scheduleData.setFinFeeReceipts(getFinFeeDetailService().
+		 * getFinFeeReceiptsById(feeIds, "_TView")); }
 		 */
 
 		// Collateral Details
@@ -1955,7 +1962,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeType.isFinCommitmentReq() && StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
 
 				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
-						AccountEventConstants.ACCEVENT_CMTDISB);// TODO : ACCOUNTINGSET
+						AccountEventConstants.ACCEVENT_CMTDISB);// TODO :
+																																								// ACCOUNTINGSET
 
 				if (accountingSetId != 0) {
 					financeDetail.setCmtFinanceEntries(AccountingConfigCache.getTransactionEntry(accountingSetId));
@@ -1975,21 +1983,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				 * ExtendedFieldHeader fieldHeader = null; List<ExtendedFieldDetail> extendedFieldDetails = null; String
 				 * assetCode = financeMain.getFinPurpose();
 				 * 
-				 * fieldHeader =
-				 * getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(FinanceConstants.MODULE_NAME,
-				 * assetCode, "_AView");
+				 * fieldHeader = getExtendedFieldHeaderDAO(). getExtendedFieldHeaderByModuleName(FinanceConstants.
+				 * MODULE_NAME, assetCode, "_AView");
 				 * 
 				 * if (fieldHeader != null) { extendedFieldDetails =
-				 * getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule(assetCode, "_AView");
+				 * getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule (assetCode, "_AView");
 				 * fieldHeader.setExtendedFieldDetails(extendedFieldDetails);
 				 * financeDetail.setExtendedFieldHeader(fieldHeader);
 				 * 
-				 * finReference = StringUtils.trimToEmpty(financeDetail.getFinScheduleData().getFinReference());
+				 * finReference = StringUtils.trimToEmpty(financeDetail.getFinScheduleData(). getFinReference());
 				 * 
 				 * if (extendedFieldDetails != null && !extendedFieldDetails.isEmpty() &&
 				 * StringUtils.isNotEmpty(finReference)) { String tableName = ""; if
-				 * (PennantStaticListUtil.getModuleName().containsKey(FinanceConstants.MODULE_NAME)) { tableName =
-				 * PennantStaticListUtil.getModuleName().get(FinanceConstants.MODULE_NAME).get(assetCode);
+				 * (PennantStaticListUtil.getModuleName().containsKey( FinanceConstants.MODULE_NAME)) { tableName =
+				 * PennantStaticListUtil.getModuleName().get(FinanceConstants. MODULE_NAME).get(assetCode);
 				 * HashMap<String, Object> map = (HashMap<String, Object>)
 				 * getExtendedFieldDetailDAO().retrive(tableName, finReference, "_Temp"); if (map != null) {
 				 * financeDetail.getLovDescExtendedFieldValues().putAll(map); } } } }
@@ -2189,7 +2196,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			updateTaskLog(financeMain, true);
 		}
 
-		// Mandate Should be processed first for changes since the mandate id will be updated in the finance main.
+		// Mandate Should be processed first for changes since the mandate id
+		// will be updated in the finance main.
 		getFinMandateService().saveOrUpdate(financeDetail, auditHeader, tableType.getSuffix());
 
 		if (financeMain.isNew()) {
@@ -2198,7 +2206,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Save Finance Premium Details
 			String productCode = scheduleData.getFinanceType().getFinCategory();
 			if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-				// FIXME : DataSet Removal to be worked on if it requires in future
+				// FIXME : DataSet Removal to be worked on if it requires in
+				// future
 			}
 
 			// Overdraft Details
@@ -2228,7 +2237,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Update Finance Premium Details
 			String productCode = scheduleData.getFinanceType().getFinCategory();
 			if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-				// FIXME : DataSet Removal to be worked on if it requires in future
+				// FIXME : DataSet Removal to be worked on if it requires in
+				// future
 			}
 
 			// Overdraft Details
@@ -2474,7 +2484,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// set Guaranteer Details Audit
 			// =======================================
 			if (financeDetail.getGurantorsDetailList() != null && !financeDetail.getGurantorsDetailList().isEmpty()) {
-				//10-Jul-2018 BUG FIX related to TktNo:127415
+				// 10-Jul-2018 BUG FIX related to TktNo:127415
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("Guarantors");
 				auditDetails
 						.addAll(getGuarantorDetailService().processingGuarantorsList(details, tableType.getSuffix()));
@@ -2484,7 +2494,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			if (financeDetail.getJountAccountDetailList() != null
 					&& !financeDetail.getJountAccountDetailList().isEmpty()) {
-				//10-Jul-2018 BUG FIX related to TktNo:127415
+				// 10-Jul-2018 BUG FIX related to TktNo:127415
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("JountAccountDetails");
 				auditDetails.addAll(getJointAccountDetailService().processingJointAccountDetail(details,
 						tableType.getSuffix(), auditTranType));
@@ -2988,7 +2998,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			auditDetail.setAuditSeq(++i);
 		}
 
-		//Update verification stage  tables document id's after saving to database and reference of RCU documntes
+		// Update verification stage tables document id's after saving to
+		// database and reference of RCU documntes
 		verificationService.updateReferenceIds(financeDetail);
 
 		auditDetails.addAll(adtVerifications);
@@ -3614,6 +3625,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
+		String finBranch = financeMain.getFinBranch();
 
 		// process to send FIN-one request and create or update the cust data.
 		if (!isWIF && StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
@@ -3626,7 +3638,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		Date curBDay = DateUtility.getAppDate();
-		// gCDCustomerService.processGcdCustomer(financeDetail, "insert"); // inserting gcdcustomer.
+		// gCDCustomerService.processGcdCustomer(financeDetail, "insert"); //
+		// inserting gcdcustomer.
 		// Execute Accounting Details Process
 		// =======================================
 		String productCode = finScheduleData.getFinanceType().getFinCategory();
@@ -3779,7 +3792,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					.getBundledProductsDetailById(financeMain.getFinReference(), "_Temp");
 		}
 
-		// Fetch Next Payment Details from Finance for Salaried Postings Verification
+		// Fetch Next Payment Details from Finance for Salaried Postings
+		// Verification
 		FinanceScheduleDetail orgNextSchd = null;
 		if (ImplementationConstants.ALLOW_FIN_SALARY_PAYMENT
 				&& StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
@@ -3807,7 +3821,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Delete Finance Premium Details
 			if (StringUtils.equals(FinanceConstants.PRODUCT_SUKUK, productCode)) {
-				// FIXME : DataSet Removal to be worked on if it requires in future
+				// FIXME : DataSet Removal to be worked on if it requires in
+				// future
 			}
 
 			// Delete overdraft Details
@@ -3855,7 +3870,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setNextUserId(null);
 			financeMain.setWorkflowId(0);
 
-			// Resetting Maturity Terms & Summary details rendering in case of Reduce maturity cases
+			// Resetting Maturity Terms & Summary details rendering in case of
+			// Reduce maturity cases
 			if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
 					&& financeMain.getAdvTerms() == 0) {
 				int size = finScheduleData.getFinanceScheduleDetails().size();
@@ -3875,7 +3891,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			if (recordType.equals(PennantConstants.RECORD_TYPE_NEW)) {
 
-				// Mandate Should be processed first for changes since the mandate id will be updated in the finance
+				// Mandate Should be processed first for changes since the
+				// mandate id will be updated in the finance
 				// main.
 				getFinMandateService().doApprove(financeDetail, auditHeader, "");
 
@@ -3935,7 +3952,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// ===========================================
 				saveSecondaryAccountList(finScheduleData, financeDetail.getModuleDefiner(), isWIF, "");
 
-				// update finreferece in finReceiptheader table for upfront receipts case 
+				// update finreferece in finReceiptheader table for upfront
+				// receipts case
 				if (finScheduleData.getExternalReference() != null
 						&& !finScheduleData.getExternalReference().isEmpty()) {
 					getFinReceiptHeaderDAO().updateReference(finScheduleData.getExternalReference(),
@@ -3979,7 +3997,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Save Finance Premium Details
 				// =======================================
 				if (StringUtils.equals(FinanceConstants.PRODUCT_SUKUK, productCode)) {
-					// FIXME : DataSet Removal to be worked on if it requires in future
+					// FIXME : DataSet Removal to be worked on if it requires in
+					// future
 				}
 
 				// Save Finance Premium Details
@@ -3998,7 +4017,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				/*
 				 * // Save Finance Flag details if(financeDetail.getFinFlagsDetails() != null &&
 				 * !financeDetail.getFinFlagsDetails().isEmpty()) {
-				 * getFinFlagDetailsDAO().savefinFlagList(financeDetail.getFinFlagsDetails(), ""); }
+				 * getFinFlagDetailsDAO().savefinFlagList(financeDetail. getFinFlagsDetails(), ""); }
 				 */
 
 				// Save Contributor Header Details
@@ -4061,7 +4080,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						oldFinSchdData.setFinReference(finScheduleData.getFinReference());
 					}
 
-					// Overdraft Movements are set for every Overdraft Schedule Built,and limit change is calculated by
+					// Overdraft Movements are set for every Overdraft Schedule
+					// Built,and limit change is calculated by
 					// sub old fin asset and current Fin asset
 					// =======================================
 					if (StringUtils.equals(financeDetail.getModuleDefiner(),
@@ -4139,7 +4159,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Update Finance Premium Details
 				// =======================================
 				if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-					// FIXME : DataSet Removal to be worked on if it requires in future
+					// FIXME : DataSet Removal to be worked on if it requires in
+					// future
 				}
 
 			}
@@ -4249,7 +4270,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					getFinAssetEvaluationService().doApprove(financeDetail.getFinAssetEvaluation(), "", tranType);
 				}
 
-				//PSL details
+				// PSL details
 				if (financeDetail.getPslDetail() != null) {
 					getpSLDetailService().doApprove(financeDetail.getPslDetail(), TableType.MAIN_TAB, tranType);
 				}
@@ -4368,10 +4389,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance Fee Receipt Details
 			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
 				if (finScheduleData.getFinFeeReceipts() == null || finScheduleData.getFinFeeReceipts().isEmpty()) {
-					getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null);
+					getFinFeeDetailService().createExcessAmount(financeMain.getFinReference(), null,
+							financeMain.getCustID());
 				} else {
 					getFinFeeDetailService().doApproveFinFeeReceipts(finScheduleData.getFinFeeReceipts(), "", tranType,
-							financeMain.getFinReference());
+							financeMain.getFinReference(), financeMain.getCustID());
 				}
 			}
 
@@ -4435,7 +4457,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Save Finance Schedule Snapshot
 		// ===============================
-		// TODO commented below line which is leading to column miss match exception
+		// TODO commented below line which is leading to column miss match
+		// exception
 		// getFinanceMainDAO().saveFinanceSnapshot(financeMain);
 
 		// Update Task_log and Task_Owners tables
@@ -4524,13 +4547,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
 				if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
-					//auditDetailList.addAll(finCovenantTypeService.delete(finCovenantTypes, "_Temp", auditTranType));
+					// auditDetailList.addAll(finCovenantTypeService.delete(finCovenantTypes,
+					// "_Temp", auditTranType));
 					finCovenantTypeService.delete(finCovenantTypes, "_Temp", auditTranType);
 				}
 
 				List<Covenant> covenants = financeDetail.getCovenants();
 				if (CollectionUtils.isNotEmpty(covenants)) {
-					// auditDetailList.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
+					// auditDetailList.addAll(covenantsService.delete(covenants,
+					// TableType.TEMP_TAB, auditTranType));
 					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
 				}
 
@@ -4639,7 +4664,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Delete Finance Premium Details
 				// =======================================
 				if (StringUtils.equals(FinanceConstants.PRODUCT_SUKUK, productCode)) {
-					// FIXME : DataSet Removal to be worked on if it requires in future
+					// FIXME : DataSet Removal to be worked on if it requires in
+					// future
 				}
 
 				// Delete Finance Overdraft Details
@@ -4680,7 +4706,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						excessAmount = BigDecimal.ZERO;
 					}
 
-					excessAmountMovement(finReference, advRule.name(), excessAmount, RepayConstants.RECEIPTTYPE_RECIPT);
+					advancePaymentService.excessAmountMovement(finReference, finBranch, advRule.name(), excessAmount,
+							RepayConstants.RECEIPTTYPE_RECIPT);
 				}
 			}
 			// tasks # >>Start Advance EMI and DSF
@@ -4749,7 +4776,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
-	private void excessAmountMovement(String finReference, String adviceType, BigDecimal reqAmount, String receiptType) {
+	private void excessAmountMovement(String finReference, String adviceType, BigDecimal reqAmount,
+			String receiptType) {
 		FinExcessAmount existingExcessAmt = null;
 
 		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finReference, adviceType);
@@ -4765,7 +4793,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		BigDecimal amount = excess.getAmount().add(reqAmount);
 		BigDecimal utilisedAmt = excess.getUtilisedAmt();
 		BigDecimal reservedAmt = excess.getReservedAmt();
-		
+
 		excess.setFinReference(finReference);
 		excess.setAmountType(adviceType);
 		excess.setAmount(amount);
@@ -4954,7 +4982,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		case PennantConstants.method_doCheckAuthLimit:
 			/*
 			 * if (!"Save".equals(afinanceMain.getRecordStatus()) && afinanceMain.getNextRoleCode().equals("")) {
-			 * authorizationLimitService.validateFinanceAuthorizationLimit(auditHeader); }
+			 * authorizationLimitService.validateFinanceAuthorizationLimit( auditHeader); }
 			 */
 			authorizationLimitService.validateFinanceAuthorizationLimit(auditHeader);
 
@@ -5197,7 +5225,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			handlingInstruction.setInstallmentDate(installmentDate);
 			narration = "Postponement";
 		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_CHGFRQ)) {
-			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_AMENDINSTLMNT); // Modify installment date
+			handlingInstruction.setMaintenanceCode(FinanceConstants.INSTCODE_AMENDINSTLMNT); // Modify
+																								// installment
+																								// date
 			narration = "Amend Installment date";
 		} else if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_RATECHG)
 				|| StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_CHGRPY)
@@ -5303,7 +5333,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Delete Finance Premium Details
 			if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-				// FIXME : DataSet Removal to be worked on if it requires in future
+				// FIXME : DataSet Removal to be worked on if it requires in
+				// future
 			}
 
 			// Step Details Deletion
@@ -5358,7 +5389,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Save Finance Premium Details
 				// =======================================
 				if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-					// FIXME : DataSet Removal to be worked on if it requires in future
+					// FIXME : DataSet Removal to be worked on if it requires in
+					// future
 				}
 
 				// Save Contributor Header Details
@@ -5429,7 +5461,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Update Finance Premium Details
 				// =======================================
 				if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-					// FIXME : DataSet Removal to be worked on if it requires in future
+					// FIXME : DataSet Removal to be worked on if it requires in
+					// future
 				}
 
 			}
@@ -5634,13 +5667,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				List<FinCovenantType> finCovenantTypes = financeDetail.getCovenantTypeList();
 				if (CollectionUtils.isNotEmpty(finCovenantTypes)) {
-					//auditDetails.addAll(getFinCovenantTypeService().delete(finCovenantTypes, "_Temp", auditTranType));
+					// auditDetails.addAll(getFinCovenantTypeService().delete(finCovenantTypes,
+					// "_Temp", auditTranType));
 					getFinCovenantTypeService().delete(finCovenantTypes, "_Temp", auditTranType);
 				}
 
 				List<Covenant> covenants = financeDetail.getCovenants();
 				if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenants)) {
-					//auditDetails.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
+					// auditDetails.addAll(covenantsService.delete(covenants,
+					// TableType.TEMP_TAB, auditTranType));
 					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
 				}
 
@@ -5760,7 +5795,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Delete Finance Premium Details
 			// =======================================
 			if (productCode.equals(FinanceConstants.PRODUCT_SUKUK)) {
-				// FIXME : DataSet Removal to be worked on if it requires in future
+				// FIXME : DataSet Removal to be worked on if it requires in
+				// future
 			}
 
 			// Finance Main Details
@@ -5800,7 +5836,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Save Finance Schedule Snapshot
 		// ===============================
-		// TODO commented below line which is leading to column miss match exception
+		// TODO commented below line which is leading to column miss match
+		// exception
 		// getFinanceMainDAO().saveFinanceSnapshot(financeMain);
 
 		// Update Task_log and Task_Owners tables
@@ -5920,7 +5957,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Document Details
 		// =======================================
 		if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
-			//getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(), "_Temp");
+			// getDocumentDetailsDAO().deleteList(financeDetail.getDocumentDetailsList(),
+			// "_Temp");
 		}
 
 		// Secondary Account deletion
@@ -6149,13 +6187,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			List<FinCovenantType> finCovenantTyps = financeDetail.getCovenantTypeList();
 			if (CollectionUtils.isNotEmpty(finCovenantTyps)) {
-				//auditDetails.addAll(finCovenantTypeService.delete(finCovenantTyps, "_Temp", auditTranType));
+				// auditDetails.addAll(finCovenantTypeService.delete(finCovenantTyps,
+				// "_Temp", auditTranType));
 				finCovenantTypeService.delete(finCovenantTyps, "_Temp", auditTranType);
 			}
 
 			List<Covenant> covenants = financeDetail.getCovenants();
 			if (CollectionUtils.isNotEmpty(covenants)) {
-				//auditDetails.addAll(covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType));
+				// auditDetails.addAll(covenantsService.delete(covenants,
+				// TableType.TEMP_TAB, auditTranType));
 				covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
 			}
 
@@ -6286,7 +6326,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Send Cancel DDA Registration request to interface
 		// ==================================================
-		//getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
+		// getDdaControllerService().cancelDDARegistration(financeMain.getFinReference());
 
 		getFinMandateService().doRejct(financeDetail, auditHeader);
 
@@ -6544,7 +6584,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
 			if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
-				//10-Jul-2018 BUG FIX related to TktNo:127415
+				// 10-Jul-2018 BUG FIX related to TktNo:127415
 				List<AuditDetail> details = getGuarantorDetailService().validate(gurantorsDetailList,
 						financeMain.getWorkflowId(), method, auditTranType, usrLanguage);
 				financeDetail.getAuditDetailMap().put("Guarantors", details);
@@ -6555,7 +6595,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			List<JointAccountDetail> jountAccountDetailList = financeDetail.getJountAccountDetailList();
 			if (jountAccountDetailList != null && !jountAccountDetailList.isEmpty()) {
-				//10-Jul-2018 BUG FIX related to TktNo:127415
+				// 10-Jul-2018 BUG FIX related to TktNo:127415
 				List<AuditDetail> details = getJointAccountDetailService().validate(jountAccountDetailList,
 						financeMain.getWorkflowId(), method, auditTranType, usrLanguage);
 				financeDetail.getAuditDetailMap().put("JountAccountDetails", details);
@@ -6703,8 +6743,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			//Collateral Setup details Business validations
-			//========================
+			// Collateral Setup details Business validations
+			// ========================
 			if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals())) {
 				auditDetails.addAll(getCollateralSetupService().validateDetails(financeDetail, auditTranType, method));
 			}
@@ -6747,8 +6787,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						auditTranType, usrLanguage));
 			}
 
-			//PSL details
-			//=======================================
+			// PSL details
+			// =======================================
 			if (financeDetail.getPslDetail() != null) {
 				financeDetail.getPslDetail().setWorkflowId(financeMain.getWorkflowId());
 				auditDetails.add(getpSLDetailService().validate(financeDetail.getPslDetail(), method, auditTranType,
@@ -6789,8 +6829,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				auditDetails.addAll(details);
 			}
 
-			//Legal details from loan business validation
-			//========================
+			// Legal details from loan business validation
+			// ========================
 			if (CollectionUtils.isNotEmpty(financeDetail.getLegalDetailsList())) {
 				auditDetails
 						.addAll(getLegalDetailService().validateDetailsFromLoan(financeDetail, auditTranType, method));
@@ -6960,7 +7000,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						for (FinCovenantType covenantType : financeDetail.getCovenantTypeList()) {
 							isDocExist = false;
 							if (!covenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_CAN)) {
-								// validate the document against the current list.
+								// validate the document against the current
+								// list.
 								for (DocumentDetails documentDetails : financeDetail.getDocumentDetailsList()) {
 									if (documentDetails.getDocCategory().equals(covenantType.getCovenantType())
 											&& !documentDetails.getRecordType()
@@ -7033,11 +7074,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		valueParm[0] = financeMain.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
-		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
+		// Checking , if Customer is in EOD process or not. if Yes, not allowed
+		// to do an action
 		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, financeMain.getRecordType())) {
 			int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
 
-			// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
+			// If Customer Exists in EOD Processing, Not allowed to Maintenance
+			// till completion
 			if (eodProgressCount > 0) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
@@ -7112,7 +7155,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Insurance Validation
-			// validate the Insurances against the finance Type having list of configured insurances
+			// validate the Insurances against the finance Type having list of
+			// configured insurances
 			List<String> mandPolicyList;
 			if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
 				mandPolicyList = getFinTypeInsuranceDAO().getFinTypeInsurances(financeMain.getPromotionCode(),
@@ -7171,7 +7215,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		getFinMandateService().validateMandate(auditDetail, financeDetail);
 		if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
-			// getFinMandateService().promptMandate(auditDetail, financeDetail);//FIXME: Override issue to be fixed
+			// getFinMandateService().promptMandate(auditDetail,
+			// financeDetail);//FIXME: Override issue to be fixed
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -7681,7 +7726,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public CustomerEligibilityCheck getODLoanCustElgDetail(FinanceDetail detail) {
 		logger.debug(Literal.ENTERING);
-		//FIXME:in single query we want get the details 
+		// FIXME:in single query we want get the details
 		if (detail.getCustomerEligibilityCheck() != null) {
 			String finType = detail.getFinScheduleData().getFinanceType().getFinType();
 			long custID = detail.getCustomerDetails().getCustomer().getCustID();
@@ -7853,23 +7898,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
+			List<FinFeeScheduleDetail> scheduleFees = null;
 			if (!feeIDList.isEmpty()) {
-				List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO()
-						.getFeeScheduleByFinID(feeIDList, false, "");
+				scheduleFees = finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList, false, "");
 
-				if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-
+				if (CollectionUtils.isNotEmpty(scheduleFees)) {
 					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
-					for (int i = 0; i < feeScheduleList.size(); i++) {
-						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
-
+					for (FinFeeScheduleDetail scheduleFee : scheduleFees) {
 						List<FinFeeScheduleDetail> schList = new ArrayList<>();
-						if (schFeeMap.containsKey(schdFee.getFeeID())) {
-							schList = schFeeMap.get(schdFee.getFeeID());
-							schFeeMap.remove(schdFee.getFeeID());
+						if (schFeeMap.containsKey(scheduleFee.getFeeID())) {
+							schList = schFeeMap.get(scheduleFee.getFeeID());
+							schFeeMap.remove(scheduleFee.getFeeID());
 						}
-						schList.add(schdFee);
-						schFeeMap.put(schdFee.getFeeID(), schList);
+						schList.add(scheduleFee);
+						schFeeMap.put(scheduleFee.getFeeID(), schList);
 
 					}
 
@@ -8001,7 +8043,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setNextSchDate(financeMain.getNextRepayPftDate());
 			}
 
-			// commented because we are fetching total fees from FinfeeDeatail table
+			// commented because we are fetching total fees from FinfeeDeatail
+			// table
 			/*
 			 * summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary); summary =
 			 * getFinFeeDetailDAO().getTotalFeeCharges(summary);
@@ -8040,32 +8083,55 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinanceMain(financeMain);
 
 		// Schedule details
-		scheduleData.setFinanceScheduleDetails(
-				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		scheduleData
+				.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, false));
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			scheduleData.setOverdraftScheduleDetails(
-					getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "", false));
+					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(finReference, "", false));
 		}
 
-		// Disbursement Details
-		scheduleData.setDisbursementDetails(
-				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		FinanceMain finMain = getFinanceMainDAO().getEntityNEntityDesc(finReference, "_Aview", false);
+
+		if (finMain != null) {
+			financeMain.setEntityCode(finMain.getEntityCode());
+			financeMain.setEntityDesc(finMain.getEntityDesc());
+		}
+
+		if (financeMain.isAllowSubvention()) {
+			// Disbursement Details
+			List<FinanceDisbursement> disbursementDetails = financeDisbursementDAO
+					.getFinanceDisbursementDetails(finReference, type, false);
+			scheduleData.setDisbursementDetails(disbursementDetails);
+			if (CollectionUtils.isNotEmpty(disbursementDetails)) {
+				for (FinanceDisbursement disbursement : disbursementDetails) {
+					List<SubventionScheduleDetail> subventionScheduleDetails = subventionDetailDAO
+							.getSubventionScheduleDetails(disbursement.getFinReference(), disbursement.getDisbSeq(),
+									type);
+					disbursement.setSubventionSchedules(subventionScheduleDetails);
+				}
+			}
+
+			scheduleData.setSubventionDetail(
+					subventionDetailDAO.getSubventionDetail(financeMain.getFinReference(), "_View"));
+		} else {
+			scheduleData.setSubventionDetail(null);
+		}
 
 		// Repay instructions
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
-		// Fiannce Type
+		// Finance Type
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), type));
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
 			// Fetching Promotion Details
-			Promotion promotion = this.promotionDAO.getPromotionById(financeMain.getPromotionCode(), type);
+			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), type);
 			scheduleData.getFinanceType().setFInTypeFromPromotiion(promotion);
 		}
 
 		// Fee Details
 		/*
-		 * scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
+		 * scheduleData.setFinFeeDetailList(getFinFeeDetailDAO(). getFinScheduleFees(finReference, false, "_View"));
 		 * 
 		 * // Finance Fee Schedule Details if (scheduleData.getFinFeeDetailList() != null &&
 		 * !scheduleData.getFinFeeDetailList().isEmpty()) {
@@ -8089,38 +8155,36 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		 * 
 		 * for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) { FinFeeDetail feeDetail =
 		 * scheduleData.getFinFeeDetailList().get(i); if (schFeeMap.containsKey(feeDetail.getFeeID())) {
-		 * feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID())); } } } } }
+		 * feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail. getFeeID())); } } } } }
 		 */
 
-		scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().getFinScheduleFees(finReference, false, "_View"));
+		List<FinFeeDetail> fees = finFeeDetailDAO.getFinScheduleFees(finReference, false, "_View");
+		scheduleData.setFinFeeDetailList(fees);
+
+		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finReference);
+		scheduleData.setFinPftDeatil(profitDetail);
 
 		// Finance Fee Schedule Details
-		if (scheduleData.getFinFeeDetailList() != null && !scheduleData.getFinFeeDetailList().isEmpty()) {
-
-			List<Long> feeIDList = new ArrayList<>();
-			for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
-				FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
-
-				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+		List<Long> feeIDList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(fees)) {
+			for (FinFeeDetail fee : fees) {
+				if (StringUtils.equals(fee.getFeeScheduleMethod(),
 						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+						|| StringUtils.equals(fee.getFeeScheduleMethod(),
 								CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
-						|| StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+						|| StringUtils.equals(fee.getFeeScheduleMethod(),
 								CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)) {
-					feeIDList.add(feeDetail.getFeeID());
+					feeIDList.add(fee.getFeeID());
 				}
 			}
 
-			if (!feeIDList.isEmpty()) {
-				List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO()
-						.getFeeScheduleByFinID(feeIDList, false, "");
+			List<FinFeeScheduleDetail> feeSchedules;
+			if (CollectionUtils.isNotEmpty(feeIDList)) {
+				feeSchedules = finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList, false, "");
 
-				if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-
+				if (CollectionUtils.isNotEmpty(feeSchedules)) {
 					HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
-					for (int i = 0; i < feeScheduleList.size(); i++) {
-						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
-
+					for (FinFeeScheduleDetail schdFee : feeSchedules) {
 						List<FinFeeScheduleDetail> schList = new ArrayList<>();
 						if (schFeeMap.containsKey(schdFee.getFeeID())) {
 							schList = schFeeMap.get(schdFee.getFeeID());
@@ -8131,10 +8195,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					}
 
-					for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
-						FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
-						if (schFeeMap.containsKey(feeDetail.getFeeID())) {
-							feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
+					for (FinFeeDetail fee : fees) {
+						if (schFeeMap.containsKey(fee.getFeeID())) {
+							fee.setFinFeeScheduleDetailList(schFeeMap.get(fee.getFeeID()));
 						}
 					}
 				}
@@ -9071,7 +9134,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (isSaveorUpdate) {
 			List<String> refList = new ArrayList<String>();
 			refList.add(financeMain.getFinReference());
-			getFinanceMainDAO().updateNextUserId(refList, "", nextUsers, true); // Update nextuserid value in finance
+			getFinanceMainDAO().updateNextUserId(refList, "", nextUsers, true); // Update
+																				// nextuserid
+																				// value
+																				// in
+																				// finance
 																				// table
 		} else {
 			getUserActivityLogDAO().updateFinStatus(financeMain.getFinReference(),
@@ -9188,7 +9255,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					baseRole = financeMain.getLovDescBaseRoleCodeMap().get(nextRoleCodes[i]);
 				}
 
-				// If base role available, check for the BASE ROLE user in Task Owners table else for the ROLE user and
+				// If base role available, check for the BASE ROLE user in Task
+				// Owners table else for the ROLE user and
 				// assign
 				if (StringUtils.isNotEmpty(baseRole)) {
 					taskOwner = fetchTaskOwner(financeMain.getFinReference(), baseRole);
@@ -9433,7 +9501,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		// Fetch Finance Premium Details
-		// financeDetail.setPremiumDetail(getFinancePremiumDetailDAO().getFinPremiumDetailsById(finReference, type));
+		// financeDetail.setPremiumDetail(getFinancePremiumDetailDAO().getFinPremiumDetailsById(finReference,
+		// type));
 
 		// scheduleData.setFeeRules(getFinFeeChargesDAO().getFeeChargesByFinRef(finReference,FinanceConstants.FINSER_EVENT_PREAPPROVAL,
 		// false, type));
@@ -9742,7 +9811,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// process block
 			if (!financeDetail.isActionSave() && !StringUtils.equals(nextrole, role)) {
-				// Checking for Limit check Authority i.e Is current Role contains limit check authority (or) Not
+				// Checking for Limit check Authority i.e Is current Role
+				// contains limit check authority (or) Not
 				List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails().doLimitChek(role,
 						finmain.getFinType());
 				if (limitCheckList == null || limitCheckList.isEmpty()) {
@@ -10473,7 +10543,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setManualSchedule(financeType.isManualSchedule());
 		// Grace period details
 
-		// Default Grace Period Group box UnVisible by setting Allow grace period to FALSE
+		// Default Grace Period Group box UnVisible by setting Allow grace
+		// period to FALSE
 		if (financeType.getFinCategory().equals(FinanceConstants.PRODUCT_ISTISNA)) {
 			financeMain.setAllowGrcPeriod(financeType.isFInIsAlwGrace());
 		} else {
@@ -10759,7 +10830,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getNextUserId(finReference);
 	}
 
-	//FinAsset details
+	// FinAsset details
 	@Override
 	public List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type) {
 		return getFinAssetTypeDAO().getFinAssetTypesByFinRef(reference, type);
@@ -10768,6 +10839,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public List<Integer> getFinanceDisbSeqs(String finReferecne, boolean isWIF) {
 		return getFinanceDisbursementDAO().getFinanceDisbSeqs(finReferecne, "", isWIF);
+	}
+
+	@Override
+	public List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList) {
+		return getProfitDetailsDAO().getFinProfitListByFinRefList(finRefList);
+	}
+
+	@Override
+	public List<FinanceMain> getFinanceMainForLinkedLoans(String finReference) {
+		return getFinanceMainDAO().getFinanceMainForLinkedLoans(finReference);
+	}
+
+	@Override
+	public List<FinanceMain> getFinanceMainForLinkedLoans(long custId) {
+		return getFinanceMainDAO().getFinanceMainForLinkedLoans(custId);
 	}
 
 	public ReasonDetailDAO getReasonDetailDAO() {
@@ -10862,4 +10948,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
+
+	@Autowired
+	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
+		this.subventionDetailDAO = subventionDetailDAO;
+	}
+
+	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
+	}
+
 }

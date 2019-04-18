@@ -102,5 +102,7 @@ public interface CustomerDetailsService {
 	CustomerDetails getCustomerChildDetails(long id, String type);
 
 	void setCustomerBasicDetails(CustomerDetails customerDetails);
+	
+	Customer checkCustomerByID(long custID, String type);
 
 }

@@ -790,4 +790,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
 	}
+
+	@Override
+	public boolean getPaymentHeadersByFinReference(String finReference, String type) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

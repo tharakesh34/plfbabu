@@ -5,54 +5,90 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ReceiptUploadDetail extends AbstractWorkflowEntity implements Entity {
+public class ReceiptUploadDetail extends AbstractWorkflowEntity {
+	private static final long serialVersionUID = -4601315178356280082L;
 
-	private static final long	serialVersionUID	= -4601315178356280082L;
+	private long uploadheaderId = Long.MIN_VALUE;
+	private long uploadDetailId = Long.MIN_VALUE;
+	private String rootId = "";
+	private String reference = "";
+	private String receiptPurpose = "";
+	private String excessAdjustTo = "";
+	private String allocationType = "";
+	private BigDecimal receiptAmount = BigDecimal.ZERO;
+	private String effectSchdMethod = "";
+	private String remarks = "";
+	private Date valueDate;
+	private Date receivedDate;
+	private String receiptMode = "";
+	private String fundingAc = "";
+	private String paymentRef = "";
+	private String favourNumber = "";
+	private String bankCode = "";
+	private String chequeNo = "";
+	private String transactionRef = "";
+	private String status = "";
+	private Date depositDate;
+	private Date realizationDate;
+	private Date instrumentDate;
+	private String uploadStatus = "";
+	private String reason = "";
+	private long receiptId = 0;
+	private long id = 0;
+	private String subReceiptMode = "";
+	private String receiptChannel = "";
+	private String panNumber = "";
+	private String extReference = "";
+	private Long collectionAgentId;
+	private String receivedFrom = "";
+	private LoggedInUser loggedInUser;
 
-	private long				UploadheaderId		= Long.MIN_VALUE;
-	private long				UploadDetailId		= Long.MIN_VALUE;
-	private String              rootId;
-	private String				reference;
-	private String				receiptPurpose;
-	private String				excessAdjustTo;
-	private String				allocationType;
-	private BigDecimal			receiptAmount;
-	private String				effectSchdMethod;
-	private String				remarks;
-	private Date				valueDate;
-	private Date				receivedDate;
-	private String				receiptMode;
-	private String				fundingAc;
-	private String				paymentRef;
-	private String				favourNumber;
-	private String				bankCode;
-	private String				chequeNo;
-	private String				transactionRef;
-	private String				status;
-	private Date				depositDate;
-	private Date				realizationDate;
-	private Date				instrumentDate;
+	private List<UploadAlloctionDetail> listAllocationDetails = new ArrayList<>();
+	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
 
-	private String				uploadStatus;
-	private String				reason;
-
-	private String				jsonObject;
-	private long                receiptId;
-	private long                id;
-	
-	private List<UploadAlloctionDetail>	listAllocationDetails	= new ArrayList<>();
-
-	//Getter and Setter
-
-	public String getUploadStatus() {
-		return uploadStatus;
+	public ReceiptUploadDetail() {
+		super();
 	}
 
-	public void setUploadStatus(String uploadStatus) {
-		this.uploadStatus = uploadStatus;
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+
+	}
+
+	public boolean isNew() {
+		return false;
+	}
+
+	public long getUploadheaderId() {
+		return uploadheaderId;
+	}
+
+	public void setUploadheaderId(long uploadheaderId) {
+		this.uploadheaderId = uploadheaderId;
+	}
+
+	public long getUploadDetailId() {
+		return uploadDetailId;
+	}
+
+	public void setUploadDetailId(long uploadDetailId) {
+		this.uploadDetailId = uploadDetailId;
+	}
+
+	public String getRootId() {
+		return rootId;
+	}
+
+	public void setRootId(String rootId) {
+		this.rootId = rootId;
 	}
 
 	public String getReference() {
@@ -69,6 +105,14 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity implements Entit
 
 	public void setReceiptPurpose(String receiptPurpose) {
 		this.receiptPurpose = receiptPurpose;
+	}
+
+	public String getExcessAdjustTo() {
+		return excessAdjustTo;
+	}
+
+	public void setExcessAdjustTo(String excessAdjustTo) {
+		this.excessAdjustTo = excessAdjustTo;
 	}
 
 	public String getAllocationType() {
@@ -110,7 +154,15 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity implements Entit
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
-	
+
+	public Date getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
 	public String getReceiptMode() {
 		return receiptMode;
 	}
@@ -199,35 +251,12 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity implements Entit
 		this.instrumentDate = instrumentDate;
 	}
 
-	public long getUploadheaderId() {
-		return UploadheaderId;
+	public String getUploadStatus() {
+		return uploadStatus;
 	}
 
-	public void setUploadheaderId(long uploadheaderId) {
-		UploadheaderId = uploadheaderId;
-	}
-
-	public long getUploadDetailId() {
-		return UploadDetailId;
-	}
-
-	public void setUploadDetailId(long uploadDetailId) {
-		UploadDetailId = uploadDetailId;
-	}
-
-	@Override
-	public boolean isNew() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	public String getJsonObject() {
-		return jsonObject;
-	}
-
-	public void setJsonObject(String jsonObject) {
-		this.jsonObject = jsonObject;
+	public void setUploadStatus(String uploadStatus) {
+		this.uploadStatus = uploadStatus;
 	}
 
 	public String getReason() {
@@ -238,30 +267,6 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity implements Entit
 		this.reason = reason;
 	}
 
-	public List<UploadAlloctionDetail> getListAllocationDetails() {
-		return listAllocationDetails;
-	}
-
-	public void setListAllocationDetails(List<UploadAlloctionDetail> listAllocationDetails) {
-		this.listAllocationDetails = listAllocationDetails;
-	}
-
-	public String getRootId() {
-		return rootId;
-	}
-
-	public void setRootId(String rootId) {
-		this.rootId = rootId;
-	}
-
-	public Date getReceivedDate() {
-		return receivedDate;
-	}
-
-	public void setReceivedDate(Date receivedDate) {
-		this.receivedDate = receivedDate;
-	}
-
 	public long getReceiptId() {
 		return receiptId;
 	}
@@ -270,23 +275,75 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity implements Entit
 		this.receiptId = receiptId;
 	}
 
-	public String getExcessAdjustTo() {
-		return excessAdjustTo;
+	public String getSubReceiptMode() {
+		return subReceiptMode;
 	}
 
-	public void setExcessAdjustTo(String excessAdjustTo) {
-		this.excessAdjustTo = excessAdjustTo;
+	public void setSubReceiptMode(String subReceiptMode) {
+		this.subReceiptMode = subReceiptMode;
 	}
 
-	@Override
-	public long getId() {
-		return id;
+	public String getReceiptChannel() {
+		return receiptChannel;
 	}
 
-	@Override
-	public void setId(long id) {
-		this.id = id;
-		
+	public void setReceiptChannel(String receiptChannel) {
+		this.receiptChannel = receiptChannel;
 	}
-	
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public String getExtReference() {
+		return extReference;
+	}
+
+	public void setExtReference(String extReference) {
+		this.extReference = extReference;
+	}
+
+	public Long getCollectionAgentId() {
+		return collectionAgentId;
+	}
+
+	public void setCollectionAgentId(Long collectionAgentId) {
+		this.collectionAgentId = collectionAgentId;
+	}
+
+	public String getReceivedFrom() {
+		return receivedFrom;
+	}
+
+	public void setReceivedFrom(String receivedFrom) {
+		this.receivedFrom = receivedFrom;
+	}
+
+	public LoggedInUser getLoggedInUser() {
+		return loggedInUser;
+	}
+
+	public void setLoggedInUser(LoggedInUser loggedInUser) {
+		this.loggedInUser = loggedInUser;
+	}
+
+	public List<UploadAlloctionDetail> getListAllocationDetails() {
+		return listAllocationDetails;
+	}
+
+	public void setListAllocationDetails(List<UploadAlloctionDetail> listAllocationDetails) {
+		this.listAllocationDetails = listAllocationDetails;
+	}
+
+	public List<ErrorDetail> getErrorDetails() {
+		return errorDetails;
+	}
+
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
+		this.errorDetails = errorDetails;
+	}
 }

@@ -3,31 +3,29 @@ package com.pennant.webui.finance.receiptupload;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -39,27 +37,25 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.batchupload.util.BatchProcessorUtil;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -68,51 +64,43 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
-	private static final long			serialVersionUID	= 4783031677099154138L;
-	private static final Logger			logger				= Logger
-			.getLogger(SelectReceiptUploadHeaderDialogCtrl.class);
+	private static final long serialVersionUID = 4783031677099154138L;
+	private static final Logger logger = Logger.getLogger(SelectReceiptUploadHeaderDialogCtrl.class);
 
-	protected Window					window_ReceiptUpload;
+	protected Window window_ReceiptUpload;
 
-	protected Button					btnBrowse;
-	protected Button					btnSave;
-	protected Button					btnRefresh;
-	protected Button					btndownload;
+	protected Button btnBrowse;
+	protected Button btnSave;
+	protected Button btnRefresh;
+	protected Button btndownload;
 
-	protected Textbox					fileName;
-	protected ExtendedCombobox			entity;
+	protected Textbox fileName;
+	protected ExtendedCombobox entity;
 
-	private Workbook					workbook			= null;
-	private DataFormatter				objDefaultFormat	= new DataFormatter();		// for cell value formating
-	private FormulaEvaluator			formulaEvaluator	= null;						// for cell value formating
-	private String						errorMsg			= null;
-	private ExcelFileImport				fileImport			= null;
+	private Workbook workbook = null;
+	private DataFormatter objDefaultFormat = new DataFormatter(); // for cell
+																	// value
+																	// formating
+	private FormulaEvaluator formulaEvaluator = null; // for cell value
+														// formating
+	private String errorMsg = null;
+	private ExcelFileImport fileImport = null;
 
-	private ReceiptUploadHeader			receiptUploadHeader	= new ReceiptUploadHeader();
-	private ReceiptUploadHeaderService	receiptUploadHeaderService;
+	private ReceiptUploadHeader receiptUploadHeader = new ReceiptUploadHeader();
+	private ReceiptUploadHeaderService receiptUploadHeaderService;
 
-	private ReceiptUploadHeaderListCtrl	receiptUploadHeaderListCtrl;
-	private Media						media				= null;
-	private String						filePath			= null;
-	private File						file;
+	private ReceiptUploadHeaderListCtrl receiptUploadHeaderListCtrl;
+	private Media media = null;
+	private String filePath = null;
+	private File file;
 
-	private List<ReceiptUploadDetail>	uploadDetailList	= new ArrayList<>();
-	private FormulaEvaluator			objFormulaEvaluator	= null;
-	private List<ReceiptUploadDetail>	uploadNewList		= new ArrayList<>();
-	
-	int									lengthfour			= 4;
-	int									lengthTwenty		= 20;
-	int									lengthSingle		= 1;
-	int									lengthTen			= 10;
-	int									lengthHunder		= 100;
-	int									lengthEight			= 8;
-	int									lengthFifty			= 50;
-	int									lengtheighteen		= 18;
-	boolean								isReceiptDetailsExits	= false;
-	
-	private ReceiptService				receiptService;
+	private List<ReceiptUploadDetail> rudList = new ArrayList<>();
+	private FormulaEvaluator objFormulaEvaluator = null;
+	private List<ReceiptUploadDetail> uploadNewList = new ArrayList<>();
+	List<UploadAlloctionDetail> uadList = new ArrayList<>();
 
-	
+	private ReceiptService receiptService;
+
 	public SelectReceiptUploadHeaderDialogCtrl() {
 		super();
 	}
@@ -145,13 +133,11 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 			if (arguments.containsKey("receiptUploadHeader")) {
 				this.receiptUploadHeader = (ReceiptUploadHeader) arguments.get("receiptUploadHeader");
-			}else{
+			} else {
 				this.setReceiptUploadHeader(null);
 			}
 
 			doSetFieldProperties();
-			doCheckRights();
-
 			this.window_ReceiptUpload.doModal();
 		} catch (Exception e) {
 			closeDialog();
@@ -178,15 +164,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * Set Visible for components by checking if there's a right for it.
-	 */
-	private void doCheckRights() {
-		logger.debug(Literal.ENTERING);
-		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
 	 * Displays the dialog page.
 	 * 
 	 * @param uploadHeader
@@ -201,7 +178,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderDialog.zul", null, aruments);
+			Executions.createComponents("/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderDialog.zul", null,
+					aruments);
 			this.window_ReceiptUpload.onClose();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -213,7 +191,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	/**
 	 * Set the components for edit mode. <br>
 	 */
-
 	@SuppressWarnings("unused")
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
@@ -224,15 +201,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		}
 
 		this.fileName.setReadonly(true);
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(false);
-			}
-			if (this.receiptUploadHeader.isNew()) {
-				this.btnCtrl.setBtnStatus_Edit();
-				btnCancel.setVisible(false);
-			}
-		}
 
 		logger.debug("Leaving ");
 	}
@@ -242,16 +210,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 */
 	public void doReadOnly() {
 		logger.debug(Literal.ENTERING);
-
 		this.fileName.setReadonly(true);
-		if (isWorkFlowEnabled()) {
-			for (int i = 0; i < userAction.getItemCount(); i++) {
-				userAction.getItemAtIndex(i).setDisabled(true);
-			}
-			this.recordStatus.setValue("");
-			this.userAction.setSelectedIndex(0);
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -259,16 +218,12 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.ENTERING);
-
 		this.fileName.setConstraint("");
 		this.fileName.setErrorMessage("");
 		this.entity.setConstraint("");
 		this.entity.setErrorMessage("");
-
-		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Change the Entity Code
 	 * 
@@ -279,7 +234,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.entity.setConstraint("");
 		this.entity.setErrorMessage("");
 		if (StringUtils.isBlank(this.entity.getValue())) {
-			this.entity.setValue("","");
+			this.entity.setValue("", "");
 		}
 		logger.debug("Leaving");
 	}
@@ -300,7 +255,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.fileImport = null;
 		this.errorMsg = null;
 		media = event.getMedia();
-		
+
 		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
 
@@ -352,17 +307,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 * @throws Exception
 	 */
 	public void onClick$btnRefresh(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
 		doResetData();
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Reset the Data onclicke the refresh button
+	 * Reset the Data onclick the refresh button
 	 */
 	private void doResetData() {
-		logger.debug(Literal.ENTERING);
-
 		doRemoveValidation();
 
 		this.fileName.setText("");
@@ -375,8 +326,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.workbook = null;
 		this.objDefaultFormat = new DataFormatter();// for cell value formating
 		this.formulaEvaluator = null; // for cell value formating
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -387,14 +336,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
+		rudList = new ArrayList<>();
+		uadList = new ArrayList<>();
 
-		doValidations();
-
-		this.btnBrowse.setDisabled(true);
-		this.btnRefresh.setDisabled(true);
+		validateFileName();
 
 		try {
-			
+
 			// If any error message on Browsing File
 			if (StringUtils.isNotBlank(this.errorMsg)) {
 				throw new Exception(this.errorMsg);
@@ -409,40 +357,30 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 					return;
 				}
 			}
-			
+
 			// On writing file, if it not exists then not allowed to proceed
 			if (file == null) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_Exists"));
 				return;
 			}
 
-			// Excel file reading with headers, in case if any mismatch on uploaded data with the format
-			if (!validateUploadedFile()) {
+			// Excel file reading with headers, in case if any mismatch on
+			// uploaded data with the format
+			if (!validateFileContent()) {
 				return;
 			}
 
-			// Unique Receipt ROOT ID validation
-			if (checkDuplicateUniqueID()) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_Invalid_UniqueID"));
+			boolean isError = validateFileData();
+			// Load Data and blockers found
+			if (isError) {
 				return;
 			}
 
-			// Preparation of JSON object using Excel uploaded file
-			try {
-				doFileProcess();
-			} catch (Exception e) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_Invalid_Data"));
-				return;
-			}
+			//Validate Receipt from service as inquiry
+			validateReceipt();
 
-			// If data not exists, no need to proceed further
-			if (uploadDetailList == null || uploadDetailList.isEmpty()) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_NoData"));
-				return;
-			}
-
-			this.receiptUploadHeader.setReceiptUploadList(this.uploadDetailList);
-			//Create backup file
+			this.receiptUploadHeader.setReceiptUploadList(this.rudList);
+			// Create backup file
 			this.fileImport.backUpFile();
 			doShowDialog(this.receiptUploadHeader);
 
@@ -450,919 +388,14 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			this.errorMsg = e.getMessage();
 			doResetData();
 			MessageUtil.showError(e);
-			return;
-		} finally {
-			this.btnBrowse.setDisabled(false);
-			this.btnRefresh.setDisabled(false);
-			logger.debug(Literal.LEAVING);
-		}
-	}
-
-	/**
-	 * Method for Checking Uniqueness on ID
-	 * @return
-	 */
-	private boolean checkDuplicateUniqueID() {
-		logger.debug(Literal.ENTERING);
-
-		List<String> list = new ArrayList<>();
-		Sheet sheet = this.workbook.getSheetAt(0);
-		Iterator<Row> rowIterator = sheet.iterator();
-		while (rowIterator.hasNext()) {
-			Row row = rowIterator.next();
-			int rowIndex = row.getRowNum();
-			Cell cell = row.getCell(0);
-
-			if (rowIndex > 0 && cell != null) {
-				list.add(objDefaultFormat.formatCellValue(cell, objFormulaEvaluator));
-			}
-		}
-
-		if (!list.isEmpty()) {
-			final Set<String> set1 = new HashSet<String>();
-
-			for (String yourInt : list) {
-				if (!set1.add(yourInt)) {
-					logger.debug(Literal.LEAVING);
-					return true;
-				}
-			}
 		}
 		logger.debug(Literal.LEAVING);
-		return false;
-	}
-
-	/**
-	 * Writing Media file into File Object
-	 * @param media
-	 * @throws IOException
-	 */
-	private void writeFile(Media media) throws IOException {
-		logger.debug(Literal.ENTERING);
-
-		File parent = new File(filePath);
-
-		// IF Directory Does not Exists
-		if (!parent.exists()) {
-			parent.mkdirs();
-		}
-
-		file = new File(parent.getPath().concat(File.separator).concat(media.getName()));
-		
-		// If File already exists in path, we need to delete first before replace
-		if (file.exists()) {
-			file.delete();
-		}
-		
-		// Creating File in Server path for Loading/Reading file from path
-		file.createNewFile();
-		FileUtils.writeByteArrayToFile(file, media.getByteData());
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Reading Excel file and writing data into JSON objects
-	 * @throws Exception
-	 */
-	private void doFileProcess() throws Exception{
-		logger.debug(Literal.ENTERING);
-
-		List<String> keys = BatchProcessorUtil.getAllKeysByIndex(workbook, 0);
-		Sheet sheet = workbook.getSheetAt(0);
-
-		if (this.workbook instanceof HSSFWorkbook) {
-			this.objFormulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) this.workbook);
-		} else if (this.workbook instanceof XSSFWorkbook) {
-			this.objFormulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) this.workbook);
-		}
-		
-		int emptyRcdCount = 0;
-		Iterator<Row> rows = sheet.iterator();
-		while (rows.hasNext()) {
-			JSONObject finalRequestJson = new JSONObject();
-			JSONObject jsonForextendedField = new JSONObject();
-
-			Row row = rows.next();
-			int rowIndex = row.getRowNum();
-			
-			// Headers Data not required
-			if(rowIndex == 0){
-				continue;
-			}
-
-			String messageId =  String.valueOf(Math.random()) + rowIndex;
-			int cellIndex = 0;
-			String rootID = "";
-			Iterator<Cell> cellIterator = row.cellIterator();
-			while (cellIterator.hasNext()) {
-				Cell cell = cellIterator.next();
-
-				// skipping header and other column value which is not inside header
-				if (cellIndex < keys.size()) {
-					
-					if(cellIndex == 0){
-						rootID = StringUtils.trimToEmpty(cell.toString());
-					}
-
-					// Only for ROOT ID Data fetching from Sheet
-					if (StringUtils.isEmpty(cell.toString()) && cellIndex == 0) {
-						finalRequestJson = new JSONObject(); // resting
-						finalRequestJson.put(keys.get(cellIndex), objDefaultFormat.formatCellValue(cell, objFormulaEvaluator));
-					} else { 
-						// Data from Sheet other than ROOT ID
-						objFormulaEvaluator.evaluate(cell);
-						String cellValueStr = objDefaultFormat.formatCellValue(cell, objFormulaEvaluator);
-						if(StringUtils.isNotBlank(rootID) && cellIndex == 0){
-							doCompare(keys.get(cellIndex), getValueByColumnType(cell, cellValueStr), finalRequestJson, jsonForextendedField);
-						}else{
-							finalRequestJson.put(keys.get(cellIndex), objDefaultFormat.formatCellValue(cell, objFormulaEvaluator));
-						}
-					}
-				}
-				cellIndex++;
-			}
-			
-			// checking finalRequestJson having value or not
-			if (isJsonObjectValueEmpty(finalRequestJson)) {
-				finalRequestJson = new JSONObject(); // resting
-				emptyRcdCount = emptyRcdCount + 1;
-			}
-			
-			// everything is fine just call api and write response back.
-			if (finalRequestJson.length() == 0) {
-				if(emptyRcdCount >= 2){
-					break;
-				}
-				continue;
-			}else{
-				emptyRcdCount = 0;
-			}
-			
-			callAPIForUploadReceipts(finalRequestJson, messageId);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-	/**
-	 * method will call appropriate api with given jsonobject and return response back to writing to excel
-	 * 
-	 * @param json
-	 *            prepared jsonObject
-	 * @param writebleSheet
-	 *            response will write to this field
-	 * @param messageId
-	 *            to pass as input header
-	 * @param lastCellIndex
-	 *            cell index where the response will written
-	 * @throws Exception 
-	 */
-	private synchronized void callAPIForUploadReceipts(JSONObject json, String messageId) throws Exception{
-		if (json.length() > 0) {
-			ReceiptUploadDetail receiptUploadDetail = callApi(json, messageId);
-			if (receiptUploadDetail != null) {
-				uploadDetailList.add(receiptUploadDetail);
-			}
-		}
-	}
-	
-	/**
-	 * Checking before calling api whether json object contains any value or not
-	 * @param finalRequestJson
-	 * @return
-	 */
-	private boolean isJsonObjectValueEmpty(JSONObject finalRequestJson) {
-		Iterator<?> keys = finalRequestJson.keys();
-		while (keys.hasNext()) {
-			String key = (String) keys.next();
-			String value;
-			try {
-				value = String.valueOf(finalRequestJson.get(key));
-				if (StringUtils.isNotBlank(value)) {
-					return false;
-				}
-			} catch (Exception e) {
-				logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * calling api with json object and returning array as response
-	 * @param jsondata
-	 * @param messageId
-	 * @return
-	 * @throws Exception
-	 */
-	private ReceiptUploadDetail callApi(JSONObject jsondata, String messageId) throws Exception {
-		logger.debug("API REQUEST :: " + jsondata.toString());
-
-		String errorMsg = "";
-		String errorCode = "0000";
-		JSONObject reqJson = new JSONObject();
-		ReceiptUploadDetail receiptUploadDetail = new ReceiptUploadDetail();
-		List<UploadAlloctionDetail> listUploadAlloctionDetail = null;
-
-		//set to false default,as default it should be false,for cheque/DD receipt mode
-		isReceiptDetailsExits = false;
-
-		try {
-			String url = SysParamUtil.getValueAsString("RECEIPTAPIURL");
-			if (jsondata.getString("RECEIPTPURPOSE").equalsIgnoreCase("ES")) {
-				url = url + "finInstructionRest/loanInstructionService/earlySettlement";
-
-				//fromDate
-				reqJson.put("fromDate",
-						DateUtility.formatDate(DateUtility.getUtilDate(jsondata.get("RECEIVEDDATE").toString(),
-								DateFormat.LONG_DATE.getPattern()), PennantConstants.APIDateFormatter));
-			} else if (jsondata.getString("RECEIPTPURPOSE").equalsIgnoreCase("SP")) {
-				url = url + "finInstructionRest/loanInstructionService/manualPayment";
-			} else if (jsondata.getString("RECEIPTPURPOSE").equalsIgnoreCase("EP")) {
-				url = url + "finInstructionRest/loanInstructionService/partialSettlement";
-			} else {
-				url = " ";
-				errorMsg = Labels.getLabel("inValid_ReceiptPurpose");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		} catch (Exception e) {
-			errorMsg = Labels.getLabel("inValid_ReceiptPurpose");
-			errorCode = PennantConstants.ERR_9999;
-		}
-
-		//root id
-		try {
-			reqJson.put("rootId", jsondata.get("<ROOT>_id"));
-			receiptUploadDetail.setRootId(jsondata.getString("<ROOT>_id"));
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_RootID");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		// Receipt Purpose
-		reqJson.put("receiptPurpose", jsondata.get("RECEIPTPURPOSE"));
-		receiptUploadDetail.setReceiptPurpose(reqJson.getString("receiptPurpose"));
-
-		//reCalType
-		reqJson.put("reCalType", jsondata.get("EFFECTSCHDMETHOD"));
-		receiptUploadDetail.setEffectSchdMethod(reqJson.getString("reCalType"));
-
-		// Finance Reference
-		reqJson.put("finReference", jsondata.get("REFERENCE"));
-		receiptUploadDetail.setReference(reqJson.getString("finReference"));
-
-		// Receipt Amount
-		try {
-			if (StringUtils.isBlank(String.valueOf(jsondata.get("RECEIPTAMOUNT")))) {
-				reqJson.put("amount", BigDecimal.ZERO);
-			} else {
-				reqJson.put("amount", jsondata.getBigDecimal("RECEIPTAMOUNT").multiply(new BigDecimal(100)));
-			}
-			receiptUploadDetail.setReceiptAmount(reqJson.getBigDecimal("amount"));
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_ReceiptAmount");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		// Receipt Mode
-		reqJson.put("paymentMode", jsondata.get("RECEIPTMODE"));
-		receiptUploadDetail.setReceiptMode(reqJson.getString("paymentMode"));
-
-		// Excess Adjust TO
-		reqJson.put("excessAdjustTo", jsondata.get("EXCESSADJUSTTO"));
-		receiptUploadDetail.setExcessAdjustTo(reqJson.getString("excessAdjustTo"));
-
-		// Allocation Type
-		reqJson.put("allocationType", jsondata.get("ALLOCATIONTYPE"));
-		receiptUploadDetail.setAllocationType(reqJson.getString("allocationType"));
-
-		// Remarks
-		reqJson.put("remarks", jsondata.get("REMARKS"));
-		receiptUploadDetail.setRemarks(reqJson.getString("remarks"));
-
-		// Value Date
-		try {
-			reqJson.put("valueDate", DateUtility.formatDate(
-					DateUtility.getUtilDate(jsondata.get("VALUEDATE").toString(), DateFormat.LONG_DATE.getPattern()),
-					PennantConstants.APIDateFormatter));
-			if (StringUtils.isBlank(reqJson.getString("valueDate"))) {
-				receiptUploadDetail.setValueDate(null);
-			} else {
-				receiptUploadDetail.setValueDate(DateUtility.getUtilDate(jsondata.get("VALUEDATE").toString(),
-						DateFormat.LONG_DATE.getPattern()));
-			}
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_ValueDate");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		// Receipt Received Date/Receipt Value Date
-		try {
-			reqJson.put("receivedDate", DateUtility.formatDate(
-					DateUtility.getUtilDate(jsondata.get("RECEIVEDDATE").toString(), DateFormat.LONG_DATE.getPattern()),
-					PennantConstants.APIDateFormatter));
-			if (StringUtils.isBlank(reqJson.getString("receivedDate"))) {
-				receiptUploadDetail.setReceivedDate(null);
-			} else {
-				receiptUploadDetail.setReceivedDate(DateUtility.getUtilDate(jsondata.get("RECEIVEDDATE").toString(),
-						DateFormat.LONG_DATE.getPattern()));
-			}
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_ReceivedDate");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		// Partner Bank
-		reqJson.put("depositAccount", jsondata.get("FUNDINGAC"));
-		receiptUploadDetail.setFundingAc(reqJson.getString("depositAccount"));
-
-		// Transaction Reference
-		reqJson.put("transactionRef", jsondata.get("TRANSACTIONREF"));
-		receiptUploadDetail.setTransactionRef(reqJson.getString("transactionRef"));
-
-		// Payment Reference
-		reqJson.put("paymentRef", jsondata.get("PAYMENTREF"));
-		receiptUploadDetail.setPaymentRef(reqJson.getString("paymentRef"));
-
-		// Favour Number
-		reqJson.put("favourNumber", jsondata.get("FAVOURNUMBER"));
-		receiptUploadDetail.setFavourNumber(reqJson.getString("favourNumber"));
-
-		// Bank Code
-		reqJson.put("bankCode", jsondata.get("BANKCODE"));
-		receiptUploadDetail.setBankCode(reqJson.getString("bankCode"));
-
-		// Cheque Number
-		reqJson.put("chequeNo", jsondata.get("CHEQUEACNO"));
-		receiptUploadDetail.setChequeNo(reqJson.getString("chequeNo"));
-
-		// Status
-		reqJson.put("status", jsondata.get("STATUS"));
-		receiptUploadDetail.setStatus(reqJson.getString("status"));
-
-		// Deposit Date
-		try {
-			reqJson.put("depositDate", DateUtility.formatDate(
-					DateUtility.getUtilDate(jsondata.get("DEPOSITDATE").toString(), DateFormat.LONG_DATE.getPattern()),
-					PennantConstants.APIDateFormatter));
-			if (StringUtils.isBlank(reqJson.getString("depositDate"))) {
-				receiptUploadDetail.setDepositDate(null);
-			} else {
-				receiptUploadDetail.setDepositDate(DateUtility.getUtilDate(jsondata.get("DEPOSITDATE").toString(),
-						DateFormat.LONG_DATE.getPattern()));
-			}
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_DepositDate");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		// Realization Date
-		try {
-			reqJson.put("realizationDate",
-					DateUtility.formatDate(DateUtility.getUtilDate(jsondata.get("REALIZATIONDATE").toString(),
-							DateFormat.LONG_DATE.getPattern()), PennantConstants.APIDateFormatter));
-			if (StringUtils.isBlank(reqJson.getString("realizationDate"))) {
-				receiptUploadDetail.setRealizationDate(null);
-			} else {
-				receiptUploadDetail.setRealizationDate(DateUtility
-						.getUtilDate(jsondata.get("REALIZATIONDATE").toString(), DateFormat.LONG_DATE.getPattern()));
-			}
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_RealizationDate");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		// Instrument Date -- Not using
-		try {
-			reqJson.put("instrumentDate",
-					DateUtility.formatDate(DateUtility.getUtilDate(jsondata.get("INSTRUMENTDATE").toString(),
-							DateFormat.LONG_DATE.getPattern()), PennantConstants.APIDateFormatter));
-			if (StringUtils.isBlank(reqJson.getString("instrumentDate"))) {
-				receiptUploadDetail.setInstrumentDate(null);
-			} else {
-				receiptUploadDetail.setInstrumentDate(DateUtility.getUtilDate(jsondata.get("INSTRUMENTDATE").toString(),
-						DateFormat.LONG_DATE.getPattern()));
-			}
-		} catch (Exception e) {
-			if (StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("inValid_InstrumentDate");
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		reqJson.put("reqType", "Inquiry");
-		reqJson.put("isUpload", true);
-		reqJson.put("entity", this.receiptUploadHeader.getEntityCode());
-		reqJson.put("entityDesc", this.receiptUploadHeader.getEntityCodeDesc());
-		reqJson.put("receiptFileName", this.receiptUploadHeader.getFileName());//To Check validation at Upload Level
-
-		JSONArray allocationDetails = new JSONArray();
-		if (jsondata.has("Sheet2")) {
-			allocationDetails = jsondata.getJSONArray("Sheet2");
-		}
-		JSONArray allocationDetailsReq = new JSONArray();
-		listUploadAlloctionDetail = new ArrayList<>();
-		Map<String, Boolean> keyMap = new HashMap<>();
-
-		// Reading Allocations based on ROOT ID
-		for (int i = 0; i < allocationDetails.length(); i++) {
-
-			JSONObject allocation = new JSONObject();
-			UploadAlloctionDetail aloc = new UploadAlloctionDetail();
-
-			// Allocation Type
-			allocation.put("allocationType",
-					allocationDetails.getJSONObject(i).get("ALLOCATIONTYPE").toString().toUpperCase());
-			aloc.setAllocationType(allocation.get("allocationType").toString());
-
-			// Allocation To
-			allocation.put("referenceCode", allocationDetails.getJSONObject(i).get("REFERENCECODE"));
-			aloc.setReferenceCode(allocation.get("referenceCode").toString());
-
-			// Allocation Paid Amount
-			if (!StringUtils.isBlank(String.valueOf(allocationDetails.getJSONObject(i).get("PAIDAMOUNT")))) {
-				allocation.put("paidAmount",
-						allocationDetails.getJSONObject(i).getBigDecimal("PAIDAMOUNT").multiply(new BigDecimal(100)));
-				aloc.setPaidAmount(new BigDecimal(allocation.get("paidAmount").toString()));
-			} else {
-				allocation.put("paidAmount", BigDecimal.ZERO);
-			}
-
-			if (!StringUtils.isBlank(String.valueOf(allocationDetails.getJSONObject(i).get("WAIVEDAMOUNT")))) {
-				allocation.put("waivedAmount",
-						allocationDetails.getJSONObject(i).getBigDecimal("WAIVEDAMOUNT").multiply(new BigDecimal(100)));
-				aloc.setWaivedAmount(new BigDecimal(allocation.get("waivedAmount").toString()));
-			} else {
-				allocation.put("waivedAmount", BigDecimal.ZERO);
-			}
-
-			allocationDetailsReq.put(allocation);
-			String key = aloc.getAllocationType();
-			if (StringUtils.isNotEmpty(aloc.getReferenceCode()) && (StringUtils.contains(aloc.getAllocationType(), "M")
-					|| StringUtils.contains(aloc.getAllocationType(), "B")
-					|| StringUtils.contains(aloc.getAllocationType(), "F"))) {
-				key = key + "_" + aloc.getReferenceCode();
-			}
-			if (keyMap.containsKey(key) && StringUtils.isEmpty(errorCode)) {
-				errorMsg = Labels.getLabel("Duplicate_AllocationDetail");
-				errorCode = PennantConstants.ERR_9999;
-			}
-			keyMap.put(key, true);
-
-			aloc.setRootId(jsondata.getString("<ROOT>_id"));
-			listUploadAlloctionDetail.add(aloc);
-		}
-
-		reqJson.put("allocationDetails", allocationDetailsReq);
-
-		receiptUploadDetail.setListAllocationDetails(listUploadAlloctionDetail);
-
-		//validate basic data of excel
-		if (StringUtils.isEmpty(errorMsg)) {
-			String returnmsg = doBasicValidation(receiptUploadDetail);
-			if (StringUtils.isNotEmpty(returnmsg)) {
-				errorMsg = returnmsg;
-				errorCode = PennantConstants.ERR_9999;
-			}
-		}
-
-		reqJson.put("receiptdetailExits", isReceiptDetailsExits);
-
-		// API CALL for ENQUIRY RESULT
-		if (StringUtils.isEmpty(errorCode)) {
-
-			
-			Gson gson = new GsonBuilder()
-					   .setDateFormat(PennantConstants.APIDateFormatter).create();
-			FinServiceInstruction finServiceInstruction = gson.fromJson(reqJson.toString(),
-					FinServiceInstruction.class);
-			String method = null;
-			if (jsondata.getString("RECEIPTPURPOSE").equalsIgnoreCase("ES")) {
-				method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
-			} else if (jsondata.getString("RECEIPTPURPOSE").equalsIgnoreCase("SP")) {
-				method = FinanceConstants.FINSER_EVENT_SCHDRPY;
-			} else if (jsondata.getString("RECEIPTPURPOSE").equalsIgnoreCase("EP")) {
-				method = FinanceConstants.FINSER_EVENT_EARLYRPY;
-			}
-
-			AuditDetail auditDetail = getReceiptService().doReceiptValidations(finServiceInstruction, method);
-			if (auditDetail.getErrorDetails() != null) {
-				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-					errorCode = errorDetail.getCode();
-					errorMsg = errorDetail.getError();
-					break;
-				}
-			}
-
-		}
-
-		receiptUploadDetail.setJsonObject(reqJson.toString());
-		receiptUploadDetail.setListAllocationDetails(listUploadAlloctionDetail);
-		if (StringUtils.equals("0000", errorCode)) {
-			receiptUploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
-			receiptUploadDetail.setReason("");
-		} else {
-			receiptUploadDetail.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
-			receiptUploadDetail.setReason(errorCode + " : " + errorMsg);
-		}
-
-		//chcking for dedup
-		uploadNewList.add(receiptUploadDetail);
-
-		return receiptUploadDetail;
-
-	}
-	
-	/**
-	 * check basic validation like length issues
-	 * @param receiptUploadDetail
-	 */
-	private String doBasicValidation(ReceiptUploadDetail receiptUploadDetail) {
-		logger.debug(Literal.ENTERING);
-
-		//reference
-		if(StringUtils.isBlank(receiptUploadDetail.getReference())){
-			return Labels.getLabel("invalid_reference");
-		}
-		
-		//root id
-		if(StringUtils.isBlank(receiptUploadDetail.getRootId())){
-			return Labels.getLabel("invalid_rootid");
-		} else if (lengthfour < receiptUploadDetail.getRootId().length()) {
-			return Labels.getLabel("invalid_rootid_length");
-		} else if (!StringUtils.isNumeric(receiptUploadDetail.getRootId())){
-			return Labels.getLabel("invalid_rootid_data");
-		}
-		
-		//receipt purpose
-		if(StringUtils.isBlank(receiptUploadDetail.getReceiptPurpose())){
-			return Labels.getLabel("invalid_ReceiptPurpose");
-		} else if (lengthTwenty < receiptUploadDetail.getReceiptPurpose().length()){
-			return Labels.getLabel("invalid_ReceiptPurpose_length");
-		}
-	
-		//allocation type
-		if(StringUtils.isBlank(receiptUploadDetail.getAllocationType())){
-			return Labels.getLabel("invalid_AllocationType");
-		} else if (lengthSingle < receiptUploadDetail.getAllocationType().length()){
-			return Labels.getLabel("invalid_AllocationType_length");
-		}
-		
-		//receipt amount
-		if(BigDecimal.ZERO.compareTo(receiptUploadDetail.getReceiptAmount())==0){
-			return Labels.getLabel("invalid_ReceiptAmt");
-		}
-		
-		//EFFECTSCHDMETHOD
-		if (!StringUtils.isBlank(receiptUploadDetail.getReceiptPurpose())
-				&& StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptPurpose(), "EP")
-				&& StringUtils.isBlank(receiptUploadDetail.getEffectSchdMethod())) {
-			return Labels.getLabel("invalid_EffectiveSchdMth");
-		} else if (!StringUtils.isBlank(receiptUploadDetail.getReceiptPurpose())
-				&& StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptPurpose(), "EP")
-				&& lengthTen < receiptUploadDetail.getEffectSchdMethod().length()) {
-			return Labels.getLabel("invalid_EffectiveSchdMth_length");
-		}
-		
-		//remarks
-		if(StringUtils.isBlank(receiptUploadDetail.getRemarks())){
-			return Labels.getLabel("invalid_Remarks");
-		} else if (lengthHunder < receiptUploadDetail.getRemarks().length()){
-			return Labels.getLabel("invalid_Remarks_length");
-		}
-		
-
-		//VALUEDATE
-		if(null == receiptUploadDetail.getValueDate()){
-			return Labels.getLabel("invalid_ValueDate");
-		}
-		
-		//RECEIVEDDATE
-		if(null == receiptUploadDetail.getReceivedDate()){
-			return Labels.getLabel("invalid_ReceivedDate");
-		}
-		
-		//receipt mode
-		if(StringUtils.isBlank(receiptUploadDetail.getReceiptMode())){
-			return Labels.getLabel("invalid_ReceiptMode");
-		} else if (lengthTen < receiptUploadDetail.getReceiptMode().length()){
-			return Labels.getLabel("invalid_ReceiptMode_length");
-		}
-		
-		//funding ac
-		if(StringUtils.isBlank(receiptUploadDetail.getFundingAc())){
-			return Labels.getLabel("invalid_FundingAcc");
-		} else if (lengthEight < receiptUploadDetail.getFundingAc().length()){
-			return Labels.getLabel("invalid_FundingAcc_length");
-		}
-		
-		//Payment ref
-		if (StringUtils.isNotBlank(receiptUploadDetail.getPaymentRef())
-				&& lengthFifty < receiptUploadDetail.getPaymentRef().length()) {
-			return Labels.getLabel("Invalid_PaymentRef_length");
-		}
-		
-		//STATUS
-		if(StringUtils.isBlank(receiptUploadDetail.getStatus())){
-			return Labels.getLabel("invalid_Status");
-		} else if (lengthSingle < receiptUploadDetail.getStatus().length()){
-			return Labels.getLabel("invalid_Status_length");
-		}
-	    
-		//check de-dupe validation
-	    if(checkDedupCondition(receiptUploadDetail)){
-	    	return Labels.getLabel("Dedup_Check");
-	    }
-		
-		//check  FinReference whether it is present in maker stage
-		if (StringUtils.isNotBlank(this.fileName.getValue())) {
-			String finReference = getReceiptUploadHeaderService().getLoanReferenc(receiptUploadDetail.getReference(),
-					this.fileName.getValue());
-			if (StringUtils.isNotBlank(finReference)) {
-				return Labels.getLabel("duplicate_referencExits_file");
-			}
-		}
-		
-		//check loan is active or not
-		boolean isLoanRefExits = getReceiptUploadHeaderService().isFinReferenceExists(receiptUploadDetail.getReference(), "", false);
-		if (!isLoanRefExits) {
-			return Labels.getLabel("no_reference_exits");
-		}
-		
-		//entity validation
-		boolean isExits = getReceiptUploadHeaderService().isFinReferenceExitsWithEntity(
-				receiptUploadDetail.getReference(), "_aview", this.entity.getValidatedValue());
-		if (!isExits) {
-			return Labels.getLabel("is_Entity_matching");
-		}
-		
-		if ((StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
-				|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))
-				&& StringUtils.equalsIgnoreCase(receiptUploadDetail.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
-			
-			boolean isreceiptdataExits = false;
-			
-			if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)) {
-				isreceiptdataExits = getReceiptUploadHeaderService().isReceiptDetailsExits(
-						receiptUploadDetail.getReference(), RepayConstants.RECEIPTMODE_CHEQUE,
-						receiptUploadDetail.getChequeNo(), receiptUploadDetail.getFavourNumber());
-			} else {
-				isreceiptdataExits = getReceiptUploadHeaderService().isReceiptDetailsExits(
-						receiptUploadDetail.getReference(), RepayConstants.RECEIPTMODE_DD,
-						receiptUploadDetail.getChequeNo(), receiptUploadDetail.getFavourNumber());
-			}
-			
-		
-			if (isreceiptdataExits) {
-				isReceiptDetailsExits = true;
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-		//Second Sheet validation
-		return doValidateAllocationDetails(receiptUploadDetail.getListAllocationDetails());
-		
-	}
-
-	/**
-	 * validate Allocation Details
-	 * @param listAllocationDetails
-	 * 
-	 */
-	private String doValidateAllocationDetails(List<UploadAlloctionDetail> listAllocationDetails) {
-		logger.debug(Literal.ENTERING);
-		
-		String errorMsg = null;
-		
-		for (UploadAlloctionDetail uploadAlloctionDetail : listAllocationDetails) {
-			
-			
-			if (StringUtils.isNotBlank(uploadAlloctionDetail.getReferenceCode())
-					&& lengthEight < uploadAlloctionDetail.getReferenceCode().length()) {
-				return Labels.getLabel("invalid_ReferenceCode_Length");
-			}
-			
-			if(lengtheighteen < uploadAlloctionDetail.getPaidAmount().toString().length()){
-				return Labels.getLabel("invalid_PaidAmount_Length");
-			}
-			
-			if(lengtheighteen < uploadAlloctionDetail.getWaivedAmount().toString().length()){
-				return Labels.getLabel("invalid_WaiverAmount_Length");
-			}
-		}
-		
-		logger.debug(Literal.LEAVING);
-		return errorMsg;
-	}
-
-	/**
-	 * validate each object with list and check dedub for loan reference with status,transaction ref,cheque or dd number
-	 * 
-	 * @param receiptUploadDetail
-	 * @return dedup Check
-	 */
-	private boolean checkDedupCondition(ReceiptUploadDetail receiptUploadDetail) {
-		
-		for (int i = 0; i < uploadNewList.size(); i++) {
-			
-			if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_NEFT)
-					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_RTGS)
-					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_IMPS)) {
-				if (uploadNewList.get(i).getReference().equals(receiptUploadDetail.getReference())
-						&& uploadNewList.get(i).getReceiptMode().equals(receiptUploadDetail.getReceiptMode())
-						&& uploadNewList.get(i).getTransactionRef().equals(receiptUploadDetail.getTransactionRef())) {
-					return true;
-				}
-			} else if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
-				if (uploadNewList.get(i).getReference().equals(receiptUploadDetail.getReference())
-						&& uploadNewList.get(i).getReceiptMode().equals(receiptUploadDetail.getReceiptMode())
-						&& uploadNewList.get(i).getBankCode().equals(receiptUploadDetail.getBankCode())
-						&& uploadNewList.get(i).getFavourNumber().equals(receiptUploadDetail.getFavourNumber())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-
-	/**
-	 * Accepting single cell key and value and comparing with other sheet data
-	 * 
-	 * @param key
-	 *            sheet key
-	 * @param value
-	 *            row value
-	 * @param jsonForextendedField
-	 * @param flag
-	 * @finalRequestJson append prepared json to this.
-	 */
-	private boolean doCompare(String key, Object value, JSONObject finalRequestJson, JSONObject jsonForextendedField)
-			throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		Map<String, String> keyTypeMap = new HashMap<>();
-		boolean isMappingFound = false;
-
-		String sheetName = workbook.getSheetAt(1).getSheetName().replace("\"", "");
-		List<String> KeyList = BatchProcessorUtil.getAllKeysByIndex(workbook, 1);
-
-		// key is a array or object
-		if (KeyList.contains(key)) {
-			keyTypeMap.put(sheetName, BatchUploadProcessorConstatnt.A);
-		} else {
-			keyTypeMap.put(sheetName, BatchUploadProcessorConstatnt.NA);
-		}
-
-		if (KeyList.contains(key) && StringUtils.equals(BatchUploadProcessorConstatnt.ROOTKEY, key)) {
-			int keyIndex = KeyList.indexOf(key);
-			List<Map<String, Object>> allocationListedMap = getAllMappingRowsOfSheet(1, keyIndex, value);
-
-			finalRequestJson.put(key, value);//adding root_id in json object
-
-			if (!allocationListedMap.isEmpty()) {
-				isMappingFound = true;
-				prepareJsonForParent(sheetName, allocationListedMap, keyTypeMap.get(sheetName),
-						finalRequestJson);
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return isMappingFound;
-	}
-
-	/**
-	 * Prepare jsonObject for column <ROOT>_id
-	 * @param key
-	 * @param singleSheetMappedRows
-	 * @param originalKey
-	 * @param finalRequestJson
-	 */
-	private void prepareJsonForParent(String key, List<Map<String, Object>> singleSheetMappedRows, String originalKey,
-			JSONObject finalRequestJson) {
-		try {
-			if (originalKey.equals(BatchUploadProcessorConstatnt.NA)) { // its a jsonObject
-				finalRequestJson.put(key, listOfMapToJson(singleSheetMappedRows));
-			} else {// its a jsonArray
-				finalRequestJson.put(key, singleSheetMappedRows);
-			}
-		} catch (Exception e) {
-			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
-		}
-	}
-
-	/**
-	 * util method convert list to json
-	 * 
-	 * @param prepairedLsitOfmap
-	 *            mapped list
-	 * @return JSONObject
-	 */
-	private List<JSONObject> listOfMapToJson(List<Map<String, Object>> prepairedLsitOfmap) {
-
-		List<JSONObject> listJsonObject = new ArrayList<>();
-		for (Map<String, Object> map : prepairedLsitOfmap) {
-			JSONObject jsonObject = new JSONObject();
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				try {
-					jsonObject.put(entry.getKey(), entry.getValue());
-
-				} catch (Exception e) {
-					logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);
-				}
-			}
-			listJsonObject.add(jsonObject);
-		}
-		return listJsonObject;
-	}
-
-	/**
-	 * method will return list of all mapping values
-	 * 
-	 * @param sheetIndex
-	 *            index of the sheet
-	 * @param keyIndex
-	 *            index of the key
-	 * 
-	 * @return List List of mapping values.
-	 */
-	public List<Map<String, Object>> getAllMappingRowsOfSheet(int sheetIndex, int keyIndex, Object value) {
-		logger.debug(Literal.ENTERING);
-		List<Map<String, Object>> allMappedRowsOfSheet = new ArrayList<>();
-		Sheet sheet = workbook.getSheetAt(sheetIndex);
-		Iterator<Row> rows = sheet.iterator();
-		List<String> keyList = BatchProcessorUtil.getAllKeysByIndex(workbook,sheetIndex);
-		while (rows.hasNext()) {
-			Row row = rows.next();
-			if (row != null && row.getRowNum() > 0) {
-
-				Cell cell = row.getCell(0);
-				if (cell == null) {
-					continue;
-				}
-
-				int columnIndex = cell.getColumnIndex();
-				if (columnIndex <= keyList.size()) {
-					objFormulaEvaluator.evaluate(cell);
-					String cellString = objDefaultFormat.formatCellValue(cell, objFormulaEvaluator).trim();
-					if (cell.getColumnIndex() == keyIndex && cellString.equals(value.toString().trim())) {
-						Map<String, Object> rowMap = new HashMap<>();
-						for (int j = 0; j < keyList.size(); j++) {
-							if (!keyList.get(j).toString().contains("_")) {
-
-								//this will check null values and replace with eampty cell
-								Cell cell1 = row.getCell(j);
-								if (cell1 == null) {
-									cell1 = row.createCell(j);
-								}
-
-								objFormulaEvaluator.evaluate(cell1);
-								String cellValueStr = objDefaultFormat.formatCellValue(cell1, objFormulaEvaluator);
-								rowMap.put(keyList.get(j), getValueByColumnType(cell1, cellValueStr));
-							}
-						}
-
-						if (!rowMap.isEmpty() && rowMap.size() > 0) {
-							allMappedRowsOfSheet.add(rowMap);
-						}
-
-					}
-				}
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return allMappedRowsOfSheet;
-	}
-
-	/** deciding cell type based on column format */
-	public Object getValueByColumnType(Cell cell, String value) {
-		Object result = null;
-		if (value.equalsIgnoreCase(BatchUploadProcessorConstatnt.TRUE) || value.equalsIgnoreCase(BatchUploadProcessorConstatnt.FALSE)) {
-			result = BatchProcessorUtil.boolFormater(value);
-		} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-			result = BatchProcessorUtil.dateFormater(cell.toString());
-		} else {
-			result = value.trim();
-		}
-		return result;
 	}
 
 	/**
 	 * Validate the ModuleType And File Name
 	 */
-	private void doValidations() {
-		logger.debug(Literal.ENTERING);
-
+	private void validateFileName() {
 		doRemoveValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -1371,9 +404,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			} else if (StringUtils.trimToEmpty(this.fileName.getValue()).length() > 200) {
 				throw new WrongValueException(this.fileName,
 						this.fileName.getValue() + ": file name should not exceed 200 characters.");
-			} else if(!this.fileName.getValue().toString().matches("^[a-zA-Z0-9 ._]*$")){
-				throw new WrongValueException(this.fileName,
-						this.fileName.getValue() + ": file name should not contain special characters, Allowed special charaters are space,dot and underScore.");
+			} else if (!this.fileName.getValue().toString().matches("^[a-zA-Z0-9 ._]*$")) {
+				throw new WrongValueException(this.fileName, this.fileName.getValue()
+						+ ": file name should not contain special characters, Allowed special charaters are space,dot and underScore.");
 			} else {
 				boolean fileExist = this.receiptUploadHeaderService.isFileNameExist(this.fileName.getValue());
 				if (fileExist) {
@@ -1381,15 +414,15 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 							this.fileName.getValue() + ": file name already Exist.");
 				}
 			}
-			this.receiptUploadHeader.setFileName(this.fileName.getValue());	
+			this.receiptUploadHeader.setFileName(this.fileName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			if (!this.entity.isReadonly()) {
-				this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_ReceiptUpload_entity.value"),
-						null, true, true));
+				this.entity.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ReceiptUpload_entity.value"), null, true, true));
 				this.receiptUploadHeader.setEntityCode(this.entity.getValue());
 				this.receiptUploadHeader.setEntityCodeDesc(this.entity.getDescription());
 			}
@@ -1398,7 +431,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			wve.add(we);
 		}
 
-		//set uploadprocess value to zero
+		// set uploadprocess value to zero
 		this.receiptUploadHeader.setUploadProgress(PennantConstants.RECEIPT_DEFAULT);
 
 		if (wve.size() > 0) {
@@ -1409,15 +442,14 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * Save the
+	 * Method for Validate uploaded file content whether data in proper manner or not
 	 * 
 	 * @throws Exception
 	 */
-	private boolean validateUploadedFile() {
+	private boolean validateFileContent() {
 		logger.debug(Literal.ENTERING);
 
 		if (this.fileImport == null) {
@@ -1425,7 +457,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			return false;
 		}
 
-		//Reading excel data and returning as a workbook
+		// Reading excel data and returning as a workbook
 		try {
 			this.workbook = this.fileImport.writeFile();
 		} catch (Exception e) {
@@ -1446,9 +478,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_NoData"));
 				return false;
 			}
-			
-			//If Uploaded Receipt record count > 1000
-			if(sheet.getPhysicalNumberOfRows() > 1001){
+
+			// If Uploaded Receipt record count > 1000
+			if (sheet.getPhysicalNumberOfRows() > 1001) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_MaxRows"));
 				return false;
 			}
@@ -1467,14 +499,16 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 					&& fsHeaderKeys.contains("ALLOCATIONTYPE") && fsHeaderKeys.contains("RECEIPTAMOUNT")
 					&& fsHeaderKeys.contains("EFFECTSCHDMETHOD") && fsHeaderKeys.contains("REMARKS")
 					&& fsHeaderKeys.contains("VALUEDATE") && fsHeaderKeys.contains("RECEIVEDDATE")
-					&& fsHeaderKeys.contains("RECEIPTMODE") && fsHeaderKeys.contains("FUNDINGAC")
+					&& fsHeaderKeys.contains("RECEIPTMODE") && fsHeaderKeys.contains("SUBRECEIPTMODE")
+					&& fsHeaderKeys.contains("RECEIPTCHANNEL") && fsHeaderKeys.contains("FUNDINGAC")
 					&& fsHeaderKeys.contains("PAYMENTREF") && fsHeaderKeys.contains("FAVOURNUMBER")
 					&& fsHeaderKeys.contains("BANKCODE") && fsHeaderKeys.contains("CHEQUEACNO")
 					&& fsHeaderKeys.contains("TRANSACTIONREF") && fsHeaderKeys.contains("STATUS")
 					&& fsHeaderKeys.contains("DEPOSITDATE") && fsHeaderKeys.contains("REALIZATIONDATE")
-					&& fsHeaderKeys.contains("INSTRUMENTDATE"))) {
-
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value"));
+					&& fsHeaderKeys.contains("INSTRUMENTDATE") && fsHeaderKeys.contains("PANNUMBER")
+					&& fsHeaderKeys.contains("EXTERNALREF") && fsHeaderKeys.contains("COLLECTIONAGENT")
+					&& fsHeaderKeys.contains("RECEIVEDFROM"))) {
+				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_HeaderSheet_Format.value"));
 				return false;
 			}
 
@@ -1483,7 +517,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			if (shHeaderKeys == null || !(shHeaderKeys.contains("<ROOT>_id") && shHeaderKeys.contains("ALLOCATIONTYPE")
 					&& shHeaderKeys.contains("REFERENCECODE") && shHeaderKeys.contains("PAIDAMOUNT")
 					&& shHeaderKeys.contains("WAIVEDAMOUNT"))) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value"));
+				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_AllocSheet_Format.value"));
 				return false;
 			}
 
@@ -1495,6 +529,719 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		return true;
 	}
 
+	/**
+	 * Method for Checking Uniqueness on ID
+	 * 
+	 * @return
+	 */
+	private boolean validateFileData() {
+		logger.debug(Literal.ENTERING);
+
+		final Set<String> setRowIds = new HashSet<String>();
+		final Set<String> setTxnKeys = new HashSet<String>();
+		Sheet rchSheet = this.workbook.getSheetAt(0);
+		int rowCount = rchSheet.getLastRowNum();
+		String txnKey = "";
+		String errorMsg = "";
+
+		for (int i = 1; i <= rowCount; i++) {
+			Row rchRow = rchSheet.getRow(i);
+
+			// To avoid possibility of blank row in between
+			if (rchRow == null) {
+				continue;
+			}
+
+			String strValue = getCellStringValue(rchRow, 0);
+
+			if (StringUtils.isBlank(strValue)) {
+				errorMsg = "<ROOT>_id with blank value";
+				MessageUtil.showError(errorMsg);
+				return true;
+			}
+
+			// Check for Row ID duplication
+			if (!setRowIds.add(strValue)) {
+				errorMsg = "<ROOT>_id " + strValue + " Has duplicate reference in Header Sheet";
+				MessageUtil.showError(errorMsg);
+				return true;
+			}
+
+			// Load Receipt Header Data to Receipts Bean
+			ReceiptUploadDetail rud = loadReceiptData(rchRow);
+
+			txnKey = rud.getReference() + "/" + rud.getTransactionRef() + "/" + rud.getReceiptAmount().toString();
+			if (!setTxnKeys.add(txnKey)) {
+				errorMsg = "with combination REFERENCE/TRANSACTIONREF/RECEIPTAMOUNT:" + txnKey;
+				setErrorToRUD(rud, "90273", errorMsg);
+			}
+
+			rudList.add(rud);
+		}
+
+		if (rudList == null || rudList.isEmpty()) {
+			MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_NoData"));
+			return true;
+		}
+
+		// Load Allocation Details to an array
+		loadAllocationFromUL();
+
+		// Validate Receipt Header Vs Allocations
+		validateRUDvsRAD();
+		if (uadList != null && !uadList.isEmpty()) {
+			MessageUtil.showError("Allocations not related to Receipts found in allocation sheet");
+			return true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
+	/**
+	 * Method for Loading Receipt Details from uploaded Excel File
+	 * 
+	 * @param rchRow
+	 * @return
+	 */
+	private ReceiptUploadDetail loadReceiptData(Row rchRow) {
+		logger.debug(Literal.ENTERING);
+		Date appDate = DateUtility.getAppDate();
+		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+		String strValue = "";
+		long longValue = 0;
+		Date dateValue = appDate;
+
+		// Root ID
+		strValue = getCellStringValue(rchRow, 0).trim();
+		rud.setRootId(strValue);
+
+		if (strValue.length() > 4) {
+			setErrorToRUD(rud, "RU0040", "[<ROOT>_id] with length > 4 ");
+			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+		}
+
+		// Loan Reference
+		strValue = getCellStringValue(rchRow, 1).trim().toUpperCase();
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setReference(strValue);
+		} else {
+			setErrorToRUD(rud, "RU0040", "Blanks/Nulls in [REFERENCE] ");
+		}
+
+		// Receipt Purpose
+		strValue = getCellStringValue(rchRow, 2).trim().toUpperCase();
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setReceiptPurpose(strValue);
+		} else {
+			setErrorToRUD(rud, "RU0040", "Blanks/Nulls in [RECEIPTPURPOSE] ");
+		}
+
+		if (!StringUtils.equals(strValue, "SP") && !StringUtils.equals(strValue, "EP")
+				&& StringUtils.equals(strValue, "ES")) {
+			setErrorToRUD(rud, "RU0040", "Values other than SP/EP/ES in [RECEIPTPURPOSE] ");
+		}
+
+		// Excess Adjusted to
+		strValue = getCellStringValue(rchRow, 3).trim();
+		if (StringUtils.isBlank(strValue)) {
+			strValue = "E";
+		}
+
+		if (!StringUtils.equals(strValue, "E") && !StringUtils.equals(strValue, "A") && StringUtils.isNotBlank(strValue)
+				&& !StringUtils.equals(strValue, "#")) {
+			setErrorToRUD(rud, "RU0040", "Values other than E/A/ /# in [EXCESSADJUSTTO] ");
+		} else {
+			rud.setExcessAdjustTo(strValue);
+		}
+
+		// Allocation type
+		strValue = getCellStringValue(rchRow, 4);
+		if (StringUtils.isBlank(strValue)) {
+			strValue = "A";
+		}
+
+		if (!StringUtils.equals(strValue, "A") && !StringUtils.equals(strValue, "M")) {
+			setErrorToRUD(rud, "RU0040", "Values other than A/M in [ALLOCATIONTYPE] ");
+		} else {
+			rud.setAllocationType(strValue);
+		}
+
+		// Receipt Amount
+		strValue = getCellStringValue(rchRow, 5);
+		if (StringUtils.isBlank(strValue)) {
+			strValue = "0";
+		}
+
+		try {
+			BigDecimal precisionAmount = new BigDecimal(strValue);
+			BigDecimal actualAmount = precisionAmount;
+
+			precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
+			if (precisionAmount.compareTo(actualAmount) != 0) {
+				actualAmount = actualAmount.multiply(BigDecimal.valueOf(100));
+				actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
+				setErrorToRUD(rud, "RU0040", "Minor Currency (Decimals) in [RECEIPTAMOUNT] ");
+				rud.setReceiptAmount(actualAmount);
+			} else {
+				precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
+				rud.setReceiptAmount(precisionAmount);
+			}
+
+			if (precisionAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				setErrorToRUD(rud, "RU0040", "[RECEIPTAMOUNT] with value <=0 ");
+			}
+		} catch (Exception e) {
+			rud.setReceiptAmount(BigDecimal.ZERO);
+			setErrorToRUD(rud, "RU0040", "[RECEIPTAMOUNT] ");
+		}
+
+		// Effective Schedule Method
+		strValue = getCellStringValue(rchRow, 6);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setEffectSchdMethod(strValue);
+		}
+
+		// Remarks
+		strValue = getCellStringValue(rchRow, 7).trim();
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setRemarks(strValue);
+		}
+
+		if (strValue.length() > 100) {
+			setErrorToRUD(rud, "RU0040", "[REMARKS] with length more than 100 characters");
+
+		}
+
+		// Value Date
+		strValue = getCellStringValue(rchRow, 8);
+		try {
+			if (StringUtils.isNotBlank(strValue)) {
+				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				rud.setValueDate(dateValue);
+			} else {
+				if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+						|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD)) {
+					setErrorToRUD(rud, "RU0040", "Blanks in [VALUEDATE] ");
+				}
+			}
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "Value in [VALUEDATE] ");
+		}
+
+		// Received Date
+		strValue = getCellStringValue(rchRow, 9);
+		try {
+			if (StringUtils.isNotBlank(strValue)) {
+				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				rud.setReceivedDate(dateValue);
+			} else {
+				setErrorToRUD(rud, "RU0040", "Blanks in [RECEIVEDDATE] ");
+			}
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "Value in [RECEIVEDDATE] ");
+		}
+
+		// Receipt Mode
+		strValue = getCellStringValue(rchRow, 10);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setReceiptMode(strValue);
+		}
+
+		if (strValue.length() > 10) {
+			setErrorToRUD(rud, "RU0040", "[RECEIPTMODE] with length more than 10 characters");
+		}
+
+		// Sub Receipt Mode
+		strValue = getCellStringValue(rchRow, 11);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setSubReceiptMode(strValue);
+		}
+
+		if (strValue.length() > 10) {
+			setErrorToRUD(rud, "RU0040", "[SUBRECEIPTMODE] with length more than 10 characters");
+		}
+
+		// Receipt Channel
+		strValue = getCellStringValue(rchRow, 12);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setReceiptChannel(strValue);
+		}
+
+		if (strValue.length() > 10) {
+			setErrorToRUD(rud, "RU0040", "[RECEIPTCHANNEL] with length more than 10 characters");
+		}
+
+		// Funding Account
+		strValue = getCellStringValue(rchRow, 13);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setFundingAc(strValue);
+		}
+
+		if (strValue.length() > 8) {
+			setErrorToRUD(rud, "RU0040", "[FUNDINGAC] with length more than 8 characters");
+		}
+
+		// Payment reference
+		strValue = getCellStringValue(rchRow, 14);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setPaymentRef(strValue);
+		}
+
+		if (strValue.length() > 50) {
+			setErrorToRUD(rud, "RU0040", "[PAYMENTREF] with length more than 50 characters");
+		}
+
+		// Favour Number
+		strValue = getCellStringValue(rchRow, 15).trim();
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setFavourNumber(strValue);
+		}
+
+		if (strValue.length() > 50) {
+			setErrorToRUD(rud, "RU0040", "[FAVOURNUMBER] with length more than 50");
+		}
+
+		// Bank Code
+		strValue = getCellStringValue(rchRow, 16).trim();
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setBankCode(strValue);
+		}
+
+		// Cheque Account Number
+		strValue = getCellStringValue(rchRow, 17).trim();
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setChequeNo(strValue);
+		}
+
+		if (strValue.length() > 50) {
+			setErrorToRUD(rud, "RU0040", "[CHEQUEACNO] with length more than 50");
+		}
+
+		// Transaction Reference
+		strValue = getCellStringValue(rchRow, 18);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setTransactionRef(strValue);
+		}
+
+		if (strValue.length() > 50) {
+			setErrorToRUD(rud, "RU0040", "[TRANSACTIONREF] with length more than 50");
+		}
+
+		// Status
+		strValue = getCellStringValue(rchRow, 19);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setStatus(strValue);
+		}
+
+		if (strValue.length() > 50) {
+			setErrorToRUD(rud, "RU0040", "[STATUS] with length more than 1");
+		}
+
+		// Deposit Date
+		strValue = getCellStringValue(rchRow, 20);
+		try {
+			if (StringUtils.isNotBlank(strValue)) {
+				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				rud.setDepositDate(dateValue);
+			} else {
+				setErrorToRUD(rud, "RU0040", "Blanks in [DEPOSITDATE] ");
+			}
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "Value in [DEPOSITDATE] ");
+		}
+
+		// Realization Date
+		strValue = getCellStringValue(rchRow, 21);
+		try {
+			if (StringUtils.isNotBlank(strValue)) {
+				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				rud.setRealizationDate(dateValue);
+			} else {
+				setErrorToRUD(rud, "RU0040", "Blanks in [REALIZATIONDATE] ");
+			}
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "Value in [REALIZATIONDATE] ");
+		}
+
+		// Instrument Date
+		strValue = getCellStringValue(rchRow, 22);
+		try {
+			if (StringUtils.isNotBlank(strValue)) {
+				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				// rch.set
+			} else {
+				if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+						|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD)) {
+					setErrorToRUD(rud, "RU0040", "Blanks in [INSTRUMENTDATE] ");
+				}
+			}
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "Value in [INSTRUMENTDATE] ");
+		}
+
+		// PAN Number
+		strValue = getCellStringValue(rchRow, 23);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setPanNumber(strValue);
+		}
+
+		// External Reference
+		strValue = getCellStringValue(rchRow, 24);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setExtReference(strValue);
+		}
+
+		if (strValue.length() > 50) {
+			setErrorToRUD(rud, "RU0040", "[EXTERNALREF] with length more than 1 ");
+		}
+
+		// Collection Agent
+		strValue = getCellStringValue(rchRow, 25);
+
+		if (StringUtils.isBlank(strValue)) {
+			strValue = "0";
+		}
+
+		if (StringUtils.isNumeric(strValue)) {
+			longValue = Long.parseLong(strValue);
+			rud.setCollectionAgentId(longValue);
+		} else {
+			setErrorToRUD(rud, "RU0040", "Non numeric value in [COLLECTIONAGENT] ");
+		}
+
+		// Received From
+		strValue = getCellStringValue(rchRow, 26);
+		if (StringUtils.isNotBlank(strValue)) {
+			rud.setReceivedFrom(strValue);
+		}
+
+		if (rud.getErrorDetails() == null || rud.getErrorDetails().isEmpty()) {
+			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+			rud.setReason("");
+		} else {
+			rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+			rud.setReason(rud.getErrorDetails().get(0).getError());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return rud;
+	}
+
+	/**
+	 * Method for Loading Allocation details from uploaded Excel File
+	 */
+	private void loadAllocationFromUL() {
+		logger.debug(Literal.ENTERING);
+
+		String strValue = "";
+
+		Sheet rchSheet = this.workbook.getSheetAt(1);
+		int rowCount = rchSheet.getLastRowNum();
+
+		// Just Load the valid fields
+		for (int i = 1; i < rowCount; i++) {
+			Row rchRow = rchSheet.getRow(i);
+
+			// To avoid possibility of blank row in between
+			if (rchRow == null) {
+				continue;
+			}
+
+			UploadAlloctionDetail uad = new UploadAlloctionDetail();
+			strValue = getCellStringValue(rchRow, 0);
+			if (StringUtils.isBlank(strValue)) {
+				setErrorToUAD(uad, "RU0040", "Allocation Sheet: <ROOT>_id with blank value");
+			}
+
+			uad.setRootId(strValue);
+
+			strValue = getCellStringValue(rchRow, 1);
+			if (StringUtils.isBlank(strValue)) {
+				setErrorToUAD(uad, "RU0040", "Allocation Sheet: [ALLOCATIONTYPE] with blank value ");
+			}
+			uad.setAllocationType(strValue);
+
+			strValue = getCellStringValue(rchRow, 2);
+			if (StringUtils.isNotBlank(strValue)) {
+				if (strValue.length() > 8) {
+					setErrorToUAD(uad, "RU0040",
+							"Allocation Sheet: [REFERENCECODE] with lenght more than 8 characters ");
+				}
+			}
+			uad.setReferenceCode(strValue);
+
+			strValue = getCellStringValue(rchRow, 3);
+			if (StringUtils.isBlank(strValue)) {
+				strValue = "0";
+			}
+
+			try {
+				BigDecimal precisionAmount = new BigDecimal(strValue);
+				BigDecimal actualAmount = precisionAmount;
+
+				precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
+				if (precisionAmount.compareTo(actualAmount) != 0) {
+					actualAmount = actualAmount.multiply(BigDecimal.valueOf(100));
+					actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
+					setErrorToUAD(uad, "RU0040", "Allocation Sheet: Minor Currency (Decimals) in [PAIDAMOUNT] ");
+					uad.setPaidAmount(actualAmount);
+				} else {
+					precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
+					uad.setPaidAmount(precisionAmount);
+				}
+
+				if (precisionAmount.compareTo(BigDecimal.ZERO) < 0) {
+					setErrorToUAD(uad, "RU0040", "Allocation Sheet: [PAIDAMOUNT] with value <0 ");
+				}
+			} catch (Exception e) {
+				uad.setPaidAmount(BigDecimal.ZERO);
+				setErrorToUAD(uad, "RU0040", "Allocation Sheet: [PAIDAMOUNT] ");
+			}
+
+			strValue = getCellStringValue(rchRow, 4);
+			if (StringUtils.isBlank(strValue)) {
+				strValue = "0";
+			}
+
+			try {
+				BigDecimal precisionAmount = new BigDecimal(strValue);
+				BigDecimal actualAmount = precisionAmount;
+
+				precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
+				if (precisionAmount.compareTo(actualAmount) != 0) {
+					actualAmount = actualAmount.multiply(BigDecimal.valueOf(100));
+					actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
+					setErrorToUAD(uad, "RU0040", "Allocation Sheet: Minor Currency (Decimals) in [WAIVEDAMOUNT] ");
+					uad.setWaivedAmount(actualAmount);
+				} else {
+					precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
+					uad.setWaivedAmount(precisionAmount);
+				}
+
+				if (precisionAmount.compareTo(BigDecimal.ZERO) < 0) {
+					setErrorToUAD(uad, "RU0040", "Allocation Sheet: [WAIVEDAMOUNT] with value <0 ");
+				}
+			} catch (Exception e) {
+				uad.setWaivedAmount(BigDecimal.ZERO);
+				setErrorToUAD(uad, "RU0040", "Allocation Sheet: [WAIVEDAMOUNT] ");
+			}
+
+			// Add to Uploaded allocation details list
+			uadList.add(uad);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return;
+
+	}
+
+	/**
+	 * Validate Receipt Details against uploaded Allocation Details
+	 */
+	private void validateRUDvsRAD() {
+		logger.debug(Literal.ENTERING);
+
+		for (int i = 0; i < rudList.size(); i++) {
+			ReceiptUploadDetail rud = rudList.get(i);
+			List<UploadAlloctionDetail> radList = setFromUadList(rud.getRootId());
+			rud.setListAllocationDetails(radList);
+
+			boolean isManualAloc = false;
+			if (StringUtils.equals(rud.getAllocationType(), "M")) {
+				isManualAloc = true;
+			}
+
+			if (isManualAloc && radList.isEmpty()) {
+				setErrorToRUD(rud, "RU0040", "Allocation Type is M but allocations not found");
+			} else if (!isManualAloc && !radList.isEmpty()) {
+				setErrorToRUD(rud, "RU0040", "Allocation Type is A but allocations found");
+			}
+
+			// Bring any errors from allocation details to header details
+			if (radList.isEmpty()) {
+				continue;
+			}
+
+			// Bring errors from allocation details to header details
+			setErrorsToRUD(rud);
+
+			// Validate sum of allocations against the receipt amount
+			BigDecimal manualAllocated = BigDecimal.ZERO;
+			for (int j = 0; j < radList.size(); j++) {
+				manualAllocated = manualAllocated.add(radList.get(j).getPaidAmount());
+			}
+
+			if (manualAllocated.compareTo(rud.getReceiptAmount()) != 0) {
+				String strAlloate = PennantApplicationUtil.amountFormate(manualAllocated, 2);
+				setErrorToRUD(rud, "RU0040", "Manual allocation " + strAlloate + " Not matching with Receipt Amount ");
+			}
+
+			if (rud.getErrorDetails() == null || rud.getErrorDetails().isEmpty()) {
+				rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+				rud.setReason("");
+			} else {
+				rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+				rud.setReason(rud.getErrorDetails().get(0).getError());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private List<UploadAlloctionDetail> setFromUadList(String rootID) {
+		List<UploadAlloctionDetail> radList = new ArrayList<>();
+		for (int i = 0; i < uadList.size(); i++) {
+			UploadAlloctionDetail uad = uadList.get(i);
+			if (StringUtils.equals(rootID, uad.getRootId())) {
+				radList.add(uad);
+				uadList.remove(i);
+				i = i - 1;
+			}
+		}
+		return radList;
+	}
+
+	private void setErrorsToRUD(ReceiptUploadDetail rud) {
+		List<UploadAlloctionDetail> list = rud.getListAllocationDetails();
+
+		for (UploadAlloctionDetail uploadAlloctionDetail : list) {
+			List<ErrorDetail> uadErrors = uploadAlloctionDetail.getErrorDetails();
+			if (CollectionUtils.isEmpty(uadErrors)) {
+				continue;
+			}
+
+			for (ErrorDetail errorDetail : uadErrors) {
+				rud.getErrorDetails().add(errorDetail);
+			}
+		}
+	}
+
+	private String getCellStringValue(Row rchRow, int cellIdx) {
+		Cell cell = rchRow.getCell(cellIdx);
+		return StringUtils.trimToEmpty(objDefaultFormat.formatCellValue(cell, objFormulaEvaluator));
+	}
+
+	public void setErrorToRUD(ReceiptUploadDetail rud, String errorCode, String parm0) {
+		String[] valueParm = new String[1];
+		valueParm[0] = parm0;
+		rud.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm)));
+	}
+
+	public void setErrorToUAD(UploadAlloctionDetail uad, String errorCode, String parm0) {
+		String[] valueParm = new String[1];
+		valueParm[0] = parm0;
+		uad.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm)));
+	}
+
+	/**
+	 * Writing Media file into File Object
+	 * 
+	 * @param media
+	 * @throws IOException
+	 */
+	private void writeFile(Media media) throws IOException {
+		logger.debug(Literal.ENTERING);
+
+		File parent = new File(filePath);
+
+		// IF Directory Does not Exists
+		if (!parent.exists()) {
+			parent.mkdirs();
+		}
+
+		file = new File(parent.getPath().concat(File.separator).concat(media.getName()));
+
+		// If File already exists in path, we need to delete first before
+		// replace
+		if (file.exists()) {
+			file.delete();
+		}
+
+		// Creating File in Server path for Loading/Reading file from path
+		file.createNewFile();
+		FileUtils.writeByteArrayToFile(file, media.getByteData());
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Validate Receipt Details against Each Record
+	 */
+	private void validateReceipt() {
+		logger.debug(Literal.ENTERING);
+
+		for (int i = 0; i < rudList.size(); i++) {
+			ReceiptUploadDetail rud = rudList.get(i);
+
+			//Already error marked. No need to find new errors
+			if (!rud.getErrorDetails().isEmpty()) {
+				continue;
+			}
+
+			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, this.entity.getValidatedValue());
+			fsi.setReqType("Inquiry");
+			fsi.setReceiptUpload(true);
+			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi, fsi.getReceiptPurpose());
+
+			WSReturnStatus returnStatus = financeDetail.getReturnStatus();
+			if (returnStatus != null) {
+				rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+
+				String code = StringUtils.trimToEmpty(returnStatus.getReturnCode());
+				String description = StringUtils.trimToEmpty(returnStatus.getReturnText());
+
+				rud.setReason(String.format("%s %s %s", code, "-", description));
+			} else {
+				rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_SUCCESS);
+				rud.setReason("");
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * validate each object with list and check dedub for loan reference with status,transaction ref,cheque or dd number
+	 * 
+	 * @param receiptUploadDetail
+	 * @return dedup Check
+	 */
+	@SuppressWarnings("unused")
+	private boolean checkDedupCondition(ReceiptUploadDetail receiptUploadDetail) {
+		logger.debug(Literal.ENTERING);
+
+		for (int i = 0; i < uploadNewList.size(); i++) {
+
+			if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
+					DisbursementConstants.PAYMENT_TYPE_NEFT)
+					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
+							DisbursementConstants.PAYMENT_TYPE_RTGS)
+					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
+							DisbursementConstants.PAYMENT_TYPE_IMPS)) {
+				if (uploadNewList.get(i).getReference().equals(receiptUploadDetail.getReference())
+						&& uploadNewList.get(i).getReceiptMode().equals(receiptUploadDetail.getReceiptMode())
+						&& uploadNewList.get(i).getTransactionRef().equals(receiptUploadDetail.getTransactionRef())) {
+
+					logger.debug(Literal.LEAVING);
+					return true;
+				}
+			} else if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
+					DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+					|| StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptMode(),
+							DisbursementConstants.PAYMENT_TYPE_DD)) {
+				if (uploadNewList.get(i).getReference().equals(receiptUploadDetail.getReference())
+						&& uploadNewList.get(i).getReceiptMode().equals(receiptUploadDetail.getReceiptMode())
+						&& uploadNewList.get(i).getBankCode().equals(receiptUploadDetail.getBankCode())
+						&& uploadNewList.get(i).getFavourNumber().equals(receiptUploadDetail.getFavourNumber())) {
+
+					logger.debug(Literal.LEAVING);
+					return true;
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
 	public void onClick$btnClose(Event event) {
 		this.window_ReceiptUpload.onClose();
 	}
@@ -1502,14 +1249,15 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	public ReceiptUploadHeader getReceiptUploadHeader() {
 		return receiptUploadHeader;
 	}
+
 	public void setReceiptUploadHeader(ReceiptUploadHeader receiptUploadHeader) {
 		this.receiptUploadHeader = receiptUploadHeader;
 	}
 
-
 	public ReceiptUploadHeaderService getReceiptUploadHeaderService() {
 		return receiptUploadHeaderService;
 	}
+
 	public void setReceiptUploadHeaderService(ReceiptUploadHeaderService receiptUploadHeaderService) {
 		this.receiptUploadHeaderService = receiptUploadHeaderService;
 	}

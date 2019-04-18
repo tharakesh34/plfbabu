@@ -63,4 +63,6 @@ public interface PromotionDAO {
 	List<Promotion> getPromotionsByFinType(String finType, String type);
 
 	int getPromotionByRuleCode(long ruleId, String type);
+	
+	Promotion getPromotionByCode(String promotionCode, String type);
 }

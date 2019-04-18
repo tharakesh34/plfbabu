@@ -240,10 +240,12 @@ import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -465,6 +467,7 @@ public class PennantJavaUtil {
 	private static String realizationWF = "RECEIPT_REALIZATION";
 	private static String receiptBounceWF = "RECEIPT_BOUNCE";
 	private static String receiptCancelWF = "RECEIPT_CANCEL";
+	private static String receiptKnockOffCancelWF = "RECEIPTKNOCKOFF_CANCEL";
 	private static String feeReceiptWF = "FEERECEIPT_PROCESS";
 	private static String gstFileUplod = "GST_UPLOAD_PROCESS";
 	private static String customerWF = "CUSTOMER_CREATE";
@@ -495,6 +498,7 @@ public class PennantJavaUtil {
 	private static String feeWaiverWF = "FEE_WAIVER";
 	private final static String PaymentWF = "PAYMENTINSTRUCTION";
 	private static String insuranceDetails = "INSURANCE_DETAILS";
+	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -1726,6 +1730,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinReceiptHeader",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
 						realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
+		
+		ModuleUtil.register("FinReceiptDetail",
+				new ModuleMapping("FinReceiptDetail", FinReceiptDetail.class, new String[] { "FinReceiptDetail","RECEIPTDETAILS_TVIEW" },
+						ReceiptProcessWF, new String[] { "ReceiptID", "ReceiptSeqID", "ReceiptPurpose" }, null, 300));
 
 		ModuleUtil.register("ReceiptRealization",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
@@ -1742,6 +1750,10 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ReceiptCancellation",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
 						receiptCancelWF, new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
+		
+		ModuleUtil.register("ReceiptKnockOffCancel",
+				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
+						receiptKnockOffCancelWF, new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
 
 		ModuleUtil.register("EarlyPayment",
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
@@ -3108,6 +3120,31 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinOption",
 				new ModuleMapping("FinOption", FinOption.class, new String[] { "FIN_OPTIONS", "FIN_OPTIONS_AView" },
 						masterWF, new String[] { "Id", "FinOption" }, null, 600));
+		ModuleUtil.register("CollectionAgencies",
+				new ModuleMapping("CollectionAgencies", BusinessVertical.class,
+						new String[] { "CollectionAgencies", "CollectionAgencies" }, BUSINESS_VERTICAL,
+						new String[] { "id", "code" }, null, 600));
+
+		ModuleUtil.register("Excess",
+				new ModuleMapping("ExcessAmount", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" },
+						null, new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AmountType", "0", "E" } }, 750));
+
+		ModuleUtil.register("EMIInAdvance",
+				new ModuleMapping("EMIINadvanceAmount", FinExcessAmount.class,
+						new String[] { "FinExcessAmount_LovView" }, null,
+						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AmountType", "0", "A" } }, 750));
+
+		ModuleUtil.register("PayableAdvise",
+				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,
+						new String[] { "AdviseID", "FeeTypeID", "AdviseAmount", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AdviseType", "0", "2" } }, 750));
+		
+		ModuleUtil.register("ReceiptFinanceMain",
+				new ModuleMapping("ReceiptFinanceMain", FinanceMain.class,
+						new String[] { "FINANCEMAIN_DATAVIEW", "FINANCEMAIN_DATAVIEW" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
 		registerCustomModules();
 	}
 
