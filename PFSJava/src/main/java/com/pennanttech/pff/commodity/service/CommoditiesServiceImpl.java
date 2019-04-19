@@ -27,31 +27,27 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 		logger.info(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-
-		Commodity commodities = (Commodity) auditHeader.getAuditDetail().getModelData();
-
+		Commodity Commodity = (Commodity) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		if (commodities.isWorkflow()) {
+		if (Commodity.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-
-		if (commodities.isNew()) {
-			commodities.setId(Long.parseLong(commoditiesDAO.save(commodities, tableType)));
-			auditHeader.getAuditDetail().setModelData(commodities);
-			auditHeader.setAuditReference(String.valueOf(commodities.getId()));
+		if (Commodity.isNew()) {
+			Commodity.setId(Long.parseLong(commoditiesDAO.save(Commodity, tableType)));
+			auditHeader.getAuditDetail().setModelData(Commodity);
+			auditHeader.setAuditReference(String.valueOf(Commodity.getId()));
 		} else {
-			commoditiesDAO.update(commodities, tableType);
+			commoditiesDAO.update(Commodity, tableType);
 		}
-
 		auditHeaderDAO.addAudit(auditHeader);
-		logger.info(Literal.LEAVING);
-		return auditHeader;
 
+		logger.info(Literal.LEAVING);
+
+		return auditHeader;
 	}
 
 	@Override
@@ -63,13 +59,12 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-
-		Commodity commodities = (Commodity) auditHeader.getAuditDetail().getModelData();
-		commoditiesDAO.delete(commodities, TableType.MAIN_TAB);
-
+		Commodity commodity = (Commodity) auditHeader.getAuditDetail().getModelData();
+		commoditiesDAO.delete(commodity, TableType.MAIN_TAB);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
+
 		return auditHeader;
 	}
 
@@ -88,55 +83,48 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
-
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-
-		Commodity commodities = new Commodity();
-		BeanUtils.copyProperties((CommodityType) auditHeader.getAuditDetail().getModelData(), commodities);
-
-		if (!commodities.isUpload()) {
-			commoditiesDAO.delete(commodities, TableType.TEMP_TAB);
+		Commodity commodity = new Commodity();
+		BeanUtils.copyProperties((CommodityType) auditHeader.getAuditDetail().getModelData(), commodity);
+		if (!commodity.isUpload()) {
+			commoditiesDAO.delete(commodity, TableType.TEMP_TAB);
 		}
-
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(commodities.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(commoditiesDAO.getCommodities(commodities.getId(), ""));
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(commoditiesDAO.getCommodities(commodity.getId(), ""));
 		}
-
-		if (commodities.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (commodity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			commoditiesDAO.delete(commodities, TableType.MAIN_TAB);
+			commoditiesDAO.delete(commodity, TableType.MAIN_TAB);
 		} else {
-			commodities.setRoleCode("");
-			commodities.setNextRoleCode("");
-			commodities.setTaskId("");
-			commodities.setNextTaskId("");
-			commodities.setWorkflowId(0);
-
-			if (commodities.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			commodity.setRoleCode("");
+			commodity.setNextRoleCode("");
+			commodity.setTaskId("");
+			commodity.setNextTaskId("");
+			commodity.setWorkflowId(0);
+			if (commodity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				commodities.setRecordType("");
-				commoditiesDAO.save(commodities, TableType.MAIN_TAB);
+				commodity.setRecordType("");
+				commoditiesDAO.save(commodity, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				commodities.setRecordType("");
-				commoditiesDAO.update(commodities, TableType.MAIN_TAB);
+				commodity.setRecordType("");
+				commoditiesDAO.update(commodity, TableType.MAIN_TAB);
 			}
 		}
-
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(commodities);
+		auditHeader.getAuditDetail().setModelData(commodity);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
-		return auditHeader;
 
+		return auditHeader;
 	}
 
 	@Override
@@ -149,14 +137,15 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 			return auditHeader;
 		}
 
-		Commodity commodities = (Commodity) auditHeader.getAuditDetail().getModelData();
+		Commodity commodity = (Commodity) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		commoditiesDAO.delete(commodities, TableType.TEMP_TAB);
+		commoditiesDAO.delete(commodity, TableType.TEMP_TAB);
 
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
+
 		return auditHeader;
 	}
 
@@ -169,6 +158,7 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 		auditHeader = nextProcess(auditHeader);
 
 		logger.debug(Literal.LEAVING);
+
 		return auditHeader;
 	}
 
@@ -176,27 +166,26 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		Commodity commodities = (Commodity) auditDetail.getModelData();
-		String code = commodities.getCode();
-		String hsnCode = commodities.getHSNCode();
-		String commodityTYpeCode = commodities.getCommodityTypeCode();
+		Commodity commodity = (Commodity) auditDetail.getModelData();
+		String code = commodity.getCode();
+		String hsnCode = commodity.getHSNCode();
+		String commodityTYpeCode = commodity.getCommodityTypeCode();
 
 		// Check the unique keys.
-		if (commodities.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodities.getRecordType())
-				&& commoditiesDAO.isDuplicateKey(commodities,
-						commodities.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType()) && commoditiesDAO
+				.isDuplicateKey(commodity, commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[3];
 			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityType.value") + ":"
 					+ commodityTYpeCode;
 			parameters[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value") + ": " + code;
 			parameters[2] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value") + ": " + hsnCode;
-
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
+
 		return auditDetail;
 	}
 
