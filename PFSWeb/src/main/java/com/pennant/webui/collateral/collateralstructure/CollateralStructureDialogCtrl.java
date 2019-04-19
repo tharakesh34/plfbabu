@@ -116,8 +116,15 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.TechnicalValuationD
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.commodity.model.Commodity;
+
+import aspose.pdf.Row;
 
 /**
  * ************************************************************<br>
@@ -184,6 +191,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected Tabpanel extendedFieldTabpanel;
 	protected Tabpanel techValuationTabpanel;
 	protected Button btnCopyTo;
+	protected Decimalbox thresholdLtv;
+	protected Row Row_Commodity;
+	protected ExtendedCombobox commodity;
 
 	private CollateralStructure collateralStructure;
 	private transient CollateralStructureListCtrl collateralStructureListCtrl;
@@ -196,6 +206,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected boolean isCopyProcess = false;
 	protected boolean preScriptValidated = false;
 	protected boolean postScriptValidated = false;
+	private Commodity commoditiesObject;
 
 	public CollateralStructureDialogCtrl() {
 		super();
@@ -328,6 +339,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.ltvPercentage.setMaxlength(6);
 		this.ltvPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		this.ltvPercentage.setScale(2);
+		this.thresholdLtv.setMaxlength(6);
+		this.thresholdLtv.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		this.thresholdLtv.setScale(2);
 		this.remarks.setMaxlength(1000);
 
 		this.valuationFrequency.setMandatoryStyle(true);
@@ -335,6 +349,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.queryId.setValueColumn("QueryId");
 		this.queryId.setDescColumn("QueryCode");
 		this.queryId.setValidateColumns(new String[] { "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
+
+		this.commodity.setModuleName("Commodities");
+		this.commodity.setMandatoryStyle(true);
+		this.commodity.setValueColumn("Id");
+		this.commodity.setDescColumn("Code");
+		this.commodity.setValueType(DataType.LONG);
+		this.commodity.setValidateColumns(new String[] { "Id", "CommodityTypeCode", "Code" });
 
 		setStatusDetails();
 		logger.debug("Leaving");
@@ -538,13 +559,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			if (!isPostValidation) {
 				return noerrors;
 			}
-			
+
 			// if no errors
 			if (variables != null && errors.size() == 0) {
 				// check for new declared variables
 				for (int i = 0; i < variables.size(); i++) {
 					JSONObject variable = (JSONObject) variables.get(i);
-					if(isPostValidation){
+					if (isPostValidation) {
 						if (!"errors".equals(variable.get("name"))) {
 							if (!fieldNames.contains(variable.get("name"))) {
 								// if new variables found throw error message
@@ -860,6 +881,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.remarks.setValue(collateralStructure.getRemarks());
 		setLtvType(getComboboxValue(this.ltvType), false);
 		this.ltvPercentage.setValue(collateralStructure.getLtvPercentage());
+		this.thresholdLtv.setValue(collateralStructure.getThresholdLtvPercentage());
 
 		this.valuationFrequency.setValue(collateralStructure.getValuationFrequency());
 		this.nextValuationDate.setValue(collateralStructure.getNextValuationDate());
@@ -885,6 +907,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			if (StringUtils.isNotBlank(collateralStructure.getActualBlock())) {
 				this.javaScriptSqlRule.buildQuery(collateralStructure.getActualBlock());
 			}
+		}
+
+		if (collateralStructure.getCommodityId() != null) {
+			Commodity commodity = getCommodityData(collateralStructure.getCommodityId());
+			this.commodity.setValue(commodity.getCommodityTypeCode());
+			this.commodity.setDescription(commodity.getCode());
+			this.commodity.setObject(commodity);
+			onChangeCommodityType();
 		}
 
 		// Default Values Setting for Script Validations
@@ -935,6 +965,12 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 		try {
 			collateralStructure.setLtvPercentage(this.ltvPercentage.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			collateralStructure.setThresholdLtvPercentage(this.thresholdLtv.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -992,6 +1028,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			wve.add(we);
 		}
 
+		try {
+			Object obj = this.commodity.getObject();
+			if (obj != null) {
+				collateralStructure.setCommodityId(((Commodity) obj).getId());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		showErrorDetails(wve, basicDetailsTab);
 
 		ExtendedFieldHeader extendedFieldHeader = null;
@@ -1173,6 +1217,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 		}
 
+		if (!this.thresholdLtv.isDisabled()) {
+			if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
+				this.thresholdLtv.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_CollateralStructureDialog_ThresholdLtv.value"), 2, true, false, 100));
+			}
+		}
+
 		// LTV Rules tab
 		if (!this.ltvType.isDisabled()) {
 			this.ltvType.setConstraint(new StaticListValidator(PennantStaticListUtil.getListLtvTypes(),
@@ -1193,6 +1244,10 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			this.nextValuationDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"), true));
 		}
+		if (!this.commodity.isReadonly() && this.commodity.isVisible()) {
+			this.commodity.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CollateralStructureDialog_commodity.value"), null, true));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1205,6 +1260,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.collateralDesc.setConstraint("");
 		this.ltvType.setConstraint("");
 		this.ltvPercentage.setConstraint("");
+		this.thresholdLtv.setConstraint("");
 		this.remarks.setConstraint("");
 		this.nextValuationDate.setConstraint("");
 		this.queryId.setConstraint("");
@@ -1237,6 +1293,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.collateralDesc.setErrorMessage("");
 		this.ltvType.setErrorMessage("");
 		this.ltvPercentage.setErrorMessage("");
+		this.thresholdLtv.setErrorMessage("");
 		this.remarks.setErrorMessage("");
 		this.valuationFrequency.setErrorMessage("");
 		this.nextValuationDate.setErrorMessage("");
@@ -1263,8 +1320,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.ltvPercentage.setValue(BigDecimal.ZERO);
 		this.space_LtvPercentage.setSclass("");
 		this.ltvRuleTab.setDisabled(true);
+		this.thresholdLtv.setConstraint("");
+		this.thresholdLtv.setErrorMessage("");
+		this.thresholdLtv.setDisabled(true);
+		this.thresholdLtv.setValue(BigDecimal.ZERO);
 		if (CollateralConstants.FIXED_LTV.equals(ltvType)) {
 			this.ltvPercentage.setDisabled(isReadOnly("CollateralStructureDialog_LtvPercentage"));
+			this.thresholdLtv.setDisabled(isReadOnly("CollateralStructureDialog_LtvPercentage"));
 			this.space_LtvPercentage.setSclass(PennantConstants.mandateSclass);
 			this.allowLtvWaiver.setDisabled(true);
 			this.maxLtvWaiver.setDisabled(true);
@@ -1403,6 +1465,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.collateralDesc.setReadonly(isReadOnly("CollateralStructureDialog_CollateralDesc"));
 		this.ltvType.setDisabled(isReadOnly("CollateralStructureDialog_LtvType"));
 		this.ltvPercentage.setDisabled(isReadOnly("CollateralStructureDialog_LtvPercentage"));
+		this.thresholdLtv.setDisabled(isReadOnly("CollateralStructureDialog_LtvPercentage"));
 		this.marketableSecurities.setDisabled(isReadOnly("CollateralStructureDialog_MarketableSecurities"));
 		this.preValidationReq.setDisabled(isReadOnly("CollateralStructureDialog_PreValidationReq"));
 		this.postValidationReq.setDisabled(isReadOnly("CollateralStructureDialog_PostValidationReq"));
@@ -1419,6 +1482,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.valuationFrequency.setDisabled(isReadOnly("CollateralStructureDialog_ValuationFrequency"));
 		this.valuationPending.setDisabled(isReadOnly("CollateralStructureDialog_ValuationPending"));
 		this.nextValuationDate.setDisabled(isReadOnly("CollateralStructureDialog_NextValuationDate"));
+		this.thresholdLtv.setDisabled(isReadOnly("CollateralStructureDialog_ThresholdLtvPercentage"));
+		this.commodity.setButtonDisabled(isReadOnly("CollateralStructureDialog_Commodity"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1446,6 +1511,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.collateralDesc.setReadonly(true);
 		this.ltvType.setDisabled(true);
 		this.ltvPercentage.setDisabled(true);
+		this.thresholdLtv.setDisabled(true);
 		this.marketableSecurities.setDisabled(true);
 		this.active.setDisabled(true);
 		this.preValidationReq.setDisabled(true);
@@ -1826,6 +1892,40 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	public void setFieldNames(List<String> fieldNames) {
 		this.fieldNames = fieldNames;
+	}
+
+	public void onFulfill$commodity(Event event) {
+		onChangeCommodityType();
+	}
+
+	public void onChangeCommodityType() {
+		if (StringUtils.isBlank(this.commodity.getValue())) {
+			return;
+		}
+
+		commoditiesObject = (Commodity) this.commodity.getObject();
+		if (commoditiesObject == null) {
+			return;
+		}
+
+		getCommodityData(commoditiesObject.getId());
+
+		this.commodity.setValue(commoditiesObject.getCommodityTypeCode());
+		this.commodity.setDescription(commoditiesObject.getCode());
+		this.commodity.setObject(commoditiesObject);
+
+	}
+
+	public Commodity getCommodityData(long id) {
+
+		Search search = new Search(Commodity.class);
+		search.addTabelName("Commodities_Aview");
+		search.addFilterEqual("Id", id);
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		commoditiesObject = (Commodity) searchProcessor.getResults(search).get(0);
+
+		return commoditiesObject;
 	}
 
 }

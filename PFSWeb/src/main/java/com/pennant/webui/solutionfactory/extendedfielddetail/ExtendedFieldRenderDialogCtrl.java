@@ -77,6 +77,8 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	private String querySubCode = "";
 	private String queryCode = "";
 	private long queryId;
+	private BigDecimal currentValue;
+	private boolean isCommodity = false;
 
 	/**
 	 * default constructor.<br>
@@ -145,6 +147,17 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
+		}
+
+		if (arguments.containsKey("currentValue")) {
+			if ((BigDecimal) arguments.get("currentValue") != null) {
+				this.currentValue = (BigDecimal) arguments.get("currentValue");
+			}
+
+		}
+
+		if (arguments.containsKey("isCommodity")) {
+			this.isCommodity = (boolean) arguments.get("isCommodity");
 		}
 
 		//Set the listbox height...
@@ -223,7 +236,8 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				map.put("queryId", this.queryId);
 				map.put("querySubCode", this.querySubCode);
 				map.put("queryCode", this.queryCode);
-
+				map.put("currentValue", this.currentValue);
+				map.put("isCommodity", this.isCommodity);
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents(
@@ -273,6 +287,8 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		map.put("queryId", this.queryId);
 		map.put("querySubCode", this.querySubCode);
 		map.put("queryCode", this.queryCode);
+		map.put("currentValue", this.currentValue);
+		map.put("isCommodity", this.isCommodity);
 
 		Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldCaptureDialog.zul",
 				window_ExtendedFieldRenderDialog, map);

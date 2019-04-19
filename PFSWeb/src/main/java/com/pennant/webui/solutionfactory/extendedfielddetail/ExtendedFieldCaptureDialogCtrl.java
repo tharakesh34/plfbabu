@@ -2,6 +2,7 @@ package com.pennant.webui.solutionfactory.extendedfielddetail;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +81,8 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
 	private DedupParmService dedupParmService;
+	private BigDecimal currentValue;
+	private boolean isCommodity = false;
 
 	/**
 	 * default constructor.<br>
@@ -136,9 +139,18 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
+		if (arguments.containsKey("currentValue")) {
+			currentValue = (BigDecimal) arguments.get("currentValue");
+		}
+		if (arguments.containsKey("isCommodity")) {
+			isCommodity = (boolean) arguments.get("isCommodity");
+		}
 
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
+		if (isCommodity && currentValue != null && currentValue != BigDecimal.ZERO) {
+			generator.setCommodity(true);
+		}
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(260);
@@ -192,15 +204,21 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 				this.btnDelete.setVisible(false);
 			}
 		}
+		if (this.currentValue != null) {
+			if (newRecord) {
+				if (fieldValuesMap == null) {
+					fieldValuesMap = new HashMap<>();
+				}
+				fieldValuesMap.put("UNITPRICE", this.currentValue);
+			}
+		}
 		if (fieldValuesMap != null) {
 			generator.setFieldValueMap((HashMap<String, Object>) fieldValuesMap);
 		}
-
 		try {
 			this.seqNo.setValue(getExtendedFieldRender().getSeqNo());
 			generator.setOverflow(true);
 			generator.renderWindow(getExtendedFieldHeader(), newRecord);
-
 			// Height Calculation
 			int height = borderLayoutHeight - 100;
 			//this.window_ExtendedFieldCaptureDialog.setHeight(height + "px");
