@@ -172,6 +172,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	// story #699 Allow Additional filters for extended combobox.
 	private List<ExtendedFieldDetail> extendedFieldDetails = new ArrayList<>();
 	private ExtendedFieldHeader extendedFieldHeader;
+	private boolean isCommodity = false;
 
 	public ExtendedFieldsGenerator() {
 		super();
@@ -295,8 +296,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Method For Create the Component and append that component to the parent
-	 * Container.
+	 * Method For Create the Component and append that component to the parent Container.
 	 * 
 	 * @param detail
 	 * @param columnCount
@@ -419,8 +419,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Method for create the Container, it creates the container based on the
-	 * fieldType and append that container to the rootElement
+	 * Method for create the Container, it creates the container based on the fieldType and append that container to the
+	 * rootElement
 	 * 
 	 * @param container
 	 * @param rootElement
@@ -580,8 +580,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Method for Create Grid component and append column and rows to that based
-	 * on columncount
+	 * Method for Create Grid component and append column and rows to that based on columncount
 	 * 
 	 * @param parentComponent
 	 * @param columnCount
@@ -614,8 +613,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Method for process all the ListFields of the ListBox container element
-	 * and render the List
+	 * Method for process all the ListFields of the ListBox container element and render the List
 	 * 
 	 * @param containerElement
 	 * @param inputElemetswithParents
@@ -1476,8 +1474,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * Method for getting the Row
 	 * 
 	 * @param intreturn
-	 *            detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder();
-	 *            columnCount
+	 *            detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
 	 * @param Row
 	 *            row
 	 * @param int
@@ -1745,6 +1742,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 
 		currencyBox.getChildren().get(3).setId(currencyBox.getId().concat("_cdb"));
+
+		if (isCommodity) {
+			currencyBox.setDisabled(true);
+		}
 
 		return currencyBox;
 	}
@@ -2069,8 +2070,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	// Ended.
 
 	/**
-	 * Method for create MultiExtendedCombox based on the Extended field
-	 * details.
+	 * Method for create MultiExtendedCombox based on the Extended field details.
 	 * 
 	 * @param detail
 	 * @return Hbox
@@ -2165,9 +2165,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Method for get the Button based on the Extended Field Detail, it sets the
-	 * onClick event on Button with the name onClickExtbtn followed by
-	 * fieldName.
+	 * Method for get the Button based on the Extended Field Detail, it sets the onClick event on Button with the name
+	 * onClickExtbtn followed by fieldName.
 	 * 
 	 * @param detail
 	 * @return button
@@ -2203,8 +2202,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Method for create AccountSelectionBox based on the Extended field
-	 * details.
+	 * Method for create AccountSelectionBox based on the Extended field details.
 	 * 
 	 * @param detail
 	 * @return AccountSelectionBox
@@ -2782,8 +2780,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	/**
 	 * 
-	 * This Comparator class is used to sort the ExtendedFieldDetail based on
-	 * their sequenceNumber
+	 * This Comparator class is used to sort the ExtendedFieldDetail based on their sequenceNumber
 	 */
 
 	public class ExtendedFieldsComparator implements Comparator<ExtendedFieldDetail> {
@@ -2805,8 +2802,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Adding the event listener to the component using the scriptlet from the
-	 * configuration
+	 * Adding the event listener to the component using the scriptlet from the configuration
 	 * 
 	 * @param eventName
 	 * @param javaScript
@@ -2833,8 +2829,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	}
 
 	/**
-	 * Adding the custom event listener to the component using the scriptlet
-	 * from the configuration for calculating the age.
+	 * Adding the custom event listener to the component using the scriptlet from the configuration for calculating the
+	 * age.
 	 */
 	private class CalcAgeListener implements EventListener {
 		@Override
@@ -3002,6 +2998,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
 		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public boolean isCommodity() {
+		return isCommodity;
+	}
+
+	public void setCommodity(boolean isCommodity) {
+		this.isCommodity = isCommodity;
 	}
 
 }
