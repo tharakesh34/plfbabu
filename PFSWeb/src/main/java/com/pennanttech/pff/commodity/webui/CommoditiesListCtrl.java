@@ -84,7 +84,7 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 		setItemRender(new CommoditiesListModelItemRenderer());
 		// Register buttons and fields.
 		registerButton(button_CommodityTypeList_CommodityTypeSearch);
-		registerButton(button_CommodityTypeList_NewCommodityType, "button_CommodityTYpeList_NewCommodityType", true);
+		registerButton(button_CommodityTypeList_NewCommodityType, "button_CommodityTypeList_NewCommodityType", true);
 		registerField("Id");
 		registerField("CommodityTypeCode");
 		registerField("CommodityType");
@@ -125,7 +125,7 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_CommodityTYpeList_NewCommodityType(Event event) {
+	public void onClick$button_CommodityTypeList_NewCommodityType(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		Commodity commodity = new Commodity();
