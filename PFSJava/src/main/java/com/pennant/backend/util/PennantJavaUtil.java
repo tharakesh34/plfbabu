@@ -438,6 +438,8 @@ import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.commodity.model.Commodity;
+import com.pennanttech.pff.commodity.model.CommodityType;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
@@ -3113,6 +3115,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinOptionType", FinOptionType.class,
 						new String[] { "FIN_OPTION_TYPES", "FIN_OPTION_TYPES_AView" }, masterWF,
 						new String[] { "Code", "Description", "OptionType", "Frequency" }, null, 600));
+
 		ModuleUtil.register("OperationRoles",
 				new ModuleMapping("OperationRoles", SecurityRole.class,
 						new String[] { "SecurityRole", "operation_roles_view" }, securityWF,
@@ -3120,6 +3123,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinOption",
 				new ModuleMapping("FinOption", FinOption.class, new String[] { "FIN_OPTIONS", "FIN_OPTIONS_AView" },
 						masterWF, new String[] { "Id", "FinOption" }, null, 600));
+
 		ModuleUtil.register("CollectionAgencies",
 				new ModuleMapping("CollectionAgencies", BusinessVertical.class,
 						new String[] { "CollectionAgencies", "CollectionAgencies" }, BUSINESS_VERTICAL,
@@ -3145,6 +3149,16 @@ public class PennantJavaUtil {
 				new ModuleMapping("ReceiptFinanceMain", FinanceMain.class,
 						new String[] { "FINANCEMAIN_DATAVIEW", "FINANCEMAIN_DATAVIEW" }, null,
 						new String[] { "FinReference", "FinType" }, null, 350));
+
+		ModuleUtil.register("CommodityType",
+				new ModuleMapping("CommodityType", CommodityType.class,
+						new String[] { "COMMODITY_TYPES", "COMMODITY_TYPES_AView" }, masterWF,
+						new String[] { "Id", "Code", "Description" }, null, 600));
+
+		ModuleUtil.register("Commodity",
+				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
+						masterWF, new String[] { "Id", "CommodityTypeCode", "Code" }, null, 600));
+
 		registerCustomModules();
 	}
 
