@@ -20,8 +20,7 @@ import com.pennant.backend.model.Property;
 import com.pennanttech.pennapps.core.App;
 
 /**
- * A suite of utilities surrounding the use of the application level static
- * lists.
+ * A suite of utilities surrounding the use of the application level static lists.
  */
 public final class AppStaticList {
 	private static List<Property> applications = initializeApplications();
@@ -32,14 +31,14 @@ public final class AppStaticList {
 	private static List<Property> covenantTypes = initializeCovenantTypes();
 	private static List<Property> months = initializeMonths();
 	private static List<Property> finOptions = initializeFinOptions();
+	private static List<Property> commodityUnitTypes = initializeCommodityUnitTypes();
 
 	/**
 	 * Private constructor to hide the implicit public one.
 	 * 
 	 * @throws IllegalAccessException
-	 *             If the constructor is used to create and initialize a new
-	 *             instance of the declaring class by suppressing Java language
-	 *             access checking.
+	 *             If the constructor is used to create and initialize a new instance of the declaring class by
+	 *             suppressing Java language access checking.
 	 */
 	private AppStaticList() throws IllegalAccessException {
 		throw new IllegalAccessException();
@@ -241,4 +240,18 @@ public final class AppStaticList {
 		return finOptions;
 	}
 
+	private static List<Property> initializeCommodityUnitTypes() {
+		List<Property> list = new ArrayList<>(5);
+		list.add(new Property(1, "Killos"));
+		list.add(new Property(2, "Tonnes"));
+		list.add(new Property(3, "Grams"));
+		list.add(new Property(4, "Ounce"));
+		list.add(new Property(5, "Quantity"));
+
+		return list;
+	}
+
+	public static List<Property> getCommodityUnitTypes() {
+		return commodityUnitTypes;
+	}
 }
