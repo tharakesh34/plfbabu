@@ -37,48 +37,48 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 			sql.append(", CommodityTypeCode ");
 		}
 
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
 		sql.append(" From Commodities");
 		sql.append(type);
 		sql.append(" Where Id = :id");
 
-		Commodity commodities = new Commodity();
-		commodities.setId(id);
+		Commodity commodity = new Commodity();
+		commodity.setId(id);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodities);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodity);
 		RowMapper<Commodity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commodity.class);
 
 		try {
-			commodities = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			commodity = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return commodities;
+		
+		return commodity;
 	}
 
 	@Override
-	public String save(Commodity commodities, TableType tableType) {
+	public String save(Commodity commodity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("insert into Commodities");
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, CommodityType, Code, Description, CurrentValue, HSNCode, Active");
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(Id, CommodityType, Code, Description, CurrentValue, HSNCode, Active, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
-		sql.append("(:Id, :CommodityType, :Code, :Description, :CurrentValue, :HSNCode, :Active");
-		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append("(:Id, :CommodityType, :Code, :Description, :CurrentValue, :HSNCode, :Active, :Version");
+		sql.append(", :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
+		sql.append(", :RecordType, :WorkflowId)");
 
-		if (commodities.getId() == Long.MIN_VALUE) {
-			commodities.setId(getNextValue("SEQCOMMODITIES"));
+		if (commodity.getId() == Long.MIN_VALUE) {
+			commodity.setId(getNextValue("SEQCOMMODITIES"));
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodities);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodity);
 
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
@@ -87,19 +87,17 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		}
 
 		logger.debug(Literal.LEAVING);
-		return String.valueOf(commodities.getId());
+		return String.valueOf(commodity.getId());
 	}
 
 	@Override
-	public void update(Commodity commodities, TableType tableType) {
+	public void update(Commodity commodity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Update Commodities");
 		sql.append(tableType.getSuffix());
-
-		sql.append(" set Description = :Description, CurrentValue = :CurrentValue");
-		sql.append(", HSNCode = :HSNCode, Active = :Active");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(" set Description = :Description, CurrentValue = :CurrentValue, HSNCode = :HSNCode");
+		sql.append(", Active = :Active, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where Id = :Id ");
@@ -107,7 +105,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodities);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodity);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		if (recordCount == 0) {
@@ -118,24 +116,22 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 	}
 
 	@Override
-	public void delete(Commodity commodities, TableType tableType) {
+	public void delete(Commodity commodity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("delete from Commodities");
 		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
+		sql.append(" where Id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodities);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(commodity);
 		int recordCount = 0;
-
 		try {
 			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -144,12 +140,11 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 	}
 
 	@Override
-	public boolean isDuplicateKey(Commodity commodities, TableType tableType) {
+	public boolean isDuplicateKey(Commodity commodity, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		String sql;
 		String whereClause = "CommodityType = :CommodityType And Code = :code And HsnCode = :HSNCode";
-
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("Commodities", whereClause);
@@ -161,12 +156,11 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 			sql = QueryUtil.getCountQuery(new String[] { "Commodities_Temp", "Commodities" }, whereClause);
 			break;
 		}
-
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CommodityType", commodities.getCommodityType());
-		paramSource.addValue("code", commodities.getCode());
-		paramSource.addValue("HSNCode", commodities.getHSNCode());
+		paramSource.addValue("CommodityType", commodity.getCommodityType());
+		paramSource.addValue("code", commodity.getCode());
+		paramSource.addValue("HSNCode", commodity.getHSNCode());
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -180,6 +174,8 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 	}
 
 	public void saveCommoditiesLog(MapSqlParameterSource mapData) {
+		logger.debug(Literal.ENTERING);
+		
 		StringBuilder sql = new StringBuilder("Insert into Commodities_Log");
 		sql.append("(CommodityId, AuditImage, CurrentValue, BatchId, ModifiedBy, ModifiedOn)");
 		sql.append(" values");
@@ -190,10 +186,13 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
+		
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public Commodity getQueryOperation(Commodity record) {
+		logger.debug(Literal.ENTERING);
+		
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CommodityType", record.getCommodityType());
 		paramSource.addValue("Code", record.getCode());
@@ -201,7 +200,6 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from COMMODITIES Where");
-
 		StringBuilder condition = new StringBuilder();
 		if (StringUtils.isNotBlank(record.getCode())) {
 			if (condition.length() > 0) {
@@ -209,32 +207,28 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 			}
 			condition.append(" Code = :Code");
 		}
-
 		if ((record.getCommodityType() != Long.MIN_VALUE )) {
 			if (condition.length() > 0) {
 				condition.append(" and");
 			}
 			condition.append(" CommodityType = :CommodityType");
 		}
-
 		if (StringUtils.isNotBlank(record.getHSNCode())) {
 			if (condition.length() > 0) {
 				condition.append(" and");
 			}
-
 			condition.append(" HSNCode = :HSNCode");
 		}
-
 		sql.append(condition.toString());
-
 		RowMapper<Commodity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commodity.class);
-
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			// TODO: handle exception
 		}
 
+		logger.debug(Literal.LEAVING);
+		
 		return null;
 	}
 

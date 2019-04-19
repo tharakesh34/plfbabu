@@ -58,7 +58,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	protected CurrencyBox currentValue;
 	protected Uppercasebox hsnCode;
 	protected Checkbox active;
-	protected Commodity commodities;
+	protected Commodity commodity;
 
 	private transient CommoditiesListCtrl commoditiesListCtrl;
 	private transient CommoditiesService commoditiesService;
@@ -79,7 +79,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 	@Override
 	protected String getReference() {
-		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.commodities.getId()));
+		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.commodity.getId()));
 		return referenceBuffer.toString();
 	}
 
@@ -97,19 +97,19 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		setPageComponents(window_CommoditiesDialogue);
 
 		try {
-			this.commodities = (Commodity) arguments.get("commodity");
+			this.commodity = (Commodity) arguments.get("commodity");
 			this.commoditiesListCtrl = (CommoditiesListCtrl) arguments.get("commoditiesListCtrl");
 
-			if (this.commodities == null) {
+			if (this.commodity == null) {
 				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
 
 			Commodity acommodities = new Commodity();
-			BeanUtils.copyProperties(this.commodities, acommodities);
-			this.commodities.setBefImage(acommodities);
+			BeanUtils.copyProperties(this.commodity, acommodities);
+			this.commodity.setBefImage(acommodities);
 
-			doLoadWorkFlow(this.commodities.isWorkflow(), this.commodities.getWorkflowId(),
-					this.commodities.getNextTaskId());
+			doLoadWorkFlow(this.commodity.isWorkflow(), this.commodity.getWorkflowId(),
+					this.commodity.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
@@ -120,7 +120,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 			doSetFieldProperties();
 			doCheckRights();
-			doShowDialog(this.commodities);
+			doShowDialog(this.commodity);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -134,6 +134,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+		
 		setStatusDetails();
 		this.type.setMandatoryStyle(true);
 		this.type.setModuleName("CommodityType");
@@ -141,11 +142,11 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		this.type.setDescColumn("Description");
 		this.type.setValueType(DataType.LONG);
 		this.type.setValidateColumns(new String[] { "Id", "Code", "Description" });
-		logger.debug(Literal.LEAVING);
-
+		
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-
 		this.currentValue.setProperties(false, formatter);
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -244,7 +245,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
-		doShowNotes(this.commodities);
+		doShowNotes(this.commodity);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -253,7 +254,9 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
+		
 		commoditiesListCtrl.search();
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -263,7 +266,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	private void doCancel() {
 		logger.debug(Literal.ENTERING);
 
-		doWriteBeanToComponents(this.commodities);
+		doWriteBeanToComponents(this.commodity);
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
@@ -277,27 +280,27 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 * @param covenantType
 	 * 
 	 */
-	public void doWriteBeanToComponents(Commodity acommodityType) {
+	public void doWriteBeanToComponents(Commodity acommodity) {
 		logger.debug(Literal.ENTERING);
 
-		this.type.setValue(acommodityType.getCommodityTypeCode());
-		this.type.setDescription(acommodityType.getDescription());
-		CommodityType commodity = new CommodityType();
-		commodity.setCode(acommodityType.getCode());
-		commodity.setDescription(acommodityType.getDescription());
-		commodity.setId(acommodityType.getCommodityType());
-		this.type.setObject(commodity);
+		this.type.setValue(acommodity.getCommodityTypeCode());
+		this.type.setDescription(acommodity.getDescription());
+		CommodityType commodityType = new CommodityType();
+		commodityType.setCode(acommodity.getCode());
+		commodityType.setDescription(acommodity.getDescription());
+		commodityType.setId(acommodity.getCommodityType());
+		this.type.setObject(commodityType);
 		onChangeCommodityType();
 
-		this.code.setText(acommodityType.getCode());
-		this.hsnCode.setText(acommodityType.getHSNCode());
-		this.currentValue.setValue(PennantApplicationUtil.formateAmount(acommodityType.getCurrentValue(),
+		this.code.setText(acommodity.getCode());
+		this.hsnCode.setText(acommodity.getHSNCode());
+		this.currentValue.setValue(PennantApplicationUtil.formateAmount(acommodity.getCurrentValue(),
 				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 
-		this.description.setText(acommodityType.getDescription());
-		this.active.setChecked(acommodityType.isActive());
+		this.description.setText(acommodity.getDescription());
+		this.active.setChecked(acommodity.isActive());
 
-		this.recordStatus.setValue(acommodityType.getRecordStatus());
+		this.recordStatus.setValue(acommodity.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -307,7 +310,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 * 
 	 * @param aCovenantType
 	 */
-	public void doWriteComponentsToBean(Commodity acommodities) {
+	public void doWriteComponentsToBean(Commodity acommodity) {
 		logger.debug(Literal.LEAVING);
 
 		List<WrongValueException> wve = new ArrayList<>();
@@ -316,39 +319,39 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			this.type.getValidatedValue();
 			Object obj = this.type.getObject();
 			if (obj != null) {
-				acommodities.setCommodityType(((CommodityType) obj).getId());
+				acommodity.setCommodityType(((CommodityType) obj).getId());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			acommodities.setCode(this.code.getValue());
+			acommodity.setCode(this.code.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			acommodities.setDescription(this.description.getValue());
+			acommodity.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			acommodities.setCurrentValue(PennantApplicationUtil.unFormateAmount(this.currentValue.getActualValue(),
+			acommodity.setCurrentValue(PennantApplicationUtil.unFormateAmount(this.currentValue.getActualValue(),
 					CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			acommodities.setHSNCode(this.hsnCode.getValue());
+			acommodity.setHSNCode(this.hsnCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			acommodities.setActive(this.active.isChecked());
+			acommodity.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -373,19 +376,19 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 * @param covenantType
 	 *            The entity that need to be render.
 	 */
-	public void doShowDialog(Commodity commodities) {
+	public void doShowDialog(Commodity commodity) {
 		logger.debug(Literal.LEAVING);
 
-		doWriteBeanToComponents(commodities);
+		doWriteBeanToComponents(commodity);
 
-		if (commodities.isNew()) {
+		if (commodity.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.type.setFocus(true);
 		} else {
 			this.description.setFocus(true);
 			if (isWorkFlowEnabled()) {
-				if (StringUtils.isNotBlank(commodities.getRecordType())) {
+				if (StringUtils.isNotBlank(commodity.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
@@ -400,7 +403,6 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
 		}
-
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug(Literal.LEAVING);
@@ -434,6 +436,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			this.currentValue.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value"), 2, false, false));
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -473,33 +476,33 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
 
-		final Commodity acommodities = new Commodity();
-		BeanUtils.copyProperties(this.commodities, acommodities);
+		final Commodity acommodity = new Commodity();
+		BeanUtils.copyProperties(this.commodity, acommodity);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ acommodities.getCommodityType();
+				+ acommodity.getCommodityType();
 		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 			return;
 		}
 
-		if (StringUtils.trimToEmpty(acommodities.getRecordType()).equals("")) {
-			acommodities.setVersion(acommodities.getVersion() + 1);
-			acommodities.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		if (StringUtils.trimToEmpty(acommodity.getRecordType()).equals("")) {
+			acommodity.setVersion(acommodity.getVersion() + 1);
+			acommodity.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
 			if (isWorkFlowEnabled()) {
-				acommodities.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				acommodities.setNewRecord(true);
+				acommodity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				acommodity.setNewRecord(true);
 				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), acommodities.getNextTaskId(), acommodities);
+				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), acommodity.getNextTaskId(), acommodity);
 			} else {
 				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
 
 		try {
-			if (doProcess(acommodities, tranType)) {
+			if (doProcess(acommodity, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -517,7 +520,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	private void doEdit() {
 		logger.debug(Literal.LEAVING);
 
-		if (this.commodities.isNewRecord()) {
+		if (this.commodity.isNewRecord()) {
 			this.type.setButtonDisabled(false);
 			this.code.setDisabled(false);
 		} else {
@@ -534,7 +537,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.commodities.isNewRecord()) {
+			if (this.commodity.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {
@@ -563,7 +566,6 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			}
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
-
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -574,9 +576,11 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
+		
 		this.type.setValue("");
 		this.description.setValue("");
 		this.active.setChecked(false);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -585,44 +589,44 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		final Commodity acommodities = new Commodity();
-		BeanUtils.copyProperties(this.commodities, acommodities);
+		
+		final Commodity acommodity = new Commodity();
+		BeanUtils.copyProperties(this.commodity, acommodity);
 
 		doSetValidation();
-		doWriteComponentsToBean(acommodities);
+		doWriteComponentsToBean(acommodity);
 
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(acommodities.getRecordType())) {
-				acommodities.setVersion(acommodities.getVersion() + 1);
-				if (acommodities.isNew()) {
-					acommodities.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (StringUtils.isBlank(acommodity.getRecordType())) {
+				acommodity.setVersion(acommodity.getVersion() + 1);
+				if (acommodity.isNew()) {
+					acommodity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					acommodities.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					acommodities.setNewRecord(true);
+					acommodity.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					acommodity.setNewRecord(true);
 				}
 			}
 		} else {
-			acommodities.setVersion(acommodities.getVersion() + 1);
-			if (acommodities.isNew()) {
+			acommodity.setVersion(acommodity.getVersion() + 1);
+			if (acommodity.isNew()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
-
 		try {
-			if (doProcess(acommodities, tranType)) {
+			if (doProcess(acommodity, tranType)) {
 				refreshList();
 				closeDialog();
 			}
-
 		} catch (final DataAccessException e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -638,45 +642,40 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(Commodity acommodityType, String tranType) {
+	private boolean doProcess(Commodity acommodity, String tranType) {
 		logger.debug(Literal.ENTERING);
+		
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		acommodityType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		acommodityType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		acommodityType.setUserDetails(getUserWorkspace().getLoggedInUser());
+		acommodity.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		acommodity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		acommodity.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			acommodityType.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-
+			acommodity.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(acommodityType.getNextTaskId());
-
+				nextTaskId = StringUtils.trimToEmpty(acommodity.getNextTaskId());
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, acommodityType);
+					nextTaskId = getNextTaskIds(taskId, acommodity);
 				}
-
-				if (isNotesMandatory(taskId, acommodityType)) {
+				if (isNotesMandatory(taskId, acommodity)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
 					}
-
 				}
 			}
 			if (!StringUtils.isBlank(nextTaskId)) {
 				String[] nextTasks = nextTaskId.split(";");
-
 				if (nextTasks != null && nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
-
 						if (nextRoleCode.length() > 1) {
 							nextRoleCode = nextRoleCode.concat(",");
 						}
@@ -686,14 +685,12 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
-
-			acommodityType.setTaskId(taskId);
-			acommodityType.setNextTaskId(nextTaskId);
-			acommodityType.setRoleCode(getRole());
-			acommodityType.setNextRoleCode(nextRoleCode);
-
-			auditHeader = getAuditHeader(acommodityType, tranType);
-			String operationRefs = getServiceOperations(taskId, acommodityType);
+			acommodity.setTaskId(taskId);
+			acommodity.setNextTaskId(nextTaskId);
+			acommodity.setRoleCode(getRole());
+			acommodity.setNextRoleCode(nextRoleCode);
+			auditHeader = getAuditHeader(acommodity, tranType);
+			String operationRefs = getServiceOperations(taskId, acommodity);
 
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
@@ -701,7 +698,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(acommodityType, PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(acommodity, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -709,11 +706,12 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 				}
 			}
 		} else {
-			auditHeader = getAuditHeader(acommodityType, tranType);
+			auditHeader = getAuditHeader(acommodity, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
 		logger.debug(Literal.LEAVING);
+		
 		return processCompleted;
 	}
 
@@ -730,15 +728,13 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
+		
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		Commodity aCovenantType = (Commodity) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-
 		try {
-
 			while (retValue == PennantConstants.porcessOVERIDE) {
-
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
 						auditHeader = commoditiesService.delete(auditHeader);
@@ -746,21 +742,17 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					} else {
 						auditHeader = commoditiesService.saveOrUpdate(auditHeader);
 					}
-
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = commoditiesService.doApprove(auditHeader);
-
 						if (aCovenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
-
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = commoditiesService.doReject(auditHeader);
 						if (aCovenantType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
-
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
@@ -768,18 +760,14 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 						return processCompleted;
 					}
 				}
-
 				auditHeader = ErrorControl.showErrorDetails(this.window_CommoditiesDialogue, auditHeader);
 				retValue = auditHeader.getProcessStatus();
-
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
-
 					if (deleteNotes) {
-						deleteNotes(getNotes(this.commodities), true);
+						deleteNotes(getNotes(this.commodity), true);
 					}
 				}
-
 				if (retValue == PennantConstants.porcessOVERIDE) {
 					auditHeader.setOveride(true);
 					auditHeader.setErrorMessage(null);
@@ -793,6 +781,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug(Literal.LEAVING);
+		
 		return processCompleted;
 	}
 
@@ -808,15 +797,17 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 				getOverideMap());
 	}
 
-	public void setCommoditiesService(CommoditiesService commoditiesService) {
-		this.commoditiesService = commoditiesService;
-	}
-
 	public void onFulfill$type(Event event) {
+		logger.debug(Literal.ENTERING);
+		
 		onChangeCommodityType();
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChangeCommodityType() {
+		logger.debug(Literal.ENTERING);
+		
 		if (StringUtils.isBlank(this.type.getValue())) {
 			clearOnChangeCommodityData();
 			return;
@@ -836,19 +827,33 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		clearOnChangeCommodityData();
 
 		commodityTypeDetails(commodityTypeObject);
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void clearOnChangeCommodityData() {
+		logger.debug(Literal.ENTERING);
+		
 		this.type.setValue("");
 		this.description.setText("");
 		this.active.setChecked(false);
+		
+		logger.debug(Literal.LEAVING);
 	}
 
-	public void commodityTypeDetails(CommodityType commodities) {
-		this.type.setValue(commodities.getCode());
-		this.type.setDescription(commodities.getDescription());
-		this.description.setText(commodities.getDescription());
-		this.active.setChecked(commodities.isActive());
+	public void commodityTypeDetails(CommodityType commodityType) {
+		logger.debug(Literal.ENTERING);
+		
+		this.type.setValue(commodityType.getCode());
+		this.type.setDescription(commodityType.getDescription());
+		this.description.setText(commodityType.getDescription());
+		this.active.setChecked(commodityType.isActive());
+		
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void setCommoditiesService(CommoditiesService commoditiesService) {
+		this.commoditiesService = commoditiesService;
 	}
 
 }
