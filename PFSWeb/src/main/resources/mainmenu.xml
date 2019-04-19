@@ -141,6 +141,8 @@
 			<menuItem id="menu_Item_Currency" zulNavigation="/WEB-INF/pages/ApplicationMaster/Currency/CurrencyList.zul" rightName="menuItem_ApplicationMaster_Currency" />
 			<menuItem id="menu_Item_DocumentType" zulNavigation="/WEB-INF/pages/SystemMaster/DocumentType/DocumentTypeList.zul" rightName="menuItem_SystemMaster_DocumentType" />
 			<menuItem id="menu_Item_CovenantType" zulNavigation="/WEB-INF/pages/Finance/Covenant/CovenantTypeList.zul" rightName="menuItem_CovenantType" />
+			<menuItem id="menu_Item_CommodityType" zulNavigation="/WEB-INF/pages/ApplicationMaster/Commodity/CommodityTypeList.zul" rightName="menuItem_Commodity_Type" />
+			<menuItem id="menu_Item_Commodities" zulNavigation="/WEB-INF/pages/ApplicationMaster/Commodity/CommoditiesList.zul" rightName="menuItem_Commodity_Details" />
 			<!-- <menuItem id="menu_Item_CovenantTypeEnquiry" zulNavigation="/WEB-INF/pages/Finance/Covenant/CovenantTypeEnquiryList.zul" rightName="menuItem_CovenantTypeEnquiry" 
 				/> -->
 			<menuItem id="menu_Item_ExpenseType" zulNavigation="/WEB-INF/pages/AMTMasters/ExpenseType/ExpenseTypeList.zul" rightName="menuItem_ApplicationMaster_ExpenseType" />
@@ -467,6 +469,7 @@
 			<menuItem id="menu_Item_FinanceTaxDetailUpload" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinTaxUploadDetailList.zul" rightName="menuItem_FinanceManagement_FinanceTaxDetailUpload" />
 			<menuItem id="menu_Item_PostingDownloads" zulNavigation="/WEB-INF/pages/InterfaceBajaj/PostingsDownloadCtrl.zul" rightName="menu_Item_PostingsDownload" />
 			<menuItem id="menu_Item_DataEngine_MasterExport" zulNavigation="/WEB-INF/pages/DataEngine/MasterDataExtraction.zul" rightName="menuItem_DataExtraction" />
+			<menuItem id="menu_Item_DataEngine_CommodityUpload" zulNavigation="/WEB-INF/pages/DataEngine/CommodityFileUpload.zul"/>
 			<menuItem id="menu_Item_ExternalUplaods" zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul" rightName="menu_Item_ExternalUpload" />
 		</menu>
 	</menu>

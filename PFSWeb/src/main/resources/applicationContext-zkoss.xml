@@ -5085,4 +5085,42 @@
 	<bean id="bounceDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+	
+		<!-- Commodity Type -->	
+	<bean id="commodityTypeListCtrl" class="com.pennanttech.pff.commodity.webui.CommodityTypeListCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="commodityTypeService" ref="commodityTypeService" />
+	</bean>
+
+	<bean id="commodityTypeDialogueCtrl" class="com.pennanttech.pff.commodity.webui.CommodityTypeDialogueCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="commodityTypeService" ref="commodityTypeService" />
+	</bean>
+	
+	<!-- Commodities -->	
+	<bean id="commoditiesListCtrl" class="com.pennanttech.pff.commodity.webui.CommoditiesListCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="commoditiesService" ref="commoditiesService" />
+	</bean>
+
+	<bean id="commoditiesDialogueCtrl" class="com.pennanttech.pff.commodity.webui.CommoditiesDialogueCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="commoditiesService" ref="commoditiesService" />
+	</bean>
+
+	<bean id="commodityTypeDAO" class="com.pennanttech.pff.commodity.dao.CommodityTypeDAOImpl" parent="sequenceDao" />
+	
+	<bean id="commodityFileUploadCtrl" class="com.pennanttech.framework.component.dataengine.CommodityFileUploadCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="commodityFileUploadResponce" ref="commodityFileUploadResponce" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>	
+	
+	<bean name="commodityFileUploadResponce" class="com.pennanttech.pff.commodity.webui.CommodityFileUploadResponce">
+		<property name="dataSource" ref="dataSource" />
+		<property name="commoditiesDAO" ref="commoditiesDAO" />
+		<property name="commoditiesService" ref="commoditiesService" />
+		<property name="commodityTypeDAO" ref="commodityTypeDAO" />
+	</bean>
+	
 </beans>
