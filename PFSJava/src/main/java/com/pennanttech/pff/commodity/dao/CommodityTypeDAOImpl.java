@@ -39,11 +39,11 @@ public class CommodityTypeDAOImpl extends SequenceDao<CommodityType> implements 
 		if (type.contains("View")) {
 			sql.append(" ");
 		}
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(" From Commodity_Types");
 		sql.append(type);
-		sql.append(" Where id = :id");
+		sql.append(" Where Id = :id");
 
 		CommodityType commodityTYpe = new CommodityType();
 		commodityTYpe.setId(id);
@@ -67,11 +67,11 @@ public class CommodityTypeDAOImpl extends SequenceDao<CommodityType> implements 
 
 		StringBuilder sql = new StringBuilder("insert into Commodity_Types");
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, Code, Description, UnitType, Active, Version , LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(Id, Code, Description, UnitType, Active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
-		sql.append("(:id, :code, :Description, :UnitType, :Active, :Version , :LastMntBy, :LastMntOn");
-		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append("(:id, :code, :Description, :UnitType, :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
+		sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (commodityType.getId() == Long.MIN_VALUE) {
 			commodityType.setId(getNextValue("SEQCOMMODITY_TYPES"));
@@ -97,8 +97,8 @@ public class CommodityTypeDAOImpl extends SequenceDao<CommodityType> implements 
 		StringBuilder sql = new StringBuilder("Update Commodity_Types");
 		sql.append(tableType.getSuffix());
 
-		sql.append(" set Code = :code, Description = :Description, UnitType = :UnitType");
-		sql.append(", Active = :Active, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(" set Code = :code, Description = :Description, UnitType = :UnitType, Active = :Active");
+		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where Id = :id ");
@@ -122,7 +122,7 @@ public class CommodityTypeDAOImpl extends SequenceDao<CommodityType> implements 
 
 		StringBuilder sql = new StringBuilder("delete from Commodity_Types");
 		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
+		sql.append(" where Id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + sql.toString());

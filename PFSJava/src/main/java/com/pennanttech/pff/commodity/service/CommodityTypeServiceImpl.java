@@ -26,19 +26,15 @@ public class CommodityTypeServiceImpl extends GenericService<CommodityType> impl
 		logger.info(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
-
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-
 		CommodityType commodityType = (CommodityType) auditHeader.getAuditDetail().getModelData();
-
 		TableType tableType = TableType.MAIN_TAB;
 		if (commodityType.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-
 		if (commodityType.isNew()) {
 			commodityType.setId(Long.parseLong(commodityTypeDAO.save(commodityType, tableType)));
 			auditHeader.getAuditDetail().setModelData(commodityType);
@@ -46,7 +42,6 @@ public class CommodityTypeServiceImpl extends GenericService<CommodityType> impl
 		} else {
 			commodityTypeDAO.update(commodityType, tableType);
 		}
-
 		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -65,7 +60,6 @@ public class CommodityTypeServiceImpl extends GenericService<CommodityType> impl
 
 		CommodityType commodityTYpe = (CommodityType) auditHeader.getAuditDetail().getModelData();
 		commodityTypeDAO.delete(commodityTYpe, TableType.MAIN_TAB);
-
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -133,7 +127,6 @@ public class CommodityTypeServiceImpl extends GenericService<CommodityType> impl
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-
 	}
 
 	@Override
@@ -147,10 +140,8 @@ public class CommodityTypeServiceImpl extends GenericService<CommodityType> impl
 		}
 
 		CommodityType commodityType = (CommodityType) auditHeader.getAuditDetail().getModelData();
-
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		commodityTypeDAO.delete(commodityType, TableType.TEMP_TAB);
-
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -182,10 +173,8 @@ public class CommodityTypeServiceImpl extends GenericService<CommodityType> impl
 						commodityType.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_StockCompanyDialogue_CompanyCode.value") + ": " + code;
-
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
