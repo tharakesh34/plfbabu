@@ -10,10 +10,10 @@ public interface CommoditiesDAO extends BasicCrudDao<Commodity> {
 
 	Commodity getCommodities(long id, String type);
 
-	boolean isDuplicateKey(Commodity commodities, TableType tableType);
+	boolean isDuplicateKey(Commodity commodity, TableType tableType);
 
 	void saveCommoditiesLog(MapSqlParameterSource mapdata);
 
-	Commodity getQueryOperation(Commodity commodities);
+	Commodity getQueryOperation(Commodity commodity);
 
 }
