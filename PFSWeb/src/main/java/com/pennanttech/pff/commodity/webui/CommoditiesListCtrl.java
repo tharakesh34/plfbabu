@@ -149,7 +149,7 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCommodityItemDoubleClicked(Event event) {
+	public void onStockCompanyItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
