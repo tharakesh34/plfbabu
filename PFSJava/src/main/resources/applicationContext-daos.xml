@@ -10394,4 +10394,57 @@
 	</bean>
 
 	<bean id="subventionDetailDAO" class="com.pennant.backend.dao.finance.impl.SubventionDetailDAOImpl" parent="basicDao" />
+
+	<!-- Commodity Type -->
+	<bean id="commodityTypeDAO" class="com.pennanttech.pff.commodity.dao.CommodityTypeDAOImpl" parent="sequenceDao" />
+
+	<bean id="commodityTypeService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="commodityTypeServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="commodityTypeServiceTarget" class="com.pennanttech.pff.commodity.service.CommodityTypeServiceImpl">
+		<property name="commodityTypeDAO" ref="commodityTypeDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!-- Commodities -->
+	<bean id="commoditiesDAO" class="com.pennanttech.pff.commodity.dao.CommoditiesDAOImpl" parent="sequenceDao" />
+
+	<bean id="commoditiesService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="commoditiesServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="commoditiesServiceTarget" class="com.pennanttech.pff.commodity.service.CommoditiesServiceImpl">
+		<property name="commoditiesDAO" ref="commoditiesDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
 </beans>
