@@ -97,7 +97,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		setPageComponents(window_CommoditiesDialogue);
 
 		try {
-			this.commodities = (Commodity) arguments.get("commodities");
+			this.commodities = (Commodity) arguments.get("commodity");
 			this.commoditiesListCtrl = (CommoditiesListCtrl) arguments.get("commoditiesListCtrl");
 
 			if (this.commodities == null) {

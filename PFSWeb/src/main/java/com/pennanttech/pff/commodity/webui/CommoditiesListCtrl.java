@@ -41,7 +41,7 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 	protected Listheader listheader_Active;
 
 	// checkRights
-	protected Button button_CommodityTYpeList_NewCommodityType;
+	protected Button button_CommodityTypeList_NewCommodityType;
 	protected Button button_CommodityTypeList_CommodityTypeSearch;
 
 	// Search Fields
@@ -84,7 +84,7 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 		setItemRender(new CommoditiesListModelItemRenderer());
 		// Register buttons and fields.
 		registerButton(button_CommodityTypeList_CommodityTypeSearch);
-		registerButton(button_CommodityTYpeList_NewCommodityType, "button_CommodityTYpeList_NewCommodityType", true);
+		registerButton(button_CommodityTypeList_NewCommodityType, "button_CommodityTYpeList_NewCommodityType", true);
 		registerField("Id");
 		registerField("CommodityTypeCode");
 		registerField("CommodityType");
@@ -128,10 +128,10 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 	public void onClick$button_CommodityTYpeList_NewCommodityType(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		Commodity commodities = new Commodity();
-		commodities.setNewRecord(true);
-		commodities.setWorkflowId(getWorkFlowId());
-		doShowDialogPage(commodities);
+		Commodity commodity = new Commodity();
+		commodity.setNewRecord(true);
+		commodity.setWorkflowId(getWorkFlowId());
+		doShowDialogPage(commodity);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -149,31 +149,31 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onStockCompanyItemDoubleClicked(Event event) {
-		logger.debug("Entering");
+	public void onCommodityItemDoubleClicked(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxCommodities.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
-		Commodity commodities = commoditiesService.getCommodities(id);
+		Commodity commodity = commoditiesService.getCommodities(id);
 
-		if (commodities == null) {
+		if (commodity == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append(commodities.getCommodityType());
+		whereCond.append(commodity.getCommodityType());
 		whereCond.append(" AND  version=");
-		whereCond.append(commodities.getVersion());
+		whereCond.append(commodity.getVersion());
 
-		if (doCheckAuthority(commodities, whereCond.toString())) {
+		if (doCheckAuthority(commodity, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
-			if (isWorkFlowEnabled() && commodities.getWorkflowId() == 0) {
-				commodities.setWorkflowId(getWorkFlowId());
+			if (isWorkFlowEnabled() && commodity.getWorkflowId() == 0) {
+				commodity.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(commodities);
+			doShowDialogPage(commodity);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -187,11 +187,11 @@ public class CommoditiesListCtrl extends GFCBaseListCtrl<Commodity> {
 	 * @param covenanttype
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(Commodity commodities) {
+	private void doShowDialogPage(Commodity commodity) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("commodities", commodities);
+		arg.put("commodity", commodity);
 		arg.put("commoditiesListCtrl", this);
 
 		try {
