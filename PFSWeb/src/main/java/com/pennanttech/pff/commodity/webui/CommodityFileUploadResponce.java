@@ -88,14 +88,14 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table) {
 		try {
-		Commodity commodities = new Commodity();
+		Commodity commodity = new Commodity();
 
-		commodities.setCode((String) record.getValue("Code"));
-		commodities.setHSNCode((String) record.getValue("HSNCode"));
-		commodities.setDescription((String) record.getValue("Description"));
-		commodities.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		commodities.setLastMntBy(userId);
-		commodities.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		commodity.setCode((String) record.getValue("Code"));
+		commodity.setHSNCode((String) record.getValue("HSNCode"));
+		commodity.setDescription((String) record.getValue("Description"));
+		commodity.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		commodity.setLastMntBy(userId);
+		commodity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		Object objCurrentValue = record.getValue("CurrentValue");
 		String strCurrentValue = null;
 		BigDecimal currentValue = BigDecimal.ZERO;
@@ -108,36 +108,36 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 			currentValue = new BigDecimal(strCurrentValue);
 		}
 
-		commodities.setCurrentValue(currentValue);
-		commodities.setUpload(true);
+		commodity.setCurrentValue(currentValue);
+		commodity.setUpload(true);
 		String commodityType = record.getValue("CommodityTypeCode") == null ? ""
 				: record.getValue("CommodityTypeCode").toString();
 		if (mapCommodityTypes.get(commodityType) != null) {
-			commodities.setCommodityType(mapCommodityTypes.get(commodityType));
+			commodity.setCommodityType(mapCommodityTypes.get(commodityType));
 		} else {
 			throw new ConcurrencyException();
 		}
 
-		Commodity Oldcommodity = commoditiesDAO.getQueryOperation(commodities);
+		Commodity Oldcommodity = commoditiesDAO.getQueryOperation(commodity);
 
 		if (Oldcommodity == null) {
-			commodities.setVersion(1);
-			commodities.setNewRecord(true);
-			commodities.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			commodity.setVersion(1);
+			commodity.setNewRecord(true);
+			commodity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		} else {
-			commodities.setId(Oldcommodity.getId());
-			commodities.setVersion(Oldcommodity.getVersion() + 1);
-			commodities.setNewRecord(false);
-			commodities.setRecordType(PennantConstants.TRAN_UPD);
+			commodity.setId(Oldcommodity.getId());
+			commodity.setVersion(Oldcommodity.getVersion() + 1);
+			commodity.setNewRecord(false);
+			commodity.setRecordType(PennantConstants.TRAN_UPD);
 		}
 
-		AuditHeader auditHeader = getAuditHeader(commodities, PennantConstants.TRAN_WF);
+		AuditHeader auditHeader = getAuditHeader(commodity, PennantConstants.TRAN_WF);
 		commoditiesService.doApprove(auditHeader);
 
 		MapSqlParameterSource beforeMapdata = new MapSqlParameterSource();
 		MapSqlParameterSource afterMapdata = new MapSqlParameterSource();
 
-		beforeMapdata.addValue("CommodityId", Oldcommodity == null ? commodities.getId() : Oldcommodity.getId());
+		beforeMapdata.addValue("CommodityId", Oldcommodity == null ? commodity.getId() : Oldcommodity.getId());
 		beforeMapdata.addValue("AuditImage", PennantConstants.TRAN_BEF_IMG);
 		beforeMapdata.addValue("CurrentValue", Oldcommodity == null ? 0 : Oldcommodity.getCurrentValue());
 		beforeMapdata.addValue("BatchId", attributes.getStatus().getId());
@@ -146,14 +146,14 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 		if (Oldcommodity == null) {
 			commoditiesDAO.saveCommoditiesLog(beforeMapdata);
 		} else {
-			if (Oldcommodity.getCurrentValue().compareTo(commodities.getCurrentValue()) != 0) {
+			if (Oldcommodity.getCurrentValue().compareTo(commodity.getCurrentValue()) != 0) {
 				commoditiesDAO.saveCommoditiesLog(beforeMapdata);
 			}
 		}
 
 		afterMapdata = beforeMapdata;
 		afterMapdata.addValue("AuditImage", PennantConstants.TRAN_AFT_IMG);
-		afterMapdata.addValue("CurrentValue", commodities.getCurrentValue());
+		afterMapdata.addValue("CurrentValue", commodity.getCurrentValue());
 		commoditiesDAO.saveCommoditiesLog(afterMapdata);
 		} catch(Exception e)
 		{
