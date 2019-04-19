@@ -278,20 +278,24 @@ public class AdvancePaymentUtil {
 		if (grcAdvType != null) {
 			// calculate grace advance interest
 			advanceType = AdvanceType.getType(grcAdvType);
-			terms = fm.getGrcAdvTerms();
-			terms = getTerms(advanceType, terms);
 
-			graceAdvPayment = getGraceAdvPayment(schedules, terms, gracePeriodEndDate);
+			if (advanceType != null) {
+				terms = fm.getGrcAdvTerms();
+				terms = getTerms(advanceType, terms);
+				graceAdvPayment = getGraceAdvPayment(schedules, terms, gracePeriodEndDate);
+			}
 		}
 
 		if (repayAdvType != null) {
 			// calculate repayments advance interest/EMI
-
 			advanceType = AdvanceType.getType(repayAdvType);
-			terms = fm.getAdvTerms();
-			terms = getTerms(advanceType, terms);
 
-			repayAdvPayment = getRepayAdvPayment(schedules, terms, gracePeriodEndDate, advanceType);
+			if (advanceType != null) {
+				terms = fm.getAdvTerms();
+				terms = getTerms(advanceType, terms);
+				repayAdvPayment = getRepayAdvPayment(schedules, terms, gracePeriodEndDate, advanceType);
+			}
+
 		}
 
 		advancePayment = advancePayment.add(graceAdvPayment).add(repayAdvPayment);
