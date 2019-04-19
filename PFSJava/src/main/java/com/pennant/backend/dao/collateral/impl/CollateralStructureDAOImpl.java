@@ -90,18 +90,16 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		MapSqlParameterSource source = null;
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(
-				" SELECT  CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq,");
-		sql.append(
-				" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver,PostValidation,PreValidation, Active,");
-		sql.append(" Fields, ActualBlock, SQLRule, ");
+		sql.append(" SELECT  CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities ");
+		sql.append(", PreValidationReq, PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks");
+		sql.append(", AllowLtvWaiver, MaxLtvWaiver,PostValidation,PreValidation, Active, Fields, ActualBlock, SQLRule");
+		sql.append(", ");
 		if (type.contains("View")) {
 			sql.append("QueryCode, QuerySubCode, ");
 		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", ValuationFrequency, nextValuationDate, valuationPending, QueryId ");
-		sql.append(" From CollateralStructure");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId, ValuationFrequency, NextValuationDate, ValuationPending, QueryId");
+		sql.append(", ThresholdLtvPercentage, CommodityId From CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralType = :CollateralType");
 		logger.debug("SelectSql: " + sql.toString());
@@ -176,22 +174,19 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq,");
-		sql.append(
-				" PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver, MaxLtvWaiver, PostValidation, PreValidation, Active,");
-		sql.append(" Fields, ActualBlock, SQLRule, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", ValuationFrequency, NextValuationDate, ValuationPending, QueryId)");
+		sql.append(" (CollateralType, CollateralDesc, LtvType, LtvPercentage, MarketableSecurities, PreValidationReq");
+		sql.append(", PostValidationReq, CollateralLocReq, CollateralValuatorReq, Remarks, AllowLtvWaiver");
+		sql.append(", MaxLtvWaiver, PostValidation, PreValidation, Active, Fields, ActualBlock, SQLRule, Version");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
+		sql.append(", WorkflowId, ValuationFrequency, NextValuationDate, ValuationPending, QueryId");
+		sql.append(", ThresholdLtvPercentage, CommodityId)");
 		sql.append(" Values(");
-		sql.append(
-				" :CollateralType, :CollateralDesc, :LtvType, :LtvPercentage, :MarketableSecurities, :PreValidationReq,");
-		sql.append(
-				" :PostValidationReq, :CollateralLocReq, :CollateralValuatorReq, :Remarks, :AllowLtvWaiver, :MaxLtvWaiver, :PostValidation, :PreValidation, :Active,");
-		sql.append(" :Fields, :ActualBlock, :SQLRule, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
-		sql.append(", :ValuationFrequency, :NextValuationDate, :ValuationPending, :QueryId)");
+		sql.append(" :CollateralType, :CollateralDesc, :LtvType, :LtvPercentage, :MarketableSecurities");
+		sql.append(", :PreValidationReq, :PostValidationReq, :CollateralLocReq, :CollateralValuatorReq, :Remarks");
+		sql.append(", :AllowLtvWaiver, :MaxLtvWaiver, :PostValidation, :PreValidation, :Active, :Fields, :ActualBlock");
+		sql.append(", :SQLRule,  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
+		sql.append(", :NextTaskId, :RecordType, :WorkflowId, :ValuationFrequency, :NextValuationDate");
+		sql.append(", :ValuationPending, :QueryId, :thresholdLtvPercentage, :commodityId)");
 
 		logger.debug("InsertSql: " + sql.toString());
 
@@ -220,20 +215,19 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 
 		StringBuilder sql = new StringBuilder("Update CollateralStructure");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set collateralDesc = :collateralDesc, ltvType = :ltvType,");
-		sql.append(
-				" ltvPercentage = :ltvPercentage, marketableSecurities = :marketableSecurities, preValidationReq = :preValidationReq,");
-		sql.append(
-				" postValidationReq = :postValidationReq, collateralLocReq = :collateralLocReq, collateralValuatorReq = :collateralValuatorReq,");
-		sql.append(
-				" remarks = :remarks, allowLtvWaiver = :allowLtvWaiver, maxLtvWaiver = :maxLtvWaiver,PostValidation = :PostValidation,PreValidation = :PreValidation, Active = :Active, ");
-		sql.append(" Fields = :Fields, ActualBlock = :ActualBlock, SQLRule = :SQLRule, ");
-		sql.append(
-				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(
-				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(
-				" , ValuationFrequency = :ValuationFrequency, NextValuationDate = :NextValuationDate, ValuationPending = :ValuationPending, QueryId = :QueryId ");
+		sql.append(" Set CollateralDesc = :collateralDesc, LtvType = :ltvType, LtvPercentage = :ltvPercentage");
+		sql.append(", MarketableSecurities = :marketableSecurities, PreValidationReq = :preValidationReq");
+		sql.append(", PostValidationReq = :postValidationReq, CollateralLocReq = :collateralLocReq");
+		sql.append(", CollateralValuatorReq = :collateralValuatorReq, Remarks = :remarks");
+		sql.append(", AllowLtvWaiver = :allowLtvWaiver, MaxLtvWaiver = :maxLtvWaiver");
+		sql.append(", PostValidation = :PostValidation, PreValidation = :PreValidation, Active = :Active");
+		sql.append(", Fields = :Fields, ActualBlock = :ActualBlock, SQLRule = :SQLRule, Version = :Version");
+		sql.append(", LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus");
+		sql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId, ValuationFrequency = :ValuationFrequency");
+		sql.append(", NextValuationDate = :NextValuationDate, ValuationPending = :ValuationPending");
+		sql.append(", QueryId = :QueryId, ThresholdLtvPercentage = :thresholdLtvPercentage");
+		sql.append(", CommodityId = :commodityId ");
 		sql.append(" Where CollateralType = :CollateralType");
 
 		logger.debug("Sql: " + sql.toString());
