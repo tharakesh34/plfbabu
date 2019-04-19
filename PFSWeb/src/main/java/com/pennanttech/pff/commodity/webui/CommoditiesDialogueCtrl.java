@@ -108,8 +108,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			BeanUtils.copyProperties(this.commodity, acommodities);
 			this.commodity.setBefImage(acommodities);
 
-			doLoadWorkFlow(this.commodity.isWorkflow(), this.commodity.getWorkflowId(),
-					this.commodity.getNextTaskId());
+			doLoadWorkFlow(this.commodity.isWorkflow(), this.commodity.getWorkflowId(), this.commodity.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
@@ -134,7 +133,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		setStatusDetails();
 		this.type.setMandatoryStyle(true);
 		this.type.setModuleName("CommodityType");
@@ -142,10 +141,10 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		this.type.setDescColumn("Description");
 		this.type.setValueType(DataType.LONG);
 		this.type.setValidateColumns(new String[] { "Id", "Code", "Description" });
-		
+
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		this.currentValue.setProperties(false, formatter);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -254,9 +253,9 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		
+
 		commoditiesListCtrl.search();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -436,7 +435,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			this.currentValue.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value"), 2, false, false));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -576,11 +575,11 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.type.setValue("");
 		this.description.setValue("");
 		this.active.setChecked(false);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -589,7 +588,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		
+
 		final Commodity acommodity = new Commodity();
 		BeanUtils.copyProperties(this.commodity, acommodity);
 
@@ -626,7 +625,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -644,7 +643,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	 */
 	private boolean doProcess(Commodity acommodity, String tranType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -711,7 +710,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return processCompleted;
 	}
 
@@ -728,7 +727,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		Commodity aCovenantType = (Commodity) auditHeader.getAuditDetail().getModelData();
@@ -781,7 +780,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return processCompleted;
 	}
 
@@ -799,15 +798,15 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 	public void onFulfill$type(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		onChangeCommodityType();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChangeCommodityType() {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isBlank(this.type.getValue())) {
 			clearOnChangeCommodityData();
 			return;
@@ -822,36 +821,36 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		search.addFilterEqual("Id", commodityTypeObject.getId());
 
 		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
-		commodityTypeObject = (CommodityType) searchProcessor.getResults(search).get(0);
-
 		clearOnChangeCommodityData();
+		if (searchProcessor.getResults(search).size() > 0) {
+			commodityTypeObject = (CommodityType) searchProcessor.getResults(search).get(0);
+			commodityTypeDetails(commodityTypeObject);
+		}
 
-		commodityTypeDetails(commodityTypeObject);
-		
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void clearOnChangeCommodityData() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.type.setValue("");
 		this.description.setText("");
 		this.active.setChecked(false);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void commodityTypeDetails(CommodityType commodityType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.type.setValue(commodityType.getCode());
 		this.type.setDescription(commodityType.getDescription());
 		this.description.setText(commodityType.getDescription());
 		this.active.setChecked(commodityType.isActive());
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void setCommoditiesService(CommoditiesService commoditiesService) {
 		this.commoditiesService = commoditiesService;
 	}
