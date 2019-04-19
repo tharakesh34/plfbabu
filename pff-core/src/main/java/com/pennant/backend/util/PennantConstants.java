@@ -848,4 +848,6 @@ public class PennantConstants {
 	public static final String FLEXI_DROPLINE = "D";
 	public static final String FLEXI_HYBRID = "H";
 	public static final String TERM_LOAN = "TL";
+	public static final String COLLATERAL_VALUE_UPDATE = "COLLETARAL_VALUE_UPDATE";
+
 }
