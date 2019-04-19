@@ -17,6 +17,7 @@ import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
@@ -24,6 +25,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -46,6 +48,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
 
 	/**
 	 * @param custId
@@ -202,38 +205,38 @@ public class AdvancePaymentService extends ServiceHelper {
 		long excessID = excessAmountMovement(finReference, finBranch, adviceType, amount, receiptType);
 
 		// Receipt Header
-		FinReceiptHeader rh = new FinReceiptHeader();
-		rh.setReference(finReference);
-		rh.setReceiptDate(DateUtility.getAppValueDate());
-		rh.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		rh.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		rh.setReceiptPurpose(FinanceConstants.FINSER_EVENT_ADDDISB);
-		rh.setExcessAdjustTo(PennantConstants.List_Select);
-		rh.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		rh.setReceiptAmount(amount);
-		rh.setEffectSchdMethod(PennantConstants.List_Select);
-		rh.setReceiptMode(RepayConstants.RECEIPTMODE_EMIINADV);
-		rh.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
-		rh.setLogSchInPresentment(false);
-		rh.setPostBranch(finBranch);
-		rh.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		FinReceiptHeader rch = new FinReceiptHeader();
+		rch.setReference(finReference);
+		rch.setReceiptDate(DateUtility.getAppValueDate());
+		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		rch.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
+		rch.setExcessAdjustTo(PennantConstants.List_Select);
+		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO); // FIXME Check with Pradeep
+		rch.setReceiptAmount(amount);
+		rch.setEffectSchdMethod(PennantConstants.List_Select);
+		rch.setReceiptMode(RepayConstants.RECEIPTMODE_EMIINADV); // FIXME Check with Pradeep
+		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		rch.setLogSchInPresentment(false);
+		rch.setPostBranch(finBranch);
+		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
-		finReceiptHeaderDAO.save(rh, TableType.MAIN_TAB);
+		finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 
 		// Receipt Details
-		FinReceiptDetail rd = new FinReceiptDetail();
-		rd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		rd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		rd.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
-		rd.setPayAgainstID(excessID);
-		rd.setAmount(amount);
-		rd.setDueAmount(BigDecimal.ZERO);
-		rd.setValueDate(DateUtility.getAppValueDate());
-		rd.setReceivedDate(DateUtility.getAppValueDate());
-		rd.setPartnerBankAc(null);
-		rd.setPartnerBankAcType(null);
+		FinReceiptDetail rcd = new FinReceiptDetail();
+		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		rcd.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV); // FIXME Check with Pradeep
+		rcd.setPayAgainstID(excessID);
+		rcd.setAmount(amount);
+		rcd.setDueAmount(BigDecimal.ZERO);
+		rcd.setValueDate(DateUtility.getAppValueDate());
+		rcd.setReceivedDate(DateUtility.getAppValueDate());
+		rcd.setPartnerBankAc(null);
+		rcd.setPartnerBankAcType(null);
 
-		finReceiptDetailDAO.save(rd, TableType.MAIN_TAB);
+		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
 		// Receipt Allocation
 		List<ReceiptAllocationDetail> allocations = new ArrayList<>();
@@ -253,6 +256,17 @@ public class AdvancePaymentService extends ServiceHelper {
 		allocations.add(allocation);
 
 		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
+
+		FinRepayHeader rph = new FinRepayHeader();
+		rph.setFinReference(rch.getReference());
+		rph.setValueDate(rch.getValueDate());
+		rph.setFinEvent(rch.getReceiptPurpose());
+		rph.setRepayAmount(rcd.getAmount());
+		rph.setExcessAmount(rcd.getAmount());
+		rcd.setRepayHeader(rph);
+
+		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB.name());
+
 	}
 
 	@Autowired
@@ -268,6 +282,11 @@ public class AdvancePaymentService extends ServiceHelper {
 	@Autowired
 	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
 		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 }

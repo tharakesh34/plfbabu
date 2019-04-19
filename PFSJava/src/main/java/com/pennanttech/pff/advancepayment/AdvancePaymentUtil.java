@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -257,82 +256,52 @@ public class AdvancePaymentUtil {
 	}
 
 	public static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
-		if (fee.getFeeTypeCode().equals(AdvanceRuleCode.ADVINT.name())) {
-			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVINT,"GRACE");
-		}
-		if (fee.getFeeTypeCode().equals(AdvanceRuleCode.ADVEMI.name())) {
-			setAdvancePayment(finScheduleData, fee, AdvanceRuleCode.ADVEMI,"REPAY");
-		}
-	}
 
-	private static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee,
-			AdvanceRuleCode advanceRuleCode,String type) {
-		String finTypeCode = fee.getFeeTypeCode();
-		String finEvent = fee.getFinEvent();
+		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+
+		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT || advanceRule != AdvanceRuleCode.ADVEMI)) {
+			return;
+		}
 
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
 		String grcAdvType = fm.getGrcAdvType();
-		int grcTerms = fm.getGrcAdvTerms();
-		String advType = fm.getAdvType();
-		int advTerms = fm.getAdvTerms();
-
-		if ((grcAdvType == null && advType == null) || !(advanceRuleCode.name().equals(finTypeCode))) {
-			return;
-		}
-
-		AdvanceType advanceType = AdvanceType.getType(advType);
-		AdvanceType grcadvanceType = AdvanceType.getType(grcAdvType);
-
-		if (advanceType == null && grcadvanceType == null) {
-			return;
-		}
-
-		BigDecimal advanceIntrest = BigDecimal.ZERO;
-//		BigDecimal graceAdvanceIntrest = BigDecimal.ZERO;
-//		BigDecimal repayAdvanceIntrest = BigDecimal.ZERO;
-
+		String repayAdvType = fm.getAdvType();
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
-		if (fm.getGrcAdvType() != null) {
-			advanceIntrest = getAdvanceInterst(type, grcTerms, gracePeriodEndDate, grcadvanceType, schedules);
+
+		AdvanceType advanceType;
+		int terms = 0;
+		BigDecimal advancePayment = BigDecimal.ZERO;
+		BigDecimal graceAdvPayment = BigDecimal.ZERO;
+		BigDecimal repayAdvPayment = BigDecimal.ZERO;
+
+		if (grcAdvType != null) {
+			// calculate grace advance interest
+			advanceType = AdvanceType.getType(grcAdvType);
+			terms = fm.getGrcAdvTerms();
+			terms = getTerms(advanceType, terms);
+
+			graceAdvPayment = getGraceAdvPayment(schedules, terms, gracePeriodEndDate);
 		}
 
-		if (fm.getAdvType() != null) {
-			advanceIntrest = getAdvanceInterst(type, advTerms, gracePeriodEndDate, advanceType, schedules);
+		if (repayAdvType != null) {
+			// calculate repayments advance interest/EMI
+
+			advanceType = AdvanceType.getType(repayAdvType);
+			terms = fm.getAdvTerms();
+			terms = getTerms(advanceType, terms);
+
+			repayAdvPayment = getRepayAdvPayment(schedules, terms, gracePeriodEndDate, advanceType);
 		}
 
-		/*
-		 * if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) { if (advanceRuleCode == AdvanceRuleCode.ADVINT)
-		 * { advanceIntrest = advanceIntrest.subtract(fm.getTotalGrossPft()); } else if (advanceRuleCode ==
-		 * AdvanceRuleCode.ADVEMI) { advanceIntrest =
-		 * advanceIntrest.subtract(fm.getTotalProfit().add(fm.getTotalPriAmt())); } }
-		 */
+		advancePayment = advancePayment.add(graceAdvPayment).add(repayAdvPayment);
 
-		// FIXME MUR>> Need to validate Frequency and Number of Terms
-		if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
-			advanceIntrest = finScheduleData.getPftChg();
-//			graceAdvanceIntrest = BigDecimal.ZERO;
-//			repayAdvanceIntrest = BigDecimal.ZERO;
-		}
-
-		//advanceIntrest = advanceIntrest.add(graceAdvanceIntrest).add(repayAdvanceIntrest);
-
-		fee.setActualAmount(advanceIntrest);
-		fee.setCalculatedAmount(advanceIntrest);
-		fee.setActualAmountOriginal(advanceIntrest);
-
-		// FIXME MUR>> Need to validate Frequency and Number of Terms
-		//fm.setAdvanceEMI(advanceIntrest);
+		fee.setActualAmount(advancePayment);
+		fee.setCalculatedAmount(advancePayment);
+		fee.setActualAmountOriginal(advancePayment);
 	}
 
-	private static BigDecimal getAdvanceInterst(String type, int terms, Date gracePeriodEndDate,
-			AdvanceType advanceType, List<FinanceScheduleDetail> schedules) {
-
-		if (advanceType == null) {
-			return BigDecimal.ZERO;
-		}
-
-		BigDecimal advanceProfit;
+	private static int getTerms(AdvanceType advanceType, int terms) {
 		switch (advanceType) {
 		case UF:
 			terms = -1;
@@ -347,12 +316,34 @@ public class AdvancePaymentUtil {
 			break;
 		}
 
-		advanceProfit = getAdvanceProfit(advanceType, type, terms, gracePeriodEndDate, schedules);
+		return terms;
+	}
+
+	private static BigDecimal getGraceAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
+			Date gracePeriodEndDate) {
+		BigDecimal advanceProfit = BigDecimal.ZERO;
+
+		int term = 0;
+		for (FinanceScheduleDetail sd : schedules) {
+			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
+				Date schDate = sd.getSchDate();
+				BigDecimal profitSchd = sd.getProfitSchd();
+				if (schDate.compareTo(gracePeriodEndDate) <= 0) {
+					advanceProfit = advanceProfit.add(profitSchd);
+					term++;
+				}
+			}
+
+			if (term == terms) {
+				break;
+			}
+		}
+
 		return advanceProfit;
 	}
 
-	private static BigDecimal getAdvanceProfit(AdvanceType advanceType, String type, int terms, Date gracePeriodEndDate,
-			List<FinanceScheduleDetail> schedules) {
+	private static BigDecimal getRepayAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
+			Date gracePeriodEndDate, AdvanceType advanceType) {
 		BigDecimal advanceProfit = BigDecimal.ZERO;
 
 		int term = 0;
@@ -361,12 +352,7 @@ public class AdvancePaymentUtil {
 			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
 				Date schDate = sd.getSchDate();
 				BigDecimal profitSchd = sd.getProfitSchd();
-				if (schDate.compareTo(gracePeriodEndDate) <= 0 && "GRACE".equals(type)) {
-					advanceProfit = advanceProfit.add(profitSchd);
-					term++;
-				}
-
-				if (schDate.compareTo(gracePeriodEndDate) > 0 && "REPAY".equals(type)) {
+				if (schDate.compareTo(gracePeriodEndDate) > 0) {
 					if (advanceType == AdvanceType.AE) {
 						BigDecimal principalSchd = sd.getPrincipalSchd();
 						advanceProfit = advanceProfit.add(profitSchd).add(principalSchd);
