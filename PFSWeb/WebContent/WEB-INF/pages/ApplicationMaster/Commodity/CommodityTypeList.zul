@@ -15,23 +15,23 @@
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
 						<button id="button_CommodityTypeList_CommodityTypeSearch" label="${c:l('label_Filter')}"
-							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTYpeList_NewCommodityType,btnRefresh,help"
+							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTypeList_NewCommodityType,btnRefresh,help"
 							tooltiptext="${c:l('button_CommodityTypeList_CommodityTypeSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
-							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTYpeList_NewCommodityType,btnRefresh,help"
+							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTypeList_NewCommodityType,btnRefresh,help"
 							tooltiptext="${c:l('button_CommodityTypeList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="button_CommodityTYpeList_NewCommodityType" label="${c:l('label_New')}"
-							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTYpeList_NewCommodityType,btnRefresh,help"
-							tooltiptext="${c:l('button_CommodityTYpeList_NewCommodityType.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="button_CommodityTypeList_NewCommodityType" label="${c:l('label_New')}"
+							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTypeList_NewCommodityType,btnRefresh,help"
+							tooltiptext="${c:l('button_CommodityTypeList_NewCommodityType.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
-							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTYpeList_NewCommodityType,btnRefresh,help"
+							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTypeList_NewCommodityType,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="help" label="${c:l('label_Help')}" visible="false"
-							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTYpeList_NewCommodityType,btnRefresh,help"
+							autodisable="button_CommodityTypeList_CommodityTypeSearch,print,button_CommodityTypeList_NewCommodityType,btnRefresh,help"
 							tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>

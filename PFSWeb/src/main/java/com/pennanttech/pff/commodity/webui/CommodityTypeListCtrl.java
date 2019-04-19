@@ -42,7 +42,7 @@ public class CommodityTypeListCtrl extends GFCBaseListCtrl<CommodityType> {
 	protected Listheader listheader_Active;
 
 	// checkRights
-	protected Button button_CommodityTYpeList_NewCommodityType;
+	protected Button button_CommodityTypeList_NewCommodityType;
 	protected Button button_CommodityTypeList_CommodityTypeSearch;
 
 	// Search Fields
@@ -85,7 +85,7 @@ public class CommodityTypeListCtrl extends GFCBaseListCtrl<CommodityType> {
 		setItemRender(new CommodityTypeListModelItemRenderer());
 		fillList(unitType, AppStaticList.getCommodityUnitTypes(), null);
 		registerButton(button_CommodityTypeList_CommodityTypeSearch);
-		registerButton(button_CommodityTYpeList_NewCommodityType, "button_CommodityTYpeList_NewCommodityType", true);
+		registerButton(button_CommodityTypeList_NewCommodityType, "button_CommodityTypeList_NewCommodityType", true);
 		registerField("id");
 		registerField("Code", listheader_CommodityType, SortOrder.NONE, commodityType, sortOperator_CommodityType,
 				Operators.STRING);
@@ -124,7 +124,7 @@ public class CommodityTypeListCtrl extends GFCBaseListCtrl<CommodityType> {
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$button_CommodityTYpeList_NewCommodityType(Event event) {
+	public void onClick$button_CommodityTypeList_NewCommodityType(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		CommodityType commodityType = new CommodityType();
