@@ -2128,5 +2128,13 @@
 			</sql>
 	</changeSet>
 	
+	<changeSet id="15" author="vijaya.a">
+		<sql>
+		<![CDATA[
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_Collateral_Values_Upload','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+		]]>
+		</sql>
+	</changeSet>
+	
 	<!--Commodity and LAS Changes -->
 </databaseChangeLog>
