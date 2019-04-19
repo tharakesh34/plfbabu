@@ -127,6 +127,9 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 	private long queryId;
 	private String queryCode;
 	private String querySubCode;
+	@XmlElement(name = "thresholdLtvPerc")
+	private BigDecimal thresholdLtvPercentage;
+	private Long commodityId;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -430,4 +433,19 @@ public class CollateralStructure extends AbstractWorkflowEntity {
 		this.querySubCode = querySubCode;
 	}
 
+	public BigDecimal getThresholdLtvPercentage() {
+		return thresholdLtvPercentage;
+	}
+
+	public void setThresholdLtvPercentage(BigDecimal thresholdLtvPercentage) {
+		this.thresholdLtvPercentage = thresholdLtvPercentage;
+	}
+
+	public Long getCommodityId() {
+		return commodityId;
+	}
+
+	public void setCommodityId(Long commodityId) {
+		this.commodityId = commodityId;
+	}
 }
