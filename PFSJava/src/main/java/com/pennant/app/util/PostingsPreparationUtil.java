@@ -714,10 +714,10 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference) {
+	public List<ReturnDataSet> postReveralsByFinreference(String finReference, boolean imdFeeReversalReq) {
 		logger.debug("Entering");
 
-		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finReference);
+		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finReference, imdFeeReversalReq);
 
 		getPostingsDAO().updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
 
@@ -824,11 +824,12 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> getReveralsByFinreference(String finReference) {
+	public List<ReturnDataSet> getReveralsByFinreference(String finReference, boolean imdFeeReversalReq) {
 		logger.debug("Entering");
 
 		long newLinkedTranID = getPostingsDAO().getLinkedTransId();
-		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByFinRef(finReference, false);
+		List<ReturnDataSet> returnDataSets = getPostingsDAO().getPostingsByFinRef(finReference, false,
+				imdFeeReversalReq);
 
 		getEngineExecution().getReversePostings(returnDataSets, newLinkedTranID);
 

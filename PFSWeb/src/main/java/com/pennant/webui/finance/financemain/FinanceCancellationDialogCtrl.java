@@ -1527,7 +1527,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil
-					.getReveralsByFinreference(finMain.getFinReference());
+					.getReveralsByFinreference(finMain.getFinReference(), true);
 
 			getFinanceDetail().setReturnDataSetList(accountingSetEntries);
 			if (getAccountingDetailDialogCtrl() != null) {

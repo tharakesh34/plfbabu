@@ -59,6 +59,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
@@ -498,7 +499,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	 */
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals) {
+	public List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals,
+			boolean imdFeeReversalReq) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -516,11 +518,12 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(
 				" T1.PostToSys, T1.ExchangeRate, T1.PostBranch, T1.AppDate, T1.AppValueDate, T1.UserBranch, T1.AccountType ");
 		selectSql.append(" FROM Postings T1");
-		//FIX version 1.0
-		//selectSql.append(" Left join Accounts T2 on Accountid = Account ");
 		selectSql.append(" Where FinReference =:FinReference and PostStatus = :PostStatus");
 		if (!reqReversals) {
 			selectSql.append(" and OldLinkedTranID = 0 ");
+		}
+		if (imdFeeReversalReq && !ImplementationConstants.UPFRONT_FEE_REVERSAL_REQ) {
+			selectSql.append(" and T1.FinEvent != 'FEEPAY' ");
 		}
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");
 

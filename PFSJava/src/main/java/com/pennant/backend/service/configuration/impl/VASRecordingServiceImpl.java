@@ -1773,7 +1773,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			postingsPreparationUtil.postAccounting(aeEvent);
 
 		} else if (StringUtils.equals(VASConsatnts.STATUS_CANCEL, vASRecording.getVasStatus())) {
-			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference());
+			postingsPreparationUtil.postReveralsByFinreference(vASRecording.getVasReference(), false);
 		}
 
 		logger.debug("Leaving");

@@ -200,4 +200,7 @@ public class ImplementationConstants {
 	//GST Invoice Due basis/Receipt Basis
 	public static final boolean INVOICE_ADDRESS_ENTITY_BASIS = false; //Service Provider address should be on Entity basis
 
+	//Upfront Fee reversal required on loan cancellation
+	public static final boolean UPFRONT_FEE_REVERSAL_REQ = true;
+
 }

@@ -271,7 +271,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		if (!financeMain.isWorkflow()) {
 			if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
 				//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
-				getPostingsPreparationUtil().postReveralsByFinreference(finReference);
+				getPostingsPreparationUtil().postReveralsByFinreference(finReference, true);
 				logger.debug("Reverse Transaction Success for Reference : " + finReference);
 			} else {
 				//Event Based Accounting on Final Stage
@@ -458,38 +458,25 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		//Finance Cancellation Posting Process Execution
 		//=====================================
-		if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
-			//Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on Reversal
-			List<Long> tranIdlIst = getPostingsDAO().getLinkTranIdByRef(finReference);
-			if (tranIdlIst != null) {
-				for (Long linkedTranID : tranIdlIst) {
-					getPostingsPreparationUtil().postReversalsByLinkedTranID(linkedTranID);
-					logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranID);
-				}
+		//Event Based Accounting on Final Stage
+		getPostingsPreparationUtil().postReveralsByFinreference(finReference, true);
+		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+			return auditHeader;
+		}
+
+		// Finance Commitment Reference Posting Details
+		Commitment commitment = null;
+		if (StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
+			commitment = getCommitmentDAO().getCommitmentById(financeMain.getFinCommitmentRef().trim(), "");
+
+			BigDecimal cmtUtlAmt = CalculationUtil.getConvertedAmount(financeMain.getFinCcy(), commitment.getCmtCcy(),
+					financeMain.getFinAmount());
+			getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), cmtUtlAmt.negate(),
+					commitment.getCmtExpDate());
+			CommitmentMovement cmtMovement = prepareCommitMovement(commitment, financeMain, cmtUtlAmt, 0);
+			if (cmtMovement != null) {
+				getCommitmentMovementDAO().save(cmtMovement, "");
 			}
-
-			// Finance Commitment Reference Posting Details
-			Commitment commitment = null;
-			if (StringUtils.isNotBlank(financeMain.getFinCommitmentRef())) {
-				commitment = getCommitmentDAO().getCommitmentById(financeMain.getFinCommitmentRef().trim(), "");
-
-				BigDecimal cmtUtlAmt = CalculationUtil.getConvertedAmount(financeMain.getFinCcy(),
-						commitment.getCmtCcy(), financeMain.getFinAmount());
-				getCommitmentDAO().updateCommitmentAmounts(commitment.getCmtReference(), cmtUtlAmt.negate(),
-						commitment.getCmtExpDate());
-				CommitmentMovement cmtMovement = prepareCommitMovement(commitment, financeMain, cmtUtlAmt, 0);
-				if (cmtMovement != null) {
-					getCommitmentMovementDAO().save(cmtMovement, "");
-				}
-			}
-		} else {
-
-			//Event Based Accounting on Final Stage
-			getPostingsPreparationUtil().postReveralsByFinreference(finReference);
-			if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-				return auditHeader;
-			}
-
 		}
 
 		//Cancelling IMD receipts

@@ -85,7 +85,7 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsByVasref(String finReference, String finEvent);
 
-	List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals);
+	List<ReturnDataSet> getPostingsByFinRef(String finReference, boolean reqReversals, boolean imdFeeReversalReq);
 
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 

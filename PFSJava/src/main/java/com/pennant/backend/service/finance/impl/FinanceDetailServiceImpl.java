@@ -5933,7 +5933,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		cancelStageAccounting(financeMain.getFinReference(), financeDetail.getModuleDefiner());
 
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
-			getPostingsPreparationUtil().postReveralsByFinreference(financeMain.getFinReference());
+			getPostingsPreparationUtil().postReveralsByFinreference(financeMain.getFinReference(), true);
 		}
 
 		// Save Finance Details Data on Reject Tables
