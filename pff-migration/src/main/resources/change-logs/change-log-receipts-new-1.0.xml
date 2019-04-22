@@ -4276,6 +4276,50 @@
 
 	<!-- <changeSet id="54.2" author="satyanarayana.g"> <addForeignKeyConstraint constraintName="FK_FEM_RID_FRH_RID" referencedTableName="FINRECEIPTHEADER" 
 		baseColumnNames="ReceiptID" baseTableName="FinExcessMovement" referencedColumnNames="ReceiptID"/> </changeSet> -->
-
+		
+	<changeSet id="55" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+		 Delete from SecGroupRights where RightID IN (select RightID from SecRights where RightName = 'menuItem_Receipts_ClosureMaker');
+		 Delete from SecGroupRights where RightID IN (select RightID from SecRights where RightName = 'menuItem_Receipts_ClosureApprover');
+		 
+		 Delete from SecRights where RightName = 'menuItem_Receipts_ClosureMaker';
+		 Delete from SecRights where RightName = 'menuItem_Receipts_ClosureApprover';
+		 
+	     Insert into SecRights values(  (select max(rightID)+1 from SecRights), 0, 'menuItem_Receipts_ClosureMaker', 'MENU', 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0) ;
+	     Insert into SecRights values(  (select max(rightID)+1 from SecRights), 0, 'menuItem_Receipts_ClosureApprover', 'MENU', 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+	
+	     Insert into SecGroupRights Values( (select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CLOSURE_RECEIPT_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Receipts_ClosureMaker'), 1, 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+	     Insert into SecGroupRights Values( (select max(GrpRightID)+1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CLOSURE_RECEIPT_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_Receipts_ClosureApprover'), 1, 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+	     	]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="56" author="satyanarayana.g">
+		<createTable tableName="MultiReceiptApproval">
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptModeStatus" type="varchar(3)"/>
+			<column name="Stage" type="varchar(3)"/>
+			<column name="ReceiptDate" type="datetime" />
+			<column name="DepositDate" type="datetime" />
+			<column name="DepositNo" type="varchar(50)" />
+			<column name="FundingAc" type="bigint" />
+			<column name="BounceId" type="bigint" />
+			<column name="BounceDate" type="datetime" />
+			<column name="CancelReason" type="varchar(8)" />
+			<column name="RealizationDate" type="datetime" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="UploadStatus" type="varchar(8)" />
+			<column name="Reason" type="varchar(200)" />
+		</createTable>
+	</changeSet>
 
 </databaseChangeLog>
