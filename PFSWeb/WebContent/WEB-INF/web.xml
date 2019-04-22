@@ -61,6 +61,7 @@
 	<filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>com.pennanttech.pennapps.web.security.filter.CORSFilter</filter-class>
+		<async-supported>true</async-supported>
 	</filter>
 
 	<filter-mapping>
