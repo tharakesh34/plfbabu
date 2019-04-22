@@ -77,8 +77,7 @@
 								<row>
 									<label value="${c:l('label_CommoditiesDialogue_CurrentValue.value')}" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<currencyBox id="currentValue" width="160px" />
+										<currencyBox id="currentValue" />
 									</hbox>
 									<label value="${c:l('label_CommoditiesDialogue_HSNCode.value')}" />
 									<hbox>
