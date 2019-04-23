@@ -58,6 +58,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -950,7 +951,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		aeEvent.getDataMap().put("rd_amount", amount);
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_RECIP,
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountEventConstants.ACCEVENT_RECIP,
 				AccountEventConstants.ACCEVENT_RECIP);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -4543,6 +4544,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	@Override
 	public FinReceiptData recalEarlyPaySchedule(FinReceiptData receiptData) {
+		String entityDesc = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getEntityDesc();
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinanceDetail fd = receiptData.getFinanceDetail();
 		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(rch.getReceiptPurpose());
@@ -4576,6 +4578,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				null, repayMain.getEarlyPayAmount(), method);
 
 		receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+		receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setEntityDesc(entityDesc);
 		return receiptData;
 	}
 
@@ -5500,38 +5503,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.subventionDetailDAO = subventionDetailDAO;
 	}
 
-	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
-		return finTypePartnerBankDAO;
+	@Autowired
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
 	}
 	
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
-	}
-
+	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
 	}
 
-	public PartnerBankDAO getPartnerBankDAO() {
-		return partnerBankDAO;
-	}
-
+	@Autowired
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
-
-	public FinanceWorkFlowDAO getFinanceWorkFlowDAO() {
-		return financeWorkFlowDAO;
-	}
-
+	
+	@Autowired
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;
 	}
 
-	public ReceiptResponseDetailDAO getReceiptResponseDetailDAO() {
-		return receiptResponseDetailDAO;
-	}
-
+	@Autowired
 	public void setReceiptResponseDetailDAO(ReceiptResponseDetailDAO receiptResponseDetailDAO) {
 		this.receiptResponseDetailDAO = receiptResponseDetailDAO;
 	}
