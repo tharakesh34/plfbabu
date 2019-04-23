@@ -4500,6 +4500,7 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
@@ -4522,6 +4523,7 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
@@ -4529,6 +4531,7 @@
 		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO" />
 		<property name="bankDetailService" ref="bankDetailService" />
 		<property name="receiptTaxDetailDAO" ref="receiptTaxDetailDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="receiptRealizationService" ref="receiptRealizationService" />
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
@@ -4642,6 +4645,8 @@
 	</bean>
 
 	<bean name="receiptCancellationServiceTarget" class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl">
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="engineExecution" ref="engineExecution" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
