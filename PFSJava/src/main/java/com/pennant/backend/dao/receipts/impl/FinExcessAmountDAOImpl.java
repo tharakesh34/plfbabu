@@ -126,7 +126,9 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("update FinExcessAmount set Amount = Amount, BalanceAmt = BalanceAmt");
+		sql.append("update FinExcessAmount");
+		sql.append(" set Amount = :Amount, UtilisedAmt = :UtilisedAmt");
+		sql.append(", ReservedAmt = :ReservedAmt, BalanceAmt = :BalanceAmt");
 		sql.append(" where ExcessID = :ExcessID");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -134,6 +136,8 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", excess.getExcessID());
 		source.addValue("Amount", excess.getAmount());
+		source.addValue("UtilisedAmt", excess.getUtilisedAmt());
+		source.addValue("ReservedAmt", excess.getReservedAmt());
 		source.addValue("BalanceAmt", excess.getBalanceAmt());
 
 		this.jdbcTemplate.update(sql.toString(), source);

@@ -685,5 +685,7 @@
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
 	</bean>
+	
+	<bean id="receiptAllocationDetailDAO" class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" parent="sequenceDao" />
 
 </beans>

@@ -113,29 +113,26 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 	@Override
 	public long save(FinReceiptDetail receiptDetail, TableType tableType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (receiptDetail.getId() == 0 || receiptDetail.getId() == Long.MIN_VALUE) {
 			receiptDetail.setId(getNextValue("SeqFinReceiptDetail"));
 			logger.debug("get NextID:" + receiptDetail.getId());
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinReceiptDetail");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(
-				" (ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , Amount  , ");
-		insertSql.append(" FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
-		insertSql.append(" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey)");
-		insertSql.append(
-				" Values(:ReceiptID , :ReceiptSeqID , :ReceiptType , :PaymentTo , :PaymentType , :PayAgainstID  , :Amount  , ");
-		insertSql.append(
-				" :FavourNumber , :ValueDate , :BankCode , :FavourName , :DepositDate , :DepositNo , :PaymentRef , ");
-		insertSql.append(" :TransactionRef , :ChequeAcNo , :FundingAc , :ReceivedDate , :Status , :PayOrder, :LogKey)");
+		StringBuilder sql = new StringBuilder("Insert Into FinReceiptDetail");
+		sql.append(tableType.getSuffix());
+		sql.append(" (ReceiptID, ReceiptSeqID, ReceiptType, PaymentTo, PaymentType, PayAgainstID, Amount");
+		sql.append(", FavourNumber, ValueDate, BankCode, FavourName, DepositDate, DepositNo, PaymentRef");
+		sql.append(", TransactionRef, ChequeAcNo, FundingAc, ReceivedDate, Status, PayOrder, LogKey)");
+		sql.append(" Values(:ReceiptID, :ReceiptSeqID, :ReceiptType, :PaymentTo, :PaymentType, :PayAgainstID, :Amount");
+		sql.append(", :FavourNumber, :ValueDate, :BankCode, :FavourName, :DepositDate, :DepositNo, :PaymentRef");
+		sql.append(", :TransactionRef, :ChequeAcNo, :FundingAc, :ReceivedDate, :Status, :PayOrder, :LogKey)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 		return receiptDetail.getId();
 	}
 

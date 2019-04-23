@@ -46,6 +46,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -142,10 +143,10 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal advRepayAmount = BigDecimal.ZERO;
 
 	// Ijarah External Charges
-	private BigDecimal SuplRent = BigDecimal.ZERO;
-	private BigDecimal IncrCost = BigDecimal.ZERO;
-	private BigDecimal SuplRentPaid = BigDecimal.ZERO;
-	private BigDecimal IncrCostPaid = BigDecimal.ZERO;
+	private BigDecimal suplRent = BigDecimal.ZERO;
+	private BigDecimal incrCost = BigDecimal.ZERO;
+	private BigDecimal suplRentPaid = BigDecimal.ZERO;
+	private BigDecimal incrCostPaid = BigDecimal.ZERO;
 
 	//Fee Details on Schedule Basis
 	@XmlElement
@@ -176,7 +177,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	private LoggedInUser userDetails;
 	private boolean repayComplete = false;
-	private ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+	private List<ErrorDetail> errorDetails = new ArrayList<>();
 
 	//GST
 	private BigDecimal feeTax = BigDecimal.ZERO;
@@ -224,7 +225,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 
 	public String getFinReference() {
-		return finReference;
+		return getId();
 	}
 
 	public void setFinReference(String finReference) {
@@ -613,11 +614,11 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public ArrayList<ErrorDetail> getErrorDetails() {
+	public List<ErrorDetail> getErrorDetails() {
 		return errorDetails;
 	}
 
-	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 
@@ -758,35 +759,35 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getSuplRent() {
-		return SuplRent;
+		return suplRent;
 	}
 
 	public void setSuplRent(BigDecimal suplRent) {
-		SuplRent = suplRent;
+		this.suplRent = suplRent;
 	}
 
 	public BigDecimal getIncrCost() {
-		return IncrCost;
+		return incrCost;
 	}
 
 	public void setIncrCost(BigDecimal incrCost) {
-		IncrCost = incrCost;
+		this.incrCost = incrCost;
 	}
 
 	public BigDecimal getSuplRentPaid() {
-		return SuplRentPaid;
+		return suplRentPaid;
 	}
 
 	public void setSuplRentPaid(BigDecimal suplRentPaid) {
-		SuplRentPaid = suplRentPaid;
+		this.suplRentPaid = suplRentPaid;
 	}
 
 	public BigDecimal getIncrCostPaid() {
-		return IncrCostPaid;
+		return incrCostPaid;
 	}
 
 	public void setIncrCostPaid(BigDecimal incrCostPaid) {
-		IncrCostPaid = incrCostPaid;
+		this.incrCostPaid = incrCostPaid;
 	}
 
 	public boolean isRolloverOnSchDate() {

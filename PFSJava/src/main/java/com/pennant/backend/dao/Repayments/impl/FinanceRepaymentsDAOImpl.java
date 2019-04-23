@@ -328,7 +328,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	}
 
 	@Override
-	public Long saveFinRepayHeader(FinRepayHeader finRepayHeader, String type) {
+	public Long saveFinRepayHeader(FinRepayHeader finRepayHeader, TableType tableType) {
 		logger.debug("Entering");
 
 		if (finRepayHeader.getRepayID() == 0 || finRepayHeader.getRepayID() == Long.MIN_VALUE) {
@@ -337,7 +337,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		}
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into FinRepayHeader");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		insertSql.append(
 				" (RepayID, ReceiptSeqID, FinReference , ValueDate , FinEvent , RepayAmount , PriAmount , PftAmount , TotalRefund , ");
 		insertSql.append(

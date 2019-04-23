@@ -56,6 +56,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -113,28 +114,28 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 	@Override
 	public void saveAllocations(List<ReceiptAllocationDetail> allocations, TableType tableType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder();
-
-		for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
-			if (receiptAllocationDetail.getReceiptAllocationid() == Long.MIN_VALUE) {
-				receiptAllocationDetail.setReceiptAllocationid(getNextValue("SeqReceiptAllocationDetail"));
-				logger.debug("get NextID:" + receiptAllocationDetail.getReceiptAllocationid());
+		for (ReceiptAllocationDetail allocation : allocations) {
+			if (allocation.getReceiptAllocationid() == Long.MIN_VALUE) {
+				allocation.setReceiptAllocationid(getNextValue("SeqReceiptAllocationDetail"));
+				logger.debug("get NextID:" + allocation.getReceiptAllocationid());
 			}
 		}
-		insertSql.append("Insert Into ReceiptAllocationDetail");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(
-				" (ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST,TotalDue)");
-		insertSql.append(
-				" Values(:ReceiptAllocationid,:ReceiptID , :AllocationID , :AllocationType , :AllocationTo , :PaidAmount , :WaivedAmount, :WaiverAccepted, :PaidGST,:TotalDue)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into ReceiptAllocationDetail");
+		sql.append(tableType.getSuffix());
+		sql.append("(ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
+		sql.append(", PaidAmount , WaivedAmount, WaiverAccepted, PaidGST,TotalDue)");
+		sql.append(" Values(:ReceiptAllocationid, :ReceiptID, :AllocationID, :AllocationType, :AllocationTo");
+		sql.append(", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue)");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(allocations.toArray());
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
 	}
 
 	//MIGRATION PURPOSE

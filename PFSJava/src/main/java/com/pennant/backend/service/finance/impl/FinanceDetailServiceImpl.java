@@ -281,6 +281,7 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
@@ -4705,9 +4706,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					if (excessAmount == null) {
 						excessAmount = BigDecimal.ZERO;
 					}
-
-					advancePaymentService.excessAmountMovement(finReference, finBranch, advRule.name(), excessAmount,
-							RepayConstants.RECEIPTTYPE_RECIPT);
+					
+					AdvancePayment advancePayment = new AdvancePayment();
+					advancePayment.setFinReference(finReference);
+					advancePayment.setFinBranch(finBranch);
+					advancePayment.setAdvancePaymentType(advRule.name());
+					advancePayment.setRequestedAmt(excessAmount);
+					advancePaymentService.excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
 				}
 			}
 			// tasks # >>Start Advance EMI and DSF
@@ -4775,51 +4780,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return auditHeader;
 	}
-
-	private void excessAmountMovement(String finReference, String adviceType, BigDecimal reqAmount,
-			String receiptType) {
-		FinExcessAmount existingExcessAmt = null;
-
-		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finReference, adviceType);
-
-		if (reqAmount == null) {
-			reqAmount = BigDecimal.ZERO;
-		}
-
-		if (excess == null) {
-			excess = new FinExcessAmount();
-		}
-
-		BigDecimal amount = excess.getAmount().add(reqAmount);
-		BigDecimal utilisedAmt = excess.getUtilisedAmt();
-		BigDecimal reservedAmt = excess.getReservedAmt();
-
-		excess.setFinReference(finReference);
-		excess.setAmountType(adviceType);
-		excess.setAmount(amount);
-		excess.setUtilisedAmt(utilisedAmt);
-		excess.setReservedAmt(reservedAmt);
-		excess.setBalanceAmt(amount.subtract(utilisedAmt).subtract(reservedAmt));
-
-		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
-			finExcessAmountDAO.saveExcess(excess);
-		} else {
-			finExcessAmountDAO.updateExcess(existingExcessAmt);
-		}
-
-		FinExcessMovement movement = new FinExcessMovement();
-		movement.setExcessID(excess.getExcessID());
-		movement.setMovementType(receiptType);
-		if (RepayConstants.RECEIPTTYPE_RECIPT.equals(movement.getMovementType())) {
-			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
-		} else {
-			movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-		}
-
-		movement.setAmount(excess.getAmount());
-		finExcessAmountDAO.saveExcessMovement(movement);
-	}
-
+	
 	public String getServiceTasks(String taskId, FinanceMain financeMain, String finishedTasks,
 			WorkflowEngine workflowEngine) {
 		logger.debug(Literal.ENTERING);
@@ -9677,7 +9638,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			finRepayHeader.setSchdRegenerated(false);
 			finRepayHeader.setPayApportionment(PennantConstants.List_Select);
 			finRepayHeader.setLinkedTranId(linkedTranId);
-			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, "");
+			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
 			// Finance Main Updation
 			// =======================================
@@ -10949,7 +10910,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
-	@Autowired
+	@Autowired(required=false)
 	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
 		this.subventionDetailDAO = subventionDetailDAO;
 	}

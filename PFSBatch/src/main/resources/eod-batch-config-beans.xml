@@ -784,4 +784,25 @@
 		<property name="customerDAO" ref="customerDAO" />		
 	</bean>
 	
+	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator">
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+	
+	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator" scope="prototype">
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="accrualService" ref="accrualService" />
+		<property name="feeCalculator" ref="feeCalculator" />
+		<property name="latePayMarkingService" ref="latePayMarkingService" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+	</bean>
+	
 </beans>

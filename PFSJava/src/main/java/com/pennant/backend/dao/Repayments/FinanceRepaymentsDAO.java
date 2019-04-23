@@ -20,7 +20,7 @@ public interface FinanceRepaymentsDAO {
 	//Manual Repayment Details :  Finance Repay Header Details & Finance Repay Schedule Details
 	FinRepayHeader getFinRepayHeader(String finReference, String type);
 
-	Long saveFinRepayHeader(FinRepayHeader finRepayHeader, String type);
+	Long saveFinRepayHeader(FinRepayHeader finRepayHeader, TableType tableType);
 
 	void updateFinRepayHeader(FinRepayHeader finRepayHeader, String type);
 

@@ -1,5 +1,7 @@
 package com.pennant.backend.util;
 
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
+
 public class RepayConstants {
 
 	private RepayConstants() {
@@ -95,6 +97,8 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
+	public static final String RECEIPTMODE_ADVINT = "ADVINT";
+	public static final String RECEIPTMODE_ADVEMI = "ADVEMI";
 	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";
 	public static final String RECEIPTMODE_PRESENTMENT = "PRESENT";
 

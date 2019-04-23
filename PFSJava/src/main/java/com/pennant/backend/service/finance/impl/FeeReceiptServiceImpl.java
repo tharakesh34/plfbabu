@@ -211,7 +211,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				rpyHeader.setReceiptSeqID(receiptSeqID);
 
 				//Save Repay Header details
-				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
+				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType);
 			}
 		}
 
@@ -378,7 +378,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				rpyHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 
 				//Save Repay Header details
-				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB.getSuffix());
+				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, TableType.MAIN_TAB);
 			}
 		}
 
@@ -808,7 +808,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				rpyHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 
 				//Save Repay Header details
-				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType.getSuffix());
+				getFinanceRepaymentsDAO().saveFinRepayHeader(rpyHeader, tableType);
 			}
 		}
 

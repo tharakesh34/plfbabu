@@ -10,7 +10,9 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 
 public class AdvancePayment implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
+	private String finReference;
+	private String finBranch;
 	private String advancePaymentType;
 	private String grcAdvType;
 	private String advType;
@@ -31,11 +33,34 @@ public class AdvancePayment implements Serializable {
 
 	private FinExcessAmount finExcessAmount;
 
+	private BigDecimal requestedAmt = BigDecimal.ZERO;
+
+	public AdvancePayment() {
+		super();
+	}
+
 	public AdvancePayment(String grcAdvType, String advType, Date grcPeriodEndDate) {
 		super();
 		this.grcAdvType = grcAdvType;
 		this.advType = advType;
 		this.grcPeriodEndDate = grcPeriodEndDate;
+	}
+	
+	
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
 	}
 
 	public String getAdvancePaymentType() {
@@ -172,5 +197,13 @@ public class AdvancePayment implements Serializable {
 
 	public void setFinExcessAmount(FinExcessAmount finExcessAmount) {
 		this.finExcessAmount = finExcessAmount;
+	}
+
+	public BigDecimal getRequestedAmt() {
+		return requestedAmt;
+	}
+
+	public void setRequestedAmt(BigDecimal requestedAmt) {
+		this.requestedAmt = requestedAmt;
 	}
 }

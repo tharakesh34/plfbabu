@@ -1653,7 +1653,51 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			financeScheduleDetail = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeScheduleDetail;
+	}
+	
+	@Override
+	public void updateSchPftPaid(FinanceScheduleDetail curSchd) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
+		sql.append(" SchdPftPaid = :SchdPftPaid");
+		sql.append(", SchPftPaid = :SchPftPaid");
+		sql.append(", TDSPaid = :TDSPaid");
+		sql.append(" where FinReference =:FinReference And SchDate = :SchDate");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(curSchd);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public void updateSchPriPaid(FinanceScheduleDetail curSchd) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
+		sql.append(" SchdPriPaid = :SchdPriPaid");
+		sql.append(", SchPriPaid = :SchPriPaid");
+		sql.append(", TDSPaid = :TDSPaid");
+		sql.append(" where FinReference =:FinReference And SchDate = :SchDate");
+		
+		logger.trace(Literal.SQL + sql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(curSchd);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 }

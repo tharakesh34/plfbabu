@@ -16,5 +16,4 @@ package com.pennanttech.pennapps.core.security;
  */
 public enum UserType {
 	USER, ADMIN
-
 }

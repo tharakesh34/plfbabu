@@ -1435,7 +1435,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 
 		// Repayment Header
 		for (int i = 0; i < dMD.getFinRepayHeaders().size(); i++) {
-			getFinanceRepaymentsDAO().saveFinRepayHeader(dMD.getFinRepayHeaders().get(i), "");
+			getFinanceRepaymentsDAO().saveFinRepayHeader(dMD.getFinRepayHeaders().get(i), TableType.MAIN_TAB);
 		}
 
 		// Repay Schedule Details

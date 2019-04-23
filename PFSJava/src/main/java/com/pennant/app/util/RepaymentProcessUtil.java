@@ -1054,7 +1054,7 @@ public class RepaymentProcessUtil {
 			}
 
 			// Save Repay Header details
-			long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rph, TableType.MAIN_TAB.getSuffix());
+			long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 			List<RepayScheduleDetail> rpySchdList = rph.getRepayScheduleDetails();
 			if (rpySchdList != null && !rpySchdList.isEmpty()) {

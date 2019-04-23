@@ -14,6 +14,8 @@ public class TaxAmountSplit implements Serializable {
 	private BigDecimal tGST = BigDecimal.ZERO;
 	private BigDecimal netAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
+	private BigDecimal totRecv = BigDecimal.ZERO;
+	private BigDecimal inProcAmount = BigDecimal.ZERO;
 	private String taxType = null;
 
 	public TaxAmountSplit() {
@@ -90,6 +92,22 @@ public class TaxAmountSplit implements Serializable {
 
 	public void setWaivedAmount(BigDecimal waivedAmount) {
 		this.waivedAmount = waivedAmount;
+	}
+
+	public BigDecimal getInProcAmount() {
+		return inProcAmount;
+	}
+
+	public void setInProcAmount(BigDecimal inProcAmount) {
+		this.inProcAmount = inProcAmount;
+	}
+
+	public BigDecimal getTotRecv() {
+		return totRecv;
+	}
+
+	public void setTotRecv(BigDecimal totRecv) {
+		this.totRecv = totRecv;
 	}
 
 }

@@ -63,6 +63,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -128,35 +129,34 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			logger.debug("get NextID:" + receiptHeader.getId());
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinReceiptHeader");
-		insertSql.append(tableType.getSuffix());
-		insertSql.append(
-				" (ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
-		insertSql.append(
+		StringBuilder sql = new StringBuilder("Insert Into FinReceiptHeader");
+		sql.append(tableType.getSuffix());
+		sql.append(" (ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, ");
+		sql.append(
 				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate,CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
-		insertSql.append(
+		sql.append(
 				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
-		insertSql.append(
+		sql.append(
 				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId,");
-		insertSql.append(" FinDivision, PostBranch,");
-		insertSql.append(
+		sql.append(" FinDivision, PostBranch,");
+		sql.append(
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
-		insertSql.append(
+		sql.append(
 				" Values(:ReceiptID, :ReceiptDate , :ReceiptType, :RecAgainst, :Reference , :ReceiptPurpose,:RcdMaintainSts, ");
-		insertSql.append(
+		sql.append(
 				" :ReceiptMode, :ExcessAdjustTo , :AllocationType , :ReceiptAmount, :EffectSchdMethod, :ReceiptModeStatus, :RealizationDate, :CancelReason, :WaviedAmt, :TotFeeAmount, :BounceDate, :Remarks,");
-		insertSql.append(
+		sql.append(
 				" :GDRAvailable, :ReleaseType, :ThirdPartyName, :ThirdPartyMobileNum, :LpiAmount,:CashierBranch,:InitiateDate, ");
-		insertSql.append(
+		sql.append(
 				" :DepositProcess, :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module, :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId,");
-		insertSql.append(" :FinDivision, :PostBranch,");
-		insertSql.append(
+		sql.append(" :FinDivision, :PostBranch,");
+		sql.append(
 				" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptHeader);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return receiptHeader.getId();
 	}

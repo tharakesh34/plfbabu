@@ -87,7 +87,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
 		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod",
 		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate",
-		"stage", "status", "advEMITerms", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
+		"stage", "status", "advTerms", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
 		"legalRequired" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -714,6 +714,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String grcAdvType;
 	private int grcAdvTerms;
 	private String advType;
+	@XmlElement(name = "advEMITerms")
 	private int advTerms;
 	private String advStage;
 

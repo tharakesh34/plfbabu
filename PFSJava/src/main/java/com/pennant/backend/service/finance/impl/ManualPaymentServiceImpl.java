@@ -443,7 +443,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			//Save FinRepayHeader Details
 			finRepayHeader.setLinkedTranId(linkedTranId);
-			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType.getSuffix());
+			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
 			//Save Repay Schedule Details
 			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
@@ -527,7 +527,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			getRepayPostingUtil().UpdateScreenPaymentsProcess(financeMain, scheduleData.getFinanceScheduleDetails(),
 					profitDetail, finRepayQueues, linkedTranId, partialPay, aeAmountCodes);
 
-			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType.getSuffix());
+			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, tableType);
 
 			//Update Linked Transaction ID after Repayments Postings Process if workflow not found
 			for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
@@ -799,7 +799,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		//Save Finance Repay Header Details
 		finRepayHeader.setLinkedTranId(linkedTranId);
-		getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, "");
+		getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
 		//Update Linked Transaction ID after Repayment Postings Process if workflow not found
 		for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
