@@ -9,7 +9,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
 public class MandateAutoDownloadJob implements Job, Serializable {
 	private static final long serialVersionUID = 1L;
@@ -21,10 +21,10 @@ public class MandateAutoDownloadJob implements Job, Serializable {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		MandateProcess mandateProcess;
+		MandateProcesses mandateProcess;
 		try {
 			JobDataMap dataMap = context.getJobDetail().getJobDataMap();
-			mandateProcess = (MandateProcess) dataMap.get("mandateProcess");
+			mandateProcess = (MandateProcesses) dataMap.get("mandateProcess");
 
 			mandateProcess.updateMandateStatus();
 		} catch (Exception e) {

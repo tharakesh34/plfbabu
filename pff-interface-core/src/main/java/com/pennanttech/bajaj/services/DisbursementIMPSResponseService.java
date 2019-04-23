@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennanttech.bajaj.process.DisbursemenIMPSResponseProcess;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.disbursement.DisbursementResponse;
+import com.pennanttech.pff.external.DisbursementResponse;
 
 public class DisbursementIMPSResponseService extends BajajService {
 	private static final Logger logger = Logger.getLogger(DisbursementIMPSResponseService.class);
