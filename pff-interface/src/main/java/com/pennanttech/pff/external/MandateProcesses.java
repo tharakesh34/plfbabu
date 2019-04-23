@@ -7,7 +7,7 @@ import org.zkoss.util.media.Media;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 
-public interface MandateProcess {
+public interface MandateProcesses {
 	public static DataEngineStatus MANDATES_IMPORT = new DataEngineStatus("MANDATES_IMPORT");
 
 	public void sendReqest(Object... object) throws Exception;

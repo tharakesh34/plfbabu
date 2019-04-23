@@ -29,8 +29,8 @@ import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentRequest;
 
-public class AbstractPresentmentRequest extends AbstractInterface implements PresentmentRequest {
-	private static final Logger logger = Logger.getLogger(AbstractPresentmentRequest.class);
+public class DefaultPresentmentRequest extends AbstractInterface implements PresentmentRequest {
+	private static final Logger logger = Logger.getLogger(DefaultPresentmentRequest.class);
 
 	private long presentmentId;
 	private long successCount;

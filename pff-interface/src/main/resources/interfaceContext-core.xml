@@ -21,14 +21,15 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="abstractMandateProcess" class="com.pennanttech.pff.external.mandate.AbstractMandateProcess" abstract="true"
+	<bean id="defaultMandateProcess" class="com.pennanttech.pff.external.mandate.DefaultMandateProcess" parent="abstractInterface" />
+	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest"
 		parent="abstractInterface" />
-	<bean id="abstractPresentmentProcess" class="com.pennanttech.pff.external.presentment.AbstractPresentmentRequest"
-		abstract="true" parent="abstractInterface" />
-	<bean id="abstarctDisbursementRequest" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementRequest"
-		abstract="true" parent="abstractInterface" />
-	<bean id="abstarctDisbursementResponse" class="com.pennanttech.pff.external.disbursment.AbstarctDisbursementResponse"
-		abstract="true" parent="abstractInterface" />
+	<bean id="defaultDisbursementRequest" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementRequest"
+		parent="abstractInterface" />
+	<bean id="defaultDisbursementResponse" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse"
+		parent="abstractInterface" />
+
+	<!-- The below bean configurations should be in implementation layer only if required. -->
 	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
 		abstract="true" parent="abstractInterface" />
 	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService"
@@ -43,9 +44,9 @@
 		<property name="threadCount" value="${dms.thread.count}" />
 		<property name="threadAwaitPeroid" value="${dms.thread.seconds.timeout}" />
 	</bean>
-	
-	<bean id ="collectionDataDownloadProcess" class ="com.pennanttech.pff.process.collection.CollectionDataDownloadProcess">
+
+	<bean id="collectionDataDownloadProcess" class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcess">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 </beans>

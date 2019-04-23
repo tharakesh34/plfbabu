@@ -79,12 +79,12 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
-import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
-public abstract class AbstractMandateProcess extends AbstractInterface implements MandateProcess {
+public class DefaultMandateProcess extends AbstractInterface implements MandateProcesses {
 	protected final Logger logger = Logger.getLogger(getClass());
 
-	public AbstractMandateProcess() {
+	public DefaultMandateProcess() {
 		super();
 	}
 

@@ -25,7 +25,7 @@ import com.pennanttech.pff.core.process.PaymentProcess;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementResponse;
 
-public class AbstarctDisbursementResponse extends AbstractInterface implements DisbursementResponse {
+public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse {
 	protected final Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
@@ -34,7 +34,7 @@ public class AbstarctDisbursementResponse extends AbstractInterface implements D
 	@Autowired
 	private PaymentProcess paymentProcess;
 
-	public AbstarctDisbursementResponse() {
+	public DefaultDisbursementResponse() {
 		super();
 	}
 

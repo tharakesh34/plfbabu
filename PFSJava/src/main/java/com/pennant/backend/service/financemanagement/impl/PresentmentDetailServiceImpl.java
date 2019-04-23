@@ -116,7 +116,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private ChequeDetailDAO chequeDetailDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
-	@Autowired(required = false)
+	private PresentmentRequest defaultPresentmentRequest;
 	private PresentmentRequest presentmentRequest;
 
 	@Autowired
@@ -449,7 +449,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			// Storing the presentment data into bajaj inteface tables
 
 			try {
-				presentmentRequest.sendReqest(idList, idExcludeEmiList, presentmentId, isError, isPDC);
+				getPresentmentRequest().sendReqest(idList, idExcludeEmiList, presentmentId, isError, isPDC);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				throw e;
@@ -457,6 +457,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 
 	/**
 	 * Create a new Receipt
@@ -750,5 +751,19 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
+	}
+		
+	private PresentmentRequest getPresentmentRequest() {
+		return presentmentRequest == null ? defaultPresentmentRequest : presentmentRequest;
+	}
+
+	@Autowired
+	public void setDefaultPresentmentRequest(PresentmentRequest defaultPresentmentRequest) {
+		this.defaultPresentmentRequest = defaultPresentmentRequest;
+	}
+
+	@Autowired(required = false)
+	public void setPresentmentRequest(PresentmentRequest presentmentRequest) {
+		this.presentmentRequest = presentmentRequest;
 	}
 }

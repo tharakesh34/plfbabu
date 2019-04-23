@@ -116,7 +116,8 @@ import com.pennanttech.pff.external.DisbursementRequest;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
  * ************************************************************<br>
  * 
  */
@@ -182,10 +183,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	private int futureDays = 0;
 
-	@Autowired(required = false)
-	private DisbursementRequest disbursementRequest;
 	@Autowired
 	private FinCovenantTypeService finCovenantTypeService;
+
+	private DisbursementRequest defaultDisbursementRequest;
+	private DisbursementRequest disbursementRequest;
 
 	/**
 	 * default constructor.<br>
@@ -235,7 +237,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -359,7 +362,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
 		this.partnerBank.setButtonDisabled(true);
-		
+
 		this.vasManufacturer.setMandatoryStyle(false);
 		this.vasManufacturer.setModuleName("VehicleDealer");
 		this.vasManufacturer.setValueColumn("DealerId");
@@ -369,7 +372,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
+	 * Filling the MandateIdMap details and based on checked and unchecked
+	 * events of listCellCheckBox.
 	 */
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -390,7 +394,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
+	 * Filling the MandateIdMap details based on checked and unchecked events of
+	 * listCellCheckBox.
 	 */
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -476,7 +481,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Getting the Disbursement List using JdbcSearchObject with search criteria..
+	 * Getting the Disbursement List using JdbcSearchObject with search
+	 * criteria..
 	 */
 	private Map<Long, FinAdvancePayments> getDisbursementDetails() {
 
@@ -495,7 +501,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		return disbMap;
 	}
 
-	// Fetching the list from The database and filtered in any pending otc's If there any record is from Disbursement we are not adding in to resultant list.
+	// Fetching the list from The database and filtered in any pending otc's If
+	// there any record is from Disbursement we are not adding in to resultant
+	// list.
 	private List<FinAdvancePayments> renderDisbursements() {
 
 		JdbcSearchObject<FinAdvancePayments> searchObject = new JdbcSearchObject<FinAdvancePayments>(
@@ -518,15 +526,17 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		searchObject.addField("channel");
 		searchObject.addField("providerId");
 		searchObject.addTabelName(this.tableName);
-		
-		//If channel is Insurance then only  we will allow to download Insurance details
+
+		// If channel is Insurance then only we will allow to download Insurance
+		// details
 		if (DisbursementConstants.CHANNEL_INSURANCE.equals(this.channelTypes.getSelectedItem().getValue())) {
 			searchObject.addFilterEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
 		} else {
-			//If then channel is not selected  we will allow to download Disbursements and Payments only. Not Insurance details
+			// If then channel is not selected we will allow to download
+			// Disbursements and Payments only. Not Insurance details
 			searchObject.addFilterNotEqual("channel", DisbursementConstants.CHANNEL_INSURANCE);
 		}
-		
+
 		// Internal Settlements Payment Type details not allowed to Download
 		searchObject.addFilterNotEqual("paymentType", DisbursementConstants.PAYMENT_TYPE_IST);
 
@@ -550,8 +560,11 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			for (FinAdvancePayments finAdvancePayments : searchList) {
 
 				boolean isCovenantCheckNotReq = false;
-				//No need to check If the record coming from Payment Instructions or Disbursement Instructions or Insurance payments
-				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel()) || DisbursementConstants.CHANNEL_INSURANCE.equals(finAdvancePayments.getChannel())) {
+				// No need to check If the record coming from Payment
+				// Instructions or Disbursement Instructions or Insurance
+				// payments
+				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())
+						|| DisbursementConstants.CHANNEL_INSURANCE.equals(finAdvancePayments.getChannel())) {
 					isCovenantCheckNotReq = true;
 				} else {
 					for (String rpymethod : repaymethod) {
@@ -592,7 +605,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -600,7 +614,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	public void onClick$button_Search(Event event) {
 		this.disbursementMap.clear();
 		this.listHeader_CheckBox_Comp.setChecked(false);
-		
+
 		doSetValidations();
 
 		renderDisbursements();
@@ -691,9 +705,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.entity.setConstraint("");
 		logger.debug("Leaving ");
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -767,11 +782,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			btnDownload.setDisabled(true);
 			button_Search.setDisabled(true);
 
-			if (disbursementRequest != null) {
-				disbursementRequest.sendReqest(this.finType.getValue(), disbushmentList,
-						getUserWorkspace().getLoggedInUser().getUserId(),
-						((PartnerBank) partnerBank.getObject()).getFileName());
-			}
+			getDisbursementRequest().sendReqest(this.finType.getValue(), disbushmentList,
+					getUserWorkspace().getLoggedInUser().getUserId(),
+					((PartnerBank) partnerBank.getObject()).getFileName());
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
@@ -874,7 +887,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			this.btnFinType.setDisabled(false);
 		}
 	}
-	
+
 	public FinCovenantTypeService getFinCovenantTypeService() {
 		return finCovenantTypeService;
 	}
@@ -889,6 +902,20 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 
 	public void setFinAdvancePaymentsList(List<FinAdvancePayments> finAdvancePaymentsList) {
 		this.finAdvancePaymentsList = finAdvancePaymentsList;
+	}
+
+	private DisbursementRequest getDisbursementRequest() {
+		return disbursementRequest == null ? defaultDisbursementRequest : disbursementRequest;
+	}
+
+	@Autowired
+	public void setDefaultDisbursementRequest(DisbursementRequest defaultDisbursementRequest) {
+		this.defaultDisbursementRequest = defaultDisbursementRequest;
+	}
+
+	@Autowired(required = false)
+	public void setDisbursementRequest(DisbursementRequest disbursementRequest) {
+		this.disbursementRequest = disbursementRequest;
 	}
 
 }

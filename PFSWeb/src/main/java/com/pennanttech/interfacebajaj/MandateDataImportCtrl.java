@@ -33,7 +33,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ConfigUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
 public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private static final long serialVersionUID = 1297405999029019920L;
@@ -61,8 +61,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	private Configuration config = null;
 
-	@Autowired(required = false)
-	private MandateProcess mandateProcess;
+	private MandateProcesses mandateProcesses;
+	private MandateProcesses defaultMandateProcess;
 
 	/**
 	 * default constructor.<br>
@@ -78,7 +78,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -106,7 +107,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				DataEngineStatus status = dataEngineConfig.getLatestExecution(config.getName());
 
 				if (status != null) {
-					BeanUtils.copyProperties(MandateProcess.MANDATES_IMPORT, status);
+					BeanUtils.copyProperties(MandateProcesses.MANDATES_IMPORT, status);
 				}
 				doFillPanel();
 				break;
@@ -211,8 +212,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showError("Please upload any file.");
 			return;
 		}
-		if (MandateProcess.MANDATES_IMPORT != null
-				&& ExecutionStatus.I.name().equals(MandateProcess.MANDATES_IMPORT.getStatus())) {
+		if (MandateProcesses.MANDATES_IMPORT != null
+				&& ExecutionStatus.I.name().equals(MandateProcesses.MANDATES_IMPORT.getStatus())) {
 			MessageUtil.showError("Export is in progress for the selected configuration.");
 			return;
 		}
@@ -244,7 +245,12 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		fileName.setText("");
 		media = event.getMedia();
 
-		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLSX"))) {//FIXME this  should not be hardcoded
+		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLSX"))) {// FIXME
+																				// this
+																				// should
+																				// not
+																				// be
+																				// hardcoded
 			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;
@@ -268,7 +274,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
-					pe.setProcess(MandateProcess.MANDATES_IMPORT);
+					pe.setProcess(MandateProcesses.MANDATES_IMPORT);
 
 					String status = pe.getProcess().getStatus();
 					if (ExecutionStatus.I.name().equals(status)) {
@@ -295,7 +301,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		pannelExecution.setBorder("normal");
 		pannelExecution.setTitle(config.getName());
 		pannelExecution.setWidth("480px");
-		pannelExecution.setProcess(MandateProcess.MANDATES_IMPORT);
+		pannelExecution.setProcess(MandateProcesses.MANDATES_IMPORT);
 		pannelExecution.render();
 
 		Row rows = (Row) panelRows.getLastChild();
@@ -338,9 +344,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				if (mandateProcess != null) {
-					mandateProcess.processResponseFile(userId, file, media);
-				}
+				getMandateProcess().processResponseFile(userId, file, media);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -349,5 +353,19 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
+	}
+
+	@Autowired(required = false)
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
+	}
+
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
 }

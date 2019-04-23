@@ -91,7 +91,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
 /**
  * Service implementation for methods that depends on <b>Mandate</b>.<br>
@@ -110,9 +110,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
 	private PartnerBankDAO partnerBankDAO;
-
-	@Autowired
-	private MandateProcess mandateProcess;
+	private MandateProcesses mandateProcesses;
+	private MandateProcesses defaultMandateProcess;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -401,7 +400,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 					}
 				}
 
-				boolean register = mandateProcess.registerMandate(mandate);
+				boolean register = getMandateProcess().registerMandate(mandate);
 				if (register) {
 					mandate.setStatus(MandateConstants.STATUS_INPROCESS);
 					getMandateDAO().updateStatusAfterRegistration(mandate.getMandateID(),
@@ -851,5 +850,18 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
 	}
+	
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+	
+	@Autowired(required = false)
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
 
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
+	}
 }

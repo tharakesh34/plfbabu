@@ -28,14 +28,14 @@ import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementRequest;
 
-public abstract class AbstarctDisbursementRequest extends AbstractInterface implements DisbursementRequest {
+public class DefaultDisbursementRequest extends AbstractInterface implements DisbursementRequest {
 	protected final Logger logger = Logger.getLogger(getClass());
 
 	public enum DisbursementTypes {
 		IMPS, RTGS, NEFT, DD, CHEQUE, I, IFT;
 	}
 
-	public AbstarctDisbursementRequest() {
+	public DefaultDisbursementRequest() {
 		super();
 	}
 

@@ -88,7 +88,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
 /**
  * Service implementation for methods that depends on <b>FinMandate</b>.<br>
@@ -102,12 +102,10 @@ public class FinMandateServiceImpl implements FinMandateService {
 	private MandateStatusDAO mandateStatusDAO;
 	private FinanceMainDAO financeMainDAO;
 	private BankBranchService bankBranchService;
-
 	@Autowired(required = false)
 	private DocumentManagerDAO documentManagerDAO;
-
-	@Autowired(required = false)
-	private MandateProcess mandateProcess;
+	private MandateProcesses mandateProcesses;
+	private MandateProcesses defaultMandateProcess;
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
 
@@ -148,10 +146,10 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 				if (useExisting != null) {
 					deleteMandate(finmain.getFinReference(), auditDetails);
-					//set mandate id to finance
+					// set mandate id to finance
 					finmain.setMandateID(mandate.getMandateID());
 				} else {
-					//check in flow table for new or old record 
+					// check in flow table for new or old record
 					Mandate oldmandate = mandateDAO.getMandateByOrgReference(finmain.getFinReference(),
 							MandateConstants.STATUS_FIN, tableType);
 
@@ -198,7 +196,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				mandate.setCustID(finmain.getCustID());
 				Mandate useExisting = checkExistingMandate(mandate.getMandateID());
 				if (useExisting != null) {
-					//set mandate id to finance
+					// set mandate id to finance
 					finmain.setMandateID(mandate.getMandateID());
 					if (StringUtils.isEmpty(useExisting.getOrgReference())) {
 						mandateDAO.updateOrgReferecne(mandate.getMandateID(), finmain.getFinReference(), "");
@@ -246,20 +244,16 @@ public class FinMandateServiceImpl implements FinMandateService {
 							}
 						}
 
-						if (mandateProcess != null) {
-							boolean register = mandateProcess.registerMandate(mandate);
-							if (register) {
-								mandate.setStatus(MandateConstants.STATUS_INPROCESS);
-								mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(),
-										MandateConstants.STATUS_INPROCESS);
-								mandateStatus.setMandateID(mandate.getMandateID());
-								mandateStatus.setStatus(mandate.getStatus());
-								mandateStatus.setReason(mandate.getReason());
-								mandateStatus.setChangeDate(mandate.getInputDate());
-								mandateStatusDAO.save(mandateStatus, "");
-							}
-						} else {
-							logger.warn("MandateProcess not configured.");
+						boolean register = getMandateProcess().registerMandate(mandate);
+						if (register) {
+							mandate.setStatus(MandateConstants.STATUS_INPROCESS);
+							mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(),
+									MandateConstants.STATUS_INPROCESS);
+							mandateStatus.setMandateID(mandate.getMandateID());
+							mandateStatus.setStatus(mandate.getStatus());
+							mandateStatus.setReason(mandate.getReason());
+							mandateStatus.setChangeDate(mandate.getInputDate());
+							mandateStatusDAO.save(mandateStatus, "");
 						}
 
 					} catch (Exception e) {
@@ -311,10 +305,11 @@ public class FinMandateServiceImpl implements FinMandateService {
 	}
 
 	private void deleteMandate(String finreferece, List<AuditDetail> auditDetails) {
-		//Check in temporary queue to get to know that the previous mandate is initiated from loan 
+		// Check in temporary queue to get to know that the previous mandate is
+		// initiated from loan
 		Mandate oldmandate = mandateDAO.getMandateByOrgReference(finreferece, MandateConstants.STATUS_FIN, "_Temp");
 		if (oldmandate != null) {
-			//if found delete from temporary
+			// if found delete from temporary
 			mandateDAO.delete(oldmandate, "_Temp");
 			auditDetails.add(getAuditDetails(oldmandate, 2, PennantConstants.TRAN_DEL));
 		}
@@ -336,7 +331,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	}
 
 	private void addAudit(AuditHeader auditHeader, List<AuditDetail> auditDetails) {
-		//Add audit if any changes
+		// Add audit if any changes
 		if (auditDetails.isEmpty()) {
 			return;
 		}
@@ -388,8 +383,10 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 			}
 
-			//Mandate start date {0} should be before first repayments date {1}.
-			if (mandate.getStartDate()!=null && financeMain.getNextRepayDate()!=null && financeMain.getNextRepayDate().compareTo(mandate.getStartDate())<0) {
+			// Mandate start date {0} should be before first repayments date
+			// {1}.
+			if (mandate.getStartDate() != null && financeMain.getNextRepayDate() != null
+					&& financeMain.getNextRepayDate().compareTo(mandate.getStartDate()) < 0) {
 				String[] errParmFrq = new String[2];
 				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
 				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
@@ -426,7 +423,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				}
 			}
 
-			//If mandate expiry date before fin maturity date--vaidate 
+			// If mandate expiry date before fin maturity date--vaidate
 			if (mandate.getExpiryDate() != null && mandate.getExpiryDate()
 					.before(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate())) {
 
@@ -452,7 +449,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 				int reminder = checkSum(barCode);
 
 				MandateCheckDigit checkDigit = mandateCheckDigitDAO.getMandateCheckDigit(reminder, "");
-				//Validation For BarCode CheckSum
+				// Validation For BarCode CheckSum
 				if (checkDigit != null) {
 					if (checkDigit.getLookUpValue().charAt(0) != lastchar) {
 
@@ -465,23 +462,26 @@ public class FinMandateServiceImpl implements FinMandateService {
 				}
 
 				/*
-				 * //BarCode Unique Validation int count = mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
-				 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-				 * ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1, valueParm1), null)); }
+				 * //BarCode Unique Validation int count =
+				 * mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
+				 * "_View"); if (count > 0) {
+				 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
+				 * ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1,
+				 * valueParm1), null)); }
 				 */
 			}
 		}
 
 	}
 
-	private  boolean isHoliday(String bpiOrHoliday, String bpiTreatment) {
+	private boolean isHoliday(String bpiOrHoliday, String bpiTreatment) {
 		if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_HOLIDAY)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_POSTPONE)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_UNPLANNED)
 				|| StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_BPI)) {
-			
-			if(StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_BPI)){
-				if(StringUtils.equals(bpiTreatment, FinanceConstants.BPI_DISBURSMENT)){
+
+			if (StringUtils.equals(bpiOrHoliday, FinanceConstants.FLAG_BPI)) {
+				if (StringUtils.equals(bpiTreatment, FinanceConstants.BPI_DISBURSMENT)) {
 					return false;
 				}
 			}
@@ -490,7 +490,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 			return false;
 		}
 	}
-	
+
 	public void promptMandate(AuditDetail auditDetail, FinanceDetail financeDetail) {
 		Mandate mandate = financeDetail.getMandate();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -682,6 +682,20 @@ public class FinMandateServiceImpl implements FinMandateService {
 
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+
+	@Autowired(required = false)
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
 	}
 
 }

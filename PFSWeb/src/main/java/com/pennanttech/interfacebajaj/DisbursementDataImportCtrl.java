@@ -59,7 +59,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private DataEngineStatus DISB_OTHER_IMPORT_STATUS = new DataEngineStatus("DISB_OTHER_IMPORT");
 	private DataEngineStatus DISB_STP_IMPORT_STATUS = new DataEngineStatus("DISB_CITI_IMPORT");
 
-	@Autowired(required = false)
+	private DisbursementResponse defaultDisbursementResponse;
 	private DisbursementResponse disbursementResponse;
 
 	/**
@@ -332,7 +332,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				disbursementResponse.processResponseFile(userId, status, file, media, false);
+				getDisbursementResponse().processResponseFile(userId, status, file, media, false);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
@@ -342,4 +342,20 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}
+	
+	private DisbursementResponse getDisbursementResponse() {
+		return disbursementResponse == null ? defaultDisbursementResponse : disbursementResponse;
+	}
+
+	@Autowired
+	public void setDefaultDisbursementResponse(DisbursementResponse defaultDisbursementResponse) {
+		this.defaultDisbursementResponse = defaultDisbursementResponse;
+	}
+
+	@Autowired(required = false)
+	public void setDisbursementResponse(DisbursementResponse disbursementResponse) {
+		this.disbursementResponse = disbursementResponse;
+	}
+	
+	
 }

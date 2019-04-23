@@ -111,7 +111,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.external.MandateProcess;
+import com.pennanttech.pff.external.MandateProcesses;
 
 /**
  * ************************************************************<br>
@@ -176,15 +176,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	protected Listbox sortOperator_btnbranchDetails;
 	protected ExtendedCombobox entityCode;
 	protected Listbox sortOperator_entityCode;
-
 	private transient MandateService mandateService;
 	private transient boolean validationOn;
-
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
-
-	@Autowired(required = true)
-	private MandateProcess mandateProcess;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	
+	private MandateProcesses mandateProcesses;
+	private MandateProcesses defaultMandateProcess;
 
 	/**
 	 * default constructor.<br>
@@ -829,12 +827,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		@Override
 		public void run() {
 			try {
-
-				if (mandateProcess != null) {
-					mandateProcess.sendReqest(mandateIdList, this.fromDate, this.toDate,
-							getUserWorkspace().getLoggedInUser().getUserId(),
-							getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails, this.entity);
-				}
+				getMandateProcess().sendReqest(mandateIdList, this.fromDate, this.toDate,
+						getUserWorkspace().getLoggedInUser().getUserId(),
+						getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails, this.entity);
+			
 			} catch (Exception e) {
 				logger.error("Exception", e);
 			}
@@ -886,6 +882,20 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 			this.custCIF.setValue("");
 		}
 		logger.debug("Leaving ");
+	}
+	
+	private MandateProcesses getMandateProcess() {
+		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+	
+	@Autowired(required = false)
+	public void setMandateProces(MandateProcesses mandateProcesses) {
+		this.mandateProcesses = mandateProcesses;
+	}
+
+	@Autowired
+	public void setDefaultMandateProcess(MandateProcesses defaultMandateProcess) {
+		this.defaultMandateProcess = defaultMandateProcess;
 	}
 
 }
