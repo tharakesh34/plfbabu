@@ -282,7 +282,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 
 		//Empty sent any required attributes
 		this.custEmpName.setInputAllowed(false);
-		this.custEmpName.setDisplayStyle(3);
+		//this.custEmpName.setDisplayStyle(3);
 		this.custEmpName.setMandatoryStyle(true);
 		this.custEmpName.setModuleName("EmployerDetail");
 		this.custEmpName.setValueColumn("EmployerId");
@@ -439,7 +439,9 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 			this.custID.setValue(aCustomerEmploymentDetail.getCustID());
 		}
 
-		this.custEmpName.setValue(String.valueOf(aCustomerEmploymentDetail.getCustEmpName()));
+		if (null != aCustomerEmploymentDetail.getCustEmpName()) {
+			this.custEmpName.setValue(String.valueOf(aCustomerEmploymentDetail.getCustEmpName()));
+		}
 		this.custEmpFrom.setValue(aCustomerEmploymentDetail.getCustEmpFrom());
 		this.custEmpTo.setValue(aCustomerEmploymentDetail.getCustEmpTo());
 		this.custEmpDesg.setValue(aCustomerEmploymentDetail.getCustEmpDesg());
