@@ -37,5 +37,5 @@
 	<include file="change-logs/change-log-advance-emai.xml" />
 	<include file="change-logs/change-log-4.14.0.xml" />
 	<include file="change-logs/change-log-receipts-new-1.0.xml" />
-	<include file="change-logs/change-log-4.15.0.xml" />
+	<include file="change-logs/change-log-5.0.0.xml" />
 </databaseChangeLog>
