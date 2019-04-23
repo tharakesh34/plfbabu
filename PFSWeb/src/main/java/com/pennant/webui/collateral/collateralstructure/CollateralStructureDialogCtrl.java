@@ -350,7 +350,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.queryId.setDescColumn("QueryCode");
 		this.queryId.setValidateColumns(new String[] { "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
 
-		this.commodity.setModuleName("Commodities");
+		this.commodity.setModuleName("Commodity");
 		this.commodity.setMandatoryStyle(true);
 		this.commodity.setValueColumn("Id");
 		this.commodity.setDescColumn("Code");
