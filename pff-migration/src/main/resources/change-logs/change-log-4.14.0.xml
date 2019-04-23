@@ -2229,6 +2229,10 @@ UNION ALL
      JOIN jvpostings t3 ON t3.batchreference::text = t1.finreference::text
 		</createView>
     </changeSet>
-    
-	<!--Commodity and LAS Changes -->
+
+	<!--This change log xml is Freezed dont add change sets in this version.
+		please add new change sets on change-log-{pff.version}.xml 
+		i.e pff.version  from pom.xml in pff pff-aggregator -->
+	
+	
 </databaseChangeLog>

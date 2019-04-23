@@ -214,5 +214,7 @@
 	</changeSet>
 	
 	
-	
+		<!--This change log xml is Freezed dont add change sets in this version.
+		please add new change sets on change-log-{pff.version}-audit.xml 
+		i.e pff.version  from pom.xml in pff pff-aggregator -->
 </databaseChangeLog>
