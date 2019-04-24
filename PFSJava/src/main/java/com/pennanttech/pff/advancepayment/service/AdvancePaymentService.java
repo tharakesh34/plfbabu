@@ -195,15 +195,16 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		if (AccountConstants.TRANTYPE_CREDIT.equals(txnType)) {
 			amount = excess.getAmount().add(reqAmount);
-			excess.setAmount(amount);
 		} else {
 			amount = excess.getAmount().subtract(reqAmount);
+			utilisedAmt = utilisedAmt.add(reqAmount);
 		}
-
+		
 		excess.setFinReference(finReference);
 		excess.setAmountType(adviceType);
-		excess.setUtilisedAmt(utilisedAmt.add(reqAmount));
+		excess.setAmount(amount);
 		excess.setReservedAmt(reservedAmt);
+		excess.setUtilisedAmt(utilisedAmt);
 		excess.setBalanceAmt(amount.subtract(utilisedAmt).subtract(reservedAmt));
 
 		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
