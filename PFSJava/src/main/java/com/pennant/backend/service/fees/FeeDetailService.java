@@ -291,7 +291,7 @@ public class FeeDetailService {
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(actualFinFeeList);
 		}
-		
+
 		//Insurance Amounts
 		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
 		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
@@ -688,91 +688,89 @@ public class FeeDetailService {
 
 		List<Rule> feeRules = ruleService.getRuleDetailList(feeRuleCodes, RuleConstants.MODULE_FEES,
 				finScheduleData.getFeeEvent());
-		if (feeRules != null && !feeRules.isEmpty()) {
-			HashMap<String, Object> executionMap = new HashMap<String, Object>();
-			Map<String, String> ruleSqlMap = new HashMap<String, String>();
-			List<Object> objectList = new ArrayList<Object>();
-			if (financeDetail.getCustomerDetails() != null) {
-				objectList.add(financeDetail.getCustomerDetails().getCustomer());
-				if (financeDetail.getCustomerDetails().getCustEmployeeDetail() != null) {
-					objectList.add(financeDetail.getCustomerDetails().getCustEmployeeDetail());
-				}
+		HashMap<String, Object> executionMap = new HashMap<String, Object>();
+		Map<String, String> ruleSqlMap = new HashMap<String, String>();
+		List<Object> objectList = new ArrayList<Object>();
+		if (financeDetail.getCustomerDetails() != null) {
+			objectList.add(financeDetail.getCustomerDetails().getCustomer());
+			if (financeDetail.getCustomerDetails().getCustEmployeeDetail() != null) {
+				objectList.add(financeDetail.getCustomerDetails().getCustEmployeeDetail());
 			}
-			if (financeDetail.getFinScheduleData() != null) {
-				objectList.add(financeDetail.getFinScheduleData().getFinanceMain());
-				objectList.add(financeDetail.getFinScheduleData().getFinanceType());
-			}
-			for (Rule feeRule : feeRules) {
-				if (feeRule.getFields() != null) {
-					String[] fields = feeRule.getFields().split(",");
-					for (String field : fields) {
-						if (!executionMap.containsKey(field)) {
-							ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
-						}
+		}
+		if (financeDetail.getFinScheduleData() != null) {
+			objectList.add(financeDetail.getFinScheduleData().getFinanceMain());
+			objectList.add(financeDetail.getFinScheduleData().getFinanceType());
+		}
+		for (Rule feeRule : feeRules) {
+			if (feeRule.getFields() != null) {
+				String[] fields = feeRule.getFields().split(",");
+				for (String field : fields) {
+					if (!executionMap.containsKey(field)) {
+						ruleExecutionUtil.setExecutionMap(field, objectList, executionMap);
 					}
 				}
-				ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
+			}
+			ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
+		}
+
+		int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
+		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference())
+				&& StringUtils.isNotBlank(finMain.getRcdMaintainSts())) {
+			FinanceProfitDetail finProfitDetail = financeDetailService
+					.getFinProfitDetailsById(finMain.getFinReference());
+			if (finProfitDetail != null) {
+				BigDecimal outStandingFeeBal = this.financeDetailService
+						.getOutStandingBalFromFees(finMain.getFinReference());
+				executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
+				executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+				executionMap.put("totOSExcludeFees",
+						finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
+				executionMap.put("totOSIncludeFees",
+						finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
+				executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
+			}
+		}
+
+		if (finServiceInst != null) {
+			executionMap.put("totalPayment", finServiceInst.getAmount());
+			BigDecimal remPartPaymentAmt = PennantApplicationUtil.formateAmount(finServiceInst.getRemPartPayAmt(),
+					formatter);
+			executionMap.put("partialPaymentAmount", remPartPaymentAmt);
+		}
+
+		if (finMain != null && finMain.getFinStartDate() != null) {
+			int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), finMain.getFinStartDate());
+			executionMap.put("finAgetilldate", finAge);
+		}
+
+		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+			if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
+				continue;
 			}
 
-			int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
-			FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-			if (finMain != null && StringUtils.isNotBlank(finMain.getFinReference())
-					&& StringUtils.isNotBlank(finMain.getRcdMaintainSts())) {
-				FinanceProfitDetail finProfitDetail = financeDetailService
-						.getFinProfitDetailsById(finMain.getFinReference());
-				if (finProfitDetail != null) {
-					BigDecimal outStandingFeeBal = this.financeDetailService
-							.getOutStandingBalFromFees(finMain.getFinReference());
-					executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
-					executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
-					executionMap.put("totOSExcludeFees",
-							finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
-					executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()
-							.add(finProfitDetail.getTotalPriBal()).add(outStandingFeeBal));
-					executionMap.put("unearnedAmount", finProfitDetail.getUnearned());
-				}
-			}
+			BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
+					executionMap, finScheduleData.getFinanceMain().getFinCcy());
 
-			if (finServiceInst != null) {
-				executionMap.put("totalPayment", finServiceInst.getAmount());
-				BigDecimal remPartPaymentAmt = PennantApplicationUtil.formateAmount(finServiceInst.getRemPartPayAmt(),
-						formatter);
-				executionMap.put("partialPaymentAmount", remPartPaymentAmt);
-			}
+			//unFormating feeResult
+			feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
 
-			if (finMain != null && finMain.getFinStartDate() != null) {
-				int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), finMain.getFinStartDate());
-				executionMap.put("finAgetilldate", finAge);
-			}
+			finFeeDetail.setCalculatedAmount(feeResult);
 
-			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-				if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
-					continue;
-				}
-
-				BigDecimal feeResult = this.finFeeDetailService.getFeeResult(ruleSqlMap.get(finFeeDetail.getRuleCode()),
-						executionMap, finScheduleData.getFinanceMain().getFinCcy());
-
-				//unFormating feeResult
-				feeResult = PennantApplicationUtil.unFormateAmount(feeResult, formatter);
-
-				finFeeDetail.setCalculatedAmount(feeResult);
-
-				if (finFeeDetail.isTaxApplicable()) {
-					if (enquiry) {
-						this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
-								gstExecutionMap, false);
-					} else {
-						this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
-								gstExecutionMap, true);
-					}
+			if (finFeeDetail.isTaxApplicable()) {
+				if (enquiry) {
+					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
+							gstExecutionMap, false);
 				} else {
-					if (enquiry) {
-						finFeeDetail.setActualAmount(feeResult);
-					}
-					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-							.subtract(finFeeDetail.getWaivedAmount()));
+					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
+							gstExecutionMap, true);
 				}
+			} else {
+				if (enquiry) {
+					finFeeDetail.setActualAmount(feeResult);
+				}
+				finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
+						.subtract(finFeeDetail.getWaivedAmount()));
 			}
 		}
 	}
