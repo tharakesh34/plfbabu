@@ -91,6 +91,7 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class FinScheduleListItemRenderer implements Serializable {
@@ -252,7 +253,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 			isRpyBaseRate = false;
 
 			int advTerms = aFinanceMain.getAdvTerms();
-			if (advTerms > 0) {
+			if ((AdvanceType.hasAdvEMI(aFinanceMain.getAdvType())
+					&& AdvanceStage.hasFrontEnd(aFinanceMain.getAdvStage())) && advTerms > 0) {
 				lastRec = false;
 				BigDecimal eachAdvanceEMI = aFinanceMain.getAdvanceEMI().divide(BigDecimal.valueOf(advTerms), 2,
 						RoundingMode.HALF_DOWN);
@@ -683,7 +685,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				}
 
 				if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0
-						&& aFinanceMain.getAdvTerms() > 0) {
+						&& AdvanceType.hasAdvEMI(aFinanceMain.getAdvType())) {
 					isEditable = false;
 					isRate = false;
 					showZeroEndBal = false;
@@ -2302,6 +2304,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				if (DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getFinStartDate()) == 0) {
 					advEMi = aFinanceMain.getAdvanceEMI();
 				}
+				
 				if (!AdvanceType.AE.name().equals(aFinanceMain.getAdvType())) {
 					advEMi = BigDecimal.ZERO;
 				}
@@ -3179,8 +3182,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 		count = 1;
 
-		int advanceEmiTerms = aFinanceMain.getAdvTerms();
-		if (advanceEmiTerms > 0) {
+		if (AdvanceType.hasAdvEMI(aFinanceMain.getAdvType())) {
+			int advanceEmiTerms = aFinanceMain.getAdvTerms();
 			BigDecimal eachAdvanceEMI = aFinanceMain.getAdvanceEMI().divide(BigDecimal.valueOf(advanceEmiTerms), 2,
 					RoundingMode.HALF_DOWN);
 			FinanceScheduleDetail advEmiSch = new FinanceScheduleDetail();
