@@ -97,6 +97,7 @@ import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.rits.cloning.Cloner;
 
@@ -3116,7 +3117,8 @@ public class ScheduleCalculator {
 			for (int j = 0; j < riSize; j++) {
 				RepayInstruction curInstruction = finScheduleData.getRepayInstructions().get(j);
 				if (DateUtility.compare(curInstruction.getRepayDate(), finMain.getGrcPeriodEndDate()) > 0) {
-					if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+					if (AdvanceType.hasAdvEMI(finMain.getAdvType())
+							&& AdvanceStage.hasFrontEnd(finMain.getAdvStage())) {
 						finMain.setAdvanceEMI(
 								curInstruction.getRepayAmount().multiply(BigDecimal.valueOf(finMain.getAdvTerms())));
 					}
@@ -3927,7 +3929,7 @@ public class ScheduleCalculator {
 				curSchd.getDisbAmount().add(curSchd.getFeeChargeAmt()).subtract(curSchd.getDownPaymentAmount()));
 		curSchd.setRvwOnSchDate(true);
 
-		if (StringUtils.equals(finMain.getAdvType(), AdvanceType.AE.name())) {
+		if (AdvanceType.hasAdvEMI(finMain.getAdvType())) {
 			if (finMain.isAdjustClosingBal()) {
 				curSchd.setClosingBalance(curSchd.getClosingBalance().subtract(finMain.getAdvanceEMI()));
 				finMain.setAdjustClosingBal(false);
@@ -4127,7 +4129,7 @@ public class ScheduleCalculator {
 		int strtPrdHdays = finMain.getStrtPrdHdays();
 		int usedStrtPrdHdays = 0;
 
-		if (advEMITerms > 0) {
+		if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())) {
 			derivedMDT = schdDetails.get(schdDetails.size() - advEMITerms - 1).getSchDate();
 			finMain.setNewMaturityIndex(schdDetails.size() - advEMITerms - 1);
 		} else {
