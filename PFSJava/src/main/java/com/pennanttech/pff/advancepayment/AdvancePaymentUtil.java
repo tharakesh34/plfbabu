@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -56,6 +57,11 @@ public class AdvancePaymentUtil {
 				if (AdvanceType.AE == type) {
 					continue;
 				}
+				if (!ImplementationConstants.ALLOW_ADVINT_FREQUENCY) {
+					if (AdvanceType.AF == type) {
+						continue;
+					}
+				}
 				list.add(new Property(type.code, type.value));
 			}
 			return list;
@@ -64,15 +70,24 @@ public class AdvancePaymentUtil {
 		public static List<Property> getRepayList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceType type : values()) {
+				if (!ImplementationConstants.ALLOW_ADVINT_FREQUENCY) {
+					if (AdvanceType.AF == type) {
+						continue;
+					}
+				}
 				list.add(new Property(type.code, type.value));
 			}
 			return list;
 		}
 
+		public static boolean hasAdvEMI(String advanceType) {
+			return AdvanceType.getType(advanceType) == AdvanceType.AE;
+		}
+
 	}
 
 	public enum AdvanceStage {
-		FE("FE", "Front End"), RE("RE", "Rear End");
+		FE("FE", "Front End"), RE("RE", "Rear End"), AD("AD", "Deposit");
 
 		private final String code;
 		private final String value;
@@ -102,9 +117,35 @@ public class AdvancePaymentUtil {
 		public static List<Property> getList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceStage type : values()) {
+				if (!ImplementationConstants.ALLOW_ADVSTAGE_REAREND) {
+					if (AdvanceStage.RE == type) {
+						continue;
+					}
+				} else if (!ImplementationConstants.ALLOW_ADVSTAGE_DEPOSIT) {
+					if (AdvanceStage.RE == type) {
+						continue;
+					}
+				}
 				list.add(new Property(type.code, type.value));
 			}
 			return list;
+		}
+
+		public static boolean isDeposit(String stage) {
+			AdvanceStage advstage = AdvanceStage.getStage(stage);
+			return advstage == AdvanceStage.AD;
+		}
+
+		public static boolean hasDeposit(String stage) {
+			return AdvanceStage.getStage(stage) == AdvanceStage.AD;
+		}
+
+		public static boolean hasFrontEnd(String stage) {
+			return AdvanceStage.getStage(stage) == AdvanceStage.FE;
+		}
+
+		public static boolean hasRearEnd(String stage) {
+			return AdvanceStage.getStage(stage) == AdvanceStage.RE;
 		}
 
 	}
@@ -381,9 +422,4 @@ public class AdvancePaymentUtil {
 
 		return advanceProfit;
 	}
-
-	public static boolean hasAdvEMI(String advanceType) {
-		return AdvanceType.getType(advanceType) == AdvanceType.AE;
-	}
-
 }
