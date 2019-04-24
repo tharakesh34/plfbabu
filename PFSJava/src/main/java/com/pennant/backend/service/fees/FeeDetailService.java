@@ -291,6 +291,7 @@ public class FeeDetailService {
 		if (AccountEventConstants.ACCEVENT_EARLYSTL.equals(finScheduleData.getFinanceMain().getFinSourceID())) {
 			finScheduleData.setFinFeeDetailList(actualFinFeeList);
 		}
+		
 		//Insurance Amounts
 		finScheduleData.getFinanceMain().setInsuranceAmt(insAddToDisb);
 		finScheduleData.getFinanceMain().setDeductInsDisb(deductInsFromDisb);
@@ -851,44 +852,43 @@ public class FeeDetailService {
 	private void calculateFeePercentageAmount(FinScheduleData finScheduleData, FinanceDetail financeDetail,
 			boolean enquiry, HashMap<String, Object> gstExecutionMap) {
 
-		if (CollectionUtils.isNotEmpty(getFinFeeDetailList())) {
+		if (CollectionUtils.isEmpty(getFinFeeDetailList())) {
+			return;
+		}
 
-			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+		for (FinFeeDetail fee : getFinFeeDetailList()) {
+			if (StringUtils.equals(fee.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE)) {
+				BigDecimal calPercentageFee = getCalculatedPercentageFee(fee, finScheduleData);
+				fee.setCalculatedAmount(calPercentageFee);
 
-				if (StringUtils.equals(finFeeDetail.getCalculationType(),
-						PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE)) {
-					BigDecimal calPercentageFee = getCalculatedPercentageFee(finFeeDetail, finScheduleData);
-					finFeeDetail.setCalculatedAmount(calPercentageFee);
+				if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+					fee.setWaivedAmount(calPercentageFee);
+				}
 
-					if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-							CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
-						finFeeDetail.setWaivedAmount(calPercentageFee);
-					}
-
-					if (finFeeDetail.isTaxApplicable()) { //if GST applicable
-						if (enquiry) {
-							this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee,
-									financeDetail, gstExecutionMap, false);
-						} else {
-							this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee,
-									financeDetail, gstExecutionMap, true);
-						}
+				if (fee.isTaxApplicable()) { //if GST applicable
+					if (enquiry) {
+						this.finFeeDetailService.processGSTCalForPercentage(fee, calPercentageFee, financeDetail,
+								gstExecutionMap, false);
 					} else {
-						if (enquiry) {
-							finFeeDetail.setActualAmount(calPercentageFee);
-						}
-						finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount()
-								.subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getWaivedAmount()));
+						this.finFeeDetailService.processGSTCalForPercentage(fee, calPercentageFee, financeDetail,
+								gstExecutionMap, true);
 					}
+				} else {
+					if (enquiry) {
+						fee.setActualAmount(calPercentageFee);
+					}
+					fee.setRemainingFee(
+							fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 				}
 			}
 		}
+
 	}
 
-	private BigDecimal getCalculatedPercentageFee(FinFeeDetail finFeeDetail, FinScheduleData finScheduleData) {
+	private BigDecimal getCalculatedPercentageFee(FinFeeDetail fee, FinScheduleData finScheduleData) {
 		BigDecimal calculatedAmt = BigDecimal.ZERO;
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		switch (finFeeDetail.getCalculateOn()) {
+		switch (fee.getCalculateOn()) {
 		case PennantConstants.FEE_CALCULATEDON_TOTALASSETVALUE:
 			calculatedAmt = financeMain.getFinAssetValue();
 			break;
@@ -902,7 +902,7 @@ public class FeeDetailService {
 		default:
 			break;
 		}
-		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 0,
+		calculatedAmt = calculatedAmt.multiply(fee.getPercentage()).divide(BigDecimal.valueOf(100), 0,
 				RoundingMode.HALF_DOWN);
 		return calculatedAmt;
 	}
