@@ -55,6 +55,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
@@ -1475,8 +1476,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	@Override
 	public void calculateFees(FinFeeDetail fee, FinScheduleData scheduleData, Map<String, Object> gstExecutionMap) {
 		FinanceMain financeMain = scheduleData.getFinanceMain();
+		String finEvent = fee.getFinEvent();
 
-		AdvancePaymentUtil.setAdvancePayment(scheduleData, fee);
+		if (AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent)) {
+			AdvancePaymentUtil.calculateLOSAdvPayment(scheduleData, fee);
+		} else if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
+			AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee);
+		}
 
 		calculateFees(fee, financeMain, gstExecutionMap);
 	}
