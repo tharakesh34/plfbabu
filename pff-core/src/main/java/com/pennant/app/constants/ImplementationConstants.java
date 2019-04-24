@@ -203,4 +203,15 @@ public class ImplementationConstants {
 	//Upfront Fee reversal required on loan cancellation
 	public static final boolean UPFRONT_FEE_REVERSAL_REQ = true;
 
+	//For Advance EMI interest frequency
+	public static final boolean ALLOW_ADVEMI_FREQUENCY = false;
+
+	//For Advance interest Advance at interest frequency
+	public static boolean ALLOW_ADVINT_FREQUENCY = true;
+
+	//For Advance interest/EMI REAR END
+	public static final boolean ALLOW_ADVSTAGE_REAREND = true;
+	//For Advance Interest/EMI Deposit
+	public static final boolean ALLOW_ADVSTAGE_DEPOSIT = false;
+
 }
