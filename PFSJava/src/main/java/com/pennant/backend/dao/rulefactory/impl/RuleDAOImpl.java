@@ -731,30 +731,30 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 */
 	@Override
 	public List<Rule> getRuleDetailList(List<String> ruleCodeList, String ruleModule, String ruleEvent) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc, AllowDeviation, CalFeeModify");
+		sql.append(", FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType");
+		sql.append(", DeviationType, GroupId, Revolving, FixedOrVariableLimit, Active, Fields");
+		sql.append(" From Rules ");
+		sql.append(" WHERE RuleModule = :RuleModule AND RuleEvent = :RuleEvent AND RuleCode In (:RuleCode)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
+		logger.debug(Literal.LEAVING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("RuleModule", ruleModule);
 		source.addValue("RuleEvent", ruleEvent);
+
 		if (ruleCodeList != null && !ruleCodeList.isEmpty()) {
 			source.addValue("RuleCode", ruleCodeList);
 		} else {
 			source.addValue("RuleCode", null);
 		}
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT RuleId, RuleCode, RuleModule,RuleEvent, RuleCodeDesc, AllowDeviation, CalFeeModify, FeeToFinance, ");
-		selectSql.append(
-				" WaiverDecider, Waiver, WaiverPerc, SQLRule, ActualBlock,SeqOrder, ReturnType, DeviationType, GroupId,");
-		selectSql.append(" Revolving, FixedOrVariableLimit, Active, Fields ");
-		selectSql.append(" From Rules ");
-		selectSql.append(" WHERE RuleModule = :RuleModule AND RuleEvent = :RuleEvent AND RuleCode In (:RuleCode)");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<Rule> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Rule.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
