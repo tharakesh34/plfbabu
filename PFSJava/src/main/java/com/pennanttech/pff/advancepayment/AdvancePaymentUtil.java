@@ -221,42 +221,48 @@ public class AdvancePaymentUtil {
 		advancePayment.setEmiDue(emiDue);
 	}
 
-	public static List<FinExcessAmount> getExcessAmounts(String finReference, List<FinFeeDetail> fees) {
-		List<FinExcessAmount> finExcessAmounts = new ArrayList<>();
+	/**
+	 * This method will calculate the Advance Interest for LMS in the below case
+	 * <p>
+	 * Consider only Repayments terms
+	 * </p>
+	 * <p>
+	 * Consider only Full Terms
+	 * </p>
+	 * 
+	 * @param finScheduleData
+	 * @param fee
+	 */
+	public static void calculateLMSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
+		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 
-		if (fees == null) {
-			return finExcessAmounts;
+		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT)) {
+			return;
 		}
 
-		for (FinFeeDetail fee : fees) {
-			AdvanceRuleCode advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		String repayAdvType = fm.getAdvType();
 
-			if (advanceRuleCode == null) {
-				continue;
-			}
+		AdvanceType advanceType = AdvanceType.getType(repayAdvType);
 
-			BigDecimal excessAmount = fee.getActualAmountOriginal();
-
-			if (excessAmount == null) {
-				excessAmount = BigDecimal.ZERO;
-			}
-
-			FinExcessAmount finExcessAmount = new FinExcessAmount();
-			finExcessAmount.setFinReference(finReference);
-			finExcessAmount.setAmountType(advanceRuleCode.name());
-			finExcessAmount.setAmount(excessAmount);
-			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
-			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
-			finExcessAmount.setBalanceAmt(excessAmount);
-
-			finExcessAmounts.add(finExcessAmount);
+		if (advanceType != AdvanceType.UF) {
+			return;
 		}
 
-		return finExcessAmounts;
+		BigDecimal advanceIntrest = finScheduleData.getPftChg();
+		fee.setActualAmount(advanceIntrest);
+		fee.setCalculatedAmount(advanceIntrest);
+		fee.setActualAmountOriginal(advanceIntrest);
+		fee.setNetAmountOriginal(advanceIntrest);
 	}
 
-	public static void setAdvancePayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
-
+	/**
+	 * This method will calculate the Advance Interest/EMI for LOS
+	 * 
+	 * @param finScheduleData
+	 * @param fee
+	 */
+	public static void calculateLOSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
 		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 
 		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT || advanceRule != AdvanceRuleCode.ADVEMI)) {
@@ -303,6 +309,7 @@ public class AdvancePaymentUtil {
 		fee.setActualAmount(advancePayment);
 		fee.setCalculatedAmount(advancePayment);
 		fee.setActualAmountOriginal(advancePayment);
+		fee.setNetAmountOriginal(advancePayment);
 	}
 
 	private static int getTerms(AdvanceType advanceType, int terms) {
@@ -373,6 +380,10 @@ public class AdvancePaymentUtil {
 		}
 
 		return advanceProfit;
+	}
+
+	public static boolean hasAdvEMI(String advanceType) {
+		return AdvanceType.getType(advanceType) == AdvanceType.AE;
 	}
 
 }
