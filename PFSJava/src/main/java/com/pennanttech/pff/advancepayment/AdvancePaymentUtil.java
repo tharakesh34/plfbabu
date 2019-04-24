@@ -131,11 +131,6 @@ public class AdvancePaymentUtil {
 			return list;
 		}
 
-		public static boolean isDeposit(String stage) {
-			AdvanceStage advstage = AdvanceStage.getStage(stage);
-			return advstage == AdvanceStage.AD;
-		}
-
 		public static boolean hasDeposit(String stage) {
 			return AdvanceStage.getStage(stage) == AdvanceStage.AD;
 		}
