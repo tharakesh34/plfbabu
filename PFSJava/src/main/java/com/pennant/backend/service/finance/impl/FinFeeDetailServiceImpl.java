@@ -925,8 +925,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			boolean error = false;
 
 			if (!financeDetail.isActionSave() && financeDetail.isUpFrentFee()) {
-				for (int i = 0; i < finScheduleData.getFinFeeDetailActualList().size(); i++) {
-					FinFeeDetail finFeeDetail = finScheduleData.getFinFeeDetailActualList().get(i);
+				List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
+				for (FinFeeDetail finFeeDetail : feeDetails) {
 					BigDecimal totalPaidAmount = BigDecimal.ZERO;
 
 					for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {

@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.util.FinanceConstants;
@@ -604,6 +606,39 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 		logger.debug(Literal.LEAVING);
 		return new ArrayList<Integer>();
+	}
+
+	@Override
+	public List<FinanceDisbursement> getDeductDisbFeeDetails(String finreference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from (");
+		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFeeDisb");
+		sql.append(" from FINFEEDETAIL_TEMP F");
+		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS_Temp DD on DD.FinReference = F.FinReference");
+		sql.append(" where FinEvent in (:FinEvent)");
+		sql.append(" group by F.Finreference, DisbSeq");
+		sql.append(" union all");
+		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFeeDisb");
+		sql.append(" from FINFEEDETAIL F");
+		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS DD on DD.FinReference = F.FinReference");
+		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FINFEEDETAIL_TEMP WHERE FeeId = F.FeeId)");
+		sql.append(" and FinEvent in (:FinEvent)");
+		sql.append(" group by F.Finreference, DisbSeq");
+		sql.append(" ) t");
+		sql.append(" where FinReference = :FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finreference);
+		source.addValue("FinEvent", Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
+
+		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceDisbursement.class);
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 }

@@ -72,6 +72,8 @@ public interface FinanceDisbursementDAO {
 	List<FinanceDisbursement> getDisbursementToday(String finRefernce, Date disbDate);
 
 	List<FinanceDisbursement> getDMFinanceDisbursementDetails(String id, String type);
-	
+
 	List<Integer> getFinanceDisbSeqs(String finReferecne, String type, boolean isWIF);
+
+	List<FinanceDisbursement> getDeductDisbFeeDetails(String finRef);
 }

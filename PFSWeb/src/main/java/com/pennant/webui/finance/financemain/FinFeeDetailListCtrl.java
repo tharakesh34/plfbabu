@@ -92,7 +92,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
@@ -439,7 +438,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		doFillFeePaymentDetails(financeDetail.getFeePaymentDetailList(), false);
 		doFillFinInsurances(financeDetail.getFinScheduleData().getFinInsuranceList());
 
-		List<FinFeeDetail> finFeeDetailActualList = financeDetail.getFinScheduleData().getFinFeeDetailActualList();
+		List<FinFeeDetail> finFeeDetailActualList = financeDetail.getFinScheduleData().getFinFeeDetailList();
 
 		if (!financeDetail.isNewRecord()) {
 			if (CollectionUtils.isNotEmpty(finFeeDetailActualList)) {
@@ -1311,218 +1310,198 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Combobox paymentMthdbox;
 		Intbox termsbox;
 
+		if (CollectionUtils.isEmpty(this.finFeeDetailList)) {
+			return this.finFeeDetailList;
+		}
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		if (this.finFeeDetailList != null && !this.finFeeDetailList.isEmpty()) {
+		int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 
-			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
+		for (FinFeeDetail fee : this.finFeeDetailList) {
+			fee.setDataModified(isDataMaintained(fee, fee.getBefImage()));
 
-			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
-
-				finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage()));
-
-				if (!finFeeDetail.isRcdVisible()) {
-
-					if (StringUtils.isBlank(aFinScheduleData.getFinanceMain().getRecordType())) {
-						finFeeDetail.setNewRecord(true);
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					}
-
-					continue;
+			if (!fee.isRcdVisible()) {
+				if (StringUtils.isBlank(aFinScheduleData.getFinanceMain().getRecordType())) {
+					fee.setNewRecord(true);
+					fee.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-				calbox = (Decimalbox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_CALCULATEDAMOUNT, finFeeDetail));
-				actualBox = (Decimalbox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, finFeeDetail));
-				paidBox = (Decimalbox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_PAID_AMOUNT, finFeeDetail));
-				waivedBox = (Decimalbox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
-				remFeeBox = (Decimalbox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_REMAINING_FEE, finFeeDetail));
-				paymentMthdbox = (Combobox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_PAYMENTMETHOD, finFeeDetail));
-				feeSchdMthdbox = (Combobox) this.listBoxFeeDetail
-						.getFellow(getComponentId(FEE_UNIQUEID_FEESCHEDULEMETHOD, finFeeDetail));
-				termsbox = (Intbox) this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_TERMS, finFeeDetail));
+				continue;
+			}
+			
+			calbox = getDecimalbox(FEE_UNIQUEID_CALCULATEDAMOUNT, fee);
+			actualBox = getDecimalbox(FEE_UNIQUEID_ACTUALAMOUNT, fee);
+			paidBox = getDecimalbox(FEE_UNIQUEID_PAID_AMOUNT, fee);
+			waivedBox = getDecimalbox(FEE_UNIQUEID_WAIVEDAMOUNT, fee);
+			remFeeBox = getDecimalbox(FEE_UNIQUEID_REMAINING_FEE, fee);
+			paymentMthdbox = getCombobox(FEE_UNIQUEID_PAYMENTMETHOD, fee);
+			feeSchdMthdbox = getCombobox(FEE_UNIQUEID_FEESCHEDULEMETHOD, fee);
+			termsbox = getIntBox(FEE_UNIQUEID_TERMS, fee);
 
-				if (calbox != null) {
-					if (validate && calbox.getValue().compareTo(BigDecimal.ZERO) < 0) {
-						throw new WrongValueException(calbox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
-								Labels.getLabel("FeeDetail_CalculateAmount"), String.valueOf(BigDecimal.ZERO) }));
-					}
 
-					finFeeDetail.setCalculatedAmount(
-							PennantAppUtil.unFormateAmount(BigDecimal.valueOf(calbox.doubleValue()), formatter));
+			if (calbox != null) {
+				if (validate && calbox.getValue().compareTo(BigDecimal.ZERO) < 0) {
+					throw new WrongValueException(calbox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
+							Labels.getLabel("FeeDetail_CalculateAmount"), String.valueOf(BigDecimal.ZERO) }));
 				}
 
-				if (actualBox != null) {
-					if (validate && actualBox.getValue() != null
-							&& actualBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
-						throw new WrongValueException(actualBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
-								Labels.getLabel("FeeDetail_ActualAmount"), String.valueOf(BigDecimal.ZERO) }));
-					}
-					finFeeDetail.setActualAmountOriginal(
-							PennantAppUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()), formatter));
-				}
-
-				try {
-					if (paidBox != null) {
-						if (validate && paidBox.getValue() != null
-								&& paidBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
-							throw new WrongValueException(paidBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
-									Labels.getLabel("FeeDetail_PaidAmount"), String.valueOf(BigDecimal.ZERO) }));
-						}
-						if (validate && BigDecimal.valueOf(paidBox.doubleValue()).compareTo(
-								PennantAppUtil.formateAmount(finFeeDetail.getActualAmount(), formatter)) > 0) {
-							throw new WrongValueException(paidBox,
-									Labels.getLabel("label_FeeDetail_Validation_Exceed",
-											new String[] { Labels.getLabel("FeeDetail_PaidAmount"),
-													Labels.getLabel("FeeDetail_ActualAmount") }));
-						}
-						finFeeDetail.setPaidAmount(
-								PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter));
-					}
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-
-				if (waivedBox != null) {
-					if (validate && waivedBox.getValue() != null
-							&& waivedBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
-						throw new WrongValueException(waivedBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
-								Labels.getLabel("FeeDetail_WaivedAmount"), String.valueOf(BigDecimal.ZERO) }));
-					}
-					BigDecimal waivedAmtTemp = BigDecimal.valueOf(waivedBox.doubleValue());
-					try {
-						if (validate && waivedAmtTemp.compareTo(
-								PennantAppUtil.formateAmount(finFeeDetail.getActualAmount(), formatter)) > 0) {
-							throw new WrongValueException(waivedBox,
-									Labels.getLabel("label_FeeDetail_Validation_Exceed",
-											new String[] { Labels.getLabel("FeeDetail_WaivedAmount"),
-													Labels.getLabel("FeeDetail_ActualAmount") }));
-						}
-						if (finFeeDetail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
-							BigDecimal alwWaiverAmt = finFeeDetail.getActualAmount()
-									.multiply(finFeeDetail.getMaxWaiverPerc())
-									.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
-							alwWaiverAmt = PennantAppUtil.formateAmount(alwWaiverAmt, formatter);
-							if (validate && waivedAmtTemp.compareTo(alwWaiverAmt) > 0) {
-								throw new WrongValueException(waivedBox,
-										Labels.getLabel("label_Fee_WaiverPercentage_Exceed",
-												new String[] { String.valueOf(finFeeDetail.getMaxWaiverPerc()),
-														alwWaiverAmt.toPlainString() }));
-							}
-						}
-						finFeeDetail.setWaivedAmount(PennantAppUtil.unFormateAmount(waivedAmtTemp, formatter));
-						BigDecimal nonOutstandingFeeAmt = finFeeDetail.getPaidAmount()
-								.add(finFeeDetail.getWaivedAmount());
-						if (validate && finFeeDetail.getPaidAmount().compareTo(finFeeDetail.getActualAmount()) <= 0
-								&& nonOutstandingFeeAmt.compareTo(finFeeDetail.getActualAmount()) > 0) {
-							throw new WrongValueException(waivedBox,
-									Labels.getLabel("label_Fee_PaidWaiverAmount_Exceed"));
-						}
-
-					} catch (WrongValueException we) {
-						wve.add(we);
-					}
-				}
-
-				try {
-					if (remFeeBox != null) {
-						if (validate && remFeeBox.getValue() != null
-								&& remFeeBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
-							throw new WrongValueException(remFeeBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
-									Labels.getLabel("FeeDetail_RemFeeAmount"), String.valueOf(BigDecimal.ZERO) }));
-						}
-						BigDecimal remainingFee = PennantAppUtil
-								.unFormateAmount(BigDecimal.valueOf(remFeeBox.doubleValue()), formatter);
-
-						if (StringUtils.isNotBlank(this.moduleDefiner)
-								&& remainingFee.compareTo(BigDecimal.ZERO) != 0) {
-							throw new WrongValueException(remFeeBox,
-									Labels.getLabel("label_Fee_PaidWaiverAmount_NotEqual"));
-						}
-
-						finFeeDetail.setRemainingFee(remainingFee);
-					}
-				} catch (WrongValueException we) {
-					wve.add(we);
-
-				}
-
-				try {
-					if (paymentMthdbox != null) {
-						if (validate && finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
-							if ("#".equals(getComboboxValue(paymentMthdbox))) {
-								// throw new WrongValueException(paymentMthdbox, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("FeeDetail_PaymentRef") }));
-							}
-						}
-						finFeeDetail.setPaymentRef(getComboboxValue(paymentMthdbox));
-					}
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-
-				try {
-					if (feeSchdMthdbox != null) {
-						if (validate && finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
-							if ("#".equals(getComboboxValue(feeSchdMthdbox))) {
-								throw new WrongValueException(feeSchdMthdbox, Labels.getLabel("STATIC_INVALID",
-										new String[] { Labels.getLabel("FeeDetail_FeeScheduleMethod") }));
-							}
-						}
-						finFeeDetail.setFeeScheduleMethod(getComboboxValue(feeSchdMthdbox));
-					}
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-
-				try {
-					if (termsbox != null) {
-						if (validate && !termsbox.isReadonly() && !termsbox.isDisabled() && termsbox.intValue() == 0) {
-							throw new WrongValueException(termsbox, Labels.getLabel("FIELD_IS_MAND",
-									new String[] { Labels.getLabel("label_Fee_Terms") }));
-						}
-						if (validate && !termsbox.isReadonly() && !termsbox.isDisabled() && termsbox.intValue() < 0) {
-							throw new WrongValueException(termsbox, Labels.getLabel("NUMBER_NOT_NEGATIVE",
-									new String[] { Labels.getLabel("label_Fee_Terms") }));
-						}
-						if (validate && !termsbox.isReadonly() && !termsbox.isDisabled()
-								&& termsbox.intValue() > aFinScheduleData.getFinanceMain().getNumberOfTerms()) {
-							throw new WrongValueException(termsbox, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
-									Labels.getLabel("listheader_FeeDetailList_Terms.label"), numberOfTermsLabel }));
-						}
-						finFeeDetail.setTerms(termsbox.intValue());
-					}
-				} catch (WrongValueException we) {
-					wve.add(we);
-				}
-
-				if (aFinScheduleData.getFinanceMain().isWorkflow()) {
-					// Saving Properties
-					if (finFeeDetail.isNewRecord()) {
-						finFeeDetail.setDataModified(true);
-						finFeeDetail.setVersion(1);
-						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-					} else {
-						finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage()));
-					}
-				} else {
-					if (finFeeDetail.isNewRecord()) {
-						finFeeDetail.setDataModified(true);
-						finFeeDetail.setVersion(1);
-						finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-					} else {
-						finFeeDetail.setDataModified(isDataMaintained(finFeeDetail, finFeeDetail.getBefImage()));
-						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					}
-				}
-				finFeeDetail.setRecordStatus(this.recordStatus.getValue());
+				fee.setCalculatedAmount(
+						PennantAppUtil.unFormateAmount(BigDecimal.valueOf(calbox.doubleValue()), formatter));
 			}
 
+			if (actualBox != null) {
+				if (validate && actualBox.getValue() != null && actualBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
+					throw new WrongValueException(actualBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
+							Labels.getLabel("FeeDetail_ActualAmount"), String.valueOf(BigDecimal.ZERO) }));
+				}
+				fee.setActualAmountOriginal(
+						PennantAppUtil.unFormateAmount(BigDecimal.valueOf(actualBox.doubleValue()), formatter));
+			}
+
+			try {
+				if (paidBox != null) {
+					if (validate && paidBox.getValue() != null && paidBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						throw new WrongValueException(paidBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
+								Labels.getLabel("FeeDetail_PaidAmount"), String.valueOf(BigDecimal.ZERO) }));
+					}
+					if (validate && BigDecimal.valueOf(paidBox.doubleValue())
+							.compareTo(PennantAppUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
+						throw new WrongValueException(paidBox,
+								Labels.getLabel("label_FeeDetail_Validation_Exceed",
+										new String[] { Labels.getLabel("FeeDetail_PaidAmount"),
+												Labels.getLabel("FeeDetail_ActualAmount") }));
+					}
+					fee.setPaidAmount(
+							PennantAppUtil.unFormateAmount(BigDecimal.valueOf(paidBox.doubleValue()), formatter));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			if (waivedBox != null) {
+				if (validate && waivedBox.getValue() != null && waivedBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
+					throw new WrongValueException(waivedBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
+							Labels.getLabel("FeeDetail_WaivedAmount"), String.valueOf(BigDecimal.ZERO) }));
+				}
+				BigDecimal waivedAmtTemp = BigDecimal.valueOf(waivedBox.doubleValue());
+				try {
+					if (validate && waivedAmtTemp
+							.compareTo(PennantAppUtil.formateAmount(fee.getActualAmount(), formatter)) > 0) {
+						throw new WrongValueException(waivedBox,
+								Labels.getLabel("label_FeeDetail_Validation_Exceed",
+										new String[] { Labels.getLabel("FeeDetail_WaivedAmount"),
+												Labels.getLabel("FeeDetail_ActualAmount") }));
+					}
+					if (fee.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal alwWaiverAmt = fee.getActualAmount().multiply(fee.getMaxWaiverPerc())
+								.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN);
+						alwWaiverAmt = PennantAppUtil.formateAmount(alwWaiverAmt, formatter);
+						if (validate && waivedAmtTemp.compareTo(alwWaiverAmt) > 0) {
+							throw new WrongValueException(waivedBox,
+									Labels.getLabel("label_Fee_WaiverPercentage_Exceed", new String[] {
+											String.valueOf(fee.getMaxWaiverPerc()), alwWaiverAmt.toPlainString() }));
+						}
+					}
+					fee.setWaivedAmount(PennantAppUtil.unFormateAmount(waivedAmtTemp, formatter));
+					BigDecimal nonOutstandingFeeAmt = fee.getPaidAmount().add(fee.getWaivedAmount());
+					if (validate && fee.getPaidAmount().compareTo(fee.getActualAmount()) <= 0
+							&& nonOutstandingFeeAmt.compareTo(fee.getActualAmount()) > 0) {
+						throw new WrongValueException(waivedBox, Labels.getLabel("label_Fee_PaidWaiverAmount_Exceed"));
+					}
+
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			}
+
+			try {
+				if (remFeeBox != null) {
+					if (validate && remFeeBox.getValue() != null
+							&& remFeeBox.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						throw new WrongValueException(remFeeBox, Labels.getLabel("NUMBER_MINVALUE", new String[] {
+								Labels.getLabel("FeeDetail_RemFeeAmount"), String.valueOf(BigDecimal.ZERO) }));
+					}
+					BigDecimal remainingFee = PennantAppUtil
+							.unFormateAmount(BigDecimal.valueOf(remFeeBox.doubleValue()), formatter);
+
+					fee.setRemainingFee(remainingFee);
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+
+			}
+
+			try {
+				if (paymentMthdbox != null) {
+					if (validate && fee.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+						if ("#".equals(getComboboxValue(paymentMthdbox))) {
+							// throw new WrongValueException(paymentMthdbox, Labels.getLabel("STATIC_INVALID", new String[] { Labels.getLabel("FeeDetail_PaymentRef") }));
+						}
+					}
+					fee.setPaymentRef(getComboboxValue(paymentMthdbox));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (feeSchdMthdbox != null) {
+					if (validate && fee.getRemainingFee().compareTo(BigDecimal.ZERO) > 0) {
+						if ("#".equals(getComboboxValue(feeSchdMthdbox))) {
+							throw new WrongValueException(feeSchdMthdbox, Labels.getLabel("STATIC_INVALID",
+									new String[] { Labels.getLabel("FeeDetail_FeeScheduleMethod") }));
+						}
+					}
+					fee.setFeeScheduleMethod(getComboboxValue(feeSchdMthdbox));
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (termsbox != null) {
+					if (validate && !termsbox.isReadonly() && !termsbox.isDisabled() && termsbox.intValue() == 0) {
+						throw new WrongValueException(termsbox,
+								Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_Fee_Terms") }));
+					}
+					if (validate && !termsbox.isReadonly() && !termsbox.isDisabled() && termsbox.intValue() < 0) {
+						throw new WrongValueException(termsbox, Labels.getLabel("NUMBER_NOT_NEGATIVE",
+								new String[] { Labels.getLabel("label_Fee_Terms") }));
+					}
+					if (validate && !termsbox.isReadonly() && !termsbox.isDisabled()
+							&& termsbox.intValue() > aFinScheduleData.getFinanceMain().getNumberOfTerms()) {
+						throw new WrongValueException(termsbox, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
+								Labels.getLabel("listheader_FeeDetailList_Terms.label"), numberOfTermsLabel }));
+					}
+					fee.setTerms(termsbox.intValue());
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			if (aFinScheduleData.getFinanceMain().isWorkflow()) {
+				// Saving Properties
+				if (fee.isNewRecord()) {
+					fee.setDataModified(true);
+					fee.setVersion(1);
+					fee.setRecordType(PennantConstants.RCD_ADD);
+				} else {
+					fee.setDataModified(isDataMaintained(fee, fee.getBefImage()));
+				}
+			} else {
+				if (fee.isNewRecord()) {
+					fee.setDataModified(true);
+					fee.setVersion(1);
+					fee.setRecordType(PennantConstants.RCD_ADD);
+				} else {
+					fee.setDataModified(isDataMaintained(fee, fee.getBefImage()));
+					fee.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+			}
+			fee.setRecordStatus(this.recordStatus.getValue());
 		}
+
 		showErrorDetails(wve);
 
 		logger.debug("Leaving");
@@ -2916,14 +2895,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
 		}
 		
-		
-		FeeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData.getFinanceMain(),
-				getFinFeeDetailList());
-
-
-		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+		/*for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
 		}
+		 */
+		FeeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData.getFinanceMain(),
+				finScheduleData);
+
 
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 
@@ -3005,15 +2983,14 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			String finCcy = financeMain.getFinCcy();
 			int formatter = CurrencyUtil.getFormat(finCcy);
-			
+
 			//FIXME: MURTHY Commented the below since there is no SourcingBranch in FM
-			/*if (StringUtils.isNotBlank(financeMain.getSourcingBranch())) {
-				Branch sourcingBranch = this.finFeeDetailService.getBranchById(financeMain.getSourcingBranch(), "");
-				if (sourcingBranch != null) {
-					executionMap.put("branchcity", sourcingBranch.getBranchCity());
-					executionMap.put("branchstate", sourcingBranch.getBranchProvince());
-				}
-			}*/
+			/*
+			 * if (StringUtils.isNotBlank(financeMain.getSourcingBranch())) { Branch sourcingBranch =
+			 * this.finFeeDetailService.getBranchById(financeMain.getSourcingBranch(), ""); if (sourcingBranch != null)
+			 * { executionMap.put("branchcity", sourcingBranch.getBranchCity()); executionMap.put("branchstate",
+			 * sourcingBranch.getBranchProvince()); } }
+			 */
 
 			for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 				if (StringUtils.isEmpty(finFeeDetail.getRuleCode())) {
@@ -3179,41 +3156,85 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		return amountCodes;
 	}
+	
+	
+	private Component getComponent(String id, FinFeeDetail fee) {
+		id = getComponentId(id, fee);
+		return this.listBoxFeeDetail.getFellow(id);
+	}
+	
+	private Decimalbox getDecimalbox(String id, FinFeeDetail fee) {
+		Component component = getComponent(id, fee);
+
+		if (component != null) {
+			return (Decimalbox) component;
+		}
+
+		return null;
+	}
+	
+	private Combobox getCombobox(String id, FinFeeDetail fee) {
+		Component component = getComponent(id, fee);
+
+		if (component != null) {
+			return (Combobox) component;
+		}
+
+		return null;
+	}
+	
+	private Intbox getIntBox(String id, FinFeeDetail fee) {
+		Component component = getComponent(id, fee);
+
+		if (component != null) {
+			return (Intbox) component;
+		}
+
+		return null;
+	}
 
 	private void doClearFeeWrongValueExceptions() {
-		Component comp = null;
-		if (this.finFeeDetailList != null) {
-			for (FinFeeDetail finFeeDetail : this.finFeeDetailList) {
-				if (!finFeeDetail.isRcdVisible()) {
-					continue;
-				}
-				comp = this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
-				if (comp != null) {
-					Decimalbox waivedbox = (Decimalbox) comp;
-					waivedbox.setErrorMessage("");
-				}
-				comp = this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_PAID_AMOUNT, finFeeDetail));
-				if (comp != null) {
-					Decimalbox paidbox = (Decimalbox) comp;
-					paidbox.setErrorMessage("");
-				}
-				comp = this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_PAYMENTMETHOD, finFeeDetail));
-				if (comp != null) {
-					Combobox payMethodBox = (Combobox) comp;
-					payMethodBox.setErrorMessage("");
-				}
-				comp = this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_FEESCHEDULEMETHOD, finFeeDetail));
-				if (comp != null) {
-					Combobox feeSchdBox = (Combobox) comp;
-					feeSchdBox.setErrorMessage("");
-				}
-				comp = this.listBoxFeeDetail.getFellow(getComponentId(FEE_UNIQUEID_TERMS, finFeeDetail));
-				if (comp != null) {
-					Intbox termbox = (Intbox) comp;
-					termbox.setErrorMessage("");
-				}
+
+		if (CollectionUtils.isEmpty(this.finFeeDetailList)) {
+			return;
+		}
+
+		for (FinFeeDetail fee : this.finFeeDetailList) {
+			if (!fee.isRcdVisible()) {
+				continue;
+			}
+
+			Decimalbox waivedbox = getDecimalbox(FEE_UNIQUEID_WAIVEDAMOUNT, fee);
+			if (waivedbox != null) {
+				waivedbox.setErrorMessage("");
+			}
+
+			Decimalbox paidbox = getDecimalbox(FEE_UNIQUEID_PAID_AMOUNT, fee);
+			if (paidbox != null) {
+				paidbox.setErrorMessage("");
+			}
+			
+			Decimalbox remFeeBox = getDecimalbox(FEE_UNIQUEID_REMAINING_FEE, fee);
+			if (remFeeBox != null) {
+				remFeeBox.setErrorMessage("");
+			}
+
+			Combobox payMethodBox = getCombobox(FEE_UNIQUEID_PAYMENTMETHOD, fee);
+			if (payMethodBox != null) {
+				payMethodBox.setErrorMessage("");
+			}
+
+			Combobox feeSchdBox = getCombobox(FEE_UNIQUEID_FEESCHEDULEMETHOD, fee);
+			if (feeSchdBox != null) {
+				feeSchdBox.setErrorMessage("");
+			}
+
+			Intbox termbox = getIntBox(FEE_UNIQUEID_TERMS, fee);
+			if (termbox != null) {
+				termbox.setErrorMessage("");
 			}
 		}
+
 	}
 
 	/**

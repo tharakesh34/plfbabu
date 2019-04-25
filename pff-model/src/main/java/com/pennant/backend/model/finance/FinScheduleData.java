@@ -355,16 +355,6 @@ public class FinScheduleData implements Serializable {
 	}
 
 	public List<FinFeeDetail> getFinFeeDetailList() {
-		//	List<FinFeeDetail> finFeeDetailTemp = new ArrayList<FinFeeDetail>();
-		//for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-		//	if(finFeeDetail.isRcdVisible()){
-		//finFeeDetailTemp.add(finFeeDetail);
-		//	}
-		//}
-		return finFeeDetailList;
-	}
-
-	public List<FinFeeDetail> getFinFeeDetailActualList() {
 		return finFeeDetailList;
 	}
 

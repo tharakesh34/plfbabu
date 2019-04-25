@@ -6777,14 +6777,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					MessageUtil.showError(Labels.getLabel("label_Finance_MandatoryVAS_Update"));
 					return;
 				}
+				
+				List<FinFeeDetail> fees = aFinanceDetail.getFinScheduleData().getFinFeeDetailList();
 
-				if (aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList() != null
-						&& !aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList().isEmpty()) {
-
-					for (FinFeeDetail feeDetail : aFinanceDetail.getFinScheduleData().getFinFeeDetailActualList()) {
-
+				if (fees != null && !fees.isEmpty()) {
+					for (FinFeeDetail feeDetail : fees) {
 						if (StringUtils.equals(feeDetail.getVasReference(), recording.getVasReference())) {
-
 							recording.setFee(feeDetail.getActualAmount());
 							recording.setPaidAmt(feeDetail.getPaidAmount());
 							recording.setWaivedAmt(feeDetail.getWaivedAmount());

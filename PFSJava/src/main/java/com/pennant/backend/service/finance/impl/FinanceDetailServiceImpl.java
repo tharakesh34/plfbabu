@@ -159,8 +159,6 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -253,7 +251,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.VASConsatnts;
@@ -2742,20 +2739,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Fee Details
 		// =======================================
 		List<FinFeeDetail> finFeeDetails = scheduleData.getFinFeeDetailList();
-		List<FinFeeDetail> finFeeDetailActuals = scheduleData.getFinFeeDetailActualList();
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			for (FinFeeDetail fee : finFeeDetailActuals) {
+			for (FinFeeDetail fee : finFeeDetails) {
 				fee.setInstructionUID(serviceUID);
 			}
 			auditDetails.addAll(
-					finFeeDetailService.saveOrUpdate(finFeeDetailActuals, tableType.getSuffix(), auditTranType, isWIF));
+					finFeeDetailService.saveOrUpdate(finFeeDetails, tableType.getSuffix(), auditTranType, isWIF));
 		}
 
 		// Finance Fee Receipts
 		// =======================================
 		if (scheduleData.getFinFeeReceipts() != null && !scheduleData.getFinFeeReceipts().isEmpty()) {
 			for (FinFeeReceipt finFeeReceipt : scheduleData.getFinFeeReceipts()) {
-				for (FinFeeDetail finFeeDetail : finFeeDetailActuals) {
+				for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
 					if (finFeeReceipt.getFeeTypeId() != 0) {
 						if (finFeeReceipt.getFeeTypeId() == finFeeDetail.getFeeTypeID()) {
@@ -3553,11 +3549,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						auditHeader.getAuditTranType()));
 			}
 		}
-
-		if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-			auditDetails.addAll(
-					getFinFeeDetailService().delete(financeDetail.getFinScheduleData().getFinFeeDetailActualList(), "",
-							auditHeader.getAuditTranType(), isWIF));
+		
+		List<FinFeeDetail> fees = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (fees != null) {
+			auditDetails.addAll(getFinFeeDetailService().delete(fees, "", auditHeader.getAuditTranType(), isWIF));
 		}
 
 		// Delete Finance Premium Details
@@ -3809,8 +3804,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		tempWorkflowId = financeMain.getWorkflowId();
 
 		List<FinFeeDetail> finFeeDetails = finScheduleData.getFinFeeDetailList();
-		List<FinFeeDetail> finFeeDetailActuals = finScheduleData.getFinFeeDetailActualList();
-
 		String auditTranType = auditHeader.getAuditTranType();
 
 		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -4379,11 +4372,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance Fee Details
 			if (!financeDetail.isExtSource()) {
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-					for (FinFeeDetail fee : finFeeDetailActuals) {
+					for (FinFeeDetail fee : finFeeDetails) {
 						fee.setInstructionUID(serviceUID);
 					}
 
-					finFeeDetailService.doApprove(finFeeDetailActuals, "", tranType, isWIF);
+					finFeeDetailService.doApprove(finFeeDetails, "", tranType, isWIF);
 				}
 			}
 
@@ -4649,7 +4642,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Fin Fee Details Deletion
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 					auditDetailList.addAll(
-							getFinFeeDetailService().delete(finFeeDetailActuals, "_Temp", auditTranType, isWIF));
+							getFinFeeDetailService().delete(finFeeDetails, "_Temp", auditTranType, isWIF));
 				}
 
 				// Fin Fee Receipt Details Deletion
@@ -4707,12 +4700,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						excessAmount = BigDecimal.ZERO;
 					}
 					
-					AdvancePayment advancePayment = new AdvancePayment();
-					advancePayment.setFinReference(finReference);
-					advancePayment.setFinBranch(finBranch);
-					advancePayment.setAdvancePaymentType(advRule.name());
-					advancePayment.setRequestedAmt(excessAmount);
-					advancePaymentService.excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
+					if (excessAmount == BigDecimal.ZERO) {
+						AdvancePayment advPayment = new AdvancePayment();
+						advPayment.setFinReference(finReference);
+						advPayment.setFinBranch(finBranch);
+						advPayment.setAdvancePaymentType(advRule.name());
+						advPayment.setRequestedAmt(excessAmount);
+						advancePaymentService.excessAmountMovement(advPayment, null, AccountConstants.TRANTYPE_CREDIT);
+					} 
 				}
 			}
 			// tasks # >>Start Advance EMI and DSF
@@ -5283,7 +5278,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String preApprovalTableType = PennantConstants.PREAPPROVAL_TABLE_TYPE;
 
-		List<FinFeeDetail> finFeeDetailActuals = finScheduleData.getFinFeeDetailActualList();
+		List<FinFeeDetail> finFeeDetailActuals = finScheduleData.getFinFeeDetailList();
 
 		String moduleDefiner = financeDetail.getModuleDefiner();
 		String auditTranType = auditHeader.getAuditTranType();
@@ -6256,11 +6251,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 		}
-
-		if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-			auditDetails.addAll(
-					getFinFeeDetailService().delete(financeDetail.getFinScheduleData().getFinFeeDetailActualList(),
-							"_Temp", auditHeader.getAuditTranType(), isWIF));
+		
+		List<FinFeeDetail> fees = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (fees != null) {
+			auditDetails.addAll(getFinFeeDetailService().delete(fees, "_Temp", auditHeader.getAuditTranType(), isWIF));
 		}
 
 		if (financeDetail.getFinScheduleData().getFinFeeReceipts() != null) {
@@ -6804,7 +6798,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			if (finFeeDeatailsList != null) {
 				List<AuditDetail> auditDetailsList = getFinFeeDetailService().validate(
-						financeDetail.getFinScheduleData().getFinFeeDetailActualList(), financeMain.getWorkflowId(),
+						financeDetail.getFinScheduleData().getFinFeeDetailList(), financeMain.getWorkflowId(),
 						method, auditTranType, usrLanguage, isWIF);
 
 				auditDetails.addAll(auditDetailsList);
