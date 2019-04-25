@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -514,42 +515,44 @@ public class DisbursementInstCtrl {
 
 	public static FinanceDisbursement getTotal(List<FinanceDisbursement> list, FinanceMain main, int seq,
 			boolean group) {
+		FinanceDisbursement disbursement = new FinanceDisbursement();
+
+		if (CollectionUtils.isEmpty(list)) {
+			return disbursement;
+		}
 
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 		Date date = null;
-		if (list != null && !list.isEmpty()) {
-			for (FinanceDisbursement financeDisbursement : list) {
-				if (group && seq != financeDisbursement.getDisbSeq()) {
+
+		for (FinanceDisbursement financeDisbursement : list) {
+			if (group && seq != financeDisbursement.getDisbSeq()) {
+				continue;
+			}
+
+			if (!group) {
+				if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())) {
 					continue;
 				}
-
-				if (!group) {
-					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())) {
-						continue;
-					}
-				}
-
-				date = financeDisbursement.getDisbDate();
-
-				//check is first disbursement
-				if (DateUtility.compare(date, main.getFinStartDate()) == 0 && financeDisbursement.getDisbSeq() == 1) {
-
-					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
-					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
-					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
-					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
-						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
-					}
-					
-					if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
-						totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
-					}
-				}
-				totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 			}
+
+			date = financeDisbursement.getDisbDate();
+
+			//check is first disbursement
+			if (DateUtility.compare(date, main.getFinStartDate()) == 0 && financeDisbursement.getDisbSeq() == 1) {
+				totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+				totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+				totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
+				if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+					totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
+				}
+
+				if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
+					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+				}
+			}
+			totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 		}
 
-		FinanceDisbursement disbursement = new FinanceDisbursement();
 		disbursement.setDisbAmount(totdisbAmt);
 		if (date != null) {
 			disbursement.setDisbDate(date);
@@ -572,7 +575,7 @@ public class DisbursementInstCtrl {
 			if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 			}
-			
+
 			if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
 				totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
 			}
