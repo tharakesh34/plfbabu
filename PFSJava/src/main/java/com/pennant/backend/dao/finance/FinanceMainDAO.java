@@ -233,7 +233,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceMainParms(String finReference);
 
-	List<FinanceMain> getFinanceByCustId(long custId);
+	List<FinanceMain> getFinanceByCustId(long custId, String type);
 
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
 

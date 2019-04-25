@@ -63,7 +63,7 @@ public interface FinanceMainService {
 
 	int updateFinanceBasicDetails(FinanceMain financeMain);
 
-	List<FinanceMain> getFinanceByCustId(long custId);
+	List<FinanceMain> getFinanceByCustId(long custId, String type);
 
 	List<FinanceMain> getFinanceByCollateralRef(String collateralRef);
 

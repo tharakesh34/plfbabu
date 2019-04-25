@@ -2583,7 +2583,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * @param custId
 	 */
 	@Override
-	public List<FinanceMain> getFinanceByCustId(long custId) {
+	public List<FinanceMain> getFinanceByCustId(long custId,String type) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = new FinanceMain();
@@ -2591,8 +2591,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference,FM.FinAmount, FM.FinType, FM.FinCcy,");
 		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,");
-		selectSql.append(" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus");
-		selectSql.append(" From FinanceMain FM INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
+		selectSql.append(" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus,FM.RecordStatus");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" FM INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
 		selectSql.append(" Where CustID =:CustID");
 
 		logger.debug("selectSql: " + selectSql.toString());

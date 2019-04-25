@@ -554,7 +554,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			valueParm[0] = custCif;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
 		} else {
-			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER);
+			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER,false);
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -586,7 +586,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			valueParm[0] = collateralRef;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90906", valueParm));
 		} else {
-			response = createFinanceController.getFinanceDetailsById(collateralRef, "Collateral");
+			response = createFinanceController.getFinanceDetailsById(collateralRef, "Collateral",false);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -838,5 +838,32 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Autowired
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
+	}
+
+	@Override
+	public FinanceInquiry getPendingFinanceWithCustomer(String custCif) throws ServiceException {
+
+		logger.debug("Enetring");
+
+		// Mandatory validation
+		if (StringUtils.isBlank(custCif)) {
+			validationUtility.fieldLevelException();
+		}
+		//for logging purpose
+		APIErrorHandlerService.logReference(custCif);
+		FinanceInquiry response = null;
+		Customer customer = customerDetailsService.getCustomerByCIF(custCif);
+		if (customer == null) {
+			response = new FinanceInquiry();
+			String[] valueParm = new String[1];
+			valueParm[0] = custCif;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+		} else {
+			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER,true);
+		}
+		logger.debug(Literal.LEAVING);
+
+		return response;
+	
 	}
 }

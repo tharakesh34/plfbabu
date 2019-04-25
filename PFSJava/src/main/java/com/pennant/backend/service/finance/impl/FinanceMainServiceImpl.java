@@ -138,8 +138,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	 * @param custId
 	 */
 	@Override
-	public List<FinanceMain> getFinanceByCustId(long custId) {
-		return financeMainDAO.getFinanceByCustId(custId);
+	public List<FinanceMain> getFinanceByCustId(long custId, String type) {
+		return financeMainDAO.getFinanceByCustId(custId,type);
 	}
 
 	/**

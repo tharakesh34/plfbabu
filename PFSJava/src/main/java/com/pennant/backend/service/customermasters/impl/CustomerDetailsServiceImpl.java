@@ -680,7 +680,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
 		customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 
-		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id));
+		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id,""));
 		customerDetails.setCollateraldetailList(getCollateralSetupDAO().getApprovedCollateralByCustId(id, type));
 
 		for (FinanceMain financemain : customerDetails.getFinanceMainList()) {

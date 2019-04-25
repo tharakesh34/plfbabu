@@ -2077,7 +2077,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 	 * @param ID
 	 * @return FinanceDetail
 	 */
-	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType) {
+	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType,boolean isPending) {
 		logger.debug("Entering");
 		try {
 			FinanceInquiry financeInquiry = new FinanceInquiry();
@@ -2086,7 +2086,11 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 			if (StringUtils.equalsIgnoreCase(APIConstants.FINANCE_INQUIRY_CUSTOMER, serviceType)) {
 				Customer customer = customerDetailsService.getCustomerByCIF(reference);
-				financeMainList = financeMainService.getFinanceByCustId(customer.getCustID());
+				String type = "";
+				if (isPending) {
+					type = "_Temp";
+				}
+				financeMainList = financeMainService.getFinanceByCustId(customer.getCustID(), type);
 				valueParm[0] = "CIF :" + reference;
 			} else {
 				financeMainList = financeMainService.getFinanceByCollateralRef(reference);
@@ -2100,6 +2104,10 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 			List<FinInquiryDetail> finance = new ArrayList<FinInquiryDetail>();
 			for (FinanceMain financeMain : financeMainList) {
+				if (isPending
+					&& StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+					continue;
+				}
 				FinInquiryDetail finInquiryDetail = new FinInquiryDetail();
 				BigDecimal paidTotal = BigDecimal.ZERO;
 				BigDecimal schdFeePaid = BigDecimal.ZERO;
