@@ -43,7 +43,7 @@
 		<dropTable tableName="AdtCommodities" />
 	</changeSet>
 
-	<changeSet id="1" author="vijaya.a">
+	<changeSet id="1.1" author="shinde.b">
 		<comment>Commodity and LAS</comment>
 		<createTable tableName="ADTCOMMODITIES">
 			<column name="AuditId" type="bigint">
@@ -79,6 +79,7 @@
 			<column name="AlertsRequired" type="boolean" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
+			<column name="AlertType" type="varchar(10)" />
 			<column name="AlertToRoles" type="varchar(1000)" />
 			<column name="UserTemplate" type="bigint" />
 			<column name="CustomerTemplate" type="bigint" />
