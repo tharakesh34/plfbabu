@@ -1,7 +1,5 @@
 package com.pennant.backend.util;
 
-import com.pennanttech.pff.advancepayment.model.AdvancePayment;
-
 public class RepayConstants {
 
 	private RepayConstants() {
