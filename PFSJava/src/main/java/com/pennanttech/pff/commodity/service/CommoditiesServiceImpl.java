@@ -174,14 +174,20 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 		// Check the unique keys.
 		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType()) && commoditiesDAO
 				.isDuplicateKey(commodity, commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[3];
+			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityType.value") + ":"
 					+ commodityTYpeCode;
 			parameters[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value") + ": " + code;
-			parameters[2] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value") + ": " + hsnCode;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 
+		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType()) && commoditiesDAO
+				.isDuplicateHSNCode(commodity, commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value") + ": " + hsnCode;
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

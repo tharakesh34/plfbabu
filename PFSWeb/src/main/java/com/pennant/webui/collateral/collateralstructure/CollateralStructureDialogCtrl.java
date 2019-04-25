@@ -351,7 +351,6 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.queryId.setValidateColumns(new String[] { "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
 
 		this.commodity.setModuleName("Commodity");
-		this.commodity.setMandatoryStyle(true);
 		this.commodity.setValueColumn("Id");
 		this.commodity.setDescColumn("Code");
 		this.commodity.setValueType(DataType.LONG);
@@ -1217,13 +1216,15 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 		}
 
-		if (!this.thresholdLtv.isDisabled()) {
-			if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
-				this.thresholdLtv.setConstraint(new PTDecimalValidator(
-						Labels.getLabel("label_CollateralStructureDialog_ThresholdLtv.value"), 2, true, false, 100));
+		if (this.commodity.getValue() != null && !this.commodity.getValue().equals("")) {
+			if (!this.thresholdLtv.isDisabled()) {
+				if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
+					this.thresholdLtv.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_CollateralStructureDialog_ThresholdLtv.value"), 2, true, false,
+							100));
+				}
 			}
 		}
-
 		// LTV Rules tab
 		if (!this.ltvType.isDisabled()) {
 			this.ltvType.setConstraint(new StaticListValidator(PennantStaticListUtil.getListLtvTypes(),

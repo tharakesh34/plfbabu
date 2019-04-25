@@ -56,7 +56,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return commodity;
 	}
 
@@ -175,7 +175,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 	public void saveCommoditiesLog(MapSqlParameterSource mapData) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder("Insert into Commodities_Log");
 		sql.append("(CommodityId, AuditImage, CurrentValue, BatchId, ModifiedBy, ModifiedOn)");
 		sql.append(" values");
@@ -186,13 +186,13 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public Commodity getQueryOperation(Commodity record) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CommodityType", record.getCommodityType());
 		paramSource.addValue("Code", record.getCode());
@@ -201,24 +201,25 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from COMMODITIES Where");
 		StringBuilder condition = new StringBuilder();
-		if (StringUtils.isNotBlank(record.getCode())) {
-			if (condition.length() > 0) {
-				condition.append(" and");
-			}
-			condition.append(" Code = :Code");
-		}
-		if ((record.getCommodityType() != Long.MIN_VALUE )) {
-			if (condition.length() > 0) {
-				condition.append(" and");
-			}
-			condition.append(" CommodityType = :CommodityType");
-		}
 		if (StringUtils.isNotBlank(record.getHSNCode())) {
 			if (condition.length() > 0) {
 				condition.append(" and");
 			}
 			condition.append(" HSNCode = :HSNCode");
 		}
+		if (StringUtils.isNotBlank(record.getCode())) {
+			if (condition.length() > 0) {
+				condition.append(" and");
+			}
+			condition.append(" Code = :Code");
+		}
+		if ((record.getCommodityType() != Long.MIN_VALUE) && record.getCommodityType() != 0) {
+			if (condition.length() > 0) {
+				condition.append(" and");
+			}
+			condition.append(" CommodityType = :CommodityType");
+		}
+
 		sql.append(condition.toString());
 		RowMapper<Commodity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commodity.class);
 		try {
@@ -228,8 +229,40 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return null;
+	}
+
+	@Override
+	public boolean isDuplicateHSNCode(Commodity commodity, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		String sql;
+		String whereClause = "HsnCode = :HSNCode";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("Commodities", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("Commodities_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "Commodities_Temp", "Commodities" }, whereClause);
+			break;
+		}
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("HSNCode", commodity.getHSNCode());
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 
 }

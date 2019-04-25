@@ -168,7 +168,7 @@
 													<label
 														value="${c:l('label_CollateralStructureDialog_ThresholdLtv.value')}" />
 													<hbox>
-														<space id="space_ThresholdLtv" spacing="2px" sclass="mandatory" />
+														<space id="space_ThresholdLtv" spacing="2px"/>
 														<decimalbox id="thresholdLtv" maxlength="10" width="90px" />
 													</hbox>
 												</row>

@@ -33,8 +33,9 @@ import com.pennanttech.pff.commodity.model.Commodity;
 import com.pennanttech.pff.commodity.service.CommoditiesService;
 
 public class CommodityFileUploadResponce extends BasicDao<Commodity> implements ProcessRecord {
-	private CommoditiesDAO commoditiesDAO;
+	CommoditiesDAO commoditiesDAO;
 	private CommoditiesService commoditiesService;
+	private long userId;
 	private DataSource dataSource;
 	private CommodityTypeDAO commodityTypeDAO;
 
@@ -68,11 +69,9 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(DateUtility.getAppDate());
 		Map<String, Object> filterMap = new HashMap<>();
-		Map<String, Object> parameterMap = new HashMap<>();
-
-		parameterMap.put("COMMIDITY_TYPES", mapCommodityTypes);
-
-		dataEngine.setParameterMap(parameterMap);
+		Map<String, Object> parametersMap = new HashMap<>();
+		parametersMap.put("CommodityType", mapCommodityTypes);
+		dataEngine.setParameterMap(parametersMap);
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setProcessRecord(this);
 		dataEngine.importData(configName);
@@ -90,19 +89,20 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 		try {
 
 			@SuppressWarnings("unchecked")
-			Map<String, Long> mapCommodityTypes = (Map<String, Long>) attributes.getParameterMap()
-					.get("COMMIDITY_TYPES");
-			DataEngineStatus status = attributes.getStatus();
+			Map<String, Long> mapCommodityTypes = (Map<String, Long>) attributes.getParameterMap().get("CommodityType");
+
 			Commodity commodity = new Commodity();
 
-			commodity.setCode((String) record.getValue("Code"));
 			commodity.setHSNCode((String) record.getValue("HSNCode"));
+			Object objCurrentValue = record.getValue("CurrentValue");
+			String commodityType = record.getValue("CommodityType") == null ? ""
+					: record.getValue("CommodityType").toString();
+			commodity.setCode((String) record.getValue("Code"));
 			commodity.setDescription((String) record.getValue("Description"));
 			commodity.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			commodity.setLastMntBy(status.getUserId());
+			commodity.setLastMntBy(userId);
 			commodity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		
-			Object objCurrentValue = record.getValue("CurrentValue");
+
 			String strCurrentValue = null;
 			BigDecimal currentValue = BigDecimal.ZERO;
 
@@ -116,20 +116,22 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 
 			commodity.setCurrentValue(currentValue);
 			commodity.setUpload(true);
-			String commodityType = record.getValue("CommodityTypeCode") == null ? ""
-					: record.getValue("CommodityTypeCode").toString();
-			if (mapCommodityTypes.get(commodityType) != null) {
+
+			if (mapCommodityTypes.get(commodityType) != null && !commodityType.equals("")) {
 				commodity.setCommodityType(mapCommodityTypes.get(commodityType));
-			} else {
-				throw new ConcurrencyException();
 			}
 
 			Commodity Oldcommodity = commoditiesDAO.getQueryOperation(commodity);
 
 			if (Oldcommodity == null) {
-				commodity.setVersion(1);
-				commodity.setNewRecord(true);
-				commodity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				if ((mapCommodityTypes.get(commodityType) != null && (commodity.getCommodityType() != Long.MIN_VALUE)
+						&& commodity.getCommodityType() > 0) && !commodity.getCode().equals("")) {
+					commodity.setVersion(1);
+					commodity.setNewRecord(true);
+					commodity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					throw new ConcurrencyException();
+				}
 			} else {
 				commodity.setId(Oldcommodity.getId());
 				commodity.setVersion(Oldcommodity.getVersion() + 1);
@@ -147,9 +149,8 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 			beforeMapdata.addValue("AuditImage", PennantConstants.TRAN_BEF_IMG);
 			beforeMapdata.addValue("CurrentValue", Oldcommodity == null ? 0 : Oldcommodity.getCurrentValue());
 			beforeMapdata.addValue("BatchId", attributes.getStatus().getId());
-			beforeMapdata.addValue("ModifiedBy", status.getUserId());
+			beforeMapdata.addValue("ModifiedBy", userId);
 			beforeMapdata.addValue("ModifiedOn", new Timestamp(System.currentTimeMillis()));
-
 			if (Oldcommodity == null) {
 				commoditiesDAO.saveCommoditiesLog(beforeMapdata);
 			} else {
@@ -187,7 +188,7 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 		super.setDataSource(dataSource);
 		this.dataSource = dataSource;
 	}
-	
+
 	@Autowired
 	public void setCommoditiesDAO(CommoditiesDAO commoditiesDAO) {
 		this.commoditiesDAO = commoditiesDAO;

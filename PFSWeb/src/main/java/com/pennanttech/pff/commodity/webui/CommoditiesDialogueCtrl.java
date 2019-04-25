@@ -141,6 +141,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		this.type.setValueColumn("Id");
 		this.type.setDescColumn("Description");
 		this.type.setValueType(DataType.LONG);
+		this.type.setWidth("300dpx");
 		this.type.setValidateColumns(new String[] { "Id", "Code", "Description" });
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
