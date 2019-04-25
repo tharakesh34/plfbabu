@@ -111,7 +111,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private long instructionUID = Long.MIN_VALUE;
 
 	//Subvention
-	private List<SubventionScheduleDetail> subventionSchedules = null;
+	private transient List<SubventionScheduleDetail> subventionSchedules = null;
 	private BigDecimal subventionAmount = BigDecimal.ZERO;
 
 	public boolean isNew() {
@@ -149,7 +149,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	}
 
 	public String getFinReference() {
-		return finReference;
+		return getId();
 	}
 
 	public void setFinReference(String finReference) {
