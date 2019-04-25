@@ -144,6 +144,7 @@ public class PennantConstants {
 	public static final String method_doDms = "doDmsService";
 	public static final String method_doPrfHunter = "doPrfHunterService";
 	public static final String method_doApprove = "doApprove";
+	public static final String method_saveOrUpdate = "saveOrUpdate";
 	public static final String method_doReversal = "doReversal";
 	public static final String method_doPreApprove = "doPreApprove";
 	public static final String method_doReject = "doReject";

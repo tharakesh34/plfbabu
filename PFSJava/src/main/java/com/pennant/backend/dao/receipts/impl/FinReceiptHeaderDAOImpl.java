@@ -57,6 +57,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.util.PennantConstants;
@@ -901,6 +902,50 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		updateSql.append(" Where ReceiptID =:ReceiptID  ");
 
 		logger.debug("updateSql: " + updateSql.toString());
+		this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("BatchId", finReceiptHeader.getBatchId());
+		source.addValue("ReceiptID", finReceiptHeader.getReceiptID());
+		source.addValue("ReceiptModeStatus", finReceiptHeader.getReceiptModeStatus());
+		source.addValue("BounceDate", finReceiptHeader.getBounceDate());
+		source.addValue("RealizationDate", finReceiptHeader.getRealizationDate());
+		source.addValue("Remarks", finReceiptHeader.getRemarks());
+		source.addValue("CancelReason", finReceiptHeader.getCancelReason());
+		source.addValue("DepositDate", finReceiptDetail.getDepositDate());
+		source.addValue("ReceiptDate", finReceiptHeader.getReceiptDate());
+		source.addValue("FinReference", finReceiptHeader.getReference());
+		if (StringUtils.isNotBlank(finReceiptHeader.getRoleCode())
+				&& finReceiptHeader.getRoleCode().contains("MAKER")) {
+			source.addValue("Stage", "M");
+		} else {
+			source.addValue("Stage", "C");
+		}
+		source.addValue("DepositNo", finReceiptDetail.getDepositNo());
+		source.addValue("FundingAc", finReceiptDetail.getFundingAc());
+		source.addValue("BounceId", finReceiptHeader.getBounceReason());
+		source.addValue("UploadStatus", "S");
+		source.addValue("Reason", "");
+
+		StringBuilder updateSql = new StringBuilder("Insert into MultiReceiptApproval");
+		updateSql.append(
+				"  (BatchId, ReceiptModeStatus, BounceDate, RealizationDate, Remarks, CancelReason, ReceiptID, ");
+		updateSql.append(
+				"  DepositDate, ReceiptDate, FinReference, Stage, DepositNo, FundingAc, BounceId, UploadStatus, Reason )");
+		updateSql.append(
+				"  values(:BatchId, :ReceiptModeStatus, :BounceDate, :RealizationDate, :Remarks, :CancelReason, :ReceiptID,");
+		updateSql.append(
+				"  :DepositDate, :ReceiptDate, :FinReference, :Stage, :DepositNo, :FundingAc, :BounceId, :UploadStatus, :Reason)");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		//SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
 		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
 	}

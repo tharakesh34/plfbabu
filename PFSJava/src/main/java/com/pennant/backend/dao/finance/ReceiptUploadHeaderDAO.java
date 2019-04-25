@@ -66,4 +66,6 @@ public interface ReceiptUploadHeaderDAO {
 
 	boolean isFileDownlaoded(long id, int receiptDownloaded);
 
+	long generateSeqId();
+
 }

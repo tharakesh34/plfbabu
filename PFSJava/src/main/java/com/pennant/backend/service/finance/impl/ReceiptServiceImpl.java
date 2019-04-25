@@ -81,6 +81,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
+import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
@@ -208,6 +209,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReceiptResponseDetailDAO receiptResponseDetailDAO;
 	private EntityDAO entityDAO;
 	private AccountingSetDAO accountingSetDAO;
+	@Autowired
+	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -238,13 +241,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		List<FinReceiptDetail> receiptDetailList = null;
-		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
-				|| StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
-			receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "");
-		} else {
-
-			receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, type);
-		}
+		receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, type);
+		/*
+		 * if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE) ||
+		 * StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+		 * receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, ""); } else {
+		 * 
+		 * receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID, type); }
+		 */
 
 		int size = receiptDetailList.size();
 		if (size > 0) {
@@ -893,6 +897,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("Receipt");
 		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.getAuditDetail().setModelData(rceiptData);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -1072,7 +1077,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		String tranType = PennantConstants.TRAN_DEL;
+		String tranType = PennantConstants.TRAN_WF;
 
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1172,7 +1177,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
 				receiptData.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
 		for (int i = 0; i < receiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
-			auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, rFields[0], rFields[1],
+			auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1],
 					receiptData.getReceiptHeader().getReceiptDetails().get(i),
 					receiptData.getReceiptHeader().getReceiptDetails().get(i)));
 		}
@@ -1256,6 +1261,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
 		logger.debug("Entering");
 
+		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		Cloner cloner = new Cloner();
@@ -1263,6 +1269,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		String roleCode = receiptData.getReceiptHeader().getRoleCode();
 		String nextRoleCode = receiptData.getReceiptHeader().getNextRoleCode();
+
+		// Preparing Before Image for Audit
+		FinReceiptHeader befRctHeader = null;
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(orgReceiptData.getReceiptHeader().getRecordType())) {
+			befRctHeader = getFinReceiptHeaderById(receiptData.getReceiptHeader().getReceiptID(), false, "");
+		}
+		List<FinReceiptDetail> befFinReceiptDetail = new ArrayList<>();
+		if (befRctHeader != null) {
+			befFinReceiptDetail = befRctHeader.getReceiptDetails();
+		}
+		aAuditHeader.getAuditDetail().setBefImage(befRctHeader); // Setting Before Image to Audit Header
 
 		if (StringUtils.equals(receiptData.getReceiptHeader().getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
 				|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptModeStatus(),
@@ -1276,8 +1293,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					rph.setRepayScheduleDetails(rpySchdList);
 				}
 			}
-			receiptCancellationService.doApprove(auditHeader);
-			return auditHeader;
+			receiptCancellationService.doApprove(aAuditHeader);
+			aAuditHeader.getAuditDetail().setModelData(receiptData);
+			return aAuditHeader;
 		}
 		if (StringUtils.equals(FinanceConstants.RECEIPTREALIZE_APPROVER, roleCode)) {
 			if ((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
@@ -1286,8 +1304,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							RepayConstants.RECEIPTMODE_CHEQUE)
 							|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
 									RepayConstants.RECEIPTMODE_DD))) {
-				receiptRealizationService.doApprove(auditHeader);
-				return auditHeader;
+				receiptRealizationService.doApprove(aAuditHeader);
+				aAuditHeader.getAuditDetail().setModelData(receiptData);
+				return aAuditHeader;
 			}
 		}
 
@@ -1588,41 +1607,44 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		}
 
-		FinReceiptHeader befRctHeader = getFinReceiptHeaderById(receiptData.getReceiptHeader().getReceiptID(), false,
-				"_View");
-
 		// FinReceiptDetail Audit Details Preparation
 		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
 				receiptData.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
 		for (int i = 0; i < receiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
-			tempAuditDetailList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, rFields[0], rFields[1],
-					befRctHeader.getReceiptDetails().get(i),
-					receiptData.getReceiptHeader().getReceiptDetails().get(i)));
+			tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rFields[0], rFields[1], null,
+					orgReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
 		}
 
 		// Receipt Header Audit Details Preparation
 		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(),
 				receiptData.getReceiptHeader().getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1],
-				receiptData.getReceiptHeader().getBefImage(), receiptData.getReceiptHeader()));
+		aAuditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], null,
+				orgReceiptData.getReceiptHeader()));
 
 		// Adding audit as deleted from TEMP table
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(tempAuditDetailList);
-		auditHeader.setAuditModule("Receipt");
-		getAuditHeaderDAO().addAudit(auditHeader);
+		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		aAuditHeader.setAuditDetails(tempAuditDetailList);
+		aAuditHeader.setAuditModule("Receipt");
+		getAuditHeaderDAO().addAudit(aAuditHeader);
+		aAuditHeader.getAuditDetail().setModelData(receiptData);
 
-		if (receiptData.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (orgReceiptData.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			tranType = PennantConstants.TRAN_ADD;
 		} else {
 			tranType = PennantConstants.TRAN_UPD;
 		}
 
 		// FinReceiptDetail Audit Details Preparation
-		for (int i = 0; i < receiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
-			auditDetails
-					.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], befRctHeader.getReceiptDetails().get(i),
-							receiptData.getReceiptHeader().getReceiptDetails().get(i)));
+		if (befFinReceiptDetail.isEmpty()) {
+			for (int i = 0; i < receiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+				auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], null,
+						receiptData.getReceiptHeader().getReceiptDetails().get(i)));
+			}
+		} else {
+			for (int i = 0; i < receiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+				auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], befFinReceiptDetail.get(i),
+						receiptData.getReceiptHeader().getReceiptDetails().get(i)));
+			}
 		}
 
 		// FinReceiptHeader Audit
@@ -5609,5 +5631,34 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// rch.setReceiptDetails(rcdList);
 		return receiptData;
+	}
+
+	@Override
+	public void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception {
+		logger.debug("Entering");
+		for (AuditHeader auditHeader : auditHeaderList) {
+			if (PennantConstants.method_doApprove.equals(auditHeader.getAuditDetail().getLovDescRecordStatus())) {
+				doApprove(auditHeader);
+			} else {
+				saveOrUpdate(auditHeader);
+			}
+			FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getModelData();
+			FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
+			for (FinReceiptDetail receiptDetail : finReceiptData.getReceiptHeader().getReceiptDetails()) {
+				if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptDetail.getPaymentType())
+						|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
+						|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptDetail.getPaymentType()))) {
+					finReceiptDetail = receiptDetail;
+				}
+			}
+
+			finReceiptHeaderDAO.saveMultiReceipt(finReceiptData.getReceiptHeader(), finReceiptDetail);
+		}
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public long getUploadSeqId() {
+		return receiptUploadHeaderDAO.generateSeqId();
 	}
 }

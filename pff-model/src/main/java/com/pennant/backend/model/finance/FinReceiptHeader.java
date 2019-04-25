@@ -163,6 +163,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private boolean loanInActive = false;
 
 	private long payAgainstId = 0;
+	private long batchId;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -267,6 +268,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("releaseType");
 		excludeFields.add("thirdPartyName");
 		excludeFields.add("thirdPartyMobileNum");
+		excludeFields.add("batchId");
 
 		return excludeFields;
 	}
@@ -1360,6 +1362,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setLoanInActive(boolean loanInActive) {
 		this.loanInActive = loanInActive;
+	}
+
+	public long getBatchId() {
+		return batchId;
+	}
+
+	public void setBatchId(long batchId) {
+		this.batchId = batchId;
 	}
 
 }

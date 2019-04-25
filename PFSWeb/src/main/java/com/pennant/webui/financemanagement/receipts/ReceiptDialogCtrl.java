@@ -787,7 +787,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setValidateColumns(new String[] { "Id" });
 
 		if (DisbursementConstants.PAYMENT_TYPE_MOB
-				.equals(receiptData.getReceiptHeader().getReceiptChannel().toString())) {
+				.equals(receiptData.getReceiptHeader().getReceiptChannel())) {
 			this.collectionAgentId.setMandatoryStyle(true);
 		}
 
@@ -2322,7 +2322,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rch.setNextTaskId(nextTaskId);
 			rch.setRoleCode(getRole());
 			rch.setNextRoleCode(nextRoleCode);
-			rch.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+			rch.setRcdMaintainSts("R");
 			rch.setRecordType(recordType);
 			rch.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));

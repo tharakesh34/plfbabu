@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennanttech.pff.core.TableType;
@@ -66,6 +67,9 @@ public interface FinReceiptHeaderDAO {
 	List<FinReceiptHeader> getInProcessReceipts(String Reference);
 
 	List<Long> getInProcessReceiptId(String finReference);
-	
+
 	void updateLoanInActive(long receiptId);
+
+	//### For MultiReceipt
+	void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail);
 }

@@ -338,4 +338,9 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		}
 	}
 
+	@Override
+	public long generateSeqId() {
+		return getNextValue("SeqReceiptUploadHeader");
+	}
+
 }

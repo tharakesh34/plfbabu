@@ -199,6 +199,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 			return aAuditHeader;
 		}
 
+		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
@@ -240,19 +241,72 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		// Delete Receipt Header
 		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				receiptHeader.getBefImage(), receiptHeader));
+		// Preparing Before Image for Audit
+		FinReceiptHeader befRctHeader = null;
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(orgReceiptData.getReceiptHeader().getRecordType())) {
+			befRctHeader = (FinReceiptHeader) aAuditHeader.getAuditDetail().getBefImage();
+		}
+		List<FinReceiptDetail> befFinReceiptDetail = new ArrayList<>();
+		if (befRctHeader != null) {
+			befFinReceiptDetail = befRctHeader.getReceiptDetails();
+		}
+
+		// Audit Header for WorkFlow Image
+		List<AuditDetail> tempAuditDetailList = new ArrayList<>();
+		// FinReceiptDetail Audit Details Preparation
+		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
+				finReceiptData.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
+		for (int i = 0; i < finReceiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+			tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rFields[0], rFields[1], null,
+					orgReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
+		}
+
+		// Receipt Header Audit Details Preparation
+		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(),
+				finReceiptData.getReceiptHeader().getExcludeFields());
+		aAuditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], null,
+				orgReceiptData.getReceiptHeader()));
 
 		// Adding audit as deleted from TEMP table
-		getAuditHeaderDAO().addAudit(auditHeader);
+		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		aAuditHeader.setAuditDetails(tempAuditDetailList);
+		aAuditHeader.setAuditModule("Receipt");
+		getAuditHeaderDAO().addAudit(aAuditHeader);
 
-		auditHeader.setAuditTranType(tranType);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				receiptHeader.getBefImage(), receiptHeader));
+		if (orgReceiptData.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			tranType = PennantConstants.TRAN_ADD;
+		} else {
+			tranType = PennantConstants.TRAN_UPD;
+		}
+
+		// Audit Header for Before and After Image
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		// FinReceiptDetail Audit Details Preparation
+		if (befFinReceiptDetail.isEmpty()) {
+			for (int i = 0; i < finReceiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+				auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], null,
+						finReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
+			}
+		} else {
+			for (int i = 0; i < finReceiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+				auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], befFinReceiptDetail.get(i),
+						finReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
+			}
+		}
+
+		//FinReceiptHeader Audit
+		auditHeader.setAuditDetail(
+				new AuditDetail(tranType, 1, rhFields[0], rhFields[1], befRctHeader,
+						finReceiptData.getReceiptHeader()));
 
 		// Adding audit as Insert/Update/deleted into main table
+		auditHeader.setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setAuditTranType(tranType);
+		auditHeader.setAuditDetails(auditDetails);
+		auditHeader.setAuditModule("Receipt");
 		getAuditHeaderDAO().addAudit(auditHeader);
+		// Reset Finance Detail Object for Service Task Verifications
+		//receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 
 		logger.debug("Leaving");
 		return auditHeader;

@@ -132,4 +132,9 @@ public interface ReceiptService {
 	boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations);
 
 	FinReceiptData adjustToExcess(FinReceiptData receiptData);
+
+	//## For MultiReceipt 
+	void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception;
+
+	long getUploadSeqId();
 }
