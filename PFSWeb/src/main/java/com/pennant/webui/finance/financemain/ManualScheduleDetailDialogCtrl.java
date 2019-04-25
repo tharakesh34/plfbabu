@@ -102,6 +102,8 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 
 /**
@@ -2045,9 +2047,14 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
 						true);
 
+				int advTerms = 0;
+				if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
+						&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+					advTerms = financeMain.getAdvTerms();
+				}
+
 				financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
-						+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms() + financeMain.getAdvTerms())
-						+ " Payments");
+						+ (financeMain.getNumberOfTerms() + financeMain.getGraceTerms() + advTerms) + " Payments");
 			}
 
 			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
