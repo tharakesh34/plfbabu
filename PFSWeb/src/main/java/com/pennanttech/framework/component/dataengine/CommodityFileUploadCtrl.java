@@ -28,7 +28,6 @@ import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.commodity.dao.CommodityTypeDAO;
 import com.pennanttech.pff.commodity.webui.CommodityFileUploadResponce;
 
 public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
@@ -116,7 +115,6 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 
 		try {
 			try {
-				commodityFileUploadResponce.tableName = "COMMODITIES";
 				Thread thread = new Thread(new ProcessData(this.userId, COLLETARAL_VALUE_UPDATE_STATUS));
 				thread.start();
 			} catch (Exception e) {
@@ -170,7 +168,9 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 		fileName.setText("");
 		media = event.getMedia();
 
-		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLS"))) {
+		String fileExt = media.getName().toUpperCase();
+
+		if (!(StringUtils.endsWith(fileExt, ".XLS") || StringUtils.endsWith(fileExt, ".XLSX"))) {
 			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;
