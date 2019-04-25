@@ -31,7 +31,7 @@
 
 	<changeSet id="1" author="vijaya.a">
 		<comment>commodity file upload</comment>
-			<sql>
+		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COLLETARAL_VALUE_UPDATE');
 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COLLETARAL_VALUE_UPDATE');
@@ -54,25 +54,254 @@
 				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 			]]>
-			</sql>
+		</sql>
 	</changeSet>
-	
+
+
 	<changeSet id="2" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities" columnNames="HSNCode" />
 	</changeSet>
-	
+
 	<changeSet id="2.1" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities_Temp" columnNames="HSNCode" />
 	</changeSet>
-	
+
 	<changeSet id="2.2" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities" columnNames="CommodityType, Code, HSNCode" />
 	</changeSet>
-	
+
 	<changeSet id="2.3" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities_Temp" columnNames="CommodityType, Code, HSNCode" />
 	</changeSet>
+
+	<changeSet id="1.1" author="vijaya.q">
+		<dropView viewName="COMMODITIES_VIEW" />
+		<dropView viewName="COMMODITIES_AVIEW" />
+		<dropColumn tableName="Commodities" columnName="Active" />
+		<dropColumn tableName="Commodities_temp" columnName="Active" />
+		<dropColumn tableName="Commodities" columnName="Version" />
+		<dropColumn tableName="Commodities_temp" columnName="Version" />
+		<dropColumn tableName="Commodities" columnName="LastMntBy" />
+		<dropColumn tableName="Commodities_temp" columnName="LastMntBy" />
+		<dropColumn tableName="Commodities" columnName="LastMntOn" />
+		<dropColumn tableName="Commodities_temp" columnName="LastMntOn" />
+		<dropColumn tableName="Commodities" columnName="RecordStatus" />
+		<dropColumn tableName="Commodities_temp" columnName="RecordStatus" />
+		<dropColumn tableName="Commodities" columnName="RoleCode" />
+		<dropColumn tableName="Commodities_temp" columnName="RoleCode" />
+		<dropColumn tableName="Commodities" columnName="NextRoleCode" />
+		<dropColumn tableName="Commodities_temp" columnName="NextRoleCode" />
+		<dropColumn tableName="Commodities" columnName="TaskId" />
+		<dropColumn tableName="Commodities_temp" columnName="TaskId" />
+		<dropColumn tableName="Commodities" columnName="NextTaskId" />
+		<dropColumn tableName="Commodities_temp" columnName="NextTaskId" />
+		<dropColumn tableName="Commodities" columnName="RecordType" />
+		<dropColumn tableName="Commodities_temp" columnName="RecordType" />
+		<dropColumn tableName="Commodities" columnName="WorkflowId" />
+		<dropColumn tableName="Commodities_temp" columnName="WorkflowId" />
+	</changeSet>
+
+	<changeSet id="3" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'Commodities_AlertToRoles','CommoditiesDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'Commodities_AlertsRequired','CommoditiesDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'Commodities_UserTemplate','CommoditiesDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'Commodities_CustomerTemplate','CommoditiesDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COMMODITIES_MAKER'), (Select RightID from SecRights where RightName = 'Commodities_AlertToRoles'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COMMODITIES_MAKER'), (Select RightID from SecRights where RightName = 'Commodities_AlertsRequired'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COMMODITIES_MAKER'), (Select RightID from SecRights where RightName = 'Commodities_UserTemplate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COMMODITIES_MAKER'), (Select RightID from SecRights where RightName = 'Commodities_CustomerTemplate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author=vijaya.a ">
+		<addColumn tableName="Commodities">
+			<column name="AlertsRequired" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="UserTemplate" type="bigint" />
+			<column name="CustomerTemplate" type="bigint" />
+			<column name="Active" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4.1" author=vijaya.a ">
+		<addColumn tableName="Commodities_temp">
+			<column name="AlertsRequired" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="UserTemplate" type="bigint" />
+			<column name="CustomerTemplate" type="bigint" />
+			<column name="Active" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4.2" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COMMODITIES_TEMP ADD CONSTRAINT DF_COMMODITIES_TEMP_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+				ALTER TABLE COMMODITIES ADD CONSTRAINT DF_COMMODITIES_TEMP_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4.3" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AlertsRequired" tableName="Commodities" defaultValue="0" />
+		<addDefaultValue columnName="AlertsRequired" tableName="Commodities_temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="4.4" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
+			  SELECT t1.id,
+    			t2.code commodityTypeCode,
+    			t1.commoditytype,
+    			t1.code,
+    			t2.description,
+    			t1.currentvalue,
+    			t1.hsncode,
+    			t1.alertsRequired,
+    			t1.alertToRoles,
+    			t1.UserTemplate,
+    			T3.TemplateCode UserTemplateCode,
+			  	T3.TemplateDesc UserTemplateName,
+    			t1.CustomerTemplate,
+    			T4.TemplateCode CustomerTemplateCode,
+			  	T4.TemplateDesc CustomerTemplateName,
+    			t2.unittype,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+    			t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM commodities_temp t1
+     		  LEFT JOIN commodity_types t2 ON t2.id = t1.commoditytype
+     		  LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			  LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
+			  UNION ALL
+ 			  SELECT t1.id,
+ 				t2.code commodityTypeCode,
+    			t1.commoditytype,
+    			t1.code,
+    			t2.description,
+    			t1.currentvalue,
+    			t1.hsncode,
+    			t1.alertsRequired,
+    			t1.UserTemplate,
+    			T3.TemplateCode UserTemplateCode,
+			  	T3.TemplateDesc UserTemplateName,
+    			t1.CustomerTemplate,
+    			T4.TemplateCode CustomerTemplateCode,
+			  	T4.TemplateDesc CustomerTemplateName,
+    			t2.unittype,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+    			t1.rolecode,
+    			t1.nextrolecode,	
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM commodities t1
+     		  LEFT JOIN commodity_types t2 ON t2.id = t1.commoditytype
+     		  LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			  LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
+  			  WHERE NOT (EXISTS ( SELECT 1
+              FROM commodities_temp
+              WHERE commodities_temp.id = t1.id))
+		</createView>
+	</changeSet>
+
+	<changeSet id="4.5" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<createView viewName="COMMODITIES_AVIEW" replaceIfExists="true">
+			  SELECT t1.id,
+ 				t2.code commodityTypeCode,
+    			t1.commoditytype,
+    			t1.code,
+    			t2.description,
+    			t1.currentvalue,
+    			t1.hsncode,
+    			t1.alertsRequired,
+    			t1.alertToRoles,
+    			t1.UserTemplate,
+    			T3.TemplateCode UserTemplateCode,
+			  	T3.TemplateDesc UserTemplateName,
+    			t1.CustomerTemplate,
+    			T4.TemplateCode CustomerTemplateCode,
+			  	T4.TemplateDesc CustomerTemplateName,
+    			t2.unittype,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+    			t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM commodities t1
+     		  JOIN commodity_types t2 ON t2.id = t1.commoditytype
+		</createView>
+	</changeSet>
 	
-	
-	
+	<changeSet id="4.6" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_USER_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="UserTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CUST_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="CustomerTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_USER_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="UserTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_CUST_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="CustomerTemplate" />
+	</changeSet>
+
 </databaseChangeLog>

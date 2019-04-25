@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -32,13 +32,71 @@
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
-	
-	 <changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+
+	<changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-	
+
+	<changeSet id="1" author="shinde.b">
+		<dropTable tableName="AdtCommodities" />
+	</changeSet>
+
+	<changeSet id="1" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<createTable tableName="ADTCOMMODITIES">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CommodityType" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrentValue" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNCode" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertsRequired" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="UserTemplate" type="bigint" />
+			<column name="CustomerTemplate" type="bigint" />
+			<column name="Active" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
