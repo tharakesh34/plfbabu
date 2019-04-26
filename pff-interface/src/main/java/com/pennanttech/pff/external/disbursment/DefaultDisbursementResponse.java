@@ -28,10 +28,7 @@ import com.pennanttech.pff.external.DisbursementResponse;
 public class DefaultDisbursementResponse extends AbstractInterface implements DisbursementResponse {
 	protected final Logger logger = Logger.getLogger(getClass());
 
-	@Autowired
 	private DisbursementProcess disbursementProcess;
-
-	@Autowired
 	private PaymentProcess paymentProcess;
 
 	public DefaultDisbursementResponse() {
@@ -230,4 +227,15 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
+	@Autowired
+	public void setDisbursementProcess(DisbursementProcess disbursementProcess) {
+		this.disbursementProcess = disbursementProcess;
+	}
+
+	@Autowired
+	public void setPaymentProcess(PaymentProcess paymentProcess) {
+		this.paymentProcess = paymentProcess;
+	}
+
 }

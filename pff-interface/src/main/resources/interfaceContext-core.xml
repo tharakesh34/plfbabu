@@ -22,18 +22,13 @@
 	</bean>
 
 	<bean id="defaultMandateProcess" class="com.pennanttech.pff.external.mandate.DefaultMandateProcess" parent="abstractInterface" />
-	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest"
-		parent="abstractInterface" />
-	<bean id="defaultDisbursementRequest" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementRequest"
-		parent="abstractInterface" />
-	<bean id="defaultDisbursementResponse" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse"
-		parent="abstractInterface" />
+	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest" parent="abstractInterface" />
+	<bean id="defaultDisbursementRequest" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementRequest" parent="abstractInterface" />
+	<bean id="defaultDisbursementResponse" class="com.pennanttech.pff.external.disbursment.DefaultDisbursementResponse" parent="abstractInterface" />
 
 	<!-- The below bean configurations should be in implementation layer only if required. -->
-	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
-		abstract="true" parent="abstractInterface" />
-	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService"
-		abstract="true" parent="abstractInterface" />
+	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess" abstract="true" parent="abstractInterface" />
+	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService" abstract="true" parent="abstractInterface" />
 	<bean id="dmsIdentificationDAO" class="com.pennant.backend.dao.dms.impl.DMSIdentificationDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
