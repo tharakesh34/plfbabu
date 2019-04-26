@@ -9,7 +9,7 @@
 	<import resource="eod-batch-config-beans.xml" />
 	<import resource="eod-batch-config-tasklet.xml" />
 	<import resource="eod-batch-config-service.xml" />
-	<import resource="interfaceBatchContext.xml" />
+
 	<!-- _____________________________________________ JOB FLOW DEFINITION _________________________________________ -->
 	<!-- The job definition for the PLF End of Day -->
 	<job id="plfEodJob" xmlns="http://www.springframework.org/schema/batch" incrementer="PFSJobParametersIncrementer">

@@ -13358,8 +13358,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (buildEvent) {
 
-			aFinanceSchData.getFinanceMain().setFeeChargeAmt(BigDecimal.ZERO);
-			aFinanceSchData.getFinanceMain().setInsuranceAmt(BigDecimal.ZERO);
+			aFinanceMain.setFeeChargeAmt(BigDecimal.ZERO);
+			aFinanceMain.setInsuranceAmt(BigDecimal.ZERO);
 			if (finFeeDetailListCtrl != null) {
 				finFeeDetailListCtrl.doExecuteFeeCharges(true, aFinanceSchData);
 				//Fill the Insurances listbox's data for the  amounts calculated
@@ -13375,8 +13375,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				disbursementDetails.setDisbSeq(1);
 				disbursementDetails.setDisbAmount(aFinanceMain.getFinAmount());
 				disbursementDetails.setDisbReqDate(appDate);
-				disbursementDetails.setFeeChargeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
-				disbursementDetails.setInsuranceAmt(aFinanceSchData.getFinanceMain().getInsuranceAmt());
+				disbursementDetails.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
+				disbursementDetails.setInsuranceAmt(aFinanceMain.getInsuranceAmt());
 				disbursementDetails
 						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(this.disbAcctId.getValue()));
 				aFinanceSchData.getDisbursementDetails().add(disbursementDetails);
@@ -13401,9 +13401,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isEmpty(moduleDefiner)) {
 					if (!aFinanceSchData.getDisbursementDetails().isEmpty()) {
 						aFinanceSchData.getDisbursementDetails().get(0)
-								.setFeeChargeAmt(aFinanceSchData.getFinanceMain().getFeeChargeAmt());
+								.setFeeChargeAmt(aFinanceMain.getFeeChargeAmt());
 						aFinanceSchData.getDisbursementDetails().get(0)
-								.setInsuranceAmt(aFinanceSchData.getFinanceMain().getInsuranceAmt());
+								.setInsuranceAmt(aFinanceMain.getInsuranceAmt());
 					}
 				}
 			}

@@ -549,6 +549,8 @@ public class DisbursementInstCtrl {
 				if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
 					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
 				}
+			} else {
+				totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFromDisb());
 			}
 			totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 		}
@@ -561,13 +563,13 @@ public class DisbursementInstCtrl {
 
 	}
 
-	public static BigDecimal getTotalByDisbursment(FinanceDisbursement financeDisbursement, FinanceMain main) {
+	public static BigDecimal getTotalByDisbursment(FinanceDisbursement disbursement, FinanceMain main) {
 
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 
 		//check is first disbursement
-		if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
-				&& financeDisbursement.getDisbSeq() == 1) {
+		if (disbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
+				&& disbursement.getDisbSeq() == 1) {
 
 			totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 			totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
@@ -579,8 +581,11 @@ public class DisbursementInstCtrl {
 			if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
 				totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
 			}
+		} else {
+			totdisbAmt = totdisbAmt.subtract(disbursement.getDeductFromDisb());
 		}
-		totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
+		
+		totdisbAmt = totdisbAmt.add(disbursement.getDisbAmount());
 		return totdisbAmt;
 
 	}

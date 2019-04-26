@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -8,12 +9,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.pennant.backend.model.Entity;
-
 @XmlType(propOrder = { "applyODPenalty", "oDIncGrcDays", "oDGraceDays", "oDChargeType", "oDChargeCalOn",
 		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinODPenaltyRate implements Entity {
+public class FinODPenaltyRate implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private String finReference;
 	private Date finEffectDate;
@@ -37,30 +37,27 @@ public class FinODPenaltyRate implements Entity {
 	private long logKey = 0;
 
 	private String oDRuleCode;
-	
+
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinODPenaltyRate validateFinODPenaltyRate = this;
 
 	public FinODPenaltyRate() {
-
+		super();
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	@Override
 	public boolean isNew() {
 		return false;
 	}
 
-	@Override
 	public long getId() {
 		return logKey;
 	}
 
-	@Override
 	public void setId(long id) {
 		this.logKey = id;
 	}
@@ -146,7 +143,7 @@ public class FinODPenaltyRate implements Entity {
 	}
 
 	public long getLogKey() {
-		return logKey;
+		return getId();
 	}
 
 	public void setLogKey(long logKey) {
@@ -160,7 +157,7 @@ public class FinODPenaltyRate implements Entity {
 	public void setODRuleCode(String ODRuleCode) {
 		this.oDRuleCode = ODRuleCode;
 	}
-	
+
 	public BigDecimal getoDMinCapAmount() {
 		return oDMinCapAmount;
 	}

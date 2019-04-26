@@ -41,7 +41,7 @@ public class EodService {
 	private AutoDisbursementService autoDisbursementService;
 	private ReceiptPaymentService receiptPaymentService;
 	private InstallmentDueService installmentDueService;
-	private AdvancePaymentService  advancePaymentService;
+	private AdvancePaymentService advancePaymentService;
 	@Autowired
 	private LimitRebuild limitRebuild;
 
@@ -178,6 +178,7 @@ public class EodService {
 	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
 		this.advancePaymentService = advancePaymentService;
 	}
+
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
 	}

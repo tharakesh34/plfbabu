@@ -75,5 +75,5 @@ public interface FinanceDisbursementDAO {
 
 	List<Integer> getFinanceDisbSeqs(String finReferecne, String type, boolean isWIF);
 
-	List<FinanceDisbursement> getDeductDisbFeeDetails(String finRef);
+	List<FinanceDisbursement> getDeductedFeeAmounts(String finRef);
 }

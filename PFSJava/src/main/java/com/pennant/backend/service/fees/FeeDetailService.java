@@ -77,6 +77,7 @@ import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -336,6 +337,12 @@ public class FeeDetailService {
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, moduleDefiner)) {
 			financeMain.setDeductFeeDisb(deductFromDisbursement);
 			financeMain.setFeeChargeAmt(feeAddToDisbTot);
+		} 
+		
+		for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+			if(disbursement.getInstructionUID() == Long.MIN_VALUE) {
+				disbursement.setDeductFromDisb(deductFromDisbursement);
+			}
 		}
 	}
 

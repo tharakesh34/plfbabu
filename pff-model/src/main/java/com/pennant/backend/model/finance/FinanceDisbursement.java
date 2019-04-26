@@ -109,6 +109,7 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private boolean posted = false;
 	private long instructionUID = Long.MIN_VALUE;
+	private BigDecimal deductFromDisb = BigDecimal.ZERO;
 
 	//Subvention
 	private transient List<SubventionScheduleDetail> subventionSchedules = null;
@@ -450,5 +451,13 @@ public class FinanceDisbursement extends AbstractWorkflowEntity {
 
 	public void setSubventionAmount(BigDecimal subventionAmount) {
 		this.subventionAmount = subventionAmount;
+	}
+
+	public BigDecimal getDeductFromDisb() {
+		return deductFromDisb;
+	}
+
+	public void setDeductFromDisb(BigDecimal deductFromDisb) {
+		this.deductFromDisb = deductFromDisb;
 	}
 }

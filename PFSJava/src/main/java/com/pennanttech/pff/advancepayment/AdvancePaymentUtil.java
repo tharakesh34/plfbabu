@@ -281,12 +281,14 @@ public class AdvancePaymentUtil {
 		String repayAdvType = fm.getAdvType();
 
 		AdvanceType advanceType = AdvanceType.getType(repayAdvType);
-
-		if (advanceType != AdvanceType.UF) {
-			return;
+		
+		BigDecimal advanceIntrest = BigDecimal.ZERO;
+		if (advanceType == AdvanceType.UF) {
+			advanceIntrest = finScheduleData.getPftChg();
+		} else {
+			advanceIntrest = calculateAdvPayment(finScheduleData);
 		}
-
-		BigDecimal advanceIntrest = finScheduleData.getPftChg();
+		
 		fee.setActualAmount(advanceIntrest);
 		fee.setCalculatedAmount(advanceIntrest);
 		fee.setActualAmountOriginal(advanceIntrest);
@@ -301,11 +303,18 @@ public class AdvancePaymentUtil {
 	 */
 	public static void calculateLOSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
 		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
-
 		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT || advanceRule != AdvanceRuleCode.ADVEMI)) {
-			return;
+			return ;
 		}
+		
+		BigDecimal advancePayment = calculateAdvPayment(finScheduleData);
+		fee.setActualAmount(advancePayment);
+		fee.setCalculatedAmount(advancePayment);
+		fee.setActualAmountOriginal(advancePayment);
+		fee.setNetAmountOriginal(advancePayment);
+	}
 
+	private static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData) {
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
 		String grcAdvType = fm.getGrcAdvType();
@@ -342,11 +351,7 @@ public class AdvancePaymentUtil {
 		}
 
 		advancePayment = advancePayment.add(graceAdvPayment).add(repayAdvPayment);
-
-		fee.setActualAmount(advancePayment);
-		fee.setCalculatedAmount(advancePayment);
-		fee.setActualAmountOriginal(advancePayment);
-		fee.setNetAmountOriginal(advancePayment);
+		return advancePayment;
 	}
 
 	private static int getTerms(AdvanceType advanceType, int terms) {

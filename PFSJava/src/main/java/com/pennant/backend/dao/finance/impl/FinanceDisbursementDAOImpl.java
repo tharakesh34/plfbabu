@@ -609,18 +609,18 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 	}
 
 	@Override
-	public List<FinanceDisbursement> getDeductDisbFeeDetails(String finreference) {
+	public List<FinanceDisbursement> getDeductedFeeAmounts(String finreference) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from (");
-		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFeeDisb");
+		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFromDisb");
 		sql.append(" from FINFEEDETAIL_TEMP F");
 		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS_Temp DD on DD.FinReference = F.FinReference");
 		sql.append(" where FinEvent in (:FinEvent)");
 		sql.append(" group by F.Finreference, DisbSeq");
 		sql.append(" union all");
-		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFeeDisb");
+		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFromDisb");
 		sql.append(" from FINFEEDETAIL F");
 		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS DD on DD.FinReference = F.FinReference");
 		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FINFEEDETAIL_TEMP WHERE FeeId = F.FeeId)");

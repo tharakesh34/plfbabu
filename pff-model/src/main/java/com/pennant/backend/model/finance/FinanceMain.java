@@ -921,7 +921,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("maxStrtPrdHdays");
 		excludeFields.add("strtPrdHdays");
 		excludeFields.add("strtprdCpzMethod");
-
 		return excludeFields;
 	}
 	// ******************************************************//

@@ -90,30 +90,30 @@ public class FinScheduleData implements Serializable {
 
 	@XmlElement(name = "financeDetail")
 	private FinanceMain financeMain = null;
-	private HashMap<Date, FinanceScheduleDetail> scheduleMap;
+	private Map<Date, FinanceScheduleDetail> scheduleMap;
 
 	@XmlElement(name = "step")
-	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<FinanceStepPolicyDetail>(1);
+	private List<FinanceStepPolicyDetail> stepPolicyDetails = new ArrayList<>(1);
 
 	@XmlElementWrapper(name = "schedules")
 	@XmlElement(name = "schedule")
-	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>(1);
+	private List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<>(1);
 
-	private List<OverdraftScheduleDetail> overdraftScheduleDetails = new ArrayList<OverdraftScheduleDetail>(1);
-	private List<FinanceDisbursement> disbursementDetails = new ArrayList<FinanceDisbursement>(1);
+	private List<OverdraftScheduleDetail> overdraftScheduleDetails = new ArrayList<>(1);
+	private List<FinanceDisbursement> disbursementDetails = new ArrayList<>(1);
 
 	@XmlElement(name = "repayInstruction")
-	private List<RepayInstruction> repayInstructions = new ArrayList<RepayInstruction>(1);
-	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>(1);
+	private List<RepayInstruction> repayInstructions = new ArrayList<>(1);
+	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
 	@XmlElement(name = "summary")
 	private FinanceSummary financeSummary;
-	private List<FeeRule> feeRules = new ArrayList<FeeRule>(1);
+	private List<FeeRule> feeRules = new ArrayList<>(1);
 	@XmlElementWrapper(name = "fees")
 	@XmlElement(name = "fee")
-	private List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>(1);
-	private List<FinanceRepayments> repayDetails = new ArrayList<FinanceRepayments>(1);
+	private List<FinFeeDetail> finFeeDetailList = new ArrayList<>(1);
+	private List<FinanceRepayments> repayDetails = new ArrayList<>(1);
 
-	private List<OverdueChargeRecovery> penaltyDetails = new ArrayList<OverdueChargeRecovery>(1);
+	private List<OverdueChargeRecovery> penaltyDetails = new ArrayList<>(1);
 	private BigDecimal accrueValue = BigDecimal.ZERO;
 
 	@XmlElement(name = "overdue")
@@ -123,38 +123,38 @@ public class FinScheduleData implements Serializable {
 	private String feeEvent;
 
 	@XmlElement(name = "insurance")
-	private List<Insurance> insuranceList = new ArrayList<Insurance>();//DDP : TO BE REMOVED TODO
+	private List<Insurance> insuranceList = new ArrayList<>();//DDP : TO BE REMOVED TODO
 	private List<FinInsurances> finInsuranceList = new ArrayList<>();
 	@XmlElement(name = "rateInstruction")
-	private List<RateInstruction> rateInstruction = new ArrayList<RateInstruction>();
-	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<FinServiceInstruction>();
+	private List<RateInstruction> rateInstruction = new ArrayList<>();
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 	private boolean odLimitReset;
 
-	private List<Integer> planEMIHmonths = new ArrayList<Integer>();
+	private List<Integer> planEMIHmonths = new ArrayList<>();
 
-	private List<Date> planEMIHDates = new ArrayList<Date>();
+	private List<Date> planEMIHDates = new ArrayList<>();
 
-	private List<BaseRate> baseRates = new ArrayList<BaseRate>();
-	private List<SplRate> splRates = new ArrayList<SplRate>();
+	private List<BaseRate> baseRates = new ArrayList<>();
+	private List<SplRate> splRates = new ArrayList<>();
 	@XmlElement(name = "planEMIHDates")
-	private List<FinPlanEmiHoliday> apiPlanEMIHDates = new ArrayList<FinPlanEmiHoliday>();
+	private List<FinPlanEmiHoliday> apiPlanEMIHDates = new ArrayList<>();
 	@XmlElement(name = "planEMIHmonths")
-	private List<FinPlanEmiHoliday> apiPlanEMIHmonths = new ArrayList<FinPlanEmiHoliday>();
+	private List<FinPlanEmiHoliday> apiPlanEMIHmonths = new ArrayList<>();
 	// Vas Recording Details
 	@XmlElementWrapper(name = "vas")
 	@XmlElement(name = "vasRecording")
-	private List<VASRecording> vasRecordingList = new ArrayList<VASRecording>(1);
+	private List<VASRecording> vasRecordingList = new ArrayList<>(1);
 
 	// API specific fields
 	@XmlElement(name = "overdueCharges")
-	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>();
+	private List<FinODDetails> finODDetails = new ArrayList<>();
 	@XmlElementWrapper(name = "foreClosureFees")
 	@XmlElement(name = "foreClosureFee")
 	List<FinFeeDetail> foreClosureFees;
 
 	@XmlElementWrapper(name = "feeDues")
 	@XmlElement(name = "feeDue")
-	List<FinFeeDetail> feeDues = new ArrayList<FinFeeDetail>(1);
+	List<FinFeeDetail> feeDues = new ArrayList<>(1);
 	@XmlElement
 	private BigDecimal outstandingPri = BigDecimal.ZERO;
 	private BigDecimal pftChg = BigDecimal.ZERO; // Using for Every service instruction Profit change
@@ -168,12 +168,12 @@ public class FinScheduleData implements Serializable {
 
 	private boolean quickDisb;
 
-	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<FinReceiptDetail>();
-	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<FinFeeReceipt>();
-	private List<FinIRRDetails> iRRDetails = new ArrayList<FinIRRDetails>();
+	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<>();
+	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<>();
+	private List<FinIRRDetails> iRRDetails = new ArrayList<>();
 
-	private List<ExposureLinking> exposureLinkings = new ArrayList<ExposureLinking>();
-	private List<SanctionCondition> sanctionConditions = new ArrayList<SanctionCondition>();
+	private List<ExposureLinking> exposureLinkings = new ArrayList<>();
+	private List<SanctionCondition> sanctionConditions = new ArrayList<>();
 
 	@XmlElement
 	private String externalReference;
@@ -253,7 +253,7 @@ public class FinScheduleData implements Serializable {
 		return errorDetails;
 	}
 
-	public void setErrorDetails(ArrayList<ErrorDetail> errorDetails) {
+	public void setErrorDetails(List<ErrorDetail> errorDetails) {
 		this.errorDetails = errorDetails;
 	}
 
@@ -261,17 +261,17 @@ public class FinScheduleData implements Serializable {
 
 		if (errorDetail != null) {
 			if (errorDetails == null) {
-				errorDetails = new ArrayList<ErrorDetail>();
+				errorDetails = new ArrayList<>();
 			}
 			this.errorDetails.add(errorDetail);
 		}
 	}
 
-	public HashMap<Date, FinanceScheduleDetail> getScheduleMap() {
+	public Map<Date, FinanceScheduleDetail> getScheduleMap() {
 		return scheduleMap;
 	}
 
-	public void setScheduleMap(HashMap<Date, FinanceScheduleDetail> scheduleMap) {
+	public void setScheduleMap(Map<Date, FinanceScheduleDetail> scheduleMap) {
 		this.scheduleMap = scheduleMap;
 	}
 
@@ -316,10 +316,6 @@ public class FinScheduleData implements Serializable {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
-	}
-
-	public void setErrorDetails(List<ErrorDetail> errorDetails) {
-		this.errorDetails = errorDetails;
 	}
 
 	public void setFinanceType(FinanceType financeType) {

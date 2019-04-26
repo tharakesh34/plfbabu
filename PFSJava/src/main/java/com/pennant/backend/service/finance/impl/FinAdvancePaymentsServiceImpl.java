@@ -759,7 +759,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
 		if (loanApproved) {
 			for (FinanceDisbursement disbursement : financeDisbursement) {
-
 				if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())) {
 					continue;
 				}
@@ -779,6 +778,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 					if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
 						singletDisbursment = singletDisbursment.subtract(financeMain.getAdvanceEMI());
 					}
+				} else {
+					singletDisbursment = singletDisbursment.subtract(disbursement.getDeductFromDisb());
 				}
 				int key = disbursement.getDisbSeq();
 
@@ -805,30 +806,32 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 		Date date = null;
 		if (list != null && !list.isEmpty()) {
-			for (FinanceDisbursement financeDisbursement : list) {
-				if (group && seq != financeDisbursement.getDisbSeq()) {
+			for (FinanceDisbursement disbursement : list) {
+				if (group && seq != disbursement.getDisbSeq()) {
 					continue;
 				}
 
 				if (!group) {
-					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, financeDisbursement.getDisbStatus())) {
+					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, disbursement.getDisbStatus())) {
 						continue;
 					}
 				}
 
-				date = financeDisbursement.getDisbDate();
+				date = disbursement.getDisbDate();
 
 				//check is first disbursement to make sure the we deducted from first disbursement date
-				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
-						&& financeDisbursement.getDisbSeq() == 1) {
+				if (disbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
+						&& disbursement.getDisbSeq() == 1) {
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 					}
+				} else {
+					totdisbAmt = totdisbAmt.subtract(disbursement.getDeductFromDisb());
 				}
-				totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
+				totdisbAmt = totdisbAmt.add(disbursement.getDisbAmount());
 			}
 		}
 

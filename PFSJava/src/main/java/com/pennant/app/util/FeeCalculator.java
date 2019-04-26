@@ -22,6 +22,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -167,48 +168,48 @@ public class FeeCalculator implements Serializable {
 		// Calculate the fee Percentage
 		calculateFeePercentageAmount(receiptData);
 
-		List<FinFeeDetail> finFeeDetailList = finScheduleData.getFinFeeDetailList();
+		List<FinFeeDetail> fees = finScheduleData.getFinFeeDetailList();
 
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
 
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-				deductFeeFromDisbTot = deductFeeFromDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-				feeAddToDisbTot = feeAddToDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
-					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+		for (FinFeeDetail fee : fees) {
+			if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+				deductFeeFromDisbTot = deductFeeFromDisbTot.add(fee.getRemainingFee());
+			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+				feeAddToDisbTot = feeAddToDisbTot.add(fee.getRemainingFee());
+			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				if (fee.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
+					fee.setPaidAmount(fee.getActualAmount());
 				}
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
-				if (finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
-					finFeeDetail.setWaivedAmount(finFeeDetail.getActualAmount());
+			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				if (fee.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
+					fee.setWaivedAmount(fee.getActualAmount());
 				}
 			}
 
-			if (finFeeDetail.isNewRecord() && !finFeeDetail.isOriginationFee()) {
-				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+			if (fee.isNewRecord() && !fee.isOriginationFee()) {
+				fee.setPaidAmount(fee.getActualAmount());
 			}
 
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-					.subtract(finFeeDetail.getWaivedAmount()));
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
 
 		// FIXME as discussed should be added in finance main table
-		if (StringUtils.isBlank(financeDetail.getModuleDefiner())
-				|| StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
-			finScheduleData.getFinanceMain().setDeductFeeDisb(deductFeeFromDisbTot);
-			finScheduleData.getFinanceMain().setFeeChargeAmt(feeAddToDisbTot);
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+			fm.setDeductFeeDisb(deductFeeFromDisbTot);
+			fm.setFeeChargeAmt(feeAddToDisbTot);
+		}
+		
+		for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+			if(disbursement.getInstructionUID() == Long.MIN_VALUE) {
+				disbursement.setDeductFromDisb(deductFeeFromDisbTot);
+			}
 		}
 
-		// finScheduleData.setFinFeeDetailList(getFinFeeDetailUpdateList());
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			// Calculating GST
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData.getFinanceMain(), gstExecutionMap);
+		for (FinFeeDetail fee : fees) {
+			this.finFeeDetailService.calculateFees(fee, fm, gstExecutionMap);
 		}
 
 		logger.debug("Leaving");

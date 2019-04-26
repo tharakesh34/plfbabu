@@ -59,6 +59,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
@@ -1615,8 +1616,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
 		// Finance Disbursement Details
-		scheduleData.setDisbursementDetails(
-				getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		List<FinanceDisbursement> disbursements = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false);
+		scheduleData.setDisbursementDetails(disbursements);
+		List<FinanceDisbursement> deductedFeeAmounts = financeDisbursementDAO.getDeductedFeeAmounts(finReference);
+		for (FinanceDisbursement deductedFeeAmount : deductedFeeAmounts) {
+			for (FinanceDisbursement disbursement : disbursements) {
+				if (disbursement.getDisbSeq() == deductedFeeAmount.getDisbSeq()) {
+					disbursement.setDeductFromDisb(deductedFeeAmount.getDeductFromDisb());
+				}
+			}
+		}
 
 		// Finance Repayments Instruction Details
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
@@ -1696,9 +1705,20 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			scheduleData.setFinanceScheduleDetails(
 					getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, isWIF));
 
+			
 			// Finance Disbursement Details
-			scheduleData.setDisbursementDetails(getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference,
-					isWIF ? "_View" : type, isWIF));
+			List<FinanceDisbursement> disbursements = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, isWIF ? "_View" : type,
+					isWIF);
+			
+			scheduleData.setDisbursementDetails(disbursements);
+			List<FinanceDisbursement> deductedFeeAmounts = financeDisbursementDAO.getDeductedFeeAmounts(finReference);
+			for (FinanceDisbursement deductedFeeAmount : deductedFeeAmounts) {
+				for (FinanceDisbursement disbursement : disbursements) {
+					if (disbursement.getDisbSeq() == deductedFeeAmount.getDisbSeq()) {
+						disbursement.setDeductFromDisb(deductedFeeAmount.getDeductFromDisb());
+					}
+				}
+			}
 
 			// Finance Repayments Instruction Details
 			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
@@ -4700,7 +4720,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						excessAmount = BigDecimal.ZERO;
 					}
 					
-					if (excessAmount == BigDecimal.ZERO) {
+					if (excessAmount != BigDecimal.ZERO) {
 						AdvancePayment advPayment = new AdvancePayment();
 						advPayment.setFinReference(finReference);
 						advPayment.setFinBranch(finBranch);
@@ -6382,36 +6402,36 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void executeAutoFinRejectProcess() {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceType> financetypes = getFinanceTypeDAO().getAutoRejectionDays();
+		List<FinanceType> financetypes = financeTypeDAO.getAutoRejectionDays();
 
 		for (FinanceType financeType : financetypes) {
+			Map<String, Date> cancelMap = financeMainDAO.getUnApprovedFinanceList(financeType.getFinType());
+			
+			if(MapUtils.isEmpty(cancelMap)) {
+				continue;
+			}
 
-			Map<String, Date> cancelMap = getFinanceMainDAO().getUnApprovedFinanceList(financeType.getFinType());
-			if (cancelMap != null && !cancelMap.isEmpty()) {
+			int maxDaysForFinRejection = financeType.getAutoRejectionDays();
+			List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
+			Date effctiveDate = DateUtility.addDays(DateUtility.getAppDate(), -(maxDaysForFinRejection - 1));
 
-				int maxDaysForFinRejection = financeType.getAutoRejectionDays();
-				List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
-				Date effctiveDate = DateUtility.addDays(DateUtility.getAppDate(), -(maxDaysForFinRejection - 1));
-
-				for (String finreference : cancelList) {
-					Date finStartDate = cancelMap.get(finreference);
-					if (((DateUtility.compare(finStartDate, effctiveDate) < 0)
-							|| DateUtility.compare(finStartDate, effctiveDate) == 0)) {
-						FinanceDetail financeDetail = new FinanceDetail();
-						FinanceMain financeMain = new FinanceMain();
-						financeMain.setFinReference(finreference);
-						financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-						AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
-						AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null,
-								auditDetail, null, new HashMap<String, ArrayList<ErrorDetail>>());
-						try {
-							doReject(auditHeader, false, true);
-						} catch (Exception e) {
-							logger.error("Finance Reference for Rejection Failed : " + finreference);
-						}
+			for (String finreference : cancelList) {
+				Date finStartDate = cancelMap.get(finreference);
+				if (((DateUtility.compare(finStartDate, effctiveDate) < 0)
+						|| DateUtility.compare(finStartDate, effctiveDate) == 0)) {
+					FinanceDetail financeDetail = new FinanceDetail();
+					FinanceMain financeMain = new FinanceMain();
+					financeMain.setFinReference(finreference);
+					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+					AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
+					AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null,
+							auditDetail, null, new HashMap<String, ArrayList<ErrorDetail>>());
+					try {
+						doReject(auditHeader, false, true);
+					} catch (Exception e) {
+						logger.error("Finance Reference for Rejection Failed : " + finreference);
 					}
 				}
-
 			}
 		}
 		logger.debug(Literal.LEAVING);

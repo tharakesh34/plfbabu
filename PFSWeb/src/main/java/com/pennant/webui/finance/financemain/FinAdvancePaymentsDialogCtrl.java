@@ -840,22 +840,26 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		//Adding 3 fields for Disbursement Tab in loan queue
 		BigDecimal disbAmount = BigDecimal.ZERO;
 		BigDecimal advancePayAmount = BigDecimal.ZERO;
-
+		BigDecimal otherExp = BigDecimal.ZERO;
+		
 		// Total Disbursed Amount
 		for (FinanceDisbursement curDisb : financeDisbursement) {
 			if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 				continue;
 			}
 			disbAmount = disbAmount.add(curDisb.getDisbAmount());
+			disbAmount = disbAmount.subtract(curDisb.getDeductFromDisb());
+			otherExp = otherExp.add(curDisb.getDeductFromDisb());
 		}
-		if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) {
+		
+		/*if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) {
 			for (FinanceDisbursement curDisb : approvedDisbursments) {
 				if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 					continue;
 				}
 				disbAmount = disbAmount.add(curDisb.getDisbAmount());
 			}
-		}
+		}*/
 
 		// Total amount released except current Instruction
 		List<FinAdvancePayments> advPayList = null;
@@ -866,11 +870,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			advPayList = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
 
-		BigDecimal otherExp = BigDecimal.ZERO;
-		otherExp = otherExp.add(financeMain.getDeductFeeDisb());
+		//BigDecimal otherExp = BigDecimal.ZERO;
+		//otherExp = otherExp.add(financeMain.getDeductFeeDisb());
 
 		disbAmount = disbAmount.subtract(financeMain.getDownPayment());
-		disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
+		//disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
 		disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
 		if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 			disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
