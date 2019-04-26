@@ -313,5 +313,71 @@
 		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_USER_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="UserTemplate" />
 		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_CUST_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="CustomerTemplate" />
 	</changeSet>
-
+	
+	<changeSet id="5" author="VijayKumar.L ">
+		<comment> Included finrefernce from finfeedetail table </comment>
+		<createView viewName="finfeereceipts_view" replaceIfExists="true">
+			  SELECT t1.id,
+			    t1.feeid,
+			    t1.receiptid,
+			    t1.paidamount,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.amount AS receiptamount,
+			    t2.transactionref,
+			    t2.favournumber,
+			    t3.feetypeid,
+			    t3.vasreference,
+			    t4.feetypecode,
+			    t4.feetypedesc,
+			    t3.finreference,
+			    t5.receiptmode AS receipttype
+			   FROM plf.finfeereceipts_temp t1
+			     JOIN plf.finreceiptdetail t2 ON t1.receiptid = t2.receiptid
+			     JOIN plf.finfeedetail_temp t3 ON t1.feeid = t3.feeid
+			     LEFT JOIN plf.feetypes t4 ON t3.feetypeid = t4.feetypeid
+			     JOIN plf.finreceiptheader t5 ON t1.receiptid = t5.receiptid
+			UNION ALL
+			 SELECT t1.id,
+			    t1.feeid,
+			    t1.receiptid,
+			    t1.paidamount,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.amount AS receiptamount,
+			    t2.transactionref,
+			    t2.favournumber,
+			    t3.feetypeid,
+			    t3.vasreference,
+			    t4.feetypecode,
+			    t4.feetypedesc,
+			    t3.finreference,
+			    t5.receiptmode AS receipttype
+			   FROM plf.finfeereceipts t1
+			     JOIN plf.finreceiptdetail t2 ON t1.receiptid = t2.receiptid
+			     JOIN plf.finfeedetail t3 ON t1.feeid = t3.feeid
+			     LEFT JOIN plf.feetypes t4 ON t3.feetypeid = t4.feetypeid
+			     JOIN plf.finreceiptheader t5 ON t1.receiptid = t5.receiptid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM plf.finfeereceipts_temp
+			          WHERE finfeereceipts_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
