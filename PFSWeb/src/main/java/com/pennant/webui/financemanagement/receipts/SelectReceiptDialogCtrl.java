@@ -1,5 +1,6 @@
 package com.pennant.webui.financemanagement.receipts;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,11 +28,13 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -39,18 +42,21 @@ import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerService;
-import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -99,16 +105,16 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
 	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
 	private long workflowId;
+	private Rule rule;
 
 	@Autowired
 	public transient ReceiptService receiptService;
 	public transient SecurityUserDAO securityUserDAO;
 
 	@Autowired
-	private transient ReceiptCalculator receiptCalculator;
-
+	private RuleService ruleService;
 	@Autowired
-	private transient FinanceMainService financeMainService;
+	private RuleExecutionUtil ruleExecutionUtil;
 
 	private transient CustomerDetailsService customerDetailsService;
 	private transient CustomerService customerService;
@@ -323,6 +329,29 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Leaving ");
 	}
 
+	/**
+	 * Method for Selecting Bounce Reason Code in case of Receipt got Bounced
+	 * 
+	 * @param event
+	 */
+	public void onFulfill$bounceCode(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = bounceCode.getObject();
+
+		if (dataObject instanceof String) {
+			this.bounceCode.setValue(dataObject.toString());
+		} else {
+			BounceReason bounceReason = (BounceReason) dataObject;
+			if (bounceReason != null) {
+				HashMap<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
+
+				rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 	public void doWriteComponentsToBean() throws Exception {
 		logger.debug("Entering ");
 		doSetValidation();
@@ -339,12 +368,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_DepositDate.isVisible()) {
-				if (label_DepositDate.getValue()
-						.equals(Labels.getLabel("label_SelectReceiptDialog_DepositDate.value"))) {
-					finReceiptDetail.setDepositDate(this.depositDate.getValue());
-				} else {
-					finReceiptHeader.setRealizationDate(this.depositDate.getValue());
-				}
+				finReceiptDetail.setDepositDate(this.depositDate.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -458,6 +482,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		boolean flag = true;
 		String method = "";
 		List<AuditHeader> auditHeaderList = new ArrayList<>();
+		Map<String, Object> executeMap = new HashMap<>();
 		Collection<FinReceiptHeader> recHeader = finReceiptHeaderMap.values();
 		long batchId = receiptService.getUploadSeqId(); // generating Sequence Id from Receipt upload
 
@@ -474,20 +499,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				receiptData = prepareReceiptData(receiptHeader);
 			} else {
 				receiptHeader.setBatchId(batchId);
-				if (FinanceConstants.DEPOSIT_MAKER.equals(module)) {
-					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
-				}
-				if (FinanceConstants.RECEIPTREALIZE_MAKER.equals(roleCode)) {
-					receiptHeader.setBounceDate(finReceiptHeader.getBounceDate());
-					receiptHeader.setRealizationDate(finReceiptHeader.getRealizationDate());
-					receiptHeader.setReceiptModeStatus(finReceiptHeader.getReceiptModeStatus());
-					receiptHeader.setRemarks(finReceiptHeader.getRemarks());
-					receiptHeader.setBounceReason(finReceiptHeader.getBounceReason());
-					receiptHeader.setCancelReason(finReceiptHeader.getCancelReason());
-				}
-				//receiptHeader.setRoleCode(roleCode);
-				//receiptHeader.setNextRoleCode(nextRoleCode);
-				receiptHeader.setRecordStatus(recordAction);
 				for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
 					if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(receiptDetail.getPaymentType())
 							|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
@@ -497,7 +508,55 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						receiptDetail.setDepositNo(finReceiptDetail.getDepositNo());
 						receiptDetail.setFundingAc(finReceiptDetail.getFundingAc());
 					}
+					// Getting Amount Codes for Calculating Bounce Charges
+					executeMap = receiptDetail.getDeclaredFieldValues();
 				}
+				if (FinanceConstants.DEPOSIT_MAKER.equals(module)) {
+					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
+				}
+				if (FinanceConstants.RECEIPTREALIZE_MAKER.equals(roleCode)) {
+					if (RepayConstants.PAYSTATUS_REALIZED.equals(finReceiptHeader.getReceiptModeStatus())) {
+						receiptHeader.setRealizationDate(finReceiptDetail.getDepositDate());
+					} else if (RepayConstants.PAYSTATUS_BOUNCE.equals(finReceiptHeader.getReceiptModeStatus())) {
+						receiptHeader.setBounceDate(finReceiptDetail.getDepositDate());
+					}
+					receiptHeader.setReceiptModeStatus(finReceiptHeader.getReceiptModeStatus());
+					receiptHeader.setRemarks(finReceiptHeader.getRemarks());
+					receiptHeader.setBounceReason(finReceiptHeader.getBounceReason());
+					receiptHeader.setCancelReason(finReceiptHeader.getCancelReason());
+
+					// Calculating Bounce Charges based on FinType
+					BigDecimal bounceAmt = BigDecimal.ZERO;
+					if (rule != null) {
+						executeMap.put("br_finType", receiptHeader.getFinType());
+						bounceAmt = (BigDecimal) getRuleExecutionUtil().executeRule(rule.getSQLRule(), executeMap,
+								receiptHeader.getFinCcy(), RuleReturnType.DECIMAL);
+
+						ManualAdvise bounce = new ManualAdvise();
+						bounce.setNewRecord(true);
+
+						bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+						bounce.setFinReference(receiptHeader.getReference());
+						bounce.setFeeTypeID(0);
+						bounce.setSequence(0);
+
+						bounce.setAdviseAmount(PennantApplicationUtil.unFormateAmount(bounceAmt,
+								CurrencyUtil.getFormat(receiptHeader.getFinCcy())));
+
+						bounce.setPaidAmount(BigDecimal.ZERO);
+						bounce.setWaivedAmount(BigDecimal.ZERO);
+						bounce.setValueDate(DateUtility.getAppDate());
+						bounce.setPostDate(DateUtility.getPostDate());
+
+						bounce.setRemarks(receiptHeader.getRemarks());
+						bounce.setReceiptID(receiptHeader.getReceiptID());
+						bounce.setBounceID(Long.valueOf(receiptHeader.getBounceReason()));
+						receiptHeader.setManualAdvise(bounce);
+					}
+				}
+				//receiptHeader.setRoleCode(roleCode);
+				//receiptHeader.setNextRoleCode(nextRoleCode);
+				receiptHeader.setRecordStatus(recordAction);
 				receiptData = prepareReceiptData(receiptHeader);
 			}
 
@@ -691,6 +750,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Get Audit Header Details
 	 */
@@ -767,6 +827,22 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
+	}
+
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+	public RuleExecutionUtil getRuleExecutionUtil() {
+		return ruleExecutionUtil;
+	}
+
+	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
+		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
 }

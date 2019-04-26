@@ -15,14 +15,18 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
@@ -43,7 +47,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinODDetailsDAO finODDetailsDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ReceiptAllocationDetailDAO allocationDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 
 	public ReceiptRealizationServiceImpl() {
@@ -76,15 +83,12 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using FinReceiptHeaderDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtFinReceiptHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -135,13 +139,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinReceiptHeaderDAO().delete with
-	 * parameters finReceiptHeader,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters finReceiptHeader,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -173,12 +174,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * doApprove method do the following steps. Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. based on the Record type do
-	 * following actions Update record in the main table by using
-	 * getFinReceiptHeaderDAO().update with parameters FinReceiptHeader. Audit
-	 * the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * doApprove method do the following steps. Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. based on the Record type do
+	 * following actions Update record in the main table by using getFinReceiptHeaderDAO().update with parameters
+	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
@@ -209,6 +208,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		// =======================================
 		tranType = PennantConstants.TRAN_UPD;
 		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		receiptHeader.setRcdMaintainSts(null);
 		receiptHeader.setRecordType("");
 		receiptHeader.setRoleCode("");
 		receiptHeader.setNextRoleCode("");
@@ -238,8 +238,26 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 			}
 		}
 
+		// updating fixexcess amount after realization
+		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
+			FinRepayHeader rph = receiptHeader.getReceiptDetails().get(0).getRepayHeader();
+			if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
+				finExcessAmountDAO.updExcessAfterRealize(receiptHeader.getReference(),
+						receiptHeader.getExcessAdjustTo(), rph.getExcessAmount());
+			}
+		}
+
+		// Delete Save Receipt Detail List by Reference
+		finReceiptDetailDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+
+		// Receipt Allocation Details
+		allocationDetailDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+
+		// Delete Manual Advise Movements
+		manualAdviseDAO.deleteMovementsByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB.getSuffix());
+
 		// Delete Receipt Header
-		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		finReceiptHeaderDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
 		// Preparing Before Image for Audit
 		FinReceiptHeader befRctHeader = null;
@@ -295,9 +313,8 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		}
 
 		//FinReceiptHeader Audit
-		auditHeader.setAuditDetail(
-				new AuditDetail(tranType, 1, rhFields[0], rhFields[1], befRctHeader,
-						finReceiptData.getReceiptHeader()));
+		auditHeader.setAuditDetail(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], befRctHeader,
+				finReceiptData.getReceiptHeader()));
 
 		// Adding audit as Insert/Update/deleted into main table
 		auditHeader.setAuditTranType(tranType);
@@ -380,12 +397,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getFinReceiptHeaderDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID
+	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -432,13 +447,13 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
 		if (receiptHeader.isNew()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-													// the
-					// table then error
+														// the
+													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -464,8 +479,8 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-													// the
-					// main table
+														// the
+													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -558,6 +573,18 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
+		this.allocationDetailDAO = allocationDetailDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }

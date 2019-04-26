@@ -63,7 +63,7 @@ public class FeeCalculator implements Serializable {
 
 		FinFeeDetail finFeeDetail = null;
 		if (finTypeFeesList == null || finTypeFeesList.isEmpty()) {
-			receiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(new ArrayList<>());
+			receiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetailList);
 			logger.debug("Leaving ");
 			return receiptData;
 		}

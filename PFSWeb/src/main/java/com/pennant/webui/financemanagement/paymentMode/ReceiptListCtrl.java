@@ -188,8 +188,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -207,7 +206,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				|| StringUtils.equals(this.module, FinanceConstants.CLOSURE_MAKER)) {
 			registerButton(button_ReceiptList_NewReceipt, "button_ReceiptList_NewReceipt", true);
 			this.button_ReceiptList_Submit.setVisible(false);
-			this.listHeader_CheckBox_Name.setVisible(false);
 		}
 
 		registerButton(button_ReceiptList_ReceiptSearchDialog);
@@ -310,7 +308,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null and ReceiptModeStatus != 'C')"
-						+ "OR NEXTROLECODE='" + module + "')");
+								+ "OR NEXTROLECODE='" + module + "')");
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");
@@ -320,7 +318,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					searchObject.addWhereClause(" PAYAGAINSTID = 0");
 				}
 			}
-		} 
+		}
 		logger.debug("Leaving");
 	}
 
@@ -369,6 +367,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_MAKER)) {
 			listheader_DepositDate.setVisible(true);
 			this.button_ReceiptList_Submit.setVisible(true);
+			listHeader_CheckBox_Name.setVisible(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.RECEIPT_APPROVER)
 				|| StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_APPROVER)
 				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_APPROVER)) {
@@ -376,6 +375,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			listheader_DepositDate.setVisible(true);
 			this.button_ReceiptList_Approve.setVisible(true);
 			this.button_ReceiptList_Resubmit.setVisible(true);
+			listHeader_CheckBox_Name.setVisible(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_APPROVER)) {
 			listheader_DepositDate.setVisible(false);
@@ -384,6 +384,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			listheader_PayTypeRef.setVisible(false);
 			listheader_PartnerBank.setVisible(false);
 			listheader_ExcessType.setVisible(true);
+			this.listHeader_CheckBox_Name.setVisible(false);
 
 			row_2.setVisible(true);
 			row_4.setVisible(false);
@@ -399,14 +400,14 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		} else if (enqiryModule) {
 			listheader_ReceiptModeStatus.setVisible(true);
 			listheader_NextRoleCode.setVisible(true);
+			this.listHeader_CheckBox_Name.setVisible(false);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -435,8 +436,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -463,8 +463,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

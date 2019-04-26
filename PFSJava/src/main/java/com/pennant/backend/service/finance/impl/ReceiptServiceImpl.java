@@ -5649,6 +5649,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						|| RepayConstants.RECEIPTMODE_EXCESS.equals(receiptDetail.getPaymentType())
 						|| RepayConstants.RECEIPTMODE_PAYABLE.equals(receiptDetail.getPaymentType()))) {
 					finReceiptDetail = receiptDetail;
+					finReceiptDetail.setStatus(finReceiptData.getReceiptHeader().getReceiptModeStatus());
 				}
 			}
 
