@@ -27,6 +27,7 @@ public class CollateralRevaluationRowMapper implements RowMapper<CollateralReval
 		cr.setUserTemplateCode(rs.getString("UserTemplateCode"));
 		cr.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
 		cr.setAlertToRoles(rs.getString("AlertToRoles"));
+		cr.setValueDate(rs.getDate("ValueDate"));
 
 		return cr;
 

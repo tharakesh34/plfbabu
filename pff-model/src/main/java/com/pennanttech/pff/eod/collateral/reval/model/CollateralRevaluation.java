@@ -2,6 +2,7 @@ package com.pennanttech.pff.eod.collateral.reval.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class CollateralRevaluation implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -24,7 +25,7 @@ public class CollateralRevaluation implements Serializable {
 	private BigDecimal thresholdLTV;
 	private BigDecimal pos;
 	private long commodityId;
-	private BigDecimal valueDate;
+	private Date valueDate;
 	private boolean sendAlert;
 	private String alertToRoles;
 	private String customerTemplateCode;
@@ -175,11 +176,11 @@ public class CollateralRevaluation implements Serializable {
 		this.commodityId = commodityId;
 	}
 
-	public BigDecimal getValueDate() {
+	public Date getValueDate() {
 		return valueDate;
 	}
 
-	public void setValueDate(BigDecimal valueDate) {
+	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
 
