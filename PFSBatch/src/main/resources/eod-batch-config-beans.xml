@@ -5,6 +5,7 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
 
+	<import resource="classpath:applicationContext-db.xml" />
 	<import resource="applicationContext-core-interface.xml" />
 	<import resource="classpath:applicationContext-jdbc.xml" />
 
@@ -164,12 +165,12 @@
 
 	<bean id="designationDAO" class="com.pennant.backend.dao.systemmasters.impl.DesignationDAOImpl" parent="basicDao" />
 
-	<bean id="hostConnection" class="com.pennant.equation.util.HostConnection">
+	<!-- <bean id="hostConnection" class="com.pennant.equation.util.HostConnection">
 		<property name="serverName" value="${pffEquation.ServerName}" />
 		<property name="unitName" value="${pffEquation.UnitName}" />
 		<property name="userName" value="${pffEquation.username}" />
 		<property name="password" value="${pffEquation.password}" />
-	</bean>
+	</bean> -->
 
 	<!-- Account Details -->
 	<bean id="accountsDAO" class="com.pennant.backend.dao.accounts.impl.AccountsDAOImpl" parent="basicDao" />
