@@ -2311,7 +2311,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			aFinanceMain.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(aFinanceMain);
-		map.put("repayData", receiptData);
+		map.put("receiptData", receiptData);
 		map.put("moduleCode", moduleDefiner);
 		map.put("moduleDefiner", moduleDefiner);
 		map.put("eventCode", eventCodeRef);

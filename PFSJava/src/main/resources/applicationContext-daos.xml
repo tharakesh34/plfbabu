@@ -103,17 +103,21 @@
 
 	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
-		<property name="mailTemplateService" ref="mailTemplateService" />
-		<property name="notificationsService" ref="notificationsService" />
-		<property name="customerEMailService" ref="customerEMailService" />
-		<property name="notesService" ref="notesService" />
+		<property name="mailTemplateDAO" ref="mailTemplateDAO" />
+		<property name="notificationsDAO" ref="notificationsDAO" />
+		<property name="notesDAO" ref="notesDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="securityRoleService" ref="securityRoleService" />
-		<property name="securityUserService" ref="securityUserService" />
-		<property name="workFlowDetailsService" ref="workFlowDetailsService" />
-		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
+		<property name="securityRoleDAO" ref="securityRoleDAO" />
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="reportingManagerDAO" ref="reportingManagerDAO" />
+		<property name="workFlowDetailsDAO" ref="workFlowDetailsDAO" />
+		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
 		<property name="documentManagerDAO" ref="documentManagerDAO" />
-		<property name="branchService" ref="branchService" />
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="emailEngine" ref="emailEngine" />
+		<property name="smsEngine" ref="smsEngine" />
 	</bean>
 
 	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData" scope="prototype">

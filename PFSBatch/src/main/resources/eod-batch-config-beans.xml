@@ -805,4 +805,34 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 	
+	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
+	<bean id="mailTemplateDAO" class="com.pennant.backend.dao.mail.impl.MailTemplateDAOImpl" parent="sequenceDao" />
+	<bean id="notesDAO" class="com.pennant.backend.dao.impl.NotesDAOImpl" parent="sequenceDao" />
+	<bean id="securityRoleDAO" class="com.pennant.backend.dao.administration.impl.SecurityRoleDAOImpl" parent="secSequenceDao" />
+	<bean id="securityUserDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserDAOImpl" parent="secSequenceDao" />
+	<bean id="reportingManagerDAO" class="com.pennant.backend.dao.applicationmaster.impl.ReportingManagerDAOImpl" parent="sequenceDao" />
+	<bean id="workFlowDetailsDAO" class="com.pennant.backend.dao.impl.WorkFlowDetailsDAOImpl" parent="sequenceDao" />
+	<bean id="securityUserOperationsDAO" class="com.pennant.backend.dao.administration.impl.SecurityUserOperationsDAOImpl" parent="secSequenceDao" />
+	<bean id="documentManagerDAO" class="com.pennant.backend.dao.documentdetails.impl.DocumentManagerDAOImpl" parent="sequenceDao" />
+	<bean id="vehicleDealerDAO" class="com.pennant.backend.dao.amtmasters.impl.VehicleDealerDAOImpl" parent="sequenceDao" />
+		
+	<bean id="notificationService" class="com.pennanttech.pff.notifications.service.NotificationService">
+		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
+		<property name="mailTemplateDAO" ref="mailTemplateDAO" />
+		<property name="notificationsDAO" ref="notificationsDAO" />
+		<property name="notesDAO" ref="notesDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="securityRoleDAO" ref="securityRoleDAO" />
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="reportingManagerDAO" ref="reportingManagerDAO" />
+		<property name="workFlowDetailsDAO" ref="workFlowDetailsDAO" />
+		<property name="securityUserOperationsDAO" ref="securityUserOperationsDAO" />
+		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="emailEngine" ref="emailEngine" />
+		<property name="smsEngine" ref="smsEngine" />
+	</bean>
+	
 </beans>

@@ -306,14 +306,18 @@
 			  LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="4.6" author="shinde.b">
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_USER_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="UserTemplate" />
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CUST_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="CustomerTemplate" />
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_USER_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="UserTemplate" />
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_CUST_TEMPLATE" referencedTableName="TEMPLATES" referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="CustomerTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_USER_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="UserTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CUST_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="CustomerTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_USER_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="UserTemplate" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_T_CUST_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="CustomerTemplate" />
 	</changeSet>
-	
+
 	<changeSet id="5" author="VijayKumar.L ">
 		<comment> Included finrefernce from finfeedetail table </comment>
 		<createView viewName="finfeereceipts_view" replaceIfExists="true">
@@ -379,5 +383,93 @@
 			          WHERE finfeereceipts_temp.id = t1.id))
 		</createView>
 	</changeSet>
-	
+
+	<changeSet id="6" author="Shinde.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM TEMPLATEFIELDS WHERE EVENT = 'CollateralLTVBreachs';
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'fm_finReference', 'Loan Reference Number', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'fm_finType', 'Loan Type', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'fm_lovDescFinTypeName', 'Loan Type Description', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_custShrtName', 'Customer Name', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_type', 'Commodity Type', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_collateralRef', 'Collateral Reference', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_callateralValue', 'Collateral Value', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_bankLtv', 'Bank LTV', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_collateralType', 'Collateral Type', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_outStandingPrincipal', 'Principle OutStanding', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_bankValuation', 'Bank Valuation', 'A', 'CollateralLTVBreachs');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cltvb_thresholdLtv', 'Threshold LTV', 'A', 'CollateralLTVBreachs');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7" author="shinde.b">
+		<createTable tableName="COLLATERAL_LTV_BREACHES">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COLLATERAL_LTV_BREACHES_ID" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralRef" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Collateralccy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Pos" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CollateralValue" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MarketValue" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankLtv" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ThresholdLtv" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MarketBankLtv" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CommodityId" type="bigint" />
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="SendAlert" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="8.1" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_ALERT DEFAULT 0 FOR SENDALERT;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_MLTV DEFAULT 0 FOR MARKETBANKLTV;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8.1" author="shinde.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MarketBankLtv" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+		<addDefaultValue columnName="SendAlert" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="8.3" author="shinde.b">
+		<createIndex tableName="COLLATERAL_LTV_BREACHES" indexName="BATCH_CA_LTV_BREACHES">
+			<column name="BatchId" />
+		</createIndex>
+	</changeSet>
+
 </databaseChangeLog>

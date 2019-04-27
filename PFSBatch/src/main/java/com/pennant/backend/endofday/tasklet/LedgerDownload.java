@@ -11,27 +11,24 @@ import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.LedgerDownloadService;
 
-public class LedgerDownload  implements Tasklet {
-	private Logger					logger	= Logger.getLogger(LedgerDownload.class);
-	
-	
+public class LedgerDownload implements Tasklet {
+	private Logger logger = Logger.getLogger(LedgerDownload.class);
+
 	@Autowired(required = false)
 	private LedgerDownloadService ledgerDownloadService;
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
-		if(ledgerDownloadService!=null){
+
+		if (ledgerDownloadService != null) {
 			ledgerDownloadService.processDownload(DateUtility.getAppDate());
-		}else{
+		} else {
 			logger.debug("LedgerDownloadService Not Configured");
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;
 	}
-	
-	
 
 }

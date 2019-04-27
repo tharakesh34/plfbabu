@@ -1038,7 +1038,7 @@
 												</row>
 												
 												<row id="row_advStages" visible="false">
-													<label value="${c:l('label_financemainDialog_AdvanceStage.value')}" />
+													<label value="${c:l('label_FinanceTypeDialog_AdvanceStage.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<combobox id="advStage" />

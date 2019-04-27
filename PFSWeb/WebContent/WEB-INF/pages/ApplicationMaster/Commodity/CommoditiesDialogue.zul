@@ -57,7 +57,7 @@
 								<row>
 									<label value="${c:l('label_CommoditiesDialogue_CommodityType.value')}" />
 									<hbox>
-										<extendedcombobox id="type" width="300px"/>
+										<extendedcombobox id="type" width="300px" />
 									</hbox>
 								</row>
 								<row>
@@ -98,6 +98,51 @@
 									</hbox>
 								</row>
 
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox id="gb_alertDetails" sclass="gb-dialog">
+						<caption label="Alert Details"></caption>
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="35%" />
+								<column width="35%" />
+								<column width="35%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_AlertsRequired"
+										value="${c:l('label_CommoditiesDialog_AlertsRequired.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="alertsRequired" checked="false" />
+									</hbox>
+								</row>
+
+								<row id="row6">
+									<label id="label_AlertType"
+										value="${c:l('label_CommoditiesDialog_AlertType.value')}" />
+									<hbox>
+										<space id="space_AlertToRoles" spacing="2px" />
+										<combobox id="alertType" width="90px" />
+									</hbox>
+									<label id="label_AlertToRoles"
+										value="${c:l('label_CommoditiesDialog_AlertToRoles.value')}" />
+
+									<extendedcombobox id="alertToRoles" />
+								</row>
+								<row id="row7">
+									<label id="label_UserTemplate"
+										value="${c:l('label_CommoditiesDialog_UserTemplate.value')}" />
+
+									<extendedcombobox id="userTemplate" />
+									<label id="label_CustomerTemplate"
+										value="${c:l('label_CommoditiesDialog_CustomerTemplate.value')}" />
+
+									<extendedcombobox id="customerTemplate" />
+								</row>
 							</rows>
 						</grid>
 					</groupbox>

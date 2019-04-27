@@ -15,14 +15,24 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.NotesDAO;
+import com.pennant.backend.dao.WorkFlowDetailsDAO;
+import com.pennant.backend.dao.administration.SecurityRoleDAO;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
+import com.pennant.backend.dao.administration.SecurityUserOperationsDAO;
+import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.applicationmaster.ReportingManagerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.mail.MailTemplateDAO;
+import com.pennant.backend.dao.notifications.NotificationsDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -56,18 +66,6 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.model.rulefactory.Notifications;
-import com.pennant.backend.service.NotesService;
-import com.pennant.backend.service.WorkFlowDetailsService;
-import com.pennant.backend.service.administration.SecurityRoleService;
-import com.pennant.backend.service.administration.SecurityUserOperationsService;
-import com.pennant.backend.service.administration.SecurityUserService;
-import com.pennant.backend.service.amtmasters.VehicleDealerService;
-import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
-import com.pennant.backend.service.applicationmaster.BranchService;
-import com.pennant.backend.service.customermasters.CustomerEMailService;
-import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
-import com.pennant.backend.service.mail.MailTemplateService;
-import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
@@ -97,26 +95,20 @@ public class NotificationService {
 	private static final Logger logger = Logger.getLogger(NotificationService.class);
 
 	private Configuration freemarkerMailConfiguration;
-	private MailTemplateService mailTemplateService;
-	private NotificationsService notificationsService;
-	private CustomerEMailService customerEMailService;
-	private AgreementDefinitionService agreementDefinitionService;
-	private SecurityUserOperationsService securityUserOperationsService;
+	private MailTemplateDAO mailTemplateDAO;
+	private NotificationsDAO notificationsDAO;
+	private NotesDAO notesDAO;
 	private RuleExecutionUtil ruleExecutionUtil;
-	private SecurityRoleService securityRoleService;
-	private SecurityUserService securityUserService;
-	private WorkFlowDetailsService workFlowDetailsService;
-	private NotesService notesService;
+	private SecurityRoleDAO securityRoleDAO;
+	private SecurityUserDAO securityUserDAO;
+	private ReportingManagerDAO reportingManagerDAO;
+	private WorkFlowDetailsDAO workFlowDetailsDAO;
+	private SecurityUserOperationsDAO securityUserOperationsDAO;
 	private DocumentManagerDAO documentManagerDAO;
-	private BranchService branchService;
-
-	@Autowired
-	private VehicleDealerService vehicleDealerService;
-	@Autowired
-	private FinanceReferenceDetailService financeReferenceDetailService;
-	@Autowired
+	private BranchDAO branchDAO;
+	private VehicleDealerDAO vehicleDealerDAO;
+	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private EmailEngine emailEngine;
-	@Autowired
 	private SmsEngine smsEngine;
 
 	public NotificationService() {
@@ -139,7 +131,7 @@ public class NotificationService {
 		}
 
 		Map<String, byte[]> attachements = mailKeyData.getAttachments();
-		MailTemplate template = getMailTemplateService().getMailTemplateByCode(mailKeyData.getTemplateCode());
+		MailTemplate template = mailTemplateDAO.getMailTemplateByCode(mailKeyData.getTemplateCode(), "_AView");
 
 		if (template != null && template.isActive()) {
 			try {
@@ -169,8 +161,6 @@ public class NotificationService {
 			sendSmsNotification(message);
 			mailKeyData.setId(message.getId());
 		}
-		
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -259,15 +249,14 @@ public class NotificationService {
 
 		if (!CollectionUtils.isEmpty(templates)) {
 			if ("LOAN".equals(module) || "LOAN_ORG".equals(module)) {
-				resendNotifications = financeReferenceDetailService.resendNotification(finType, finEvent, role,
-						templates);
+				resendNotifications = financeReferenceDetailDAO.resendNotification(finType, finEvent, role, templates);
 			}
-			notificationIds = financeReferenceDetailService.getNotifications(finType, finEvent, role, templates);
+			notificationIds = getNotifications(finType, finEvent, role, templates);
 			if (CollectionUtils.isNotEmpty(notificationIds)) {
-				notifications = getNotificationsService().getApprovedNotificationsByRuleIdList(notificationIds);
+				notifications = notificationsDAO.getNotificationsByRuleIdList(notificationIds, "");
 			}
 		} else {
-			notifications = notificationsService.getApprovedNotificationsByModule(module);
+			notifications = notificationsDAO.getNotificationsByModule(module, "");
 		}
 
 		if (CollectionUtils.isEmpty(notifications)) {
@@ -457,8 +446,8 @@ public class NotificationService {
 		StringTemplateLoader loader = new StringTemplateLoader();
 		loader.putTemplate("mailTemplate",
 				new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
-		getFreemarkerMailConfiguration().setTemplateLoader(loader);
-		Template template = getFreemarkerMailConfiguration().getTemplate("mailTemplate");
+		freemarkerMailConfiguration.setTemplateLoader(loader);
+		Template template = freemarkerMailConfiguration.getTemplate("mailTemplate");
 
 		try {
 			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
@@ -469,8 +458,8 @@ public class NotificationService {
 		}
 		StringTemplateLoader subloader = new StringTemplateLoader();
 		subloader.putTemplate("mailSubject", mailTemplate.getEmailSubject());
-		getFreemarkerMailConfiguration().setTemplateLoader(subloader);
-		Template templateSubject = getFreemarkerMailConfiguration().getTemplate("mailSubject");
+		freemarkerMailConfiguration.setTemplateLoader(subloader);
+		Template templateSubject = freemarkerMailConfiguration.getTemplate("mailSubject");
 
 		try {
 			subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, model);
@@ -486,8 +475,8 @@ public class NotificationService {
 		if (mailTemplate.isSmsTemplate()) {
 			loader = new StringTemplateLoader();
 			loader.putTemplate("smsTemplate", mailTemplate.getSmsContent());
-			getFreemarkerMailConfiguration().setTemplateLoader(loader);
-			template = getFreemarkerMailConfiguration().getTemplate("smsTemplate");
+			freemarkerMailConfiguration.setTemplateLoader(loader);
+			template = freemarkerMailConfiguration.getTemplate("smsTemplate");
 
 			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
@@ -508,7 +497,7 @@ public class NotificationService {
 		logger.debug(Literal.ENTERING);
 		MailTemplate template = null;
 		try {
-			template = getMailTemplateService().getApprovedMailTemplateById(templateId);
+			template = mailTemplateDAO.getMailTemplateById(templateId, "_AView");
 			if (template != null && template.isActive()) {
 
 				template.getEmailIds().add(mailId);
@@ -527,7 +516,7 @@ public class NotificationService {
 					templateData.setFinPurpose(notification.getFinPurpose());
 
 					// user Details
-					SecurityUser secUser = getSecurityUserService().getSecurityUserById(notification.getLastMntBy());
+					SecurityUser secUser = getSecurityUserById(notification.getLastMntBy());
 					templateData.setUsrName(secUser.getUsrFName());
 
 				}
@@ -681,7 +670,7 @@ public class NotificationService {
 		data.setUserDepartment(main.getUserDetails().getDepartmentName());
 
 		// Finance Branch Details
-		Branch branch = getBranchService().getApprovedBranchById(main.getFinBranch());
+		Branch branch = branchDAO.getBranchById(main.getFinBranch(), "_AView");
 		if (branch != null) {
 			data.setFinBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
 			data.setFinBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
@@ -698,7 +687,7 @@ public class NotificationService {
 
 		// User Branch Details
 		if (!StringUtils.equals(main.getFinBranch(), main.getUserDetails().getBranchCode())) {
-			branch = getBranchService().getApprovedBranchById(main.getUserDetails().getBranchCode());
+			branch = branchDAO.getBranchById(main.getUserDetails().getBranchCode(), "_AView");
 		}
 		if (branch != null) {
 			data.setUserBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
@@ -762,11 +751,11 @@ public class NotificationService {
 		data.setPriority(main.getPriority());
 
 		// Role Code For Alert Notification
-		List<SecurityRole> securityRoles = getSecurityRoleService().getSecRoleCodeDesc(main.getRoleCode());
+		List<SecurityRole> securityRoles = securityRoleDAO.getSecurityRole(main.getRoleCode());
 		data.setRoleCode(securityRoles.size() > 0 ? securityRoles.get(0).getRoleDesc() : "");
 
 		// user Details
-		SecurityUser secUser = getSecurityUserService().getSecurityUserById(main.getLastMntBy());
+		SecurityUser secUser = getSecurityUserById(main.getLastMntBy());
 		String secUsrFullName = PennantApplicationUtil.getFullName(secUser.getUsrFName(), secUser.getUsrMName(),
 				secUser.getUsrLName());
 		data.setUsrName(secUsrFullName);
@@ -774,12 +763,12 @@ public class NotificationService {
 		data.setPrevUsrName(secUsrFullName);
 
 		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
-			WorkFlowDetails workFlowDetails = getWorkFlowDetailsService().getWorkFlowDetailsByID(main.getWorkflowId());
+			WorkFlowDetails workFlowDetails = workFlowDetailsDAO.getWorkFlowDetailsByID(main.getWorkflowId());
 			data.setWorkflowType(workFlowDetails == null ? "" : workFlowDetails.getWorkFlowType());
 		}
 
 		data.setNextUsrRoleCode(main.getNextRoleCode());
-		List<SecurityRole> securityNextRoles = getSecurityRoleService().getSecRoleCodeDesc(main.getNextRoleCode());
+		List<SecurityRole> securityNextRoles = securityRoleDAO.getSecurityRole(main.getNextRoleCode());
 		String nextRoleCode = "";
 		for (SecurityRole securityRole : securityNextRoles) {
 			if (StringUtils.isNotEmpty(nextRoleCode)) {
@@ -797,7 +786,7 @@ public class NotificationService {
 		Notes note = new Notes();
 		note.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
 		note.setReference(main.getFinReference());
-		List<Notes> list = getNotesService().getNotesListByRole(note, false, new String[] { main.getRoleCode() });
+		List<Notes> list = notesDAO.getNotesListByRole(note, false, new String[] { main.getRoleCode() });
 		StringBuilder recommendations = new StringBuilder();
 		for (Notes notes : list) {
 			recommendations.append(notes.getRemarks());
@@ -1074,7 +1063,7 @@ public class NotificationService {
 		try {
 			declaredFieldValues.putAll(getTemplData(aFinanceDetail, receiptHeader));
 		} catch (Exception e) {
-			
+
 		}
 		declaredFieldValues.putAll(DataMapUtil.getDataMap(aFinanceDetail));
 
@@ -1112,7 +1101,7 @@ public class NotificationService {
 				return null;
 			}
 
-			template = mailTemplateService.getApprovedMailTemplateById(templateId);
+			template = mailTemplateDAO.getMailTemplateById(templateId, "_AView");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -1162,7 +1151,7 @@ public class NotificationService {
 			}
 		} else if (NotificationConstants.TEMPLATE_FOR_SP.equals(templateType)) {
 			long vehicleDealerid = customerDetails.getCustomer().getCustRO1();
-			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(vehicleDealerid);
+			VehicleDealer vehicleDealer = vehicleDealerDAO.getVehicleDealerById(vehicleDealerid, "_AView");
 
 			if (vehicleDealer != null) {
 				emails.add(StringUtils.trimToEmpty(vehicleDealer.getEmail()));
@@ -1172,8 +1161,7 @@ public class NotificationService {
 		} else if (NotificationConstants.TEMPLATE_FOR_DSAN.equals(templateType)) {
 			VehicleDealer vehicleDealer = null;
 			if (StringUtils.isNotBlank(financeMain.getDsaCode()) && StringUtils.isNumeric(financeMain.getDsaCode())) {
-				vehicleDealer = vehicleDealerService
-						.getApprovedVehicleDealerById(Long.valueOf(financeMain.getDsaCode()));
+				vehicleDealer = vehicleDealerDAO.getVehicleDealerById(Long.valueOf(financeMain.getDsaCode()), "_AView");
 			}
 
 			if (vehicleDealer != null) {
@@ -1189,7 +1177,7 @@ public class NotificationService {
 			String ruleResString = (String) this.ruleExecutionUtil.executeRule(notification.getRuleReciepent(),
 					fieldsAndValues, null, RuleReturnType.STRING);
 			if (StringUtils.isEmpty(ruleResString)) {
-				List<String> emailList = securityUserOperationsService.getUsrMailsByRoleIds(ruleResString);
+				List<String> emailList = securityUserOperationsDAO.getUsrMailsByRoleIds(ruleResString);
 
 				if (CollectionUtils.isNotEmpty(emailList)) {
 					emails.addAll(emailList);
@@ -1233,114 +1221,98 @@ public class NotificationService {
 	public String[] getAttchmentRuleResult(String attachmentRule, FinanceDetail financeDetail) {
 		String[] documentCodes = getAttachmentCode(attachmentRule, getTemplateData(financeDetail, null));
 		return documentCodes;
-
 	}
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+
+	public SecurityUser getSecurityUserById(long id) {
+		logger.debug(Literal.ENTERING);
+
+		SecurityUser securityUser = securityUserDAO.getSecurityUserById(id, "_View");
+
+		securityUser.setSecurityUserDivBranchList(securityUserDAO.getSecUserDivBrList(id, "_View"));
+
+		securityUser.setReportingManagersList(reportingManagerDAO.getReportingManagers(id, "_View"));
+
+		return securityUser;
+	}
+
+	public List<Long> getNotifications(String financeType, String finEvent, String roleCode, List<String> lovCodeList) {
+		List<Long> list = new ArrayList<>();
+		Map<Long, String> templateMap = financeReferenceDetailDAO.getTemplateIdList(financeType, finEvent, roleCode,
+				lovCodeList);
+
+		if (templateMap == null) {
+			return list;
+		}
+
+		for (Long notificationId : templateMap.keySet()) {
+			list.add(notificationId);
+		}
+
+		return list;
+	}
 
 	public void setFreemarkerMailConfiguration(Configuration configuration) {
 		this.freemarkerMailConfiguration = configuration;
 	}
 
-	public Configuration getFreemarkerMailConfiguration() {
-		return freemarkerMailConfiguration;
+	public void setMailTemplateDAO(MailTemplateDAO mailTemplateDAO) {
+		this.mailTemplateDAO = mailTemplateDAO;
 	}
 
-	public void setMailTemplateService(MailTemplateService mailTemplateService) {
-		this.mailTemplateService = mailTemplateService;
+	public void setSecurityUserOperationsDAO(SecurityUserOperationsDAO securityUserOperationsDAO) {
+		this.securityUserOperationsDAO = securityUserOperationsDAO;
 	}
 
-	public MailTemplateService getMailTemplateService() {
-		return mailTemplateService;
+	public void setNotificationsDAO(NotificationsDAO notificationsDAO) {
+		this.notificationsDAO = notificationsDAO;
 	}
 
-	public void setCustomerEMailService(CustomerEMailService customerEMailService) {
-		this.customerEMailService = customerEMailService;
-	}
-
-	public CustomerEMailService getCustomerEMailService() {
-		return customerEMailService;
-	}
-
-	public SecurityUserOperationsService getSecurityUserOperationsService() {
-		return securityUserOperationsService;
-	}
-
-	public void setSecurityUserOperationsService(SecurityUserOperationsService securityUserOperationsService) {
-		this.securityUserOperationsService = securityUserOperationsService;
-	}
-
-	public NotificationsService getNotificationsService() {
-		return notificationsService;
-	}
-
-	public void setNotificationsService(NotificationsService notificationsService) {
-		this.notificationsService = notificationsService;
-	}
-
-	public AgreementDefinitionService getAgreementDefinitionService() {
-		return agreementDefinitionService;
-	}
-
-	public void setAgreementDefinitionService(AgreementDefinitionService agreementDefinitionService) {
-		this.agreementDefinitionService = agreementDefinitionService;
-	}
-
-	public NotesService getNotesService() {
-		return notesService;
-	}
-
-	public void setNotesService(NotesService notesService) {
-		this.notesService = notesService;
-	}
-
-	public RuleExecutionUtil getRuleExecutionUtil() {
-		return ruleExecutionUtil;
+	public void setNotesDAO(NotesDAO notesDAO) {
+		this.notesDAO = notesDAO;
 	}
 
 	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
 		this.ruleExecutionUtil = ruleExecutionUtil;
 	}
 
-	public SecurityRoleService getSecurityRoleService() {
-		return securityRoleService;
+	public void setSecurityRoleDAO(SecurityRoleDAO securityRoleDAO) {
+		this.securityRoleDAO = securityRoleDAO;
 	}
 
-	public void setSecurityRoleService(SecurityRoleService securityRoleService) {
-		this.securityRoleService = securityRoleService;
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
 	}
 
-	public SecurityUserService getSecurityUserService() {
-		return securityUserService;
+	public void setReportingManagerDAO(ReportingManagerDAO reportingManagerDAO) {
+		this.reportingManagerDAO = reportingManagerDAO;
 	}
 
-	public void setSecurityUserService(SecurityUserService securityUserService) {
-		this.securityUserService = securityUserService;
-	}
-
-	public WorkFlowDetailsService getWorkFlowDetailsService() {
-		return workFlowDetailsService;
-	}
-
-	public void setWorkFlowDetailsService(WorkFlowDetailsService workFlowDetailsService) {
-		this.workFlowDetailsService = workFlowDetailsService;
+	public void setWorkFlowDetailsDAO(WorkFlowDetailsDAO workFlowDetailsDAO) {
+		this.workFlowDetailsDAO = workFlowDetailsDAO;
 	}
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
 
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
 	public void setEmailEngine(EmailEngine emailEngine) {
 		this.emailEngine = emailEngine;
 	}
 
-	public BranchService getBranchService() {
-		return branchService;
+	public void setVehicleDealerDAO(VehicleDealerDAO vehicleDealerDAO) {
+		this.vehicleDealerDAO = vehicleDealerDAO;
 	}
 
-	public void setBranchService(BranchService branchService) {
-		this.branchService = branchService;
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}
 
+	public void setSmsEngine(SmsEngine smsEngine) {
+		this.smsEngine = smsEngine;
+	}
+	
 }

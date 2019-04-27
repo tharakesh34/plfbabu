@@ -54,13 +54,13 @@
 			<next on="*" to="ledgerNotification" />
 			<fail on="FAILED" />
 		</step>
-		
+
 		<step id="ledgerNotification">
 			<tasklet ref="ledgerNotificationTaskLet" />
 			<fail on="FAILED" />
-			<next on="*" to="datesUpdate" />			
-		</step> 
-		
+			<next on="*" to="datesUpdate" />
+		</step>
+
 		<step id="datesUpdate">
 			<tasklet ref="datesUpdateTaskLet" />
 			<!-- <next on="*" to="posidex" /> -->
@@ -76,6 +76,21 @@
 
 		<step id="collectionNotification">
 			<tasklet ref="collectionNotificationTaskLet" />
+			<fail on="FAILED" />
+			<next on="*" to="loadCollateralRevaluationData" />
+		</step>
+
+		<step id="loadCollateralRevaluationData">
+			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
+			<fail on="FAILED" />
+			<next on="*" to="collateralRevaluation" />
+		</step>
+
+		<step id="collateralRevaluation">
+			<tasklet>
+				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor" writer="collateralRevaluationItemWriter"
+					commit-interval="10" />
+			</tasklet>
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>
@@ -99,8 +114,10 @@
 		<!-- <step id="sapGL"> <tasklet ref="sapGLTaskLet" /> <next on="*" to="alm" /> <fail on="FAILED" /> </step> <step id="alm"> 
 			<tasklet ref="almTaskLet" /> <next on="*" to="cibil" /> <fail on="FAILED" /> </step> -->
 
-		<!-- <step id="retailcibil"> <tasklet ref="retailcibilTaskLet" /> <next on="*" to="corporatecibilTaskLet" /> <fail on="FAILED" /> </step>-->
-		<!-- <step id="corporatecibil"> <tasklet ref="corporatecibilTaskLet" /> <next on="*" to="gstTaxDownload" /> <fail on="FAILED" /> </step>-->
+		<!-- <step id="retailcibil"> <tasklet ref="retailcibilTaskLet" /> <next on="*" to="corporatecibilTaskLet" /> <fail on="FAILED" 
+			/> </step> -->
+		<!-- <step id="corporatecibil"> <tasklet ref="corporatecibilTaskLet" /> <next on="*" to="gstTaxDownload" /> <fail on="FAILED" 
+			/> </step> -->
 		<!-- <step id="gstTaxDownload"> <tasklet ref="gstTaxDownloadTaskLet" /> <next on="*" to="dmLoanDetailsMonthly" /> <fail 
 			on="FAILED" /> </step> <step id="dmLoanDetailsMonthly"> <tasklet ref="DM_LOAN_DETAILS_MONTHLY"/> <next on="*" to="dmLoanBalancesMonthly" 
 			/> <fail on="FAILED" /> </step> -->

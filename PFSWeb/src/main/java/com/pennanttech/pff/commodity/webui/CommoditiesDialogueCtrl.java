@@ -2,7 +2,9 @@ package com.pennanttech.pff.commodity.webui;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,6 +15,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -20,8 +23,12 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.Property;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.mail.MailTemplate;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -29,26 +36,30 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.commodity.model.Commodity;
 import com.pennanttech.pff.commodity.model.CommodityType;
 import com.pennanttech.pff.commodity.service.CommoditiesService;
+import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(CommodityTypeDialogueCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_CommoditiesDialogue;
 
@@ -59,9 +70,16 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	protected Uppercasebox hsnCode;
 	protected Checkbox active;
 	protected Commodity commodity;
+	protected Checkbox alertsRequired;
+	protected Combobox alertType;
+	protected ExtendedCombobox alertToRoles;
+	protected ExtendedCombobox userTemplate;
+	protected ExtendedCombobox customerTemplate;
 
 	private transient CommoditiesListCtrl commoditiesListCtrl;
 	private transient CommoditiesService commoditiesService;
+
+	private transient List<Property> listAlertType = AppStaticList.getAlertsFor();
 
 	private CommodityType commodityTypeObject;
 
@@ -85,7 +103,8 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -143,6 +162,32 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		this.type.setValueType(DataType.LONG);
 		this.type.setWidth("300dpx");
 		this.type.setValidateColumns(new String[] { "Id", "Code", "Description" });
+
+		this.alertToRoles.setModuleName("OperationRoles");
+		this.alertToRoles.setValueColumn("RoleCd");
+		this.alertToRoles.setDescColumn("RoleDesc");
+		this.alertToRoles.setValidateColumns(new String[] { "RoleCd" });
+		this.alertToRoles.setMultySelection(true);
+		this.alertToRoles.setInputAllowed(false);
+		this.alertToRoles.setWidth("150px");
+
+		this.userTemplate.setModuleName("MailTemplate");
+		this.userTemplate.setValueColumn("TemplateCode");
+		this.userTemplate.setDescColumn("TemplateDesc");
+		this.userTemplate.setValidateColumns(new String[] { "TemplateCode", "TemplateDesc" });
+		Filter[] userTemplateFilter = new Filter[2];
+		userTemplateFilter[0] = new Filter("TemplateFor", NotificationConstants.TEMPLATE_FOR_AE);
+		userTemplateFilter[1] = new Filter("TemplateCode", "LAS%", Filter.OP_LIKE);
+		userTemplate.setFilters(userTemplateFilter);
+
+		this.customerTemplate.setModuleName("MailTemplate");
+		this.customerTemplate.setValueColumn("TemplateCode");
+		this.customerTemplate.setDescColumn("TemplateDesc");
+		this.customerTemplate.setValidateColumns(new String[] { "TemplateCode", "TemplateDesc" });
+		Filter[] custTemplateFilter = new Filter[2];
+		custTemplateFilter[0] = new Filter("TemplateFor", NotificationConstants.TEMPLATE_FOR_CN);
+		custTemplateFilter[1] = new Filter("TemplateCode", "LAS%", Filter.OP_LIKE);
+		customerTemplate.setFilters(custTemplateFilter);
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		this.currentValue.setProperties(true, formatter);
@@ -203,7 +248,8 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -215,7 +261,8 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -301,9 +348,164 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		this.description.setText(acommodity.getDescription());
 		this.active.setChecked(acommodity.isActive());
 
+		fillList(this.alertType, listAlertType, acommodity.getAlertType());
+		this.alertsRequired.setChecked(acommodity.isAlertsRequired());
+
+		onCheckAlertsRequired();
+
+		onSelectAlertType();
+
+		if (acommodity.getAlertToRoles() != null) {
+			Map<String, Object> map = new HashMap<>();
+			StringBuilder roles = new StringBuilder();
+			for (String role : acommodity.getAlertToRoles().split(",")) {
+				role = StringUtils.trim(role);
+
+				if (roles.length() > 0) {
+					roles.append(",");
+				}
+				roles.append(role);
+
+				SecurityRole securityRole = new SecurityRole();
+				securityRole.setRoleCd(role);
+				securityRole.setRoleCode(role);
+
+				map.put(role, securityRole);
+			}
+
+			this.alertToRoles.setValue(roles.toString());
+			this.alertToRoles.setAttribute("data", map);
+			this.alertToRoles.setTooltiptext(roles.toString());
+			this.alertToRoles.setInputAllowed(false);
+			this.alertToRoles.setSelectedValues(map);
+		}
+
+		if (acommodity.getUserTemplate() != null) {
+			this.userTemplate.setValue(String.valueOf(acommodity.getUserTemplateCode()));
+			this.userTemplate.setDescription(acommodity.getUserTemplateName());
+			MailTemplate template = new MailTemplate();
+			template.setId(acommodity.getUserTemplate());
+			template.setTemplateCode(String.valueOf(acommodity.getUserTemplateCode()));
+			template.setTemplateDesc(acommodity.getUserTemplateName());
+			this.userTemplate.setObject(template);
+			onFulfillUserTemplates();
+		}
+
+		if (acommodity.getCustomerTemplate() != null) {
+			this.customerTemplate.setValue(String.valueOf(acommodity.getCustomerTemplateCode()));
+			this.customerTemplate.setDescription(acommodity.getCustomerTemplateName());
+			MailTemplate template = new MailTemplate();
+			template.setId(acommodity.getCustomerTemplate());
+			template.setTemplateCode(String.valueOf(acommodity.getCustomerTemplateCode()));
+			template.setTemplateDesc(acommodity.getCustomerTemplateName());
+			this.customerTemplate.setObject(template);
+			onFulfillCustomerTemplates();
+		}
+
 		this.recordStatus.setValue(acommodity.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void onCheckAlertsRequired() {
+
+		if (this.alertsRequired.isChecked()) {
+			this.alertType.setSelectedIndex(1);
+			this.alertType.setDisabled(true);
+			this.alertToRoles.setButtonDisabled(false);
+			this.userTemplate.setButtonDisabled(false);
+		} else {
+			this.alertType.setDisabled(true);
+			this.alertType.setSelectedIndex(0);
+			this.alertToRoles.setButtonDisabled(true);
+			this.alertToRoles.setValue("");
+			this.alertToRoles.setDescription("");
+			this.userTemplate.setButtonDisabled(true);
+			this.customerTemplate.setButtonDisabled(true);
+			this.userTemplate.setValue("");
+			this.userTemplate.setDescription("");
+			this.customerTemplate.setValue("");
+			this.customerTemplate.setDescription("");
+		}
+	}
+
+	private void onSelectAlertType() {
+
+		if (alertType.isDisabled()) {
+			return;
+		}
+
+		if (this.alertType.getSelectedIndex() == 1) {
+			this.userTemplate.setButtonDisabled(false);
+			this.customerTemplate.setButtonDisabled(true);
+			this.alertToRoles.setButtonDisabled(false);
+			this.customerTemplate.setValue(null);
+			this.customerTemplate.setDescription(null);
+			this.customerTemplate.setObject(null);
+		} else if (this.alertType.getSelectedIndex() == 2) {
+			this.userTemplate.setButtonDisabled(true);
+			this.customerTemplate.setButtonDisabled(false);
+			this.alertToRoles.setButtonDisabled(true);
+			this.alertToRoles.setValue(null);
+			this.alertToRoles.setDescription(null);
+			this.userTemplate.setValue(null);
+			this.userTemplate.setDescription(null);
+			this.userTemplate.setObject(null);
+		} else if (this.alertType.getSelectedIndex() == 3) {
+			this.userTemplate.setButtonDisabled(false);
+			this.customerTemplate.setButtonDisabled(false);
+			this.alertToRoles.setButtonDisabled(false);
+		} else {
+			this.userTemplate.setButtonDisabled(true);
+			this.customerTemplate.setButtonDisabled(true);
+			this.alertToRoles.setButtonDisabled(true);
+			this.alertToRoles.setValue(null);
+			this.alertToRoles.setDescription(null);
+			this.userTemplate.setValue("");
+			this.userTemplate.setDescription("");
+			this.customerTemplate.setValue("");
+			this.customerTemplate.setDescription("");
+			this.customerTemplate.setId("");
+			this.userTemplate.setId("");
+			this.customerTemplate.setObject(null);
+			this.userTemplate.setObject(null);
+		}
+	}
+
+	public void onFulfill$userTemplate(Event event) {
+		logger.debug(Literal.ENTERING);
+		onFulfillUserTemplates();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void onFulfillUserTemplates() {
+		Object dataObject = this.userTemplate.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.userTemplate.setValue("");
+			this.userTemplate.setDescription("");
+		} else {
+			MailTemplate template = (MailTemplate) dataObject;
+			this.userTemplate.setValue(String.valueOf(template.getTemplateCode()));
+			this.userTemplate.setDescription(template.getTemplateDesc());
+		}
+	}
+
+	public void onFulfill$customerTemplate(Event event) {
+		logger.debug(Literal.ENTERING);
+		onFulfillCustomerTemplates();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void onFulfillCustomerTemplates() {
+		Object dataObject = this.customerTemplate.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.customerTemplate.setValue("");
+			this.customerTemplate.setDescription("");
+		} else {
+			MailTemplate template = (MailTemplate) dataObject;
+			this.customerTemplate.setValue(String.valueOf(template.getTemplateCode()));
+			this.customerTemplate.setDescription(template.getTemplateDesc());
+		}
 	}
 
 	/**
@@ -357,6 +559,81 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			wve.add(we);
 		}
 
+		try {
+			acommodity.setAlertsRequired(this.alertsRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			String strAlertType = null;
+			if (this.alertType.getSelectedItem() != null) {
+				strAlertType = this.alertType.getSelectedItem().getValue().toString();
+			}
+			if (strAlertType != null && !PennantConstants.List_Select.equals(strAlertType)) {
+				acommodity.setAlertType(strAlertType);
+
+			} else {
+				acommodity.setAlertType(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			this.alertToRoles.getValue();
+			Map<String, Object> roles = getSelectedValues(this.alertToRoles);
+			if (roles != null) {
+				if (!this.alertToRoles.getButton().isDisabled() && roles.size() > 5) {
+					throw new WrongValueException(this.alertToRoles.getButton(),
+							"The number of roles should not exceed more than 5.");
+				}
+
+				StringBuffer data = new StringBuffer();
+				for (String role : roles.keySet()) {
+					if (data.length() > 0) {
+						data.append(",");
+					}
+					data.append(role);
+				}
+
+				acommodity.setAlertToRoles(data.toString());
+			} else {
+				acommodity.setAlertToRoles(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			this.userTemplate.getValidatedValue();
+			Object obj = this.userTemplate.getObject();
+			if (obj != null) {
+				acommodity.setUserTemplate(((MailTemplate) obj).getTemplateId());
+				acommodity.setUserTemplateCode(((MailTemplate) obj).getTemplateCode());
+			} else {
+				acommodity.setUserTemplate(null);
+				acommodity.setUserTemplateCode(null);
+				acommodity.setUserTemplateName(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			this.customerTemplate.getValidatedValue();
+			Object obj = this.customerTemplate.getObject();
+			if (obj != null) {
+				acommodity.setCustomerTemplate(((MailTemplate) obj).getTemplateId());
+				acommodity.setCustomerTemplateCode(((MailTemplate) obj).getTemplateCode());
+			} else {
+				acommodity.setCustomerTemplate(null);
+				acommodity.setCustomerTemplateCode(null);
+				acommodity.setCustomerTemplateName(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -368,6 +645,18 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 			throw new WrongValuesException(wvea);
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getSelectedValues(ExtendedCombobox extendedCombobox) {
+		Object object = extendedCombobox.getAttribute("data");
+		return (Map<String, Object>) object;
+	}
+
+	public void onCheck$alertsRequired(Event event) {
+		logger.debug(Literal.ENTERING);
+		onCheckAlertsRequired();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -438,6 +727,29 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value"), 2, false, false));
 		}
 
+		if (!this.alertToRoles.getButton().isDisabled()) {
+			this.alertToRoles.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_CommoditiesDialog_AlertToRoles.value"), null, true));
+		}
+
+		if (!this.userTemplate.isReadonly()
+				&& ("User".equals(alertType.getValue()) || "Both".equals(alertType.getValue()))) {
+			this.userTemplate.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommoditiesDialog_UserTemplate.value"), null, true, true));
+		}
+
+		if (!this.alertToRoles.getButton().isDisabled()
+				&& ("User".equals(alertType.getValue()) || "Both".equals(alertType.getValue()))) {
+			this.alertToRoles.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommoditiesDialog_AlertToRoles.value"), null, true, true));
+		}
+
+		if (!this.customerTemplate.isReadonly()
+				&& ("Customer".equals(alertType.getValue()) || "Both".equals(alertType.getValue()))) {
+			this.customerTemplate.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_CommoditiesDialog_CustomerTemplate.value"), null, true, false));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -460,7 +772,8 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -524,15 +837,33 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		if (this.commodity.isNewRecord()) {
 			this.type.setButtonDisabled(false);
 			this.code.setDisabled(false);
+			this.alertType.setDisabled(true);
+			this.customerTemplate.setReadonly(true);
 		} else {
 			this.type.setButtonDisabled(true);
 			this.code.setDisabled(true);
+			this.alertType.setDisabled(true);
+			this.customerTemplate.setReadonly(true);
 		}
 
 		readOnlyComponent(isReadOnly("Commodities_Description"), this.description);
 		readOnlyComponent(isReadOnly("Commodities_CurrentValue"), this.currentValue);
 		readOnlyComponent(isReadOnly("Commodities_HSNCode"), this.hsnCode);
 		readOnlyComponent(isReadOnly("Commodities_Active"), this.active);
+		readOnlyComponent(isReadOnly("Commodities_AlertsRequired"), this.alertsRequired);
+		readOnlyComponent(isReadOnly("Commodities_AlertToRoles"), this.alertToRoles);
+		readOnlyComponent(isReadOnly("Commodities_UserTemplate"), this.userTemplate);
+
+		if (this.commodity != null
+				&& StringUtils.equals(this.commodity.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
+			readOnlyComponent(true, this.description);
+			readOnlyComponent(true, this.currentValue);
+			readOnlyComponent(true, this.hsnCode);
+			readOnlyComponent(true, this.active);
+			readOnlyComponent(true, this.alertsRequired);
+			readOnlyComponent(true, this.alertToRoles);
+			readOnlyComponent(true, this.userTemplate);
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

@@ -93,6 +93,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
+import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
 import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
 
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
@@ -268,6 +269,7 @@ public class FinanceDetail implements java.io.Serializable {
 	@XmlElement(name = "interfaceDetailList")
 	private List<InterfaceServiceDetails> interfaceDetailList = new ArrayList<>();
 	private boolean validateUpfrontFees;
+	private CollateralRevaluation collateralRevaluation = new CollateralRevaluation();
 
 	public FinanceDetail() {
 		super();
@@ -1321,5 +1323,13 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setValidateUpfrontFees(boolean validateUpfrontFees) {
 		this.validateUpfrontFees = validateUpfrontFees;
+	}
+
+	public CollateralRevaluation getCollateralRevaluation() {
+		return collateralRevaluation;
+	}
+
+	public void setCollateralRevaluation(CollateralRevaluation collateralRevaluation) {
+		this.collateralRevaluation = collateralRevaluation;
 	}
 }

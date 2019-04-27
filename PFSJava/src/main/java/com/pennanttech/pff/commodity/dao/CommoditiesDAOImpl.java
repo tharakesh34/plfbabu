@@ -31,10 +31,11 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select Id, CommodityType, Code, Description, CurrentValue, HSNCode, Active");
+		sql.append("Select Id, CommodityType, Code, Description, CurrentValue, HSNCode, Active,");
+		sql.append(" AlertsRequired, AlertType, AlertToRoles, UserTemplate, CustomerTemplate");
 
 		if (type.contains("View")) {
-			sql.append(", CommodityTypeCode ");
+			sql.append(", CommodityTypeCode, UserTemplateName, CustomerTemplateName, userTemplateCode, customerTemplateCode"); 
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -66,10 +67,14 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 		StringBuilder sql = new StringBuilder("insert into Commodities");
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, CommodityType, Code, Description, CurrentValue, HSNCode, Active, Version, LastMntBy");
+		sql.append("(Id, CommodityType, Code, Description, CurrentValue, HSNCode, Active,");
+		sql.append(" AlertsRequired, AlertType, AlertToRoles, UserTemplate, CustomerTemplate");
+		sql.append(", Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
-		sql.append("(:Id, :CommodityType, :Code, :Description, :CurrentValue, :HSNCode, :Active, :Version");
+		sql.append("(:Id, :CommodityType, :Code, :Description, :CurrentValue, :HSNCode, :Active,");
+		sql.append(" :AlertsRequired, :AlertType, :AlertToRoles, :UserTemplate, :CustomerTemplate");
+		sql.append(", :Version");
 		sql.append(", :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
 		sql.append(", :RecordType, :WorkflowId)");
 
@@ -96,7 +101,8 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 		StringBuilder sql = new StringBuilder("Update Commodities");
 		sql.append(tableType.getSuffix());
-		sql.append(" set Description = :Description, CurrentValue = :CurrentValue, HSNCode = :HSNCode");
+		sql.append(" set Description = :Description, CurrentValue = :CurrentValue, HSNCode = :HSNCode,");
+		sql.append(" AlertsRequired= :AlertsRequired, AlertType= :AlertType, AlertToRoles= :AlertToRoles, UserTemplate= :UserTemplate, CustomerTemplate= :CustomerTemplate");
 		sql.append(", Active = :Active, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");

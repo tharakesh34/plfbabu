@@ -23,6 +23,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.util.ClassUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
 
 /**
  * <p>
@@ -41,7 +42,8 @@ public final class DataMapUtil {
 		CustomerEmail("cte_"),
 		CustomerPhoneNumber("ctp_"),
 		Covenant("cvnt_"),
-		Putcall("pc_");
+		Putcall("pc_"),
+		CollateralLTVBreachs("cltvb_");
 
 		private String prefix;
 
@@ -68,6 +70,7 @@ public final class DataMapUtil {
 		List<CustomerPhoneNumber> custMobiles = null;
 		Covenant covenant = null;
 		FinOption finOption = null;
+		CollateralRevaluation collateralRevaluation = null;
 
 		if (customerDetails != null) {
 			cu = customerDetails.getCustomer();
@@ -117,6 +120,9 @@ public final class DataMapUtil {
 		
 		finOption = financeDetail.getFinOption();
 		data.putAll(getDataMap(finOption, FieldPrefix.Putcall.getPrefix()));
+		
+		collateralRevaluation = financeDetail.getCollateralRevaluation();
+		data.putAll(getDataMap(collateralRevaluation, FieldPrefix.CollateralLTVBreachs.getPrefix()));
 
 		return data;
 	}
