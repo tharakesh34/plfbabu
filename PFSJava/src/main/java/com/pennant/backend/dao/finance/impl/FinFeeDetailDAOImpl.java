@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +62,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -762,13 +760,15 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	@Override
-	public BigDecimal getPreviousAdvInterest(String finReferee) {
+	public List<FinFeeDetail> getPreviousAdvPayments(String finReferee) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select sum(CalculatedAmount)");
-		sql.append(" from FinFeeDetail");
+		sql.append("select ft.FeeTypeId, FeeTypeCode, sum(CalculatedAmount) CalculatedAmount");
+		sql.append("from FinFeeDetail fd");
+		sql.append(" inner join FeeTypes ft on ft.FeeTypeID = fd.FeeTypeID");
 		sql.append(" where FinReference = :FinReference and FinEvent in (:FinEvent)");
+		sql.append(" group by ft.FeeTypeId, FeeTypeCode");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -777,10 +777,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		source.addValue("FinEvent",
 				Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
 
-		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, BigDecimal.class);
-		} catch (Exception e) {
-			return BigDecimal.ZERO;
-		}
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		logger.debug(Literal.LEAVING);
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 }

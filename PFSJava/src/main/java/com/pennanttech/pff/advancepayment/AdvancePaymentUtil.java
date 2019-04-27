@@ -84,6 +84,10 @@ public class AdvancePaymentUtil {
 			return AdvanceType.getType(advanceType) == AdvanceType.AE;
 		}
 
+		public static boolean hasAdvInterest(String advanceType) {
+			return AdvanceType.getType(advanceType) != null && AdvanceType.getType(advanceType) != AdvanceType.AE;
+		}
+
 	}
 
 	public enum AdvanceStage {
@@ -130,8 +134,7 @@ public class AdvancePaymentUtil {
 			}
 			return list;
 		}
-		
-				
+
 		public static boolean hasDeposit(String stage) {
 			return AdvanceStage.getStage(stage) == AdvanceStage.AD;
 		}
@@ -263,9 +266,6 @@ public class AdvancePaymentUtil {
 	 * <p>
 	 * Consider only Repayments terms
 	 * </p>
-	 * <p>
-	 * Consider only Full Terms
-	 * </p>
 	 * 
 	 * @param finScheduleData
 	 * @param fee
@@ -281,14 +281,14 @@ public class AdvancePaymentUtil {
 		String repayAdvType = fm.getAdvType();
 
 		AdvanceType advanceType = AdvanceType.getType(repayAdvType);
-		
+
 		BigDecimal advanceIntrest = BigDecimal.ZERO;
 		if (advanceType == AdvanceType.UF) {
 			advanceIntrest = finScheduleData.getPftChg();
 		} else {
 			advanceIntrest = calculateAdvPayment(finScheduleData);
 		}
-		
+
 		fee.setActualAmount(advanceIntrest);
 		fee.setCalculatedAmount(advanceIntrest);
 		fee.setActualAmountOriginal(advanceIntrest);
@@ -304,9 +304,9 @@ public class AdvancePaymentUtil {
 	public static void calculateLOSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
 		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT || advanceRule != AdvanceRuleCode.ADVEMI)) {
-			return ;
+			return;
 		}
-		
+
 		BigDecimal advancePayment = calculateAdvPayment(finScheduleData);
 		fee.setActualAmount(advancePayment);
 		fee.setCalculatedAmount(advancePayment);
@@ -314,18 +314,25 @@ public class AdvancePaymentUtil {
 		fee.setNetAmountOriginal(advancePayment);
 	}
 
-	private static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData) {
+	/**
+	 * This method will calculate the Advance Interest/EMI.
+	 * 
+	 * <p>
+	 * Here the calculation of advance Interest at Grace terms only and Advance Interest/EMI at Repay terms.
+	 * </p>
+	 * 
+	 * @param finScheduleData
+	 * @return the calculated Advance Interest.
+	 */
+	public static BigDecimal calculateGrcAdvPayment(final FinScheduleData finScheduleData) {
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
 		String grcAdvType = fm.getGrcAdvType();
-		String repayAdvType = fm.getAdvType();
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 
 		AdvanceType advanceType;
 		int terms = 0;
-		BigDecimal advancePayment = BigDecimal.ZERO;
 		BigDecimal graceAdvPayment = BigDecimal.ZERO;
-		BigDecimal repayAdvPayment = BigDecimal.ZERO;
 
 		if (grcAdvType != null) {
 			// calculate grace advance interest
@@ -337,6 +344,28 @@ public class AdvancePaymentUtil {
 				graceAdvPayment = getGraceAdvPayment(schedules, terms, gracePeriodEndDate);
 			}
 		}
+		return graceAdvPayment;
+	}
+
+	/**
+	 * This method will calculate the Advance Interest/EMI.
+	 * 
+	 * <p>
+	 * This method will consider both Advance Interest/EMI
+	 * </p>
+	 * 
+	 * @param finScheduleData
+	 * @return the calculated Advance EMI/Interest.
+	 */
+	public static BigDecimal calculateRepayAdvPayment(final FinScheduleData finScheduleData) {
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		Date gracePeriodEndDate = fm.getGrcPeriodEndDate();
+		String repayAdvType = fm.getAdvType();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+
+		AdvanceType advanceType;
+		int terms = 0;
+		BigDecimal repayAdvPayment = BigDecimal.ZERO;
 
 		if (repayAdvType != null) {
 			// calculate repayments advance interest/EMI
@@ -349,6 +378,24 @@ public class AdvancePaymentUtil {
 			}
 
 		}
+
+		return repayAdvPayment;
+	}
+
+	/**
+	 * This method will calculate the Advance Interest/EMI
+	 * 
+	 * @param finScheduleData
+	 * @return The Calculated Advance Interest/EMI
+	 */
+	public static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData) {
+		BigDecimal advancePayment = BigDecimal.ZERO;
+		BigDecimal graceAdvPayment = BigDecimal.ZERO;
+		BigDecimal repayAdvPayment = BigDecimal.ZERO;
+
+		graceAdvPayment = calculateGrcAdvPayment(finScheduleData);
+
+		repayAdvPayment = calculateRepayAdvPayment(finScheduleData);
 
 		advancePayment = advancePayment.add(graceAdvPayment).add(repayAdvPayment);
 		return advancePayment;
@@ -372,6 +419,19 @@ public class AdvancePaymentUtil {
 		return terms;
 	}
 
+	/**
+	 * This Method will calculate the Advance Interest at Grace terms.
+	 * 
+	 * @param schedules
+	 *            The number of schedules.
+	 * @param terms
+	 *            The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
+	 * @param gracePeriodEndDate
+	 *            Grace Period End Date.
+	 * @param advanceType
+	 *            Advance Type either Advance EMI/Interest.
+	 * @return The calculated Advance EMI/Interest.
+	 */
 	private static BigDecimal getGraceAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
 			Date gracePeriodEndDate) {
 		BigDecimal advanceProfit = BigDecimal.ZERO;
@@ -395,6 +455,19 @@ public class AdvancePaymentUtil {
 		return advanceProfit;
 	}
 
+	/**
+	 * This Method will calculate the Advance Interest/EMI for Repay Terms.
+	 * 
+	 * @param schedules
+	 *            The number of schedules.
+	 * @param terms
+	 *            The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
+	 * @param gracePeriodEndDate
+	 *            Grace Period End Date.
+	 * @param advanceType
+	 *            Advance Type either Advance EMI/Interest.
+	 * @return The calculated Advance EMI/Interest.
+	 */
 	private static BigDecimal getRepayAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
 			Date gracePeriodEndDate, AdvanceType advanceType) {
 		BigDecimal advanceProfit = BigDecimal.ZERO;
@@ -407,9 +480,11 @@ public class AdvancePaymentUtil {
 				BigDecimal profitSchd = sd.getProfitSchd();
 				if (schDate.compareTo(gracePeriodEndDate) > 0) {
 					if (advanceType == AdvanceType.AE) {
+						// Advance EMI
 						BigDecimal principalSchd = sd.getPrincipalSchd();
 						advanceProfit = advanceProfit.add(profitSchd).add(principalSchd);
 					} else {
+						// Advance Interest
 						advanceProfit = advanceProfit.add(profitSchd);
 					}
 					term++;

@@ -92,5 +92,5 @@ public interface FinFeeDetailDAO {
 
 	boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee);
 	
-	BigDecimal getPreviousAdvInterest(String finReferee);
+	public List<FinFeeDetail> getPreviousAdvPayments(String finReferee);
 }

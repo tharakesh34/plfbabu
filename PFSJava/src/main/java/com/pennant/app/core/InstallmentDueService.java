@@ -298,7 +298,7 @@ public class InstallmentDueService extends ServiceHelper {
 			if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 				amountCodes.setPriSB(BigDecimal.ZERO);
 			}
-			
+
 			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			if (feelist != null && !feelist.isEmpty()) {
