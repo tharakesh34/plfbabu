@@ -302,10 +302,10 @@
 
 
 	<bean id="collateralRevaluationProcessor" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationProcessor"
-		scope="step" />
+		scope="step" parent="basicDao"/>
 
 	<bean id="collateralRevaluationRowMapper" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationRowMapper"
 		scope="step" />
 	<bean id="collateralRevaluationItemWriter" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemWriter"
-		scope="step" />
+		scope="step" parent="basicDao"/>
 </beans>

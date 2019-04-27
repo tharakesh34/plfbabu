@@ -39,56 +39,69 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 	private NotificationService notificationService;
 
 	public void write(List<? extends CollateralRevaluation> items) throws Exception {
-		updateCollateralDetails(items);
-
-		updateDyamicDetails(items);
-
+		updateCollateralValues(items);
+		updateCollateralSetup(items);
+		updateCollateralLTVBreaches(items);
+		
 		for (CollateralRevaluation collateralRevaluation : items) {
-			sendAlert(collateralRevaluation);
-		}
+			try {
 
-		updateEmailAlertsTable(items);
+				if (collateralRevaluation.getCurrentBankLTV().compareTo(collateralRevaluation.getThresholdLTV()) >= 0) {
+					sendAlert(collateralRevaluation);
+					collateralRevaluation.setSendAlert(true);
+				}
+
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+
+			}
+		}
 	}
 
-	private void updateEmailAlertsTable(List<? extends CollateralRevaluation> items) {
+	private void updateCollateralLTVBreaches(List<? extends CollateralRevaluation> items) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("update Collateral_ltv_breaches set MarketBankLtv = :MarketBankLtv, SendAlert :SendAlert");
-		sql.append("where Id =:Id");
+		sql.append("update COLLATERAL_LTV_BREACHES set");
+		sql.append(" UnitPrice = : UnitPrice");
+		sql.append(", NoOfUnits = :NoOfUnits");
+		sql.append(", CurrentCollateralValue = :CurrentCollateralValue");
+		sql.append(", CurrentBankLTV = :CurrentBankLTV");
+		sql.append(", CurrentBankValuation = :CurrentBankValuation");
+		sql.append(", SendAlert =:SendAlert");
+		sql.append(" where Id =:Id");
 
 		try {
 			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(items.toArray()));
 
 		} catch (Exception e) {
-			System.out.println(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-
 	}
 
-	private void updateDyamicDetails(List<? extends CollateralRevaluation> items) {
-		String tableName = "";
+	private void updateCollateralValues(List<? extends CollateralRevaluation> items) {
 		for (CollateralRevaluation collateralDetail : items) {
-			tableName = "COLLATERAL_".concat(collateralDetail.getCollateralType().concat("_ED"));
 
 			StringBuilder sql = new StringBuilder();
 			sql.append(" update ");
-			sql.append(tableName);
-			sql.append(" set unitPrice =:currentValue where reference =:collateralRef");
+			sql.append(collateralDetail.getTableName());
+			sql.append(" set UnitPrice =:MarketValue where Reference =:CollateralRef");
 
 			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(collateralDetail);
 			try {
 				jdbcTemplate.update(sql.toString(), paramSource);
 			} catch (Exception e) {
-				System.out.println(e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 
 	}
 
-	private void updateCollateralDetails(List<? extends CollateralRevaluation> items) {
+	private void updateCollateralSetup(List<? extends CollateralRevaluation> items) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("update collateralSetup set CollateralValue =:CollateralValue, bankLtv= :BankLTV");
-		sql.append(" where collateralRef =:collateralRef");
-
+		sql.append("update collateralSetup set ");
+		sql.append(" CollateralValue =:CurrentCollateralValue");
+		sql.append(", BankLTV = :CurrentBankLTV");
+		sql.append(", BankValuation = :CurrentBankValuation");
+		sql.append(" where CollateralRef =:CollateralRef");
 
 		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(items.toArray()));
 

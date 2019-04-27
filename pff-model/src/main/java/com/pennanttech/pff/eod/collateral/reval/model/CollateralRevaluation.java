@@ -12,21 +12,23 @@ public class CollateralRevaluation implements Serializable {
 	private String collateralType;
 	private String collateralRef;
 	private String collateralCCY;
-	private BigDecimal collateralValue;
 	private BigDecimal marketValue;
+	private BigDecimal unitPrice;
+	private BigDecimal noOfUnits;
+	private BigDecimal collateralValue;
+	private BigDecimal currentCollateralValue;
 	private BigDecimal bankLTV;
-	private BigDecimal thresholdLTV;
-	private BigDecimal marketLTV;
+	private BigDecimal currentBankLTV;
 	private BigDecimal bankValuation;
-	private int commodityId;
-	private int units;
+	private BigDecimal currentBankValuation;
+	private BigDecimal thresholdLTV;
 	private BigDecimal pos;
+	private long commodityId;
 	private BigDecimal valueDate;
-	private BigDecimal sendAlert;
+	private boolean sendAlert;
 	private String alertToRoles;
 	private String customerTemplateCode;
 	private String userTemplateCode;
-
 	private String tableName;
 
 	public long getId() {
@@ -77,12 +79,28 @@ public class CollateralRevaluation implements Serializable {
 		this.collateralCCY = collateralCCY;
 	}
 
-	public BigDecimal getPos() {
-		return pos;
+	public BigDecimal getMarketValue() {
+		return marketValue;
 	}
 
-	public void setPos(BigDecimal pos) {
-		this.pos = pos;
+	public void setMarketValue(BigDecimal marketValue) {
+		this.marketValue = marketValue;
+	}
+
+	public BigDecimal getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(BigDecimal unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public BigDecimal getNoOfUnits() {
+		return noOfUnits;
+	}
+
+	public void setNoOfUnits(BigDecimal noOfUnits) {
+		this.noOfUnits = noOfUnits;
 	}
 
 	public BigDecimal getCollateralValue() {
@@ -93,12 +111,12 @@ public class CollateralRevaluation implements Serializable {
 		this.collateralValue = collateralValue;
 	}
 
-	public BigDecimal getMarketValue() {
-		return marketValue;
+	public BigDecimal getCurrentCollateralValue() {
+		return currentCollateralValue;
 	}
 
-	public void setMarketValue(BigDecimal marketValue) {
-		this.marketValue = marketValue;
+	public void setCurrentCollateralValue(BigDecimal currentCollateralValue) {
+		this.currentCollateralValue = currentCollateralValue;
 	}
 
 	public BigDecimal getBankLTV() {
@@ -109,20 +127,12 @@ public class CollateralRevaluation implements Serializable {
 		this.bankLTV = bankLTV;
 	}
 
-	public BigDecimal getThresholdLTV() {
-		return thresholdLTV;
+	public BigDecimal getCurrentBankLTV() {
+		return currentBankLTV;
 	}
 
-	public void setThresholdLTV(BigDecimal thresholdLTV) {
-		this.thresholdLTV = thresholdLTV;
-	}
-
-	public BigDecimal getMarketLTV() {
-		return marketLTV;
-	}
-
-	public void setMarketLTV(BigDecimal marketLTV) {
-		this.marketLTV = marketLTV;
+	public void setCurrentBankLTV(BigDecimal currentBankLTV) {
+		this.currentBankLTV = currentBankLTV;
 	}
 
 	public BigDecimal getBankValuation() {
@@ -133,20 +143,36 @@ public class CollateralRevaluation implements Serializable {
 		this.bankValuation = bankValuation;
 	}
 
-	public int getCommodityId() {
+	public BigDecimal getCurrentBankValuation() {
+		return currentBankValuation;
+	}
+
+	public void setCurrentBankValuation(BigDecimal currentBankValuation) {
+		this.currentBankValuation = currentBankValuation;
+	}
+
+	public BigDecimal getThresholdLTV() {
+		return thresholdLTV;
+	}
+
+	public void setThresholdLTV(BigDecimal thresholdLTV) {
+		this.thresholdLTV = thresholdLTV;
+	}
+
+	public BigDecimal getPos() {
+		return pos;
+	}
+
+	public void setPos(BigDecimal pos) {
+		this.pos = pos;
+	}
+
+	public long getCommodityId() {
 		return commodityId;
 	}
 
-	public void setCommodityId(int commodityId) {
+	public void setCommodityId(long commodityId) {
 		this.commodityId = commodityId;
-	}
-
-	public int getUnits() {
-		return units;
-	}
-
-	public void setUnits(int units) {
-		this.units = units;
 	}
 
 	public BigDecimal getValueDate() {
@@ -157,11 +183,11 @@ public class CollateralRevaluation implements Serializable {
 		this.valueDate = valueDate;
 	}
 
-	public BigDecimal getSendAlert() {
+	public boolean isSendAlert() {
 		return sendAlert;
 	}
 
-	public void setSendAlert(BigDecimal sendAlert) {
+	public void setSendAlert(boolean sendAlert) {
 		this.sendAlert = sendAlert;
 	}
 

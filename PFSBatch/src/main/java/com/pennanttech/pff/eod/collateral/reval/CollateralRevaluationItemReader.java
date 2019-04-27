@@ -1,13 +1,14 @@
 package com.pennanttech.pff.eod.collateral.reval;
 
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
 
 public class CollateralRevaluationItemReader extends JdbcCursorItemReader<CollateralRevaluation> {
 	public CollateralRevaluationItemReader() {
-		super();
+		super.setSql(getSql());
 	}
 
 	private long batchId;
@@ -16,23 +17,27 @@ public class CollateralRevaluationItemReader extends JdbcCursorItemReader<Collat
 	public String getSql() {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("select Id, BatchId, FinReference, CollateralType, CollateralRef, CollateralCCY");
+		sql.append("select ca.Id, BatchId, FinReference, CollateralType, CollateralRef, CollateralCCY");
 		sql.append(", CollateralValue, MarketValue, BankLTV, ThresholdLTV, CommodityId, POS");
 		sql.append(", ut.TemplateCode userTemplateCode, cust.TemplateCode customerTemplateCode");
 		sql.append(", c.alertToRoles");
 		sql.append(" from Collateral_Ltv_Breaches ca");
 		sql.append(" inner join commodities c on c.id = ca.commodityId");
-		sql.append(" inner  join commodity_types ct on ct.id = c.commodityId");
-		sql.append(" left join Templates ut on ut.TemplateId = ct.userTemplate");
-		sql.append(" left join Templates cust on cust.TemplateId = ct.customertemplate");
+		sql.append(" inner  join commodity_types ct on ct.id = c.commodityType");
+		sql.append(" left join Templates ut on ut.TemplateId = c.userTemplate");
+		sql.append(" left join Templates cust on cust.TemplateId = c.customertemplate");
 		sql.append(" where BatchId = ").append(batchId);
+		sql.append(" and SendAlert = 0");
 
 		return sql.toString();
 
 	}
 
-	@Value("#{jobExecutionContext['jobId']}")
-	public void setBatchId(long batchId) {
-		this.batchId = batchId;
+	
+	@BeforeStep
+	public void getInterstepData(StepExecution stepExecution) {
+	    this.batchId = stepExecution.getJobExecution().getJobInstance().getInstanceId();
+	    super.setSql(getSql());
 	}
+
 }
