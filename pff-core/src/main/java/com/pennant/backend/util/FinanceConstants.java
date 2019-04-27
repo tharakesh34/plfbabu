@@ -452,6 +452,7 @@ public class FinanceConstants {
 	public static final String FIN_OPTION_OTHERS = "Others";
 
 	public static final String FINSER_EVENT_PUTCALL = "Putcall";
+	public static final String FINSER_EVENT_COLLATERAL_LTV_BREACHS = "CollateralLTVBreachs";
 
 	// DownSizing
 	public static final String MOVEMENTTYPE_DOWNSIZING = "DS";

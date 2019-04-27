@@ -2313,6 +2313,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Covenants")));
 			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_PUTCALL,
 					Labels.getLabel("label_FinSerEvent_PutCall")));
+			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_COLLATERAL_LTV_BREACHS,
+					Labels.getLabel("label_FinSerEvent_Collateral_Ltv_Breaches")));
 		}
 		return templateEvents;
 	}
