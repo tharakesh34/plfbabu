@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 
 /**
  * DAO methods implementation for the <b>FinFeeDetail model</b> class.<br>
@@ -765,9 +766,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select ft.FeeTypeId, FeeTypeCode, sum(CalculatedAmount) CalculatedAmount");
-		sql.append("from FinFeeDetail fd");
+		sql.append(" from FinFeeDetail fd");
 		sql.append(" inner join FeeTypes ft on ft.FeeTypeID = fd.FeeTypeID");
-		sql.append(" where FinReference = :FinReference and FinEvent in (:FinEvent)");
+		sql.append(" where FinReference = :FinReference and FinEvent in (:FinEvent) and FeeTypeCode in (:FeeTypeCode)");
 		sql.append(" group by ft.FeeTypeId, FeeTypeCode");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -776,6 +777,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		source.addValue("FinReference", finReferee);
 		source.addValue("FinEvent",
 				Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
+		source.addValue("FeeTypeCode", Arrays.asList(AdvanceRuleCode.ADVINT.name(), AdvanceRuleCode.ADVEMI.name()));
+		
 
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
 		logger.debug(Literal.LEAVING);

@@ -226,7 +226,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
 				createPayableAdvise(finReference, fee.getFeeTypeID(), adviseAmount, financeMain.getLastMntBy());
 			} else if (pftChg.compareTo(fee.getCalculatedAmount()) > 0) {
-				BigDecimal adviseAmount = fee.getCalculatedAmount().add(pftChg);
+				BigDecimal adviseAmount = pftChg.subtract(fee.getCalculatedAmount());
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
 				createReceivableAdvise(finReference, fee.getFeeTypeID(), adviseAmount, financeMain.getLastMntBy());
@@ -597,6 +597,11 @@ public class AdvancePaymentService extends ServiceHelper {
 	@Autowired
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }
