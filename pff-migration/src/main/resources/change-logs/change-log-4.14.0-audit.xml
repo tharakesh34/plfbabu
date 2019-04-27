@@ -164,15 +164,6 @@
 			constraintName="PK_ADTCOMMODITIES" />
 	</changeSet>
 
-	<changeSet id="2.2" author="murthy.y" dbms="mssql">
-		<comment>Commodity and LAS</comment>
-		<sql>
-			<![CDATA[
-				ALTER TABLE COMMODITIES ADD CONSTRAINT DF_COMMODITIES_ACTIVE DEFAULT 1 FOR ACTIVE;
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="2.3" author="vijaya.a" dbms="postgresql, oracle">
 		<comment>Commodity and LAS</comment>
 		<addDefaultValue columnName="Active" tableName="ADTCOMMODITIES" defaultValue="1" />

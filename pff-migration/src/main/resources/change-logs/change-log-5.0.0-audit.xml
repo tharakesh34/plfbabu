@@ -40,7 +40,7 @@
 	</changeSet>
 
 	<changeSet id="1" author="shinde.b">
-		<dropTable tableName="AdtCommodities" />
+		<dropTable tableName="ADTCOMMODITIES" />
 	</changeSet>
 
 	<changeSet id="1.1" author="shinde.b">
@@ -76,7 +76,7 @@
 			<column name="HSNCode" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="AlertsRequired" type="boolean" defaultValue="0">
+			<column name="AlertsRequired" type="boolean">
 				<constraints nullable="false" />
 			</column>
 			<column name="AlertType" type="varchar(10)" />
@@ -99,5 +99,17 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
+	</changeSet>
+
+	<changeSet id="1.2" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTCOMMODITIES ADD CONSTRAINT DF_ADTCOMMODITIES_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1.2" author="shinde.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ALERTSREQUIRED" tableName="ADTCOMMODITIES" defaultValue="0"/>
 	</changeSet>
 </databaseChangeLog>

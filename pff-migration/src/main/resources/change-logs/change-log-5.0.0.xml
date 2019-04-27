@@ -75,6 +75,8 @@
 	</changeSet>
 
 	<changeSet id="1.1" author="vijaya.q">
+		<dropDefaultValue columnName="Active" tableName="Commodities" />
+		<dropDefaultValue columnName="Active" tableName="Commodities_temp" />
 		<dropView viewName="COMMODITIES_VIEW" />
 		<dropView viewName="COMMODITIES_AVIEW" />
 		<dropColumn tableName="Commodities" columnName="Active" />
@@ -181,21 +183,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="4.2" author="shinde.b" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE COMMODITIES_TEMP ADD CONSTRAINT DF_COMMODITIES_TEMP_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
-				ALTER TABLE COMMODITIES ADD CONSTRAINT DF_COMMODITIES_TEMP_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="4.3" author="shinde.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AlertsRequired" tableName="Commodities" defaultValue="0" />
-		<addDefaultValue columnName="AlertsRequired" tableName="Commodities_temp" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="4.4" author="shinde.b">
+	<changeSet id="4.2" author="shinde.b">
 		<comment>Commodity and LAS</comment>
 		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
 			  SELECT t1.id,
@@ -269,7 +257,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="4.5" author="shinde.b">
+	<changeSet id="4.3" author="shinde.b">
 		<comment>Commodity and LAS</comment>
 		<createView viewName="COMMODITIES_AVIEW" replaceIfExists="true">
 			  SELECT t1.id,
@@ -307,7 +295,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="4.6" author="shinde.b">
+	<changeSet id="4.4" author="shinde.b">
 		<addForeignKeyConstraint constraintName="FK_COMMODITIES_USER_TEMPLATE" referencedTableName="TEMPLATES"
 			referencedColumnNames="TemplateId" baseTableName="commodities" baseColumnNames="UserTemplate" />
 		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CUST_TEMPLATE" referencedTableName="TEMPLATES"
@@ -318,7 +306,7 @@
 			referencedColumnNames="TemplateId" baseTableName="commodities_temp" baseColumnNames="CustomerTemplate" />
 	</changeSet>
 
-	<changeSet id="5" author="VijayKumar.L ">
+	<changeSet id="5.0" author="VijayKumar.L ">
 		<comment> Included finrefernce from finfeedetail table </comment>
 		<createView viewName="finfeereceipts_view" replaceIfExists="true">
 			  SELECT t1.id,
@@ -344,11 +332,11 @@
 			    t4.feetypedesc,
 			    t3.finreference,
 			    t5.receiptmode AS receipttype
-			   FROM plf.finfeereceipts_temp t1
-			     JOIN plf.finreceiptdetail t2 ON t1.receiptid = t2.receiptid
-			     JOIN plf.finfeedetail_temp t3 ON t1.feeid = t3.feeid
-			     LEFT JOIN plf.feetypes t4 ON t3.feetypeid = t4.feetypeid
-			     JOIN plf.finreceiptheader t5 ON t1.receiptid = t5.receiptid
+			   FROM finfeereceipts_temp t1
+			     JOIN finreceiptdetail t2 ON t1.receiptid = t2.receiptid
+			     JOIN finfeedetail_temp t3 ON t1.feeid = t3.feeid
+			     LEFT JOIN feetypes t4 ON t3.feetypeid = t4.feetypeid
+			     JOIN finreceiptheader t5 ON t1.receiptid = t5.receiptid
 			UNION ALL
 			 SELECT t1.id,
 			    t1.feeid,
@@ -373,13 +361,13 @@
 			    t4.feetypedesc,
 			    t3.finreference,
 			    t5.receiptmode AS receipttype
-			   FROM plf.finfeereceipts t1
-			     JOIN plf.finreceiptdetail t2 ON t1.receiptid = t2.receiptid
-			     JOIN plf.finfeedetail t3 ON t1.feeid = t3.feeid
-			     LEFT JOIN plf.feetypes t4 ON t3.feetypeid = t4.feetypeid
-			     JOIN plf.finreceiptheader t5 ON t1.receiptid = t5.receiptid
+			   FROM finfeereceipts t1
+			     JOIN finreceiptdetail t2 ON t1.receiptid = t2.receiptid
+			     JOIN finfeedetail t3 ON t1.feeid = t3.feeid
+			     LEFT JOIN feetypes t4 ON t3.feetypeid = t4.feetypeid
+			     JOIN finreceiptheader t5 ON t1.receiptid = t5.receiptid
 			  WHERE NOT (EXISTS ( SELECT 1
-			           FROM plf.finfeereceipts_temp
+			           FROM finfeereceipts_temp
 			          WHERE finfeereceipts_temp.id = t1.id))
 		</createView>
 	</changeSet>
@@ -424,22 +412,37 @@
 			<column name="Collateralccy" type="char(3)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Pos" type="decimal(18, 0)">
+			<column name="MarketValue" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UnitPrice" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfUnits" type="int">
 				<constraints nullable="false" />
 			</column>
 			<column name="CollateralValue" type="decimal(18, 0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="MarketValue" type="decimal(18, 0)">
+			<column name="CurrentCollateralValue" type="decimal(18, 0)">
 				<constraints nullable="false" />
 			</column>
-			<column name="BankLtv" type="decimal(5,2)">
+			<column name="BankLTV" type="decimal(5,2)">
 				<constraints nullable="false" />
 			</column>
-			<column name="ThresholdLtv" type="decimal(5,2)">
+			<column name="CurrentBankLTV" type="decimal(5,2)">
 				<constraints nullable="false" />
 			</column>
-			<column name="MarketBankLtv" type="decimal(5,2)">
+			<column name="BankValuation" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrentBankValuation" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ThresholdLTV" type="decimal(5,2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Pos" type="decimal(18, 0)">
 				<constraints nullable="false" />
 			</column>
 			<column name="CommodityId" type="bigint" />
@@ -452,23 +455,32 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="8.1" author="shinde.b" dbms="mssql">
+	<changeSet id="7.1" author="shinde.b" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_ALERT DEFAULT 0 FOR SENDALERT;
-				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_MLTV DEFAULT 0 FOR MARKETBANKLTV;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_CURRENTBANKLTV DEFAULT 0 FOR CURRENTBANKLTV;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_UNITPRICE DEFAULT 0 FOR UNITPRICE;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_NOOFUNITS DEFAULT 0 FOR NOOFUNITS;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_CURRENTCOLLATERALVALUE DEFAULT 0 FOR CURRENTCOLLATERALVALUE;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_CURRENTBANKVALUATION DEFAULT 0 FOR CURRENTBANKVALUATION;
+				ALTER TABLE COLLATERAL_LTV_BREACHES ADD CONSTRAINT DF_COLLATERAL_LTV_BREACHES_SENDALERT DEFAULT 0 FOR SENDALERT;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="8.1" author="shinde.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="MarketBankLtv" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
-		<addDefaultValue columnName="SendAlert" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+	<changeSet id="7.1" author="shinde.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="CURRENTBANKLTV" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+		<addDefaultValue columnName="UNITPRICE" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+		<addDefaultValue columnName="NOOFUNITS" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+		<addDefaultValue columnName="CURRENTCOLLATERALVALUE" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+		<addDefaultValue columnName="CURRENTBANKVALUATION" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
+		<addDefaultValue columnName="SENDALERT" tableName="COLLATERAL_LTV_BREACHES" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="8.3" author="shinde.b">
-		<createIndex tableName="COLLATERAL_LTV_BREACHES" indexName="BATCH_CA_LTV_BREACHES">
+	<changeSet id="7.2" author="shinde.b">
+		<createIndex tableName="COLLATERAL_LTV_BREACHES" indexName="IDX_BATCH_CA_LTV_BR_BID_SA">
 			<column name="BatchId" />
+			<column name="SendAlert" />
 		</createIndex>
 	</changeSet>
 
