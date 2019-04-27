@@ -30,7 +30,8 @@ public class CollateralRevaluationProcessor extends BasicDao<CollateralRevaluati
 		BigDecimal osp = collateral.getPos();
 
 		// setting Updated LTV
-		BigDecimal currentBankLTV = osp.divide(currentCollateralValue, 0, RoundingMode.HALF_DOWN);
+		BigDecimal currentBankLTV = osp.divide(currentCollateralValue, 9, RoundingMode.HALF_DOWN);
+		currentBankLTV = currentBankLTV.multiply(new BigDecimal(100));
 		collateral.setCurrentBankLTV(currentBankLTV);
 
 		BigDecimal currentBankValuation = currentCollateralValue.multiply(currentBankLTV).divide(new BigDecimal(100), 0,

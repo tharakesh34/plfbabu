@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.endofday.tasklet.LedgerDownload;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.eod.collateral.reval.model.CollateralRevaluation;
@@ -25,10 +26,10 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into Collateral_Ltv_Breaches (BatchId, FinReference, CollateralType, CollateralRef");
-		sql.append(", Collateralccy, MarketValue, CollateralValue, BankLTV");
+		sql.append(", Collateralccy, MarketValue, CollateralValue, BankLTV, BankValuation");
 		sql.append(", ThresholdLTV, POS, CommodityId, ValueDate)");
 		sql.append(" select :BatchId, fm.FinReference, cs.CollateralType, ca.CollateralRef");
-		sql.append(", cs.Collateralccy, c.Currentvalue, cs.CollateralValue, cs.BankLTV");
+		sql.append(", cs.Collateralccy, c.Currentvalue, cs.CollateralValue, cs.BankLTV, cs.BankValuation");
 		sql.append(", ce.thresholdLtvPercentage, fpt.odprincipal, c.id, :ValueDate");
 		sql.append(" from collateralassignment ca");
 		sql.append(" inner join collateralsetup cs on cs.collateralref = ca.collateralref");
@@ -48,6 +49,7 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw new AppException("Unable to load Collateral LTV Breaches");
 		}
 		return RepeatStatus.FINISHED;
 	}

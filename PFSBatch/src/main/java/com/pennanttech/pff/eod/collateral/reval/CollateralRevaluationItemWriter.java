@@ -61,7 +61,7 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 	private void updateCollateralLTVBreaches(List<? extends CollateralRevaluation> items) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("update COLLATERAL_LTV_BREACHES set");
-		sql.append(" UnitPrice = : UnitPrice");
+		sql.append(" UnitPrice = :UnitPrice");
 		sql.append(", NoOfUnits = :NoOfUnits");
 		sql.append(", CurrentCollateralValue = :CurrentCollateralValue");
 		sql.append(", CurrentBankLTV = :CurrentBankLTV");
@@ -71,7 +71,6 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 
 		try {
 			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(items.toArray()));
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -97,7 +96,7 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 
 	private void updateCollateralSetup(List<? extends CollateralRevaluation> items) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("update collateralSetup set ");
+		sql.append("update CollateralSetup set");
 		sql.append(" CollateralValue =:CurrentCollateralValue");
 		sql.append(", BankLTV = :CurrentBankLTV");
 		sql.append(", BankValuation = :CurrentBankValuation");

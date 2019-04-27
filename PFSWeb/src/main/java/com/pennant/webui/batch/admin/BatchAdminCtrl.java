@@ -156,7 +156,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		collectionDataDownLoad,
 		collectionNotification,
 		ledgerNotification,
-		ledgerDownLoad
+		ledgerDownLoad,
+		loadCollateralRevaluationData,
+		collateralRevaluation		
 	}
 
 	public BatchAdminCtrl() {
