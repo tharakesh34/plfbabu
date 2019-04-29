@@ -492,7 +492,7 @@
 		<sql>
 			<![CDATA[
 				Delete from reportlist where code = 'Commodity';
-				INSERT INTO ReportList VALUES ('Commodities', 'Commodities', 'listheader_CommodityType.label,listheader_Code.label,listheader_CurrentValue.label,listheader_Description.label,listheader_HSNCode.label,listheader_Active.label',  'CommodityTypeCode,Code,CurrentValue,Description,HSNCode,Active', 'String,String,BigDecimal,String,String,String', ' ', 'ReportList06', 'Commodities', 'Application Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
+				INSERT INTO ReportList VALUES ('Commodity', 'Commodity', 'listheader_CommodityType.label,listheader_Code.label,listheader_CurrentValue.label,listheader_Description.label,listheader_HSNCode.label,listheader_Active.label',  'CommodityTypeCode,Code,CurrentValue,Description,HSNCode,Active', 'String,String,BigDecimal,String,String,String', ' ', 'ReportList06', 'Commodities', 'Application Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0); 
 			]]>
 		</sql>
 	</changeSet>
