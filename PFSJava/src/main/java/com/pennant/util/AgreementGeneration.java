@@ -141,6 +141,7 @@ import com.pennant.backend.model.finance.AgreementDetail.Score;
 import com.pennant.backend.model.finance.AgreementDetail.SourcingDetail;
 import com.pennant.backend.model.finance.AgreementDetail.VerificationDetail;
 import com.pennant.backend.model.finance.AgreementFieldDetails;
+import com.pennant.backend.model.finance.CustomerAgreementDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetEvaluation;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -197,6 +198,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.document.generator.TemplateEngine;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.framework.security.core.User;
@@ -3806,6 +3808,30 @@ public class AgreementGeneration implements Serializable {
 		}
 
 	}
+	
+	public byte[] getCustomerAgreementGeneration(CustomerAgreementDetail custAgreementDetail, String templatepath,
+			String templateFile) {
+		logger.debug(" Entering ");
+
+		TemplateEngine engine;
+		try {
+			engine = new TemplateEngine();
+			engine.setTemplateSite(templatepath);
+			engine.setDocumentSite(templatepath);
+			engine.setTemplate(templateFile);
+			engine.loadTemplate();
+			engine.mergeFields(custAgreementDetail);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			engine.getDocument().save(stream, SaveFormat.PDF);
+			stream.close();
+			return stream.toByteArray();
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		logger.debug(" Leaving ");
+		return null;
+		
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -3866,4 +3892,6 @@ public class AgreementGeneration implements Serializable {
 	public void setMasterDefService(MasterDefService masterDefService) {
 		this.masterDefService = masterDefService;
 	}
+
+	
 }

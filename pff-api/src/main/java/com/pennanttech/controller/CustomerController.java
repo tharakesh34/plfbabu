@@ -3,9 +3,13 @@ package com.pennanttech.controller;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -14,8 +18,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -38,6 +45,7 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.CustomerAgreementDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -45,11 +53,13 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.AgreementGeneration;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CustomerController {
@@ -62,6 +72,9 @@ public class CustomerController {
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private DocumentManagerDAO documentManagerDAO;
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	private AgreementGeneration agreementGeneration;
+
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -1139,6 +1152,132 @@ public class CustomerController {
 		return response;
 	}
 
+	public AgreementData getCustomerAgreement(long custId) {
+		logger.debug(" Entering ");
+
+		CustomerAgreementDetail custAgreementDetail = new CustomerAgreementDetail();
+		CustomerDetails customerDetails = customerDetailsService.getApprovedCustomerById(custId);
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustomer().getCustCtgCode(), null, "");
+		if (extendedFieldHeader != null) {
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			tableName.append("_ED");
+
+			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO
+					.getExtendedFieldMap(customerDetails.getCustomer().getCustCIF(), tableName.toString(), "");
+
+			if (renderMapList != null) {
+				for (Map<String, Object> mapValues : renderMapList) {
+					custAgreementDetail.setExtendedFields(mapValues);
+				}
+			}
+		}
+		Map<String, Object> result = new HashMap();
+
+		Iterator<Entry<String, Object>> iter = custAgreementDetail.getExtendedFields().entrySet().iterator();
+
+		while (iter.hasNext()) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			Object key = entry.getKey();
+			Object value = entry.getValue();
+			result.put("CUST_EF_" + key.toString(), value);
+		}
+		custAgreementDetail.setExtendedFields(result);
+		custAgreementDetail.setCustCIF(customerDetails.getCustomer().getCustCIF());
+		custAgreementDetail.setCustShrtName(customerDetails.getCustomer().getCustShrtName());
+		custAgreementDetail.setCustCRCPR(customerDetails.getCustomer().getCustCRCPR());
+		List<CustomerAddres> addressList = customerDetails.getAddressList();
+		custAgreementDetail.setCustCurrentAddres(new CustomerAddres());
+		custAgreementDetail.setCustomerEMail(new CustomerEMail());
+		custAgreementDetail.setAppDate(DateUtility.getAppDate());
+
+		setCustomerAddress(custAgreementDetail, addressList);
+
+		int highPriorty = 0;
+		for (CustomerEMail email : customerDetails.getCustomerEMailList()) {
+			if (highPriorty < email.getCustEMailPriority()) {
+				custAgreementDetail.getCustomerEMail().setCustEMail(StringUtils.trimToEmpty(email.getCustEMail()));
+				highPriorty = email.getCustEMailPriority();
+			}
+			CustomerEMail emailDetails = custAgreementDetail.getCustomerEMail();
+			emailDetails.setCustEMailTypeCode(StringUtils.trimToEmpty(email.getLovDescCustEMailTypeCode()));
+			emailDetails.setCustEMail(StringUtils.trimToEmpty(email.getCustEMail()));
+			custAgreementDetail.setCustomerEMail(emailDetails);
+		}
+		
+		String mobileNumber = "";
+
+		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
+		if (phoneNumberList != null && !phoneNumberList.isEmpty()) {
+			if (phoneNumberList.size() > 1) {
+				Collections.sort(phoneNumberList, new Comparator<CustomerPhoneNumber>() {
+					@Override
+					public int compare(CustomerPhoneNumber detail1, CustomerPhoneNumber detail2) {
+						return detail2.getPhoneTypePriority() - detail1.getPhoneTypePriority();
+					}
+				});
+			}
+			CustomerPhoneNumber custPhone = phoneNumberList.get(0);
+			mobileNumber = PennantApplicationUtil.formatPhoneNumber(custPhone.getPhoneCountryCode(),
+					custPhone.getPhoneAreaCode(), custPhone.getPhoneNumber());
+			custAgreementDetail.setCustomerPhoneNumber(mobileNumber);
+		}
+		String path = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
+		byte[] doc = agreementGeneration.getCustomerAgreementGeneration(custAgreementDetail, path,
+				"MMFLAgreement.docx");
+		AgreementData agrdata = new AgreementData();
+		agrdata.setDocContent(doc);
+		agrdata.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		logger.debug(" Leaving ");
+		return agrdata;
+	}
+
+	private void setCustomerAddress(CustomerAgreementDetail agreement, List<CustomerAddres> addressList) {
+		if (addressList != null && !addressList.isEmpty()) {
+			if (addressList.size() == 1) {
+				setAddressDetails(agreement, addressList.get(0));
+			} else {
+				// sort the address based on priority and consider the top priority 
+				sortCustomerAdress(addressList);
+				for (CustomerAddres customerAddres : addressList) {
+					setAddressDetails(agreement, customerAddres);
+					break;
+				}
+
+			}
+		}
+	}
+	private void setAddressDetails(CustomerAgreementDetail agreement, CustomerAddres customerAddres) {
+		agreement.getCustCurrentAddres().setCustAddrHNbr(customerAddres.getCustAddrHNbr());
+		agreement.getCustCurrentAddres().setCustFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
+		agreement.getCustCurrentAddres().setCustPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
+		agreement.getCustCurrentAddres().setCustAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
+		agreement.getCustCurrentAddres().setCustAddrCountry(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
+		agreement.getCustCurrentAddres().setCustAddrProvince(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+		agreement.getCustCurrentAddres().setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		if (!PennantConstants.CITY_FREETEXT) {
+			agreement.getCustCurrentAddres().setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		}
+		agreement.getCustCurrentAddres().setCustDistrict(StringUtils.trimToEmpty(customerAddres.getCustDistrict()));
+		agreement.getCustCurrentAddres().setCustAddrLine4(StringUtils.trimToEmpty(customerAddres.getCustAddrLine4()));
+		agreement.getCustCurrentAddres().setCustAddrLine1(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
+		agreement.getCustCurrentAddres().setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
+		agreement.getCustCurrentAddres().setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+	}
+	public static void sortCustomerAdress(List<CustomerAddres> list) {
+
+		if (list != null && !list.isEmpty()) {
+			Collections.sort(list, new Comparator<CustomerAddres>() {
+				@Override
+				public int compare(CustomerAddres detail1, CustomerAddres detail2) {
+					return detail2.getCustAddrPriority() - detail1.getCustAddrPriority();
+				}
+			});
+		}
+	}
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -1191,5 +1330,14 @@ public class CustomerController {
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
+	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
+		return extendedFieldRenderDAO;
+	}
 
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
+		this.agreementGeneration = agreementGeneration;
+	}
 }

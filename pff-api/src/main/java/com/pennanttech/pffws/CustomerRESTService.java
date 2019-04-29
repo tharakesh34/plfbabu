@@ -21,6 +21,7 @@ import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 
 @Produces(MediaType.APPLICATION_JSON)
 public interface CustomerRESTService {
@@ -219,4 +220,10 @@ public interface CustomerRESTService {
 	@Path("/customerService/deleteCustomerDocument")
 	public WSReturnStatus deleteCustomerDocument(
 			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
+	
+	
+	@GET
+	@Path("/customerService/getCustomerAgreement/{cif}")
+	public AgreementData getCustomerAgreement(@PathParam("cif") String custCIF) throws ServiceException;
+
 }

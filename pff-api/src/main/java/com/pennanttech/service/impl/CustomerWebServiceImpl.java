@@ -20,6 +20,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
+import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -69,6 +70,7 @@ import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
@@ -2308,6 +2310,38 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	}
 
+	@Override
+	public AgreementData getCustomerAgreement(String custCIF) throws ServiceException {
+
+		logger.debug("Enetring");
+		AgreementData agrData = null;
+		try {
+			// Mandatory validation
+			if (StringUtils.isBlank(custCIF)) {
+				validationUtility.fieldLevelException();
+			}
+			// for logging purpose
+			APIErrorHandlerService.logReference(custCIF);
+			// validate Customer with given CustCIF
+			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+			if (customer != null) {
+				agrData = customerController.getCustomerAgreement(customer.getCustID());
+			} else {
+				agrData = new AgreementData();
+				String[] valueParm = new String[1];
+				valueParm[0] = custCIF;
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+			}
+		} catch (Exception e) {
+			APIErrorHandlerService.logUnhandledException(e);
+			agrData = new AgreementData();
+			agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug("Leaving");
+
+		return agrData;
+	}
+	
 	/**
 	 * Get Audit Header Details
 	 * 

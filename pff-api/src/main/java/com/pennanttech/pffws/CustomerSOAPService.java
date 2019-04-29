@@ -17,6 +17,7 @@ import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 
 @WebService
 public interface CustomerSOAPService {
@@ -160,4 +161,7 @@ public interface CustomerSOAPService {
 
 	public WSReturnStatus deleteCustomerDocument(
 			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
+	
+	@WebResult(name = "customer")
+	public AgreementData getCustomerAgreement(@WebParam(name = "cif") String custCIF) throws ServiceException;
 }
