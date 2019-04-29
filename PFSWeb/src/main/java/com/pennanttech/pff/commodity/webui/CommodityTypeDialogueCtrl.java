@@ -105,7 +105,7 @@ public class CommodityTypeDialogueCtrl extends GFCBaseCtrl<CommodityType> {
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.commodityType);
-			
+
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -368,19 +368,22 @@ public class CommodityTypeDialogueCtrl extends GFCBaseCtrl<CommodityType> {
 							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
-		if (!this.type.isReadonly()) {
-			if (this.type.getValue().length() > 8) {
-				throw new WrongValueException(this.type,
-						Labels.getLabel("label_CommoditiesDialogue_CommodityTypeAlert.value"));
-			}
-		}
-
 		if (!this.description.isReadonly()) {
 			this.description.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_CommoditiesDialogue_CommodityDescription.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
+		if (!this.type.isReadonly()) {
+			if (this.type.isValid()) {
+				if (StringUtils.isNotBlank(this.type.getValue())) {
+					if (this.type.getValue().length() > 8) {
+						throw new WrongValueException(this.type,
+								Labels.getLabel("label_CommoditiesDialogue_CommodityTypeAlert.value"));
+					}
+				}
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

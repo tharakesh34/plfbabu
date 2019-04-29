@@ -55,29 +55,22 @@
 							</columns>
 							<rows>
 								<row>
-									<label value="${c:l('label_CommoditiesDialogue_CommodityType.value')}" />
-									<hbox>
-										<extendedcombobox id="type" width="300px" />
-									</hbox>
-								</row>
-								<row>
 									<label value="${c:l('label_CommoditiesDialogue_CommodityCode.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
 										<uppercasebox id="code" width="180px" />
 									</hbox>
+									<label value="${c:l('label_CommodityTypeDialogue_CommodityTypeDescription.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="description" />
+									</hbox>
 								</row>
 								<row>
-									<cell>
-										<label
-											value="${c:l('label_CommodityTypeDialogue_CommodityTypeDescription.value')}" />
-									</cell>
-									<cell colspan="3">
-										<hbox width="100%">
-											<space spacing="2px" />
-											<textbox id="description" width="750px" multiline="true" rows="3" />
-										</hbox>
-									</cell>
+									<label value="${c:l('label_CommoditiesDialogue_CommodityType.value')}" />
+									<hbox>
+										<extendedcombobox id="type" width="300px" />
+									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_CommoditiesDialogue_CurrentValue.value')}" />

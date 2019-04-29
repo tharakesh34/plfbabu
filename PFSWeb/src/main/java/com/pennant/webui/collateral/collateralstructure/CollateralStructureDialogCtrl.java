@@ -77,6 +77,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
@@ -123,8 +124,6 @@ import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.commodity.model.Commodity;
-
-import aspose.pdf.Row;
 
 /**
  * ************************************************************<br>
@@ -192,7 +191,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	protected Tabpanel techValuationTabpanel;
 	protected Button btnCopyTo;
 	protected Decimalbox thresholdLtv;
-	protected Row Row_Commodity;
+	protected Row rw_commodity;
 	protected ExtendedCombobox commodity;
 
 	private CollateralStructure collateralStructure;
@@ -875,6 +874,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.collateralType.setValue(collateralStructure.getCollateralType());
 		this.collateralDesc.setValue(collateralStructure.getCollateralDesc());
 		this.marketableSecurities.setChecked(collateralStructure.isMarketableSecurities());
+		onCheckmarketableSecurities();
 		this.collateralLocReq.setChecked(collateralStructure.isCollateralLocReq());
 		this.collateralValuatorReq.setChecked(collateralStructure.isCollateralValuatorReq());
 		this.remarks.setValue(collateralStructure.getRemarks());
@@ -1216,7 +1216,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 		}
 
-		if (this.commodity.getValue() != null && !this.commodity.getValue().equals("")) {
+		if (this.thresholdLtv.isVisible()) {
 			if (!this.thresholdLtv.isDisabled()) {
 				if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
 					this.thresholdLtv.setConstraint(new PTDecimalValidator(
@@ -1225,6 +1225,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				}
 			}
 		}
+
 		// LTV Rules tab
 		if (!this.ltvType.isDisabled()) {
 			this.ltvType.setConstraint(new StaticListValidator(PennantStaticListUtil.getListLtvTypes(),
@@ -1927,6 +1928,18 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		commoditiesObject = (Commodity) searchProcessor.getResults(search).get(0);
 
 		return commoditiesObject;
+	}
+
+	public void onCheck$marketableSecurities(Event event) {
+		onCheckmarketableSecurities();
+	}
+
+	public void onCheckmarketableSecurities() {
+		if (this.marketableSecurities.isChecked()) {
+			this.rw_commodity.setVisible(true);
+		} else {
+			this.rw_commodity.setVisible(false);
+		}
 	}
 
 }

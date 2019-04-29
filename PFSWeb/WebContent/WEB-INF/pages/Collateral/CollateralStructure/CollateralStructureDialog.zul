@@ -228,7 +228,7 @@
 													<label value="${c:l('label_CollateralStructureDialog_Rule.value')}" />
 													<extendedcombobox id="queryId" />
 												</row>
-												<row id="Row_Commodity">
+												<row id="rw_commodity">
 													<label
 														id="label_CollateralStructureDialog_commodity"
 														value="${c:l('label_CollateralStructureDialog_commodity.value')}" />
