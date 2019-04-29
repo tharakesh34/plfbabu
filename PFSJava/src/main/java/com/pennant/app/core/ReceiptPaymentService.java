@@ -74,8 +74,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			//check banking presentation exists
 			PresentmentDetail prestDetails = getPresentmentDetail(presentments, finReference, businessDate);
 			if (prestDetails != null) {
-
-				processprestment(prestDetails, finEODEvent, customer, businessDate, false);
+				processprestment(prestDetails, finEODEvent, customer, businessDate, false, true);
 
 			} else {
 				//if banking presentation not exists check advance EMI			
@@ -112,7 +111,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 					pDetail.setPresentmentAmt(BigDecimal.ZERO);
 					pDetail.setExcessID(finExcessAmount.getExcessID());
-					processprestment(pDetail, finEODEvent, customer, businessDate, true);
+					processprestment(pDetail, finEODEvent, customer, businessDate, true, false);
 				}
 			}
 		}
@@ -122,7 +121,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 	}
 
 	private void processprestment(PresentmentDetail presentmentDetail, FinEODEvent finEODEvent, Customer customer,
-			Date businessDate, boolean noReserve) throws Exception {
+			Date businessDate, boolean noReserve, boolean isPDetailsExits) throws Exception {
 
 		String finref = presentmentDetail.getFinReference();
 		Date schDate = presentmentDetail.getSchDate();
@@ -140,7 +139,10 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.RECEIPTMODE_PRESENTMENT);
+		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+		if (!isPDetailsExits) {
+			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+		}
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
 		header.setLogSchInPresentment(true);
 		header.setPostBranch("EOD");//FIXME

@@ -2863,18 +2863,14 @@ public class PennantStaticListUtil {
 		return statusTypeList;
 	}
 	
-	public static ArrayList<ValueLabel>  getStatusTypeList() {
+	public static ArrayList<ValueLabel> getStatusTypeList() {
 		statusTypeList = new ArrayList<ValueLabel>(7);
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
-		statusTypeList
-				.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-		statusTypeList
-				.add(new ValueLabel(MandateConstants.STATUS_APPROVED, Labels.getLabel("label_Mandate_APPROVED")));
-		statusTypeList
-				.add(new ValueLabel(MandateConstants.STATUS_REJECTED, Labels.getLabel("label_Mandate_REJECTED")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_APPROVED, Labels.getLabel("label_Mandate_APPROVED")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_REJECTED, Labels.getLabel("label_Mandate_REJECTED")));
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_HOLD, Labels.getLabel("label_Mandate_HOLD")));
-		statusTypeList
-				.add(new ValueLabel(MandateConstants.STATUS_RELEASE, Labels.getLabel("label_Mandate_RELEASE")));
+		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_RELEASE, Labels.getLabel("label_Mandate_RELEASE")));
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_FIN, Labels.getLabel("label_Mandate_FINANCE")));
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_CANCEL, Labels.getLabel("label_Mandate_CANCEL")));
 		statusTypeList
@@ -3423,7 +3419,7 @@ public class PennantStaticListUtil {
 
 	public static List<ValueLabel> getEnquiryReceiptModeStatus() {
 		if (enqReceiptModeStatus == null) {
-			enqReceiptModeStatus = new ArrayList<ValueLabel>(3);
+			enqReceiptModeStatus = new ArrayList<ValueLabel>(5);
 			enqReceiptModeStatus.add(new ValueLabel(RepayConstants.PAYSTATUS_REALIZED,
 					Labels.getLabel("label_ReceiptModeStatus_Realize")));
 			enqReceiptModeStatus.add(
@@ -3683,21 +3679,11 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAccountMapping() {
 
 		if (accountMapping == null) {
-			accountMapping = new ArrayList<ValueLabel>(3);
-			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
+			accountMapping = new ArrayList<ValueLabel>(2);
 			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
 			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
 		}
 		return accountMapping;
-	}
-
-	public static ArrayList<ValueLabel> getMandateStatusTypeList() {
-		if (statusTypeList == null) {
-			statusTypeList = new ArrayList<ValueLabel>(7);
-			statusTypeList
-					.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
-		}
-		return statusTypeList;
 	}
 
 	public static ArrayList<ValueLabel> getUploadLevelsList() {
@@ -4763,6 +4749,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptChannelMode_mobile")));
 			receiptChannels.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_OTC,
 					Labels.getLabel("label_ReceiptChannelMode_otc")));
+			receiptChannels.add(new ValueLabel(DisbursementConstants.RECEIPT_CHANNEL_POR,
+					Labels.getLabel("label_ReceiptChannelMode_por")));
 		}
 		return receiptChannels;
 	}

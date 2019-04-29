@@ -188,8 +188,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinStageAccountingLogDAO finStageAccountingLogDAO;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
 	private CustomerDetailsService customerDetailsService;
-
-	// GST Invoice Report
 	private FinanceDetailService financeDetailService;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private DepositChequesDAO depositChequesDAO;
@@ -484,7 +482,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				for (RepayScheduleDetail rpySchd : repaySchdList) {
 					if (rpySchd.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0) {
 						finODDetailsDAO.updateWaiverAmount(receiptHeader.getReference(), rpySchd.getSchDate(),
-								rpySchd.getWaivedAmt());
+								rpySchd.getWaivedAmt(), rpySchd.getPenaltyPayNow());
 					}
 				}
 			}
@@ -1380,9 +1378,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						.equals(scheduleData.getFinanceMain().getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
-				List<FinODDetails> overdueList = getFinODDetailsDAO()
+				List<FinODDetails> overdueList = finODDetailsDAO
 						.getFinODBalByFinRef(financeMain.getFinReference());
-				List<FinanceRepayments> repayments = getFinanceRepaymentsDAO()
+				List<FinanceRepayments> repayments = financeRepaymentsDAO
 						.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
 				overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate,
 						scheduleData.getFinanceScheduleDetails(), repayments, true, true);
@@ -1393,7 +1391,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Overdue Details Updation after Recalculation with Current Data
 				if (overdueList != null && !overdueList.isEmpty()) {
-					getFinODDetailsDAO().updateList(overdueList);
+					finODDetailsDAO.updateList(overdueList);
 				}
 				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 

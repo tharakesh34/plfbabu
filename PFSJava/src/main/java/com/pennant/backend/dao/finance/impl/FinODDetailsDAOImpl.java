@@ -951,16 +951,16 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	}
 
 	@Override
-	public void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount) {
+	public void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount, BigDecimal penAmount) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("FinODSchdDate", odDate);
 		source.addValue("WaivedAmount", waivedAmount);
-
+		source.addValue("PenaltyAmount", penAmount.add(waivedAmount));
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set TOTWAIVED= TOTWAIVED - :WaivedAmount");
+		updateSql.append(" Set TOTWAIVED= TOTWAIVED - :WaivedAmount, TOTPENALTYBAL= TOTPENALTYBAL + :PenaltyAmount");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());

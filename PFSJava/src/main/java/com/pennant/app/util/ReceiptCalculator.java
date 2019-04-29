@@ -366,10 +366,10 @@ public class ReceiptCalculator implements Serializable {
 								receiptData.setFCDueChanged(true);
 							}
 							allocate.setWaivedAmount(alloc.getWaivedAmount());
-							BigDecimal paidAmount = allocate.getPaidAmount();
-							if (paidAmount.compareTo(alloc.getWaivedAmount()) > 0) {
-								allocate.setPaidAmount(paidAmount.subtract(alloc.getWaivedAmount()));
-								allocate.setTotalPaid(paidAmount.subtract(alloc.getWaivedAmount()));
+							BigDecimal dueAmount = allocate.getTotalDue();
+							if (dueAmount.compareTo(alloc.getWaivedAmount()) > 0) {
+								allocate.setPaidAmount(dueAmount.subtract(alloc.getWaivedAmount()));
+								allocate.setTotalPaid(dueAmount.subtract(alloc.getWaivedAmount()));
 							} else {
 								allocate.setPaidAmount(BigDecimal.ZERO);
 								allocate.setTotalPaid(BigDecimal.ZERO);

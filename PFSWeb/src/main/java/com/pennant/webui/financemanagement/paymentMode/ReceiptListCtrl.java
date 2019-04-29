@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,11 +12,9 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
@@ -73,9 +70,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Button btnClear;
 	protected Button button_ReceiptList_NewReceipt;
 	protected Button button_ReceiptList_ReceiptSearchDialog;
-	protected Button button_ReceiptList_Submit;
-	protected Button button_ReceiptList_Resubmit;
-	protected Button button_ReceiptList_Approve;
 
 	protected Longbox receiptId;
 	protected Datebox receiptDate;
@@ -125,18 +119,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Row row_3;
 	protected Row row_4;
 	protected Row row_5;
-	protected Listheader listHeader_CheckBox_Name;
-	protected Listcell listCell_Checkbox;
-	protected Listitem listItem_Checkbox;
-	protected Checkbox listHeader_CheckBox_Comp;
-	protected Checkbox list_CheckBox;
-
-	private String roleCode;
-	private String nextRoleCode;
-	private String recordAction;
-
-	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
-	private Map<Long, FinReceiptHeader> headerMap = new HashMap<Long, FinReceiptHeader>(); // it has all data
 
 	private String module;
 	private ReceiptService receiptService;
@@ -205,7 +187,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.CLOSURE_MAKER)) {
 			registerButton(button_ReceiptList_NewReceipt, "button_ReceiptList_NewReceipt", true);
-			this.button_ReceiptList_Submit.setVisible(false);
 		}
 
 		registerButton(button_ReceiptList_ReceiptSearchDialog);
@@ -325,17 +306,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	public void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		listItem_Checkbox = new Listitem();
-		listCell_Checkbox = new Listcell();
-		listHeader_CheckBox_Comp = new Checkbox();
-		listCell_Checkbox.appendChild(listHeader_CheckBox_Comp);
-		listHeader_CheckBox_Comp.addForward("onClick", self, "onClick_listHeaderCheckBox");
-		listItem_Checkbox.appendChild(listCell_Checkbox);
-
-		if (listHeader_CheckBox_Name.getChildren() != null) {
-			listHeader_CheckBox_Name.getChildren().clear();
-		}
-		listHeader_CheckBox_Name.appendChild(listHeader_CheckBox_Comp);
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		// TODO CH : Static List method should be changed to Receipt Modes and
@@ -363,19 +333,12 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
-		if (StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_MAKER)
-				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_MAKER)) {
+		if (StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_MAKER)) {
 			listheader_DepositDate.setVisible(true);
-			this.button_ReceiptList_Submit.setVisible(true);
-			listHeader_CheckBox_Name.setVisible(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.RECEIPT_APPROVER)
-				|| StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_APPROVER)
-				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_APPROVER)) {
+				|| StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_APPROVER)) {
 			listheader_RealizationDate.setVisible(true);
 			listheader_DepositDate.setVisible(true);
-			this.button_ReceiptList_Approve.setVisible(true);
-			this.button_ReceiptList_Resubmit.setVisible(true);
-			listHeader_CheckBox_Name.setVisible(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_APPROVER)) {
 			listheader_DepositDate.setVisible(false);
@@ -384,7 +347,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			listheader_PayTypeRef.setVisible(false);
 			listheader_PartnerBank.setVisible(false);
 			listheader_ExcessType.setVisible(true);
-			this.listHeader_CheckBox_Name.setVisible(false);
 
 			row_2.setVisible(true);
 			row_4.setVisible(false);
@@ -400,7 +362,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		} else if (enqiryModule) {
 			listheader_ReceiptModeStatus.setVisible(true);
 			listheader_NextRoleCode.setVisible(true);
-			this.listHeader_CheckBox_Name.setVisible(false);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -445,10 +406,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		doRefresh();
 	}
 
-	public void doRefresh() {
-		recHeaderMap.clear();
-		headerMap.clear();
-		this.listHeader_CheckBox_Comp.setChecked(false);
+	private void doRefresh() {
 		doReset();
 		search();
 		// doSearch(true);
@@ -472,52 +430,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		doPrintResults();
 	}
 
-	/**
-	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
-	 */
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		for (int i = 0; i < listBoxReceipts.getItems().size(); i++) {
-			Listitem listitem = listBoxReceipts.getItems().get(i);
-			Checkbox cb = (Checkbox) listitem.getChildren().get(0).getChildren().get(0);
-			cb.setChecked(listHeader_CheckBox_Comp.isChecked());
-		}
-
-		if (listHeader_CheckBox_Comp.isChecked() && listBoxReceipts.getItems().size() > 0) {
-			recHeaderMap.putAll(headerMap);
-		} else {
-			recHeaderMap.clear();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
-	 */
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
-
-		FinReceiptHeader finReceiptHeader = (FinReceiptHeader) checkBox.getAttribute("finReceiptHeader");
-
-		if (checkBox.isChecked()) {
-			recHeaderMap.put(finReceiptHeader.getReceiptID(), finReceiptHeader);
-		} else {
-			recHeaderMap.remove(finReceiptHeader.getReceiptID());
-		}
-
-		if (recHeaderMap.size() == this.pagingReceiptList.getTotalSize()) {
-			listHeader_CheckBox_Comp.setChecked(true);
-		} else {
-			listHeader_CheckBox_Comp.setChecked(false);
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
 	public class ReceiptListModelItemRenderer implements ListitemRenderer<FinReceiptHeader>, Serializable {
 		private static final long serialVersionUID = 8848425569301884635L;
 
@@ -528,22 +440,9 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		@Override
 		public void render(Listitem item, FinReceiptHeader finReceiptHeader, int count) throws Exception {
 
-			headerMap.put(finReceiptHeader.getReceiptID(), finReceiptHeader); // Setting all FinReceiptHeader into Map
-
 			Listcell lc;
 
 			lc = new Listcell();
-
-			list_CheckBox = new Checkbox();
-			list_CheckBox.setAttribute("finReceiptHeader", finReceiptHeader);
-			list_CheckBox.addForward("onClick", self, "onClick_listCellCheckBox");
-			lc.appendChild(list_CheckBox);
-			if (listHeader_CheckBox_Comp.isChecked()) {
-				list_CheckBox.setChecked(true);
-			} else {
-				list_CheckBox.setChecked(recHeaderMap.containsKey(finReceiptHeader.getReceiptID()));
-			}
-			lc.setParent(item);
 
 			lc = new Listcell(String.valueOf(finReceiptHeader.getReceiptID()));
 			lc.setParent(item);
@@ -796,92 +695,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-	}
-
-	public void onClick$button_ReceiptList_Submit(Event event) {
-		logger.debug("Entering");
-
-		recordAction = PennantConstants.RCD_STATUS_SUBMITTED;
-		/*
-		 * if (StringUtils.equals(module, FinanceConstants.DEPOSIT_MAKER)) { roleCode = FinanceConstants.DEPOSIT_MAKER;
-		 * nextRoleCode = FinanceConstants.DEPOSIT_APPROVER; }
-		 * 
-		 * if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)) { roleCode =
-		 * FinanceConstants.RECEIPTREALIZE_MAKER; nextRoleCode = FinanceConstants.RECEIPTREALIZE_APPROVER; }
-		 */
-		doShowMultiReceipt();
-		logger.debug("Leaving");
-	}
-
-	public void onClick$button_ReceiptList_Resubmit(Event event) {
-		logger.debug("Entering");
-
-		recordAction = PennantConstants.RCD_STATUS_RESUBMITTED;
-		/*
-		 * if (StringUtils.equals(module, FinanceConstants.DEPOSIT_APPROVER)) { roleCode =
-		 * FinanceConstants.DEPOSIT_APPROVER; nextRoleCode = FinanceConstants.DEPOSIT_MAKER; }
-		 * 
-		 * if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)) { roleCode =
-		 * FinanceConstants.RECEIPTREALIZE_APPROVER; nextRoleCode = FinanceConstants.RECEIPTREALIZE_MAKER; }
-		 */
-		doShowMultiReceipt();
-		logger.debug("Leaving");
-	}
-
-	public void onClick$button_ReceiptList_Approve(Event event) {
-		logger.debug("Entering");
-
-		recordAction = PennantConstants.RCD_STATUS_APPROVED;
-		/*
-		 * if (StringUtils.equals(module, FinanceConstants.DEPOSIT_APPROVER)) { roleCode =
-		 * FinanceConstants.DEPOSIT_APPROVER; nextRoleCode = FinanceConstants.RECEIPTREALIZE_MAKER; }
-		 * 
-		 * if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)) { roleCode =
-		 * FinanceConstants.RECEIPTREALIZE_APPROVER; nextRoleCode = null; }
-		 */
-		doShowMultiReceipt();
-		logger.debug("Leaving");
-	}
-
-	public void doShowMultiReceipt() {
-		logger.debug("Entering");
-
-		if (recHeaderMap.isEmpty()) {
-			MessageUtil.showError("Please Select 1 or more then 1 record to proceed");
-			return;
-		}
-
-		Set<Long> recId = recHeaderMap.keySet();
-		for (long receiptId : recId) {
-			FinReceiptHeader finReceiptHeader = receiptService.getFinReceiptHeaderById(receiptId, false, "_View");
-			finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
-			setWorkflowDetails(finReceiptHeader.getFinType(), false);
-			if (finReceiptHeader.getWorkflowId() == 0 && isWorkFlowEnabled()) {
-				finReceiptHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
-				roleCode = workFlowDetails.getFirstTaskOwner();
-			} else {
-				roleCode = finReceiptHeader.getNextRoleCode();
-			}
-			recHeaderMap.put(receiptId, finReceiptHeader);
-		}
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("recHeaderMap", recHeaderMap);
-		//map.put("finReceiptHeader", finReceiptHeader);
-		map.put("receiptListCtrl", this);
-		map.put("module", module);
-		map.put("moduleCode", moduleCode);
-		map.put("roleCode", roleCode);
-		//	map.put("nextRoleCode", nextRoleCode);
-		map.put("recordAction", recordAction);
-
-		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/SelectReceiptDialog.zul", null, map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-
-		logger.debug("Leaving");
 	}
 
 	public void setReceiptService(ReceiptService receiptService) {

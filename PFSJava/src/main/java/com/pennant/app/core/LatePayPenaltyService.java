@@ -36,6 +36,8 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +46,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
@@ -74,8 +75,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 		super();
 	}
 
-	public void computeLPP(FinODDetails fod, Date valueDate, FinanceMain financeMain, List<FinanceScheduleDetail> finScheduleDetails,
-			List<FinanceRepayments> repayments) {
+	public void computeLPP(FinODDetails fod, Date valueDate, FinanceMain financeMain,
+			List<FinanceScheduleDetail> finScheduleDetails, List<FinanceRepayments> repayments) {
 		logger.debug("Entering");
 		BigDecimal penalty = BigDecimal.ZERO;
 		//Late Payment Penalty. Do not apply LPP
@@ -131,21 +132,27 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (repayments == null) {
 				repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 			}
+			repayments = sortFinanceRepayments(repayments);
 			prepareDueDateData(fod, valueDate, financeMain.getProfitDaysBasis(), repayments, financeMain);
 			penalty = fod.getTotPenaltyAmt();
 		}
 
-		penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+		penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(),
+				financeMain.getRoundingTarget());
+		fod.setTotPenaltyAmt(penalty); // ### 03-12-2018 PSD Ticket ID: 130669
 
-		// Check Whether Min cap Amount reached or not
-		if (ImplementationConstants.ALW_LPP_MIN_CAP_AMT) {
-			if (penalty.compareTo(BigDecimal.ZERO) > 0 && penalty.compareTo(fod.getoDMinCapAmount()) < 0) {
-				penalty = fod.getoDMinCapAmount();
-			}
+		/*
+		 * fod.setTotPenaltyAmt(penalty);
+		 * fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+		 */
+		if (fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived())
+				.compareTo(BigDecimal.ZERO) >= 0) {
+			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
+			fod.setPayableAmount(BigDecimal.ZERO);
+		} else {
+			fod.setTotPenaltyBal(BigDecimal.ZERO);
+			fod.setPayableAmount(fod.getTotPenaltyPaid().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyAmt()));
 		}
-
-		fod.setTotPenaltyAmt(penalty);
-		fod.setTotPenaltyBal(penalty.subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
 		logger.debug("Leaving");
 	}
@@ -341,6 +348,20 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		return terms;
 
+	}
+
+	public List<FinanceRepayments> sortFinanceRepayments(List<FinanceRepayments> repayments) {
+
+		if (repayments != null && repayments.size() > 0) {
+			Collections.sort(repayments, new Comparator<FinanceRepayments>() {
+				@Override
+				public int compare(FinanceRepayments detail1, FinanceRepayments detail2) {
+					return DateUtility.compare(detail1.getFinValueDate(), detail2.getFinValueDate());
+				}
+			});
+		}
+
+		return repayments;
 	}
 
 }

@@ -126,6 +126,6 @@ public interface FinODDetailsDAO {
 
 	List<FinODDetails> getFinODDetailsByFinRef(String finReference, String type);
 
-	void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount);
+	void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount, BigDecimal penAmount);
 
 }

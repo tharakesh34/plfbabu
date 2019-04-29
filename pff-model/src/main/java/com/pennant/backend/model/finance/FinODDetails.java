@@ -108,6 +108,7 @@ public class FinODDetails implements java.io.Serializable {
 	private boolean oDAllowWaiver;
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
+	private BigDecimal payableAmount = BigDecimal.ZERO;
 
 	private String oDRuleCode;
 	
@@ -421,6 +422,14 @@ public class FinODDetails implements java.io.Serializable {
 
 	public void setODRuleCode(String oDRuleCode) {
 		this.oDRuleCode = oDRuleCode;
+	}
+
+	public BigDecimal getPayableAmount() {
+		return payableAmount;
+	}
+
+	public void setPayableAmount(BigDecimal payableAmount) {
+		this.payableAmount = payableAmount;
 	}
 
 }
