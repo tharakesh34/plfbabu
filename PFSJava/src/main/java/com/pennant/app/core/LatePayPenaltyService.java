@@ -198,6 +198,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 				continue;
 			}
 
+			if (repayment.getFinValueDate().compareTo(valueDate) > 0) {
+				continue;
+			}
+
+			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
+				continue;
+			}
+
 			Date grcDate = DateUtility.addDays(repayment.getFinSchdDate(), fod.getODGraceDays());
 
 			//MAx OD amounts is same as repayments balance amounts

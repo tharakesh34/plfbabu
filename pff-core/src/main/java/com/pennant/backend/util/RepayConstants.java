@@ -76,6 +76,9 @@ public class RepayConstants {
 	public static final String EXCESSADJUSTTO_SETTLEMENT = "S";
 	public static final String EXCESSADJUSTTO_PARTPAY = "S";
 
+	public static final String REQTYPE_INQUIRY = "Inquiry";
+	public static final String REQTYPE_POST = "Post";
+
 	// Receipt Modes
 	// 1. Screen Display Modes
 	public static final String RECEIPTMODE_CASH = "CASH";

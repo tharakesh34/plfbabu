@@ -220,8 +220,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Fetch Receipt Detail List
 		if (receiptHeader != null) {
-			List<FinReceiptDetail> receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID,
-					"_AView");
+			List<FinReceiptDetail> receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "_AView");
 			receiptHeader.setReceiptDetails(receiptDetailList);
 
 			// Fetch Repay Headers List
@@ -230,8 +229,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 			// Fetch List of Repay Schedules
 			if (!isFeePayment) {
-				List<RepayScheduleDetail> rpySchList = financeRepaymentsDAO
-						.getRpySchdList(receiptHeader.getReference(), "");
+				List<RepayScheduleDetail> rpySchList = financeRepaymentsDAO.getRpySchdList(receiptHeader.getReference(),
+						"");
 				if (rpySchList != null && !rpySchList.isEmpty()) {
 					for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 						for (RepayScheduleDetail repaySchd : rpySchList) {
@@ -265,8 +264,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * Method for fetching List of Postings details which are executed for the
-	 * Transaction
+	 * Method for fetching List of Postings details which are executed for the Transaction
 	 */
 	@Override
 	public List<ReturnDataSet> getPostingsByTranIdList(List<Long> tranIdList) {
@@ -279,15 +277,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's
-	 * save method b) Update the Record in the table. based on the module
-	 * workFlow Configuration. by using FinReceiptHeaderDAO's update method 3)
-	 * Audit the record in to AuditHeader and AdtFinReceiptHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -346,13 +341,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using finReceiptHeaderDAO.delete with
-	 * parameters finReceiptHeader,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using finReceiptHeaderDAO.delete with parameters finReceiptHeader,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -389,12 +381,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * doApprove method do the following steps. Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. based on the Record type do
-	 * following actions Update record in the main table by using
-	 * finReceiptHeaderDAO.update with parameters FinReceiptHeader. Audit
-	 * the record in to AuditHeader and AdtFinReceiptHeader by using
+	 * doApprove method do the following steps. Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. based on the Record type do
+	 * following actions Update record in the main table by using finReceiptHeaderDAO.update with parameters
+	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
@@ -553,12 +543,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * finReceiptHeaderDAO.getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -595,8 +583,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		if (receiptHeader.isWorkflow()) {
 			tempReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptHeader.getReceiptID(), "_Temp");
 		}
-		FinReceiptHeader beFinReceiptHeader = finReceiptHeaderDAO
-				.getReceiptHeaderByID(receiptHeader.getReceiptID(), "");
+		FinReceiptHeader beFinReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptHeader.getReceiptID(),
+				"");
 		FinReceiptHeader oldReceiptHeader = receiptHeader.getBefImage();
 
 		String[] errParm = new String[1];
@@ -605,13 +593,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		errParm[0] = PennantJavaUtil.getLabel("label_ReceiptID") + ":" + valueParm[0];
 
 		if (receiptHeader.isNew()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-													// the
-					// table then error
+														// the
+													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -637,8 +625,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-													// the
-					// main table
+														// the
+													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -691,50 +679,35 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		/*
 		 * =====================================================================
-		 * ======================================== ================ // For Gold
-		 * Loans, Not allowed to cancel when finance is in Other Maintenance
-		 * if(StringUtils.equals(receiptHeader.getProductCategory(),
-		 * FinanceConstants.PRODUCT_GOLD)){ String finReference =
-		 * receiptHeader.getReference(); boolean rcdAvailable =
-		 * financeMainDAO.isFinReferenceExists(finReference, "_Temp",
-		 * false); if (rcdAvailable) {
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
-		 * ErrorDetails("60213", null),usrLanguage)); }else{
+		 * ======================================== ================ // For Gold Loans, Not allowed to cancel when
+		 * finance is in Other Maintenance if(StringUtils.equals(receiptHeader.getProductCategory(),
+		 * FinanceConstants.PRODUCT_GOLD)){ String finReference = receiptHeader.getReference(); boolean rcdAvailable =
+		 * financeMainDAO.isFinReferenceExists(finReference, "_Temp", false); if (rcdAvailable) {
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60213", null),usrLanguage)); }else{
 		 * 
-		 * // If any receipt after cancellation receipt and including that
-		 * having Waiver amount // then should not allow for cancellation Date
-		 * cancelReqDate =
-		 * receiptHeader.getReceiptDetails().get(0).getReceivedDate();
+		 * // If any receipt after cancellation receipt and including that having Waiver amount // then should not allow
+		 * for cancellation Date cancelReqDate = receiptHeader.getReceiptDetails().get(0).getReceivedDate();
 		 * 
-		 * FinanceMain financeMain =
-		 * financeMainDAO.getFinanceMainById(receiptHeader.getReference(),
-		 * "", false); int minPftPeriod =
-		 * getPromotionDAO().getPromtionMinPftPeriod(financeMain.
-		 * getPromotionSeqId(), ""); Date maxAlwCancelRcptDate =
-		 * DateUtility.addDays(financeMain.getFinStartDate(), minPftPeriod);
+		 * FinanceMain financeMain = financeMainDAO.getFinanceMainById(receiptHeader.getReference(), "", false); int
+		 * minPftPeriod = getPromotionDAO().getPromtionMinPftPeriod(financeMain. getPromotionSeqId(), ""); Date
+		 * maxAlwCancelRcptDate = DateUtility.addDays(financeMain.getFinStartDate(), minPftPeriod);
 		 * 
 		 * if(DateUtility.compare(cancelReqDate, maxAlwCancelRcptDate) <= 0){
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
-		 * ErrorDetails("60215", null),usrLanguage)); }else{
-		 * List<ReceiptCancelDetail> cancelReceipts =
-		 * finReceiptHeaderDAO.getReceiptCancelDetailList(cancelReqDate,
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60215", null),usrLanguage)); }else{
+		 * List<ReceiptCancelDetail> cancelReceipts = finReceiptHeaderDAO.getReceiptCancelDetailList(cancelReqDate,
 		 * finReference);
 		 * 
-		 * boolean waiverExists = false; sortReceipts(cancelReceipts); for (int
-		 * i = cancelReceipts.size() - 1; i >= 0; i--) {
+		 * boolean waiverExists = false; sortReceipts(cancelReceipts); for (int i = cancelReceipts.size() - 1; i >= 0;
+		 * i--) {
 		 * 
-		 * ReceiptCancelDetail receipt = cancelReceipts.get(i);
-		 * if(receipt.getReceiptId() <= receiptHeader.getReceiptID()){ continue;
-		 * } if(receipt.getWaviedAmt() != null &&
-		 * receipt.getWaviedAmt().compareTo(BigDecimal.ZERO) > 0){ waiverExists
-		 * = true; } }
+		 * ReceiptCancelDetail receipt = cancelReceipts.get(i); if(receipt.getReceiptId() <=
+		 * receiptHeader.getReceiptID()){ continue; } if(receipt.getWaviedAmt() != null &&
+		 * receipt.getWaviedAmt().compareTo(BigDecimal.ZERO) > 0){ waiverExists = true; } }
 		 * 
 		 * // If waiver exists not allowed to do cancellation if(waiverExists){
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new
-		 * ErrorDetails("60214", null),usrLanguage)); } } }
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails("60214", null),usrLanguage)); } } }
 		 * 
-		 * }
-		 * =====================================================================
+		 * } =====================================================================
 		 * ======================================== ================
 		 */
 
@@ -742,8 +715,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus())
 				&& RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())) {
 
-			DepositMovements movement = depositDetailsDAO
-					.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(), "_AView");
+			DepositMovements movement = depositDetailsDAO.getDepositMovementsByReceiptId(receiptHeader.getReceiptID(),
+					"_AView");
 			if (movement != null) {
 				// Find Amount of Deposited Request
 				BigDecimal reqAmount = BigDecimal.ZERO;
@@ -753,8 +726,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 				}
 				// getDepositDetailsById
-				DepositDetails depositDetails = depositDetailsDAO.getDepositDetailsById(movement.getDepositId(),
-						"");
+				DepositDetails depositDetails = depositDetailsDAO.getDepositDetailsById(movement.getDepositId(), "");
 
 				// if deposit Details amount is less than Requested amount throw
 				// an error
@@ -1057,8 +1029,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						if ((StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
 								|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD))
 								&& StringUtils.equals(RepayConstants.PAYSTATUS_DEPOSITED, curStatus)) {
-							finExcessAmountDAO.deductExcessReserve(excess.getExcessID(),
-									rpyHeader.getExcessAmount());
+							finExcessAmountDAO.deductExcessReserve(excess.getExcessID(), rpyHeader.getExcessAmount());
 						} else {
 
 							finExcessAmountDAO.updateExcessBal(excess.getExcessID(),
@@ -1109,8 +1080,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// Update Log Entry Based on FinPostDate and Reference
 				// ============================================
 				if (receiptDetail.getLogKey() != 0 && receiptDetail.getLogKey() != Long.MIN_VALUE) {
-					FinLogEntryDetail detail = finLogEntryDetailDAO
-							.getFinLogEntryDetail(receiptDetail.getLogKey());
+					FinLogEntryDetail detail = finLogEntryDetailDAO.getFinLogEntryDetail(receiptDetail.getLogKey());
 					if (detail == null) {
 						ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60207", "", null),
 								PennantConstants.default_Language);
@@ -1148,8 +1118,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					}
 
 					// Update Movement Status
-					manualAdviseDAO.updateMovementStatus(receiptDetail.getReceiptID(),
-							receiptDetail.getReceiptSeqID(), receiptHeader.getReceiptModeStatus(), "");
+					manualAdviseDAO.updateMovementStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),
+							receiptHeader.getReceiptModeStatus(), "");
 
 					// GST Invoice Preparation
 					long postingSeqId = 0; // TODO should be pass linkedTranId
@@ -1268,8 +1238,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// ============================================
 					if (rpySchd.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
 							|| rpySchd.getLatePftSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
-						finODDetailsDAO.updateReversals(finReference, rpySchd.getSchDate(),
-								rpySchd.getPenaltyPayNow(), rpySchd.getLatePftSchdPayNow());
+						finODDetailsDAO.updateReversals(finReference, rpySchd.getSchDate(), rpySchd.getPenaltyPayNow(),
+								rpySchd.getLatePftSchdPayNow());
 					}
 
 					// Update Fee Balance
@@ -1410,23 +1380,21 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						.equals(scheduleData.getFinanceMain().getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
-				List<FinODDetails> overdueList = finODDetailsDAO
+				List<FinODDetails> overdueList = getFinODDetailsDAO()
 						.getFinODBalByFinRef(financeMain.getFinReference());
-				List<FinanceRepayments> repayments = financeRepaymentsDAO
+				List<FinanceRepayments> repayments = getFinanceRepaymentsDAO()
 						.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
 				overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate,
 						scheduleData.getFinanceScheduleDetails(), repayments, true, true);
 
 				// Status Updation
-				repaymentPostingsUtil.updateStatus(financeMain, valueDate,
-						scheduleData.getFinanceScheduleDetails(), pftDetail, overdueList, null);
+				repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleData.getFinanceScheduleDetails(),
+						pftDetail, overdueList, null);
 
-				// Overdue Details Updation after Recalculation with Current
-				// Data
+				// Overdue Details Updation after Recalculation with Current Data
 				if (overdueList != null && !overdueList.isEmpty()) {
-					finODDetailsDAO.updateList(overdueList);
+					getFinODDetailsDAO().updateList(overdueList);
 				}
-
 				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 
 					// Finance Main Details Update
@@ -1512,8 +1480,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 								RepayConstants.RECEIPTMODE_PAYABLE)) {
 
 							// Payable Utilize reversals
-							manualAdviseDAO.reverseUtilise(receiptDetail.getPayAgainstID(),
-									receiptDetail.getAmount());
+							manualAdviseDAO.reverseUtilise(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
 						}
 					}
 				}
@@ -1536,13 +1503,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// need to check accounting should be reversal or not for
 					// Bank To Cash
 					/*
-					 * AEEvent aeEvent =
-					 * this.cashManagementAccounting.generateAccounting(
-					 * AccountEventConstants.ACCEVENT_BANKTOCASH,
-					 * movement.getBranchCode(), movement.getBranchCode(),
-					 * movement.getReservedAmount(),
-					 * movement.getPartnerBankId(), movement.getMovementId(),
-					 * null);
+					 * AEEvent aeEvent = this.cashManagementAccounting.generateAccounting(
+					 * AccountEventConstants.ACCEVENT_BANKTOCASH, movement.getBranchCode(), movement.getBranchCode(),
+					 * movement.getReservedAmount(), movement.getPartnerBankId(), movement.getMovementId(), null);
 					 */
 
 					if (reqAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -1603,8 +1566,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	/**
-	 * Method for Processing Fee Payments Cancellation Based on Event and
-	 * Reference
+	 * Method for Processing Fee Payments Cancellation Based on Event and Reference
 	 * 
 	 * @param receiptHeader
 	 * @throws InterfaceException
@@ -1830,8 +1792,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, false, logKey));
 		finSchData.setDisbursementDetails(
 				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false, logKey));
-		finSchData
-				.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, type, false, logKey));
+		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, type, false, logKey));
 		logger.debug("Leaving");
 		return finSchData;
 	}
@@ -1893,12 +1854,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving ");
 	}
-	
+
 	@Autowired
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
-	
+
 	@Autowired
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
@@ -1908,27 +1869,27 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-	
+
 	@Autowired
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
-	
+
 	@Autowired
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
 	}
-	
+
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
-	
+
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
-	
+
 	@Autowired
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
@@ -1943,7 +1904,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
-	
+
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
@@ -1953,7 +1914,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
 		this.repaymentPostingsUtil = repaymentPostingsUtil;
 	}
-	
+
 	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;

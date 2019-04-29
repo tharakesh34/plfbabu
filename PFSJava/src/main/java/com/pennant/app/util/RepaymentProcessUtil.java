@@ -432,7 +432,7 @@ public class RepaymentProcessUtil {
 		}
 
 		//Put Manual Advises to the map
-		List<ReceiptAllocationDetail> radList = rch.getAllocations();
+		/*List<ReceiptAllocationDetail> radList = rch.getAllocations();
 		for (int i = 0; i < radList.size(); i++) {
 			ReceiptAllocationDetail rad = radList.get(i);
 			String allocType = rad.getAllocationType();
@@ -452,7 +452,9 @@ public class RepaymentProcessUtil {
 				extDataMap.put((rad.getFeeTypeCode() + "_UGST_P"), rad.getPaidUGST());
 				extDataMap.put((rad.getFeeTypeCode() + "_IGST_P"), rad.getPaidIGST());
 			}
-		}
+		}*/
+
+		extDataMap.putAll(prepareMovementMap(movements));
 
 		BigDecimal adjustedToReceipt = BigDecimal.ZERO;
 		adjustedToReceipt = rch.getTotalPastDues().getTotalPaid();

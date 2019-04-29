@@ -197,7 +197,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return custEODEvent;
 	}
 
-	private FinEODEvent findLatePay(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	public FinEODEvent findLatePay(FinEODEvent finEODEvent, Date valueDate) throws Exception {
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
@@ -292,6 +292,30 @@ public class LatePayMarkingService extends ServiceHelper {
 		//FIXME: PV To be verified with Chaitanya & Satish
 		//fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), valueDate));
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), penaltyCalDate));
+
+		//PENALTY Issue Ref : 134715
+		if (repayments == null) {
+			repayments = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finMain.getFinReference(),
+					fod.getFinODSchdDate());
+		}
+
+		if (repayments != null) {
+			for (int i = 0; i < repayments.size(); i++) {
+				FinanceRepayments repayment = repayments.get(i);
+
+				//check the payment made against the actual schedule date 
+				if (repayment.getFinSchdDate().compareTo(fod.getFinODSchdDate()) != 0) {
+					continue;
+				}
+
+				//MAx OD amounts is same as repayments balance amounts
+				if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
+					fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(repayment.getFinSchdPriPaid()));
+					fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(repayment.getFinSchdPftPaid()));
+				}
+
+			}
+		}
 
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
 		fod.setFinLMdfDate(DateUtility.getAppDate());
@@ -406,6 +430,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finODDetail.setFinType(finMain.getFinType());
 		finODDetail.setCustID(finMain.getCustID());
 		finODDetail.setFinODTillDate(valueDate);
+		finODDetail.setRcdAction("I");
 
 		finODDetail.setFinCurODPri(
 				curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()).add(curSchd.getCpzBalance()));

@@ -656,8 +656,8 @@ public class ReceiptCalculator implements Serializable {
 		return taxSplit;
 	}
 
-	private ReceiptAllocationDetail getAllocation(TaxAmountSplit taxAmountSplit, String allocType, int id,
-			String desc, long allocTo, String taxType, boolean isEditable) {
+	private ReceiptAllocationDetail getAllocation(TaxAmountSplit taxAmountSplit, String allocType, int id, String desc,
+			long allocTo, String taxType, boolean isEditable) {
 
 		ReceiptAllocationDetail allocation = new ReceiptAllocationDetail();
 		allocation.setAllocationID(id);
@@ -685,8 +685,8 @@ public class ReceiptCalculator implements Serializable {
 
 	}
 
-	public ReceiptAllocationDetail getAllocation(String allocType, int id, BigDecimal due, String desc,
-			long allocTo, String taxType, boolean isEditable) {
+	public ReceiptAllocationDetail getAllocation(String allocType, int id, BigDecimal due, String desc, long allocTo,
+			String taxType, boolean isEditable) {
 		TaxAmountSplit taxSplit = getTaxAmountSplit(allocType, due, taxType);
 		return getAllocation(taxSplit, allocType, id, desc, allocTo, taxType, isEditable);
 	}
@@ -791,11 +791,6 @@ public class ReceiptCalculator implements Serializable {
 			FinODDetails finODDetail = overdueList.get(i);
 			if (finODDetail.getFinODSchdDate().compareTo(reqMaxODDate) > 0) {
 				break;
-			}
-
-			// Not allowed Presentment/Freezing Period Schedule dates
-			if (presentmentDates.contains(finODDetail.getFinODSchdDate())) {
-				continue;
 			}
 
 			lpiBal = lpiBal.add(finODDetail.getLPIBal());
@@ -1560,9 +1555,7 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		// LPP & LPI Apportionment as separate
-		if (rch.getBalAmount().compareTo(BigDecimal.ZERO) > 0) {
-			receiptData = penalApportion(receiptData);
-		}
+		receiptData = penalApportion(receiptData);
 
 		// Advise apportionment
 		if (isAdjSchedule) {
@@ -1693,7 +1686,7 @@ public class ReceiptCalculator implements Serializable {
 			balAmount = balAmount.subtract(payNow);
 			rch.setBalAmount(rch.getBalAmount().subtract(payNow));
 			updateAllocation(allocate, payNow, waiveNow);
-			if (isAdjSchedule) {
+			if (isAdjSchedule && (payNow.compareTo(BigDecimal.ZERO) > 0 || waiveNow.compareTo(BigDecimal.ZERO) > 0)) {
 				allocate.setPaidNow(payNow);
 				allocate.setWaivedNow(waiveNow);
 				if (!isEventFee) {
@@ -1924,20 +1917,15 @@ public class ReceiptCalculator implements Serializable {
 	public FinReceiptData partialApportion(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
-		int schdIdx = rch.getSchdIdx();
 		FinanceScheduleDetail curSchd = null;
 		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
-		if (schdIdx <= 0) {
-			for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
-				FinanceScheduleDetail schd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(schd.getSchDate(), rch.getValueDate()) == 0) {
-					rch.setSchdIdx(i);
-					curSchd = schd;
-					break;
-				}
+		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+			FinanceScheduleDetail schd = finScheduleData.getFinanceScheduleDetails().get(i);
+			if (DateUtility.compare(schd.getSchDate(), rch.getValueDate()) == 0) {
+				rch.setSchdIdx(i);
+				curSchd = schd;
+				break;
 			}
-		} else {
-			curSchd = finScheduleData.getFinanceScheduleDetails().get(schdIdx);
 		}
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 
@@ -2194,6 +2182,7 @@ public class ReceiptCalculator implements Serializable {
 		}
 
 		BigDecimal balAmount = rch.getBalAmount();
+		BigDecimal waivedAmount = BigDecimal.ZERO;
 
 		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 
@@ -2214,10 +2203,15 @@ public class ReceiptCalculator implements Serializable {
 			if (isAdjSchedule) {
 				rph = rcdList.get(rcdIdx).getRepayHeader();
 				balAmount = rch.getBalAmount();
+				waivedAmount = allocate.getWaivedAvailable();
 				if (rch.getBalAmount().compareTo(allocate.getPaidAvailable()) > 0) {
 					balAmount = allocate.getPaidAvailable();
 				}
-				if (balAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				if (balAmount.compareTo(BigDecimal.ZERO) <= 0 && waivedAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
+				}
+			} else {
+				if ((balAmount).compareTo(BigDecimal.ZERO) <= 0) {
 					break;
 				}
 			}
@@ -2227,10 +2221,14 @@ public class ReceiptCalculator implements Serializable {
 			if (odBal.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
-			if (allocate.getWaivedAvailable().compareTo(odBal) > 0) {
-				odWaiveNow = odBal;
-			} else {
-				odWaiveNow = allocate.getWaivedAvailable();
+			if (allocate.getWaivedAvailable().compareTo(BigDecimal.ZERO) > 0) {
+				if (allocate.getWaivedAvailable().compareTo(odBal) > 0) {
+					odWaiveNow = odBal;
+					waivedAmount = waivedAmount.subtract(odWaiveNow);
+				} else {
+					odWaiveNow = allocate.getWaivedAvailable();
+					waivedAmount = BigDecimal.ZERO;
+				}
 			}
 
 			odBal = odBal.subtract(odWaiveNow);

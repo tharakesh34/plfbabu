@@ -168,6 +168,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			XcessPayables xcessPayable = new XcessPayables();
 			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			xcessPayable.setAmount(advanceAmt);
+			xcessPayable.setTotPaidNow(advanceAmt);
 			header.getXcessPayables().add(xcessPayable);
 			receiptDetail.setValueDate(schDate);
 			receiptDetail.setReceivedDate(businessDate);

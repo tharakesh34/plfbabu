@@ -853,7 +853,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.realizationDate.setValue(rch.getRealizationDate());
 		}
 
-		fillComboBox(this.receiptModeStatus, rch.getReceiptModeStatus(), PennantStaticListUtil.getReceiptModeStatus(),
+		fillComboBox(this.receiptModeStatus, rch.getReceiptModeStatus(), PennantStaticListUtil.getEnquiryReceiptModeStatus(),
 				"");
 	}
 

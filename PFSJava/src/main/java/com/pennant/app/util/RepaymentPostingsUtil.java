@@ -1120,7 +1120,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		//Overdue Details Updation for Paid Penalty
-		if (aeEvent.isPostingSucess()
+		/*if (aeEvent.isPostingSucess()
 				&& StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
 			BigDecimal penaltyAmt = rpyQueueHeader.getPenalty().add(rpyQueueHeader.getPenaltyWaived());
 
@@ -1136,7 +1136,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				detail.setTotWaived(rpyQueueHeader.getPenaltyWaived());
 				getFinODDetailsDAO().updateTotals(detail);
 			}
-		}
+		}*/
 
 		logger.debug("Leaving");
 		return aeEvent;

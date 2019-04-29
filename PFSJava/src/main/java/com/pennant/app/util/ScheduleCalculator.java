@@ -4618,7 +4618,20 @@ public class ScheduleCalculator {
 
 				curSchd.setProfitSchd(
 						prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount()));
-				curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
+
+				if (StringUtils.isNotBlank(finMain.getReceiptPurpose())
+						&& (StringUtils.equals(finMain.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)
+								|| StringUtils.equals(finMain.getReceiptPurpose(),
+										FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
+
+					if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
+						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+					} else {
+						curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
+					}
+				} else {
+					curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
+				}
 
 			} else if (!finMain.isProtectSchdPft()) {
 				schdInterest = calProfitToSchd(curSchd, prvSchd);
