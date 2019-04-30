@@ -1588,6 +1588,56 @@ public class ReceiptCalculator implements Serializable {
 				recalEarlyStlAlloc(receiptData, receiptData.getActualReceiptAmount());
 			}
 		}
+		rch = receiptData.getReceiptHeader();
+		List<ReceiptAllocationDetail> allocationList = rch.getAllocations();
+		for (int i = 0; i < allocationList.size(); i++) {
+			ReceiptAllocationDetail allocate = allocationList.get(i);
+			if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)) {
+				BigDecimal[] emisplit = getEmiSplit(receiptData, allocate.getTotalPaid());
+				for (ReceiptAllocationDetail alloc : rch.getAllocations()) {
+					if (StringUtils.equals(alloc.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+						alloc.setTotalPaid(emisplit[1]);
+						alloc.setPaidAmount(emisplit[1]);
+					} else if (StringUtils.equals(alloc.getAllocationType(), RepayConstants.ALLOCATION_NPFT)) {
+						alloc.setTotalPaid(emisplit[2]);
+						alloc.setPaidAmount(emisplit[2]);
+					} else if (StringUtils.equals(alloc.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+						if (alloc.getTotalDue().compareTo(BigDecimal.ZERO) > 0) {
+							alloc.setTotalPaid(emisplit[1].subtract(emisplit[2]));
+							alloc.setPaidAmount(emisplit[1].subtract(emisplit[2]));
+						}
+					} else if (StringUtils.equals(alloc.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+						alloc.setTotalPaid(emisplit[0]);
+						alloc.setPaidAmount(emisplit[0]);
+					}
+				}
+				continue;
+			}
+
+			if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_NPFT)) {
+				FinScheduleData fsd = receiptData.getFinanceDetail().getFinScheduleData();
+				List<FinanceScheduleDetail> schdDtls = fsd.getFinanceScheduleDetails();
+				FinanceScheduleDetail lastSchd = schdDtls.get(schdDtls.size() - 1);
+				BigDecimal npftPaid = allocate.getTotalPaid();
+				BigDecimal pftPaid = allocate.getTotalPaid();
+				if (lastSchd.isTDSApplicable()) {
+					pftPaid = getNetOffTDS(npftPaid);
+				} else {
+					npftPaid = pftPaid;
+				}
+				for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+					if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_PFT)) {
+						allocteDtl.setTotalPaid(pftPaid);
+						allocteDtl.setPaidAmount(pftPaid);
+					}
+					if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_TDS)) {
+						allocteDtl.setTotalPaid(pftPaid.subtract(npftPaid));
+						allocteDtl.setPaidAmount(pftPaid.subtract(npftPaid));
+					}
+				}
+			}
+
+		}
 		return receiptData;
 	}
 
@@ -1607,18 +1657,22 @@ public class ReceiptCalculator implements Serializable {
 					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PRI)
 					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)
 					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
-				allocate.setTotalPaid(allocate.getTotalDue().subtract(allocate.getWaivedAmount()));
-				allocate.setPaidAmount(allocate.getTotalDue().subtract(allocate.getWaivedAmount()));
+
 				continue;
 			}
-			BigDecimal payNow = allocate.getTotalDue().subtract(allocate.getTotalPaid());
+			BigDecimal payNow = allocate.getTotalDue()
+					.subtract(allocate.getTotalPaid().add(allocate.getWaivedAmount()));
+			if (payNow.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
 			if (totalReceiptAmount.compareTo(payNow) > 0) {
 				totalReceiptAmount = totalReceiptAmount.subtract(payNow);
 			} else {
 				payNow = totalReceiptAmount;
 				totalReceiptAmount = BigDecimal.ZERO;
 			}
-			allocate.setTotalPaid(allocate.getTotalPaid().add(payNow.subtract(allocate.getWaivedAmount())));
+
+			allocate.setTotalPaid(allocate.getTotalPaid().add(payNow));
 			allocate.setPaidAmount(allocate.getPaidAmount().add(payNow));
 			if (totalReceiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				break;
@@ -1718,14 +1772,13 @@ public class ReceiptCalculator implements Serializable {
 		List<FinFeeDetail> finFeeDtls = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDtls != null) {
 			for (FinFeeDetail feeDtl : finFeeDtls) {
-				if (allocate.getFeeId() == feeDtl.getFeeID()) {
+				if (allocate.getAllocationTo() == -(feeDtl.getFeeTypeID())) {
 					feeDtl.setPaidAmount(feeDtl.getPaidAmount().add(allocate.getPaidNow()));
 					break;
 				}
 			}
 		}
 		return receiptData;
-
 	}
 
 	private ManualAdviseMovements buildManualAdvsieMovements(ReceiptAllocationDetail allocate, Date valueDate) {
@@ -3088,6 +3141,9 @@ public class ReceiptCalculator implements Serializable {
 			if (pftPaid.compareTo(BigDecimal.ZERO) <= 0) {
 				return nBalPft;
 			}
+			if (balPft.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
 			if (balPft.compareTo(pftPaid) > 0) {
 				pftNow = balPft.subtract(pftPaid);
 				pftPaid = pftPaid.subtract(pftNow);
@@ -3276,6 +3332,9 @@ public class ReceiptCalculator implements Serializable {
 				if (schd.getSchDate().compareTo(repay.getFinSchdDate()) == 0) {
 					schd.setSchdPriPaid(schd.getSchdPriPaid().subtract(repay.getFinSchdPriPaid()));
 					schd.setSchdPftPaid(schd.getSchdPftPaid().subtract(repay.getFinSchdPftPaid()));
+					schd.setTDSPaid(schd.getTDSPaid().subtract(repay.getFinSchdTdsPaid()));
+					schd.setSchPriPaid(false);
+					schd.setSchPftPaid(false);
 					break;
 				}
 			}

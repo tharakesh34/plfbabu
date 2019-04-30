@@ -34,7 +34,6 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -275,8 +274,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	private void doSetFieldProperties() {
 
-		
-
 		this.tranBranch.setMandatoryStyle(true);
 		this.tranBranch.setTextBoxWidth(155);
 		this.tranBranch.setReadonly(false);
@@ -288,7 +285,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.receiptDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.receiptDate.setValue(appDate);
-		
+
 		this.receiptAmount.setTextBoxWidth(190);
 
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
@@ -337,15 +334,15 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
 		}
-		if (isKnockOff ){
+		if (isKnockOff) {
 			this.receiptAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
-		}else{
+		} else {
 			this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		}
 		this.receiptDues.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptDues.setTextBoxWidth(190);
 		this.receiptDues.setDisabled(true);
-		
+
 		this.finReference.setButtonDisabled(false);
 		this.finReference.setTextBoxWidth(155);
 		this.finReference.setMandatoryStyle(true);
@@ -353,8 +350,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		if (isForeClosure){
-			this.finReference.setFilters((new Filter[] {new Filter("FinIsActive", 1, Filter.OP_EQUAL)}));
+		if (isForeClosure) {
+			this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
 		}
 
 	}

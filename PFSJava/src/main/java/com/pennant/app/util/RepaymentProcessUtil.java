@@ -151,6 +151,7 @@ public class RepaymentProcessUtil {
 		logger.debug("Entering");
 
 		String finrefer = financeMain.getFinReference();
+		getFinReceiptHeaderDAO().generatedReceiptID(rch);
 		//Prepare schedule data for log
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = new FinScheduleData();
@@ -168,6 +169,7 @@ public class RepaymentProcessUtil {
 		FinReceiptData finReceiptData = new FinReceiptData();
 		//TDS Calculation, if Applicable
 		financeDetail.setFinScheduleData(scheduleData);
+		List<XcessPayables> xcsPaybles = rch.getXcessPayables();
 
 		scheduleData.getFinanceMain().setRecordType("");
 		scheduleData.getFinanceMain().setVersion(scheduleData.getFinanceMain().getVersion() + 1);
@@ -197,6 +199,8 @@ public class RepaymentProcessUtil {
 
 		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
 		finReceiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(schdDtls);
+		finReceiptData.getReceiptHeader().getXcessPayables().clear();
+		finReceiptData.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);
 
 		List<Object> returnList = doProcessReceipts(financeMain, schdDtls, profitDetail, rch, finFeeDetailList,
 				scheduleData, valuedate, postDate, financeDetail);
@@ -345,10 +349,8 @@ public class RepaymentProcessUtil {
 
 			if (StringUtils.equals(xcessPayable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
 				extDataMap.put("EX_ReceiptAmount", xcessPayable.getTotPaidNow());
-				amountCodes.setToExcessAmt(xcessPayable.getTotPaidNow());
 			} else if (StringUtils.equals(xcessPayable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
 				extDataMap.put("EA_ReceiptAmount", xcessPayable.getTotPaidNow());
-				amountCodes.setToEmiAdvance(xcessPayable.getTotPaidNow());
 			} else {
 				// Paid Amount. GST Tax to be included after Bajaj Test
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_P"), xcessPayable.getTotPaidNow());
@@ -432,27 +434,21 @@ public class RepaymentProcessUtil {
 		}
 
 		//Put Manual Advises to the map
-		/*List<ReceiptAllocationDetail> radList = rch.getAllocations();
-		for (int i = 0; i < radList.size(); i++) {
-			ReceiptAllocationDetail rad = radList.get(i);
-			String allocType = rad.getAllocationType();
-			String bounceChg = "bounceCharge";
-
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)) {
-				extDataMap.put((bounceChg + "Paid"), rad.getTotalPaid());
-				extDataMap.put((bounceChg + "_CGST_P"), rad.getPaidCGST());
-				extDataMap.put((bounceChg + "_SGST_P"), rad.getPaidSGST());
-				extDataMap.put((bounceChg + "_UGST_P"), rad.getPaidUGST());
-				extDataMap.put((bounceChg + "_IGST_P"), rad.getPaidIGST());
-			} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_MANADV)) {
-				// Paid Amount. GST Tax to be included after Bajaj Test
-				extDataMap.put((rad.getFeeTypeCode() + "_P"), rad.getTotalPaid());
-				extDataMap.put((rad.getFeeTypeCode() + "_CGST_P"), rad.getPaidCGST());
-				extDataMap.put((rad.getFeeTypeCode() + "_SGST_P"), rad.getPaidSGST());
-				extDataMap.put((rad.getFeeTypeCode() + "_UGST_P"), rad.getPaidUGST());
-				extDataMap.put((rad.getFeeTypeCode() + "_IGST_P"), rad.getPaidIGST());
-			}
-		}*/
+		/*
+		 * List<ReceiptAllocationDetail> radList = rch.getAllocations(); for (int i = 0; i < radList.size(); i++) {
+		 * ReceiptAllocationDetail rad = radList.get(i); String allocType = rad.getAllocationType(); String bounceChg =
+		 * "bounceCharge";
+		 * 
+		 * if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)) {
+		 * extDataMap.put((bounceChg + "Paid"), rad.getTotalPaid()); extDataMap.put((bounceChg + "_CGST_P"),
+		 * rad.getPaidCGST()); extDataMap.put((bounceChg + "_SGST_P"), rad.getPaidSGST()); extDataMap.put((bounceChg +
+		 * "_UGST_P"), rad.getPaidUGST()); extDataMap.put((bounceChg + "_IGST_P"), rad.getPaidIGST()); } else if
+		 * (StringUtils.equals(allocType, RepayConstants.ALLOCATION_MANADV)) { // Paid Amount. GST Tax to be included
+		 * after Bajaj Test extDataMap.put((rad.getFeeTypeCode() + "_P"), rad.getTotalPaid());
+		 * extDataMap.put((rad.getFeeTypeCode() + "_CGST_P"), rad.getPaidCGST()); extDataMap.put((rad.getFeeTypeCode() +
+		 * "_SGST_P"), rad.getPaidSGST()); extDataMap.put((rad.getFeeTypeCode() + "_UGST_P"), rad.getPaidUGST());
+		 * extDataMap.put((rad.getFeeTypeCode() + "_IGST_P"), rad.getPaidIGST()); } }
+		 */
 
 		extDataMap.putAll(prepareMovementMap(movements));
 
@@ -463,14 +459,20 @@ public class RepaymentProcessUtil {
 		adjustedToReceipt = adjustedToReceipt.add(rch.getTotalFees().getTotalPaid());
 
 		BigDecimal toExcess = rch.getReceiptAmount().subtract(adjustedToReceipt);
-		if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
-			extDataMap.put("ae_toEmiAdvance", toExcess);
-		} else if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_BOUNCE)) {
-			extDataMap.put("ae_toBounce", toExcess);
-		} else if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_SETTLEMENT)) {
-			extDataMap.put("ae_toSettlement", toExcess);
-		} else if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS)) {
-			extDataMap.put("ae_toExcessAmt", toExcess);
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, rch.getReceiptPurpose())) {
+			adjustedToReceipt = adjustedToReceipt.add(toExcess);
+			toExcess = BigDecimal.ZERO;
+		}
+		if (toExcess.compareTo(BigDecimal.ZERO) > 0) {
+			if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EMIINADV)) {
+				extDataMap.put("ae_toEmiAdvance", toExcess);
+			} else if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_BOUNCE)) {
+				extDataMap.put("ae_toBounce", toExcess);
+			} else if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_SETTLEMENT)) {
+				extDataMap.put("ae_toSettlement", toExcess);
+			} else if (StringUtils.equals(rch.getExcessAdjustTo(), RepayConstants.EXCESSADJUSTTO_EXCESS)) {
+				extDataMap.put("ae_toExcessAmt", toExcess);
+			}
 		}
 
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -496,6 +498,12 @@ public class RepaymentProcessUtil {
 			}
 			int transOrder = 0;
 			linkedTranId = (long) returnList.get(1);
+			for (FinReceiptDetail rcDtl : rch.getReceiptDetails()) {
+				FinRepayHeader rpyh = rcDtl.getRepayHeader();
+				if (rpyh != null) {
+					rpyh.setLinkedTranId(linkedTranId);
+				}
+			}
 			rph.setLinkedTranId(linkedTranId);
 			transOrder = (int) returnList.get(9);
 			rph.setValueDate(postDate);

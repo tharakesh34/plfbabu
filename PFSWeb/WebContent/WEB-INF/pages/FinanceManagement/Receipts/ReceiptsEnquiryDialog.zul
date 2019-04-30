@@ -252,6 +252,13 @@
 													<label id="label_ReceiptDialog_CancelReason"
 														value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
 													<extendedcombobox id="cancelReason" />
+													
+													<label id="label_ReceiptDialog_CancelDate"
+														value="${c:l('label_ReceiptDialog_CanceDate.value')}" />
+													<hbox id="hbox_ReceiptDialog_CanceDate">
+														<space spacing="2px"  />
+														<datebox id="cancelDate" width="100px" disabled="true" />
+													</hbox>
 
 													<label id="label_ReceiptDialog_CancelRemark"
 														value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />

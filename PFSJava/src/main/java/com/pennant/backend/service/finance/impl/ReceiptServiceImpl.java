@@ -634,6 +634,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// =======================================
 		long receiptID = receiptHeader.getReceiptID();
 		receiptHeader.setRcdMaintainSts("R");
+		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+			receiptHeader.setBounceDate(DateUtility.getAppDate());
+		}
 		if (receiptHeader.isNew()) {
 
 			// Save Receipt Header
@@ -1311,12 +1314,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Execute Accounting Details Process
 		// =======================================
-		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
-		FinanceMain financeMain = scheduleData.getFinanceMain();
-		String finReference = financeMain.getFinReference();
-
-		List<FinanceScheduleDetail> finSchdDtls = cloner.deepClone(scheduleData.getFinanceScheduleDetails());
-
 		if (receiptData.getReceiptHeader().getReceiptID() > 0) {
 			receiptData = recalculateReceipt(receiptData);
 			if (receiptData.getErrorDetails().size() > 0) {
@@ -1324,7 +1321,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return auditHeader;
 			}
 		}
+		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
+		FinanceMain financeMain = scheduleData.getFinanceMain();
+		String finReference = financeMain.getFinReference();
 
+		List<FinanceScheduleDetail> finSchdDtls = cloner.deepClone(scheduleData.getFinanceScheduleDetails());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		rch.setRoleCode(roleCode);
 		rch.setNextRoleCode(nextRoleCode);
@@ -2438,19 +2439,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Prepare Receipt Details Data
 		FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
 		receiptHeader.setReceiptAmount(receiptHeader.getReceiptAmount());
-		// receiptHeader.getAllocations().clear();
-
-		// Receipt Mode case
-		FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(0);
-		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		receiptDetail.setPaymentType(receiptHeader.getReceiptMode());
-		receiptDetail.setPayAgainstID(0);
-		receiptDetail.setAmount(receiptHeader.getReceiptAmount());
-		receiptDetail.setDelRecord(false);
-		receiptDetail.setPayOrder(1);
-		receiptDetail.getAdvMovements().clear();
-		receiptDetail.setDueAmount(receiptCalculator.getTotalNetPastDue(finReceiptData));
 
 		for (ReceiptAllocationDetail allocate : finReceiptData.getReceiptHeader().getAllocations()) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());

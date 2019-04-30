@@ -3121,12 +3121,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isEmiWaived) {
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
+					allocate.setWaivedAmount(BigDecimal.ZERO);
 					adjustWaiver(allocteDtl, allocteDtl.getWaivedAmount().add(priWaived.add(netPftWaived)));
 					break;
 				}
 			}
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
+					allocteDtl.setWaivedAmount(BigDecimal.ZERO);
 					adjustWaiver(allocteDtl, allocteDtl.getWaivedAmount().add(priWaived.add(netPftWaived)));
 					break;
 				}
@@ -3645,7 +3647,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 		try {
-			if (receivedFrom.isVisible() && !receivedFrom.isDisabled()) {
+			if (receivedFrom.isVisible()) {
 				header.setReceivedFrom(getComboboxValue(receivedFrom));
 			}
 		} catch (WrongValueException we) {

@@ -4367,7 +4367,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
-				" Select T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
+				" Select DISTINCT T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
 		selectSql.append(" From FinanceMain T1");
 		selectSql.append(" where T1.CustId = :CustId");
 
@@ -4396,7 +4396,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(
-				" Select T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
+				" Select DISTINCT T1.FinReference, T1.FINTYPE, T1.FINSTARTDATE, T1.FINSTATUS, T1.FINCCY, T1.FinCurrAssetValue, T1.FeeChargeAmt, T1.InsuranceAmt, T1.FinRepaymentAmount");
 		selectSql.append(" From FinanceMain T1");
 		selectSql.append(" Inner Join CollateralAssignment T2 On T2.Reference = T1.FinReference");
 		selectSql.append(" Where T2.COLLATERALREF In (select collateralref from COLLATERALASSIGNMENT ");

@@ -236,6 +236,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row row_BounceRemarks;
 	protected Textbox bounceRemarks;
 	protected Datebox bounceDate;
+	protected Datebox cancelDate;
 	protected Row row_CancelReason;
 	protected ExtendedCombobox cancelReason;
 	protected ExtendedCombobox cancelRemarks;
@@ -583,6 +584,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
 		this.bounceDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.cancelDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setModuleName("FinTypePartner");
@@ -849,6 +851,11 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			this.cancelReason.setValue(rch.getCancelReason(), rch.getCancelReasonDesc());
+			this.cancelDate.setVisible(true);
+			this.cancelDate.setValue(rch.getBounceDate());
+			if (rch.getBounceDate() == null) {
+				this.bounceDate.setValue(DateUtility.getAppDate());
+			}
 		} else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 			this.realizationDate.setValue(rch.getRealizationDate());
 		}
