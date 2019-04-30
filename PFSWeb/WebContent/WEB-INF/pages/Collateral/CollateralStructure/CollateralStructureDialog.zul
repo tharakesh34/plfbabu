@@ -11,51 +11,96 @@
 		.3em; font-size: 10pt; font-family: monospace; padding-top: .4em; line-height: normal; }
 	</style>
 
-
 	<script type="text/javascript" src="/ptjs/fulljslint.js" />
 	<script type="text/javascript">
-
-
 		
-		<![CDATA[ function addPreValidationContent(strContent) {
-		zk.Widget.$(jq('$preValidation'))._editor.replaceSelection(strContent); } function
-		addPostValidationContent(strContent) { zk.Widget.$(jq('$postValidation'))._editor.replaceSelection(strContent);
-		} function validateJs(btn) { try{ var scriptCode; jslint_options = {//json object 'passfail':false, // Stop on
-		first error 'white':false, // Strict whitespace (enabled in "good parts") 'browser':false, // Assume a browser
-		'devel':false, // Assume console, alert,... 'widget':false, // Assume Yahoo widget 'windows':false, // Assume
-		Windows 'rhino':false, // Assume Rhino 'safe':false, // Safe Subset 'adsafe':false, // ADsafe 'debug':false, //
-		Tolerate debugger statements 'evil':false, // Tolerate eval() statements 'laxbreak':false, // Tolerate sloppy
-		linebreaking 'forin':false, // Tolerate unfiltered for in 'sub':false, // Tolerate inefficient subscripting
-		'css':false, // Tolerate CSS workarounds 'cap':false, // Tolerate HTML case 'on':false, // Tolerate HTML event
-		handlers 'fragment':false, // Tolerate HTML fragments 'es5':false, // Tolerate ES5 syntax 'onevar':false, //
-		Allow one var statement per function (enabled in "good parts") 'undef':false, // Disallow undefined variables
-		(enabled in "good parts") 'nomen':true, // Disallow dangling _ in identifiers (enabled in "good parts")
-		'eqeqeq':false, // Disallow == and != (enabled in "good parts") 'plusplus':true, // Disallow ++ and -- (enabled
-		in "good parts") 'bitwise':true, // Disallow bitwise operators (enabled in "good parts") 'regexp':true, //
-		Disallow insecure . and [^...] in /RegExp/ (enabled in "good parts") 'newcap':true, // Require Initial Caps for
-		constructors (enabled in "good parts") 'immed':true, // Require parens around immediate invocations (enabled in
-		"good parts") 'strict':false, // Require "use strict"; 'maxerr':10, 'indent':4 };
-
-		// Pre Validation Details if(btn == 1 || btn == 2){ scriptCode =
-		zk.Widget.$(jq('$preValidation'))._editor.getCode(); msgWidget = zk.Widget.$(jq('$btnPreValidate')); simWidget =
-		zk.Widget.$(jq('$btnPreSimulate')); }
-
-		// Post validation Details if(btn == 4 || btn == 5){ scriptCode =
-		zk.Widget.$(jq('$postValidation'))._editor.getCode(); msgWidget = zk.Widget.$(jq('$btnPostValidate')); simWidget
-		= zk.Widget.$(jq('$btnPostSimulate')); }
-
-		if(btn == 3){ scriptCode = zk.Widget.$(jq('$preValidation'))._editor.getCode(); scriptCode = scriptCode + "\n" +
-		zk.Widget.$(jq('$postValidation'))._editor.getCode(); }
-
-		savWidget = zk.Widget.$(jq('$btnSave')); var data; if(scriptCode != ""){ JSLINT(scriptCode, jslint_options);
-		data = [JSLINT.errors,JSLINT.data().implieds]; if(btn==1 || btn == 4){ zAu.send(new zk.Event(msgWidget,
-		'onUser',data)); } if(btn==2 || btn == 5){ zAu.send(new zk.Event(simWidget, 'onUser',data)); } } if(btn==3){
-		zAu.send(new zk.Event(savWidget, 'onUser',data)); }
-
-		}catch(err){ alert("Error on The Page"+err); } } ]]>
+		<![CDATA[ 
+		function addPreValidationContent(strContent) {
+			zk.Widget.$(jq('$preValidation'))._editor.replaceSelection(strContent); 
+			} 
 		
+		function addPostValidationContent(strContent) { 
+			zk.Widget.$(jq('$postValidation'))._editor.replaceSelection(strContent);
+			} 
+		function validateJs(btn) { 
+			try { 
+				var scriptCode; 
+				jslint_options = {//json object 
+				'passfail':false, // Stop on first error 
+				'white':false, // Strict whitespace (enabled in "good parts") 
+				'browser':false, // Assume a browser
+				'devel':false, // Assume console, alert,... 
+				'widget':false, // Assume Yahoo widget 
+				'windows':false, // Assume Windows 
+				'rhino':false, // Assume Rhino 
+				'safe':false, // Safe Subset 
+				'adsafe':false, // ADsafe 
+				'debug':false, // Tolerate debugger statements 
+				'evil':false, // Tolerate eval() statements 
+				'laxbreak':false, // Tolerate sloppy linebreaking 
+				'forin':false, // Tolerate unfiltered for in 
+				'sub':false, // Tolerate inefficient subscripting
+				'css':false, // Tolerate CSS workarounds 
+				'cap':false, // Tolerate HTML case 
+				'on':false, // Tolerate HTML event handlers 
+				'fragment':false, // Tolerate HTML fragments 
+				'es5':false, // Tolerate ES5 syntax 
+				'onevar':false, //	Allow one var statement per function (enabled in "good parts") 
+				'undef':false, // Disallow undefined variables	(enabled in "good parts") 
+				'nomen':true, // Disallow dangling _ in identifiers (enabled in "good parts")
+				'eqeqeq':false, // Disallow == and != (enabled in "good parts") 
+				'plusplus':true, // Disallow ++ and -- (enabled	in "good parts") 
+				'bitwise':true, // Disallow bitwise operators (enabled in "good parts") 
+				'regexp':true, // Disallow insecure . and [^...] in /RegExp/ (enabled in "good parts") 
+				'newcap':true, // Require Initial Caps for constructors (enabled in "good parts") 
+				'immed':true, // Require parens around immediate invocations (enabled in "good parts") 
+				'strict':false, // Require "use strict"; 
+				'maxerr':10, 
+				'indent':4 
+				};
+
+		// Pre Validation Details 
+		if(btn == 1 || btn == 2) { 
+			scriptCode = zk.Widget.$(jq('$preValidation'))._editor.getCode(); 
+			msgWidget = zk.Widget.$(jq('$btnPreValidate')); 
+			simWidget =	zk.Widget.$(jq('$btnPreSimulate')); 
+		}
+
+		// Post validation Details 
+		if(btn == 4 || btn == 5) { 
+			scriptCode = zk.Widget.$(jq('$postValidation'))._editor.getCode(); 
+			msgWidget = zk.Widget.$(jq('$btnPostValidate')); 
+			simWidget = zk.Widget.$(jq('$btnPostSimulate')); 
+		}
+
+		if(btn == 3) { 
+			scriptCode = zk.Widget.$(jq('$preValidation'))._editor.getCode(); 
+			scriptCode = scriptCode + "\n" + zk.Widget.$(jq('$postValidation'))._editor.getCode(); 
+		}
+
+		savWidget = zk.Widget.$(jq('$btnSave')); 
+		var data;
 		
+		if(scriptCode != "") { 
+			JSLINT(scriptCode, jslint_options);
+			data = [JSLINT.errors,JSLINT.data().implieds];
+			
+			if(btn==1 || btn == 4){ 
+				zAu.send(new zk.Event(msgWidget,'onUser',data)); 
+			} 
+			if(btn==2 || btn == 5){ 
+				zAu.send(new zk.Event(simWidget, 'onUser',data)); 
+				} 
+			}
 		
+		if(btn==3) {
+			zAu.send(new zk.Event(savWidget, 'onUser',data)); 
+			}
+		} catch(err) { 
+			alert("Error on The Page"+err); 
+			} 
+			} 
+		]]>
 	</script>
 
 	<window>
