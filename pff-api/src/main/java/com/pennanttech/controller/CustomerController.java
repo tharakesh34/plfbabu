@@ -1207,7 +1207,7 @@ public class CustomerController {
 			emailDetails.setCustEMail(StringUtils.trimToEmpty(email.getCustEMail()));
 			custAgreementDetail.setCustomerEMail(emailDetails);
 		}
-		
+
 		String mobileNumber = "";
 
 		List<CustomerPhoneNumber> phoneNumberList = customerDetails.getCustomerPhoneNumList();
@@ -1227,10 +1227,14 @@ public class CustomerController {
 		}
 		String path = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		byte[] doc = agreementGeneration.getCustomerAgreementGeneration(custAgreementDetail, path,
-				"MMFLAgreement.docx");
+				"Limit Sanction Letter.docx");
 		AgreementData agrdata = new AgreementData();
 		agrdata.setDocContent(doc);
-		agrdata.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		if (doc != null) {
+			agrdata.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		} else {
+			agrdata.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
 		logger.debug(" Leaving ");
 		return agrdata;
 	}
