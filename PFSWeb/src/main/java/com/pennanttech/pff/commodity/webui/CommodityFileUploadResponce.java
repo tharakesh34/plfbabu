@@ -95,8 +95,8 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 
 			commodity.setHSNCode((String) record.getValue("HSNCode"));
 			Object objCurrentValue = record.getValue("CurrentValue");
-			String commodityType = record.getValue("CommodityType") == null ? ""
-					: record.getValue("CommodityType").toString();
+			String commodityType = record.getValue("CommodityTypeCode") == null ? ""
+					: record.getValue("CommodityTypeCode").toString();
 			commodity.setCode((String) record.getValue("Code"));
 			commodity.setDescription((String) record.getValue("Description"));
 			commodity.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -137,6 +137,25 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 				commodity.setVersion(Oldcommodity.getVersion() + 1);
 				commodity.setNewRecord(false);
 				commodity.setRecordType(PennantConstants.TRAN_UPD);
+				if (commodity.getCode() == null || commodity.getCode().equals("")) {
+					commodity.setCode(Oldcommodity.getCode());
+				}
+				if ((commodity.getCommodityType() == Long.MIN_VALUE) || commodity.getCommodityType() == 0) {
+					commodity.setCommodityType(Oldcommodity.getCommodityType());
+				}
+				commodity.setActive(Oldcommodity.isActive());
+				commodity.setDescription(Oldcommodity.getDescription());
+				commodity.setAlertsRequired(Oldcommodity.isAlertsRequired());
+				commodity.setAlertToRoles(Oldcommodity.getAlertToRoles());
+				commodity.setAlertToRolesName(Oldcommodity.getAlertToRolesName());
+				commodity.setAlertType(Oldcommodity.getAlertType());
+				commodity.setAlertTypeName(Oldcommodity.getAlertTypeName());
+				commodity.setCustomerTemplate(Oldcommodity.getCustomerTemplate());
+				commodity.setCustomerTemplateCode(Oldcommodity.getCustomerTemplateCode());
+				commodity.setCustomerTemplateName(Oldcommodity.getCustomerTemplateName());
+				commodity.setUserTemplate(Oldcommodity.getUserTemplate());
+				commodity.setUserTemplateCode(Oldcommodity.getUserTemplateCode());
+				commodity.setUserTemplateName(Oldcommodity.getUserTemplateName());
 			}
 
 			AuditHeader auditHeader = getAuditHeader(commodity, PennantConstants.TRAN_WF);
