@@ -1160,24 +1160,23 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public List<ManualAdviseMovements> getInProcManualAdvMovmnts(List<Long> receiptList) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = null;
 		source = new MapSqlParameterSource();
 		source.addValue("ReceiptId", receiptList);
 
-		StringBuilder selectSql = new StringBuilder(
-				" Select  AdviseID, SUM( PaidAmount) PaidAmount,SUM( WaivedAmount) WaivedAmount ");
-		selectSql.append(" From ManualAdviseMovements");
-		selectSql.append(" Where ReceiptID IN (:ReceiptID)  GROUP BY AdviseID");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select AdviseID, SUM(PaidAmount) PaidAmount, SUM(WaivedAmount) WaivedAmount");
+		sql.append(" From ManualAdviseMovements");
+		sql.append(" Where ReceiptID IN (:ReceiptID)  GROUP BY AdviseID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		RowMapper<ManualAdviseMovements> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ManualAdviseMovements.class);
 
-		List<ManualAdviseMovements> list = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return list;
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override
