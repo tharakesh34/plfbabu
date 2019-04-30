@@ -259,6 +259,11 @@ public class CommodityTypeDialogueCtrl extends GFCBaseCtrl<CommodityType> {
 		this.type.setText(commodityType.getCode());
 		this.description.setText(commodityType.getDescription());
 		this.active.setChecked(commodityType.isActive());
+		if (commodityType.isNew() || (commodityType.getRecordType() != null ? commodityType.getRecordType() : "")
+				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
 		this.recordStatus.setValue(commodityType.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -326,8 +331,6 @@ public class CommodityTypeDialogueCtrl extends GFCBaseCtrl<CommodityType> {
 	public void doShowDialog(CommodityType commodityType) {
 		logger.debug(Literal.ENTERING);
 
-		doWriteBeanToComponents(commodityType);
-
 		if (commodityType.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -345,6 +348,8 @@ public class CommodityTypeDialogueCtrl extends GFCBaseCtrl<CommodityType> {
 				btnCancel.setVisible(false);
 			}
 		}
+
+		doWriteBeanToComponents(commodityType);
 
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
