@@ -4,6 +4,8 @@ import com.pennant.backend.model.WSReturnStatus;
 
 public class AgreementData {
 
+	private String cif;
+	
 	private byte [] docContent;
 	
 	private WSReturnStatus returnStatus;
@@ -22,6 +24,14 @@ public class AgreementData {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getCif() {
+		return cif;
+	}
+
+	public void setCif(String cif) {
+		this.cif = cif;
 	}
 	
 	

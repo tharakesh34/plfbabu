@@ -1231,6 +1231,7 @@ public class CustomerController {
 		AgreementData agrdata = new AgreementData();
 		agrdata.setDocContent(doc);
 		if (doc != null) {
+			agrdata.setCif(customerDetails.getCustomer().getCustCIF());
 			agrdata.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		} else {
 			agrdata.setReturnStatus(APIErrorHandlerService.getFailedStatus());

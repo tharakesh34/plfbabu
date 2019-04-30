@@ -42,5 +42,6 @@ public class APIConstants {
 	public static final String REPORT_SOA = "SOA";
 	public static final String REPORT_TEMPLATE_APPLICATION = "Format1";
 	public static final String REPORT_TEMPLATE_API = "Format2";
+	public static final String CUST_AGR_NAME = "SANCTIONAGREEMENT";
 
 }

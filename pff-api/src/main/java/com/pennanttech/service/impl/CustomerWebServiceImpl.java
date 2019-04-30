@@ -61,6 +61,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CustomerRESTService;
 import com.pennanttech.pffws.CustomerSOAPService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
@@ -2311,25 +2312,45 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	@Override
-	public AgreementData getCustomerAgreement(String custCIF) throws ServiceException {
+	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException {
 
 		logger.debug("Enetring");
 		AgreementData agrData = null;
 		try {
 			// Mandatory validation
-			if (StringUtils.isBlank(custCIF)) {
-				validationUtility.fieldLevelException();
+			if (StringUtils.isBlank(agrRequest.getCif())) {
+				agrData = new AgreementData();
+				String[] valueParm = new String[1];
+				valueParm[0] = "CIF";
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return agrData;
+			}
+			
+			if (StringUtils.isBlank(agrRequest.getAgreementType())) {
+				agrData = new AgreementData();
+				String[] valueParm = new String[1];
+				valueParm[0] = "AgreementType";
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return agrData;
 			}
 			// for logging purpose
-			APIErrorHandlerService.logReference(custCIF);
+			APIErrorHandlerService.logReference(agrRequest.getCif());
+			if (!StringUtils.equals(agrRequest.getAgreementType(), APIConstants.CUST_AGR_NAME)) {
+				agrData = new AgreementData();
+				String[] valueParm = new String[2];
+				valueParm[0] = APIConstants.CUST_AGR_NAME;
+				valueParm[1] = "AgreementType";
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90298", valueParm));
+				return agrData;
+			}
 			// validate Customer with given CustCIF
-			Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+			Customer customer = customerDetailsService.getCustomerByCIF(agrRequest.getCif());
 			if (customer != null) {
 				agrData = customerController.getCustomerAgreement(customer.getCustID());
 			} else {
 				agrData = new AgreementData();
 				String[] valueParm = new String[1];
-				valueParm[0] = custCIF;
+				valueParm[0] = agrRequest.getCif();
 				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
 			}
 		} catch (Exception e) {

@@ -8,6 +8,7 @@ import javax.ws.rs.PathParam;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
@@ -163,5 +164,5 @@ public interface CustomerSOAPService {
 			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
 	
 	@WebResult(name = "customer")
-	public AgreementData getCustomerAgreement(@WebParam(name = "cif") String custCIF) throws ServiceException;
+	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException;
 }

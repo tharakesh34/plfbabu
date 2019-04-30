@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
@@ -222,8 +223,8 @@ public interface CustomerRESTService {
 			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
 	
 	
-	@GET
-	@Path("/customerService/getCustomerAgreement/{cif}")
-	public AgreementData getCustomerAgreement(@PathParam("cif") String custCIF) throws ServiceException;
+	@POST
+	@Path("/customerService/getCustomerAgreement")
+	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException;
 
 }
