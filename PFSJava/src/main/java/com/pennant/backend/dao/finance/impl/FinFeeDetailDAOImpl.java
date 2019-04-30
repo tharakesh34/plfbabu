@@ -342,8 +342,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", :Terms, :RemainingFee, :PaymentRef, :CalculationType, :VasReference, :Status");
 		sql.append(", :RuleCode, :FixedAmount, :Percentage, :CalculateOn, :AlwDeviation, :MaxWaiverPerc");
 		sql.append(", :AlwModifyFee, :AlwModifyFeeSchdMthd, :PostDate, :Refundable, :PaidAmountOriginal");
-		sql.append(", :RemainingFeeGST, :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount");
-		sql.append(", :RemainingFeeOriginal, :TaxApplicable, :TaxComponent, :ActualAmountOriginal");
+		sql.append(", :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount, :RemainingFeeOriginal");
+		sql.append(", :RemainingFeeGST, :TaxApplicable, :TaxComponent, :ActualAmountOriginal");
 		sql.append(", :ActualAmountGST, :TransactionId, :InstructionUID");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
