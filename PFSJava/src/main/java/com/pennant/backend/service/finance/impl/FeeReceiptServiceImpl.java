@@ -62,6 +62,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
+import software.amazon.ion.Decimal;
+
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> implements FeeReceiptService {
 	private static final Logger logger = Logger.getLogger(FeeReceiptServiceImpl.class);
 
@@ -335,8 +337,21 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		if (map != null) {
 			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
-			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
-			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+
+			BigDecimal alwFlexi = BigDecimal.ZERO;
+			if (map.get("AlwFlexi") instanceof Long) {
+				long value = (long) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(value == 0 ? false : true);
+			} else if (map.get("AlwFlexi") instanceof BigDecimal) {
+				alwFlexi = (BigDecimal) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+			} else if (map.get("AlwFlexi") instanceof Integer) {
+				int value = (int) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(value == 0 ? false : true);
+			} else if (map.get("AlwFlexi") instanceof Decimal) {
+				Decimal value = (Decimal) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(value == Decimal.ZERO ? false : true);
+			}
 			amountCodes.setFinbranch((String) map.get("FinBranch"));
 			amountCodes.setEntitycode((String) map.get("Entitycode"));
 			dataMap.put("emptype", map.get("emptype"));

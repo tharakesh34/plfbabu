@@ -2529,6 +2529,9 @@
 		scope="prototype">
 		<property name="feeReceiptService" ref="feeReceiptService" />
 	</bean>
+	
+	<bean id="selectFeeReceiptListCtrl" class="com.pennant.webui.financemanagement.receipts.SelectFeeReceiptListCtrl" parent="basisListCtrl" scope="prototype">
+	</bean>
 
 	<bean id="feeReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.FeeReceiptDialogCtrl" parent="basisListCtrl"
 		scope="prototype">

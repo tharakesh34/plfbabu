@@ -135,6 +135,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
+import software.amazon.ion.Decimal;
+
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptDialog.zul
  */
@@ -1289,8 +1291,20 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
 			amountCodes.setFinbranch((String) map.get("FinBranch"));
 			amountCodes.setEntitycode((String) map.get("Entitycode"));
-			BigDecimal alwFlexi = (BigDecimal) map.get("AlwFlexi");
-			amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+			BigDecimal alwFlexi = BigDecimal.ZERO;
+			if (map.get("AlwFlexi") instanceof Long) {
+				long value = (long) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(value == 0 ? false : true);
+			} else if (map.get("AlwFlexi") instanceof BigDecimal) {
+				alwFlexi = (BigDecimal) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(alwFlexi.compareTo(BigDecimal.ZERO) == 0 ? false : true);
+			} else if (map.get("AlwFlexi") instanceof Integer) {
+				int value = (int) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(value == 0 ? false : true);
+			} else if (map.get("AlwFlexi") instanceof Decimal) {
+				Decimal value = (Decimal) map.get("AlwFlexi");
+				amountCodes.setAlwflexi(value == Decimal.ZERO ? false : true);
+			}
 		} else {
 			amountCodes.setEntitycode(getReceiptHeader().getEntityCode());
 			amountCodes.setFinbranch(getReceiptHeader().getPostBranch());

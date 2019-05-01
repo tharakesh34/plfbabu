@@ -356,7 +356,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		}
 
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
+		String whereCond = " ReceiptID='" + header.getReceiptID() + "' AND version=" + header.getVersion() + " ";
 
 		if (doCheckAuthority(header, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.

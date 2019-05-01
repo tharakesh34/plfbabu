@@ -91,6 +91,12 @@
 									<uppercasebox id="transactionRef" width="150px" />
 								</row>
 								<row>
+									<label id="label_FeeReceiptSearch_FeeReceptReceiptid"
+										value="${c:l('label_FeeReceiptSearch_FeeReceptReceiptid.value')}" />
+									<listbox id="sortOperator_FeeReceiptId" width="43px" mold="select" rows="1" />
+									<longbox id="feeReceiptId" width="163px" maxlength="19" />
+								</row>
+								<row>
 									<label id="label_FeeReceiptSearch_RecordStatus" value="${c:l('label.RecordStatus')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
@@ -114,6 +120,8 @@
 						<listbox id="listBoxFeeReceipt" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
+								<listheader id="listheader_FeeReceiptId" label="${c:l('listheader_FeeReceiptId.label')}"
+									sort="auto" hflex="min" />
 								<listheader id="listheader_FeeReceiptReference" label="${c:l('listheader_FeeReceiptReference.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_FeeReceipt_PromotionCode" label="${c:l('listheader_FeeReceipt_PromotionCode')}"
