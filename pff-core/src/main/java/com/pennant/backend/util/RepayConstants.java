@@ -67,6 +67,8 @@ public class RepayConstants {
 	public static final String EXAMOUNTTYPE_EXCESS = "E";
 	public static final String EXAMOUNTTYPE_EMIINADV = "A";
 	public static final String EXAMOUNTTYPE_PAYABLE = "P";
+	public static final String EXAMOUNTTYPE_ADVINT = "ADVINT";
+	public static final String EXAMOUNTTYPE_ADVEMI = "ADVEMI";
 
 	// Excess Adjustment to in Receipts
 	public static final String EXCESSADJUSTTO_EXCESS = "E";
@@ -131,7 +133,7 @@ public class RepayConstants {
 	 * Received
 	 */
 	public static final String RECEIPTTYPE_RECIPT = "R";
-	
+
 	/**
 	 * Paid
 	 */
