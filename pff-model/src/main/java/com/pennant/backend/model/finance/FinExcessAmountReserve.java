@@ -1,8 +1,10 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class FinExcessAmountReserve {
+public class FinExcessAmountReserve implements Serializable {
+	private static final long serialVersionUID = 2348967326702773559L;
 
 	private long excessID = 0;
 	private long receiptSeqID = 0;
@@ -10,7 +12,7 @@ public class FinExcessAmountReserve {
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
 
 	public FinExcessAmountReserve() {
-
+		super();
 	}
 
 	// ******************************************************//

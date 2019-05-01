@@ -52,14 +52,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String cashierBranch;
 	private Date initiateDate;
 	private String partnerBankCode;
-	private String KnockoffId;
-	private String KnockoffFrom;
-	private Date KnockoffRefDate;
-	private String KnockoffAmount;
+	private String knockoffId;
+	private String knockoffFrom;
+	private Date knockoffRefDate;
+	private String knockoffAmount;
 	private String slipNo;
-	private String RealizeStatus;
-	private String BounceReason;
-	private String RealizeRemarks;
+	private String realizeStatus;
+	private String bounceReason;
+	private String realizeRemarks;
 	private String extReference;
 	private String module;
 	private String subReceiptMode;
@@ -72,23 +72,22 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String paymentType;
 	private String feeTypeCode;
 
-	private String loanClosure_custCIF;
-	protected String loanClosure_finReference;
-	protected String loanClosure_knockOffFrom;
-	protected String loanClosure_refId;
-	protected Date LoanClosure_receiptDate;
-	protected Date LoanClosure_intTillDate;
+	private String loanClosureCustCIF;
+	protected String loanClosureFinReference;
+	protected String loanClosureKnockOffFrom;
+	protected String loanClosureRefId;
+	protected Date loanClosureReceiptDate;
+	protected Date loanClosureIntTillDate;
 
 	private Date depositeDate;
 	private String depositBank;
-	private Date CancelDate;
+	private Date cancelDate;
 	private String lovDescRequestStage;
 
 	private BigDecimal lpiAmount = BigDecimal.ZERO;
 	private BigDecimal lppAmount = BigDecimal.ZERO;
 	private BigDecimal gstLpiAmount = BigDecimal.ZERO;
 	private BigDecimal gstLppAmount = BigDecimal.ZERO;
-	private BigDecimal waivedAmt = BigDecimal.ZERO;
 
 	private String remarks;
 	private boolean depositProcess = false; // added for Cash Management 
@@ -120,22 +119,21 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String finDivisionDesc;
 	private String entityCode;
 
-	private List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>(1);
-	private List<FinExcessAmount> excessAmounts = new ArrayList<FinExcessAmount>(1);
-	private List<FinExcessAmountReserve> excessReserves = new ArrayList<FinExcessAmountReserve>(1);
-	private List<ManualAdvise> payableAdvises = new ArrayList<ManualAdvise>(1);
-	private List<ManualAdvise> receivableAdvises = new ArrayList<ManualAdvise>(1);
-	private List<ManualAdviseReserve> payableReserves = new ArrayList<ManualAdviseReserve>(1);
-	private List<ReceiptAllocationDetail> allocations = new ArrayList<ReceiptAllocationDetail>(1);
-	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<ReceiptAllocationDetail>(1);
+	private List<FinReceiptDetail> receiptDetails = new ArrayList<>(1);
+	private List<FinExcessAmount> excessAmounts = new ArrayList<>(1);
+	private List<FinExcessAmountReserve> excessReserves = new ArrayList<>(1);
+	private List<ManualAdvise> payableAdvises = new ArrayList<>(1);
+	private List<ManualAdvise> receivableAdvises = new ArrayList<>(1);
+	private List<ManualAdviseReserve> payableReserves = new ArrayList<>(1);
+	private List<ReceiptAllocationDetail> allocations = new ArrayList<>(1);
+	private List<ReceiptAllocationDetail> allocationsSummary = new ArrayList<>(1);
 	private ManualAdvise manualAdvise; // Bounce Reason
 	private List<FinFeeDetail> paidFeeList; // Paid Fee Detail List for Fee Receipt
-	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(1);
-	private List<ManualAdviseMovements> payablesMovements = new ArrayList<ManualAdviseMovements>(1);
-	private List<FinExcessMovement> finExcessMovements = new ArrayList<FinExcessMovement>(1);
-	private FinRepayHeader repayHeader = new FinRepayHeader();
+	private List<FinODDetails> finODDetails = new ArrayList<>(1);
+	private List<ManualAdviseMovements> payablesMovements = new ArrayList<>(1);
+	private List<FinExcessMovement> finExcessMovements = new ArrayList<>(1);
 
-	private List<XcessPayables> xcessPayables = new ArrayList<XcessPayables>(1);
+	private List<XcessPayables> xcessPayables = new ArrayList<>(1);
 	private BigDecimal balAmount = BigDecimal.ZERO;
 	private BigDecimal partPayAmount = BigDecimal.ZERO;
 	private BigDecimal tds = BigDecimal.ZERO;
@@ -169,7 +167,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("receiptDetails");
 		excludeFields.add("excessAmounts");
 		excludeFields.add("allocations");
@@ -181,7 +179,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custCIF");
 		excludeFields.add("custShrtName");
 		excludeFields.add("excessReserves");
-		//excludeFields.add("postBranch");
 		excludeFields.add("logSchInPresentment");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("finBranchDesc");
@@ -240,25 +237,25 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("entityCode");
 		excludeFields.add("collectionAgentDesc");
 		excludeFields.add("collectionAgentCode");
-		excludeFields.add("loanClosure_custCIF");
-		excludeFields.add("loanClosure_finReference");
-		excludeFields.add("loanClosure_knockOffFrom");
-		excludeFields.add("loanClosure_refId");
-		excludeFields.add("LoanClosure_receiptDate");
-		excludeFields.add("LoanClosure_intTillDate");
+		excludeFields.add("loanClosureCustCIF");
+		excludeFields.add("loanClosureFinReference");
+		excludeFields.add("loanClosureKnockOffFrom");
+		excludeFields.add("loanClosureRefId");
+		excludeFields.add("LoanClosureReceiptDate");
+		excludeFields.add("LoanClosureIntTillDate");
 		excludeFields.add("depositeDate");
 		excludeFields.add("depositBank");
-		excludeFields.add("CancelDate");
+		excludeFields.add("cancelDate");
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("waivedAmt");
-		excludeFields.add("KnockoffId");
-		excludeFields.add("KnockoffFrom");
-		excludeFields.add("KnockoffRefDate");
-		excludeFields.add("KnockoffAmount");
+		excludeFields.add("knockoffId");
+		excludeFields.add("knockoffFrom");
+		excludeFields.add("knockoffRefDate");
+		excludeFields.add("knockoffAmount");
 		excludeFields.add("slipNo");
-		excludeFields.add("RealizeStatus");
-		excludeFields.add("BounceReason");
-		excludeFields.add("RealizeRemarks");
+		excludeFields.add("realizeStatus");
+		excludeFields.add("bounceReason");
+		excludeFields.add("realizeRemarks");
 		excludeFields.add("allocationsSummary");
 		excludeFields.add("totalRcvAdvises");
 		excludeFields.add("totalBounces");
@@ -295,7 +292,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public long getReceiptID() {
-		return receiptID;
+		return getId();
 	}
 
 	public void setReceiptID(long receiptID) {
@@ -1047,11 +1044,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public Date getCancelDate() {
-		return CancelDate;
+		return cancelDate;
 	}
 
 	public void setCancelDate(Date cancelDate) {
-		CancelDate = cancelDate;
+		this.cancelDate = cancelDate;
 	}
 
 	public String getLovDescRequestStage() {
@@ -1095,35 +1092,35 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getKnockoffId() {
-		return KnockoffId;
+		return knockoffId;
 	}
 
 	public void setKnockoffId(String knockoffId) {
-		KnockoffId = knockoffId;
+		this.knockoffId = knockoffId;
 	}
 
 	public String getKnockoffFrom() {
-		return KnockoffFrom;
+		return knockoffFrom;
 	}
 
 	public void setKnockoffFrom(String knockoffFrom) {
-		KnockoffFrom = knockoffFrom;
+		this.knockoffFrom = knockoffFrom;
 	}
 
 	public Date getKnockoffRefDate() {
-		return KnockoffRefDate;
+		return knockoffRefDate;
 	}
 
 	public void setKnockoffRefDate(Date knockoffRefDate) {
-		KnockoffRefDate = knockoffRefDate;
+		this.knockoffRefDate = knockoffRefDate;
 	}
 
 	public String getKnockoffAmount() {
-		return KnockoffAmount;
+		return knockoffAmount;
 	}
 
 	public void setKnockoffAmount(String knockoffAmount) {
-		KnockoffAmount = knockoffAmount;
+		this.knockoffAmount = knockoffAmount;
 	}
 
 	public String getSlipNo() {
@@ -1135,19 +1132,19 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getRealizeStatus() {
-		return RealizeStatus;
+		return realizeStatus;
 	}
 
 	public void setRealizeStatus(String realizeStatus) {
-		RealizeStatus = realizeStatus;
+		this.realizeStatus = realizeStatus;
 	}
 
 	public String getBounceReason() {
-		return BounceReason;
+		return bounceReason;
 	}
 
 	public void setBounceReason(String bounceReason) {
-		BounceReason = bounceReason;
+		this.bounceReason = bounceReason;
 	}
 
 	public String getSubReceiptMode() {
@@ -1167,11 +1164,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getRealizeRemarks() {
-		return RealizeRemarks;
+		return realizeRemarks;
 	}
 
 	public void setRealizeRemarks(String realizeRemarks) {
-		RealizeRemarks = realizeRemarks;
+		this.realizeRemarks = realizeRemarks;
 	}
 
 	public ReceiptAllocationDetail getTotalBounces() {
@@ -1206,52 +1203,52 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.allocationsSummary = allocationsSummary;
 	}
 
-	public String getLoanClosure_custCIF() {
-		return loanClosure_custCIF;
+	public String getLoanClosureCustCIF() {
+		return loanClosureCustCIF;
 	}
 
-	public void setLoanClosure_custCIF(String loanClosure_custCIF) {
-		this.loanClosure_custCIF = loanClosure_custCIF;
+	public void setLoanClosureCustCIF(String loanClosureCustCIF) {
+		this.loanClosureCustCIF = loanClosureCustCIF;
 	}
 
-	public String getLoanClosure_finReference() {
-		return loanClosure_finReference;
+	public String getLoanClosureFinReference() {
+		return loanClosureFinReference;
 	}
 
-	public void setLoanClosure_finReference(String loanClosure_finReference) {
-		this.loanClosure_finReference = loanClosure_finReference;
+	public void setLoanClosureFinReference(String loanClosureFinReference) {
+		this.loanClosureFinReference = loanClosureFinReference;
 	}
 
-	public String getLoanClosure_knockOffFrom() {
-		return loanClosure_knockOffFrom;
+	public String getLoanClosureKnockOffFrom() {
+		return loanClosureKnockOffFrom;
 	}
 
-	public void setLoanClosure_knockOffFrom(String loanClosure_knockOffFrom) {
-		this.loanClosure_knockOffFrom = loanClosure_knockOffFrom;
+	public void setLoanClosureKnockOffFrom(String loanClosureKnockOffFrom) {
+		this.loanClosureKnockOffFrom = loanClosureKnockOffFrom;
 	}
 
-	public String getLoanClosure_refId() {
-		return loanClosure_refId;
+	public String getLoanClosureRefId() {
+		return loanClosureRefId;
 	}
 
-	public void setLoanClosure_refId(String loanClosure_refId) {
-		this.loanClosure_refId = loanClosure_refId;
+	public void setLoanClosureRefId(String loanClosureRefId) {
+		this.loanClosureRefId = loanClosureRefId;
 	}
 
-	public Date getLoanClosure_receiptDate() {
-		return LoanClosure_receiptDate;
+	public Date getLoanClosureReceiptDate() {
+		return loanClosureReceiptDate;
 	}
 
-	public void setLoanClosure_receiptDate(Date loanClosure_receiptDate) {
-		LoanClosure_receiptDate = loanClosure_receiptDate;
+	public void setLoanClosureReceiptDate(Date loanClosureReceiptDate) {
+		this.loanClosureReceiptDate = loanClosureReceiptDate;
 	}
 
-	public Date getLoanClosure_intTillDate() {
-		return LoanClosure_intTillDate;
+	public Date getLoanClosureIntTillDate() {
+		return loanClosureIntTillDate;
 	}
 
-	public void setLoanClosure_intTillDate(Date loanClosure_intTillDate) {
-		LoanClosure_intTillDate = loanClosure_intTillDate;
+	public void setLoanClosureIntTillDate(Date loanClosureIntTillDate) {
+		this.loanClosureIntTillDate = loanClosureIntTillDate;
 	}
 
 	public String getPaymentType() {
@@ -1355,7 +1352,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
 	}
-	
+
 	public boolean isLoanInActive() {
 		return loanInActive;
 	}

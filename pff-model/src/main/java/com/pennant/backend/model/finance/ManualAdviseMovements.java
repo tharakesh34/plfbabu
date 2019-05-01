@@ -1,9 +1,11 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ManualAdviseMovements {
+public class ManualAdviseMovements implements Serializable {
+	private static final long serialVersionUID = 6112694689541699540L;
 
 	private long movementID = Long.MIN_VALUE;
 	private long adviseID = Long.MIN_VALUE;

@@ -1,15 +1,17 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ManualAdviseReserve {
+public class ManualAdviseReserve implements Serializable {
+	private static final long serialVersionUID = -7770933426665736780L;
 
 	private long adviseID = 0;
 	private long receiptSeqID = 0;
 	private BigDecimal reservedAmt = BigDecimal.ZERO;
 
 	public ManualAdviseReserve() {
-
+		super();
 	}
 
 	// ******************************************************//
