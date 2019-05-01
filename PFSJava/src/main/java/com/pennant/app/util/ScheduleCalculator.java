@@ -2994,7 +2994,8 @@ public class ScheduleCalculator {
 		ri.setRepayDate(fromDate);
 		ri.setRepayAmount(repayAmount);
 		ri.setRepaySchdMethod(schdMethod);
-
+		ri.setFinReference(finMain.getFinReference());
+		
 		finScheduleData.getRepayInstructions().add(ri);
 
 		// Add (reset) repay instruction after todate
@@ -3005,6 +3006,7 @@ public class ScheduleCalculator {
 
 		if (DateUtility.compare(nextInstructDate, fromDate) > 0) {
 			ri = new RepayInstruction();
+			ri.setFinReference(finMain.getFinReference());
 			ri.setRepayDate(nextInstructDate);
 			ri.setRepayAmount(nextInstructAmount);
 			ri.setRepaySchdMethod(nextInstructSchdMethod);
