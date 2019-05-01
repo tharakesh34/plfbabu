@@ -90,15 +90,21 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 
 			@SuppressWarnings("unchecked")
 			Map<String, Long> mapCommodityTypes = (Map<String, Long>) attributes.getParameterMap().get("CommodityType");
-
+			String commodityType = "";
 			Commodity commodity = new Commodity();
 
 			commodity.setHSNCode((String) record.getValue("HSNCode"));
 			Object objCurrentValue = record.getValue("CurrentValue");
-			String commodityType = record.getValue("CommodityTypeCode") == null ? ""
-					: record.getValue("CommodityTypeCode").toString();
-			commodity.setCode((String) record.getValue("Code"));
-			commodity.setDescription((String) record.getValue("Description"));
+			if (record.hasValue("CommodityTypeCode")) {
+				commodityType = record.getValue("CommodityTypeCode") == null ? ""
+						: record.getValue("CommodityTypeCode").toString();
+			}
+			if (record.hasValue("Code")) {
+				commodity.setCode((String) record.getValue("Code"));
+			}
+			if (record.hasValue("Description")) {
+				commodity.setDescription((String) record.getValue("Description"));
+			}
 			commodity.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			commodity.setLastMntBy(userId);
 			commodity.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -129,37 +135,16 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 					commodity.setVersion(1);
 					commodity.setNewRecord(true);
 					commodity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					AuditHeader auditHeader = getAuditHeader(commodity, PennantConstants.TRAN_WF);
+					commoditiesService.doApprove(auditHeader);
 				} else {
 					throw new ConcurrencyException();
 				}
 			} else {
 				commodity.setId(Oldcommodity.getId());
 				commodity.setVersion(Oldcommodity.getVersion() + 1);
-				commodity.setNewRecord(false);
-				commodity.setRecordType(PennantConstants.TRAN_UPD);
-				if (commodity.getCode() == null || commodity.getCode().equals("")) {
-					commodity.setCode(Oldcommodity.getCode());
-				}
-				if ((commodity.getCommodityType() == Long.MIN_VALUE) || commodity.getCommodityType() == 0) {
-					commodity.setCommodityType(Oldcommodity.getCommodityType());
-				}
-				commodity.setActive(Oldcommodity.isActive());
-				commodity.setDescription(Oldcommodity.getDescription());
-				commodity.setAlertsRequired(Oldcommodity.isAlertsRequired());
-				commodity.setAlertToRoles(Oldcommodity.getAlertToRoles());
-				commodity.setAlertToRolesName(Oldcommodity.getAlertToRolesName());
-				commodity.setAlertType(Oldcommodity.getAlertType());
-				commodity.setAlertTypeName(Oldcommodity.getAlertTypeName());
-				commodity.setCustomerTemplate(Oldcommodity.getCustomerTemplate());
-				commodity.setCustomerTemplateCode(Oldcommodity.getCustomerTemplateCode());
-				commodity.setCustomerTemplateName(Oldcommodity.getCustomerTemplateName());
-				commodity.setUserTemplate(Oldcommodity.getUserTemplate());
-				commodity.setUserTemplateCode(Oldcommodity.getUserTemplateCode());
-				commodity.setUserTemplateName(Oldcommodity.getUserTemplateName());
+				commoditiesDAO.updateCommodity(commodity);
 			}
-
-			AuditHeader auditHeader = getAuditHeader(commodity, PennantConstants.TRAN_WF);
-			commoditiesService.doApprove(auditHeader);
 
 			MapSqlParameterSource beforeMapdata = new MapSqlParameterSource();
 			MapSqlParameterSource afterMapdata = new MapSqlParameterSource();

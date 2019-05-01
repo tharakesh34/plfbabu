@@ -270,5 +270,25 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	
+	@Override
+	public void updateCommodity(Commodity commodity) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update Commodities");
+		sql.append(" set CurrentValue = :CurrentValue, Version = :Version ");
+		sql.append(" where HSNCode = :HSNCode ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSources = new BeanPropertySqlParameterSource(commodity);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSources);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 
 }
