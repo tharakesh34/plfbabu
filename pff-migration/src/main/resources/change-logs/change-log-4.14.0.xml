@@ -2137,7 +2137,7 @@
 	
 	<changeSet id="16" author="aditya.a">
 	   <createView viewName="Postings_View" replaceIfExists="true">
-    SELECT t1.linkedtranid,
+     SELECT t1.linkedtranid,
     t1.postref,
     t1.postingid,
     t1.finreference,
@@ -2201,7 +2201,7 @@ UNION ALL
  SELECT t1.linkedtranid,
     t1.postref,
     t1.postingid,
-    t3.reference AS finreference,
+    cast(t3.reference as varchar2(20)) AS finreference,
     t1.finevent,
     t1.postdate,
     t1.valuedate,
@@ -2226,10 +2226,10 @@ UNION ALL
     t1.transorder
    FROM postings t1
      JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-     JOIN jvpostings t3 ON t3.batchreference::text = t1.finreference::text
+     JOIN jvpostings t3 ON cast(t3.batchreference as varchar2(20)) = t1.finreference
 		</createView>
     </changeSet>
-
+   
 	<!--This change log xml is Freezed dont add change sets in this version.
 		please add new change sets on change-log-{pff.version}.xml 
 		i.e pff.version  from pom.xml in pff pff-aggregator -->
