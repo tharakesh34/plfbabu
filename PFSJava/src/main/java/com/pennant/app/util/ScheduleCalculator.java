@@ -1134,6 +1134,14 @@ public class ScheduleCalculator {
 					oldInstructions) >= 0) {
 				finScheduleData.getRepayInstructions().remove(i);
 				i = i - 1;
+			} else if (DateUtility.compare(finScheduleData.getRepayInstructions().get(i).getRepayDate(),
+					oldInstructions) < 0
+					&& (StringUtils.equals(finScheduleData.getRepayInstructions().get(i).getRepaySchdMethod(),
+							CalculationConstants.SCHMTHD_EQUAL)
+							|| StringUtils.equals(finScheduleData.getRepayInstructions().get(i).getRepaySchdMethod(),
+									CalculationConstants.SCHMTHD_PRI_PFT))) {
+				finScheduleData.getRepayInstructions().get(i).setRepaySchdMethod(finMain.getGrcSchdMthd());
+				finScheduleData.getRepayInstructions().get(i).setRepayAmount(BigDecimal.ZERO);
 			}
 		}
 

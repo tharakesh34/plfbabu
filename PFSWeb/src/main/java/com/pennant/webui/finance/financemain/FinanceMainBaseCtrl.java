@@ -13949,12 +13949,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						int day = DateUtility.getDay(this.nextRepayPftDate.getValue());
 						this.nextRepayDate_two.setValue(FrequencyUtil
 								.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayPftDate.getValue(),
-										HolidayHandlerTypes.MOVE_NONE, day == frqDay, financeType.getFddLockPeriod())
+										HolidayHandlerTypes.MOVE_NONE, day == frqDay,
+										this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 								.getNextFrequencyDate());
 					} else {
 						this.nextRepayDate_two.setValue(FrequencyUtil
 								.getNextDate(this.repayFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-										HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+										HolidayHandlerTypes.MOVE_NONE, false,
+										this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 								.getNextFrequencyDate());
 					}
 				}
@@ -13987,13 +13989,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				int day = DateUtility.getDay(this.nextRepayPftDate.getValue());
 				this.nextRepayDate_two.setValue(FrequencyUtil
 						.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayPftDate.getValue(),
-								HolidayHandlerTypes.MOVE_NONE, day == frqDay, financeType.getFddLockPeriod())
+								HolidayHandlerTypes.MOVE_NONE, day == frqDay,
+								this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 						.getNextFrequencyDate());
 
 			} else {
 				this.nextRepayDate_two.setValue(FrequencyUtil
 						.getNextDate(this.repayFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+								HolidayHandlerTypes.MOVE_NONE, false,
+								this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 						.getNextFrequencyDate());
 
 			}
@@ -14126,7 +14130,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 			this.nextRepayPftDate_two.setValue(FrequencyUtil
 					.getNextDate(this.repayPftFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+							HolidayHandlerTypes.MOVE_NONE, false,
+							this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 					.getNextFrequencyDate());
 		} else if (!this.rpyPftFrqRow.isVisible()) {
 			this.nextRepayPftDate_two.setValue(this.nextRepayDate_two.getValue());
@@ -14151,12 +14156,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.nextRepayRvwDate_two.setValue(FrequencyUtil
 						.getNextDate(this.repayRvwFrq.getValue(), 1,
 								DateUtility.addMonths(this.gracePeriodEndDate_two.getValue(), fixedTenor - 1),
-								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+								HolidayHandlerTypes.MOVE_NONE, false,
+								this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 						.getNextFrequencyDate());
 			} else {
 				this.nextRepayRvwDate_two.setValue(FrequencyUtil
 						.getNextDate(this.repayRvwFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+								HolidayHandlerTypes.MOVE_NONE, false,
+								this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 						.getNextFrequencyDate());
 			}
 		}
@@ -14175,7 +14182,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 			this.nextRepayCpzDate_two.setValue(FrequencyUtil
 					.getNextDate(this.repayCpzFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-							HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
+							HolidayHandlerTypes.MOVE_NONE, false,
+							this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
 					.getNextFrequencyDate());
 		}
 
@@ -17525,6 +17533,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)) {
 				financeMain.setScheduleRegenerated(true);
 			}
+
+			org_grcPeriodEndDate = getFinanceDetail().getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 
 			//Schedule tab Selection After Schedule Re-modified
 			Tab tab = getTab(AssetConstants.UNIQUE_ID_SCHEDULE);
