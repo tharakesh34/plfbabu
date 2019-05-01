@@ -26,7 +26,7 @@
  * com.pennant.backend.service.finance.FinCovenantTypeService; import com.pennant.backend.util.PennantConstants; import
  * com.pennant.util.ErrorControl; import com.pennant.util.Constraint.PTDateValidator; import
  * com.pennant.util.Constraint.PTStringValidator; import com.pennant.webui.util.GFCBaseCtrl; import
- * com.pennanttech.pennapps.web.util.MessageUtil; import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+ * com.pennanttech.pennapps.web.util.MessageUtil; import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
  * 
  *//**
 	 * ************************************************************<br>

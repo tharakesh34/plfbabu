@@ -35,7 +35,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = 454600127282110738L;

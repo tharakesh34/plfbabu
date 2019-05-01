@@ -36,7 +36,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class PoliceCaseDialogCtrl extends GFCBaseCtrl<PoliceCaseDetail> {
 	private static final long serialVersionUID = 5058430665774376406L;

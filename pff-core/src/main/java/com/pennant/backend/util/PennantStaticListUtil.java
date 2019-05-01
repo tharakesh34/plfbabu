@@ -28,8 +28,8 @@ import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
 

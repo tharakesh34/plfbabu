@@ -24,7 +24,7 @@ import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.messages.MessagesService;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class EventManager implements ServletContextListener {
 	public static final String QUEUE_NAME = "AppNotificationQueue";

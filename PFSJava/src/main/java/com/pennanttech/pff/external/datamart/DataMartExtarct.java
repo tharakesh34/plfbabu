@@ -23,7 +23,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.DataMartProcess;
 
 public class DataMartExtarct extends DatabaseDataEngine implements DataMartProcess {

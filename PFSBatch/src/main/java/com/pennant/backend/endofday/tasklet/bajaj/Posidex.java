@@ -19,8 +19,8 @@ import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.external.posidex.PosidexDataExtarct;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class Posidex implements Tasklet {
 	private Logger logger = Logger.getLogger(Posidex.class);

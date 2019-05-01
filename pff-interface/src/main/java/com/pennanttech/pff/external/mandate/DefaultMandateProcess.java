@@ -76,7 +76,7 @@ import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcesses;

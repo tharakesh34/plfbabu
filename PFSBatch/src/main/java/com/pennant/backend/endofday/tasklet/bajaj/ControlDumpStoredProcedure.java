@@ -20,8 +20,8 @@ import org.springframework.jdbc.object.StoredProcedure;
 
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ControlDumpStoredProcedure extends StoredProcedure implements Tasklet {
 	private Logger logger = Logger.getLogger(ControlDumpStoredProcedure.class);

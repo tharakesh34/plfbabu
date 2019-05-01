@@ -67,7 +67,7 @@ import com.pennant.backend.service.finance.covenant.impl.PutCallAlerts;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Alerts/AlertList.zul file.

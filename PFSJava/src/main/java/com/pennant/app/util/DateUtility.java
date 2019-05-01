@@ -49,7 +49,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * <p>
@@ -59,10 +59,7 @@ import com.pennanttech.pff.core.util.DateUtil;
 public final class DateUtility extends DateUtil {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
 
-	private DateUtility() {
-		super();
-	}
-
+	
 	/**
 	 * Returns the string representation with the specified pattern of the server time.
 	 * 
@@ -77,7 +74,7 @@ public final class DateUtility extends DateUtil {
 			throw new IllegalArgumentException();
 		}
 
-		return format(getSysDate(), pattern);
+		return format(DateUtil.getSysDate(), pattern);
 	}
 
 	/**
@@ -819,5 +816,21 @@ public final class DateUtility extends DateUtil {
 		}
 
 		return appDate;
+	}
+	
+
+	/**
+	 * Returns {@link java.sql.Date} for the specified {@link Date}.
+	 * 
+	 * @param date
+	 *            The date object which which needs to be convert to {@link java.sql.Date} .
+	 * @return A {@link java.sql.Date}
+	 */
+	public static java.sql.Date getSqlDate(java.util.Date date) {
+		if (date == null) {
+			throw new IllegalArgumentException();
+		}
+
+		return new java.sql.Date(date.getTime());
 	}
 }

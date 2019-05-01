@@ -27,8 +27,8 @@ import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ReceiptResponseProcess {
 	private static final Logger logger = LogManager.getLogger(ReceiptResponseProcess.class);

@@ -62,7 +62,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	private static final long serialVersionUID = 1L;

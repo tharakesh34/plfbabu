@@ -25,7 +25,7 @@ import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PDFConversion;
 import com.pennant.app.util.PathUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ArchivalService extends ServiceHelper {
 	private static final long serialVersionUID = -2106034326949484681L;

@@ -11,7 +11,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class TestControlDumpRequestService {
 

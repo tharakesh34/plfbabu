@@ -37,7 +37,7 @@ import com.pennanttech.dataengine.util.XmlBuilder;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution

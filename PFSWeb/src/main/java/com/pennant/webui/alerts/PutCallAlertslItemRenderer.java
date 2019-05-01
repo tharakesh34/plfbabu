@@ -13,7 +13,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 public class PutCallAlertslItemRenderer implements ListitemRenderer<FinOption>, Serializable {

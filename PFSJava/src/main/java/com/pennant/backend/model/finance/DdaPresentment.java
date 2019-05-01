@@ -48,7 +48,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.util.DateUtility;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * Model class for the <b>DdaPresentment</b>.<br>

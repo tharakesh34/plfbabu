@@ -31,7 +31,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.PosidexProcess;
 import com.pennanttech.pff.model.external.posidex.PosidexCustomer;
 import com.pennanttech.pff.model.external.posidex.PosidexCustomerAddress;

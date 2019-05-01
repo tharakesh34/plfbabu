@@ -3,7 +3,7 @@ package com.pennant.app.util;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class DateUtilityTest {
 	@Test

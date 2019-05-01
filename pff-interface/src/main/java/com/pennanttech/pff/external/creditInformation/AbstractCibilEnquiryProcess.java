@@ -62,7 +62,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.InterfaceConstants;
-import com.pennanttech.pff.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.CreditInformation;

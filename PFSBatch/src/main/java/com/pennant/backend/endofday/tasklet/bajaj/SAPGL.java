@@ -18,8 +18,8 @@ import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.util.DateUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.external.sapgl.SAPGLExtract;
 
 public class SAPGL implements Tasklet {

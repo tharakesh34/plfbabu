@@ -15,7 +15,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl implements Serializable {
 	private static final long serialVersionUID = 6004939933729664895L;
