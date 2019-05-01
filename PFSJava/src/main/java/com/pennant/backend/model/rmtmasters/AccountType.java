@@ -64,6 +64,7 @@ public class AccountType extends AbstractWorkflowEntity {
 	private String acHeadCode;
 	private boolean internalAc;
 	private boolean custSysAc;
+	private boolean controlAc;
 	private String acLmtCategory;
 	private String assertOrLiability;
 	private boolean onBalanceSheet;
@@ -364,6 +365,14 @@ public class AccountType extends AbstractWorkflowEntity {
 
 	public void setExtractionType(String extractionType) {
 		this.extractionType = extractionType;
+	}
+
+	public boolean isControlAc() {
+		return controlAc;
+	}
+
+	public void setControlAc(boolean controlAc) {
+		this.controlAc = controlAc;
 	}
 
 }

@@ -90,7 +90,8 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		accountType.setId(id);
 
 		StringBuilder selectSql = new StringBuilder("Select  AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode,");
-		selectSql.append(" InternalAc, CustSysAc, AcTypeIsActive, AssertOrLiability, OnBalanceSheet, AllowOverDraw , ");
+		selectSql.append(
+				" InternalAc, CustSysAc, ControlAc, AcTypeIsActive, AssertOrLiability, OnBalanceSheet, AllowOverDraw , ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		selectSql.append(
 				" TaskId, NextTaskId, RecordType, WorkflowId, AcLmtCategory, ProfitCenterID, CostCenterID, TaxApplicable,  ACCADDLVAR1, ACCADDLVAR2, ACCADDLCHAR1, ExtractionType");
@@ -173,13 +174,13 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (AcType, AcTypeDesc, AcPurpose, AcTypeGrpId, AcHeadCode,");
 		insertSql.append(
-				" InternalAc, CustSysAc, AcTypeIsActive, AcLmtCategory, AssertOrLiability, OnBalanceSheet, AllowOverDraw ,");
+				" InternalAc, CustSysAc, ControlAc, AcTypeIsActive, AcLmtCategory, AssertOrLiability, OnBalanceSheet, AllowOverDraw ,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(
 				" TaskId, NextTaskId, RecordType, WorkflowId, ProfitCenterID, CostCenterID, TaxApplicable,  ACCADDLVAR1, ACCADDLVAR2, ACCADDLCHAR1, ExtractionType)");
 		insertSql.append(" Values(:AcType, :AcTypeDesc, :AcPurpose,  :AcTypeGrpId, :AcHeadCode, ");
 		insertSql.append(
-				" :InternalAc, :CustSysAc,:AcTypeIsActive, :AcLmtCategory, :AssertOrLiability, :OnBalanceSheet, :AllowOverDraw ,");
+				" :InternalAc, :CustSysAc, :ControlAc, :AcTypeIsActive, :AcLmtCategory, :AssertOrLiability, :OnBalanceSheet, :AllowOverDraw ,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(
 				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ProfitCenterID, :CostCenterID, :TaxApplicable,  :ACCADDLVAR1, :ACCADDLVAR2, :ACCADDLCHAR1, :ExtractionType)");
@@ -214,7 +215,7 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		updateSql.append(" Set AcTypeDesc = :AcTypeDesc, AcPurpose = :AcPurpose,  AcTypeGrpId = :AcTypeGrpId,");
 		updateSql.append(" AcHeadCode = :AcHeadCode, InternalAc = :InternalAc, AcLmtCategory=:AcLmtCategory,");
 		updateSql.append(
-				" CustSysAc = :CustSysAc, AcTypeIsActive = :AcTypeIsActive, AssertOrLiability = :AssertOrLiability, OnBalanceSheet = :OnBalanceSheet, AllowOverDraw = :AllowOverDraw ,");
+				" CustSysAc = :CustSysAc, ControlAc = :ControlAc, AcTypeIsActive = :AcTypeIsActive, AssertOrLiability = :AssertOrLiability, OnBalanceSheet = :OnBalanceSheet, AllowOverDraw = :AllowOverDraw ,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode,TaskId = :TaskId, NextTaskId = :NextTaskId,");

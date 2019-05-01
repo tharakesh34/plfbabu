@@ -522,5 +522,169 @@
 			]]>
 			</sql>
 	</changeSet>
+	
+<changeSet id="10" author="aditya.a">
+<comment>New column added for Account Types</comment>
+   <sql>
+      INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+   </sql>
+</changeSet>
+
+<changeSet id="11" author="aditya.a">
+<comment>New column added for Account Types</comment>
+   <addColumn tableName="rmtaccounttypes">
+      <column name="ControlAc" type="boolean" defaultValueBoolean="false"/>
+   </addColumn>
+</changeSet>
+
+<changeSet id="12" author="aditya.a">
+<comment>New column added for Account Types</comment>
+   <addColumn tableName="rmtaccounttypes_temp">
+      <column name="ControlAc" type="boolean" defaultValueBoolean="false"/>
+   </addColumn>
+</changeSet>
+
+<changeSet id="13" author="aditya.a">
+<createView viewName="rmtaccounttypes_aview" replaceIfExists="true">
+ SELECT t1.actype,
+    t1.actypedesc,
+    t1.acpurpose,
+    t1.acheadcode,
+    t1.internalac,
+    t1.custsysac,
+    t1.controlac,
+    t1.aclmtcategory,
+    t1.actypeisactive,
+    t1.profitcenterid,
+    t1.costcenterid,
+    t1.taxapplicable,
+    t1.accaddlvar1,
+    t1.accaddlvar2,
+    t1.accaddlchar1,
+    t1.accaddlvar3,
+    t1.accaddlvar4,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.assertorliability,
+    t1.onbalancesheet,
+    t1.allowoverdraw,
+    t1.actypegrpid,
+    t1.extractiontype,
+    t2.groupcode,
+    t2.groupdescription,
+    t2.accttypelevel,
+    t3.costcentercode,
+    t3.costcenterdesc,
+    t4.profitcentercode,
+    t4.profitcenterdesc
+   FROM rmtaccounttypes t1
+     LEFT JOIN accounttypegroup t2 ON t1.actypegrpid = t2.groupid
+     LEFT JOIN costcenters t3 ON t1.costcenterid = t3.costcenterid
+     JOIN profitcenters t4 ON t1.profitcenterid = t4.profitcenterid
+</createView>
+</changeSet>
+
+<changeSet id="14" author="aditya.a">
+<createView viewName="rmtaccounttypes_view" replaceIfExists="true">
+ SELECT t1.actype,
+    t1.actypedesc,
+    t1.acpurpose,
+    t1.acheadcode,
+    t1.internalac,
+    t1.custsysac,
+    t1.controlac,
+    t1.aclmtcategory,
+    t1.actypeisactive,
+    t1.profitcenterid,
+    t1.costcenterid,
+    t1.taxapplicable,
+    t1.accaddlvar1,
+    t1.accaddlvar2,
+    t1.accaddlchar1,
+    t1.accaddlvar3,
+    t1.accaddlvar4,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.assertorliability,
+    t1.onbalancesheet,
+    t1.allowoverdraw,
+    t1.actypegrpid,
+    t1.extractiontype,
+    t2.groupcode,
+    t2.groupdescription,
+    t2.accttypelevel,
+    t3.costcentercode,
+    t3.costcenterdesc,
+    t4.profitcentercode,
+    t4.profitcenterdesc
+   FROM rmtaccounttypes_temp t1
+     LEFT JOIN accounttypegroup t2 ON t1.actypegrpid = t2.groupid
+     LEFT JOIN costcenters t3 ON t1.costcenterid = t3.costcenterid
+     JOIN profitcenters t4 ON t1.profitcenterid = t4.profitcenterid
+UNION ALL
+ SELECT t1.actype,
+    t1.actypedesc,
+    t1.acpurpose,
+    t1.acheadcode,
+    t1.internalac,
+    t1.custsysac,
+    t1.controlac,
+    t1.aclmtcategory,
+    t1.actypeisactive,
+    t1.profitcenterid,
+    t1.costcenterid,
+    t1.taxapplicable,
+    t1.accaddlvar1,
+    t1.accaddlvar2,
+    t1.accaddlchar1,
+    t1.accaddlvar3,
+    t1.accaddlvar4,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.assertorliability,
+    t1.onbalancesheet,
+    t1.allowoverdraw,
+    t1.actypegrpid,
+    t1.extractiontype,
+    t2.groupcode,
+    t2.groupdescription,
+    t2.accttypelevel,
+    t3.costcentercode,
+    t3.costcenterdesc,
+    t4.profitcentercode,
+    t4.profitcenterdesc
+   FROM rmtaccounttypes t1
+     LEFT JOIN accounttypegroup t2 ON t1.actypegrpid = t2.groupid
+     LEFT JOIN costcenters t3 ON t1.costcenterid = t3.costcenterid
+     JOIN profitcenters t4 ON t1.profitcenterid = t4.profitcenterid
+  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM rmtaccounttypes_temp
+          WHERE rmtaccounttypes_temp.actype = t1.actype))
+</createView>
+</changeSet>
 
 </databaseChangeLog>

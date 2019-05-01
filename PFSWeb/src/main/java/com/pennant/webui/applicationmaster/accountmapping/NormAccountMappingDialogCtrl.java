@@ -27,6 +27,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
@@ -136,6 +137,9 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.accountType.setDisplayStyle(2);
 		this.accountType.setValidateColumns(new String[] { "AcType" });
 		this.accountType.setMandatoryStyle(true);
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("controlac", 0, Filter.OP_EQUAL);
+		this.accountType.setFilters(filters);
 		setStatusDetails();
 
 		logger.debug("Leaving");

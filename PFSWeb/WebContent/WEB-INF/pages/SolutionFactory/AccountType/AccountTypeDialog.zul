@@ -114,6 +114,13 @@
 								</hbox>
 							</row>
 							<row visible="true">
+								<label id="label_AccountTypeDialog_IsControlAc" value="${c:l('label_AccountTypeDialog_IsControlAc.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="controlAc" checked="false" />
+								</hbox>
+							</row>
+							<row visible="true">
 								<label id="label_AccountTypeDialog_ProfitCenter" value="${c:l('label_AccountTypeDialog_ProfitCenter.value')}" />
 								<hbox>
 									<extendedcombobox id="profitCenter" />

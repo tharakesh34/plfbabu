@@ -103,6 +103,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	protected Textbox acHeadCode;
 	protected Checkbox internalAc;
 	protected Checkbox custSysAc;
+	protected Checkbox controlAc;
 	protected Combobox assertOrLiability;
 	protected Combobox extractionType;
 	protected Checkbox onBalanceSheet;
@@ -453,6 +454,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 
 		this.internalAc.setChecked(aAccountType.isInternalAc());
 		this.custSysAc.setChecked(aAccountType.isCustSysAc());
+		this.controlAc.setChecked(aAccountType.isControlAc());
 		this.acTypeIsActive.setChecked(aAccountType.isAcTypeIsActive());
 		fillComboBox(this.assertOrLiability, aAccountType.getAssertOrLiability(),
 				PennantStaticListUtil.getAssetOrLiability(), "");
@@ -549,6 +551,12 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 
 		try {
 			aAccountType.setCustSysAc(this.custSysAc.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aAccountType.setControlAc(this.controlAc.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -927,6 +935,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acHeadCode.setReadonly(isReadOnly("AccountTypeDialog_acHeadCode"));
 		this.internalAc.setDisabled(isReadOnly("AccountTypeDialog_isInternalAc"));
 		this.custSysAc.setDisabled(isReadOnly("AccountTypeDialog_isCustSysAc"));
+		this.controlAc.setDisabled(isReadOnly("AccountTypeDialog_isControlAc"));
 		this.acTypeIsActive.setDisabled(isReadOnly("AccountTypeDialog_acTypeIsActive"));
 		this.assertOrLiability.setDisabled(isReadOnly("AccountTypeDialog_AssertOrLiability"));
 		this.onBalanceSheet.setDisabled(isReadOnly("AccountTypeDialog_OnBalanceSheet"));
@@ -970,6 +979,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acHeadCode.setReadonly(true);
 		this.internalAc.setDisabled(true);
 		this.custSysAc.setDisabled(true);
+		this.controlAc.setDisabled(true);
 		this.acTypeIsActive.setDisabled(true);
 		this.assertOrLiability.setDisabled(true);
 		this.onBalanceSheet.setDisabled(true);
@@ -1009,6 +1019,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		this.acHeadCode.setText("");
 		this.internalAc.setChecked(false);
 		this.custSysAc.setChecked(false);
+		this.controlAc.setChecked(false);
 		this.acTypeIsActive.setChecked(false);
 		this.assertOrLiability.setValue("");
 		this.onBalanceSheet.setChecked(false);

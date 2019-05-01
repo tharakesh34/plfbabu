@@ -112,4 +112,10 @@
 	<changeSet id="1.2" author="shinde.b" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ALERTSREQUIRED" tableName="ADTCOMMODITIES" defaultValue="0"/>
 	</changeSet>
+	
+<changeSet id="2" author="aditya.a">
+<addColumn tableName="AdtRMTAccountTypes">
+			<column name="ControlAc" type="boolean" defaultValueBoolean="false"/>
+</addColumn>
+</changeSet>
 </databaseChangeLog>
