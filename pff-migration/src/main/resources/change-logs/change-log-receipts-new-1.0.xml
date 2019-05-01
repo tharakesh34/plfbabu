@@ -2812,7 +2812,7 @@
 			<column name="WaiverAccepted" type="VARCHAR(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="34_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2821,7 +2821,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="34.1_pre" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -2857,7 +2857,7 @@
 		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="TOTALDUE" columnDataType="decimal(18,0)" />
 		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="TOTALDUE" columnDataType="decimal(18,0)" />
 	</changeSet>
-	
+
 	<changeSet id="34.3_pre" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -2953,7 +2953,7 @@
 			<column name="PenaltyWaived" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="37.1_pre" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -3012,7 +3012,7 @@
 			<column name="ACCESSTOALLBRANCHES" type="NUMBER(1,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="39.2_pre" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -3506,7 +3506,7 @@
 			<column name="FeeAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 
 	<changeSet id="44.1_pre" author="satyanarayana.g">
 		<sql>
@@ -3516,7 +3516,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="44.1" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4276,7 +4276,7 @@
 
 	<!-- <changeSet id="54.2" author="satyanarayana.g"> <addForeignKeyConstraint constraintName="FK_FEM_RID_FRH_RID" referencedTableName="FINRECEIPTHEADER" 
 		baseColumnNames="ReceiptID" baseTableName="FinExcessMovement" referencedColumnNames="ReceiptID"/> </changeSet> -->
-		
+
 	<changeSet id="55" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -4294,7 +4294,7 @@
 	     	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="56" author="satyanarayana.g">
 		<createTable tableName="MultiReceiptApproval">
 			<column name="BatchId" type="bigint">
@@ -4306,8 +4306,8 @@
 			<column name="ReceiptId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="ReceiptModeStatus" type="varchar(3)"/>
-			<column name="Stage" type="varchar(3)"/>
+			<column name="ReceiptModeStatus" type="varchar(3)" />
+			<column name="Stage" type="varchar(3)" />
 			<column name="ReceiptDate" type="datetime" />
 			<column name="DepositDate" type="datetime" />
 			<column name="DepositNo" type="varchar(50)" />
@@ -4321,7 +4321,7 @@
 			<column name="Reason" type="varchar(200)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="57" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -4337,7 +4337,8 @@
 			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
-			<column name="WorkFlowRoles">RECEIPT_MAKER;RECEIPT_APPROVER;DEPOSIT_MAKER;DEPOSIT_APPROVER;RECEIPTWAIVER_APPROVER;RECEIPTREALIZE_MAKER;RECEIPTREALIZE_APPROVER;RECEIPTBOUNCE_APPROVER</column>
+			<column name="WorkFlowRoles">RECEIPT_MAKER;RECEIPT_APPROVER;DEPOSIT_MAKER;DEPOSIT_APPROVER;RECEIPTWAIVER_APPROVER;RECEIPTREALIZE_MAKER;RECEIPTREALIZE_APPROVER;RECEIPTBOUNCE_APPROVER
+			</column>
 			<column name="FirstTaskOwner">RECEIPT_MAKER</column>
 			<column name="WorkFlowActive">1</column>
 			<column name="Version">0</column>
@@ -4360,7 +4361,7 @@
 			</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="58" author="satyanarayana.g">
 		<createView viewName="RECEIPTUPLOADHEADER_VIEW" replaceIfExists="true">
 			SELECT T1.UPLOADHEADERID,
@@ -4406,5 +4407,6 @@
 					  (SELECT 1 FROM RECEIPTUPLOADHEADER_TEMP WHERE UPLOADHEADERID =T1.UPLOADHEADERID
 					  )
 		</createView>
+	</changeSet>
 
 </databaseChangeLog>
