@@ -1903,6 +1903,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				rcd.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
 			} else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
 				rcd.setPaymentType(RepayConstants.RECEIPTMODE_EXCESS);
+			} else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_ADVINT)) {
+				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVINT);
+			} else if (StringUtils.equals(payable.getPayableType(), RepayConstants.EXAMOUNTTYPE_ADVEMI)) {
+				rcd.setPaymentType(RepayConstants.EXAMOUNTTYPE_ADVEMI);
 			} else {
 				rcd.setPaymentType(RepayConstants.RECEIPTMODE_PAYABLE);
 			}
@@ -3837,6 +3841,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
 			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)) {
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
+			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
+				extDataMap.put("EAI_ReceiptAmount", receiptDetail.getAmount());
+			}  else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)) {
+				extDataMap.put("EAE_ReceiptAmount", receiptDetail.getAmount());
 			} else {
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
@@ -3845,6 +3853,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EAI_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EAE_ReceiptAmount");
 
 			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 				if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_P")) {

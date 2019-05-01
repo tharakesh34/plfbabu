@@ -311,10 +311,13 @@ public class RepaymentProcessUtil {
 		}
 
 		for (FinReceiptDetail rcd : rcdList) {
+			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
-			if (!StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-					&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-					&& !StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+			if (!RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
+					|| !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
+					|| !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
+					|| !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
+					|| !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
@@ -347,11 +350,18 @@ public class RepaymentProcessUtil {
 				continue;
 			}
 
-			if (StringUtils.equals(xcessPayable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EXCESS)) {
+			String payableType = xcessPayable.getPayableType();
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(payableType)) {
 				extDataMap.put("EX_ReceiptAmount", xcessPayable.getTotPaidNow());
-			} else if (StringUtils.equals(xcessPayable.getPayableType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
+			} else if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(payableType)) {
 				extDataMap.put("EA_ReceiptAmount", xcessPayable.getTotPaidNow());
-			} else {
+			} else if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(payableType)) {
+				extDataMap.put("EAI_ReceiptAmount", xcessPayable.getTotPaidNow());
+			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(payableType)) {
+				extDataMap.put("EAM_ReceiptAmount", xcessPayable.getTotPaidNow());
+			}
+			
+			else {
 				// Paid Amount. GST Tax to be included after Bajaj Test
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_P"), xcessPayable.getTotPaidNow());
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_CGST_P"), xcessPayable.getPaidCGST());
@@ -917,8 +927,10 @@ public class RepaymentProcessUtil {
 			long receiptSeqID = getFinReceiptDetailDAO().save(rcd, TableType.MAIN_TAB);
 
 			// Excess Amounts
-			if (StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-					|| StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)) {
+			if (RepayConstants.RECEIPTMODE_EXCESS.equals(rcd.getPaymentType())
+					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(rcd.getPaymentType())
+					|| RepayConstants.RECEIPTMODE_ADVINT.equals(rcd.getPaymentType())
+					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(rcd.getPaymentType())) {
 
 				long payAgainstID = rcd.getPayAgainstID();
 

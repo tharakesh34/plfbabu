@@ -79,22 +79,22 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		sql.append(" Where FinReference =:FinReference ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
-		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append(
-				" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
-		selectSql.append(" Where FinReference =:FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmount.class);
 
-		List<FinExcessAmount> excessList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return excessList;
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	/**

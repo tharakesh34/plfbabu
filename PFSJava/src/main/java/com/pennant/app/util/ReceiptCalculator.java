@@ -900,12 +900,48 @@ public class ReceiptCalculator implements Serializable {
 	}
 
 	public FinReceiptData setXcessPayables(FinReceiptData receiptData) {
-		receiptData = getXcessList(receiptData);
+		receiptData.getReceiptHeader().setXcessPayables(getXcessPayables(receiptData));
+		//receiptData = getXcessList(receiptData);
 		receiptData = getPayableList(receiptData);
 		return receiptData;
 	}
+	
+	private List<XcessPayables> getXcessPayables(FinReceiptData receiptData) {
+		List<XcessPayables> xcessPayables = new ArrayList<>();
 
-	public FinReceiptData getXcessList(FinReceiptData receiptData) {
+		List<FinExcessAmount> excessAmounts = receiptData.getReceiptHeader().getExcessAmounts();
+		List<FinExcessAmountReserve> excessReserveList = receiptData.getReceiptHeader().getExcessReserves();
+
+		String excessLabel = "label_RecceiptDialog_ExcessType_";
+		int idx = 0;
+		XcessPayables xcessPayable;
+		for (FinExcessAmount excess : excessAmounts) {
+			xcessPayable = new XcessPayables();
+			xcessPayable.setIdx(++idx);
+			xcessPayable.setPayableType(excess.getAmountType());
+			xcessPayable.setPayableDesc(Labels.getLabel(excessLabel + excess.getAmountType()));
+			xcessPayable.setPayableID(excess.getExcessID());
+			xcessPayable.setAmount(excess.getAmount().subtract(excess.getUtilisedAmt().add(excess.getReservedAmt())));
+
+			for (FinExcessAmountReserve reserve : excessReserveList) {
+				if (reserve.getExcessID() == xcessPayable.getPayableID()) {
+					xcessPayable.setReserved(reserve.getReservedAmt());
+					break;
+				}
+			}
+
+			xcessPayable.setAvailableAmt(xcessPayable.getAmount());
+			xcessPayable.setTotPaidNow(BigDecimal.ZERO);
+			xcessPayable.setReserved(BigDecimal.ZERO);
+			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
+
+			xcessPayables.add(xcessPayable);
+		}
+
+		return xcessPayables;
+	}
+
+	private FinReceiptData getXcessList(FinReceiptData receiptData) {
 		List<XcessPayables> xcessPayableList = new ArrayList<XcessPayables>(1);
 		XcessPayables xcessPayable = new XcessPayables();
 		String excessLabel = "label_RecceiptDialog_ExcessType_";

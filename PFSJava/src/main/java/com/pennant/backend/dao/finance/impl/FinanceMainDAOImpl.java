@@ -3525,38 +3525,35 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	public FinanceMain getEntityNEntityDesc(String finreference, String type, boolean wif) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = null;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finreference);
-
-		StringBuilder sql = new StringBuilder("SELECT t4.ENTITYCODE,t4.ENTITYDESC From");
+		StringBuilder sql = new StringBuilder("SELECT T4.ENTITYCODE, T4.ENTITYDESC From");
 		if (wif) {
 			sql.append(" WifFinanceMain");
 		} else {
 			sql.append(" FinanceMain");
 		}
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" FM");
+		sql.append(" T1");
 
 		sql.append(" INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T3 ON T2.FINDIVISION=T3.DIVISIONCODE");
 		sql.append(" INNER JOIN ENTITY T4 ON T4.ENTITYCODE = T4.ENTITYCODE");
 
 		sql.append(" Where FinReference = :FinReference");
-		logger.debug("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finreference);
 		try {
 			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-			financeMain = this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
-		} catch (DataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeMain = null;
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeMain;
+		return null;
 	}
 
 	@Override

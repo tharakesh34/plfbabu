@@ -241,8 +241,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("loanClosureFinReference");
 		excludeFields.add("loanClosureKnockOffFrom");
 		excludeFields.add("loanClosureRefId");
-		excludeFields.add("LoanClosureReceiptDate");
-		excludeFields.add("LoanClosureIntTillDate");
+		excludeFields.add("loanClosureReceiptDate");
+		excludeFields.add("loanClosureIntTillDate");
 		excludeFields.add("depositeDate");
 		excludeFields.add("depositBank");
 		excludeFields.add("cancelDate");

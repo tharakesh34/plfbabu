@@ -538,14 +538,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinanceMain/FinanceMain_Temp by using FinanceMainDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinanceMainDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtFinanceMain by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinanceMain/FinanceMain_Temp by
+	 * using FinanceMainDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -696,97 +693,100 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Manual Advise Movements
 		manualAdviseDAO.deleteMovementsByReceiptID(receiptID, TableType.TEMP_TAB.getSuffix());
 
-		for (FinReceiptDetail receiptDetail : receiptDetails) {
-			receiptDetail.setReceiptID(receiptID);
-			long receiptSeqID = receiptDetail.getReceiptSeqID();
-			if (!receiptDetail.isDelRecord()) {
-				receiptSeqID = finReceiptDetailDAO.save(receiptDetail, tableType);
+		for (FinReceiptDetail rd : receiptDetails) {
+			rd.setReceiptID(receiptID);
+			long receiptSeqID = rd.getReceiptSeqID();
+			if (!rd.isDelRecord()) {
+				receiptSeqID = finReceiptDetailDAO.save(rd, tableType);
 
 				// Tax Details saving against Receipt
-				if (receiptDetail.getReceiptTaxDetail() != null) {
-					receiptDetail.getReceiptTaxDetail().setReceiptSeqID(receiptSeqID);
-					receiptDetail.getReceiptTaxDetail().setReceiptID(receiptID);
-					receiptTaxDetailDAO.save(receiptDetail.getReceiptTaxDetail(), tableType);
+				if (rd.getReceiptTaxDetail() != null) {
+					rd.getReceiptTaxDetail().setReceiptSeqID(receiptSeqID);
+					rd.getReceiptTaxDetail().setReceiptID(receiptID);
+					receiptTaxDetailDAO.save(rd.getReceiptTaxDetail(), tableType);
 				}
 			}
-			
+
 			// Excess Amount Reserve
-			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)) {
+			String paymentType = rd.getPaymentType();
+			if (RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)) {
 
 				// Excess Amount make utilization
 				FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(receiptSeqID,
-						receiptDetail.getPayAgainstID());
+						rd.getPayAgainstID());
 				if (exReserve == null) {
 
 					// Update Excess Amount in Reserve
-					finExcessAmountDAO.updateExcessReserve(receiptDetail.getPayAgainstID(), receiptDetail.getAmount());
+					finExcessAmountDAO.updateExcessReserve(rd.getPayAgainstID(), rd.getAmount());
 
 					// Save Excess Reserve Log Amount
-					finExcessAmountDAO.saveExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(),
-							receiptDetail.getAmount(), RepayConstants.RECEIPTTYPE_RECIPT);
+					finExcessAmountDAO.saveExcessReserveLog(receiptSeqID, rd.getPayAgainstID(), rd.getAmount(),
+							RepayConstants.RECEIPTTYPE_RECIPT);
 
 				} else {
 					// If Receipt details re-modified in process
-					if (receiptDetail.isDelRecord()) {
+					if (rd.isDelRecord()) {
 
 						// Delete Reserve Amount in FinExcessAmount
-						finExcessAmountDAO.deleteExcessReserve(receiptSeqID, receiptDetail.getPayAgainstID(),
+						finExcessAmountDAO.deleteExcessReserve(receiptSeqID, rd.getPayAgainstID(),
 								RepayConstants.RECEIPTTYPE_RECIPT);
 
 						// Update Reserve Amount in FinExcessAmount
-						finExcessAmountDAO.updateExcessReserve(receiptDetail.getPayAgainstID(),
+						finExcessAmountDAO.updateExcessReserve(rd.getPayAgainstID(),
 								exReserve.getReservedAmt().negate());
 
 					} else {
 
-						if (receiptDetail.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
-							BigDecimal diffInReserve = receiptDetail.getAmount().subtract(exReserve.getReservedAmt());
+						if (rd.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
+							BigDecimal diffInReserve = rd.getAmount().subtract(exReserve.getReservedAmt());
 
 							// Update Reserve Amount in FinExcessAmount
-							finExcessAmountDAO.updateExcessReserve(receiptDetail.getPayAgainstID(), diffInReserve);
+							finExcessAmountDAO.updateExcessReserve(rd.getPayAgainstID(), diffInReserve);
 
 							// Update Excess Reserve Log
-							finExcessAmountDAO.updateExcessReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(),
-									diffInReserve, RepayConstants.RECEIPTTYPE_RECIPT);
+							finExcessAmountDAO.updateExcessReserveLog(receiptSeqID, rd.getPayAgainstID(), diffInReserve,
+									RepayConstants.RECEIPTTYPE_RECIPT);
 						}
 					}
 				}
 			}
 
 			// Payable Amount Reserve
-			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+			if (StringUtils.equals(paymentType, RepayConstants.RECEIPTMODE_PAYABLE)) {
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(receiptSeqID,
-						receiptDetail.getPayAgainstID());
+						rd.getPayAgainstID());
 
-				BigDecimal payableAmt = receiptDetail.getAmount();
-				if (receiptDetail.getReceiptTaxDetail() != null) {
-					if (StringUtils.equals(receiptDetail.getReceiptTaxDetail().getTaxComponent(),
+				BigDecimal payableAmt = rd.getAmount();
+				if (rd.getReceiptTaxDetail() != null) {
+					if (StringUtils.equals(rd.getReceiptTaxDetail().getTaxComponent(),
 							FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-						payableAmt = payableAmt.subtract(receiptDetail.getReceiptTaxDetail().getTotalGST());
+						payableAmt = payableAmt.subtract(rd.getReceiptTaxDetail().getTotalGST());
 					}
 				}
 
 				if (payableReserve == null) {
 
 					// Update Payable Amount in Reserve
-					manualAdviseDAO.updatePayableReserve(receiptDetail.getPayAgainstID(), payableAmt);
+					manualAdviseDAO.updatePayableReserve(rd.getPayAgainstID(), payableAmt);
 
 					// Save Payable Reserve Log Amount
-					manualAdviseDAO.savePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(), payableAmt);
+					manualAdviseDAO.savePayableReserveLog(receiptSeqID, rd.getPayAgainstID(), payableAmt);
 
 				} else {
 					// If Receipt details re-modified in process
-					if (receiptDetail.isDelRecord()) {
+					if (rd.isDelRecord()) {
 
 						// Delete Reserved Log against Payable Advise ID and
 						// Receipt ID
-						manualAdviseDAO.deletePayableReserve(receiptSeqID, receiptDetail.getPayAgainstID());
+						manualAdviseDAO.deletePayableReserve(receiptSeqID, rd.getPayAgainstID());
 
 						// Update Reserve Amount in Manual Advise
-						manualAdviseDAO.updatePayableReserve(receiptDetail.getPayAgainstID(),
+						manualAdviseDAO.updatePayableReserve(rd.getPayAgainstID(),
 								payableReserve.getReservedAmt().negate());
 
 					} else {
@@ -795,18 +795,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 							BigDecimal diffInReserve = payableAmt.subtract(payableReserve.getReservedAmt());
 
 							// Update Reserve Amount in Manual Advise
-							manualAdviseDAO.updatePayableReserve(receiptDetail.getPayAgainstID(), diffInReserve);
+							manualAdviseDAO.updatePayableReserve(rd.getPayAgainstID(), diffInReserve);
 
 							// Update Payable Reserve Log
-							manualAdviseDAO.updatePayableReserveLog(receiptSeqID, receiptDetail.getPayAgainstID(),
-									diffInReserve);
+							manualAdviseDAO.updatePayableReserveLog(receiptSeqID, rd.getPayAgainstID(), diffInReserve);
 						}
 					}
 				}
 			}
 
 			// Manual Advise Movements
-			for (ManualAdviseMovements movement : receiptDetail.getAdvMovements()) {
+			for (ManualAdviseMovements movement : rd.getAdvMovements()) {
 				movement.setReceiptID(receiptID);
 				movement.setReceiptSeqID(receiptSeqID);
 				manualAdviseDAO.saveMovement(movement, TableType.TEMP_TAB.getSuffix());
@@ -825,7 +824,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Finance Schedule Details
 		listDeletion(finReference, tableType.getSuffix());
 		// listSave(scheduleData, tableType.getSuffix(), 0, false);
-		
+
 		if (FinanceConstants.DEPOSIT_APPROVER.equals(receiptHeader.getRoleCode())) {
 			executeAccounting(rceiptData);
 		}
@@ -882,7 +881,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	public long executeAccounting(FinReceiptData receiptData) {
 		logger.debug(Literal.ENTERING);
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -927,13 +926,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		BigDecimal amount = BigDecimal.ZERO;
 		for (FinReceiptDetail detail : receiptData.getReceiptHeader().getReceiptDetails()) {
-			if (!(detail.getPaymentType().equals(RepayConstants.RECEIPTMODE_EMIINADV)
-					|| detail.getPaymentType().equals(RepayConstants.RECEIPTMODE_EMIINADV)
-					|| detail.getPaymentType().equals(RepayConstants.RECEIPTMODE_EMIINADV))) {
+			String paymentType = detail.getPaymentType();
+			if (!(RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)
+					|| RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType))) {
 				amount = amount.add(detail.getAmount());
 			}
 		}
-
 
 		aeEvent.getDataMap().put("rd_amount", amount);
 
@@ -1017,8 +1016,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * Method to delete schedule, disbursement, deferment header, deferment
-	 * detail,repay instruction, rate changes lists.
+	 * Method to delete schedule, disbursement, deferment header, deferment detail,repay instruction, rate changes
+	 * lists.
 	 * 
 	 * @param finDetail
 	 * @param tableType
@@ -1032,13 +1031,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using finReceiptHeaderDAO.delete with parameters
-	 * financeMain,TableType.TEMP_TAB.getSuffix() 3) Audit the record in to
-	 * AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using finReceiptHeaderDAO.delete with parameters financeMain,TableType.TEMP_TAB.getSuffix() 3)
+	 * Audit the record in to AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1131,10 +1127,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Bounce reason Code
 		/*
-		 * ManualAdvise advise = manualAdviseDAO
-		 * .getManualAdviseByReceiptId(receiptData.getReceiptHeader().
-		 * getReceiptID(), "_Temp"); if (advise != null) {
-		 * manualAdviseDAO.delete(advise, TableType.TEMP_TAB); }
+		 * ManualAdvise advise = manualAdviseDAO .getManualAdviseByReceiptId(receiptData.getReceiptHeader().
+		 * getReceiptID(), "_Temp"); if (advise != null) { manualAdviseDAO.delete(advise, TableType.TEMP_TAB); }
 		 */
 
 		// Tax Details Deletion against Receipt ID
@@ -1216,19 +1210,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using finReceiptHeaderDAO.delete with parameters financeMain,"" b) NEW
-	 * Add new record in to main table by using finReceiptHeaderDAO.save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by
-	 * using finReceiptHeaderDAO.update with parameters financeMain,"" 3) Delete
-	 * the record from the workFlow table by using finReceiptHeaderDAO.delete
-	 * with parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using finReceiptHeaderDAO.delete with
+	 * parameters financeMain,"" b) NEW Add new record in to main table by using finReceiptHeaderDAO.save with
+	 * parameters financeMain,"" c) EDIT Update record in the main table by using finReceiptHeaderDAO.update with
+	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using finReceiptHeaderDAO.delete with
+	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1690,8 +1680,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * Method for Saving Deposit Details for Both Receipt Modes of CASH &
-	 * Cheque/DD
+	 * Method for Saving Deposit Details for Both Receipt Modes of CASH & Cheque/DD
 	 * 
 	 * @param receiptHeader
 	 */
@@ -1804,19 +1793,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * doReversal method do the following steps. 1) Do the Business validation
-	 * by using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using finReceiptHeaderDAO.delete with parameters financeMain,"" b) NEW
-	 * Add new record in to main table by using finReceiptHeaderDAO.save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by
-	 * using finReceiptHeaderDAO.update with parameters financeMain,"" 3) Delete
-	 * the record from the workFlow table by using finReceiptHeaderDAO.delete
-	 * with parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doReversal method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using finReceiptHeaderDAO.delete with
+	 * parameters financeMain,"" b) NEW Add new record in to main table by using finReceiptHeaderDAO.save with
+	 * parameters financeMain,"" c) EDIT Update record in the main table by using finReceiptHeaderDAO.update with
+	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using finReceiptHeaderDAO.delete with
+	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -2110,12 +2095,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * finReceiptHeaderDAO.getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -2182,13 +2165,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (finReceiptHeader.isNew()) { // for New record or new record into
-										// work
-			// flow
+											// work
+										// flow
 
 			if (!finReceiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (befFinReceiptHeader != null) { // Record Already Exists in
-													// the
+														// the
 													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -2212,11 +2195,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!finReceiptHeader.isWorkflow()) { // With out Work flow for
-													// update
+														// update
 													// and delete
 
 				if (befFinReceiptHeader == null) { // if records not exists in
-													// the
+														// the
 													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
@@ -2238,7 +2221,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			} else {
 
 				if (tempFinReceiptHeader == null) { // if records not exists in
-													// the
+														// the
 													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -2314,17 +2297,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		/*
 		 * // Checking For Commitment , Is it In Maintenance Or not if
-		 * (StringUtils.trimToEmpty(finReceiptHeader.getRecordType()).equals(
-		 * PennantConstants.RECORD_TYPE_NEW) && "doApprove".equals(method) &&
-		 * StringUtils.isNotEmpty(finReceiptHeader.getFinCommitmentRef())) {
+		 * (StringUtils.trimToEmpty(finReceiptHeader.getRecordType()).equals( PennantConstants.RECORD_TYPE_NEW) &&
+		 * "doApprove".equals(method) && StringUtils.isNotEmpty(finReceiptHeader.getFinCommitmentRef())) {
 		 * 
-		 * Commitment tempcommitment =
-		 * getCommitmentDAO().getCommitmentById(finReceiptHeader.
-		 * getFinCommitmentRef(), TableType.TEMP_TAB.getSuffix()); if
-		 * (tempcommitment != null && tempcommitment.isRevolving()) {
-		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-		 * ErrorDetail(PennantConstants.KEY_FIELD, "30538", errParm, valueParm),
-		 * usrLanguage)); } }
+		 * Commitment tempcommitment = getCommitmentDAO().getCommitmentById(finReceiptHeader. getFinCommitmentRef(),
+		 * TableType.TEMP_TAB.getSuffix()); if (tempcommitment != null && tempcommitment.isRevolving()) {
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "30538",
+		 * errParm, valueParm), usrLanguage)); } }
 		 */
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -3002,7 +2981,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					&& !StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_ESCROW)
 					&& !StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_PAYU)
 					&& !StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_PAYTM)
-				    && !StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_PORTAL)) {
+					&& !StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_PORTAL)) {
 
 				parm0 = "Sub Receipt Mode";
 				parm1 = RepayConstants.RECEIPTMODE_IMPS + ", " + RepayConstants.RECEIPTMODE_NEFT + ", "
@@ -3163,9 +3142,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Entity Mismatch
 		/*
-		 * if (StringUtils.equals(financeMain.getEntityCode(), fsi.getEntity()))
-		 * { finScheduleData = setErrorToFSD(finScheduleData, "RU004",
-		 * fsi.getFinReference()); return receiptData; }
+		 * if (StringUtils.equals(financeMain.getEntityCode(), fsi.getEntity())) { finScheduleData =
+		 * setErrorToFSD(finScheduleData, "RU004", fsi.getFinReference()); return receiptData; }
 		 */
 
 		if (StringUtils.isBlank(fsi.getEntity())) {
@@ -3729,9 +3707,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		if (StringUtils.equals(fsi.getPaymentMode(), RepayConstants.RECEIPTMODE_ONLINE)){
+		if (StringUtils.equals(fsi.getPaymentMode(), RepayConstants.RECEIPTMODE_ONLINE)) {
 			rcd.setPaymentType(fsi.getSubReceiptMode());
-		}else{
+		} else {
 			rcd.setPaymentType(fsi.getPaymentMode());
 		}
 		rcd.setAmount(fsi.getAmount());
@@ -4263,13 +4241,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 								financeType.getFinTypeClassification())) {
 							epyMethodList.add(epMthd);
 						} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, epMthd.getValue().trim())) {
-									if (financeType.isDeveloperFinance()) {
-										epyMethodList.clear();
-										epyMethodList.add(epMthd);
-										break;
-									} else {
-										epyMethodList.add(epMthd);
-									}
+							if (financeType.isDeveloperFinance()) {
+								epyMethodList.clear();
+								epyMethodList.add(epMthd);
+								break;
+							} else {
+								epyMethodList.add(epMthd);
+							}
 						} else {
 							epyMethodList.add(epMthd);
 						}
@@ -4432,8 +4410,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.setFinanceDetail(financeDetail);
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		scheduleData.setFinReference(finReference);
-		
-		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, finReceiptHeader.getRecordType())){
+
+		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, finReceiptHeader.getRecordType())) {
 			receiptData.setCalReq(false);
 		}
 
@@ -5219,10 +5197,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 			/*
-			 * APIHeader reqHeaderDetails = (APIHeader)
-			 * PhaseInterceptorChain.getCurrentMessage().getExchange()
-			 * .get(APIHeader.API_HEADER_KEY);
-			 * auditHeader.setApiHeader(reqHeaderDetails);
+			 * APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+			 * .get(APIHeader.API_HEADER_KEY); auditHeader.setApiHeader(reqHeaderDetails);
 			 */
 
 			auditHeader = saveOrUpdate(auditHeader);
@@ -5230,10 +5206,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} else {
 
 			/*
-			 * APIHeader reqHeaderDetails = (APIHeader)
-			 * PhaseInterceptorChain.getCurrentMessage().getExchange()
-			 * .get(APIHeader.API_HEADER_KEY);
-			 * auditHeader.setApiHeader(reqHeaderDetails);
+			 * APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+			 * .get(APIHeader.API_HEADER_KEY); auditHeader.setApiHeader(reqHeaderDetails);
 			 */
 			BigDecimal earlyPayAmount = receiptData.getRemBal();
 			String recalType = rch.getEffectSchdMethod();
@@ -5526,7 +5500,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
 		this.accountingSetDAO = accountingSetDAO;
 	}
-	
+
 	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
@@ -5536,7 +5510,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
-	
+
 	@Autowired
 	public void setFinanceWorkFlowDAO(FinanceWorkFlowDAO financeWorkFlowDAO) {
 		this.financeWorkFlowDAO = financeWorkFlowDAO;

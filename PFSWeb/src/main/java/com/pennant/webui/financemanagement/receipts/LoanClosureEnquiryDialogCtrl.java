@@ -1708,7 +1708,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
 			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)) {
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
-			} else {
+			}  else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
+				extDataMap.put("EAI_ReceiptAmount", receiptDetail.getAmount());
+			}  else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)) {
+				extDataMap.put("EAE_ReceiptAmount", receiptDetail.getAmount());
+			}  else {
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
 
@@ -1716,6 +1720,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 			addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EAI_ReceiptAmount");
+			addZeroifNotContains(extDataMap, "EAE_ReceiptAmount");
 
 			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
 				if (extDataMap.containsKey(receiptDetail.getFeeTypeCode() + "_P")) {
