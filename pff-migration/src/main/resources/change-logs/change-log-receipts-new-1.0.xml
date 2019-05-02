@@ -4408,64 +4408,64 @@
 					  )
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="59" author="satyanarayana.g">
 		<createTable tableName="InstrumentwiseLimit">
-		<column name="Id" type="bigint">
-			<constraints primaryKey="true" primaryKeyName="PK_IWL_Id" nullable="false" />
-		</column>
-		<column name="InstrumentMode" type="varchar(8)">
-			<constraints unique="true" uniqueConstraintName="UK_IWL_InstrumentMode" />
-		</column>
-		<column name="PaymentMinAmtperTrans" type="decimal(18,0)" />
-		<column name="PaymentMaxAmtperTran" type="decimal(18,0)" />
-		<column name="PaymentMaxAmtperDay" type="decimal(18,0)" />
-		<column name="ReceiptMinAmtperTran" type="decimal(18,0)" />
-		<column name="ReceiptMaxAmtperTran" type="decimal(18,0)" />
-		<column name="ReceiptMaxAmtperDay" type="decimal(18,0)" />
-		<column name="Version" type="int">
-			<constraints nullable="false" />
-		</column>
-		<column name="LastMntBy" type="bigint" />
-		<column name="LastMntOn" type="datetime" />
-		<column name="RecordStatus" type="varchar(50)" />
-		<column name="RoleCode" type="varchar(100)" />
-		<column name="NextRoleCode" type="varchar(200)" />
-		<column name="TaskId" type="varchar(50)" />
-		<column name="NextTaskId" type="varchar(200)" />
-		<column name="RecordType" type="varchar(50)" />
-		<column name="WorkflowId" type="bigint" />
-	</createTable>
-</changeSet>
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_IWL_Id" nullable="false" />
+			</column>
+			<column name="InstrumentMode" type="varchar(8)">
+				<constraints unique="true" uniqueConstraintName="UK_IWL_InstrumentMode" />
+			</column>
+			<column name="PaymentMinAmtperTrans" type="decimal(18,0)" />
+			<column name="PaymentMaxAmtperTran" type="decimal(18,0)" />
+			<column name="PaymentMaxAmtperDay" type="decimal(18,0)" />
+			<column name="ReceiptMinAmtperTran" type="decimal(18,0)" />
+			<column name="ReceiptMaxAmtperTran" type="decimal(18,0)" />
+			<column name="ReceiptMaxAmtperDay" type="decimal(18,0)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 
 	<changeSet id="59.1" author="satyanarayana.g">
 		<createTable tableName="InstrumentwiseLimit_Temp">
-		<column name="Id" type="bigint">
-			<constraints primaryKey="true" primaryKeyName="PK_IWL_T_Id" nullable="false" />
-		</column>
-		<column name="InstrumentMode" type="varchar(8)">
-			<constraints unique="true" uniqueConstraintName="UK_IWL_T_InstrumentMode" />
-		</column>
-		<column name="PaymentMinAmtperTrans" type="decimal(18,0)" />
-		<column name="PaymentMaxAmtperTran" type="decimal(18,0)" />
-		<column name="PaymentMaxAmtperDay" type="decimal(18,0)" />
-		<column name="ReceiptMinAmtperTran" type="decimal(18,0)" />
-		<column name="ReceiptMaxAmtperTran" type="decimal(18,0)" />
-		<column name="ReceiptMaxAmtperDay" type="decimal(18,0)" />
-		<column name="Version" type="int">
-			<constraints nullable="false" />
-		</column>
-		<column name="LastMntBy" type="bigint" />
-		<column name="LastMntOn" type="datetime" />
-		<column name="RecordStatus" type="varchar(50)" />
-		<column name="RoleCode" type="varchar(100)" />
-		<column name="NextRoleCode" type="varchar(200)" />
-		<column name="TaskId" type="varchar(50)" />
-		<column name="NextTaskId" type="varchar(200)" />
-		<column name="RecordType" type="varchar(50)" />
-		<column name="WorkflowId" type="bigint" />
-	</createTable>
-</changeSet>
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="PK_IWL_T_Id" nullable="false" />
+			</column>
+			<column name="InstrumentMode" type="varchar(8)">
+				<constraints unique="true" uniqueConstraintName="UK_IWL_T_InstrumentMode" />
+			</column>
+			<column name="PaymentMinAmtperTrans" type="decimal(18,0)" />
+			<column name="PaymentMaxAmtperTran" type="decimal(18,0)" />
+			<column name="PaymentMaxAmtperDay" type="decimal(18,0)" />
+			<column name="ReceiptMinAmtperTran" type="decimal(18,0)" />
+			<column name="ReceiptMaxAmtperTran" type="decimal(18,0)" />
+			<column name="ReceiptMaxAmtperDay" type="decimal(18,0)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 
 	<changeSet id="59.2" author="satyanarayana.g">
 		<createTable tableName="SeqInstrumentwiseLimit">
@@ -4475,10 +4475,10 @@
 
 	<changeSet id="59.3" author="satyanarayana.g">
 		<sql>
-		INSERT INTO SeqInstrumentwiseLimit VALUES (0);
+			INSERT INTO SeqInstrumentwiseLimit VALUES (0);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="60" author="satyanarayana.g">
 		<createView viewName="INSTRUMENTWISELIMIT_VIEW" replaceIfExists="true">
 			SELECT T1.ID,
@@ -4524,7 +4524,7 @@
 				(SELECT 1 FROM INSTRUMENTWISELIMIT_TEMP WHERE ID = T1.ID
 				)
 		</createView>
-</changeSet>
+	</changeSet>
 
 	<changeSet id="61" author="satyanarayana.g">
 		<createView viewName="INSTRUMENTWISELIMIT_AVIEW" replaceIfExists="true">
@@ -4548,6 +4548,6 @@
 					T1.WORKFLOWID
 					FROM INSTRUMENTWISELIMIT T1 
 		</createView>
-</changeSet>
+	</changeSet>
 
 </databaseChangeLog>
