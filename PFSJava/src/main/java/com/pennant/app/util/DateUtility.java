@@ -59,7 +59,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 public final class DateUtility extends DateUtil {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
 
-	
 	/**
 	 * Returns the string representation with the specified pattern of the server time.
 	 * 
@@ -359,32 +358,6 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the day part of the Date. <br>
-	 * This method is provided because <code> getDate() <code> method in Date is deprecated
-	 * 
-	 * @param date
-	 *            (Date)
-	 * 
-	 * @return int
-	 */
-	public static int getDay(java.util.Date date) {
-		return date == null ? -1 : convert(date).get(Calendar.DATE);
-	}
-
-	/**
-	 * Returns the month part of the Date. This method is provided because <code> getMonth() <code> method in Date is
-	 * deprecated
-	 * 
-	 * @param date
-	 *            (Date)
-	 * 
-	 * @return int
-	 */
-	public static int getMonth(java.util.Date date) {
-		return date == null ? -1 : convert(date).get(Calendar.MONTH) + 1;
-	}
-
-	/**
 	 * Returns the last date of the month
 	 * 
 	 * @param date
@@ -420,31 +393,6 @@ public final class DateUtility extends DateUtil {
 		int day = 01;
 
 		return convert(new GregorianCalendar(year, month, day));
-	}
-
-	/**
-	 * Returns the year part of the Date. This method is provided because <code> getYear() <code> method in Date is
-	 * deprecated
-	 * 
-	 * @param date
-	 *            (Date)
-	 * 
-	 * @return int
-	 */
-	public static int getYear(java.util.Date date) {
-		return date == null ? -1 : convert(date).get(Calendar.YEAR);
-	}
-
-	/**
-	 * Returns whether it is a leap year or not
-	 * 
-	 * @param year
-	 *            (int)
-	 * 
-	 * @return boolean
-	 */
-	public static boolean isLeapYear(int year) {
-		return new GregorianCalendar().isLeapYear(year);
 	}
 
 	/**
@@ -791,7 +739,7 @@ public final class DateUtility extends DateUtil {
 		return convert(new GregorianCalendar(year - 1, month, day));
 
 	}
-	
+
 	public static java.util.Date getDerivedAppDate() {
 		java.util.Date appDate = SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_DATE.getCode());
 
@@ -817,20 +765,5 @@ public final class DateUtility extends DateUtil {
 
 		return appDate;
 	}
-	
 
-	/**
-	 * Returns {@link java.sql.Date} for the specified {@link Date}.
-	 * 
-	 * @param date
-	 *            The date object which which needs to be convert to {@link java.sql.Date} .
-	 * @return A {@link java.sql.Date}
-	 */
-	public static java.sql.Date getSqlDate(java.util.Date date) {
-		if (date == null) {
-			throw new IllegalArgumentException();
-		}
-
-		return new java.sql.Date(date.getTime());
-	}
 }
