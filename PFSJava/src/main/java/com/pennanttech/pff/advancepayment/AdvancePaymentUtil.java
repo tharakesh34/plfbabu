@@ -12,6 +12,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 
 public class AdvancePaymentUtil {
@@ -286,7 +287,7 @@ public class AdvancePaymentUtil {
 		if (advanceType == AdvanceType.UF) {
 			advanceIntrest = finScheduleData.getPftChg();
 		} else {
-			advanceIntrest = calculateAdvPayment(finScheduleData,advanceRule);
+			advanceIntrest = calculateAdvPayment(finScheduleData);
 		}
 
 		fee.setActualAmount(advanceIntrest);
@@ -307,11 +308,115 @@ public class AdvancePaymentUtil {
 			return;
 		}
 
-		BigDecimal advancePayment = calculateAdvPayment(finScheduleData,advanceRule);
+		BigDecimal advancePayment = BigDecimal.ZERO;
+
+		if (advanceRule == AdvanceRuleCode.ADVINT) {
+			advancePayment = calculateAdvanseInterest(finScheduleData);
+		}
+
+		if (advanceRule == AdvanceRuleCode.ADVEMI) {
+			advancePayment = calculateAdvanseEMI(finScheduleData);
+		}
+
 		fee.setActualAmount(advancePayment);
 		fee.setCalculatedAmount(advancePayment);
 		fee.setActualAmountOriginal(advancePayment);
 		fee.setNetAmountOriginal(advancePayment);
+	}
+
+	private static BigDecimal calculateAdvanseInterest(final FinScheduleData finScheduleData) {
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+		Date gracePeriodEndDate = finMain.getGrcPeriodEndDate();
+
+		BigDecimal amount = BigDecimal.ZERO;
+		AdvanceType grcAdvType = AdvanceType.getType(finMain.getGrcAdvType());
+		AdvanceType rpyAdvType = AdvanceType.getType(finMain.getAdvType());
+
+		int grcAdvTerms = getTerms(grcAdvType, finMain.getGrcAdvTerms());
+		int rpyAdvTerms = getTerms(rpyAdvType, finMain.getAdvTerms());
+		int grcTerm = 0;
+		int rpyTerm = 0;
+
+		for (FinanceScheduleDetail sd : schedules) {
+
+			if (FinanceConstants.FLAG_BPI.equals(sd.getBpiOrHoliday())) {
+				continue;
+			}
+
+			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
+				Date schDate = sd.getSchDate();
+
+				if (schDate.compareTo(gracePeriodEndDate) <= 0) {
+
+					if (grcTerm == grcAdvTerms) {
+						continue;
+					}
+
+					if (grcAdvTerms > 0) {
+						grcTerm++;
+					}
+
+					amount = amount.add(sd.getProfitSchd());
+				} else {
+					if (AdvanceType.AE != rpyAdvType) {
+
+						if (rpyTerm == rpyAdvTerms) {
+							continue;
+						}
+
+						if (rpyAdvTerms > 0) {
+							rpyTerm++;
+						}
+						amount = amount.add(sd.getProfitSchd());
+					}
+				}
+			}
+		}
+
+		return amount;
+	}
+
+	private static BigDecimal calculateAdvanseEMI(final FinScheduleData finScheduleData) {
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		AdvanceType rpyAdvType = AdvanceType.getType(finMain.getAdvType());
+		if (AdvanceType.AE != rpyAdvType) {
+			return BigDecimal.ZERO;
+		}
+
+		Date gracePeriodEndDate = finMain.getGrcPeriodEndDate();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+
+		BigDecimal amount = BigDecimal.ZERO;
+		int rpyAdvTerms = getTerms(rpyAdvType, finMain.getAdvTerms());
+		int rpyTerm = 0;
+
+		for (FinanceScheduleDetail sd : schedules) {
+
+			if (FinanceConstants.FLAG_BPI.equals(sd.getBpiOrHoliday())) {
+				continue;
+			}
+
+			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
+				Date schDate = sd.getSchDate();
+
+				if (schDate.compareTo(gracePeriodEndDate) > 0) {
+
+					if (rpyTerm == rpyAdvTerms) {
+						continue;
+					}
+					if (rpyAdvTerms > 0) {
+						rpyTerm++;
+					}
+					amount = amount.add(sd.getProfitSchd()).add(sd.getPrincipalSchd());
+
+				}
+			}
+		}
+
+		return amount;
 	}
 
 	/**
@@ -388,14 +493,12 @@ public class AdvancePaymentUtil {
 	 * @param finScheduleData
 	 * @return The Calculated Advance Interest/EMI
 	 */
-	public static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData, AdvanceRuleCode advanceRule) {
+	public static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData) {
 		BigDecimal advancePayment = BigDecimal.ZERO;
 		BigDecimal graceAdvPayment = BigDecimal.ZERO;
 		BigDecimal repayAdvPayment = BigDecimal.ZERO;
 
-		if (advanceRule == AdvanceRuleCode.ADVINT) {
-			graceAdvPayment = calculateGrcAdvPayment(finScheduleData);
-		}
+		graceAdvPayment = calculateGrcAdvPayment(finScheduleData);
 
 		repayAdvPayment = calculateRepayAdvPayment(finScheduleData);
 
