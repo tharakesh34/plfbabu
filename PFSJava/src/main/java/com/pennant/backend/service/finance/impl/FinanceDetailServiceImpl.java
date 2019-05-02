@@ -4723,7 +4723,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)) {
+						|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner) 
+						|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
 					processAdvancePayment(finScheduleData);
 				}
 			}
