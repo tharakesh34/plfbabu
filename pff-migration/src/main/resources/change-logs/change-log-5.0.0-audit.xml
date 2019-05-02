@@ -119,6 +119,14 @@
 </addColumn>
 </changeSet>
 
+<changeSet id="3_pre" author="aditya.a">
+		<sql>
+			<![CDATA[
+				UPDATE AdtRMTAccountTypes SET ControlAc = 0 where ControlAc is null;
+			]]>
+		</sql>
+</changeSet>
+
 <changeSet id="3" author="aditya.a" dbms="mssql">
 		<sql>
 			<![CDATA[

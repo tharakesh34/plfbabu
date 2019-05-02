@@ -688,6 +688,15 @@ UNION ALL
 </createView>
 	</changeSet>
 	
+<changeSet id="15_pre" author="aditya.a" >
+		<sql>
+			<![CDATA[
+				UPDATE RMTAccountTypes SET ControlAc = 0 where ControlAc is null;
+				UPDATE RMTAccountTypes_temp SET ControlAc = 0 where ControlAc is null;
+			]]>
+		</sql>
+</changeSet>
+	
 <changeSet id="15" author="aditya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
