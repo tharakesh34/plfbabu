@@ -4545,6 +4545,7 @@
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<!-- Subvention -->
 		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
 

@@ -1403,30 +1403,29 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 		if (StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)) {
-			// FIXME: PV. IS IT REQUIRED HERE? VALIDATION AL;READY DONE IN
-			// RECEIPT SERVICE.
+			//FIXME: PV. IS IT REQUIRED HERE? VALIDATION AL;READY DONE IN RECEIPT SERVICE.
 			String receiptMode = finServiceInst.getPaymentMode();
 
 			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 				receiptMode = finServiceInst.getSubReceiptMode();
 			}
+			if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+				long fundingAccount = finServiceInst.getReceiptDetail().getFundingAc();
+				finServiceInst.setFundingAc(fundingAccount);
+				int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(), receiptMode,
+						AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
+				if (count <= 0) {
+					finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90263", null);
+					return financeDetail;
+				}
 
-			long fundingAccount = finServiceInst.getReceiptDetail().getFundingAc();
-			finServiceInst.setFundingAc(fundingAccount);
-			int count = finTypePartnerBankService.getPartnerBankCount(financeMain.getFinType(), receiptMode,
-					AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
-			if (count <= 0) {
-				finScheduleData = receiptService.setErrorToFSD(finScheduleData, "90263", null);
-				return financeDetail;
+				// fetch partner bank details
+				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
+				if (partnerBank != null) {
+					rcd.setPartnerBankAc(partnerBank.getAccountNo());
+					rcd.setPartnerBankAcType(partnerBank.getAcType());
+				}
 			}
-
-			// fetch partner bank details
-			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
-			if (partnerBank != null) {
-				rcd.setPartnerBankAc(partnerBank.getAccountNo());
-				rcd.setPartnerBankAcType(partnerBank.getAcType());
-			}
-
 			int version = 0;
 			// Receipt upload process
 			if (finServiceInst.isReceiptdetailExits()) {
@@ -1568,6 +1567,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			// FIXME: PV re-look at it
 			financeDetail = getServiceInstResponse(receiptData.getFinanceDetail().getFinScheduleData());
+			rch = receiptData.getReceiptHeader();
+			financeDetail.getFinScheduleData().getFinServiceInstruction().setReceiptId(rch.getReceiptID());
 
 			List<FinServiceInstruction> finServInstList = new ArrayList<>();
 			for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
@@ -1584,7 +1585,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					finServInst.setChecker(auditHeader.getAuditUsrId());
 					finServInst.setCheckerAppDate(DateUtility.getAppDate());
 					finServInst.setCheckerSysDate(DateUtility.getSysDate());
-					finServInst.setReference(String.valueOf(rch.getReceiptID()));
+					finServInst.setReference(String.valueOf(receiptData.getReceiptHeader().getReceiptID()));
 					finServInstList.add(finServInst);
 				}
 			}

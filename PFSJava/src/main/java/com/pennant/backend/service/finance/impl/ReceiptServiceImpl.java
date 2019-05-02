@@ -175,8 +175,8 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 public class ReceiptServiceImpl extends GenericFinanceDetailService implements ReceiptService {
@@ -3174,12 +3174,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
 			receiptMode = fsi.getSubReceiptMode();
 		}
-
-		int count = finTypePartnerBankDAO.getPartnerBankCount(financeMain.getFinType(), receiptMode,
-				AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
-		if (count <= 0) {
-			finScheduleData = setErrorToFSD(finScheduleData, "RU0020", null);
-			return receiptData;
+		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+			int count = finTypePartnerBankDAO.getPartnerBankCount(financeMain.getFinType(), receiptMode,
+					AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
+			if (count <= 0) {
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0020", null);
+				return receiptData;
+			}
 		}
 
 		receiptData = validateDual(receiptData, methodCtg);
