@@ -3538,7 +3538,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		sql.append(" INNER JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T3 ON T2.FINDIVISION=T3.DIVISIONCODE");
-		sql.append(" INNER JOIN ENTITY T4 ON T4.ENTITYCODE = T4.ENTITYCODE");
+		sql.append(" INNER JOIN ENTITY T4 ON T4.ENTITYCODE = T3.ENTITYCODE");
 
 		sql.append(" Where FinReference = :FinReference");
 		logger.trace(Literal.SQL + sql.toString());

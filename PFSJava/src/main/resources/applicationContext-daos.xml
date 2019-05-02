@@ -5396,6 +5396,7 @@
 
 	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
