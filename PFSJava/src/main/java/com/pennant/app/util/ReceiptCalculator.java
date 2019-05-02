@@ -455,7 +455,7 @@ public class ReceiptCalculator implements Serializable {
 		for (int i = 0; i < finFeedetails.size(); i++) {
 			FinFeeDetail finFeeDetail = finFeedetails.get(i);
 			ReceiptAllocationDetail allocDetail = getAllocation(receiptData, RepayConstants.ALLOCATION_FEE, 1,
-					finFeeDetail.getActualAmount(), finFeeDetail.getFeeTypeDesc(), -(finFeeDetail.getFeeTypeID()), "",
+					finFeeDetail.getActualAmountOriginal(), finFeeDetail.getFeeTypeDesc(), -(finFeeDetail.getFeeTypeID()), finFeeDetail.getTaxComponent(),
 					true);
 			allocDetail.setFeeTypeCode(finFeeDetail.getFeeTypeCode());
 			allocationsList.add(allocDetail);
@@ -840,7 +840,7 @@ public class ReceiptCalculator implements Serializable {
 			adviseDue = advise.getAdviseAmount().subtract(advise.getPaidAmount()).subtract(advise.getWaivedAmount());
 			String type = null;
 			String desc = null;
-			String taxType = null;
+			String taxType = advise.getTaxComponent();
 			long advID = 0;
 
 			// Adding Advise Details to Map

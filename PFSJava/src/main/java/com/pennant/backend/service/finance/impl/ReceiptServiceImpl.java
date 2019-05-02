@@ -572,7 +572,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Finance Stage Accounting Process
 		// =======================================
+		FinanceMain finMain = rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		//For Stage Accounting it is required
+		finMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
 		auditHeader = executeStageAccounting(auditHeader);
+		finMain.setRcdMaintainSts("");
+		
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -1230,7 +1235,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
 		logger.debug("Entering");
-
+		//Storing screen data
+		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		Cloner cloner = new Cloner();
@@ -1311,6 +1317,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return auditHeader;
 			}
 		}
+		receiptData.getReceiptHeader().setDepositProcess(orgReceiptData.getReceiptHeader().isDepositProcess());
+		
 		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();

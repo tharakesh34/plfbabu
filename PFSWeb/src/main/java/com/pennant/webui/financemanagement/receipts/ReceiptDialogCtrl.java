@@ -2319,6 +2319,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			rch.setUserDetails(getUserWorkspace().getLoggedInUser());
 		}
+		//it is required since based on the work flow 
+		rch.setNextTaskId(curNextTaskId);
 
 		// Duplicate Creation of Object
 		Cloner cloner = new Cloner();
@@ -3651,7 +3653,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			wve.add(we);
 		}
 		try {
-			if (receivedFrom.isVisible()) {
+			if (receivedFrom.isVisible() && !receivedFrom.isDisabled()) {
 				header.setReceivedFrom(getComboboxValue(receivedFrom));
 			}
 		} catch (WrongValueException we) {
@@ -4892,7 +4894,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (processCompleted) {
 
 				if (!"".equals(nextTaskId) || "Save".equals(userAction.getSelectedItem().getLabel())) {
-					setNextTaskDetails(taskId, tRepayData.getReceiptHeader());
+					setNextTaskDetails(taskId, rch);
 					auditHeader.getAuditDetail().setModelData(tRepayData);
 					processCompleted = doSaveProcess(auditHeader, null);
 				}

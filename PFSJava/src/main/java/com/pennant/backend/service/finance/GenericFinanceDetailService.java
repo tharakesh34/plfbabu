@@ -1837,7 +1837,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		String receiptNumber = null;
 		String paymentType = null;
 		String partnerBankAc = null;
-
+		String roleCode = "";
+		String nextRoleCode = "";
+		long postRef = 0;
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinanceDetail) {
 			financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof LiabilityRequest) {
@@ -1850,6 +1852,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			// Value Date identification
 			FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
+			roleCode = receiptHeader.getRoleCode();
+			nextRoleCode = receiptHeader.getNextRoleCode();
 			if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
 				for (FinReceiptDetail detail : receiptHeader.getReceiptDetails()) {
 					if (StringUtils.equals(detail.getPaymentType(), receiptHeader.getReceiptMode())
@@ -1858,6 +1862,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						tranAmount = detail.getAmount();
 						receiptNumber = detail.getPaymentRef();
 						partnerBankAc = detail.getPartnerBankAcType();
+						postRef = detail.getReceiptID();
 					}
 				}
 			}
@@ -1870,7 +1875,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		// If Record action is Save then, no need to do any accounting
-		if (StringUtils.equals(finMain.getRoleCode(), finMain.getNextRoleCode())
+		if (StringUtils.equals(roleCode, nextRoleCode)
 				|| StringUtils.equals(finMain.getRecordStatus(), PennantConstants.RCD_STATUS_RESUBMITTED)) {
 			logger.debug("Leaving");
 			return auditHeader;
@@ -1891,10 +1896,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		//Stage Accounting Rule Id list 
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
 			stageAccRuleIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getPromotionCode(),
-					finMain.getRcdMaintainSts(), finMain.getRoleCode(), FinanceConstants.PROCEDT_STAGEACC);
+					finMain.getRcdMaintainSts(), roleCode, FinanceConstants.PROCEDT_STAGEACC);
 		} else {
 			stageAccRuleIdList = getFinanceReferenceDetailDAO().getRefIdListByRefType(finMain.getFinType(),
-					finMain.getRcdMaintainSts(), finMain.getRoleCode(), FinanceConstants.PROCEDT_STAGEACC);
+					finMain.getRcdMaintainSts(), roleCode, FinanceConstants.PROCEDT_STAGEACC);
 		}
 
 		// If No Rule Sets added against stage, no action to be done
@@ -1983,6 +1988,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setEntityCode(finMain.getLovDescEntityCode());
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setPostDate(DateUtility.getAppDate());
+		if (postRef > 0) {
+			aeEvent.setPostRefId(postRef);
+		}
 		amountCodes.setUserBranch(auditHeader.getAuditBranchCode());
 
 		HashMap<String, Object> dataMap = aeEvent.getDataMap();
@@ -2017,7 +2025,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		// Check If there is no difference in Postings, if already executed on process of workflow
 		if (!prvStageAccountingCheck(newStageAcEntries, finMain.getFinReference(), finMain.getRcdMaintainSts(),
-				finMain.getRoleCode())) {
+				roleCode)) {
 			logger.debug(Labels.getLabel("label_Finance_Recal_StageAccountings"));
 			logger.debug("Leaving");
 			return auditHeader;
@@ -2033,7 +2041,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			FinStageAccountingLog stageAccountingLog = new FinStageAccountingLog();
 			stageAccountingLog.setFinReference(finMain.getFinReference());
 			stageAccountingLog.setFinEvent(finMain.getRcdMaintainSts());
-			stageAccountingLog.setRoleCode(finMain.getRoleCode());
+			stageAccountingLog.setRoleCode(roleCode);
 			stageAccountingLog.setLinkedTranId(aeEvent.getLinkedTranId());
 			stageAccountingLog.setReceiptNo(receiptNumber);
 			getFinStageAccountingLogDAO().saveStageAccountingLog(stageAccountingLog);
