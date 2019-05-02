@@ -118,4 +118,17 @@
 			<column name="ControlAc" type="boolean" defaultValueBoolean="false"/>
 </addColumn>
 </changeSet>
+
+<changeSet id="3" author="aditya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtRMTAccountTypes ADD CONSTRAINT DF_RMTAccountTypes_ControlAc DEFAULT 0 FOR ControlAc;
+			]]>
+		</sql>
+</changeSet>
+
+<changeSet id="3" author="aditya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ControlAc" tableName="AdtRMTAccountTypes" defaultValue="0" />
+</changeSet>
+
 </databaseChangeLog>
