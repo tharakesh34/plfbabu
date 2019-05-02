@@ -484,7 +484,7 @@
 			<column name="SendAlert" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="8" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
 		<sql>
@@ -494,10 +494,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="9" author="vijaya.a">
 		<comment>commodity file upload</comment>
-			<sql>
+		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COLLETARAL_VALUE_UPDATE');
 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COLLETARAL_VALUE_UPDATE');
@@ -520,32 +520,33 @@
 				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 			]]>
-			</sql>
+		</sql>
 	</changeSet>
-	
-<changeSet id="10" author="aditya.a">
-<comment>New column added for Account Types</comment>
-   <sql>
-      INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
-   </sql>
-</changeSet>
 
-<changeSet id="11" author="aditya.a">
-<comment>New column added for Account Types</comment>
-   <addColumn tableName="rmtaccounttypes">
-      <column name="ControlAc" type="boolean" defaultValueBoolean="false"/>
-   </addColumn>
-</changeSet>
+	<changeSet id="10" author="aditya.a">
+		<comment>New column added for Account Types</comment>
+		<sql>
+			INSERT INTO SecRights Values ((select max(RightId)+1 from
+			SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+		</sql>
+	</changeSet>
 
-<changeSet id="12" author="aditya.a">
-<comment>New column added for Account Types</comment>
-   <addColumn tableName="rmtaccounttypes_temp">
-      <column name="ControlAc" type="boolean" defaultValueBoolean="false"/>
-   </addColumn>
-</changeSet>
+	<changeSet id="11" author="aditya.a">
+		<comment>New column added for Account Types</comment>
+		<addColumn tableName="rmtaccounttypes">
+			<column name="ControlAc" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
 
-<changeSet id="13" author="aditya.a">
-<createView viewName="rmtaccounttypes_aview" replaceIfExists="true">
+	<changeSet id="12" author="aditya.a">
+		<comment>New column added for Account Types</comment>
+		<addColumn tableName="rmtaccounttypes_temp">
+			<column name="ControlAc" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="13" author="aditya.a">
+		<createView viewName="rmtaccounttypes_aview" replaceIfExists="true">
  SELECT t1.actype,
     t1.actypedesc,
     t1.acpurpose,
@@ -590,10 +591,10 @@
      LEFT JOIN costcenters t3 ON t1.costcenterid = t3.costcenterid
      JOIN profitcenters t4 ON t1.profitcenterid = t4.profitcenterid
 </createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="14" author="aditya.a">
-<createView viewName="rmtaccounttypes_view" replaceIfExists="true">
+	<changeSet id="14" author="aditya.a">
+		<createView viewName="rmtaccounttypes_view" replaceIfExists="true">
  SELECT t1.actype,
     t1.actypedesc,
     t1.acpurpose,
@@ -685,6 +686,6 @@ UNION ALL
            FROM rmtaccounttypes_temp
           WHERE rmtaccounttypes_temp.actype = t1.actype))
 </createView>
-</changeSet>
+	</changeSet>
 
 </databaseChangeLog>
