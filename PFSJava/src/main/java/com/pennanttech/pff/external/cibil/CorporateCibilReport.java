@@ -720,20 +720,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				if (odDays > 0) {
 					BigDecimal futureSchedulePrincipal = getAmount(loan.getFutureSchedulePrin());
-					BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
-					BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
-					BigDecimal bounceDue = getAmount(loan.getBounceDue());
-					BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
-					BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
-					BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
-					BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
-					BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
-
-					currentBalance = futureSchedulePrincipal.add(installmentDue.subtract(installmentPaid).add(bounceDue
-							.subtract(bouncePaid)
-							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
+					currentBalance = futureSchedulePrincipal;
 				} else {
-					currentBalance = loan.getFutureSchedulePrin();
+					currentBalance = getAmount(loan.getFutureSchedulePrin());
 				}
 
 				if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
