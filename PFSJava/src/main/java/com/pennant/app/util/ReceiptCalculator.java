@@ -1027,20 +1027,18 @@ public class ReceiptCalculator implements Serializable {
 
 		int prvSize = xcessPayableList.size();
 
-		for (int i = 0; i < payableList.size(); i++) {
-			ManualAdvise payable = payableList.get(i);
+		for (ManualAdvise payable : payableList) {
 			XcessPayables xcessPayable = new XcessPayables();
 			String feeDesc = payable.getFeeTypeDesc();
 
-			xcessPayable.setIdx(prvSize + i);
+			xcessPayable.setIdx(prvSize++);
 			xcessPayable.setPayableID(payable.getAdviseID());
 			xcessPayable.setPayableType("P");
 			xcessPayable.setAmount(payable.getBalanceAmt());
 			xcessPayable.setFeeTypeCode(payable.getFeeTypeCode());
 
 			if (payableReserveList != null && !payableReserveList.isEmpty()) {
-				for (int j = 0; j < payableReserveList.size(); j++) {
-					ManualAdviseReserve reserve = payableReserveList.get(j);
+				for (ManualAdviseReserve reserve : payableReserveList) {
 					if (reserve.getAdviseID() == xcessPayable.getPayableID()) {
 						xcessPayable.setReserved(reserve.getReservedAmt());
 						break;
@@ -1137,9 +1135,7 @@ public class ReceiptCalculator implements Serializable {
 	public FinReceiptData recalXcessPayableGST(FinReceiptData receiptData) {
 		// Set Balance Changes
 		List<XcessPayables> xcessPayables = receiptData.getReceiptHeader().getXcessPayables();
-		for (int i = 0; i < xcessPayables.size(); i++) {
-			XcessPayables payable = xcessPayables.get(i);
-
+		for (XcessPayables payable : xcessPayables) {
 			if (payable.getTotPaidNow().compareTo(BigDecimal.ZERO) != 0) {
 				TaxAmountSplit taxSplit = new TaxAmountSplit();
 				taxSplit.setAmount(payable.getTotPaidNow());
@@ -1202,9 +1198,7 @@ public class ReceiptCalculator implements Serializable {
 
 		// Set Balance Changes.
 		List<ReceiptAllocationDetail> allocations = receiptData.getReceiptHeader().getAllocations();
-		for (int i = 0; i < allocations.size(); i++) {
-			ReceiptAllocationDetail allocation = allocations.get(i);
-
+		for (ReceiptAllocationDetail allocation : allocations) {
 			allocation.setWaivedAvailable(allocation.getWaivedAmount());
 			// PRI and Interest Records should have been set before reached here
 			if (StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_PFT)
@@ -1515,30 +1509,46 @@ public class ReceiptCalculator implements Serializable {
 			/*
 			 * if (allocate.getAllocationTo() != 0) { allocate.setPaidAvailable(allocate.getPaidAmount()); continue; }
 			 */
-			if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+
+			switch (allocate.getAllocationType()) {
+			case RepayConstants.ALLOCATION_PFT:
 				rch.setPftIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+				break;
+			case RepayConstants.ALLOCATION_TDS:
 				rch.setTdsIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_NPFT)) {
+				break;
+			case RepayConstants.ALLOCATION_NPFT:
 				rch.setNPftIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+				break;
+			case RepayConstants.ALLOCATION_PRI:
 				rch.setPriIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_LPFT)) {
+				break;
+			case RepayConstants.ALLOCATION_LPFT:
 				rch.setLpiIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
+				break;
+			case RepayConstants.ALLOCATION_ODC:
 				rch.setLppIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_EMI)) {
+				break;
+			case RepayConstants.ALLOCATION_EMI:
 				rch.setEmiIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+				break;
+			case RepayConstants.ALLOCATION_FUT_PFT:
 				rch.setFutPftIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PRI)) {
+				break;
+			case RepayConstants.ALLOCATION_FUT_PRI:
 				rch.setFutPriIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_NPFT)) {
+				break;
+			case RepayConstants.ALLOCATION_FUT_NPFT:
 				rch.setFutNPftIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)) {
+				break;
+			case RepayConstants.ALLOCATION_FUT_TDS:
 				rch.setFutTdsIdx(i);
-			} else if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PP)) {
+				break;
+			case RepayConstants.ALLOCATION_PP:
 				rch.setPpIdx(i);
+				break;
+			default:
+
 			}
 
 			if (!isAdjSchedule) {
@@ -1687,12 +1697,12 @@ public class ReceiptCalculator implements Serializable {
 		}
 		for (int i = 0; i < allocationList.size(); i++) {
 			ReceiptAllocationDetail allocate = allocationList.get(i);
-			if (StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PFT)
-					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_TDS)
-					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_NPFT)
-					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_PRI)
-					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)
-					|| StringUtils.equals(allocate.getAllocationType(), RepayConstants.ALLOCATION_FUT_PFT)) {
+			if (RepayConstants.ALLOCATION_PFT.equals(allocate.getAllocationType())
+					|| RepayConstants.ALLOCATION_TDS.equals(allocate.getAllocationType())
+					|| RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())
+					|| RepayConstants.ALLOCATION_PRI.equals(allocate.getAllocationType())
+					|| RepayConstants.ALLOCATION_FUT_TDS.equals(allocate.getAllocationType())
+					|| RepayConstants.ALLOCATION_FUT_PFT.equals(allocate.getAllocationType())) {
 
 				continue;
 			}
@@ -1907,9 +1917,7 @@ public class ReceiptCalculator implements Serializable {
 
 	public FinReceiptData calApportion(char[] rpyOrder, FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		for (int i = 0; i < rpyOrder.length; i++) {
-			char repayTo = rpyOrder[i];
-
+		for (char repayTo : rpyOrder) {
 			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
 				receiptData = priApportion(receiptData);
 				if (isAdjSchedule && receiptPurposeCtg == 2 && rch.getPriIdx() > 0 && rch.getAllocations()
