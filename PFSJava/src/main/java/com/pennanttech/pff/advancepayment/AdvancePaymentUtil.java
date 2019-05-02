@@ -286,7 +286,7 @@ public class AdvancePaymentUtil {
 		if (advanceType == AdvanceType.UF) {
 			advanceIntrest = finScheduleData.getPftChg();
 		} else {
-			advanceIntrest = calculateAdvPayment(finScheduleData);
+			advanceIntrest = calculateAdvPayment(finScheduleData,advanceRule);
 		}
 
 		fee.setActualAmount(advanceIntrest);
@@ -303,11 +303,11 @@ public class AdvancePaymentUtil {
 	 */
 	public static void calculateLOSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
 		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
-		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT || advanceRule != AdvanceRuleCode.ADVEMI)) {
+		if (advanceRule == null || (advanceRule != AdvanceRuleCode.ADVINT && advanceRule != AdvanceRuleCode.ADVEMI)) {
 			return;
 		}
 
-		BigDecimal advancePayment = calculateAdvPayment(finScheduleData);
+		BigDecimal advancePayment = calculateAdvPayment(finScheduleData,advanceRule);
 		fee.setActualAmount(advancePayment);
 		fee.setCalculatedAmount(advancePayment);
 		fee.setActualAmountOriginal(advancePayment);
@@ -388,12 +388,14 @@ public class AdvancePaymentUtil {
 	 * @param finScheduleData
 	 * @return The Calculated Advance Interest/EMI
 	 */
-	public static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData) {
+	public static BigDecimal calculateAdvPayment(final FinScheduleData finScheduleData, AdvanceRuleCode advanceRule) {
 		BigDecimal advancePayment = BigDecimal.ZERO;
 		BigDecimal graceAdvPayment = BigDecimal.ZERO;
 		BigDecimal repayAdvPayment = BigDecimal.ZERO;
 
-		graceAdvPayment = calculateGrcAdvPayment(finScheduleData);
+		if (advanceRule == AdvanceRuleCode.ADVINT) {
+			graceAdvPayment = calculateGrcAdvPayment(finScheduleData);
+		}
 
 		repayAdvPayment = calculateRepayAdvPayment(finScheduleData);
 
