@@ -3529,7 +3529,7 @@
 	<changeSet id="22" author="murthy.y">
 		<sql>
 			<![CDATA[
-				INSERT INTO RMTACCOUNTTYPES VALUES('ADVINTDUE','Advance Interest Due A/C', 'L', '', 1, 0, '', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, '', 0, 0, 1, 4, 1, 1, '', '', 0, '', '', 'NA', 0);
+				INSERT INTO RMTACCOUNTTYPES VALUES('ADVINTDUE','Advance Interest Due A/c', 'L', '', 1, 0, '', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, '', 0, 0, 1, 4, 1, 1, '', '', 0, '', '', 'NA', 0);
 			]]>
 		</sql>
 	</changeSet>
