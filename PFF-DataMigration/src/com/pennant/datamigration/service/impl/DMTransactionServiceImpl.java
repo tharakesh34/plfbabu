@@ -1439,7 +1439,7 @@ public class DMTransactionServiceImpl implements DMTransactionService {
 		}
 
 		// Repay Schedule Details
-		getFinanceRepaymentsDAO().saveRpySchdList(dMD.getRepayScheduleDetails(), "");
+		getFinanceRepaymentsDAO().saveRpySchdList(dMD.getRepayScheduleDetails(), TableType.MAIN_TAB);
 
 		// Repayment Details
 		for (int i = 0; i < dMD.getRepayDetails().size(); i++) {
