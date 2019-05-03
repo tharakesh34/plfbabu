@@ -507,6 +507,10 @@ public class AdvancePaymentUtil {
 	}
 
 	private static int getTerms(AdvanceType advanceType, int terms) {
+		if (advanceType == null) {
+			return 0;
+		}
+
 		switch (advanceType) {
 		case UF:
 			terms = -1;
