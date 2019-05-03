@@ -20,6 +20,7 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -63,6 +64,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	private ReceiptCalculator receiptCalculator;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	public void processAdvansePayments(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -86,27 +88,38 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
+			FinanceScheduleDetail nextSchd = null;
 
 			if (fm.getGrcAdvType() == null && fm.getAdvType() == null) {
 				continue;
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
-
 				if (fm.getGrcAdvType() == null) {
 					continue;
 				}
 
-				// ADVINST
-				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
+				if (AdvanceType.getType(fm.getGrcAdvType()) == AdvanceType.AF) {
+					if (finEODEvent.getFinanceScheduleDetails().size() > idx) {
+						nextSchd = finEODEvent.getFinanceScheduleDetails().get(idx + 1);
+					}
+				}
+
+				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID);
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
 				if (fm.getAdvType() == null) {
 					continue;
 				}
-				//ADVEMI
-				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
+
+				if (AdvanceType.getType(fm.getAdvType()) == AdvanceType.AF) {
+					if (finEODEvent.getFinanceScheduleDetails().size() > idx) {
+						nextSchd = finEODEvent.getFinanceScheduleDetails().get(idx + 1);
+					}
+				}
+
+				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID);
 			}
 
 		}
@@ -115,10 +128,11 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public void processAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd,
-			CustEODEvent custEODEvent, long accountingID) throws Exception {
+			FinanceScheduleDetail nextSchd, CustEODEvent custEODEvent, long accountingID) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
+		String finReference = fm.getFinReference();
 		Date valueDate = custEODEvent.getEodValueDate();
 		Date schDate = curSchd.getSchDate();
 
@@ -160,6 +174,12 @@ public class AdvancePaymentService extends ServiceHelper {
 		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
 		amountCodes.setEmiDue(advancePayment.getEmiDue());
 
+		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
+			if (nextSchd != null) {
+				amountCodes.setAdvIntDue(curSchd.getProfitSchd());
+			}
+		}
+
 		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		aeEvent.setDataMap(dataMap);
@@ -173,6 +193,12 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
 			createAdvIntReceipt(advancePayment, curSchd, AccountConstants.TRANTYPE_DEBIT);
+
+			if (amountCodes.getAdvIntDue().compareTo(BigDecimal.ZERO) > 0) {
+				long feeTypeID = feeTypeDAO.getFeeTypeId(AdvanceRuleCode.ADVINT.name());
+				createReceivableAdvise(finReference, feeTypeID, amountCodes.getAdvIntDue(), null);
+			}
+
 		} else if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVEMI) {
 			createAdvEMIReceipt(advancePayment, curSchd, AccountConstants.TRANTYPE_DEBIT);
 		}
@@ -617,7 +643,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	 * 
 	 * @param vASRecording
 	 */
-	private void createReceivableAdvise(String finReference, long feeTypeID, BigDecimal adviseAmount, long lastMntBy) {
+	private void createReceivableAdvise(String finReference, long feeTypeID, BigDecimal adviseAmount, Long lastMntBy) {
 		logger.debug(Literal.ENTERING);
 
 		ManualAdvise manualAdvise = new ManualAdvise();
@@ -638,7 +664,9 @@ public class AdvancePaymentService extends ServiceHelper {
 		manualAdvise.setBalanceAmt(adviseAmount);
 
 		manualAdvise.setVersion(0);
-		manualAdvise.setLastMntBy(lastMntBy);
+		if (lastMntBy != null) {
+			manualAdvise.setLastMntBy(lastMntBy);
+		}
 		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		manualAdvise.setRoleCode("");
@@ -693,4 +721,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
 }

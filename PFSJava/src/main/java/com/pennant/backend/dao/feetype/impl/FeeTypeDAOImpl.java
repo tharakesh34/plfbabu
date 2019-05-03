@@ -423,4 +423,26 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		return null;
 	}
 
+	@Override
+	public long getFeeTypeId(String feeTypeCode) {
+		logger.debug(Literal.ENTERING);
+
+		long feeTypeId = Long.MIN_VALUE;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FeeTypeID From FeeTypes");
+		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FeeTypeCode", feeTypeCode);
+
+		try {
+			feeTypeId = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+
+		logger.debug(Literal.LEAVING);
+		return feeTypeId;
+	}
+
 }

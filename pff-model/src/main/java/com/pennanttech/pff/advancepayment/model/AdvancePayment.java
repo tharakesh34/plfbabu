@@ -25,6 +25,7 @@ public class AdvancePayment implements Serializable {
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
 	private BigDecimal intAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal intDue = BigDecimal.ZERO;
+	private BigDecimal advIntDue = BigDecimal.ZERO;
 	private BigDecimal emiAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
@@ -149,6 +150,14 @@ public class AdvancePayment implements Serializable {
 
 	public void setIntDue(BigDecimal intDue) {
 		this.intDue = intDue;
+	}
+	
+	public BigDecimal getAdvIntDue() {
+		return advIntDue;
+	}
+
+	public void setAdvIntDue(BigDecimal advIntDue) {
+		this.advIntDue = advIntDue;
 	}
 
 	public BigDecimal getEmiAdjusted() {
