@@ -60,23 +60,6 @@ public final class DateUtility extends DateUtil {
 	private static final Logger logger = Logger.getLogger(DateUtility.class);
 
 	/**
-	 * Returns the string representation with the specified pattern of the server time.
-	 * 
-	 * @param pattern
-	 *            The pattern describing the date and time format.
-	 * @return The formatted date string of the server time.
-	 * @throws IllegalArgumentException
-	 *             - If the given pattern is <code>null</code> or invalid.
-	 */
-	public static String getSysDate(String pattern) {
-		if (StringUtils.isBlank(pattern)) {
-			throw new IllegalArgumentException();
-		}
-
-		return format(DateUtil.getSysDate(), pattern);
-	}
-
-	/**
 	 * Returns a {@link java.util.Date} object that represents the application date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the application date.
@@ -255,28 +238,6 @@ public final class DateUtility extends DateUtil {
 			uDate = DateUtility.getAppDate();
 		}
 		return new Date(uDate.getTime());
-	}
-
-	/**
-	 * Compares the given dates and returns
-	 * 
-	 * <pre>
-	 * 		 0 if both dates are equal
-	 * 		<0 if date1 < date2
-	 * 		>0 if date1 > date2
-	 * </pre>
-	 */
-	public static int compare(java.util.Date date1, java.util.Date date2) {
-		GregorianCalendar gc1, gc2;
-		gc1 = new GregorianCalendar(getYear(date1), getMonth(date1) - 1, getDay(date1));
-		gc2 = new GregorianCalendar(getYear(date2), getMonth(date2) - 1, getDay(date2));
-		if (gc1.after(gc2)) {
-			return 1;
-		} else if (gc1.before(gc2)) {
-			return -1;
-		} else {
-			return 0;
-		}
 	}
 
 	/**
@@ -765,5 +726,4 @@ public final class DateUtility extends DateUtil {
 
 		return appDate;
 	}
-
 }
