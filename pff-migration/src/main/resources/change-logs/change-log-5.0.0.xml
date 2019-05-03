@@ -687,29 +687,15 @@ UNION ALL
           WHERE rmtaccounttypes_temp.actype = t1.actype))
 </createView>
 	</changeSet>
-	
-<changeSet id="15_pre" author="aditya.a" >
+
+	<changeSet id="15_pre" author="aditya.a">
 		<sql>
 			<![CDATA[
 				UPDATE RMTAccountTypes SET ControlAc = 0 where ControlAc is null;
 				UPDATE RMTAccountTypes_temp SET ControlAc = 0 where ControlAc is null;
 			]]>
 		</sql>
-</changeSet>
-	
-<changeSet id="15" author="aditya.a" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE RMTAccountTypes ADD CONSTRAINT DF_RMTAccountTypes_ControlAc DEFAULT 0 FOR ControlAc;
-				ALTER TABLE RMTAccountTypes_temp ADD CONSTRAINT DF_RMTAccountTypes_t_ControlAc DEFAULT 0 FOR ControlAc;
-			]]>
-		</sql>
-</changeSet>
-
-<changeSet id="15" author="aditya.a" dbms="postgresql, oracle">
-		<addDefaultValue columnName="ControlAc" tableName="RMTAccountTypes" defaultValue="0" />
-		<addDefaultValue columnName="ControlAc" tableName="RMTAccountTypes_temp" defaultValue="0" />
-</changeSet>
+	</changeSet>
 
 	<changeSet id="16" author="satyanarayana.g">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">

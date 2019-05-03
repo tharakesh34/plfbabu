@@ -191,25 +191,18 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms"
-			columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms"
-			columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms"
-			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms" columnDataType="int" />
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq" columnDataType="boolean" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMinTerms" columnDataType="int" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms"
-			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms" columnDataType="int" />
 
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="DSFReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="shinde.b">
@@ -3098,6 +3091,15 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="18.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) 
+				values ('REPAY', 0, 'ae_advIntDue', 'Advance Interest Due', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="19" author="murthy.y">
 		<addColumn tableName="FinFeeDetail">
 			<column name="InstructionUID" type="bigint" />
@@ -3493,7 +3495,7 @@
 		          WHERE wiffinfeedetail_temp.finreference = t1.finreference AND wiffinfeedetail_temp.originationfee = t1.originationfee AND wiffinfeedetail_temp.finevent = t1.finevent AND wiffinfeedetail_temp.feetypeid = t1.feetypeid))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="21" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -3523,5 +3525,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="22" author="murthy.y">
+		<sql>
+			<![CDATA[
+				INSERT INTO RMTACCOUNTTYPES VALUES('ADVINTDUE','Advance Interest Due A/C', 'L', '', 1, 0, '', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '', 0, '', 0, 0, 1, 4, 1, 1, '', '', 0, '', '', 'NA', 0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
