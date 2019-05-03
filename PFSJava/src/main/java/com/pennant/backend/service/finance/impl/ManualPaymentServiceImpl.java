@@ -446,7 +446,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
 
 			//Save Repay Schedule Details
-			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
+			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
 
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
@@ -456,7 +456,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				finRepayHeader.setLinkedTranId(linkedTranId);
 				getFinanceRepaymentsDAO().updateFinRepayHeader(finRepayHeader, tableType.getSuffix());
 				getFinanceRepaymentsDAO().deleteRpySchdList(finReference, tableType.getSuffix());
-				getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
+				getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
 			}
 		}
 
@@ -533,7 +533,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
 				rpySchd.setLinkedTranId(linkedTranId);
 			}
-			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType.getSuffix());
+			getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), tableType);
 		}
 
 		//Reset Repay Account ID On Finance Main for Correcting Audit Data
@@ -806,7 +806,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			rpySchd.setLinkedTranId(linkedTranId);
 			rpySchd.setFinReference(repayData.getFinanceDetail().getFinScheduleData().getFinReference());
 		}
-		getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), "");
+		getFinanceRepaymentsDAO().saveRpySchdList(repayData.getRepayScheduleDetails(), TableType.MAIN_TAB);
 
 		if (!StringUtils.equals("API", repayData.getSourceId())) {
 			// Save Document Details

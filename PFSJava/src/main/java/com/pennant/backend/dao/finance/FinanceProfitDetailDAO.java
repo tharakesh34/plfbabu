@@ -49,6 +49,7 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 /**
  * DAO methods declaration for the <b>FinanceProfitDetail model</b> class.<br>
@@ -132,4 +133,8 @@ public interface FinanceProfitDetailDAO {
 	void updateAMZMethod(String finReference, String amzMethod);
 	
 	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
+
+	void updateSchPftPaid(FinanceProfitDetail profitDetail);
+
+	void updateSchPriPaid(FinanceProfitDetail profitDetail);
 }

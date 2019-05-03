@@ -1098,7 +1098,7 @@ public class RepaymentProcessUtil {
 				}
 
 				// Save Repayment Schedule Details
-				getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB.getSuffix());
+				getFinanceRepaymentsDAO().saveRpySchdList(rpySchdList, TableType.MAIN_TAB);
 			}
 		}
 

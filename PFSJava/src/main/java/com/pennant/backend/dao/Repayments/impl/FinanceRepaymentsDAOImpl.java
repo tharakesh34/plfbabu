@@ -487,11 +487,11 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	}
 
 	@Override
-	public void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, String type) {
+	public void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, TableType tableType) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinRepayScheduleDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
+		insertSql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		insertSql.append(
 				" (RepayID, RepaySchID, FinReference , SchDate , SchdFor , LinkedTranId, ProfitSchdBal , PrincipalSchdBal , ");
 		insertSql.append(

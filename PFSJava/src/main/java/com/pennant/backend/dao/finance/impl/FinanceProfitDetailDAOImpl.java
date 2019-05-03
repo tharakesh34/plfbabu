@@ -64,6 +64,7 @@ import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.MonthlyAccumulateDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -949,7 +950,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.LEAVING);
 		return totalExposer;
 	}
-	
+
 	@Override
 	public void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive) {
 		logger.debug("Entering");
@@ -1150,6 +1151,48 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		beanParameters.addValue("AMZMethod", amzMethod);
 
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+	}
+
+	@Override
+	public void updateSchPftPaid(FinanceProfitDetail profitDetail) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update FinPftDetails set");
+		sql.append(" TotalPftPaid = :TotalPftPaid");
+		sql.append(",TdSchdPftPaid = :TdSchdPftPaid");
+		sql.append(" where FinReference =:FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(profitDetail);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updateSchPriPaid(FinanceProfitDetail profitDetail) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
+		sql.append(" TotalPriPaid = :TotalPriPaid");
+		sql.append(", TdSchdPriPaid = :TdSchdPriPaid");
+		sql.append(" where FinReference =:FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(profitDetail);
+		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 }

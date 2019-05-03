@@ -30,7 +30,7 @@ public interface FinanceRepaymentsDAO {
 
 	List<RepayScheduleDetail> getRpySchdList(long repayId, String type);
 
-	void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, String type);
+	void saveRpySchdList(List<RepayScheduleDetail> repaySchdList, TableType tableType);
 
 	void deleteRpySchdList(String finReference, String type);
 

@@ -1630,6 +1630,7 @@ public class ReceiptCalculator implements Serializable {
 				xcess.setTotPaidNow(balAmount);
 				xcess.setBalanceAmt(xcess.getBalanceAmt().subtract(balAmount));
 			}
+			
 			if (!receiptData.isForeClosure() && receiptData.getActualReceiptAmount().compareTo(BigDecimal.ZERO) > 0) {
 				recalEarlyStlAlloc(receiptData, receiptData.getActualReceiptAmount());
 			}
