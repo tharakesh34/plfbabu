@@ -3675,7 +3675,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// validating closing status
 		String closingStaus = finScheduleData.getFinanceMain().getClosingStatus();
-		if (StringUtils.isEmpty(closingStaus)) {
+		if (StringUtils.isBlank(closingStaus)) {
 			return receiptData;
 		}
 
