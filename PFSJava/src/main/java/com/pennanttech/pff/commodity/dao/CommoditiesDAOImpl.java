@@ -150,7 +150,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		logger.debug(Literal.ENTERING);
 
 		String sql;
-		String whereClause = "CommodityType = :CommodityType And Code = :code And HsnCode = :HSNCode";
+		String whereClause = "CommodityType = :CommodityType And Code = :code ";
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("Commodities", whereClause);
@@ -166,8 +166,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CommodityType", commodity.getCommodityType());
 		paramSource.addValue("code", commodity.getCode());
-		paramSource.addValue("HSNCode", commodity.getHSNCode());
-
+		
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;

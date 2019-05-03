@@ -169,14 +169,12 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 		Commodity commodity = (Commodity) auditDetail.getModelData();
 		String code = commodity.getCode();
 		String hsnCode = commodity.getHSNCode();
-		String commodityTYpeCode = commodity.getCommodityTypeCode();
-
+		
 		// Check the unique keys.
 		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType()) && commoditiesDAO
 				.isDuplicateKey(commodity, commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityType.value") + ":"
-					+ commodityTYpeCode;
+			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityType.value") ;
 			parameters[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value") + ": " + code;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
