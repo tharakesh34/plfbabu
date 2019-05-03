@@ -528,18 +528,21 @@ public class AdvancePaymentService extends ServiceHelper {
 		ReceiptAllocationDetail allocation;
 		String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PFT");
 		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_PFT, id, payNow, desc, 0, "", false);
+		allocation.setPaidAmount(payNow);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_TDS");
 		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_TDS, id, tdsPayNow, desc, 0, "", false);
+		allocation.setPaidAmount(tdsPayNow);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_NPFT");
 		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_NPFT, id, netPay, desc, 0, "", false);
+		allocation.setPaidAmount(netPay);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
