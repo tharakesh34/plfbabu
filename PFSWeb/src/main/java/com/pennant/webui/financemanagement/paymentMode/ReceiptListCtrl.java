@@ -271,7 +271,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			List<String> filterList = new ArrayList<>();
 			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
-			searchObject.addWhereClause(" PAYAGAINSTID = 0");
+			//searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
 			if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)
 					|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
