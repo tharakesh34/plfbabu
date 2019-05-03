@@ -19,6 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
@@ -360,7 +361,7 @@ public class RepaymentProcessUtil {
 			} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(payableType)) {
 				extDataMap.put("EAM_ReceiptAmount", xcessPayable.getTotPaidNow());
 			}
-			
+
 			else {
 				// Paid Amount. GST Tax to be included after Bajaj Test
 				extDataMap.put((xcessPayable.getFeeTypeCode() + "_P"), xcessPayable.getTotPaidNow());
@@ -1977,6 +1978,7 @@ public class RepaymentProcessUtil {
 		this.assignmentDealDAO = assignmentDealDAO;
 	}
 
+	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
