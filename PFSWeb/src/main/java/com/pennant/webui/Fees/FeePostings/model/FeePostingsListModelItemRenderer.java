@@ -85,9 +85,9 @@ public class FeePostingsListModelItemRenderer implements ListitemRenderer<FeePos
 		lc = new Listcell(PennantApplicationUtil.amountFormate(feePostings.getPostingAmount(),
 				CurrencyUtil.getFormat(feePostings.getCurrency())));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(feePostings.getPostDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtility.format(feePostings.getPostDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(feePostings.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtility.format(feePostings.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(feePostings.getRecordStatus());
 		lc.setParent(item);

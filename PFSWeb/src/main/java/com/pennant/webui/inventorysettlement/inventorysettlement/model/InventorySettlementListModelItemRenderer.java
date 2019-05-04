@@ -71,7 +71,7 @@ public class InventorySettlementListModelItemRenderer implements ListitemRendere
 		lc.setParent(item);
 		lc = new Listcell(inventorySettlement.getBrokerCode());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(inventorySettlement.getSettlementDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtility.format(inventorySettlement.getSettlementDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(inventorySettlement.getRecordStatus());
 		lc.setParent(item);

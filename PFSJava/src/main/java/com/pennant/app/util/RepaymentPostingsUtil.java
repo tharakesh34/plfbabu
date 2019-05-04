@@ -862,7 +862,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				 */
 			}
 
-			Date curMonthStartDate = DateUtility.getMonthStartDate(lastSchd.getSchDate());
+			Date curMonthStartDate = DateUtility.getMonthStart(lastSchd.getSchDate());
 
 			// UnAccrual Calculation
 			BigDecimal unaccrue = BigDecimal.ZERO;

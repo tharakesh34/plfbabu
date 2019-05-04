@@ -93,52 +93,52 @@ public class FinanceDataDefaulting {
 	private void setDefaultDateFormats(FinanceMain financeMain) {
 		if (financeMain.getFinStartDate() != null) {
 			financeMain.setFinStartDate(DateUtility
-					.getDBDate(DateUtility.formatDate(financeMain.getFinStartDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(financeMain.getFinStartDate(), PennantConstants.DBDateFormat)));
 		}
 
 		if (financeMain.getGrcPeriodEndDate() != null) {
 			financeMain.setGrcPeriodEndDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextGrcPftDate() != null) {
 			financeMain.setNextGrcPftDate(DateUtility
-					.getDBDate(DateUtility.formatDate(financeMain.getNextGrcPftDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(financeMain.getNextGrcPftDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextGrcPftRvwDate() != null) {
 			financeMain.setNextGrcPftRvwDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getNextGrcPftRvwDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextGrcCpzDate() != null) {
 			financeMain.setNextGrcCpzDate(DateUtility
-					.getDBDate(DateUtility.formatDate(financeMain.getNextGrcCpzDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(financeMain.getNextGrcCpzDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextRepayDate() != null) {
 			financeMain.setNextRepayDate(DateUtility
-					.getDBDate(DateUtility.formatDate(financeMain.getNextRepayDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(financeMain.getNextRepayDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextRepayPftDate() != null) {
 			financeMain.setNextRepayPftDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getNextRepayPftDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getNextRepayPftDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextRepayRvwDate() != null) {
 			financeMain.setNextRepayRvwDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getNextRepayRvwDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextRepayCpzDate() != null) {
 			financeMain.setNextRepayCpzDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getNextRepayCpzDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getNextRepayCpzDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getFirstDroplineDate() != null) {
 			financeMain.setFirstDroplineDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getFirstDroplineDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getFirstDroplineDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getMaturityDate() != null) {
 			financeMain.setMaturityDate(DateUtility
-					.getDBDate(DateUtility.formatDate(financeMain.getMaturityDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(financeMain.getMaturityDate(), PennantConstants.DBDateFormat)));
 		}
 		if (financeMain.getNextRolloverDate() != null) {
 			financeMain.setNextRolloverDate(DateUtility.getDBDate(
-					DateUtility.formatDate(financeMain.getNextRolloverDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(financeMain.getNextRolloverDate(), PennantConstants.DBDateFormat)));
 		}
 	}
 
@@ -631,7 +631,7 @@ public class FinanceDataDefaulting {
 			if (isValidOtherFrq && finMain.getNextGrcPftRvwDate() == null) {
 				Date rvwDate = FrequencyUtil.getNextDate(finMain.getGrcPftRvwFrq(), 1, finMain.getFinStartDate(),
 						HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
-				rvwDate = DateUtility.getDBDate(DateUtility.formatDate(rvwDate, PennantConstants.DBDateFormat));
+				rvwDate = DateUtility.getDBDate(DateUtility.format(rvwDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalGrcEndDate() != null && rvwDate != null) {
 					if (finMain.getCalGrcEndDate().compareTo(rvwDate) < 0) {
@@ -662,7 +662,7 @@ public class FinanceDataDefaulting {
 			if (isValidOtherFrq && finMain.getNextGrcCpzDate() == null) {
 				Date cpzDate = FrequencyUtil.getNextDate(finMain.getGrcCpzFrq(), 1, finMain.getFinStartDate(),
 						HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
-				cpzDate = DateUtility.getDBDate(DateUtility.formatDate(cpzDate, PennantConstants.DBDateFormat));
+				cpzDate = DateUtility.getDBDate(DateUtility.format(cpzDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalGrcEndDate() != null && cpzDate != null) {
 					if (finMain.getCalGrcEndDate().compareTo(cpzDate) < 0) {
@@ -763,7 +763,7 @@ public class FinanceDataDefaulting {
 			//	Date nextDate = getNextDftDate(finMain.getRepayFrq(), finMain.getCalGrcEndDate(),financeType.getFddLockPeriod());
 			Date nextDate = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, finMain.getCalGrcEndDate(),
 					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
-			nextDate = DateUtility.getDBDate(DateUtility.formatDate(nextDate, PennantConstants.DBDateFormat));
+			nextDate = DateUtility.getDBDate(DateUtility.format(nextDate, PennantConstants.DBDateFormat));
 			finMain.setNextRepayDate(nextDate);
 		}
 
@@ -787,7 +787,7 @@ public class FinanceDataDefaulting {
 			Date nextRpyPftDate = FrequencyUtil.getNextDate(finMain.getRepayPftFrq(), 1, finMain.getCalGrcEndDate(),
 					HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate();
 			nextRpyPftDate = DateUtility
-					.getDBDate(DateUtility.formatDate(nextRpyPftDate, PennantConstants.DBDateFormat));
+					.getDBDate(DateUtility.format(nextRpyPftDate, PennantConstants.DBDateFormat));
 
 			if (finMain.getCalMaturity() != null && nextRpyPftDate != null) {
 				if (finMain.getCalMaturity().compareTo(nextRpyPftDate) < 0) {
@@ -819,7 +819,7 @@ public class FinanceDataDefaulting {
 								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
 						.getNextFrequencyDate();
 				nextRpyRvwDate = DateUtility
-						.getDBDate(DateUtility.formatDate(nextRpyRvwDate, PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(nextRpyRvwDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalMaturity() != null && nextRpyRvwDate != null) {
 					if (finMain.getCalMaturity().compareTo(nextRpyRvwDate) < 0) {
@@ -850,7 +850,7 @@ public class FinanceDataDefaulting {
 						.getNextDate(finMain.getRepayCpzFrq(), 1, finMain.getCalGrcEndDate(),
 								HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod())
 						.getNextFrequencyDate();
-				cpzDate = DateUtility.getDBDate(DateUtility.formatDate(cpzDate, PennantConstants.DBDateFormat));
+				cpzDate = DateUtility.getDBDate(DateUtility.format(cpzDate, PennantConstants.DBDateFormat));
 
 				if (finMain.getCalMaturity() != null && cpzDate != null) {
 					if (finMain.getCalMaturity().compareTo(cpzDate) < 0) {
@@ -1015,7 +1015,7 @@ public class FinanceDataDefaulting {
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 					geDate = DateUtility
-							.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+							.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 				}
 
 				finMain.setCalGrcEndDate(geDate);
@@ -1071,7 +1071,7 @@ public class FinanceDataDefaulting {
 					if (scheduleDateList != null) {
 						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 						Date matDate = DateUtility
-								.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+								.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 						finMain.setCalMaturity(matDate);
 					}
 				}
@@ -1085,7 +1085,7 @@ public class FinanceDataDefaulting {
 					if (scheduleDateList != null) {
 						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 						Date matDate = DateUtility
-								.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+								.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 						finMain.setCalMaturity(matDate);
 					}
 				}

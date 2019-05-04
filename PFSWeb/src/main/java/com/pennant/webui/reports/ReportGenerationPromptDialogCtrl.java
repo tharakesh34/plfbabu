@@ -1097,7 +1097,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 										ReportSearchTemplate aReportSearchTemplate = getSearchTemplate(filter,
 												aReportFieldsDetails);
 										aReportSearchTemplate.setFieldValue(DateUtility
-												.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat));
+												.format(datebox.getValue(), PennantConstants.DBDateFormat));
 										reportSearchTemplateList.add(aReportSearchTemplate);
 									}
 
@@ -1443,18 +1443,18 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					String exactDate = "";
 					if (App.DATABASE == Database.DB2) {
 						exactDate = "DATE(" + aReportFieldsDetails.getFieldDBName() + ") " + filter + "'"
-								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
+								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 
 					if (App.DATABASE == Database.SQL_SERVER) {
 						exactDate = "CONVERT(DATETIME, FLOOR(CONVERT(FLOAT," + aReportFieldsDetails.getFieldDBName()
 								+ "))) " + filter + "'"
-								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
+								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 
 					if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
 						exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
-								+ DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
+								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 					whereCondition.append(exactDate);
 
@@ -1462,7 +1462,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				// Prepare query for Exact Date and Time
 				if (fieldValueType.toString().equals(FIELDTYPE.DATETIME.toString())
 						|| fieldValueType.toString().equals(FIELDTYPE.DATETIMERANGE.toString())) {
-					String dateTime = DateUtility.formatUtilDate(datebox.getValue(), PennantConstants.DBDateTimeFormat);
+					String dateTime = DateUtility.format(datebox.getValue(), PennantConstants.DBDateTimeFormat);
 					whereCondition = addAndCondition(whereCondition);
 					String exactDateTime = "";
 					dateFormat = PennantConstants.dateTimeAMPMFormat;
@@ -1493,11 +1493,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				String timeFunction = "";
 				if (App.DATABASE == Database.DB2) {
 					timeFunction = "TIME(" + aReportFieldsDetails.getFieldDBName() + ")" + filter + "'"
-							+ DateUtility.formatUtilDate(timeBox.getValue(), PennantConstants.DBDateTimeFormat) + "'";
+							+ DateUtility.format(timeBox.getValue(), PennantConstants.DBDateTimeFormat) + "'";
 				}
 				if (App.DATABASE == Database.SQL_SERVER) {
 					timeFunction = "CONVERT(VARCHAR(8)," + aReportFieldsDetails.getFieldDBName() + ",108)" + filter
-							+ "'" + DateUtility.formatUtilDate(timeBox.getValue(), PennantConstants.DBTimeFormat) + "'";
+							+ "'" + DateUtility.format(timeBox.getValue(), PennantConstants.DBTimeFormat) + "'";
 				}
 				whereCondition.append(timeFunction);
 			}
@@ -1526,7 +1526,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			break;
 		}
 		if (component instanceof Datebox && ((Datebox) component).getValue() != null) {
-			filedValue = DateUtility.formatUtilDate((Date) filedValue, dateFormat);
+			filedValue = DateUtility.format((Date) filedValue, dateFormat);
 		}
 		if (rangeFieldsMap.containsKey(String.valueOf(aReportFieldsDetails.getFieldID()))) {
 			boolean isDateType = component instanceof Datebox;
@@ -2262,9 +2262,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					false);
 			if (filters != null && filters.size() >= 2) {
 				String[] fromDateArray = ((ReportSearchTemplate) filters.get(1)).getFieldValue().split("&");
-				fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]),
+				fromDate = DateUtility.format(DateUtility.getDate(fromDateArray[0]),
 						PennantConstants.DBDateFormat);
-				toDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]),
+				toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]),
 						PennantConstants.DBDateFormat);
 			}
 
@@ -2331,9 +2331,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						//break;
 					} else if (template.getFieldID() == 4) { // Dates
 						String[] fromDateArray = template.getFieldValue().split("&");
-						fromDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[0]),
+						fromDate = DateUtility.format(DateUtility.getDate(fromDateArray[0]),
 								PennantConstants.DBDateFormat);
-						toDate = DateUtility.formatUtilDate(DateUtility.getDate(fromDateArray[1]),
+						toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]),
 								PennantConstants.DBDateFormat);
 					} else if (template.getFieldID() == 5) { // Invoice Type
 						if (StringUtils.isNotBlank(template.getFieldValue())) {

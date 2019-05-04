@@ -1096,8 +1096,8 @@ public class AccrualService extends ServiceHelper {
 
 		HashMap<Date, ProjectedAccrual> map = new HashMap<Date, ProjectedAccrual>(1);
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
-		Date appDateMonthStart = DateUtility.getMonthStartDate(appDate);
-		Date appDateMonthEnd = DateUtility.getMonthEndDate(appDate);
+		Date appDateMonthStart = DateUtility.getMonthStart(appDate);
+		Date appDateMonthEnd = DateUtility.getMonthEnd(appDate);
 		BigDecimal totalProfit = BigDecimal.ZERO;
 		BigDecimal cummAccAmt = BigDecimal.ZERO;
 
@@ -1118,10 +1118,10 @@ public class AccrualService extends ServiceHelper {
 		List<Date> monthsCopy = new ArrayList<Date>();
 		Date newMonth = null;
 
-		if (calFromFinStartDate || DateUtility.getMonthEndDate(getFormatDate(finMain.getFinStartDate()))
+		if (calFromFinStartDate || DateUtility.getMonthEnd(getFormatDate(finMain.getFinStartDate()))
 				.compareTo(appDateMonthEnd) == 0) {
 
-			newMonth = new Date(DateUtility.getMonthEndDate(finMain.getFinStartDate()).getTime());
+			newMonth = new Date(DateUtility.getMonthEnd(finMain.getFinStartDate()).getTime());
 		} else {
 
 			newMonth = new Date(appDateMonthEnd.getTime());
@@ -1136,10 +1136,10 @@ public class AccrualService extends ServiceHelper {
 		}
 
 		// Prepare Months list From FinStartDate to MaturityDate
-		while (DateUtility.getMonthEndDate(finMain.getMaturityDate()).compareTo(newMonth) >= 0) {
+		while (DateUtility.getMonthEnd(finMain.getMaturityDate()).compareTo(newMonth) >= 0) {
 			months.add(getFormatDate((Date) newMonth.clone()));
 			newMonth = DateUtility.addMonths(newMonth, 1);
-			newMonth = DateUtility.getMonthEndDate(newMonth);
+			newMonth = DateUtility.getMonthEnd(newMonth);
 		}
 		monthsCopy.addAll(months);
 
@@ -1186,7 +1186,7 @@ public class AccrualService extends ServiceHelper {
 
 				// ACCRUAL calculation includes current date
 				Date nextMonthStart = DateUtility.addDays(curMonthEnd, 1);
-				Date curMonthStart = DateUtility.getMonthStartDate(curMonthEnd);
+				Date curMonthStart = DateUtility.getMonthStart(curMonthEnd);
 
 				// Schedules between Previous MonthEnd to CurMonthEnd
 				if (prvSchdDate.compareTo(curMonthStart) >= 0 && curSchdDate.compareTo(curMonthEnd) <= 0) {
@@ -1215,7 +1215,7 @@ public class AccrualService extends ServiceHelper {
 				pftAmz = schdPftAmz.add(prvPftAmz).add(curPftAmz);
 
 				// Adjust remaining profit to maturity MonthEnd to avoid rounding issues
-				if (DateUtility.getMonthEndDate(getFormatDate(finMain.getMaturityDate())).compareTo(curMonthEnd) == 0) {
+				if (DateUtility.getMonthEnd(getFormatDate(finMain.getMaturityDate())).compareTo(curMonthEnd) == 0) {
 					prjAcc.setPftAmz(totalProfit.subtract(cummAccAmt));
 				} else {
 					prjAcc.setPftAmz(prjAcc.getPftAmz().add(pftAmz));
@@ -1289,7 +1289,7 @@ public class AccrualService extends ServiceHelper {
 	 * @return
 	 */
 	private static Date getFormatDate(Date date) {
-		return DateUtility.getDBDate(DateUtility.formatDate(date, PennantConstants.DBDateFormat));
+		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
 	}
 
 	/**

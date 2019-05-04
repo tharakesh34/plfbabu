@@ -281,7 +281,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							}
 							if (DateUtility.compare(curDisb.getDisbDate(), curSchd.getSchDate()) >= 0) {
 								comboitem = new Comboitem();
-								comboitem.setLabel(DateUtility.formatDate(curDisb.getDisbDate(),
+								comboitem.setLabel(DateUtility.format(curDisb.getDisbDate(),
 										DateFormat.SHORT_DATE.getPattern()) + " , " + curDisb.getDisbSeq());
 								comboitem.setValue(curDisb.getDisbDate());
 								comboitem.setAttribute("Seq", curDisb.getDisbSeq());

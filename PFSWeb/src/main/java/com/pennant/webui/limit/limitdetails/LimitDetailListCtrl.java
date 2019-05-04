@@ -756,13 +756,13 @@ public class LimitDetailListCtrl extends GFCBaseListCtrl<LimitHeader> implements
 		// Expiry Date
 		if (this.expiryDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_ExpiryDate.getSelectedItem(),
-					DateUtility.formatDate(this.expiryDate.getValue(), PennantConstants.DBDateFormat),
+					DateUtility.format(this.expiryDate.getValue(), PennantConstants.DBDateFormat),
 					"LimitExpiryDate");
 		}
 		// Review Date
 		if (this.reviewDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_ReviewDate.getSelectedItem(),
-					DateUtility.formatDate(this.reviewDate.getValue(), PennantConstants.DBDateFormat), "LimitRvwDate");
+					DateUtility.format(this.reviewDate.getValue(), PennantConstants.DBDateFormat), "LimitRvwDate");
 		}
 
 		// Active

@@ -1993,7 +1993,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 				}
 
-				Date curMonthStartDate = DateUtility.getMonthStartDate(lastSchd.getSchDate());
+				Date curMonthStartDate = DateUtility.getMonthStart(lastSchd.getSchDate());
 
 				// UnAccrual Calculation
 				BigDecimal unaccrue = BigDecimal.ZERO;

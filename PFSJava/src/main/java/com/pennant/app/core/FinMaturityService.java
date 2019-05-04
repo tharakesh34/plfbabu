@@ -87,7 +87,7 @@ public class FinMaturityService extends ServiceHelper {
 			connection = DataSourceUtils.doGetConnection(dataSource);
 			sqlStatement = connection.prepareStatement(selectSql);
 			sqlStatement.setInt(1, 0);
-			sqlStatement.setDate(2, DateUtility.getMonthStartDate(appDate));
+			sqlStatement.setDate(2, DateUtility.getSqlDate(DateUtility.getMonthStart(appDate)));
 			resultSet = sqlStatement.executeQuery();
 
 			while (resultSet.next()) {

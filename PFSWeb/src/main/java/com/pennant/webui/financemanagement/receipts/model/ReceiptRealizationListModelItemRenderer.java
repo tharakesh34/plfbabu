@@ -90,7 +90,7 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		lc = new Listcell(header.getTransactionRef());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatDate(header.getReceiptDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtility.format(header.getReceiptDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.amountFormate(header.getReceiptAmount(),
 				CurrencyUtil.getFormat(header.getFinCcy())));

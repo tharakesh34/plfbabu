@@ -2447,7 +2447,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 		String legalDate = "";
 		if (getLegalDetail().getLegalDate() != null) {
-			legalDate = DateUtility.formatDate(getLegalDetail().getLegalDate(), DateFormat.LONG_DATE.getPattern());
+			legalDate = DateUtility.format(getLegalDetail().getLegalDate(), DateFormat.LONG_DATE.getPattern());
 		}
 		arrayList.add(0, getLegalDetail().getLoanReference());
 		arrayList.add(1, getLegalDetail().getCollateralReference());
@@ -2580,7 +2580,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		String legalDate = "";
 		if (aLegalDetail.getLegalDate() != null) {
-			legalDate = DateUtility.formatDate(aLegalDetail.getLegalDate(), DateFormat.LONG_DATE.getPattern());
+			legalDate = DateUtility.format(aLegalDetail.getLegalDate(), DateFormat.LONG_DATE.getPattern());
 		}
 		this.label_LoanReference.setValue(aLegalDetail.getLoanReference());
 		this.label_CollateralRef.setValue(aLegalDetail.getCollateralReference());

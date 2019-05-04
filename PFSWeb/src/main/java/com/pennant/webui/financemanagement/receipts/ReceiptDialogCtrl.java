@@ -3677,7 +3677,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Entering");
 		Date appDate = DateUtility.getAppDate();
 		// Date receivedDate = this.receivedDate.getValue();
-		Date curMonthStartDate = DateUtility.getMonthStartDate(appDate);
+		Date curMonthStartDate = DateUtility.getMonthStart(appDate);
 		Date currentMonthScheduleDate = null;
 		// FIXME: PV: CODE REVIEW PENDING
 		// Get the current month schedule date
@@ -4128,7 +4128,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 				}
 
-				Date curMonthStartDate = DateUtility.getMonthStartDate(lastSchd.getSchDate());
+				Date curMonthStartDate = DateUtility.getMonthStart(lastSchd.getSchDate());
 
 				// UnAccrual Calculation
 				BigDecimal unaccrue = BigDecimal.ZERO;

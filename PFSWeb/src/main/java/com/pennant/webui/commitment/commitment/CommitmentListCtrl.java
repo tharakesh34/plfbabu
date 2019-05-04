@@ -184,17 +184,17 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.cmtExpDate_one.getValue() != null) {
 						this.searchObject.addFilter(
-								new Filter("CmtExpDate", DateUtility.formatUtilDate(this.cmtExpDate_one.getValue(),
+								new Filter("CmtExpDate", DateUtility.format(this.cmtExpDate_one.getValue(),
 										PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.cmtExpDate_two.getValue() != null) {
 						this.searchObject.addFilter(
-								new Filter("CmtExpDate", DateUtility.formatUtilDate(this.cmtExpDate_two.getValue(),
+								new Filter("CmtExpDate", DateUtility.format(this.cmtExpDate_two.getValue(),
 										PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
 					this.searchObject.addFilter(new Filter("CmtExpDate",
-							DateUtility.formatUtilDate(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
+							DateUtility.format(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}
@@ -213,17 +213,17 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.cmtRvwDate_one.getValue() != null) {
 						this.searchObject.addFilter(
-								new Filter("CmtRvwDate", DateUtility.formatUtilDate(this.cmtRvwDate_one.getValue(),
+								new Filter("CmtRvwDate", DateUtility.format(this.cmtRvwDate_one.getValue(),
 										PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.cmtRvwDate_two.getValue() != null) {
 						this.searchObject.addFilter(
-								new Filter("CmtRvwDate", DateUtility.formatUtilDate(this.cmtRvwDate_two.getValue(),
+								new Filter("CmtRvwDate", DateUtility.format(this.cmtRvwDate_two.getValue(),
 										PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
 					this.searchObject.addFilter(new Filter("CmtRvwDate",
-							DateUtility.formatUtilDate(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
+							DateUtility.format(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}

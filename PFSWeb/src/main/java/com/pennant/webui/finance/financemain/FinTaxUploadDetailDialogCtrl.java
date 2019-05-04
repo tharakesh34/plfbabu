@@ -294,7 +294,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 	private void doFillHeaderData(String fileName, Date curBDay, long total, String Status) {
 		this.fileName.setValue(fileName);
-		this.batchCreationDate.setValue(DateUtility.formatDate(curBDay, DateFormat.LONG_DATE.getPattern()));
+		this.batchCreationDate.setValue(DateUtility.format(curBDay, DateFormat.LONG_DATE.getPattern()));
 		this.totalNoofRecords.setValue(total + "");
 		this.status.setValue(Status + "");
 

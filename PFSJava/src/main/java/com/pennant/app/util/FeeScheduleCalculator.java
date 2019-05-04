@@ -236,7 +236,7 @@ public class FeeScheduleCalculator {
 
 			//Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
-				feeSchdDate = DateUtility.getDBDate(DateUtility.formatDate(feeSchdDate, PennantConstants.DBDateFormat));
+				feeSchdDate = DateUtility.getDBDate(DateUtility.format(feeSchdDate, PennantConstants.DBDateFormat));
 				if (!avlSchdMap.containsKey(feeSchdDate)) {
 					recalFee = recalFee.add(feeSchdDetail.getSchAmount());
 					feeSchdDetails.remove(i);

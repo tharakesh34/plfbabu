@@ -2647,7 +2647,7 @@ public class ScheduleCalculator {
 		// get next Repayment Date
 		Date nextSchdDate = DateUtility
 				.getDate(
-						DateUtility.formatUtilDate(
+						DateUtility.format(
 								FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, curSchdDate,
 										HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 								PennantConstants.dateFormat));
@@ -2850,7 +2850,7 @@ public class ScheduleCalculator {
 		while (true) {
 			// Get Next Schedule Date
 
-			Date nextSchdDate = DateUtility.getDate(DateUtility.formatUtilDate(
+			Date nextSchdDate = DateUtility.getDate(DateUtility.format(
 					FrequencyUtil.getNextDate(frequency, 1, curStartDate, HolidayHandlerTypes.MOVE_NONE, false)
 							.getNextFrequencyDate(),
 					PennantConstants.dateFormat));
@@ -4850,7 +4850,7 @@ public class ScheduleCalculator {
 		lastDateLimit = DateUtility.addYears(finMain.getFinStartDate(), maxFinYears);
 
 		Date newSchdDate = DateUtility
-				.getDate(DateUtility.formatUtilDate(subSchStartDate, PennantConstants.dateFormat));
+				.getDate(DateUtility.format(subSchStartDate, PennantConstants.dateFormat));
 
 		for (int i = 0; i < noOfTerms; i++) {
 			finScheduleData = addSubScheduleTerm(finScheduleData, lastDateLimit, true, newSchdDate, frqNewSchd);
@@ -4859,7 +4859,7 @@ public class ScheduleCalculator {
 				return orgFinScheduleData;
 			}
 
-			newSchdDate = DateUtility.getDate(DateUtility.formatUtilDate(
+			newSchdDate = DateUtility.getDate(DateUtility.format(
 					FrequencyUtil.getNextDate(frqNewSchd, 1, newSchdDate, HolidayHandlerTypes.MOVE_NONE, false)
 							.getNextFrequencyDate(),
 					PennantConstants.dateFormat));
@@ -5392,11 +5392,11 @@ public class ScheduleCalculator {
 			List<Calendar> termSchList = FrequencyUtil
 					.getNextDate(frqBPI, terms - 1, finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false)
 					.getScheduleList();
-			bpiDate = DateUtility.getDate(DateUtility.formatUtilDate(termSchList.get(termSchList.size() - 1).getTime(),
+			bpiDate = DateUtility.getDate(DateUtility.format(termSchList.get(termSchList.size() - 1).getTime(),
 					PennantConstants.dateFormat));
 		} else {
 			bpiDate = DateUtility
-					.getDate(DateUtility.formatUtilDate(
+					.getDate(DateUtility.format(
 							FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
 									HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 							PennantConstants.dateFormat));
@@ -7180,7 +7180,7 @@ public class ScheduleCalculator {
 
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
 			curODSchd.setDroplineDate(DateUtility
-					.getDBDate(DateUtility.formatDate(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
 			curODSchd.setActualRate(prvODSchd.getActualRate());
 			curODSchd.setBaseRate(prvODSchd.getBaseRate());
 			curODSchd.setSplRate(prvODSchd.getSplRate());

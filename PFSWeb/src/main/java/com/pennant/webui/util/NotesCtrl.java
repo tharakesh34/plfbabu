@@ -588,7 +588,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ StringEscapeUtils.unescapeHtml(note.getRemarks()) + " </font> <br>  ";
-				String date = DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
+				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + usrAlign + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
@@ -677,7 +677,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 				lc.setParent(item);
 				//3
-				lc = new Listcell(DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+				lc = new Listcell(DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);
 

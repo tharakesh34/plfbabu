@@ -1761,32 +1761,32 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private void setDefaultDateFormats(FinServiceInstruction finServInst) {
 		if (finServInst.getFromDate() != null) {
 			finServInst.setFromDate(DateUtility
-					.getDBDate(DateUtility.formatDate(finServInst.getFromDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(finServInst.getFromDate(), PennantConstants.DBDateFormat)));
 		}
 
 		if (finServInst.getToDate() != null) {
 			finServInst.setToDate(DateUtility
-					.getDBDate(DateUtility.formatDate(finServInst.getToDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getRecalFromDate() != null) {
 			finServInst.setRecalFromDate(DateUtility
-					.getDBDate(DateUtility.formatDate(finServInst.getRecalFromDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(finServInst.getRecalFromDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getRecalToDate() != null) {
 			finServInst.setRecalToDate(DateUtility
-					.getDBDate(DateUtility.formatDate(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getGrcPeriodEndDate() != null) {
 			finServInst.setGrcPeriodEndDate(DateUtility.getDBDate(
-					DateUtility.formatDate(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getNextGrcRepayDate() != null) {
 			finServInst.setNextGrcRepayDate(DateUtility.getDBDate(
-					DateUtility.formatDate(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getNextRepayDate() != null) {
 			finServInst.setNextRepayDate(DateUtility
-					.getDBDate(DateUtility.formatDate(finServInst.getNextRepayDate(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(finServInst.getNextRepayDate(), PennantConstants.DBDateFormat)));
 		}
 	}
 

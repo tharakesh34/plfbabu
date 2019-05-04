@@ -233,9 +233,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "custDocExpDate: "
-								+ DateUtility.formatDate(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+								+ DateUtility.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "custDocIssuedOn: "
-								+ DateUtility.formatDate(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+								+ DateUtility.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 						return errorDetails;
 					}
@@ -349,9 +349,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "custDocExpDate: "
-						+ DateUtility.formatDate(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+						+ DateUtility.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 				valueParm[1] = "custDocIssuedOn: "
-						+ DateUtility.formatDate(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+						+ DateUtility.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 				return auditDetail;
 			}

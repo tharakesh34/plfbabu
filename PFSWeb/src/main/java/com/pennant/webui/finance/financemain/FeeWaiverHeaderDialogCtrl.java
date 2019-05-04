@@ -1007,7 +1007,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				lc.setParent(item);
 				lc.setStyle("font-weight:bold;color:##FF4500;");
 
-				lc = new Listcell(DateUtility.formatDate(detail.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtility.format(detail.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 

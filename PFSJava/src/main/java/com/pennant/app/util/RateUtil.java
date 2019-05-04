@@ -108,7 +108,7 @@ public class RateUtil implements Serializable {
 
 		if (!error) {
 			String[] valueParm = new String[2];
-			valueParm[1] = DateUtility.formatUtilDate(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
+			valueParm[1] = DateUtility.format(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
 
 			String[] errorParm = new String[2];
 			errorParm[1] = PennantJavaUtil.getLabel("label_Date") + ": " + valueParm[1];
@@ -386,7 +386,7 @@ public class RateUtil implements Serializable {
 
 		if (!error) {
 			String[] valueParm = new String[2];
-			valueParm[1] = DateUtility.formatUtilDate(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
+			valueParm[1] = DateUtility.format(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
 
 			String[] errorParm = new String[2];
 			errorParm[1] = PennantJavaUtil.getLabel("label_Date") + ": " + valueParm[1];

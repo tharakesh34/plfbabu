@@ -114,7 +114,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 		paramMap.addValue("FINISACTIVE", 1);
 		paramMap.addValue("PAYMENTTYPE", "EMIINADV");
 		paramMap.addValue("ACCRUEDON", appDate);
-		paramMap.addValue("MATURITYDATE", DateUtility.getMonthStartDate(appDate));
+		paramMap.addValue("MATURITYDATE", DateUtility.getMonthStart(appDate));
 		paramMap.addValue("ROWNUM", batchSize);
 
 		try {

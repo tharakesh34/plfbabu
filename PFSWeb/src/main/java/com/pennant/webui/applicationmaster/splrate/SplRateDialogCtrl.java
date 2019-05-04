@@ -894,7 +894,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	@Override
 	protected String getReference() {
 		return getSplRate().getSRType() + PennantConstants.KEY_SEPERATOR
-				+ DateUtility.formatDate(getSplRate().getSREffDate(), PennantConstants.DBDateFormat);
+				+ DateUtility.format(getSplRate().getSREffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

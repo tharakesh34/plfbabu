@@ -578,7 +578,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				//searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(), this.finSchdDate.getValue() , "finSchdDate");
 
 				searchObj.addFilter(new Filter("finSchdDate",
-						DateUtility.formatUtilDate(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
+						DateUtility.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
 						Filter.OP_EQUAL));
 			}
 			// Overdue Date
@@ -586,7 +586,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				//searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(), this.finODDate.getValue() , "finODDate");
 
 				searchObj.addFilter(new Filter("finODDate",
-						DateUtility.formatUtilDate(this.finODDate.getValue(), PennantConstants.DBDateFormat),
+						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat),
 						Filter.OP_EQUAL));
 			}
 			// Overdue Principle 

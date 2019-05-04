@@ -1173,7 +1173,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 							financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
 
 					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
-						schdMap.put(DateUtility.formatDate(schd.getSchDate(), PennantConstants.DBDateFormat), schd);
+						schdMap.put(DateUtility.format(schd.getSchDate(), PennantConstants.DBDateFormat), schd);
 					}
 				}
 
@@ -1185,9 +1185,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						FinanceScheduleDetail curSchd = null;
 						boolean schdUpdated = false;
 						if (schdMap.containsKey(
-								DateUtility.formatDate(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
+								DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
 							curSchd = schdMap
-									.get(DateUtility.formatDate(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
+									.get(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
 
 							// Principal Payment
 							if (rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {

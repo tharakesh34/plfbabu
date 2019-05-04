@@ -87,7 +87,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering : " + event);
 
 		if ("".equals(AccrualProcess.ACC_RUNNING)) {
-			this.valueDate.setValue(DateUtility.getMonthEndDate(DateUtility.getAppDate()));
+			this.valueDate.setValue(DateUtility.getMonthEnd(DateUtility.getAppDate()));
 			this.valueDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_ProjectedProfitDetails_valueDate.value"), true));
 		}

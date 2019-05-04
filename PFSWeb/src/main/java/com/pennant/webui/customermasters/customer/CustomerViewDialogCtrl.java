@@ -669,11 +669,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				custDOBDOI.setValue(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"));
 			}
-			custDOB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			custDOB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
-			custDOBB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			custDOBB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
@@ -920,11 +920,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custSubSectorr.setValue("- - - - - - - - -");
 			}
 			corpcustDOBDOI.setValue(Labels.getLabel("label_CustomerDialog_CustDateOfIncorporation.value"));
-			corpcustDOB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			corpcustDOB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
-			corpcustDOBB.setValue(DateUtility.formatDate(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			corpcustDOBB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}

@@ -129,11 +129,11 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 
 			Date curSchDate = DateUtility
-					.getDBDate(DateUtility.formatUtilDate(newDate.getTime(), PennantConstants.DBDateFormat));
+					.getDBDate(DateUtility.format(newDate.getTime(), PennantConstants.DBDateFormat));
 			while (prvSchdate.compareTo(curSchDate) >= 0) {
 				newDate.add(Calendar.MONTH, 1);
 				curSchDate = DateUtility
-						.getDBDate(DateUtility.formatUtilDate(newDate.getTime(), PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(newDate.getTime(), PennantConstants.DBDateFormat));
 			}
 
 			curSchd.setSchDate(curSchDate);

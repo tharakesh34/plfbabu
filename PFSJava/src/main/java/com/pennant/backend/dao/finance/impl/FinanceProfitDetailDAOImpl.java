@@ -632,7 +632,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		MonthlyAccumulateDetail accumulateDetail = new MonthlyAccumulateDetail();
 		accumulateDetail.setMonthEndDate(valueDate);
-		accumulateDetail.setMonthStartDate(DateUtility.getMonthStartDate(valueDate));
+		accumulateDetail.setMonthStartDate(DateUtility.getMonthStart(valueDate));
 
 		//FIXME: PV 14APR17 based on finPftDetails
 		StringBuilder insertSql = new StringBuilder(" INSERT INTO MonthlyAccumulateDetail ");

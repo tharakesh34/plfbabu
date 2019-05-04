@@ -219,7 +219,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		try {
 			Date newSchdDate = DateUtility
-					.getDate(DateUtility.formatUtilDate(this.firstDate.getValue(), PennantConstants.dateFormat));
+					.getDate(DateUtility.format(this.firstDate.getValue(), PennantConstants.dateFormat));
 			if (newSchdDate.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) <= 0) {
 				throw new WrongValueException(this.firstDate, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] {
 						Labels.getLabel("label_SubScheduleDialog_firstDate.value"),

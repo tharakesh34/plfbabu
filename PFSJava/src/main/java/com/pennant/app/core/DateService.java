@@ -26,7 +26,7 @@ public class DateService extends ServiceHelper {
 		//Reset Next Business Date after updating Calendar with Core System
 		Calendar calendar = BusinessCalendar.getWorkingBussinessDate(localCcy, HolidayHandlerTypes.MOVE_NEXT,
 				DateUtility.getAppDate());
-		String nextBussDate = DateUtility.formatUtilDate(calendar.getTime(), PennantConstants.DBDateFormat);
+		String nextBussDate = DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat);
 
 		//set System Parameter Value
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
@@ -53,16 +53,16 @@ public class DateService extends ServiceHelper {
 		String localccy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
 		Date tempnextBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, nextBusinessDate).getTime();
-		String nextBussDate = DateUtility.formatUtilDate(tempnextBussDate, PennantConstants.DBDateFormat);
+		String nextBussDate = DateUtility.format(tempnextBussDate, PennantConstants.DBDateFormat);
 
 		Date tempprevBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
-		String prevBussDate = DateUtility.formatUtilDate(tempprevBussDate, PennantConstants.DBDateFormat);
+		String prevBussDate = DateUtility.format(tempprevBussDate, PennantConstants.DBDateFormat);
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);
 
 		Date appDate = DateUtility.getAppDate();
-		Date montEndDate = DateUtility.getMonthEndDate(appDate);
+		Date montEndDate = DateUtility.getMonthEnd(appDate);
 		boolean updatevalueDate = true;
 
 		//check month extension required

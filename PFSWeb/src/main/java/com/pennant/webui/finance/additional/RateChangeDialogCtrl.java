@@ -477,7 +477,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValueException(this.anyDateRateChangeToDate,
 					Labels.getLabel("NUMBER_MAXVALUE",
 							new String[] { Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
-									DateUtility.formatUtilDate(getFinScheduleData().getFinanceMain().getMaturityDate(),
+									DateUtility.format(getFinScheduleData().getFinanceMain().getMaturityDate(),
 											PennantConstants.DBDateFormat) }));
 		}
 
@@ -833,7 +833,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// Month End Date or Last installment which is Greater should be considered
-		Date mnthEndDate = DateUtility.getMonthEndDate(DateUtility.addMonths(currBussDate, -1));
+		Date mnthEndDate = DateUtility.getMonthEnd(DateUtility.addMonths(currBussDate, -1));
 		if (mnthEndDate.compareTo(lastPaidDate) > 0) {
 			lastPaidDate = DateUtility.addDays(mnthEndDate, 1);
 		}

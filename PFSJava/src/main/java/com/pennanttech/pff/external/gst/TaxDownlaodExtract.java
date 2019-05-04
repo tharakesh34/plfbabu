@@ -496,7 +496,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		// Only changes after the loan approval should be shown in the Address
 		// Change Date
 		if (DateUtility.compare(lastMntOn, finApprovalDate) > 0) {
-			lastMntOn = DateUtility.getDBDate(DateUtility.formatDate(lastMntOn, "yyyy-MM-dd"));
+			lastMntOn = DateUtility.getDBDate(DateUtility.format(lastMntOn, "yyyy-MM-dd"));
 			taxDownload.setAddressChangeDate(lastMntOn);
 		} else {
 			taxDownload.setAddressChangeDate(null);

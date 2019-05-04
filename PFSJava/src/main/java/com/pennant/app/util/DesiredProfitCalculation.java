@@ -141,14 +141,14 @@ public class DesiredProfitCalculation {
 		}
 
 		nextRepayPftDate = DateUtility.getUtilDate(
-				DateUtility.formatUtilDate(nextRepayPftDate, PennantConstants.DBDateFormat),
+				DateUtility.format(nextRepayPftDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		gpEndDate = DateUtility.getUtilDate(DateUtility.formatUtilDate(gpEndDate, PennantConstants.DBDateFormat),
+		gpEndDate = DateUtility.getUtilDate(DateUtility.format(gpEndDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
 		nextRepayDate = DateUtility.getUtilDate(
-				DateUtility.formatUtilDate(nextRepayDate, PennantConstants.DBDateFormat),
+				DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
 		//Calculation process based on Repay period rate type

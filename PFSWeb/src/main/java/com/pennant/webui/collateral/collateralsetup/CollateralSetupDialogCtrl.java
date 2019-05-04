@@ -2853,7 +2853,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
-				lc = new Listcell(DateUtility.formatDate(movement.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtility.format(movement.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 				this.listBoxMovements.appendChild(item);
 			}

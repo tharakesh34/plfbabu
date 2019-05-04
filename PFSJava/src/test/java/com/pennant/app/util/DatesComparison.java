@@ -21,13 +21,13 @@ public class DatesComparison {
 			List<FinanceDisbursement> apacheDisbList = comparison.getSortedDatesUsingApache(disbList);
 			System.out.println("Apache commons-lang Sorting.....Result");
 			for (FinanceDisbursement finDisb : apacheDisbList) {
-				System.out.println(DateUtility.formatDate(finDisb.getDisbDate(), "dd-MMM-yyyy"));
+				System.out.println(DateUtility.format(finDisb.getDisbDate(), "dd-MMM-yyyy"));
 			}
 
 			List<FinanceDisbursement> finalDisbList = comparison.getSortedDatesUsingDateutility(disbList);
 			System.out.println("DateUtility Sorting.....Result");
 			for (FinanceDisbursement finDisb : finalDisbList) {
-				System.out.println(DateUtility.formatDate(finDisb.getDisbDate(), "dd-MMM-yyyy"));
+				System.out.println(DateUtility.format(finDisb.getDisbDate(), "dd-MMM-yyyy"));
 			}
 
 		} catch (ParseException e) {

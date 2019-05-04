@@ -267,7 +267,7 @@ public class SummaryDetailService {
 		if (!alwEMIHoliday && StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 				FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
 			String[] valueParm = new String[1];
-			valueParm[0] = DateUtility.formatDate(lockPeriodDate, PennantConstants.XMLDateFormat);
+			valueParm[0] = DateUtility.format(lockPeriodDate, PennantConstants.XMLDateFormat);
 			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", valueParm)));
 			return;
 		}

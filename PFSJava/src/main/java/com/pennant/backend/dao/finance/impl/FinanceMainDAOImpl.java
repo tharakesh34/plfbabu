@@ -3941,7 +3941,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		// get the finances list
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("MonthStartDate", DateUtility.getMonthStartDate(monthEndDate));
+		source.addValue("MonthStartDate", DateUtility.getMonthStart(monthEndDate));
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT FinReference, FinType, FinCcy, CustID, FinBranch, ");

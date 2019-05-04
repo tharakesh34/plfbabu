@@ -662,7 +662,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 									throw new WrongValueException(rangeFrom,
 											Labels.getLabel("FIELD_IS_MAND", new String[] { "From Date" }));
 								}
-								value = value + "," + DateUtility.formatUtilDate(rangeFrom.getValue(),
+								value = value + "," + DateUtility.format(rangeFrom.getValue(),
 										PennantConstants.dateTimeFormat);
 							}
 
@@ -677,7 +677,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 									throw new WrongValueException(rangeTo, Labels.getLabel("DATE_ALLOWED_MINDATE",
 											new String[] { "To Date", "From Date" }));
 								}
-								value = value + "," + DateUtility.formatUtilDate(rangeTo.getValue(),
+								value = value + "," + DateUtility.format(rangeTo.getValue(),
 										PennantConstants.dateTimeFormat);
 							}
 

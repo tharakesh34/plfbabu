@@ -253,7 +253,7 @@ public class BusinessCalendar implements Serializable {
 					continue;
 				}
 				for (int j = 0; j < holidayDetails.size(); j++) {
-					String curDate = DateUtility.formatDate(holidayDetails.get(j).getHoliday().getTime(),
+					String curDate = DateUtility.format(holidayDetails.get(j).getHoliday().getTime(),
 							PennantConstants.DBDateFormat);
 					if (!holidayMap.containsKey(curDate)) {
 						holidayMap.put(curDate, true);
@@ -456,7 +456,7 @@ public class BusinessCalendar implements Serializable {
 				tempDate.add(Calendar.DATE, -1);
 			}
 			if (!holidayListMap
-					.containsKey(DateUtility.formatDate(tempDate.getTime(), PennantConstants.DBDateFormat))) {
+					.containsKey(DateUtility.format(tempDate.getTime(), PennantConstants.DBDateFormat))) {
 				workingBussDateFound = true;
 			}
 		}

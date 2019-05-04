@@ -221,7 +221,7 @@ public class DDARepresentmentListCtrl extends GFCBaseListCtrl<DdaPresentment> {
 
 		if (this.ddaDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_DDADate.getSelectedItem(),
-					DateUtility.formatDate(this.ddaDate.getValue(), PennantConstants.DBDateFormat), "ddaDate");
+					DateUtility.format(this.ddaDate.getValue(), PennantConstants.DBDateFormat), "ddaDate");
 		}
 		if (this.noPay.isChecked()) {
 			searchObj = getSearchFilter(searchObj, Filter.OP_EQUAL, "NOPAY", "ddaStatus");

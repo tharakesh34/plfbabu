@@ -131,7 +131,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 			getSplRateDAO().save(splRate, tableType);
 			auditHeader.getAuditDetail().setModelData(splRate);
 			auditHeader.setAuditReference(splRate.getSRType() + PennantConstants.KEY_SEPERATOR
-					+ DateUtility.formatDate(splRate.getSREffDate(), PennantConstants.DBDateFormat));
+					+ DateUtility.format(splRate.getSREffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getSplRateDAO().update(splRate, tableType);
 		}

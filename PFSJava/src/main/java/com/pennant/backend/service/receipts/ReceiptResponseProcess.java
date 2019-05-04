@@ -175,7 +175,7 @@ public class ReceiptResponseProcess {
 
 			// fromDate
 			reqJson.put("fromDate",
-					DateUtility.formatDate(receiptUploadDetail.getReceivedDate(), PennantConstants.APIDateFormatter));
+					DateUtility.format(receiptUploadDetail.getReceivedDate(), PennantConstants.APIDateFormatter));
 		} else if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptPurpose(), "SP")) {
 			url = url + "finInstructionRest/loanInstructionService/manualPayment";
 		} else if (StringUtils.equalsIgnoreCase(receiptUploadDetail.getReceiptPurpose(), "EP")) {
@@ -234,7 +234,7 @@ public class ReceiptResponseProcess {
 		// Value Date
 		try {
 			reqJson.put("valueDate",
-					DateUtility.formatDate(receiptUploadDetail.getValueDate(), PennantConstants.APIDateFormatter));
+					DateUtility.format(receiptUploadDetail.getValueDate(), PennantConstants.APIDateFormatter));
 		} catch (Exception e) {
 			if (StringUtils.isEmpty(errorCode)) {
 				errorMsg = Labels.getLabel("inValid_ValueDate");
@@ -245,7 +245,7 @@ public class ReceiptResponseProcess {
 		// Receipt Received Date/Receipt Value Date
 		try {
 			reqJson.put("receivedDate",
-					DateUtility.formatDate(receiptUploadDetail.getReceivedDate(), PennantConstants.APIDateFormatter));
+					DateUtility.format(receiptUploadDetail.getReceivedDate(), PennantConstants.APIDateFormatter));
 		} catch (Exception e) {
 			if (StringUtils.isEmpty(errorCode)) {
 				errorMsg = Labels.getLabel("inValid_ReceivedDate");
@@ -277,7 +277,7 @@ public class ReceiptResponseProcess {
 		// Deposit Date
 		try {
 			reqJson.put("depositDate",
-					DateUtility.formatDate(receiptUploadDetail.getDepositDate(), PennantConstants.APIDateFormatter));
+					DateUtility.format(receiptUploadDetail.getDepositDate(), PennantConstants.APIDateFormatter));
 		} catch (Exception e) {
 			if (StringUtils.isEmpty(errorCode)) {
 				errorMsg = Labels.getLabel("inValid_DepositDate");
@@ -287,7 +287,7 @@ public class ReceiptResponseProcess {
 
 		// Realization Date
 		try {
-			reqJson.put("realizationDate", DateUtility.formatDate(receiptUploadDetail.getRealizationDate(),
+			reqJson.put("realizationDate", DateUtility.format(receiptUploadDetail.getRealizationDate(),
 					PennantConstants.APIDateFormatter));
 		} catch (Exception e) {
 			if (StringUtils.isEmpty(errorCode)) {
@@ -299,7 +299,7 @@ public class ReceiptResponseProcess {
 		// Instrument Date -- Not using
 		try {
 			reqJson.put("instrumentDate",
-					DateUtility.formatDate(receiptUploadDetail.getInstrumentDate(), PennantConstants.APIDateFormatter));
+					DateUtility.format(receiptUploadDetail.getInstrumentDate(), PennantConstants.APIDateFormatter));
 		} catch (Exception e) {
 			if (StringUtils.isEmpty(errorCode)) {
 				errorMsg = Labels.getLabel("inValid_InstrumentDate");

@@ -263,7 +263,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 				}
 				retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId() + "-" + seqNo));
 				retDataSet.setPostingId(retDataSet.getFinReference()
-						+ DateUtility.formatDate(new Date(), "yyyyMMddHHmmss") + StringUtils
+						+ DateUtility.format(new Date(), "yyyyMMddHHmmss") + StringUtils
 								.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
 				retDataSet.setShadowPosting(false);
 				retDataSet.setPostDate(dateAppDate);

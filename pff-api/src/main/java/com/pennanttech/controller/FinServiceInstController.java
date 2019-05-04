@@ -961,7 +961,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			int totRepayTerms = 0;
 			boolean isFromDateFound = false;
 			Date fromDate = DateUtility
-					.getDBDate(DateUtility.formatDate(finServiceInst.getFromDate(), PennantConstants.DBDateFormat));
+					.getDBDate(DateUtility.format(finServiceInst.getFromDate(), PennantConstants.DBDateFormat));
 			finServiceInst.setFromDate(fromDate);
 			List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 			if (financeScheduleDetails != null) {
@@ -2036,7 +2036,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				geDate = DateUtility
-						.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 			}
 			Date curBussDate = DateUtility.getAppDate();
 			if (geDate.before(DateUtility.addDays(curBussDate, 1))) {

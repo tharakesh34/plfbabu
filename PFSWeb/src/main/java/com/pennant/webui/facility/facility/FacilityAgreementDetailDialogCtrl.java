@@ -1040,7 +1040,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 						recommendation.setNoteType(noteType);
 						recommendation.setNoteDesc(notes.getRemarks());
 						recommendation.setCommentedDate(
-								DateUtility.formatUtilDate(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+								DateUtility.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 						recommendation.setUserName(notes.getUsrLogin());
 						recommendation.setUserRole(notes.getRoleDesc());
 						groupRecommendation.getRecommendations().add(recommendation);

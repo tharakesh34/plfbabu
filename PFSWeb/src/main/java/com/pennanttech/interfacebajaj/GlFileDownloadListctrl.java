@@ -631,7 +631,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 			if (item instanceof Listgroup) {
 				item.appendChild(new Listcell(
-						(DateUtility.formatDate(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern()))));
+						(DateUtility.format(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern()))));
 			} else if (item instanceof Listgroupfoot) {
 				Listcell cell = new Listcell("");
 				cell.setSpan(4);
@@ -645,7 +645,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				lc = new Listcell(fileDownlaod.getFileName());
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.formatDate(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
@@ -701,13 +701,13 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			lc = new Listcell(getSecurityUser(fileDownlaod.getUserId()));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getStartDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtility.format(fileDownlaod.getStartDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtility.format(fileDownlaod.getEndDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtility.format(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());

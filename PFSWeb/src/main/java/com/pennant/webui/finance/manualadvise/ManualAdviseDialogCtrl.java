@@ -699,7 +699,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				Listcell lc;
 
 				lc = new Listcell(
-						DateUtility.formatDate(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
+						DateUtility.format(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(),

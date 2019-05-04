@@ -1166,8 +1166,8 @@ public class FinanceDataValidation {
 		} else {
 			if (finMain.getFinContractDate().compareTo(finMain.getFinStartDate()) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatDate(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
-				valueParm[1] = DateUtility.formatDate(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
+				valueParm[0] = DateUtility.format(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtility.format(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 			}
 		}
@@ -2004,9 +2004,9 @@ public class FinanceDataValidation {
 					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "custDocExpDate: "
-								+ DateUtility.formatDate(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+								+ DateUtility.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "custDocIssuedOn: "
-								+ DateUtility.formatDate(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+								+ DateUtility.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 						return errorDetails;
 					}
@@ -2911,7 +2911,7 @@ public class FinanceDataValidation {
 		if (finMain.getFinStartDate().compareTo(minReqFinStartDate) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = SysParamUtil.getValueAsString("BACKDAYS_STARTDATE");
-			valueParm[1] = DateUtility.formatDate(DateUtility.addDays(minReqFinStartDate, 1),
+			valueParm[1] = DateUtility.format(DateUtility.addDays(minReqFinStartDate, 1),
 					PennantConstants.XMLDateFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90134", valueParm)));
 		}
@@ -2920,7 +2920,7 @@ public class FinanceDataValidation {
 		if (finMain.getFinStartDate().compareTo(maxReqFinStartDate) > 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Loan Start Date";
-			valueParm[1] = DateUtility.formatDate(DateUtility.addDays(maxReqFinStartDate, 1),
+			valueParm[1] = DateUtility.format(DateUtility.addDays(maxReqFinStartDate, 1),
 					PennantConstants.XMLDateFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", valueParm)));
 		}
@@ -3947,7 +3947,7 @@ public class FinanceDataValidation {
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				geDate = DateUtility
-						.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 			}
 
 			finMain.setCalGrcEndDate(geDate);
@@ -4462,7 +4462,7 @@ public class FinanceDataValidation {
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 					matDate = DateUtility
-							.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+							.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 				}
 
 				finMain.setCalMaturity(matDate);
@@ -4478,7 +4478,7 @@ public class FinanceDataValidation {
 					if (scheduleDateList != null) {
 						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 						Date matDate = DateUtility
-								.getDBDate(DateUtility.formatDate(calendar.getTime(), PennantConstants.DBDateFormat));
+								.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 						finMain.setCalMaturity(matDate);
 					}
 				}
@@ -4812,7 +4812,7 @@ public class FinanceDataValidation {
 		}
 		if (finMain.isAlwBPI()) {
 			Date bpiDate = DateUtility
-					.getDate(DateUtility.formatUtilDate(
+					.getDate(DateUtility.format(
 							FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
 									HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 							PennantConstants.dateFormat));

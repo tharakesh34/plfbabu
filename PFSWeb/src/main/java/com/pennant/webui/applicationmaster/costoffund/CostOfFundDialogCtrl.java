@@ -951,7 +951,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	@Override
 	protected String getReference() {
 		return getCostOfFund().getCofCode() + PennantConstants.KEY_SEPERATOR
-				+ DateUtility.formatDate(getCostOfFund().getCofEffDate(), PennantConstants.DBDateFormat);
+				+ DateUtility.format(getCostOfFund().getCofEffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

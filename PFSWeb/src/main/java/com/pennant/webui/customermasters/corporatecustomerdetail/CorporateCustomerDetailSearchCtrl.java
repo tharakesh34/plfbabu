@@ -591,7 +591,7 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					// do nothing
 				} else {
 					so.addFilter(new Filter("bussCommenceDate",
-							DateUtility.formatUtilDate(this.bussCommenceDate.getValue(), PennantConstants.DBDateFormat),
+							DateUtility.format(this.bussCommenceDate.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}
@@ -606,7 +606,7 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					// do nothing
 				} else {
 					so.addFilter(new Filter("servCommenceDate",
-							DateUtility.formatUtilDate(this.servCommenceDate.getValue(), PennantConstants.DBDateFormat),
+							DateUtility.format(this.servCommenceDate.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}
@@ -620,7 +620,7 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 				if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("bankRelationshipDate", DateUtility.formatUtilDate(
+					so.addFilter(new Filter("bankRelationshipDate", DateUtility.format(
 							this.bankRelationshipDate.getValue(), PennantConstants.DBDateFormat), searchOpId));
 				}
 			}

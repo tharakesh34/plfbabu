@@ -242,14 +242,14 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 									method = data.getClass().getDeclaredMethod("set" + getFieldValue(db.getId()),
 											Timestamp.class);
 									ts = new Timestamp(DateUtility.getUtilDate(
-											DateUtility.formatDate(db.getValue(), PennantConstants.DBDateTimeFormat),
+											DateUtility.format(db.getValue(), PennantConstants.DBDateTimeFormat),
 											PennantConstants.DBDateTimeFormat).getTime());
 									method.invoke(data, ts);
 								} else {
 									method = data.getClass().getDeclaredMethod("set" + getFieldValue(db.getId()),
 											Date.class);
 									date = DateUtility.getDBDate(
-											DateUtility.formatDate(db.getValue(), PennantConstants.DBDateFormat));
+											DateUtility.format(db.getValue(), PennantConstants.DBDateFormat));
 									method.invoke(data, date);
 								}
 

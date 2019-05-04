@@ -1259,7 +1259,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			int seqNum = 0;
 			for (LegalDocument legalDocument : documentList) {
 				if (legalDocument.getDocumentDate() != null) {
-					legalDocument.setDocumentDateStr(DateUtility.formatDate(legalDocument.getDocumentDate(),
+					legalDocument.setDocumentDateStr(DateUtility.format(legalDocument.getDocumentDate(),
 							DateFormat.SHORT_DATE.getPattern()));
 					legalDocument.setDocumentAcceptedName(PennantStaticListUtil.getlabelDesc(
 							legalDocument.getDocumentAccepted(), PennantStaticListUtil.getDocumentAcceptedList()));
@@ -1276,12 +1276,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		if (CollectionUtils.isNotEmpty(ecDetailsList)) {
 			for (LegalECDetail legalECDetail : ecDetailsList) {
 				legalECDetail.setStrECDate(
-						DateUtility.formatDate(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
+						DateUtility.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
 			}
 		}
 		if (legalDetail.getPropertyDetailECDate() != null) {
 			legalDetail.setStrPropertyDetailECDate(
-					DateUtility.formatDate(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
+					DateUtility.format(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
 		}
 
 		StringBuilder sb = null;

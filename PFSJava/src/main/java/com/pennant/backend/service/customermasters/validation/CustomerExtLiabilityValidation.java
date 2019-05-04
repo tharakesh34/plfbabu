@@ -170,9 +170,9 @@ public class CustomerExtLiabilityValidation {
 				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(liability.getFinDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "FinDate";
-			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}

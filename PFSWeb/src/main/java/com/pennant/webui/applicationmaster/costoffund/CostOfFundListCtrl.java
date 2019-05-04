@@ -219,7 +219,7 @@ public class CostOfFundListCtrl extends GFCBaseListCtrl<CostOfFund> {
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND CofCode='" + costOfFund.getCofCode() + "' AND CofEffDate='"
-				+ DateUtility.formatDate(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat) + "' AND version="
+				+ DateUtility.format(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat) + "' AND version="
 				+ costOfFund.getVersion() + " ";
 
 		if (doCheckAuthority(costOfFund, whereCond)) {

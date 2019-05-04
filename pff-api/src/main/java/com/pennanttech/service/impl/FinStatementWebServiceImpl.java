@@ -397,8 +397,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 			Date appDate = DateUtility.getAppDate();
 			if (DateUtility.compare(toDate, appDate) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "toDate:" + DateUtility.formatDate(toDate, PennantConstants.XMLDateFormat);
-				valueParm[1] = "ApplicationDate:" + DateUtility.formatDate(appDate, PennantConstants.XMLDateFormat);
+				valueParm[0] = "toDate:" + DateUtility.format(toDate, PennantConstants.XMLDateFormat);
+				valueParm[1] = "ApplicationDate:" + DateUtility.format(appDate, PennantConstants.XMLDateFormat);
 				finStatementResponse = new FinStatementResponse();
 				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 				return finStatementResponse;
@@ -421,8 +421,8 @@ public class FinStatementWebServiceImpl implements FinStatementRestService, FinS
 		}
 		if (DateUtility.compare(fromDate, toDate) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "fromDate:" + DateUtility.formatDate(fromDate, PennantConstants.XMLDateFormat);
-			valueParm[1] = "toDate:" + DateUtility.formatDate(toDate, PennantConstants.XMLDateFormat);
+			valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
+			valueParm[1] = "toDate:" + DateUtility.format(toDate, PennantConstants.XMLDateFormat);
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 			return finStatementResponse;

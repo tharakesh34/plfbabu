@@ -459,13 +459,13 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 
 		try {
 			aBulkProcessHeader.setFromDate(DateUtility
-					.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(this.fromDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			aBulkProcessHeader.setToDate(DateUtility
-					.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -499,7 +499,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			try {
 				if (this.calFromDate.getValue() != null) {
 					aBulkProcessHeader.setReCalFromDate(DateUtility.getDBDate(
-							DateUtility.formatDate(this.calFromDate.getValue(), PennantConstants.DBDateFormat)));
+							DateUtility.format(this.calFromDate.getValue(), PennantConstants.DBDateFormat)));
 				}
 
 			} catch (WrongValueException we) {
@@ -508,7 +508,7 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			try {
 				if (this.calToDate.getValue() != null) {
 					aBulkProcessHeader.setReCalToDate(DateUtility.getDBDate(
-							DateUtility.formatDate(this.calToDate.getValue(), PennantConstants.DBDateFormat)));
+							DateUtility.format(this.calToDate.getValue(), PennantConstants.DBDateFormat)));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -1240,9 +1240,9 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 				.trimToEmpty(this.bulkProcessHeader.getRecordStatus()).equals(PennantConstants.RCD_STATUS_APPROVED)) {
 
 			Date fromDate = DateUtility
-					.getDBDate(DateUtility.formatDate(this.fromDate.getValue(), PennantConstants.DBDateFormat));
+					.getDBDate(DateUtility.format(this.fromDate.getValue(), PennantConstants.DBDateFormat));
 			Date toDate = DateUtility
-					.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat));
+					.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat));
 
 			if ("R".equals(this.bulkProcessHeader.getBulkProcessFor())) {
 				setRateChangeFinances(getBulkDefermentChangeProcessService().getIjaraBulkRateFinList(fromDate, toDate));

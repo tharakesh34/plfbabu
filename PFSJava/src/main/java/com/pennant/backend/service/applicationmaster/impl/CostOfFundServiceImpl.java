@@ -133,7 +133,7 @@ public class CostOfFundServiceImpl extends GenericService<CostOfFund> implements
 			getCostOfFundDAO().save(costOfFund, tableType);
 			auditHeader.getAuditDetail().setModelData(costOfFund);
 			auditHeader.setAuditReference(costOfFund.getCofCode() + PennantConstants.KEY_SEPERATOR
-					+ DateUtility.formatDate(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat));
+					+ DateUtility.format(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getCostOfFundDAO().update(costOfFund, tableType);
 		}

@@ -302,7 +302,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatDate(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc = new Listcell(DateUtility.format(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());

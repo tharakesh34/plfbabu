@@ -130,7 +130,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 			getBaseRateDAO().save(baseRate, tableType);
 			auditHeader.getAuditDetail().setModelData(baseRate);
 			auditHeader.setAuditReference(baseRate.getBRType() + PennantConstants.KEY_SEPERATOR
-					+ DateUtility.formatDate(baseRate.getBREffDate(), PennantConstants.DBDateFormat));
+					+ DateUtility.format(baseRate.getBREffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getBaseRateDAO().update(baseRate, tableType);
 		}

@@ -90,7 +90,7 @@ public class DealWiseIncomeReportCtrl extends GFCBaseCtrl<ReportConfiguration> {
 			dateValueDate = DateUtility.getAppDate();
 
 			Date prvMnthStartDate = DateUtility
-					.getMonthStartDate(DateUtility.addDays(DateUtility.getMonthStartDate(dateValueDate), -1));
+					.getMonthStart(DateUtility.addDays(DateUtility.getMonthStart(dateValueDate), -1));
 
 			//Saving new Income Account Transaction Details From Core System
 			getDailyDownloadInterfaceService().processIncomeAccTransactions(prvMnthStartDate);

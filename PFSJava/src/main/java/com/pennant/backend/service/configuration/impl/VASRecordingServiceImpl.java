@@ -2257,9 +2257,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 						if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 							String[] valueParm = new String[2];
-							valueParm[0] = DateUtility.formatDate(detail.getCustDocIssuedOn(),
+							valueParm[0] = DateUtility.format(detail.getCustDocIssuedOn(),
 									PennantConstants.XMLDateFormat);
-							valueParm[1] = DateUtility.formatDate(detail.getCustDocExpDate(),
+							valueParm[1] = DateUtility.format(detail.getCustDocExpDate(),
 									PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);

@@ -225,8 +225,8 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setPostAmount(
 					PennantAppUtil.amountFormate(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			detail.setRevTranCode(dataSet.getRevTranCode());
-			detail.setPostDate(DateUtility.formatDate(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
-			detail.setValueDate(DateUtility.formatDate(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+			detail.setPostDate(DateUtility.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
+			detail.setValueDate(DateUtility.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 			accountingDetails.add(detail);
 		}
 

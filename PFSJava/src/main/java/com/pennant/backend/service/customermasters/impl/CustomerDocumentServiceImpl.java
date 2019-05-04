@@ -374,9 +374,9 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (customerDocument.getCustDocIssuedOn() != null && customerDocument.getCustDocExpDate() != null) {
 				if (customerDocument.getCustDocIssuedOn().compareTo(customerDocument.getCustDocExpDate()) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "custDocExpDate: " + DateUtility.formatDate(customerDocument.getCustDocExpDate(),
+					valueParm[0] = "custDocExpDate: " + DateUtility.format(customerDocument.getCustDocExpDate(),
 							PennantConstants.XMLDateFormat);
-					valueParm[1] = "custDocIssuedOn: " + DateUtility.formatDate(customerDocument.getCustDocIssuedOn(),
+					valueParm[1] = "custDocIssuedOn: " + DateUtility.format(customerDocument.getCustDocIssuedOn(),
 							PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
@@ -597,8 +597,8 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						|| customerDocument.getCustDocIssuedOn().after(startDate)) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "custDocIssuedOn";
-					valueParm[1] = DateUtility.formatDate(customer.getCustDOB(), PennantConstants.XMLDateFormat);
-					valueParm[2] = DateUtility.formatDate(startDate, PennantConstants.XMLDateFormat);
+					valueParm[1] = DateUtility.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtility.format(startDate, PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
@@ -612,8 +612,8 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						|| customerDocument.getCustDocExpDate().after(endDate)) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "custDocExpDate";
-					valueParm[1] = DateUtility.formatDate(startDate, PennantConstants.XMLDateFormat);
-					valueParm[2] = DateUtility.formatDate(endDate, PennantConstants.XMLDateFormat);
+					valueParm[1] = DateUtility.format(startDate, PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtility.format(endDate, PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;

@@ -301,7 +301,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ note.getRemarks() + " </font> <br>  ";
-				String date = DateUtility.formatUtilDate(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
+				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + alignSide + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";

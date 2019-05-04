@@ -124,7 +124,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 			lc.setParent(item);
 		}
 		lc.setStyle("text-align:right;");
-		lc = new Listcell(DateUtility.formatDate(financeMain.getInitiateDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtility.format(financeMain.getInitiateDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getLovDescRequestStage());
 		lc.setParent(item);

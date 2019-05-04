@@ -159,7 +159,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 
 			item = new Listitem();
 			Listcell lc = new Listcell(
-					DateUtility.formatDate(curSchd.getDroplineDate(), DateFormat.SHORT_DATE.getPattern()));
+					DateUtility.format(curSchd.getDroplineDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setStyle("font-weight:bold;");
 			item.appendChild(lc);
 

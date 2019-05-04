@@ -119,7 +119,7 @@ public class ExtFinanceUploadService {
 			System.out.println("======================        START     ==========================");
 			System.out.println("==================================================================");
 			System.out.println("----> START EXTENDED FINANCE UPLOAD  --------> :: "
-					+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+					+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 			POIFSFileSystem finFileSystem = new POIFSFileSystem(finInput);
 			@SuppressWarnings("resource")
 			HSSFWorkbook finWorkBook = new HSSFWorkbook(finFileSystem);
@@ -307,7 +307,7 @@ public class ExtFinanceUploadService {
 		logger.debug("Entering");
 
 		System.out.println("----> START PREPARING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 
 		BigDecimal decimal100 = BigDecimal.valueOf(100);
 		String strYES = "YES";
@@ -466,7 +466,7 @@ public class ExtFinanceUploadService {
 
 		logger.debug("Leaving");
 		System.out.println("----> END SETTING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return extFinData;
 	}
 
@@ -480,7 +480,7 @@ public class ExtFinanceUploadService {
 		logger.debug("Entering");
 
 		System.out.println("----> START VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 
 		// Validate REFERENCE
 		if (extFinData.getFinReference() == null) {
@@ -560,7 +560,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextDepDate(FrequencyUtil.getNextDate(financeMain.getDepreciationFrq(), 1,
 					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextDepDate(DateUtility
-					.getDate(DateUtility.formatUtilDate(financeMain.getNextDepDate(), PennantConstants.dateFormat)));
+					.getDate(DateUtility.format(financeMain.getNextDepDate(), PennantConstants.dateFormat)));
 		}
 
 		financeMain.setFinIsActive(true);
@@ -615,7 +615,7 @@ public class ExtFinanceUploadService {
 		financeMain.setNextRepayPftDate(FrequencyUtil.getNextDate(financeMain.getRepayPftFrq(), 1,
 				financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 		financeMain.setNextRepayPftDate(DateUtility
-				.getDate(DateUtility.formatUtilDate(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
+				.getDate(DateUtility.format(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
 
 		// Allow Repay Review
 		if (finType.isFinIsRvwAlw()) {
@@ -624,7 +624,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1,
 					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextRepayRvwDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
+					DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
 		} else {
 			financeMain.setRepayRvwFrq("");
 		}
@@ -637,7 +637,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextRepayCpzDate(FrequencyUtil.getNextDate(financeMain.getRepayCpzFrq(), 1,
 					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextRepayCpzDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
+					DateUtility.format(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
 		} else {
 			financeMain.setRepayCpzFrq("");
 		}
@@ -647,7 +647,7 @@ public class ExtFinanceUploadService {
 		financeMain.setNextRepayDate(FrequencyUtil.getNextDate(financeMain.getRepayFrq(), 1,
 				financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 		financeMain.setNextRepayDate(DateUtility
-				.getDate(DateUtility.formatUtilDate(financeMain.getNextRepayDate(), PennantConstants.dateFormat)));
+				.getDate(DateUtility.format(financeMain.getNextRepayDate(), PennantConstants.dateFormat)));
 
 		// Maturity Date
 		List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(financeMain.getRepayFrq(),
@@ -656,7 +656,7 @@ public class ExtFinanceUploadService {
 			Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 			financeMain.setMaturityDate(calendar.getTime());
 			financeMain.setMaturityDate(DateUtility
-					.getDate(DateUtility.formatUtilDate(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
+					.getDate(DateUtility.format(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
 		}
 
 		financeMain.setFinRepayPftOnFrq(finType.isFinRepayPftOnFrq());
@@ -702,7 +702,7 @@ public class ExtFinanceUploadService {
 		oldFinMain = new FinanceMain();
 		BeanUtils.copyProperties(financeMain, oldFinMain);
 		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return extFinData;
 	}
 
@@ -738,7 +738,7 @@ public class ExtFinanceUploadService {
 		financeMain.setNextGrcPftDate(FrequencyUtil.getNextDate(financeMain.getGrcPftFrq(), 1,
 				financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 		financeMain.setNextGrcPftDate(DateUtility
-				.getDate(DateUtility.formatUtilDate(financeMain.getNextGrcPftDate(), PennantConstants.dateFormat)));
+				.getDate(DateUtility.format(financeMain.getNextGrcPftDate(), PennantConstants.dateFormat)));
 		if (financeMain.getNextGrcPftDate().after(financeMain.getGrcPeriodEndDate())) {
 			financeMain.setNextGrcPftDate(financeMain.getGrcPeriodEndDate());
 		}
@@ -753,7 +753,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(financeMain.getGrcPftRvwFrq(), 1,
 					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextGrcPftRvwDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
+					DateUtility.format(financeMain.getNextGrcPftRvwDate(), PennantConstants.dateFormat)));
 			if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {
 				financeMain.setNextGrcPftRvwDate(financeMain.getGrcPeriodEndDate());
 			}
@@ -770,7 +770,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextGrcCpzDate(FrequencyUtil.getNextDate(financeMain.getGrcCpzFrq(), 1,
 					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextGrcCpzDate(DateUtility
-					.getDate(DateUtility.formatUtilDate(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormat)));
+					.getDate(DateUtility.format(financeMain.getNextGrcCpzDate(), PennantConstants.dateFormat)));
 			if (financeMain.getNextGrcCpzDate().after(financeMain.getGrcPeriodEndDate())) {
 				financeMain.setNextGrcCpzDate(financeMain.getGrcPeriodEndDate());
 			}
@@ -911,7 +911,7 @@ public class ExtFinanceUploadService {
 		logger.debug("Entering");
 
 		System.out.println("----> START VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		finType = getFinanceTypeDAO().getFinanceTypeByID(extFinData.getFinType(), "");
 		// Validate REFERENCE
 		if (extFinData.getFinReference() == null) {
@@ -997,7 +997,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextDepDate(FrequencyUtil.getNextDate(financeMain.getDepreciationFrq(), 1,
 					financeMain.getFinStartDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextDepDate(DateUtility
-					.getDate(DateUtility.formatUtilDate(financeMain.getNextDepDate(), PennantConstants.dateFormat)));
+					.getDate(DateUtility.format(financeMain.getNextDepDate(), PennantConstants.dateFormat)));
 		}
 
 		financeMain.setFinIsActive(true);
@@ -1054,7 +1054,7 @@ public class ExtFinanceUploadService {
 		}
 		if (financeMain.getNextRepayPftDate() != null) {
 			financeMain.setNextRepayPftDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
+					DateUtility.format(financeMain.getNextRepayPftDate(), PennantConstants.dateFormat)));
 		}
 
 		// Allow Repay Review
@@ -1064,7 +1064,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1,
 					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextRepayRvwDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
+					DateUtility.format(financeMain.getNextRepayRvwDate(), PennantConstants.dateFormat)));
 		} else {
 			financeMain.setRepayRvwFrq("");
 		}
@@ -1077,7 +1077,7 @@ public class ExtFinanceUploadService {
 			financeMain.setNextRepayCpzDate(FrequencyUtil.getNextDate(financeMain.getRepayCpzFrq(), 1,
 					financeMain.getGrcPeriodEndDate(), "A", false, finType.getFddLockPeriod()).getNextFrequencyDate());
 			financeMain.setNextRepayCpzDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
+					DateUtility.format(financeMain.getNextRepayCpzDate(), PennantConstants.dateFormat)));
 		} else {
 			financeMain.setRepayCpzFrq("");
 		}
@@ -1090,7 +1090,7 @@ public class ExtFinanceUploadService {
 		}
 		if (financeMain.getNextRepayDate() != null) {
 			financeMain.setNextRepayDate(DateUtility
-					.getDate(DateUtility.formatUtilDate(financeMain.getNextRepayDate(), PennantConstants.dateFormat)));
+					.getDate(DateUtility.format(financeMain.getNextRepayDate(), PennantConstants.dateFormat)));
 		}
 
 		// Maturity Date
@@ -1101,7 +1101,7 @@ public class ExtFinanceUploadService {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				financeMain.setMaturityDate(calendar.getTime());
 				financeMain.setMaturityDate(DateUtility.getDate(
-						DateUtility.formatUtilDate(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
+						DateUtility.format(financeMain.getMaturityDate(), PennantConstants.dateFormat)));
 			}
 		}
 		financeMain.setFinRepayPftOnFrq(finType.isFinRepayPftOnFrq());
@@ -1147,7 +1147,7 @@ public class ExtFinanceUploadService {
 		oldFinMain = new FinanceMain();
 		BeanUtils.copyProperties(financeMain, oldFinMain);
 		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return extFinData;
 	}
 

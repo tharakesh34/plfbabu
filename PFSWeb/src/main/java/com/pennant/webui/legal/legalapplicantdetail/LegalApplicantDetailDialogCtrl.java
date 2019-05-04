@@ -353,7 +353,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		if (isNewRecord() && aLegalApplicantDetail.getCustomer() != null) {
 			Customer customer = aLegalApplicantDetail.getCustomer();
 			if (customer.getCustDOB() != null) {
-				String dob = DateUtility.formatDate(customer.getCustDOB(), DateFormat.LONG_DATE.getPattern());
+				String dob = DateUtility.format(customer.getCustDOB(), DateFormat.LONG_DATE.getPattern());
 				this.label_dob.setValue(dob);
 			}
 		}

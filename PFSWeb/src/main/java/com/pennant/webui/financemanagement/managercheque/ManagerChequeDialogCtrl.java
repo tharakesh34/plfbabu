@@ -1435,7 +1435,7 @@ public class ManagerChequeDialogCtrl extends GFCBaseCtrl<ManagerCheque> {
 
 		printManagerCheque.setIssueDate(DateUtility.getAppDate());
 		printManagerCheque.setTodayDate(
-				DateUtility.formatDate(this.valueDate.getValue(), PennantConstants.dateFormat).replace("/", ""));
+				DateUtility.format(this.valueDate.getValue(), PennantConstants.dateFormat).replace("/", ""));
 		printManagerCheque.setFundingAccount(this.fundingAccount.getValue());
 		printManagerCheque.setNostroAccount(this.nostroAccount.getValue());
 		printManagerCheque.setLoginUsrName(usrName);

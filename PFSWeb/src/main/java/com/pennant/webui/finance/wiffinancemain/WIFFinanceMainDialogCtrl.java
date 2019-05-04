@@ -1736,7 +1736,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.gracePeriodEndDate_two.getValue() != null) {
 
 				aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(DateUtility
-						.formatUtilDate(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+						.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 
 			}
 		} catch (WrongValueException we) {
@@ -1899,7 +1899,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.gracePftFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 						aFinanceMain.setNextGrcPftDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 				}
 			} catch (WrongValueException we) {
@@ -1923,7 +1923,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.gracePftRvwFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 						aFinanceMain.setNextGrcPftRvwDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 				}
 			} catch (WrongValueException we) {
@@ -1950,7 +1950,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.graceCpzFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.graceCpzFrq.getValue()) == null) {
 						aFinanceMain.setNextGrcCpzDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 
 				} else {
@@ -2002,7 +2002,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.gracePeriodEndDate.setValue(this.finStartDate.getValue());
 			this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
 			aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+					DateUtility.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 			aFinanceMain.setGraceTerms(0);
 			aFinanceMain.setGrcMaxAmount(BigDecimal.ZERO);
 		}
@@ -2283,7 +2283,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 						aFinanceMain.setNextRepayPftDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 				}
 			}
@@ -2308,7 +2308,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayRvwDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -2332,7 +2332,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayCpzFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayCpzDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -2358,7 +2358,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
 			if (!this.rpyPftFrqRow.isVisible()) {
@@ -2405,7 +2405,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			if (this.maturityDate_two.getValue() != null) {
 				aFinanceMain.setMaturityDate(DateUtility.getDate(
-						DateUtility.formatUtilDate(this.maturityDate_two.getValue(), PennantConstants.dateFormat)));
+						DateUtility.format(this.maturityDate_two.getValue(), PennantConstants.dateFormat)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -5573,15 +5573,15 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)) {
 					mnth = FrequencyUtil.getMonthFrqValue(DateUtility
-							.formatUtilDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
+							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
 							frqCode);
 				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)) {
-					mnth = DateUtility.formatUtilDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+					mnth = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 							.split("-")[1];
 				}
 			}
 			mnth = frqCode.concat(mnth).concat("00");
-			String day = DateUtility.formatUtilDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+			String day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 					.split("-")[2];
 			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
 				day = "00";
@@ -7131,7 +7131,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					frqDate = this.nextRepayPftDate_two.getValue();
 				}
 
-				Date bpiDate = DateUtility.getDate(DateUtility.formatUtilDate(
+				Date bpiDate = DateUtility.getDate(DateUtility.format(
 						FrequencyUtil.getNextDate(frqBPI, 1, this.finStartDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 						PennantConstants.dateFormat));

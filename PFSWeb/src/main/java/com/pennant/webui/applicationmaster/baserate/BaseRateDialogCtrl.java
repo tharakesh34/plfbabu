@@ -945,7 +945,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	@Override
 	protected String getReference() {
 		return getBaseRate().getBRType() + PennantConstants.KEY_SEPERATOR
-				+ DateUtility.formatDate(getBaseRate().getBREffDate(), PennantConstants.DBDateFormat);
+				+ DateUtility.format(getBaseRate().getBREffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

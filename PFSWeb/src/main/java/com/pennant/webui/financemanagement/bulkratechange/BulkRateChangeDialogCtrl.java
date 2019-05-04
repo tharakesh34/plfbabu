@@ -391,7 +391,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		//Schedule Date From
 		if (aBulkRateChangeHeader.getFromDate() != null) {
 			this.schFromDate.setValue(DateUtility.getDBDate(
-					DateUtility.formatDate(aBulkRateChangeHeader.getFromDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(aBulkRateChangeHeader.getFromDate(), PennantConstants.DBDateFormat)));
 		} else {
 			this.schFromDate.setText("");
 		}
@@ -399,7 +399,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		//To Date
 		if (aBulkRateChangeHeader.getToDate() != null) {
 			this.toDate.setValue(DateUtility.getDBDate(
-					DateUtility.formatDate(aBulkRateChangeHeader.getToDate(), PennantConstants.DBDateFormat)));
+					DateUtility.format(aBulkRateChangeHeader.getToDate(), PennantConstants.DBDateFormat)));
 		} else {
 			this.toDate.setText("");
 		}
@@ -552,7 +552,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		//Schedule Date From
 		try {
 			aBulkRateChangeHeader.setFromDate(DateUtility
-					.getDBDate(DateUtility.formatDate(this.schFromDate.getValue(), PennantConstants.DBDateFormat)));
+					.getDBDate(DateUtility.format(this.schFromDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -561,7 +561,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 		try {
 			if (this.row_ToDate.isVisible()) {
 				aBulkRateChangeHeader.setToDate(DateUtility
-						.getDBDate(DateUtility.formatDate(this.toDate.getValue(), PennantConstants.DBDateFormat)));
+						.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1758,7 +1758,7 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 			try {
 				final String msg = " No Finances Founded With Finance Type " + this.finType.getValue()
 						+ " And Schedule Date Greater than or equal to "
-						+ DateUtility.formatUtilDate(this.schFromDate.getValue(), PennantConstants.dateFormat);
+						+ DateUtility.format(this.schFromDate.getValue(), PennantConstants.dateFormat);
 
 				MessageUtil.showMessage(msg);
 

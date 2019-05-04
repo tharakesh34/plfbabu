@@ -427,10 +427,10 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 		String tempFolderLocation = PathUtil.getPath(PathUtil.REPORTS_EOMDOWNLOAD_FOLDER);
 		String folderPath = this.moduleName.getSelectedItem().getValue().toString().trim();
 		String fileLocation = tempFolderLocation + "/" + folderPath + "_"
-				+ DateUtility.formatDate(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
+				+ DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
 				+ getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
 		fileLocation = tempFolderLocation + "/" + folderPath + "_"
-				+ DateUtility.formatDate(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
+				+ DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
 				+ getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
 
 		File directory = new File(fileLocation);

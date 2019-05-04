@@ -132,10 +132,6 @@ public final class DateUtility extends DateUtil {
 		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), pattern);
 	}
 
-	public static String formatDate(java.util.Date date, String pattern) {
-		return date == null ? "" : new SimpleDateFormat(pattern).format(date);
-	}
-
 	public static String formateDate(java.util.Date date, String pattern) {
 		String formatedDate = null;
 		if (StringUtils.isBlank(pattern)) {
@@ -149,10 +145,6 @@ public final class DateUtility extends DateUtil {
 		}
 		return formatedDate;
 
-	}
-
-	public static String formatUtilDate(java.util.Date date, String pattern) {
-		return date == null ? "" : formatDate(date, pattern);
 	}
 
 	private static Date parseDate(String date, String format) {
@@ -319,44 +311,6 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Returns the last date of the month
-	 * 
-	 * @param date
-	 *            (Date)
-	 * 
-	 * @return int
-	 */
-	public static Date getMonthEndDate(java.util.Date date) {
-
-		int[] daysInAMonth = { 29, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-		int month = getMonth(date);
-		int year = getYear(date);
-		int day = daysInAMonth[month];
-		if (isLeapYear(year) && month == 2) {
-			day++;
-		}
-
-		return convert(new GregorianCalendar(year, month - 1, day));
-	}
-
-	/**
-	 * Returns the last date of the month
-	 * 
-	 * @param date
-	 *            (Date)
-	 * 
-	 * @return int
-	 */
-	public static Date getMonthStartDate(java.util.Date date) {
-
-		int month = getMonth(date) - 1;
-		int year = getYear(date);
-		int day = 01;
-
-		return convert(new GregorianCalendar(year, month, day));
-	}
-
-	/**
 	 * Adds the required number of days to the date
 	 * 
 	 * @param date
@@ -456,9 +410,8 @@ public final class DateUtility extends DateUtil {
 
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = 0;
-		if (includeDate2
-				&& getMonthEndDate(date1).compareTo(getUtilDate(formatUtilDate(date1, PennantConstants.DBDateFormat),
-						PennantConstants.DBDateFormat)) == 0) {
+		if (includeDate2 && getMonthEnd(date1).compareTo(
+				getUtilDate(format(date1, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat)) == 0) {
 
 			if (convert(addDays(date1, 1)).get(Calendar.YEAR) != convert(date1).get(Calendar.YEAR)) {
 				years++;
@@ -655,19 +608,6 @@ public final class DateUtility extends DateUtil {
 		return new SimpleDateFormat(format).format(cal.getTime());
 	}
 
-	public static java.util.Date getPostDate() {
-		String setPostingDateTo = SysParamUtil.getValueAsString(PennantConstants.SET_POSTDATE_TO);
-		java.util.Date postingDate = getAppDate();
-
-		if (!StringUtils.equals(setPostingDateTo, SysParamUtil.Param.APP_DATE.getCode())) {
-			postingDate = getAppDate();
-		} else {
-			postingDate = getAppValueDate();
-		}
-
-		return postingDate;
-	}
-
 	/**
 	 * Returns the date of the month
 	 * 
@@ -712,7 +652,7 @@ public final class DateUtility extends DateUtil {
 			sysDate = SysParamUtil.getValueAsDate("SYS_DATE");
 		}
 
-		if (compare(getMonthEndDate(appDate), appDate) == 0 && DateUtility.compare(sysDate, appDate) > 0) {
+		if (compare(getMonthEnd(appDate), appDate) == 0 && DateUtility.compare(sysDate, appDate) > 0) {
 			appDate = sysDate;
 
 			Calendar calendar = Calendar.getInstance();
@@ -725,5 +665,18 @@ public final class DateUtility extends DateUtil {
 		}
 
 		return appDate;
+	}
+
+	public static java.util.Date getPostDate() {
+		String setPostingDateTo = SysParamUtil.getValueAsString(PennantConstants.SET_POSTDATE_TO);
+		java.util.Date postingDate = getAppDate();
+
+		if (!StringUtils.equals(setPostingDateTo, SysParamUtil.Param.APP_DATE.getCode())) {
+			postingDate = getAppDate();
+		} else {
+			postingDate = getAppValueDate();
+		}
+
+		return postingDate;
 	}
 }

@@ -219,7 +219,7 @@ public class BaseRateListCtrl extends GFCBaseListCtrl<BaseRate> {
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " AND BRType='" + baseRate.getBRType() + "' AND BREffDate='"
-				+ DateUtility.formatDate(baseRate.getBREffDate(), PennantConstants.DBDateFormat) + "' AND version="
+				+ DateUtility.format(baseRate.getBREffDate(), PennantConstants.DBDateFormat) + "' AND version="
 				+ baseRate.getVersion() + " ";
 
 		if (doCheckAuthority(baseRate, whereCond)) {

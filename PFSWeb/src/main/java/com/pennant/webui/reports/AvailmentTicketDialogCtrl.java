@@ -318,7 +318,7 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 		}
 		AvailCustomer availCustomer = new AvailCustomer();
 		availCustomer.setAppDate(DateUtility.getAppDate(DateFormat.LONG_DATE));
-		availCustomer.setAppTime(DateUtility.formatDate(DateUtility.getSysDate(), PennantConstants.timeFormat));
+		availCustomer.setAppTime(DateUtility.format(DateUtility.getSysDate(), PennantConstants.timeFormat));
 
 		availCustomer.setCustCIF(this.lovDescCustCIF.getValue() + " - " + this.custShrtName.getValue());
 		availCustomer.setBranch(this.custDftBranch.getValue());

@@ -957,7 +957,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			System.out.println("======================        START     ==========================");
 			System.out.println("==================================================================");
 			System.out.println("----> START EXTENDED FINANCE UPLOAD  --------> :: "
-					+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+					+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 			POIFSFileSystem finFileSystem = new POIFSFileSystem(finInput);
 			@SuppressWarnings("resource")
 			HSSFWorkbook finWorkBook = new HSSFWorkbook(finFileSystem);
@@ -1073,7 +1073,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Entering");
 
 		System.out.println("----> START PREPARING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 
 		// Customer Id
 		if (StringUtils.isNotEmpty(getValue(finRow.getCell(0)))) {
@@ -1151,7 +1151,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		logger.debug("Leaving");
 		System.out.println("----> END SETTING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return headerDetails;
 	}
 
@@ -1165,7 +1165,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		logger.debug("Entering");
 
 		System.out.println("----> START VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 
 		// Validate REFERENCE
 		if (headerDetails.getCustomerId() == 0) {
@@ -1220,7 +1220,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
+				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return headerDetails;
 	}
 

@@ -130,7 +130,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				Date eventFromDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
 						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate();
 				eventFromDate = DateUtility
-						.getDBDate(DateUtility.formatUtilDate(eventFromDate, PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(eventFromDate, PennantConstants.DBDateFormat));
 				financeMain.setEventFromDate(eventFromDate);
 			}
 
@@ -148,7 +148,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 
 				startRepayCalDate = DateUtility
-						.getDBDate(DateUtility.formatUtilDate(startRepayCalDate, PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(startRepayCalDate, PennantConstants.DBDateFormat));
 
 			}
 
@@ -158,7 +158,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				recalToDate = calendar.getTime();
 				recalToDate = DateUtility
-						.getDBDate(DateUtility.formatUtilDate(recalToDate, PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(recalToDate, PennantConstants.DBDateFormat));
 			}
 			scheduleDateList = null;
 
@@ -183,7 +183,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		} else {
 			if (finServiceInstruction.getNextRepayDate() != null) {
 				startRepayCalDate = DateUtility.getDBDate(DateUtility
-						.formatUtilDate(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
+						.format(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
 			} else {
 				startRepayCalDate = FrequencyUtil
 						.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
@@ -195,7 +195,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 
 				startRepayCalDate = DateUtility
-						.getDBDate(DateUtility.formatUtilDate(startRepayCalDate, PennantConstants.DBDateFormat));
+						.getDBDate(DateUtility.format(startRepayCalDate, PennantConstants.DBDateFormat));
 			}
 
 			if (maturityDate != null) {
@@ -206,7 +206,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				if (scheduleDateList != null) {
 					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 					recalToDate = DateUtility
-							.getDBDate(DateUtility.formatUtilDate(calendar.getTime(), PennantConstants.DBDateFormat));
+							.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 				}
 				scheduleDateList = null;
 			}

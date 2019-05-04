@@ -201,7 +201,7 @@ public class ProcessExecution extends Panel {
 			row4.appendChild(label4);
 		}
 
-		label4.setValue(DateUtility.formatUtilDate(getProcess().getStartTime(), PennantConstants.DBTimeFormat));
+		label4.setValue(DateUtility.format(getProcess().getStartTime(), PennantConstants.DBTimeFormat));
 
 		row5 = (Row) getChildren(rows, "row5");
 		if (row5 == null) {
@@ -219,7 +219,7 @@ public class ProcessExecution extends Panel {
 			row5.appendChild(label5);
 		}
 
-		label5.setValue(DateUtility.formatUtilDate(getProcess().getEndTime(), PennantConstants.DBTimeFormat));
+		label5.setValue(DateUtility.format(getProcess().getEndTime(), PennantConstants.DBTimeFormat));
 
 		if ("EXECUTING".equals(process.getStatus())) {
 			row5.setVisible(false);

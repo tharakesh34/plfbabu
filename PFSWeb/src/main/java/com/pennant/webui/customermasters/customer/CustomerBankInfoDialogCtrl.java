@@ -1239,7 +1239,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		AuditHeader auditHeader = new AuditHeader();
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
-		valueParm[0] = String.valueOf(DateUtility.formatDate(detail.getMonthYear(),PennantConstants.monthYearFormat));
+		valueParm[0] = String.valueOf(DateUtility.format(detail.getMonthYear(),PennantConstants.monthYearFormat));
 		errParm[0] = "Monthyear" + ":" + valueParm[0];
 		
 		bankInfoDetails = new ArrayList<>();

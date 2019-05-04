@@ -1882,10 +1882,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						if (empDetail.getCustEmpFrom().compareTo(empDetail.getCustEmpTo()) > 0) {
 							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[2];
-							valueParm[0] = "employment startDate:" + DateUtility.formatDate(empDetail.getCustEmpFrom(),
+							valueParm[0] = "employment startDate:" + DateUtility.format(empDetail.getCustEmpFrom(),
 									PennantConstants.XMLDateFormat);
 							valueParm[1] = "employment endDate:"
-									+ DateUtility.formatDate(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
+									+ DateUtility.format(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 						}
@@ -2298,9 +2298,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[3];
 					valueParm[0] = "FinDate";
-					valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+					valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 							PennantConstants.XMLDateFormat);
-					valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -2369,8 +2369,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (date.compareTo(DateUtility.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = label;
-				valueParm[1] = DateUtility.formatDate(defaultAppDate, PennantConstants.XMLDateFormat);
-				valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtility.format(defaultAppDate, PennantConstants.XMLDateFormat);
+				valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			}
 		}
@@ -2609,9 +2609,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
-			valueParm[1] = DateUtility.formatDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.formatDate(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			auditDetail.setErrorDetail(errorDetail);
 		}

@@ -8458,15 +8458,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						|| FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_BIMONTHLY.equals(frqCode)) {
 					mnth = FrequencyUtil.getMonthFrqValue(DateUtility
-							.formatUtilDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
+							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
 							frqCode);
 				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)) {
-					mnth = DateUtility.formatUtilDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+					mnth = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 							.split("-")[1];
 				}
 			}
 			mnth = frqCode.concat(mnth).concat("00");
-			String day = DateUtility.formatUtilDate(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+			String day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 					.split("-")[2];
 			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
 				day = "00";
@@ -10454,7 +10454,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					frqDate = this.nextRepayPftDate_two.getValue();
 				}
 
-				Date bpiDate = DateUtility.getDate(DateUtility.formatUtilDate(
+				Date bpiDate = DateUtility.getDate(DateUtility.format(
 						FrequencyUtil.getNextDate(frqBPI, 1, this.finStartDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 						PennantConstants.dateFormat));
@@ -11088,7 +11088,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.gracePeriodEndDate_two.getValue() != null) {
 
 				aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(DateUtility
-						.formatUtilDate(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+						.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 
 			}
 		} catch (WrongValueException we) {
@@ -11309,7 +11309,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.gracePftFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
 						aFinanceMain.setNextGrcPftDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
 					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextGrcPftDate.getValue() != null
@@ -11343,7 +11343,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.gracePftRvwFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
 						aFinanceMain.setNextGrcPftRvwDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
 					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextGrcPftRvwDate.getValue() != null
@@ -11379,7 +11379,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							&& FrequencyUtil.validateFrequency(this.graceCpzFrq.getValue()) == null
 							&& this.nextGrcCpzDate_two.getValue() != null) {
 						aFinanceMain.setNextGrcCpzDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
 					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextGrcCpzDate.getValue() != null
@@ -11478,7 +11478,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
 			}
 			aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(
-					DateUtility.formatUtilDate(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+					DateUtility.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 			aFinanceMain.setGraceTerms(0);
 			aFinanceMain.setAllowGrcRepay(false);
 			aFinanceMain.setGraceBaseRate(null);
@@ -11711,7 +11711,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
 						aFinanceMain.setNextRepayPftDate(DateUtility.getDate(DateUtility
-								.formatUtilDate(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
+								.format(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
 					if (ImplementationConstants.FRQ_DATE_VALIDATION && !this.nextRepayPftDate.isReadonly()
@@ -11746,7 +11746,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayRvwDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 
 				//Validation Against the Repay Frequency and the next Frequency Date
@@ -11778,7 +11778,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayCpzFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayCpzDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
 				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayCpzDate.getValue() != null
@@ -11812,7 +11812,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
 				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayDate.getValue() != null
@@ -11827,7 +11827,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
 
@@ -11856,7 +11856,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotEmpty(this.rolloverFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.rolloverFrq.getValue()) == null) {
 					aFinanceMain.setNextRolloverDate(DateUtility.getDate(DateUtility
-							.formatUtilDate(this.nextRollOverDate_two.getValue(), PennantConstants.dateFormat)));
+							.format(this.nextRollOverDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
 				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRollOverDate.getValue() != null
@@ -12039,7 +12039,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		try {
 			if (this.maturityDate_two.getValue() != null) {
 				aFinanceMain.setMaturityDate(DateUtility.getDate(
-						DateUtility.formatUtilDate(this.maturityDate_two.getValue(), PennantConstants.dateFormat)));
+						DateUtility.format(this.maturityDate_two.getValue(), PennantConstants.dateFormat)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -14105,7 +14105,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isOverdraft && financeType.isDroplineOD() && this.firstDroplineDate.getValue() == null) {
 			int tenor = ((this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue());
 			if (tenor > 0) {
-				Date nextSchdDate = DateUtility.getDate(DateUtility.formatUtilDate(
+				Date nextSchdDate = DateUtility.getDate(DateUtility.format(
 						FrequencyUtil.getNextDate(this.droplineFrq.getValue(), tenor, this.finStartDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 						PennantConstants.dateFormat));

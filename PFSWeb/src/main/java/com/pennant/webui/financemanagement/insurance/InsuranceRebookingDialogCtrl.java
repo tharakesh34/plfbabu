@@ -2404,7 +2404,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private void formatCustomerData(Customer customer) {
 		Date dob = customer.getCustDOB();
 		if (dob != null) {
-			customer.setCustDOB(DateUtility.getDate(DateUtility.formatDate(dob, DateFormat.SHORT_DATE.getPattern())));
+			customer.setCustDOB(DateUtility.getDate(DateUtility.format(dob, DateFormat.SHORT_DATE.getPattern())));
 			customer.setCustomerAge(new BigDecimal(getAge(dob)));
 		}
 	}
