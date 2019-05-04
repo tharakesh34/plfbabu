@@ -47,6 +47,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -1762,14 +1763,14 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 		return StringUtils.isBlank(getCustCoreBank());
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> customerMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> customerMap = new HashMap<>();
 
 		return getDeclaredFieldValues(customerMap);
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> customerMap) {
-		customerMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> customerMap) {
+		customerMap = new HashMap<>();
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				//"ct_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.

@@ -597,13 +597,13 @@ public class VASRecording extends AbstractWorkflowEntity {
 		this.financeProcess = financeProcess;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> vasRecordingMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> vasRecordingMap = new HashMap<>();
 
 		return getDeclaredFieldValues(vasRecordingMap);
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> vasRecordingMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> vasRecordingMap) {
 		// feeMap.put(String.valueOf(fee), getFee());
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {

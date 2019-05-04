@@ -1462,7 +1462,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return datasetList;
 	}
 
-	protected HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap,
+	protected Map<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap,
 			FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
@@ -1661,7 +1661,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
@@ -1685,7 +1685,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(),
 				financeMain.getFinBranch());
 
@@ -1970,7 +1970,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finMain.getFinReference(), ""));
 		}
 
-		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(),
 				finMain.getFinBranch());
 
@@ -1993,7 +1993,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 		amountCodes.setUserBranch(auditHeader.getAuditBranchCode());
 
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
@@ -2683,7 +2683,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		if (StringUtils.equals(accFor, RepayConstants.ALLOCATION_BOUNCE)) {
 			dataMap.put("bounceCharge", dueAmount);
@@ -2790,7 +2790,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finMain.getFinReference(), ""));
 		}
 
-		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
+		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
 				finMain.getFinBranch(), custDftBranch, highPriorityState, highPriorityCountry,
 				financeDetail.getFinanceTaxDetail(), finMain.getFinBranch());
 

@@ -761,7 +761,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			amountCodes.setEntitycode(financeMain.getEntityCode());
 			
 			aeEvent.setAeAmountCodes(amountCodes);
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			if (excludeFees != null) {
 				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 			}

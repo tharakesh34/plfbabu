@@ -46,8 +46,8 @@ package com.pennant.backend.service.finance;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jaxen.JaxenException;
@@ -289,7 +289,7 @@ public interface FinanceDetailService {
 	DocumentDetails getDocumentDetails(long id, String type);
 
 	//GST
-	HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
+	Map<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode);
 
 	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schDate);
 

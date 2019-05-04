@@ -1854,7 +1854,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 
 		prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 		aeEvent.getAeAmountCodes().setTotalWriteoff(financeWriteoff.getWriteoffPrincipal()
@@ -1966,7 +1966,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				amountCodes.setPartnerBankAc(advPayment.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(advPayment.getPartnerBankAcType());
 
-				HashMap<String, Object> dataMap = aeEvent.getDataMap();
+				Map<String, Object> dataMap = aeEvent.getDataMap();
 				dataMap = amountCodes.getDeclaredFieldValues();
 				aeEvent.setDataMap(dataMap);
 				if (advPayment.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(advPayment.getRecordType())) {
@@ -1982,7 +1982,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	}
 
-	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap) {
+	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap) {
 		logger.debug("Entering");
 
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();

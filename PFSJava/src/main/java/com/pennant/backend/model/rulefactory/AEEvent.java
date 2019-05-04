@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.app.constants.AccountConstants;
 
@@ -13,7 +14,7 @@ public class AEEvent implements Serializable {
 
 	private AEAmountCodes aeAmountCodes = new AEAmountCodes();
 	private String moduleDefiner;
-	private HashMap<String, Object> dataMap = new HashMap<>();
+	private Map<String, Object> dataMap = new HashMap<>();
 
 	private List<Long> acSetIDList = new ArrayList<>(1);
 	private List<ReturnDataSet> returnDataSet = new ArrayList<ReturnDataSet>(1);
@@ -89,11 +90,11 @@ public class AEEvent implements Serializable {
 		this.moduleDefiner = moduleDefiner;
 	}
 
-	public HashMap<String, Object> getDataMap() {
+	public Map<String, Object> getDataMap() {
 		return dataMap;
 	}
 
-	public void setDataMap(HashMap<String, Object> dataMap) {
+	public void setDataMap(Map<String, Object> dataMap) {
 		this.dataMap = dataMap;
 	}
 

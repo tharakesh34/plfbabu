@@ -48,8 +48,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -137,11 +137,11 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 
 		aeEvent.setEOD(false);
-		;
+		
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			aeEvent.setEOD(true);
@@ -267,7 +267,7 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 
 		//Postings Preparation

@@ -1519,7 +1519,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 				profitDetail, eventCode, dateValueDate, dateValueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<ReturnDataSet> returnSetEntries = null;
 

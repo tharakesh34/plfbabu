@@ -1272,7 +1272,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			amountCodes.setWoPayAmt(
 					PennantApplicationUtil.unFormateAmount(this.finWriteoffPayAmount.getActualValue(), format));
 
-			HashMap<String, Object> dataMap = aeEvent.getDataMap();
+			Map<String, Object> dataMap = aeEvent.getDataMap();
 			dataMap = amountCodes.getDeclaredFieldValues();
 
 			List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();

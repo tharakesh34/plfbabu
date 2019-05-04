@@ -48,8 +48,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -159,7 +159,7 @@ public class ProvisionPostings implements Tasklet {
 					amountCodes.setProvDue(movement.getProvisionDue());
 					amountCodes.setProvAmt(movement.getProvisionedAmt());
 
-					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+					Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
 
 					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);

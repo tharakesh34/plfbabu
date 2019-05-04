@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -93,7 +94,7 @@ public class PostingsPreparationUtil implements Serializable {
 		super();
 	}
 
-	public AEEvent processPostingDetails(AEEvent aeEvent, HashMap<String, Object> dataMap)
+	public AEEvent processPostingDetails(AEEvent aeEvent, Map<String, Object> dataMap)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 
 		return processPostings(aeEvent, dataMap);
@@ -173,7 +174,7 @@ public class PostingsPreparationUtil implements Serializable {
 		return aeEvent;
 	}
 
-	private AEEvent processPostings(AEEvent aeEvent, HashMap<String, Object> dataMap)
+	private AEEvent processPostings(AEEvent aeEvent, Map<String, Object> dataMap)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -273,7 +274,7 @@ public class PostingsPreparationUtil implements Serializable {
 		amountCodes.setRpPri(BigDecimal.ZERO);
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 
 		// Accounting Set Execution to get Posting Details List

@@ -45,8 +45,8 @@ package com.pennant.webui.finance.manualadvise;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -106,9 +106,9 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/finance/ManualAdvise/manualAdviseDialog.zul file. <br>
@@ -508,7 +508,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 					}
 				}
 
-				HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(
+				Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(
 						fromBranchCode, custDftBranch, highPriorityState, highPriorityCountry,
 						financeDetail.getFinanceTaxDetail(), financeMain.getFinBranch());
 

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -66,13 +67,13 @@ public class FinReceiptDetail implements Serializable {
 	private BigDecimal partialPaidAMount = BigDecimal.ZERO;
 	private BigDecimal dueAmount = BigDecimal.ZERO;
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> receiptDetailMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		HashMap<String, Object> receiptDetailMap = new HashMap<>();
 		getDeclaredFieldValues(receiptDetailMap);
 		return receiptDetailMap;
 	}
 
-	public void getDeclaredFieldValues(HashMap<String, Object> receiptDetailMap) {
+	public void getDeclaredFieldValues(Map<String, Object> receiptDetailMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				// "rd_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.

@@ -334,7 +334,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(finreceiptDetail.getAmount());
 		amountCodes.setFinType(receiptHeader.getFinType());
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		if (map != null) {
 			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
 
@@ -720,7 +720,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			amountCodes.setEntitycode((String) map.get("Entitycode"));
 		}
 
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		if (map != null) {
 			dataMap.put("emptype", map.get("emptype"));
 			dataMap.put("branchcity", map.get("branchcity"));
@@ -860,7 +860,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 	}
 
-	private BigDecimal prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap,
+	private BigDecimal prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap,
 			List<FinFeeDetail> finFeeDetailList) {
 		logger.debug("Entering");
 		BigDecimal accountedImd = BigDecimal.ZERO;

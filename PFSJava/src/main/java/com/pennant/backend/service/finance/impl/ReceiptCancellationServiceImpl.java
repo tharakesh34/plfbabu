@@ -854,7 +854,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		BigDecimal bounceAmt = BigDecimal.ZERO;
 
 		Map<String, Object> eventMapping = null;
-		HashMap<String, Object> fieldsAndValues = finReceiptDetail.getDeclaredFieldValues();
+		Map<String, Object> fieldsAndValues = finReceiptDetail.getDeclaredFieldValues();
 		bounceReason.getDeclaredFieldValues(fieldsAndValues);
 
 		eventMapping = financeMainDAO.getGLSubHeadCodes(receiptHeader.getReference());
@@ -1672,7 +1672,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),
 						"");
 
-				HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
+				Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
 						financeMain.getFinBranch(), custDftBranch, highPriorityState, highPriorityCountry, taxDetail,
 						financeMain.getFinBranch());
 

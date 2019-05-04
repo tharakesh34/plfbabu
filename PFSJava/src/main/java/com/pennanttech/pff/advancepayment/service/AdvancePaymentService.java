@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,7 +180,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 		}
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());

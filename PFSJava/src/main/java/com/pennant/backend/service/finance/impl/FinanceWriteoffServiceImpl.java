@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -308,7 +309,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					profitDetail, AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
 
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setDataMap(dataMap);
 			try {
 				aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
@@ -754,7 +755,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		financeWriteoff.getDeclaredFieldValues(dataMap);

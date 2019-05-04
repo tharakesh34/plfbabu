@@ -45,6 +45,7 @@ package com.pennant.backend.model.applicationmaster;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -244,13 +245,13 @@ public class BounceReason extends AbstractWorkflowEntity implements Entity {
 		this.ruleID = ruleID;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> bounceReasonMap = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> bounceReasonMap = new HashMap<String, Object>();
 		getDeclaredFieldValues(bounceReasonMap);
 		return bounceReasonMap;
 	}
 
-	public void getDeclaredFieldValues(HashMap<String, Object> bounceReasonMap) {
+	public void getDeclaredFieldValues(Map<String, Object> bounceReasonMap) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
 				// "br_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.

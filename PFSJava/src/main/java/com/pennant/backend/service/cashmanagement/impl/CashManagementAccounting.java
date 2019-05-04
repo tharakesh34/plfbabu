@@ -1,7 +1,7 @@
 package com.pennant.backend.service.cashmanagement.impl;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -73,7 +73,7 @@ public class CashManagementAccounting {
 
 		amountCodes.setTransfer(transactionAmount);
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 		aeEvent.getAcSetIDList().clear();
 		aeEvent.getAcSetIDList().add(getAccountingSetId(eventCode));

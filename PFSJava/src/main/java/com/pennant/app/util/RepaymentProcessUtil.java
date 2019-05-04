@@ -486,7 +486,7 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		if (excludeFees != null) {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -656,7 +656,7 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		if (excludeFees != null) {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);

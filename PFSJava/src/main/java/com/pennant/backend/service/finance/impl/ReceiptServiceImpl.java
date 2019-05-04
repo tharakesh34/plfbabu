@@ -918,7 +918,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		btLoan = financeMain.getLoanCategory();
 		eventMapping = getFinanceMainDAO().getGLSubHeadCodes(financeMain.getFinReference());
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		if (eventMapping != null) {
 			//	dataMap = aeEvent.getDataMap();
 			dataMap.put("emptype", eventMapping.get("emptype"));

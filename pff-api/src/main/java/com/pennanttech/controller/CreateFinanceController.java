@@ -1544,7 +1544,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				if (custDetails != null) {
 					colSetup.setCustomerDetails(customerDetails);
 				}
-				HashMap<String, Object> declaredMap = colSetup.getCustomerDetails().getCustomer()
+				
+				Map<String, Object> declaredMap = colSetup.getCustomerDetails().getCustomer()
 						.getDeclaredFieldValues();
 				declaredMap.put("collateralType", colSetup.getCollateralType());
 				declaredMap.put("collateralCcy", colSetup.getCollateralCcy());

@@ -2572,7 +2572,7 @@ public class ReceiptCalculator implements Serializable {
 	 * @return
 	 */
 	public FinanceDetail setGSTExecutionMap(FinanceDetail financeDetail) {
-		HashMap<String, Object> dataMap = getFeeCalculator().getGstMappingDetails(financeDetail);
+		Map<String, Object> dataMap = getFeeCalculator().getGstMappingDetails(financeDetail);
 		financeDetail.getFinScheduleData().setGstExecutionMap(dataMap);
 		setTaxPercentages(financeDetail);
 		return financeDetail;
@@ -2604,7 +2604,7 @@ public class ReceiptCalculator implements Serializable {
 	}
 
 	public Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail) {
-		HashMap<String, Object> dataMap = getFeeCalculator().getGstMappingDetails(financeDetail);
+		Map<String, Object> dataMap = getFeeCalculator().getGstMappingDetails(financeDetail);
 
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
@@ -2646,7 +2646,7 @@ public class ReceiptCalculator implements Serializable {
 	 * 
 	 * @return
 	 */
-	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy) {
+	private BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		logger.debug("Entering");
 		// FIXME: Why this method is required in this class. should it be in a
 		// common class?

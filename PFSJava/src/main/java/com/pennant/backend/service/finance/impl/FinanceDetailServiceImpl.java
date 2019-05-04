@@ -278,7 +278,6 @@ import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -10786,7 +10785,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public HashMap<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode) {
+	public Map<String, Object> prepareGstMappingDetails(FinanceDetail financeDetail, String branchCode) {
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
 
 		String custDftBranch = null;

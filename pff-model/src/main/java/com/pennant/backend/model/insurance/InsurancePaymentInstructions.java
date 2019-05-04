@@ -3,9 +3,9 @@ package com.pennant.backend.model.insurance;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -52,7 +52,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 		return isNewRecord();
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> detailsMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> detailsMap) {
 		detailsMap.put("id_payAmount", getPayableAmount());// Total payable amount
 		detailsMap.put("id_recAmount", getReceivableAmount());// Total  receivable  amount
 		detailsMap.put("id_totPayAmount", getPaymentAmount());// Total payment amount to the  partner after  adjusting the receivables

@@ -74,7 +74,7 @@ public class DisbursementPostings {
 
 				AEEvent aeEvent = new AEEvent();
 				AEAmountCodes amountCodes = new AEAmountCodes();
-				HashMap<String, Object> dataMap = aeEvent.getDataMap();
+				Map<String, Object> dataMap = aeEvent.getDataMap();
 
 				aeEvent.setValueDate(finAdvancePayments.getLlDate());
 				aeEvent.setCcy(finAdvancePayments.getDisbCCy());
@@ -152,7 +152,7 @@ public class DisbursementPostings {
 				} else {
 					AEEvent aeEvent = new AEEvent();
 					AEAmountCodes amountCodes = new AEAmountCodes();
-					HashMap<String, Object> dataMap = aeEvent.getDataMap();
+					Map<String, Object> dataMap = aeEvent.getDataMap();
 
 					aeEvent.setValueDate(finAdvancePayments.getLlDate());
 					aeEvent.setCcy(finAdvancePayments.getDisbCCy());

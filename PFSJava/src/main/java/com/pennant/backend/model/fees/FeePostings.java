@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -124,7 +125,7 @@ public class FeePostings extends AbstractWorkflowEntity implements Entity {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> feePostingMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> feePostingMap) {
 
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {

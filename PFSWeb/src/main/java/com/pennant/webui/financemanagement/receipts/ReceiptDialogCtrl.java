@@ -1224,7 +1224,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			BounceReason bounceReason = (BounceReason) dataObject;
 			if (bounceReason != null) {
-				HashMap<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
+				Map<String, Object> executeMap = bounceReason.getDeclaredFieldValues();
 
 				if (receiptHeader != null) {
 					if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
@@ -3956,7 +3956,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 				}
 
-				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 				if (excludeFees != null) {
 					dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -4325,7 +4325,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			if (excludeFees != null) {
 				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -4552,7 +4552,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						}
 					}
 
-					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+					Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 					if (excludeFees != null) {
 						dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -4579,7 +4579,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param amountCodes
 	 * @param dataMap
 	 */
-	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, String payType) {
+	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap, String payType) {
 		logger.debug("Entering");
 		List<FinFeeDetail> finFeeDetailList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 

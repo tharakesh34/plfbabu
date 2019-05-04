@@ -377,7 +377,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 
 		aeEvent.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		// Fee Rules Map Fetching from Fee Details Dialog Controller for Accounting process
 		Map<String, FeeRule> feeRuleDetailMap = null;

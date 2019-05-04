@@ -3,8 +3,8 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,7 +15,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.DateUtility;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -32,8 +31,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
-import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 
 public class InstallmentDueService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
@@ -122,7 +119,7 @@ public class InstallmentDueService extends ServiceHelper {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		List<FinFeeScheduleDetail> feelist = finEODEvent.getFinFeeScheduleDetails();
 		if (feelist != null && !feelist.isEmpty()) {
@@ -299,7 +296,7 @@ public class InstallmentDueService extends ServiceHelper {
 				amountCodes.setPriSB(BigDecimal.ZERO);
 			}
 
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			if (feelist != null && !feelist.isEmpty()) {
 				for (FinFeeScheduleDetail feeSchd : feelist) {

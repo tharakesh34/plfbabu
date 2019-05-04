@@ -143,8 +143,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
@@ -1821,7 +1821,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 				}
 
-				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 				if (excludeFees != null) {
 					dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -2190,7 +2190,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 			}
 
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			if (excludeFees != null) {
 				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -2417,7 +2417,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						}
 					}
 
-					HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+					Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 					if (excludeFees != null) {
 						dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
@@ -2444,7 +2444,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * @param amountCodes
 	 * @param dataMap
 	 */
-	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap, String payType) {
+	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap, String payType) {
 		logger.debug("Entering");
 		List<FinFeeDetail> finFeeDetailList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 

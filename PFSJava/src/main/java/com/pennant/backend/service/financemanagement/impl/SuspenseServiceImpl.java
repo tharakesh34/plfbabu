@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -305,7 +306,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 					AccountEventConstants.ACCEVENT_WRITEOFF, curBDay, financeMain.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setDataMap(dataMap);
 
 			try {

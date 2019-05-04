@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -276,7 +277,7 @@ public class ExtFinanceUploadService {
 				data.getFinanceMain().getFinStartDate(), data.getFinanceMain().getFinStartDate());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 
 		// Building Account Entry Details

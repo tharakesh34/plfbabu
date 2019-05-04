@@ -378,7 +378,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public BigDecimal getProvisionExecResults(HashMap<String, Object> dataMap)
+	public BigDecimal getProvisionExecResults(Map<String, Object> dataMap)
 			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 
 		doFilldataMap(dataMap);
@@ -509,7 +509,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
 		logger.trace("Entity Code" + aeEvent.getEntityCode());
 		String zeroPostingFlag = SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS");
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		List<Long> acSetIDList = aeEvent.getAcSetIDList();
 		List<ReturnDataSet> returnDataSets = new ArrayList<ReturnDataSet>();
 		List<TransactionEntry> transactionEntries = new ArrayList<>();
@@ -792,7 +792,7 @@ public class AccountEngineExecution implements Serializable {
 	}
 
 	private List<ReturnDataSet> createAccOnCCyConversion(ReturnDataSet existDataSet, String acCcy,
-			BigDecimal unconvertedPostAmt, HashMap<String, Object> dataMap) {
+			BigDecimal unconvertedPostAmt, Map<String, Object> dataMap) {
 
 		List<ReturnDataSet> newEntries = new ArrayList<ReturnDataSet>(2);
 
@@ -855,7 +855,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private void doFilldataMap(HashMap<String, Object> dataMap)
+	private void doFilldataMap(Map<String, Object> dataMap)
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -882,7 +882,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 */
 	private IAccounts getAccountNumber(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> accountsMap,
-			HashMap<String, Object> dataMap) {
+			Map<String, Object> dataMap) {
 		logger.debug("Entering");
 
 		String txnOrder = String.valueOf(txnEntry.getTransOrder());
@@ -932,7 +932,7 @@ public class AccountEngineExecution implements Serializable {
 	 *             BigDecimal
 	 */
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry, String finCcy,
-			HashMap<String, Object> dataMap) {
+			Map<String, Object> dataMap) {
 		logger.debug("Entering");
 
 		// Execute Transaction Entry Rule
@@ -953,7 +953,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @param amountCode
 	 * @return
 	 */
-	private void setAmountCodes(HashMap<String, Object> dataMap, boolean isWIF) {
+	private void setAmountCodes(Map<String, Object> dataMap, boolean isWIF) {
 		logger.debug("Entering");
 
 		boolean finOverDueInPast = false;

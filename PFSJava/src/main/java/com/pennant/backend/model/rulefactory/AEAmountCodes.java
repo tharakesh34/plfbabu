@@ -3,6 +3,7 @@ package com.pennant.backend.model.rulefactory;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.pennant.app.constants.AccountConstants;
 
@@ -217,14 +218,14 @@ public class AEAmountCodes implements Serializable {
 		super();
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues() {
-		HashMap<String, Object> map = new HashMap<String, Object>();
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> map = new HashMap<String, Object>();
 		getDeclaredFieldValues(map);
 
 		return map;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> map) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> map) {
 
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {

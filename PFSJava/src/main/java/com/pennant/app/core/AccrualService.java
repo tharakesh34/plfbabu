@@ -791,7 +791,7 @@ public class AccrualService extends ServiceHelper {
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(main.getFinBranch(),
+		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(main.getFinBranch(),
 				custDftBranch, highPriorityState, highPriorityCountry, detail.getFinanceTaxDetail(),
 				main.getFinBranch());
 
@@ -1354,7 +1354,7 @@ public class AccrualService extends ServiceHelper {
 
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
 
 		// TODO : WRITE THIS IN CACHE
@@ -1398,7 +1398,7 @@ public class AccrualService extends ServiceHelper {
 	 * 
 	 * @return
 	 */
-	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy) {
+	private BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		logger.debug("Entering");
 
 		BigDecimal result = BigDecimal.ZERO;

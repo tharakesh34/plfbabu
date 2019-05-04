@@ -1082,7 +1082,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				}
 			}
 		}
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		Map<String, Object> glSubHeadCodes = financeMain.getGlSubHeadCodes();
 		dataMap.put("emptype", glSubHeadCodes.get("emptype"));
@@ -1150,7 +1150,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 	}
 
-	private HashMap<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap,
+	private Map<String, Object> prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap,
 			List<FinFeeDetail> finFeeDetailList, String payType) {
 		logger.debug("Entering");
 
@@ -1521,7 +1521,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				aeEvent.setSchdDate(valueDate);
 
 				// Set O/S balances for Principal & profits in Amount Codes Data--TODO
-				HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 				aeEvent.setDataMap(dataMap);
 
 				// Reset AEAmount Code Details Bean and send for Accounting Execution.

@@ -39,9 +39,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -170,7 +170,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			}
 		}
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		if (excludeFees != null) {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);

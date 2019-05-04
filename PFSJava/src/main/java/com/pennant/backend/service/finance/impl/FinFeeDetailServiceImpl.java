@@ -1197,7 +1197,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		String finCcy = financeMain.getFinCcy();
-		BigDecimal gstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
+		BigDecimal gstPercentage = calculateGSTPercentage(finFeeDetail, finCcy, gstExecutionMap);
 		BigDecimal gstActual = BigDecimal.ZERO;
 		BigDecimal gstNetOriginal = BigDecimal.ZERO;
 
@@ -1209,7 +1209,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
 		if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finTypeFee.getTaxComponent())) {
-			gstActual = calculatePercentage(finTypeFee.getAmount(), gstPercentage, taxRoundMode, taxRoundingTarget);
+			gstActual = calculateGST(finTypeFee.getAmount(), gstPercentage, taxRoundMode, taxRoundingTarget);
 
 			finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
 			finFeeDetail.setActualAmountGST(gstActual);
@@ -1222,7 +1222,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 		} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, finTypeFee.getTaxComponent())) {
-			gstNetOriginal = calculateInclusivePercentage(finTypeFee.getAmount(), finFeeDetail.getCgst(),
+			gstNetOriginal = calculateInclusiveGST(finTypeFee.getAmount(), finFeeDetail.getCgst(),
 					finFeeDetail.getSgst(), finFeeDetail.getUgst(), finFeeDetail.getIgst(), taxRoundMode,
 					taxRoundingTarget);
 			finFeeDetail.setNetAmount(finTypeFee.getAmount());
@@ -1230,8 +1230,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setNetAmountGST(finTypeFee.getAmount().subtract(gstNetOriginal));
 			finFeeDetail.setActualAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
 
-			BigDecimal actualGst = calculatePercentage(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()),
-					gstPercentage, taxRoundMode, taxRoundingTarget);
+			BigDecimal actualGst = calculateGST(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()), gstPercentage,
+					taxRoundMode, taxRoundingTarget);
 			finFeeDetail.setActualAmountGST(actualGst);
 			finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
 
@@ -1257,7 +1257,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
-			BigDecimal gstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
+			BigDecimal gstPercentage = calculateGSTPercentage(finFeeDetail, finCcy, gstExecutionMap);
 			BigDecimal gstActual = BigDecimal.ZERO;
 
 			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
@@ -1278,7 +1278,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 
 			} else {
-				BigDecimal gstNetOriginal = calculateInclusivePercentage(feeResult, finFeeDetail.getCgst(),
+				BigDecimal gstNetOriginal = calculateInclusiveGST(feeResult, finFeeDetail.getCgst(),
 						finFeeDetail.getSgst(), finFeeDetail.getUgst(), finFeeDetail.getIgst(), taxRoundMode,
 						taxRoundingTarget);
 
@@ -1288,7 +1288,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				finFeeDetail.setActualAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
 
-				BigDecimal actualGst = calculatePercentage(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()),
+				BigDecimal actualGst = calculateGST(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()),
 						gstPercentage, taxRoundMode, taxRoundingTarget);
 				finFeeDetail.setActualAmountGST(actualGst);
 				finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
@@ -1312,99 +1312,101 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		if ((!apiRequest && finFeeDetail.isFeeModified()) || (apiRequest && finFeeDetail.isAlwModifyFee())) {
 			return;
+		}
+
+		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
+
+		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+
+		BigDecimal totalGST = calculateGSTPercentage(finFeeDetail, finCcy, gstExecutionMap);
+		BigDecimal gstActual = BigDecimal.ZERO;
+		int formatter = CurrencyUtil.getFormat(finCcy);
+
+		if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
+			gstActual = calPercentageFee
+					.multiply(totalGST.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
+			finFeeDetail.setActualAmountOriginal(calPercentageFee);
+			finFeeDetail.setActualAmountGST(gstActual);
+			finFeeDetail.setActualAmount(gstActual.add(calPercentageFee));
+
+			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				finFeeDetail.setPaidAmount(gstActual.add(calPercentageFee));
+				finFeeDetail.setPaidAmountOriginal(calPercentageFee);
+				finFeeDetail.setPaidAmountGST(gstActual);
+			}
 		} else {
-			String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
 
-			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+			BigDecimal gstNetOriginal = calculateInclusiveGST(calPercentageFee, finFeeDetail.getCgst(),
+					finFeeDetail.getSgst(), finFeeDetail.getUgst(), finFeeDetail.getIgst(), taxRoundMode,
+					taxRoundingTarget);
 
-			BigDecimal gstPercentage = calculateGstPercentage(finFeeDetail, finCcy, gstExecutionMap);
-			BigDecimal gstActual = BigDecimal.ZERO;
-			int formatter = CurrencyUtil.getFormat(finCcy);
+			finFeeDetail.setNetAmount(calPercentageFee);
+			finFeeDetail.setNetAmountOriginal(gstNetOriginal);
+			finFeeDetail.setNetAmountGST(calPercentageFee.subtract(gstNetOriginal));
 
-			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
+			finFeeDetail.setActualAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
 
-				gstActual = calPercentageFee
-						.multiply(gstPercentage.divide(BigDecimal.valueOf(100), formatter, RoundingMode.HALF_DOWN));
-				finFeeDetail.setActualAmountOriginal(calPercentageFee);
-				finFeeDetail.setActualAmountGST(gstActual);
-				finFeeDetail.setActualAmount(gstActual.add(calPercentageFee));
+			BigDecimal actualGst = calculateGST(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()), totalGST,
+					taxRoundMode, taxRoundingTarget);
+			finFeeDetail.setActualAmountGST(actualGst);
+			finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
 
-				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-						CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-					finFeeDetail.setPaidAmount(gstActual.add(calPercentageFee));
-					finFeeDetail.setPaidAmountOriginal(calPercentageFee);
-					finFeeDetail.setPaidAmountGST(gstActual);
-				}
-			} else {
-
-				BigDecimal gstNetOriginal = calculateInclusivePercentage(calPercentageFee, finFeeDetail.getCgst(),
-						finFeeDetail.getSgst(), finFeeDetail.getUgst(), finFeeDetail.getIgst(), taxRoundMode,
-						taxRoundingTarget);
-
-				finFeeDetail.setNetAmount(calPercentageFee);
-				finFeeDetail.setNetAmountOriginal(gstNetOriginal);
-				finFeeDetail.setNetAmountGST(calPercentageFee.subtract(gstNetOriginal));
-
-				finFeeDetail.setActualAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
-
-				BigDecimal actualGst = calculatePercentage(gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()),
-						gstPercentage, taxRoundMode, taxRoundingTarget);
-				finFeeDetail.setActualAmountGST(actualGst);
-				finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
-
-				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-						CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
-					finFeeDetail.setPaidAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
-					finFeeDetail.setPaidAmountGST(actualGst);
-				}
+			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
+				finFeeDetail.setPaidAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
+				finFeeDetail.setPaidAmountGST(actualGst);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	@Override
-	public BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy,
-			Map<String, Object> gstExecutionMap) {
-		logger.debug(Literal.ENTERING);
+	private void executeGSTRules(FinFeeDetail finFee, String finCcy, Map<String, Object> executionMap) {
+		BigDecimal cgst = BigDecimal.ZERO;
+		BigDecimal igst = BigDecimal.ZERO;
+		BigDecimal ugst = BigDecimal.ZERO;
+		BigDecimal sgst = BigDecimal.ZERO;
 
-		BigDecimal cgstPercentage = BigDecimal.ZERO;
-		BigDecimal igstPercentage = BigDecimal.ZERO;
-		BigDecimal ugstPercentage = BigDecimal.ZERO;
-		BigDecimal sgstPercentage = BigDecimal.ZERO;
-		BigDecimal tgstPercentage = BigDecimal.ZERO;
-
-		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 
 		for (Rule rule : rules) {
-			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
-				cgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstPercentage = tgstPercentage.add(cgstPercentage);
-			} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
-				igstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstPercentage = tgstPercentage.add(igstPercentage);
-			} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
-				sgstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstPercentage = tgstPercentage.add(sgstPercentage);
-			} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
-				ugstPercentage = getFeeResult(rule.getSQLRule(), gstExecutionMap, finCcy);
-				tgstPercentage = tgstPercentage.add(ugstPercentage);
+			if (RuleConstants.CODE_CGST.equals(rule.getRuleCode())) {
+				cgst = getFeeResult(rule.getSQLRule(), executionMap, finCcy);
+			} else if (RuleConstants.CODE_IGST.equals(rule.getRuleCode())) {
+				igst = getFeeResult(rule.getSQLRule(), executionMap, finCcy);
+			} else if (RuleConstants.CODE_SGST.equals(rule.getRuleCode())) {
+				ugst = getFeeResult(rule.getSQLRule(), executionMap, finCcy);
+			} else if (RuleConstants.CODE_UGST.equals(rule.getRuleCode())) {
+				sgst = getFeeResult(rule.getSQLRule(), executionMap, finCcy);
 			}
 		}
 
-		finFeeDetail.setCgst(cgstPercentage);
-		finFeeDetail.setIgst(igstPercentage);
-		finFeeDetail.setSgst(sgstPercentage);
-		finFeeDetail.setUgst(ugstPercentage);
-
-		logger.debug("Leaving");
-
-		return tgstPercentage;
+		finFee.setCgst(cgst);
+		finFee.setIgst(igst);
+		finFee.setSgst(sgst);
+		finFee.setUgst(ugst);
 	}
 
-	private BigDecimal calculateInclusivePercentage(BigDecimal amount, BigDecimal cgstPerc, BigDecimal sgstPerc,
+	@Override
+	public BigDecimal calculateGSTPercentage(FinFeeDetail finFee, String finCcy, Map<String, Object> executionMap) {
+		logger.debug(Literal.ENTERING);
+
+		BigDecimal totalGST = BigDecimal.ZERO;
+
+		executeGSTRules(finFee, finCcy, executionMap);
+
+		totalGST = totalGST.add(finFee.getCgst());
+		totalGST = totalGST.add(finFee.getIgst());
+		totalGST = totalGST.add(finFee.getSgst());
+		totalGST = totalGST.add(finFee.getUgst());
+
+		logger.debug(Literal.LEAVING);
+
+		return totalGST;
+	}
+
+	private BigDecimal calculateInclusiveGST(BigDecimal amount, BigDecimal cgstPerc, BigDecimal sgstPerc,
 			BigDecimal ugstPerc, BigDecimal igstPerc, String taxRoundMode, int taxRoundingTarget) {
 		logger.debug(Literal.ENTERING);
 
@@ -1453,9 +1455,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	 */
 	@Override
 	public BigDecimal getFeeResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BigDecimal result = BigDecimal.ZERO;
+
 		try {
 			Object exereslut = this.ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy,
 					RuleReturnType.DECIMAL);
@@ -1465,10 +1468,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				result = new BigDecimal(exereslut.toString());
 			}
 		} catch (Exception e) {
-			logger.debug(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return result;
 	}
@@ -1504,62 +1507,60 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		}
 
 		if (fee.isTaxApplicable()) {
+			BigDecimal totalGST = calculateGSTPercentage(fee, finCcy, gstExecutionMap);
+			BigDecimal centralGST = fee.getCgst();
+			BigDecimal integratedGST = fee.getIgst();
+			BigDecimal unionTerritoryGST = fee.getUgst();
+			BigDecimal stateGST = fee.getSgst();
 
-			BigDecimal tgstPercentage = calculateGstPercentage(fee, finCcy, gstExecutionMap);
-			BigDecimal cgstPercentage = fee.getCgst();
-			BigDecimal igstPercentage = fee.getIgst();
-			BigDecimal ugstPercentage = fee.getUgst();
-			BigDecimal sgstPercentage = fee.getSgst();
-
-			String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-			int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+			String roundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			int roundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
 			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, fee.getTaxComponent())) {
 
 				//Actual Amounts
 				BigDecimal actualOriginal = fee.getActualAmountOriginal();
 
-				tax.setActualCGST(calculatePercentage(actualOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setActualIGST(calculatePercentage(actualOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setActualSGST(calculatePercentage(actualOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setActualUGST(calculatePercentage(actualOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setActualCGST(calculateGST(actualOriginal, centralGST, roundMode, roundingTarget));
+				tax.setActualIGST(calculateGST(actualOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setActualSGST(calculateGST(actualOriginal, stateGST, roundMode, roundingTarget));
+				tax.setActualUGST(calculateGST(actualOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
-				BigDecimal actualTGST = tax.getActualCGST().add(tax.getActualIGST()).add(tax.getActualUGST())
-						.add(tax.getActualSGST());
-				actualTGST = CalculationUtil.roundAmount(actualTGST, taxRoundMode, taxRoundingTarget);
+				BigDecimal actualTGST = BigDecimal.ZERO;
+				actualTGST = actualTGST.add(tax.getActualCGST());
+				actualTGST = actualTGST.add(tax.getActualIGST());
+				actualTGST = actualTGST.add(tax.getActualUGST());
+				actualTGST = actualTGST.add(tax.getActualSGST());
+				actualTGST = CalculationUtil.roundAmount(actualTGST, roundMode, roundingTarget);
+
 				fee.setActualAmountGST(actualTGST);
 				fee.setActualAmount(actualOriginal.add(actualTGST));
 
 				//Paid Amounts
-				tax.setPaidCGST(
-						calculatePercentage(paidAmountOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setPaidIGST(
-						calculatePercentage(paidAmountOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setPaidSGST(
-						calculatePercentage(paidAmountOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setPaidUGST(
-						calculatePercentage(paidAmountOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setPaidCGST(calculateGST(paidAmountOriginal, centralGST, roundMode, roundingTarget));
+				tax.setPaidIGST(calculateGST(paidAmountOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setPaidSGST(calculateGST(paidAmountOriginal, stateGST, roundMode, roundingTarget));
+				tax.setPaidUGST(calculateGST(paidAmountOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
 				//Net Amounts
-				tax.setNetCGST(calculatePercentage(netAmountOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setNetIGST(calculatePercentage(netAmountOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setNetSGST(calculatePercentage(netAmountOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setNetUGST(calculatePercentage(netAmountOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setNetCGST(calculateGST(netAmountOriginal, centralGST, roundMode, roundingTarget));
+				tax.setNetIGST(calculateGST(netAmountOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setNetSGST(calculateGST(netAmountOriginal, stateGST, roundMode, roundingTarget));
+				tax.setNetUGST(calculateGST(netAmountOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
 				//Remaining Fee
-				tax.setRemFeeSGST(
-						calculatePercentage(remainingAmountOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setRemFeeIGST(
-						calculatePercentage(remainingAmountOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setRemFeeCGST(
-						calculatePercentage(remainingAmountOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setRemFeeUGST(
-						calculatePercentage(remainingAmountOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setRemFeeSGST(calculateGST(remainingAmountOriginal, centralGST, roundMode, roundingTarget));
+				tax.setRemFeeIGST(calculateGST(remainingAmountOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setRemFeeCGST(calculateGST(remainingAmountOriginal, stateGST, roundMode, roundingTarget));
+				tax.setRemFeeUGST(calculateGST(remainingAmountOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
 				// Total Paid GST
-				BigDecimal paidTGST = tax.getPaidCGST().add(tax.getPaidIGST()).add(tax.getPaidUGST())
-						.add(tax.getPaidSGST());
-				paidTGST = CalculationUtil.roundAmount(paidTGST, taxRoundMode, taxRoundingTarget);
+				BigDecimal paidTGST = BigDecimal.ZERO;
+				paidTGST = paidTGST.add(tax.getPaidCGST());
+				paidTGST = paidTGST.add(tax.getPaidIGST());
+				paidTGST = paidTGST.add(tax.getPaidUGST());
+				paidTGST = paidTGST.add(tax.getPaidSGST());
+				paidTGST = CalculationUtil.roundAmount(paidTGST, roundMode, roundingTarget);
 
 				tax.setPaidTGST(paidTGST);
 				fee.setPaidAmountGST(paidTGST);
@@ -1567,7 +1568,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				// Total Net GST
 				BigDecimal netTGST = tax.getNetCGST().add(tax.getNetIGST()).add(tax.getNetUGST()).add(tax.getNetSGST());
-				netTGST = CalculationUtil.roundAmount(netTGST, taxRoundMode, taxRoundingTarget);
+				netTGST = CalculationUtil.roundAmount(netTGST, roundMode, roundingTarget);
 
 				tax.setNetTGST(netTGST);
 				fee.setNetAmountGST(netTGST);
@@ -1576,7 +1577,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				// Total Rem Fee Gst
 				BigDecimal remTGST = fee.getNetAmountGST().subtract(fee.getPaidAmountGST());
-				remTGST = CalculationUtil.roundAmount(remTGST, taxRoundMode, taxRoundingTarget);
+				remTGST = CalculationUtil.roundAmount(remTGST, roundMode, roundingTarget);
 
 				tax.setRemFeeTGST(remTGST);
 				fee.setRemainingFeeGST(remTGST);
@@ -1588,16 +1589,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				//Net Amount
 				BigDecimal totalNetFee = fee.getNetAmount().subtract(fee.getWaivedAmount());
-				BigDecimal netFeeOriginal = calculateInclusivePercentage(totalNetFee, cgstPercentage, sgstPercentage,
-						ugstPercentage, igstPercentage, taxRoundMode, taxRoundingTarget);
+				BigDecimal netFeeOriginal = calculateInclusiveGST(totalNetFee, centralGST, stateGST,
+						unionTerritoryGST, integratedGST, roundMode, roundingTarget);
 
-				tax.setNetCGST(calculatePercentage(netFeeOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setNetIGST(calculatePercentage(netFeeOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setNetSGST(calculatePercentage(netFeeOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setNetUGST(calculatePercentage(netFeeOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setNetCGST(calculateGST(netFeeOriginal, centralGST, roundMode, roundingTarget));
+				tax.setNetIGST(calculateGST(netFeeOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setNetSGST(calculateGST(netFeeOriginal, stateGST, roundMode, roundingTarget));
+				tax.setNetUGST(calculateGST(netFeeOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
 				BigDecimal netTGST = tax.getNetCGST().add(tax.getNetIGST()).add(tax.getNetUGST()).add(tax.getNetSGST());
-				netTGST = CalculationUtil.roundAmount(netTGST, taxRoundMode, taxRoundingTarget);
+				netTGST = CalculationUtil.roundAmount(netTGST, roundMode, roundingTarget);
 
 				//finFeeDetail.setNetAmountOriginal(netFeeOriginal);
 				fee.setNetAmountOriginal(totalNetFee.subtract(netTGST));
@@ -1618,39 +1619,39 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					tax.setActualTGST(tax.getNetTGST());
 				} else {
 					//BigDecimal actualOriginal = netFeeOriginal.add(finFeeDetail.getWaivedAmount());
-					BigDecimal actualGst = calculatePercentage(netFeeOriginal.subtract(fee.getWaivedAmount()),
-							tgstPercentage, taxRoundMode, taxRoundingTarget);
-					actualGst = CalculationUtil.roundAmount(actualGst, taxRoundMode, taxRoundingTarget);
+					BigDecimal amount = netFeeOriginal.subtract(fee.getWaivedAmount());
+					BigDecimal actualGst = calculateGST(amount, totalGST, roundMode, roundingTarget);
+					actualGst = CalculationUtil.roundAmount(actualGst, roundMode, roundingTarget);
 
 					//finFeeDetail.setActualAmountOriginal(actualOriginal);
 					fee.setActualAmountOriginal(totalNetFee.subtract(netTGST));
 					fee.setActualAmountGST(actualGst);
 					fee.setActualAmount(fee.getActualAmountOriginal().add(actualGst));
 
-					tax.setActualCGST(calculatePercentage(netFeeOriginal.subtract(fee.getWaivedAmount()),
-							cgstPercentage, taxRoundMode, taxRoundingTarget));
-					tax.setActualIGST(calculatePercentage(netFeeOriginal.subtract(fee.getWaivedAmount()),
-							igstPercentage, taxRoundMode, taxRoundingTarget));
-					tax.setActualSGST(calculatePercentage(netFeeOriginal.subtract(fee.getWaivedAmount()),
-							sgstPercentage, taxRoundMode, taxRoundingTarget));
-					tax.setActualUGST(calculatePercentage(netFeeOriginal.subtract(fee.getWaivedAmount()),
-							ugstPercentage, taxRoundMode, taxRoundingTarget));
+					tax.setActualCGST(calculateGST(amount, centralGST, roundMode, roundingTarget));
+					tax.setActualIGST(calculateGST(amount, integratedGST, roundMode, roundingTarget));
+					tax.setActualSGST(calculateGST(amount, stateGST, roundMode, roundingTarget));
+					tax.setActualUGST(calculateGST(amount, unionTerritoryGST, roundMode, roundingTarget));
 					tax.setActualTGST(actualGst);
 				}
 
 				//Paid Amounts
 				BigDecimal totalPaidFee = fee.getPaidAmount();
-				BigDecimal paidFeeOriginal = calculateInclusivePercentage(totalPaidFee, cgstPercentage, sgstPercentage,
-						ugstPercentage, igstPercentage, taxRoundMode, taxRoundingTarget);
+				BigDecimal paidFeeOriginal = calculateInclusiveGST(totalPaidFee, centralGST, stateGST,
+						unionTerritoryGST, integratedGST, roundMode, roundingTarget);
 
-				tax.setPaidCGST(calculatePercentage(paidFeeOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setPaidIGST(calculatePercentage(paidFeeOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setPaidSGST(calculatePercentage(paidFeeOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setPaidUGST(calculatePercentage(paidFeeOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setPaidCGST(calculateGST(paidFeeOriginal, centralGST, roundMode, roundingTarget));
+				tax.setPaidIGST(calculateGST(paidFeeOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setPaidSGST(calculateGST(paidFeeOriginal, stateGST, roundMode, roundingTarget));
+				tax.setPaidUGST(calculateGST(paidFeeOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
-				BigDecimal paidTGST = tax.getPaidCGST().add(tax.getPaidIGST()).add(tax.getPaidUGST())
-						.add(tax.getPaidSGST());
-				paidTGST = CalculationUtil.roundAmount(paidTGST, taxRoundMode, taxRoundingTarget);
+				BigDecimal paidTGST = BigDecimal.ZERO;
+				paidTGST = paidTGST.add(tax.getPaidCGST());
+				paidTGST = paidTGST.add(tax.getPaidIGST());
+				paidTGST = paidTGST.add(tax.getPaidUGST());
+				paidTGST = paidTGST.add(tax.getPaidSGST());
+				paidTGST = CalculationUtil.roundAmount(paidTGST, roundMode, roundingTarget);
+
 				//finFeeDetail.setPaidAmountOriginal(paidFeeOriginal);
 				fee.setPaidAmountOriginal(totalPaidFee.subtract(paidTGST));
 				fee.setPaidAmountGST(paidTGST);
@@ -1658,21 +1659,17 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				//Remaining Amount
 				BigDecimal totalRemainingFee = totalNetFee.subtract(totalPaidFee);
-				BigDecimal remainingFeeOriginal = calculateInclusivePercentage(totalRemainingFee, cgstPercentage,
-						sgstPercentage, ugstPercentage, igstPercentage, taxRoundMode, taxRoundingTarget);
+				BigDecimal remainingFeeOriginal = calculateInclusiveGST(totalRemainingFee, centralGST, stateGST,
+						unionTerritoryGST, integratedGST, roundMode, roundingTarget);
 
-				tax.setRemFeeCGST(
-						calculatePercentage(remainingFeeOriginal, cgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setRemFeeIGST(
-						calculatePercentage(remainingFeeOriginal, igstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setRemFeeSGST(
-						calculatePercentage(remainingFeeOriginal, sgstPercentage, taxRoundMode, taxRoundingTarget));
-				tax.setRemFeeUGST(
-						calculatePercentage(remainingFeeOriginal, ugstPercentage, taxRoundMode, taxRoundingTarget));
+				tax.setRemFeeCGST(calculateGST(remainingFeeOriginal, centralGST, roundMode, roundingTarget));
+				tax.setRemFeeIGST(calculateGST(remainingFeeOriginal, integratedGST, roundMode, roundingTarget));
+				tax.setRemFeeSGST(calculateGST(remainingFeeOriginal, stateGST, roundMode, roundingTarget));
+				tax.setRemFeeUGST(calculateGST(remainingFeeOriginal, unionTerritoryGST, roundMode, roundingTarget));
 
 				BigDecimal remFeeTGST = tax.getRemFeeCGST().add(tax.getRemFeeIGST()).add(tax.getRemFeeUGST())
 						.add(tax.getRemFeeSGST());
-				remFeeTGST = CalculationUtil.roundAmount(remFeeTGST, taxRoundMode, taxRoundingTarget);
+				remFeeTGST = CalculationUtil.roundAmount(remFeeTGST, roundMode, roundingTarget);
 
 				//finFeeDetail.setRemainingFeeOriginal(remainingFeeOriginal);
 				fee.setRemainingFeeOriginal(totalRemainingFee.subtract(remFeeTGST));
@@ -1731,12 +1728,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode,
+	public BigDecimal calculateGST(BigDecimal amount, BigDecimal totalGST, String taxRoundMode,
 			int taxRoundingTarget) {
 		logger.debug(Literal.ENTERING);
 
 		BigDecimal result = BigDecimal.ZERO;
-		result = amount.multiply(gstPercentage.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN));
+		result = amount.multiply(totalGST.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN));
 		result = CalculationUtil.roundAmount(result, taxRoundMode, taxRoundingTarget);
 
 		logger.debug(Literal.LEAVING);
@@ -1744,25 +1741,25 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch,
-			String highPriorityState, String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode) {
+	public Map<String, Object> prepareGstMappingDetails(String finBranch, String custBranch, String custState,
+			String custCountry, FinanceTaxDetail taxDetail, String userBranch) {
 
-		HashMap<String, Object> gstExecutionMap = new HashMap<>();
+		Map<String, Object> executionMap = new HashMap<>();
 		boolean gstExempted = false;
 
-		if (StringUtils.isNotBlank(dftBranch)) {
-			if (fromBranchCode == null) {
-				fromBranchCode = dftBranch;
+		if (StringUtils.isNotBlank(custBranch)) {
+			if (finBranch == null) {
+				finBranch = custBranch;
 			}
 
-			Branch fromBranch = getBranchDAO().getBranchById(fromBranchCode, "");
-			Province fromState = getProvinceDAO().getProvinceById(fromBranch.getBranchCountry(),
+			Branch fromBranch = branchDAO.getBranchById(finBranch, "");
+			Province fromState = provinceDAO.getProvinceById(fromBranch.getBranchCountry(),
 					fromBranch.getBranchProvince(), "");
 
 			if (fromState != null) {
-				gstExecutionMap.put("fromState", fromState.getCPProvince());
-				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
-				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+				executionMap.put("fromState", fromState.getCPProvince());
+				executionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				executionMap.put("fromStateGstExempted", fromState.isTaxExempted());
 			}
 
 			String toStateCode = "";
@@ -1776,39 +1773,39 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				toCountryCode = taxDetail.getCountry();
 				gstExempted = taxDetail.isTaxExempted();
 			} else {
-				toStateCode = highPriorityState;
-				toCountryCode = highPriorityCountry;
+				toStateCode = custState;
+				toCountryCode = custCountry;
 			}
 
 			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) { // if toCountry is not available 
-				gstExecutionMap.put("toState", "");
-				gstExecutionMap.put("toUnionTerritory", 2);
-				gstExecutionMap.put("toStateGstExempted", "");
+				executionMap.put("toState", "");
+				executionMap.put("toUnionTerritory", 2);
+				executionMap.put("toStateGstExempted", "");
 			} else {
 				Province toState = getProvinceDAO().getProvinceById(toCountryCode, toStateCode, "");
 
 				if (toState == null) {
-					gstExecutionMap.put("toState", "");
-					gstExecutionMap.put("toUnionTerritory", 2);
-					gstExecutionMap.put("toStateGstExempted", "");
+					executionMap.put("toState", "");
+					executionMap.put("toUnionTerritory", 2);
+					executionMap.put("toStateGstExempted", "");
 				} else {
-					gstExecutionMap.put("toState", toState.getCPProvince());
-					gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
-					gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+					executionMap.put("toState", toState.getCPProvince());
+					executionMap.put("toUnionTerritory", toState.isUnionTerritory());
+					executionMap.put("toStateGstExempted", toState.isTaxExempted());
 				}
 			}
 
-			gstExecutionMap.put("gstExempted", gstExempted);
+			executionMap.put("gstExempted", gstExempted);
 
-		} else if (StringUtils.isNotBlank(branchCode)) {
-			Branch fromBranch = getBranchDAO().getBranchById(branchCode, "");
+		} else if (StringUtils.isNotBlank(userBranch)) {
+			Branch fromBranch = getBranchDAO().getBranchById(userBranch, "");
 			Province fromState = getProvinceDAO().getProvinceById(fromBranch.getBranchCountry(),
 					fromBranch.getBranchProvince(), "");
 
 			if (fromState != null) {
-				gstExecutionMap.put("fromState", fromState.getCPProvince());
-				gstExecutionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
-				gstExecutionMap.put("fromStateGstExempted", fromState.isTaxExempted());
+				executionMap.put("fromState", fromState.getCPProvince());
+				executionMap.put("fromUnionTerritory", fromState.isUnionTerritory());
+				executionMap.put("fromStateGstExempted", fromState.isTaxExempted());
 			}
 
 			String toStateCode = "";
@@ -1824,28 +1821,28 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (StringUtils.isBlank(toCountryCode) || StringUtils.isBlank(toStateCode)) {
-				gstExecutionMap.put("toState", fromState.getCPProvince());
-				gstExecutionMap.put("toUnionTerritory", fromState.isUnionTerritory());
-				gstExecutionMap.put("toStateGstExempted", fromState.isTaxExempted());
+				executionMap.put("toState", fromState.getCPProvince());
+				executionMap.put("toUnionTerritory", fromState.isUnionTerritory());
+				executionMap.put("toStateGstExempted", fromState.isTaxExempted());
 			} else {
 				Province toState = getProvinceDAO().getProvinceById(toCountryCode, toStateCode, "");
 
 				if (toState == null) {
-					gstExecutionMap.put("toState", fromState.getCPProvince());
-					gstExecutionMap.put("toUnionTerritory", fromState.isUnionTerritory());
-					gstExecutionMap.put("toStateGstExempted", fromState.isTaxExempted());
+					executionMap.put("toState", fromState.getCPProvince());
+					executionMap.put("toUnionTerritory", fromState.isUnionTerritory());
+					executionMap.put("toStateGstExempted", fromState.isTaxExempted());
 				} else {
-					gstExecutionMap.put("toState", toState.getCPProvince());
-					gstExecutionMap.put("toUnionTerritory", toState.isUnionTerritory());
-					gstExecutionMap.put("toStateGstExempted", toState.isTaxExempted());
+					executionMap.put("toState", toState.getCPProvince());
+					executionMap.put("toUnionTerritory", toState.isUnionTerritory());
+					executionMap.put("toStateGstExempted", toState.isTaxExempted());
 				}
 			}
 
-			gstExecutionMap.put("gstExempted", gstExempted);
+			executionMap.put("gstExempted", gstExempted);
 
 		}
 
-		return gstExecutionMap;
+		return executionMap;
 	}
 
 	@Override

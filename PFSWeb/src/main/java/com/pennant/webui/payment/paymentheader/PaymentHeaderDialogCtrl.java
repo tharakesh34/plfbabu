@@ -122,8 +122,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/payment/PaymentHeader/paymentHeaderDialog.zul file. <br>
@@ -1143,7 +1143,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		// Set Tax Details if Already exists
 		FinanceTaxDetail taxDetail = getFinanceTaxDetailService().getApprovedFinanceTaxDetail(financeMain.getFinReference());
-		HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
+		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
 				financeMain.getFinBranch(), highPriorityState, highPriorityCountry, taxDetail, financeMain.getFinBranch());
 
 		aeEvent.setCcy(financeMain.getFinCcy());
@@ -1152,7 +1152,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		BigDecimal emiInAdavance = BigDecimal.ZERO;
-		HashMap<String, Object> eventMapping = aeEvent.getDataMap();
+		Map<String, Object> eventMapping = aeEvent.getDataMap();
 		for (PaymentDetail paymentDetail : getPaymentDetailList()) {
 			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 				amount = paymentDetail.getAmount();

@@ -48,6 +48,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -121,7 +122,7 @@ public class ProvisionCalculationUtil implements Serializable {
 		amountCodes.setProvAmt(
 				procProvision.getProvisionedAmt() == null ? BigDecimal.ZERO : procProvision.getProvisionedAmt());
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 
 		if (isFromCore) {

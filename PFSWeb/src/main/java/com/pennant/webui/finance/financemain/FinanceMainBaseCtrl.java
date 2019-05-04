@@ -329,6 +329,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -338,7 +339,6 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.webui.sampling.FinSamplingDialogCtrl;
@@ -13044,7 +13044,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
@@ -13056,7 +13056,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			//GST Added		
 			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			HashMap<String, Object> gstExecutionMap = getFinanceDetailService()
+			Map<String, Object> gstExecutionMap = getFinanceDetailService()
 					.prepareGstMappingDetails(getFinanceDetail(), branch);
 			if (gstExecutionMap != null) {
 				for (String key : gstExecutionMap.keySet()) {
@@ -13197,7 +13197,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return aeEvent;
 	}
 
-	private void prepareFeeRulesMap(AEAmountCodes amountCodes, HashMap<String, Object> dataMap) {
+	private void prepareFeeRulesMap(AEAmountCodes amountCodes, Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();

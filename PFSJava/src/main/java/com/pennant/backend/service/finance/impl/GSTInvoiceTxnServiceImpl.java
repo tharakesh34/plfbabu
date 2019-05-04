@@ -648,7 +648,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			}
 		}
 
-		HashMap<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode, custDftBranch,
+		Map<String, Object> dataMap = finFeeDetailService.prepareGstMappingDetails(fromBranchCode, custDftBranch,
 				highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
 
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");

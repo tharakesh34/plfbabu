@@ -535,7 +535,7 @@ public class CollateralController {
 				if (customerDetails != null) {
 					collateralSetup.setCustomerDetails(customerDetails);
 				}
-				HashMap<String, Object> declaredMap = collateralSetup.getCustomerDetails().getCustomer()
+				Map<String, Object> declaredMap = collateralSetup.getCustomerDetails().getCustomer()
 						.getDeclaredFieldValues();
 				declaredMap.put("collateralType", collateralSetup.getCollateralType());
 				declaredMap.put("collateralCcy", collateralSetup.getCollateralCcy());

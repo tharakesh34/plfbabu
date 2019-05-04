@@ -1924,7 +1924,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		HashMap<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
 
 		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
@@ -1967,7 +1967,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	 * 
 	 * @return
 	 */
-	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy) {
+	private BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		logger.debug("Entering");
 
 		BigDecimal result = BigDecimal.ZERO;

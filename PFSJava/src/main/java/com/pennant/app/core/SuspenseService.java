@@ -45,7 +45,7 @@ package com.pennant.app.core;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -235,7 +235,7 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(suspFromDate);
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		//FIXME: PV: 07MAY17 to be addressed when suspense related changes released
 		//Postings Process and save all postings related to finance for one time accounts update

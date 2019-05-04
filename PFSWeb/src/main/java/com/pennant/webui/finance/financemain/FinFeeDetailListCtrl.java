@@ -743,7 +743,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+			Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 					custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
 					branch);
 
@@ -1627,13 +1627,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+			Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 					custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
 					branch);
 
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
-				this.finFeeDetailService.calculateGstPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
+				this.finFeeDetailService.calculateGSTPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
 
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
@@ -2148,7 +2148,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
 				branch);
 
@@ -2290,7 +2290,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 
-			HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+			Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 					custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
 					branch);
 

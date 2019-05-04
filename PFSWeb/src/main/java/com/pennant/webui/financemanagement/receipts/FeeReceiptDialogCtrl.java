@@ -1312,7 +1312,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
-			HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 			if (map != null) {
 				dataMap.put("emptype", map.get("emptype"));

@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -675,7 +676,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 			// Set Tax Details if Already exists
 			FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),"");
-			HashMap<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
+			Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
 					financeMain.getFinBranch(), highPriorityState, highPriorityCountry, taxDetail, financeMain.getFinBranch());
 
 			aeEvent.setCcy(financeMain.getFinCcy());
@@ -684,7 +685,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 			BigDecimal excessAmount = BigDecimal.ZERO;
 			BigDecimal emiInAdavance = BigDecimal.ZERO;
-			HashMap<String, Object> eventMapping = aeEvent.getDataMap();
+			Map<String, Object> eventMapping = aeEvent.getDataMap();
 			for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
 				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 					BigDecimal payableAmount = BigDecimal.ZERO;

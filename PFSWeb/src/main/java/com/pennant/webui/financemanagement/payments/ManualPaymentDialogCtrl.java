@@ -2138,7 +2138,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		amountCodes.setSuplRentPay(PennantApplicationUtil.unFormateAmount(this.suplRentAmount.getValue(), format));
 		amountCodes.setIncrCostPay(PennantApplicationUtil.unFormateAmount(this.incrCostAmount.getValue(), format));
 
-		HashMap<String, Object> dataMap = aeEvent.getDataMap();
+		Map<String, Object> dataMap = aeEvent.getDataMap();
 
 		List<ReturnDataSet> returnSetEntries = null;
 

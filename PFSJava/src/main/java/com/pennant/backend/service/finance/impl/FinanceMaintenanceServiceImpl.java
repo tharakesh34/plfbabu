@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -889,7 +890,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			amountCodes.setWoPayAmt(financeDetail.getFinwriteoffPayment().getWriteoffPayAmount());
 		}
 
-		HashMap<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 
 		try {

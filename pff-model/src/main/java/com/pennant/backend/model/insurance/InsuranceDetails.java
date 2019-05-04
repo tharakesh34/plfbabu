@@ -2,8 +2,8 @@ package com.pennant.backend.model.insurance;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
@@ -119,7 +119,7 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 		return excludeFields;
 	}
 
-	public HashMap<String, Object> getDeclaredFieldValues(HashMap<String, Object> detailsMap) {
+	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> detailsMap) {
 		detailsMap.put("id_adjAmount", getAdjAmount());
 		return detailsMap;
 	}
