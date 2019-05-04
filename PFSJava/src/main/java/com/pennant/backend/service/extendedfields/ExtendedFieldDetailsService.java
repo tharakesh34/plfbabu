@@ -1619,8 +1619,8 @@ public class ExtendedFieldDetailsService {
 		switch (value[0]) {
 		case "RANGE":
 			if (value[1] != null && value[2] != null) {
-				if (dateValue.before(DateUtility.getUtilDate(value[1], PennantConstants.dateFormat))
-						|| dateValue.after(DateUtility.getUtilDate(value[2], PennantConstants.dateFormat))) {
+				if (dateValue.before(DateUtility.parse(value[1], PennantConstants.dateFormat))
+						|| dateValue.after(DateUtility.parse(value[2], PennantConstants.dateFormat))) {
 					String valueParm[] = new String[3];
 					valueParm[0] = exdConfigDetail.getFieldName();
 					valueParm[1] = String.valueOf(DateUtility.getDate(value[1]));

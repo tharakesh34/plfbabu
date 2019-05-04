@@ -1758,7 +1758,7 @@ public class QueryBuilder extends Groupbox {
 							listCell = new Listcell("-- NO VALUE --");
 							listCell.setParent(item);
 						} else {
-							listCell = new Listcell(DateUtility.formatToLongDate(DateUtility.getformatCDate(data)));
+							listCell = new Listcell(DateUtility.formatToLongDate(DateUtility.parse(data, "yyMMdd")));
 							listCell.setParent(item);
 						}
 					} else {

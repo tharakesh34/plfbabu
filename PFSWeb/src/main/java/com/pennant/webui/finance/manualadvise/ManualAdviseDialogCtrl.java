@@ -630,9 +630,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.lbl_FinAmount.setValue(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
 		this.lbl_startDate
-				.setValue(DateUtility.formateDate(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtility.format(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
-				.setValue(DateUtility.formateDate(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtility.format(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 		setFeeTypeFilters();

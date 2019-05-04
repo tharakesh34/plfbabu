@@ -235,7 +235,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc = new Listcell(legalDetail.getBranchDesc());
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.formateDate(legalDetail.getLegalDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(legalDetail.getLegalDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				if (legalDetail.isActive()) {

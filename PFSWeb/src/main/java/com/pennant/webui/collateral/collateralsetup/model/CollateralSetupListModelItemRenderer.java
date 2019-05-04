@@ -76,9 +76,9 @@ public class CollateralSetupListModelItemRenderer implements ListitemRenderer<Co
 		lc.setParent(item);
 		lc = new Listcell(collateralSetup.getCollateralType());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formateDate(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtility.format(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formateDate(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtility.format(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(collateralSetup.getRecordStatus());
 		lc.setParent(item);

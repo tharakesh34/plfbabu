@@ -671,10 +671,10 @@ public class ScheduleGenerator {
 			FinanceScheduleDetail schedule = null;
 			if (finScheduleData.getScheduleMap() != null && finScheduleData.getScheduleMap()
 					.containsKey(DateUtility.getDate(
-							DateUtility.formateDate(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
+							DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
 							PennantConstants.DBDateFormat))) {
 				schedule = finScheduleData.getScheduleMap().get(DateUtility.getDate(
-						DateUtility.formateDate(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
+						DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
 						PennantConstants.DBDateFormat));
 			} else {
 

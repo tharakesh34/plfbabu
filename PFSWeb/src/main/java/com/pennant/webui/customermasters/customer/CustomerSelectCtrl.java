@@ -244,7 +244,7 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 				} else if ("CustDOB".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custDob, filter);
 					this.custDob.setValue(
-							DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.DBDateFormat));
+							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("CustShrtName".equals(filter.getProperty())) {
 					SearchOperators.resetOperator(this.sortOperator_custName, filter);
 					this.custName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custName));

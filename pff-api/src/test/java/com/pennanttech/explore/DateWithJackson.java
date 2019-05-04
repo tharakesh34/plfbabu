@@ -14,11 +14,7 @@ public class DateWithJackson {
 	@Test
 	public void serializedToDefaultTimestamp() {
 		Person person = new Person(1, "Sai");
-		try {
-			person.setDob(DateUtil.parse("1975-07-28 01:20:00", "yyyy-MM-dd hh:mm:ss"));
-		} catch (ParseException e) {
-			throw new AppException("Given string cannot be parsed.", e);
-		}
+		person.setDob(DateUtil.parse("1975-07-28 01:20:00", "yyyy-MM-dd hh:mm:ss"));
 
 		String value = null;
 		try {
@@ -33,11 +29,7 @@ public class DateWithJackson {
 	@Test
 	public void serializedXmlDateToDefaultTimestamp() {
 		Person person = new Person(1, "Sai");
-		try {
-			person.setDob(DateUtil.parse("1975-07-28T01:20:00", "yyyy-MM-dd'T'hh:mm:ss"));
-		} catch (ParseException e) {
-			throw new AppException("Given string cannot be parsed.", e);
-		}
+		person.setDob(DateUtil.parse("1975-07-28T01:20:00", "yyyy-MM-dd'T'hh:mm:ss"));
 
 		String value = null;
 		try {

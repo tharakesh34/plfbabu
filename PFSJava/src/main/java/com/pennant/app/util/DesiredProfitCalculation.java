@@ -140,14 +140,14 @@ public class DesiredProfitCalculation {
 			return;
 		}
 
-		nextRepayPftDate = DateUtility.getUtilDate(
+		nextRepayPftDate = DateUtility.parse(
 				DateUtility.format(nextRepayPftDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		gpEndDate = DateUtility.getUtilDate(DateUtility.format(gpEndDate, PennantConstants.DBDateFormat),
+		gpEndDate = DateUtility.parse(DateUtility.format(gpEndDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		nextRepayDate = DateUtility.getUtilDate(
+		nextRepayDate = DateUtility.parse(
 				DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 

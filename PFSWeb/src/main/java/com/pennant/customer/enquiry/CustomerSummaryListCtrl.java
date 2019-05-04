@@ -371,7 +371,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				lc = new Listcell(commitment.getCmtAccount());
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formateDate(commitment.getCmtExpDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(commitment.getCmtExpDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(), formatter));
 				lc.setParent(item);
@@ -379,7 +379,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAvailable(), formatter));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formateDate(commitment.getCmtStartDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(commitment.getCmtStartDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				item.setAttribute("data", commitment);
 				if (!finance) {
@@ -484,11 +484,11 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				cell.setParent(item);
 
 				//Date date = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getCollExpDate().toString()));
-				cell = new Listcell(DateUtility.formateDate((Date) customerCollateral.getCollExpDate(),
+				cell = new Listcell(DateUtility.format((Date) customerCollateral.getCollExpDate(),
 						PennantConstants.dateFormat));
 				cell.setParent(item);
 				//Date date1 = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getColllastRvwDate().toString()));
-				cell = new Listcell(DateUtility.formateDate((Date) customerCollateral.getColllastRvwDate(),
+				cell = new Listcell(DateUtility.format((Date) customerCollateral.getColllastRvwDate(),
 						PennantConstants.dateFormat));
 				cell.setParent(item);
 				//cell = new Listcell(PennantAppUtil.amountFormate(new BigDecimal(customerCollateral.getCollValue().toString()).divide(new BigDecimal(Math.pow(10, formatter)), RoundingMode.HALF_UP), 0));

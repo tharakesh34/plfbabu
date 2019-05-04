@@ -2291,9 +2291,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			parent_fieldConstraint.appendChild(hbox);
 
 			if (!newSel) {
-				rangeFrom.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[1],
+				rangeFrom.setValue(DateUtility.parse(getExtendedFieldDetail().getFieldConstraint().split(",")[1],
 						PennantConstants.dateFormat));
-				rangeTo.setValue(DateUtility.getUtilDate(getExtendedFieldDetail().getFieldConstraint().split(",")[2],
+				rangeTo.setValue(DateUtility.parse(getExtendedFieldDetail().getFieldConstraint().split(",")[2],
 						PennantConstants.dateFormat));
 			}
 

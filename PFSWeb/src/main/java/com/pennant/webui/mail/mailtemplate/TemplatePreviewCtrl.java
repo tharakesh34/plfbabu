@@ -241,7 +241,7 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 								if (db.getFormat().equals(PennantConstants.dateTimeFormat)) {
 									method = data.getClass().getDeclaredMethod("set" + getFieldValue(db.getId()),
 											Timestamp.class);
-									ts = new Timestamp(DateUtility.getUtilDate(
+									ts = new Timestamp(DateUtility.parse(
 											DateUtility.format(db.getValue(), PennantConstants.DBDateTimeFormat),
 											PennantConstants.DBDateTimeFormat).getTime());
 									method.invoke(data, ts);

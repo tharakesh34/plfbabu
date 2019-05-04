@@ -2,7 +2,7 @@ package com.pennanttech.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Date;
+import java.util.Date;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;

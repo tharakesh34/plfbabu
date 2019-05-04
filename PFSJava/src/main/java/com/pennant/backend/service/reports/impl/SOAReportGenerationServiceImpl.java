@@ -113,6 +113,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAccount>
@@ -1267,7 +1268,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				for (FinODDetails finODDetails : finODDetailsList) {
 					soaTranReport = new SOATransactionReport();
-					soaTranReport.setEvent(penality + DateUtility.formateDate(finODDetails.getFinODTillDate(), ""));
+					soaTranReport.setEvent(penality + DateUtility.format(finODDetails.getFinODTillDate(), DateFormat.SHORT_DATE.getPattern()));
 					soaTranReport.setTransactionDate(finODDetails.getFinODSchdDate());
 					soaTranReport.setValueDate(finODDetails.getFinODSchdDate());
 					soaTranReport.setCreditAmount(BigDecimal.ZERO);

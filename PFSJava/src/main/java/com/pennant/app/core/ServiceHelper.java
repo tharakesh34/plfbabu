@@ -260,7 +260,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	public Date formatDate(Date date) {
 		if (date != null) {
-			return DateUtility.getDate(DateUtility.formateDate(date, PennantConstants.DBDateFormat),
+			return DateUtility.getDate(DateUtility.format(date, PennantConstants.DBDateFormat),
 					PennantConstants.DBDateFormat);
 		}
 		return null;

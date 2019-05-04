@@ -371,15 +371,15 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 				} else if ("bussCommenceDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_bussCommenceDate, filter);
 					this.bussCommenceDate.setValue(
-							DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.DBDateFormat));
+							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("servCommenceDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_servCommenceDate, filter);
 					this.servCommenceDate.setValue(
-							DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.DBDateFormat));
+							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("bankRelationshipDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_bankRelationshipDate, filter);
 					this.bankRelationshipDate.setValue(
-							DateUtility.getUtilDate(filter.getValue().toString(), PennantConstants.DBDateFormat));
+							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("paidUpCapital".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_paidUpCapital, filter);
 					this.paidUpCapital.setValue(filter.getValue().toString());

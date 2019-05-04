@@ -1107,8 +1107,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			switch (value[0]) {
 			case "RANGE":
 				dateValidator = new PTDateValidator(label, isMandatory,
-						DateUtility.getUtilDate(value[1], PennantConstants.dateFormat),
-						DateUtility.getUtilDate(value[2], PennantConstants.dateFormat), true);
+						DateUtility.parse(value[1], PennantConstants.dateFormat),
+						DateUtility.parse(value[2], PennantConstants.dateFormat), true);
 				break;
 			case "FUTURE_DAYS":
 				dateValidator = new PTDateValidator(label, isMandatory, null,

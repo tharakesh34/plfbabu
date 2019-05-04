@@ -39,7 +39,7 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 		logger.debug("Entering");
 
 		Date processDate = DateUtility.getDate(
-				DateUtility.formateDate(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
+				DateUtility.format(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 		eodDetail.setProcessDate(processDate);
 
@@ -63,7 +63,7 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 		logger.debug("Entering");
 
 		Date processDate = DateUtility.getDate(
-				DateUtility.formateDate(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
+				DateUtility.format(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 		eodDetail.setProcessDate(processDate);
 

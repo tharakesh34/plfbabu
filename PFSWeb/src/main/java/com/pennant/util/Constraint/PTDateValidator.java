@@ -99,14 +99,14 @@ public class PTDateValidator implements Constraint {
 			if (equal) {
 				if (compValue.before(fromDate) || compValue.after(toDate)) {
 					return Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
-							new String[] { fieldParm, DateUtility.formateDate(fromDate, PennantConstants.dateFormat),
-									DateUtility.formateDate(toDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat),
+									DateUtility.format(toDate, PennantConstants.dateFormat) });
 				}
 			} else {
 				if (!compValue.after(fromDate) || !compValue.before(toDate)) {
 					return Labels.getLabel("DATE_ALLOWED_RANGE",
-							new String[] { fieldParm, DateUtility.formateDate(fromDate, PennantConstants.dateFormat),
-									DateUtility.formateDate(toDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat),
+									DateUtility.format(toDate, PennantConstants.dateFormat) });
 				}
 			}
 		}
@@ -117,12 +117,12 @@ public class PTDateValidator implements Constraint {
 			if (equal) {
 				if (comp < 0) {
 					return Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
-							new String[] { fieldParm, DateUtility.formateDate(fromDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat) });
 				}
 			} else {
 				if (comp <= 0) {
 					return Labels.getLabel("DATE_ALLOWED_MINDATE",
-							new String[] { fieldParm, DateUtility.formateDate(fromDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtility.format(fromDate, PennantConstants.dateFormat) });
 				}
 			}
 		}
@@ -134,12 +134,12 @@ public class PTDateValidator implements Constraint {
 			if (equal) {
 				if (comp > 0) {
 					return Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-							new String[] { fieldParm, DateUtility.formateDate(toDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtility.format(toDate, PennantConstants.dateFormat) });
 				}
 			} else {
 				if (comp >= 0) {
 					return Labels.getLabel("DATE_ALLOWED_MAXDATE",
-							new String[] { fieldParm, DateUtility.formateDate(toDate, PennantConstants.dateFormat) });
+							new String[] { fieldParm, DateUtility.format(toDate, PennantConstants.dateFormat) });
 				}
 			}
 		}

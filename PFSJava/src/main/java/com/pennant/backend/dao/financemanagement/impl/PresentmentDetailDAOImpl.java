@@ -74,6 +74,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -341,10 +342,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			stmt = conn.prepareStatement(sql.toString());
 			stmt.setInt(1, 1);
 			stmt.setBigDecimal(2, BigDecimal.ZERO);
-			stmt.setDate(3, getDate(detailHeader.getFromDate()));
-			stmt.setDate(4, getDate(detailHeader.getToDate()));
-			stmt.setDate(5, getDate(detailHeader.getFromDate()));
-			stmt.setDate(6, getDate(detailHeader.getToDate()));
+			stmt.setDate(3, DateUtil.getSqlDate(detailHeader.getFromDate()));
+			stmt.setDate(4, DateUtil.getSqlDate(detailHeader.getToDate()));
+			stmt.setDate(5, DateUtil.getSqlDate(detailHeader.getFromDate()));
+			stmt.setDate(6, DateUtil.getSqlDate(detailHeader.getToDate()));
 			index = 6;
 			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
 				index = index + 1;
@@ -461,10 +462,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			stmt = conn.prepareStatement(sql.toString());
 			stmt.setInt(1, 1);
 			stmt.setBigDecimal(2, BigDecimal.ZERO);
-			stmt.setDate(3, getDate(presentmentHeader.getFromDate()));
-			stmt.setDate(4, getDate(presentmentHeader.getToDate()));
-			stmt.setDate(5, getDate(presentmentHeader.getFromDate()));
-			stmt.setDate(6, getDate(presentmentHeader.getToDate()));
+			stmt.setDate(3, DateUtil.getSqlDate(presentmentHeader.getFromDate()));
+			stmt.setDate(4, DateUtil.getSqlDate(presentmentHeader.getToDate()));
+			stmt.setDate(5, DateUtil.getSqlDate(presentmentHeader.getFromDate()));
+			stmt.setDate(6, DateUtil.getSqlDate(presentmentHeader.getToDate()));
 			index = 6;
 			if (StringUtils.trimToNull(presentmentHeader.getMandateType()) != null) {
 				index = index + 1;
@@ -510,10 +511,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return list;
 	}
 
-	private java.sql.Date getDate(Date date) {
-		return DateUtility.getDate(DateUtility.formateDate(date, PennantConstants.DBDateFormat),
-				PennantConstants.DBDateFormat);
-	}
+	
 
 	@Override
 	public long savePresentmentHeader(PresentmentHeader presentmentHeader) {

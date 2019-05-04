@@ -717,7 +717,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		strValue = getCellStringValue(rchRow, 8);
 		try {
 			if (StringUtils.isNotBlank(strValue)) {
-				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setValueDate(dateValue);
 			} else {
 				if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
@@ -733,7 +733,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		strValue = getCellStringValue(rchRow, 9);
 		try {
 			if (StringUtils.isNotBlank(strValue)) {
-				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setReceivedDate(dateValue);
 			} else {
 				setErrorToRUD(rud, "RU0040", "Blanks in [RECEIVEDDATE] ");
@@ -842,7 +842,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		strValue = getCellStringValue(rchRow, 20);
 		try {
 			if (StringUtils.isNotBlank(strValue)) {
-				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setDepositDate(dateValue);
 			} else {
 				setErrorToRUD(rud, "RU0040", "Blanks in [DEPOSITDATE] ");
@@ -855,7 +855,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		strValue = getCellStringValue(rchRow, 21);
 		try {
 			if (StringUtils.isNotBlank(strValue)) {
-				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setRealizationDate(dateValue);
 			} else {
 				setErrorToRUD(rud, "RU0040", "Blanks in [REALIZATIONDATE] ");
@@ -868,7 +868,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		strValue = getCellStringValue(rchRow, 22);
 		try {
 			if (StringUtils.isNotBlank(strValue)) {
-				dateValue = DateUtility.getUtilDate(strValue, DateFormat.LONG_DATE.getPattern());
+				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				// rch.set
 			} else {
 				if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)

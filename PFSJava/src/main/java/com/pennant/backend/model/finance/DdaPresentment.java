@@ -132,12 +132,7 @@ public class DdaPresentment implements java.io.Serializable {
 			return "";
 		}
 
-		try {
-			return DateUtility.format(DateUtility.parse(request[4], "dd-MM-yyyy"), DateFormat.SHORT_DATE);
-		} catch (ParseException e) {
-			logger.warn("Exception: ", e);
-			return "";
-		}
+		return DateUtility.format(DateUtility.parse(request[4], "dd-MM-yyyy"), DateFormat.SHORT_DATE);
 	}
 
 	public String getReason() {

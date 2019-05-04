@@ -407,9 +407,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		this.lbl_Currency
 				.setValue(this.financeMain.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
 		this.lbl_startDate.setValue(
-				DateUtility.formateDate(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+				DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate.setValue(
-				DateUtility.formateDate(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+				DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(aPaymentHeader);

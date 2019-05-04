@@ -132,60 +132,6 @@ public final class DateUtility extends DateUtil {
 		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), pattern);
 	}
 
-	public static String formateDate(java.util.Date date, String pattern) {
-		String formatedDate = null;
-		if (StringUtils.isBlank(pattern)) {
-			pattern = DateFormat.SHORT_DATE.getPattern();
-		}
-
-		SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-
-		if (date != null) {
-			formatedDate = formatter.format(date);
-		}
-		return formatedDate;
-
-	}
-
-	private static Date parseDate(String date, String format) {
-		SimpleDateFormat df = new SimpleDateFormat(format);
-		java.util.Date uDate = null;
-		try {
-			uDate = df.parse(date);
-		} catch (ParseException e) {
-			logger.error("Exception: ", e);
-		}
-		if (uDate == null) {
-			uDate = DateUtility.getAppDate();
-		}
-		return new Date(uDate.getTime());
-	}
-
-	private static Date parseDate(String date) {
-		SimpleDateFormat df = new SimpleDateFormat(DateFormat.SHORT_DATE.getPattern());
-		java.util.Date uDate = null;
-		try {
-			uDate = df.parse(date);
-		} catch (ParseException e) {
-			logger.error("Exception: ", e);
-		}
-		if (uDate == null) {
-			uDate = DateUtility.getAppDate();
-		}
-		return new Date(uDate.getTime());
-	}
-
-	public static java.util.Date getUtilDate(String date, String format) {
-		SimpleDateFormat df = new SimpleDateFormat(format);
-		java.util.Date uDate = null;
-		try {
-			uDate = df.parse(date);
-		} catch (ParseException e) {
-			logger.error("Exception: ", e);
-		}
-		return uDate;
-	}
-
 	/**
 	 * Take String Date and return UTIL Date
 	 * 
@@ -194,12 +140,12 @@ public final class DateUtility extends DateUtil {
 	 * 
 	 * @return Date
 	 */
-	public static Date getDate(String date) {
-		return parseDate(date);
+	public static java.util.Date getDate(String date) {
+		return parseShortDate(date);
 	}
 
-	public static Date getDate(String date, String format) {
-		return parseDate(date, format);
+	public static java.util.Date getDate(String date, String format) {
+		return parse(date, format);
 	}
 
 	/**
@@ -214,23 +160,10 @@ public final class DateUtility extends DateUtil {
 		if (date == null) {
 			return null;
 		}
-		return parseDate(date, PennantConstants.DBDateFormat);
+		return getSqlDate(parse(date, PennantConstants.DBDateFormat));
 	}
 
-	public static Date getformatCDate(String date) {
-		String temp = date.substring(1);
-		SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
-		java.util.Date uDate = null;
-		try {
-			uDate = df.parse(temp);
-		} catch (ParseException e) {
-			logger.error("Exception: ", e);
-		}
-		if (uDate == null) {
-			uDate = DateUtility.getAppDate();
-		}
-		return new Date(uDate.getTime());
-	}
+	
 
 	/**
 	 * This method compares two times by comparing hours ,minutes and seconds
@@ -411,7 +344,7 @@ public final class DateUtility extends DateUtil {
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = 0;
 		if (includeDate2 && getMonthEnd(date1).compareTo(
-				getUtilDate(format(date1, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat)) == 0) {
+				parse(format(date1, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat)) == 0) {
 
 			if (convert(addDays(date1, 1)).get(Calendar.YEAR) != convert(date1).get(Calendar.YEAR)) {
 				years++;
@@ -541,9 +474,9 @@ public final class DateUtility extends DateUtil {
 	public static java.util.Date convertDateFromAS400(BigDecimal as400Date) {
 		if (as400Date != null) {
 			if (BigDecimal.ZERO.equals(as400Date)) {
-				return getUtilDate("1900-01-01", PennantConstants.DBDateFormat);
+				return parse("1900-01-01", PennantConstants.DBDateFormat);
 			} else if (as400Date.equals(new BigDecimal(9999999))) {
-				return getUtilDate("2049-12-31", PennantConstants.DBDateFormat);
+				return parse("2049-12-31", PennantConstants.DBDateFormat);
 			} else {
 				SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 				try {

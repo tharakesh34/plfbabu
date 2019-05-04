@@ -560,13 +560,13 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 					orgData.setCmtExpDate("Open");
 				} else {
 
-					Date date = DateUtility.getUtilDate(orgData.getCmtExpDate(), PennantConstants.DBDateTimeFormat);
+					Date date = DateUtility.parse(orgData.getCmtExpDate(), PennantConstants.DBDateTimeFormat);
 					if (date.compareTo(DateUtility.getAppDate()) < 0) {
 						orgData.setCmtExpFlag("T");
 					}
 
 					orgData.setCmtExpDate(DateUtility.formatToLongDate(
-							DateUtility.getUtilDate(orgData.getCmtExpDate(), PennantConstants.DBDateTimeFormat)));
+							DateUtility.parse(orgData.getCmtExpDate(), PennantConstants.DBDateTimeFormat)));
 				}
 				orgData.setCmtNotes(orgData.getCmtNotes().replace("||", "").trim());
 
@@ -617,10 +617,10 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 					 * finCmt.setOutStandingBal(PennantApplicationUtil.amountFormate(outStandBHD,3));
 					 */
 					finCmt.setLastRepay(availFinance.getLastRepay() == null ? ""
-							: DateUtility.formatToLongDate(DateUtility.getUtilDate(availFinance.getLastRepay(),
+							: DateUtility.formatToLongDate(DateUtility.parse(availFinance.getLastRepay(),
 									PennantConstants.DBDateTimeFormat)));
 					finCmt.setMaturityDate(DateUtility.formatToLongDate(DateUtility
-							.getUtilDate(availFinance.getMaturityDate(), PennantConstants.DBDateTimeFormat)));
+							.parse(availFinance.getMaturityDate(), PennantConstants.DBDateTimeFormat)));
 					finCmt.setProfitRate(availFinance.getProfitRate());
 					finCmt.setRepayFrq(availFinance.getRepayFrq());
 					finCmt.setStatus(availFinance.getStatus());
@@ -689,10 +689,10 @@ public class AvailmentTicketDialogCtrl extends GFCBaseCtrl<Customer> {
 								.multiply(new BigDecimal(Math.pow(10, 3 - formatter)));
 				finCmt.setOutStandingBal(PennantApplicationUtil.amountFormate(outStandBHD, 3));
 				finCmt.setLastRepay(availFinance.getLastRepay() == null ? ""
-						: DateUtility.formatToLongDate(DateUtility.getUtilDate(availFinance.getLastRepay(),
+						: DateUtility.formatToLongDate(DateUtility.parse(availFinance.getLastRepay(),
 								PennantConstants.DBDateTimeFormat)));
 				finCmt.setMaturityDate(DateUtility.formatToLongDate(
-						DateUtility.getUtilDate(availFinance.getMaturityDate(), PennantConstants.DBDateTimeFormat)));
+						DateUtility.parse(availFinance.getMaturityDate(), PennantConstants.DBDateTimeFormat)));
 				finCmt.setProfitRate(availFinance.getProfitRate());
 				finCmt.setRepayFrq(availFinance.getRepayFrq());
 				finCmt.setStatus(availFinance.getStatus());

@@ -1990,7 +1990,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc.setParent(item);
 
 				lc = new Listcell(
-						DateUtility.formateDate(legalDocument.getDocumentDate(), PennantConstants.dateFormat));
+						DateUtility.format(legalDocument.getDocumentDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(legalDocument.getDocumentNo());
@@ -2253,7 +2253,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			for (LegalECDetail legalECDetail : legalECDetailList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(DateUtility.formateDate(legalECDetail.getEcDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(legalECDetail.getEcDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				lc = new Listcell(legalECDetail.getDocument());
 				lc.setParent(item);
@@ -2261,10 +2261,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc = new Listcell(legalECDetail.getEcNumber());
 				lc.setParent(item);
 				
-				lc = new Listcell(DateUtility.formateDate(legalECDetail.getEcFrom(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(legalECDetail.getEcFrom(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				
-				lc = new Listcell(DateUtility.formateDate(legalECDetail.getEcTo(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(legalECDetail.getEcTo(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				
 				lc = new Listcell(PennantStaticListUtil.getlabelDesc(legalECDetail.getEcType(), ecTypesTypesList));
