@@ -3139,6 +3139,18 @@ public class PennantJavaUtil {
 						new String[] { "FinExcessAmount_LovView" }, null,
 						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AmountType", "0", "A" } }, 750));
+		
+		ModuleUtil.register("CASHCLT",
+				new ModuleMapping("CASHCLT", FinExcessAmount.class,
+						new String[] { "FinExcessAmount_LovView" }, null,
+						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AmountType", "0", RepayConstants.RECEIPTMODE_CASHCLT } }, 750));
+		
+		ModuleUtil.register("DSF",
+				new ModuleMapping("DSF", FinExcessAmount.class,
+						new String[] { "FinExcessAmount_LovView" }, null,
+						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
+						new String[][] { { "AmountType", "0", RepayConstants.RECEIPTMODE_DSF } }, 750));
 
 		ModuleUtil.register("PayableAdvise",
 				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,

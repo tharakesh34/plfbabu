@@ -266,6 +266,18 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.referenceId.setValueColumn("AdviseID");
 			this.referenceId.setDescColumn("BalanceAmt");
 			this.referenceId.setValidateColumns(new String[] { "AdviseID" });
+		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_CASHCLT)) {
+
+			this.referenceId.setModuleName("CASHCLT");
+			this.referenceId.setValueColumn("ExcessID");
+			this.referenceId.setDescColumn("BalanceAmt");
+			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
+		} else if (StringUtils.equals(getComboboxValue(knockOffFrom), RepayConstants.RECEIPTMODE_DSF)) {
+
+			this.referenceId.setModuleName("DSF");
+			this.referenceId.setValueColumn("ExcessID");
+			this.referenceId.setDescColumn("BalanceAmt");
+			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
 		}
 	}
 
@@ -921,7 +933,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			MessageUtil.showError(Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" }));
 		}
 		if (isKnockOff) {
-			BigDecimal availableAmount = new BigDecimal(this.referenceId.getDescription());
+			BigDecimal availableAmount = BigDecimal.ZERO;
+
+			if (!StringUtils.isBlank(this.referenceId.getDescription())) {
+				availableAmount = new BigDecimal(this.referenceId.getDescription());
+			}
 			if (PennantApplicationUtil.formateAmount(receiptAmount, formatter).compareTo(availableAmount) > 0) {
 				MessageUtil.showError(
 						Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] { "Receipt Amount", "KnockOff Amount" }));

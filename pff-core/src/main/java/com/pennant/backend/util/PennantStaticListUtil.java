@@ -4762,8 +4762,9 @@ public class PennantStaticListUtil {
 			knockOffFrom = new ArrayList<>(3);
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_Excess")));
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EMIINADV, Labels.getLabel("label_EMI_Advance")));
-			knockOffFrom
-					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
+			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
+			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT, Labels.getLabel("label_CASHCLT")));
+			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF, Labels.getLabel("label_DSF")));
 
 		}
 		return knockOffFrom;

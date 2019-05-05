@@ -104,6 +104,8 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_ADVEMI = "ADVEMI";
 	public static final String RECEIPTMODE_PAYABLE = "PAYABLE";
 	public static final String RECEIPTMODE_PRESENTMENT = "PRESENT";
+	public static final String RECEIPTMODE_CASHCLT = "CASHCLT";
+	public static final String RECEIPTMODE_DSF = "DSF";
 
 	public static final String ALLOCATION_PP = "PP";
 	public static final String ALLOCATION_EMI = "EMI";
