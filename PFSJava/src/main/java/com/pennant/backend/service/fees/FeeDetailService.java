@@ -478,7 +478,7 @@ public class FeeDetailService {
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branchCode);
 
 		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
@@ -603,7 +603,7 @@ public class FeeDetailService {
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branchCode);
 
 		// set FinType fees details
@@ -1065,7 +1065,7 @@ public class FeeDetailService {
 	}
 
 	public FinFeeDetail setFinFeeDetails(FinTypeFees finTypeFee, FinFeeDetail finFeeDetail,
-			HashMap<String, Object> gstExecutionMap, String currency) {
+			Map<String, Object> gstExecutionMap, String currency) {
 
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData finScheduleData = new FinScheduleData();

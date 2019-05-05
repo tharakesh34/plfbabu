@@ -68,7 +68,7 @@ public class FeeCalculator implements Serializable {
 			return receiptData;
 		}
 
-		HashMap<String, Object> gstExecutionMap = new HashMap<>();
+		Map<String, Object> gstExecutionMap = new HashMap<>();
 
 		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
 			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
@@ -153,7 +153,7 @@ public class FeeCalculator implements Serializable {
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		logger.debug("Entering");
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		HashMap<String, Object> gstExecutionMap = new HashMap<>();
+		Map<String, Object> gstExecutionMap = new HashMap<>();
 
 		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
 			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
@@ -343,7 +343,7 @@ public class FeeCalculator implements Serializable {
 			return;
 		}
 
-		HashMap<String, Object> gstExecutionMap = new HashMap<>();
+		Map<String, Object> gstExecutionMap = new HashMap<>();
 		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
 			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
 		} else {
@@ -423,7 +423,7 @@ public class FeeCalculator implements Serializable {
 		return calculatedAmt;
 	}
 
-	public HashMap<String, Object> getGstMappingDetails(FinanceDetail financeDetail) {
+	public Map<String, Object> getGstMappingDetails(FinanceDetail financeDetail) {
 
 		// String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
 		String branch = "";
@@ -448,7 +448,7 @@ public class FeeCalculator implements Serializable {
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branch);
 
 		return gstExecutionMap;

@@ -118,10 +118,10 @@ public interface FinFeeDetailService {
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
 			Map<String, Object> gstExecutionMap);
 
-	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
+	Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
 			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
 
-	HashMap<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
+	Map<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
 
 	boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee);
 

@@ -76,38 +76,34 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 	public FinanceTaxDetail getFinanceTaxDetail(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" finReference, applicableFor,TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
-		sql.append(" addrLine3, addrLine4, country, province, city, pinCode, ");
+		sql.append(" finReference, applicableFor, TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2");
+		sql.append(", addrLine3, addrLine4, country, province, city, pinCode");
 		if (type.contains("View")) {
-			sql.append("countryName,provinceName,cityName,pinCodeName, custCIF, custShrtName, ");
+			sql.append(", countryName, provinceName, cityName, pinCodeName, custCIF, custShrtName");
 		}
 
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
 		sql.append(" From FinTaxDetail");
 		sql.append(type);
 		sql.append(" Where finReference = :finReference");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		FinanceTaxDetail financeTaxDetail = new FinanceTaxDetail();
-		financeTaxDetail.setFinReference(finReference);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("finReference", finReference);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeTaxDetail);
 		RowMapper<FinanceTaxDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceTaxDetail.class);
 
 		try {
-			financeTaxDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			logger.debug(Literal.LEAVING);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeTaxDetail = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return financeTaxDetail;
+		return null;
 	}
 
 	@Override
