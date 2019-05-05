@@ -2714,7 +2714,7 @@ public class FinServiceInstController extends SummaryDetailService {
 							if (StringUtils.equals(feeDetail.getFeeTypeCode(), finTypeFee.getFeeTypeCode())) {
 								isFeeCodeFound = true;
 								finPaidAMount = feeDetail.getPaidAmount();
-								HashMap<String, Object> gstExecutionMap = this.finFeeDetailService
+								Map<String, Object> gstExecutionMap = this.finFeeDetailService
 										.prepareGstMapping(finServInst.getFromBranch(), finServInst.getToBranch());
 								if (finTypeFee.isTaxApplicable() && !gstExecutionMap.containsKey("fromState")) {
 									String[] valueParm = new String[1];
