@@ -455,8 +455,8 @@ public class ReceiptCalculator implements Serializable {
 		for (int i = 0; i < finFeedetails.size(); i++) {
 			FinFeeDetail finFeeDetail = finFeedetails.get(i);
 			ReceiptAllocationDetail allocDetail = getAllocation(receiptData, RepayConstants.ALLOCATION_FEE, 1,
-					finFeeDetail.getActualAmountOriginal(), finFeeDetail.getFeeTypeDesc(), -(finFeeDetail.getFeeTypeID()), finFeeDetail.getTaxComponent(),
-					true);
+					finFeeDetail.getActualAmountOriginal(), finFeeDetail.getFeeTypeDesc(),
+					-(finFeeDetail.getFeeTypeID()), finFeeDetail.getTaxComponent(), true);
 			allocDetail.setFeeTypeCode(finFeeDetail.getFeeTypeCode());
 			allocationsList.add(allocDetail);
 		}
@@ -905,16 +905,44 @@ public class ReceiptCalculator implements Serializable {
 		receiptData = getPayableList(receiptData);
 		return receiptData;
 	}
-	
+
 	private List<XcessPayables> getXcessPayables(FinReceiptData receiptData) {
 		List<XcessPayables> xcessPayables = new ArrayList<>();
 
 		List<FinExcessAmount> excessAmounts = receiptData.getReceiptHeader().getExcessAmounts();
 		List<FinExcessAmountReserve> excessReserveList = receiptData.getReceiptHeader().getExcessReserves();
 
+		boolean emiInAdvType = false;
+		boolean excessType = false;
+		for (FinExcessAmount excess : excessAmounts) {
+			if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(excess.getAmountType())) {
+				emiInAdvType = true;
+			}
+
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(excess.getAmountType())) {
+				excessType = true;
+			}
+		}
+
 		String excessLabel = "label_RecceiptDialog_ExcessType_";
 		int idx = 0;
-		XcessPayables xcessPayable;
+		XcessPayables xcessPayable = null;
+		if (!emiInAdvType) {
+			xcessPayable = new XcessPayables();
+			xcessPayable.setIdx(0);
+			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
+			xcessPayable.setPayableDesc(Labels.getLabel(excessLabel + RepayConstants.EXAMOUNTTYPE_EMIINADV));
+			xcessPayables.add(xcessPayable);
+		}
+
+		if (!excessType) {
+			xcessPayable = new XcessPayables();
+			xcessPayable.setIdx(0);
+			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EXCESS);
+			xcessPayable.setPayableDesc(Labels.getLabel(excessLabel + RepayConstants.EXAMOUNTTYPE_EXCESS));
+			xcessPayables.add(xcessPayable);
+		}
+
 		for (FinExcessAmount excess : excessAmounts) {
 			xcessPayable = new XcessPayables();
 			xcessPayable.setIdx(++idx);
@@ -1630,7 +1658,7 @@ public class ReceiptCalculator implements Serializable {
 				xcess.setTotPaidNow(balAmount);
 				xcess.setBalanceAmt(xcess.getBalanceAmt().subtract(balAmount));
 			}
-			
+
 			if (!receiptData.isForeClosure() && receiptData.getActualReceiptAmount().compareTo(BigDecimal.ZERO) > 0) {
 				recalEarlyStlAlloc(receiptData, receiptData.getActualReceiptAmount());
 			}
