@@ -929,7 +929,7 @@ public class ReceiptCalculator implements Serializable {
 		XcessPayables xcessPayable = null;
 		if (!emiInAdvType) {
 			xcessPayable = new XcessPayables();
-			xcessPayable.setIdx(0);
+			xcessPayable.setIdx(++idx);
 			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			xcessPayable.setPayableDesc(Labels.getLabel(excessLabel + RepayConstants.EXAMOUNTTYPE_EMIINADV));
 			xcessPayables.add(xcessPayable);
@@ -937,7 +937,7 @@ public class ReceiptCalculator implements Serializable {
 
 		if (!excessType) {
 			xcessPayable = new XcessPayables();
-			xcessPayable.setIdx(0);
+			xcessPayable.setIdx(++idx);
 			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EXCESS);
 			xcessPayable.setPayableDesc(Labels.getLabel(excessLabel + RepayConstants.EXAMOUNTTYPE_EXCESS));
 			xcessPayables.add(xcessPayable);
