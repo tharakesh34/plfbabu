@@ -1633,7 +1633,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
-				this.finFeeDetailService.calculateGSTPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
+				this.finFeeDetailService.calculateGstPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
 
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;

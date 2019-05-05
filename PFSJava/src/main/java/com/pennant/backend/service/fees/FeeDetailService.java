@@ -349,7 +349,7 @@ public class FeeDetailService {
 	private BigDecimal getPaidOriginal(FinFeeDetail finFeeDetail, Map<String, Object> gstExecutionMap,
 			FinanceDetail financeDetail) {
 		BigDecimal gstNetOriginal = BigDecimal.ZERO;
-		BigDecimal gstPerc = this.finFeeDetailService.calculateGSTPercentage(finFeeDetail,
+		BigDecimal gstPerc = this.finFeeDetailService.calculateGstPercentage(finFeeDetail,
 				financeDetail.getFinScheduleData().getFinanceMain().getFinCcy(), gstExecutionMap);
 		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
@@ -478,7 +478,7 @@ public class FeeDetailService {
 			}
 		}
 
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branchCode);
 
 		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
@@ -603,7 +603,7 @@ public class FeeDetailService {
 			}
 		}
 
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		HashMap<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
 				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branchCode);
 
 		// set FinType fees details
@@ -1102,7 +1102,7 @@ public class FeeDetailService {
 
 			if (finTypeFee.isTaxApplicable()) {
 
-				BigDecimal gstPerc = this.finFeeDetailService.calculateGSTPercentage(finFeeDetail, currency,
+				BigDecimal gstPerc = this.finFeeDetailService.calculateGstPercentage(finFeeDetail, currency,
 						gstExecutionMap);
 				String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 				int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
@@ -1117,7 +1117,7 @@ public class FeeDetailService {
 
 					finFeeDetail.setActualAmountOriginal(gstNetOriginal.add(finFeeDetail.getWaivedAmount()));
 
-					BigDecimal actualGst = this.finFeeDetailService.calculateGST(
+					BigDecimal actualGst = this.finFeeDetailService.calculatePercentage(
 							gstNetOriginal.subtract(finFeeDetail.getWaivedAmount()), gstPerc, taxRoundMode,
 							taxRoundingTarget);
 					finFeeDetail.setActualAmountGST(actualGst);
@@ -1129,13 +1129,13 @@ public class FeeDetailService {
 				} else {
 					finFeeDetail.setNetAmountOriginal(
 							finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
-					BigDecimal netGst = this.finFeeDetailService.calculateGST(
+					BigDecimal netGst = this.finFeeDetailService.calculatePercentage(
 							finFeeDetail.getNetAmountOriginal(), gstPerc, taxRoundMode, taxRoundingTarget);
 					finFeeDetail.setNetAmountGST(netGst);
 					finFeeDetail.setNetAmount(finFeeDetail.getNetAmountOriginal().add(netGst));
 
 					finFeeDetail.setActualAmountOriginal(finFeeDetail.getActualAmount());
-					BigDecimal actualGst = this.finFeeDetailService.calculateGST(
+					BigDecimal actualGst = this.finFeeDetailService.calculatePercentage(
 							finFeeDetail.getActualAmountOriginal(), gstPerc, taxRoundMode, taxRoundingTarget);
 					finFeeDetail.setActualAmountGST(actualGst);
 					finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(actualGst));
