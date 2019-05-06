@@ -3218,11 +3218,11 @@ public class ReceiptCalculator implements Serializable {
 				continue;
 			}
 			if (balPft.compareTo(pftPaid) > 0) {
-				pftNow = balPft.subtract(pftPaid);
-				pftPaid = pftPaid.subtract(pftNow);
-			} else {
 				pftNow = pftPaid;
 				pftPaid = BigDecimal.ZERO;
+			} else {
+				pftNow = balPft.subtract(pftPaid);
+				pftPaid = pftPaid.subtract(pftNow);
 			}
 			if (curSchd.isTDSApplicable()) {
 				tdsNow = getTDS(pftNow);

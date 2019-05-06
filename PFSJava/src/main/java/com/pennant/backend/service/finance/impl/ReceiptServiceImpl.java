@@ -1346,6 +1346,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setTaskId("");
 		rch.setNextTaskId("");
 		rch.setWorkflowId(0);
+		rch.setActFinReceipt(financeMain.isFinIsActive());
 
 		// Resetting Maturity Terms & Summary details rendering in case of
 		// Reduce maturity cases
@@ -5610,6 +5611,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// rch.setReceiptDetails(rcdList);
 		return receiptData;
+	}
+
+	@Override
+	public boolean canProcessReceipt(long receiptId) {
+		boolean canProcessReceipt = true;
+		FinReceiptHeader rch = finReceiptHeaderDAO.getReceiptHeaderByID(receiptId, "");
+		if (rch != null) {
+			boolean isLanActive = getFinanceMainDAO().isFinActive(rch.getReference());
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(rch.getReceiptModeStatus()) && !isLanActive
+					&& rch.isActFinReceipt()) {
+				canProcessReceipt = false;
+			}
+		}
+
+		return canProcessReceipt;
 	}
 
 }

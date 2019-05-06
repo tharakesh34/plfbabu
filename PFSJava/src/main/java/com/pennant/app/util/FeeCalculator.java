@@ -188,9 +188,9 @@ public class FeeCalculator implements Serializable {
 				}
 			}
 
-			if (fee.isNewRecord() && !fee.isOriginationFee()) {
+			/*if (fee.isNewRecord() && !fee.isOriginationFee()) {
 				fee.setPaidAmount(fee.getActualAmount());
-			}
+			}*/
 
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}

@@ -219,12 +219,12 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -327,6 +327,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected AccountSelectionBox chequeAcNo;
 	protected Uppercasebox paymentRef;
 	// protected Datebox receivedDate;
+	protected ExtendedCombobox postBranch;
+	protected ExtendedCombobox cashierBranch;
+	protected ExtendedCombobox finDivision;
 
 	// Payable Details
 	protected Groupbox gb_Payable;
@@ -783,6 +786,24 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setDisplayStyle(2);
 		this.collectionAgentId.setValidateColumns(new String[] { "Id" });
 
+		// Post Branch
+		this.postBranch.setModuleName("Branch");
+		this.postBranch.setValueColumn("BranchCode");
+		this.postBranch.setDescColumn("BranchDesc");
+		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		// Cashier Branch
+		this.cashierBranch.setModuleName("Branch");
+		this.cashierBranch.setValueColumn("BranchCode");
+		this.cashierBranch.setDescColumn("BranchDesc");
+		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		// Fin Division
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+
 		if (DisbursementConstants.PAYMENT_TYPE_MOB
 				.equals(receiptData.getReceiptHeader().getReceiptChannel().toString())) {
 			this.collectionAgentId.setMandatoryStyle(true);
@@ -926,6 +947,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(isReadOnly("ReceiptDialog_fundingAccount"), this.fundingAccount);
 		// readOnlyComponent(true, this.receivedDate);
 		readOnlyComponent(isReadOnly("ReceiptDialog_remarks"), this.remarks);
+		readOnlyComponent(true, this.cashierBranch);
+		readOnlyComponent(true, this.postBranch);
+		readOnlyComponent(true, this.finDivision);
 
 		logger.debug("Leaving");
 	}
@@ -943,6 +967,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.collectionAgentId);
 		readOnlyComponent(true, this.panNumber);
 		readOnlyComponent(true, this.externalRefrenceNumber);
+		readOnlyComponent(true, this.cashierBranch);
+		readOnlyComponent(true, this.postBranch);
+		readOnlyComponent(true, this.finDivision);
 
 		// Receipt Details
 		if (isUserAction) {
@@ -2500,6 +2527,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		this.favourName.setValue(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getEntityDesc());
 		this.finReference.setValue(rch.getReference());
+		this.postBranch.setValue(rch.getPostBranch(), rch.getPostBranchDesc());
+		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
+		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
 		if (StringUtils.isEmpty(rch.getAllocationType())) {
 			rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		}
@@ -3119,7 +3149,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					adjustWaiver(allocteDtl, npftWaived);
 				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)) {
-					adjustWaiver(allocteDtl, allocate.getWaivedAmount().subtract(npftWaived));
+					adjustWaiver(allocteDtl, waivedAmount.subtract(npftWaived));
 				}
 			}
 		}
@@ -3656,6 +3686,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (receivedFrom.isVisible() && !receivedFrom.isDisabled()) {
 				header.setReceivedFrom(getComboboxValue(receivedFrom));
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			header.setCashierBranch(this.cashierBranch.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

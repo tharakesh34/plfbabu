@@ -362,4 +362,6 @@ public interface FinanceMainDAO {
 	
 	Map<String, Object> getGSTDataMap(String finReference);
 
+	boolean isFinActive(String finReference);
+
 }

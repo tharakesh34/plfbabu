@@ -71,6 +71,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private String panNumber;
 	private String paymentType;
 	private String feeTypeCode;
+	private boolean actFinReceipt;
 
 	private String loanClosureCustCIF;
 	protected String loanClosureFinReference;
@@ -1060,7 +1061,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	}
 
 	public String getReceiptChannel() {
-		return receiptChannel;
+		return receiptChannel == null ? "" : receiptChannel;
 	}
 
 	public void setReceiptChannel(String receiptChannel) {
@@ -1367,6 +1368,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setBatchId(long batchId) {
 		this.batchId = batchId;
+	}
+
+	public boolean isActFinReceipt() {
+		return actFinReceipt;
+	}
+
+	public void setActFinReceipt(boolean actFinReceipt) {
+		this.actFinReceipt = actFinReceipt;
 	}
 
 }

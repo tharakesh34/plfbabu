@@ -4441,4 +4441,36 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return new HashMap<>();
 	}
+	
+	@Override
+	public boolean isFinActive(String finReference) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT Count(FinReference)");
+		selectSql.append(" From FinanceMain");
+
+		selectSql.append(" Where FinReference = :finReference");
+		selectSql.append(" And FinisActive=1");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("finReference", finReference);
+
+		int count = 0;
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			count = 0;
+		}
+		logger.debug("Leaving");
+
+		if (count > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 }

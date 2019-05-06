@@ -170,10 +170,10 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -238,6 +238,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Datebox bounceDate;
 	protected Datebox cancelDate;
 	protected Row row_CancelReason;
+	protected Row row_CancelDate;
 	protected ExtendedCombobox cancelReason;
 	protected ExtendedCombobox cancelRemarks;
 	protected Row row_ReceiptModeStatus;
@@ -259,6 +260,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox collectionAgentId;
 	protected Uppercasebox externalRefrenceNumber;
 	protected Textbox remarks;
+	protected ExtendedCombobox postBranch;
+	protected ExtendedCombobox cashierBranch;
+	protected ExtendedCombobox finDivision;
 
 	protected Label scheduleLabel;
 	protected Combobox effScheduleMethod;
@@ -629,6 +633,28 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setDescColumn("Code");
 		this.collectionAgentId.setDisplayStyle(2);
 		this.collectionAgentId.setValidateColumns(new String[] { "Id" });
+		
+		// Post Branch
+		this.postBranch.setModuleName("Branch");
+		this.postBranch.setValueColumn("BranchCode");
+		this.postBranch.setDescColumn("BranchDesc");
+		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		// Cashier Branch
+		this.cashierBranch.setModuleName("Branch");
+		this.cashierBranch.setValueColumn("BranchCode");
+		this.cashierBranch.setDescColumn("BranchDesc");
+		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
+
+		// Fin Division
+		this.finDivision.setModuleName("DivisionDetail");
+		this.finDivision.setValueColumn("DivisionCode");
+		this.finDivision.setDescColumn("DivisionCodeDesc");
+		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
+
+		readOnlyComponent(true, this.cashierBranch);
+		readOnlyComponent(true, this.postBranch);
+		readOnlyComponent(true, this.finDivision);
 
 		appendScheduleMethod(receiptData.getReceiptHeader());
 
@@ -868,6 +894,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Entering");
 
 		this.row_CancelReason.setVisible(false);
+		this.row_CancelDate.setVisible(false);
 		this.row_BounceReason.setVisible(false);
 		this.row_BounceRemarks.setVisible(false);
 		this.row_RealizationDate.setVisible(false);
@@ -880,6 +907,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else if (StringUtils.equals(status, RepayConstants.PAYSTATUS_CANCEL)) {
 
 			this.row_CancelReason.setVisible(true);
+			this.row_CancelDate.setVisible(true);
 
 		} else if (StringUtils.equals(status, RepayConstants.PAYSTATUS_REALIZED)) {
 
@@ -1140,6 +1168,10 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptChannel.setValue(rch.getReceiptChannel());
 		this.subReceiptMode.setValue(rch.getSubReceiptMode());
 		this.realizationDate.setValue(rch.getRealizationDate());
+
+		this.postBranch.setValue(rch.getPostBranch(), rch.getPostBranchDesc());
+		this.cashierBranch.setValue(rch.getCashierBranch(), rch.getCashierBranchDesc());
+		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
 
 		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
 			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {

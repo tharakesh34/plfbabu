@@ -53,9 +53,9 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
@@ -573,6 +573,20 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetail.getError());
+
+			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			logger.debug("Leaving");
+			return;
+		}
+
+		boolean canProcessReceipt = receiptService.canProcessReceipt(finReceiptHeader.getReceiptID());
+
+		if (!canProcessReceipt) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Unable to process the request, loan is in in-active state";
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm),
 					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetail.getError());
 

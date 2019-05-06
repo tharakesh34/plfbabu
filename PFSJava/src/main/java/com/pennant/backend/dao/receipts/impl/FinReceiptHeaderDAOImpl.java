@@ -95,7 +95,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		selectSql.append(
 				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch,ActFinReceipt");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, ProductCategory, ");
@@ -138,7 +138,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(
 				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
 		sql.append(
-				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId,");
+				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId, ActFinReceipt,");
 		sql.append(" FinDivision, PostBranch,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
@@ -149,7 +149,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(
 				" :GDRAvailable, :ReleaseType, :ThirdPartyName, :ThirdPartyMobileNum, :LpiAmount,:CashierBranch,:InitiateDate, ");
 		sql.append(
-				" :DepositProcess, :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module, :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId,");
+				" :DepositProcess, :DepositBranch, :LppAmount, :GstLpiAmount, :GstLppAmount, :ExtReference, :Module, :subReceiptMode, :receiptChannel, :receivedFrom, :panNumber, :collectionAgentId,:ActFinReceipt,");
 		sql.append(" :FinDivision, :PostBranch,");
 		sql.append(
 				" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId )");
@@ -183,7 +183,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		updateSql.append(
 				" Version =:Version, LastMntOn=:LastMntOn, LastMntBy=:LastMntBy, RecordStatus=:RecordStatus, RoleCode=:RoleCode, ");
 		updateSql.append(
-				" SubReceiptMode=:SubReceiptMode, ReceiptChannel=:ReceiptChannel, ReceivedFrom=:ReceivedFrom, PanNumber=:PanNumber, CollectionAgentId=:CollectionAgentId,");
+				" SubReceiptMode=:SubReceiptMode, ReceiptChannel=:ReceiptChannel, ReceivedFrom=:ReceivedFrom, PanNumber=:PanNumber, CollectionAgentId=:CollectionAgentId, ActFinReceipt=:ActFinReceipt,");
 		updateSql.append(
 				" NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId,");
 		updateSql.append(" FinDivision = :FinDivision, PostBranch = :PostBranch");
@@ -234,7 +234,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		selectSql.append(
 				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch,ActFinReceipt");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, ");
@@ -710,7 +710,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		selectSql.append(
 				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
 		selectSql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch");
+				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, FinDivision, PostBranch, ActFinReceipt");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					" , FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");

@@ -163,6 +163,19 @@
 													</hbox>
 												</row>
 												<row>
+													<label id="label_ReceiptDialog_CashierBranch"
+														value="${c:l('label_ReceiptDialog_CashierBranch.value')}" />
+													<extendedcombobox id="cashierBranch" />
+												</row>
+												<row visible="false">
+													<label id="label_ReceiptDialog_PostBranch"
+														value="${c:l('label_ReceiptDialog_PostBranch.value')}" />
+													<extendedcombobox id="postBranch" />
+													<label id="label_ReceiptDialog_FinDivision"
+														value="${c:l('label_ReceiptDialog_FinDivision.value')}" />
+													<extendedcombobox id="finDivision" />
+												</row>
+												<row>
 													<label value="${c:l('label_ReceiptDialog_ReceiptMode.value')}" />
 													<hbox>
 														<space spacing="2px" />
@@ -252,17 +265,18 @@
 													<label id="label_ReceiptDialog_CancelReason"
 														value="${c:l('label_ReceiptDialog_CancelReason.value')}" />
 													<extendedcombobox id="cancelReason" />
-													
-													<label id="label_ReceiptDialog_CancelDate"
-														value="${c:l('label_ReceiptDialog_CanceDate.value')}" />
-													<hbox id="hbox_ReceiptDialog_CanceDate">
-														<space spacing="2px"  />
-														<datebox id="cancelDate" width="100px" disabled="true" />
-													</hbox>
 
 													<label id="label_ReceiptDialog_CancelRemark"
 														value="${c:l('label_ReceiptDialog_CancelRemark.value')}" />
 													<extendedcombobox id="cancelRemarks" />
+												</row>
+												<row id="row_CancelDate" visible="false">
+													<label id="label_ReceiptDialog_CancelDate"
+														value="${c:l('label_ReceiptDialog_CancelDate.value')}" />
+													<hbox id="hbox_ReceiptDialog_CanceDate">
+														<space spacing="2px" />
+														<datebox id="cancelDate" width="100px" disabled="true" />
+													</hbox>
 												</row>
 												<row id="row_knockOffRef" visible="false">
 													<label id="label_ReceiptDialog_KnockoffReferenec"

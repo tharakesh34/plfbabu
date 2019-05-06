@@ -89,6 +89,8 @@ public interface ReceiptService {
 
 	boolean isReceiptsPending(String finreference);
 
+	boolean canProcessReceipt(long receiptId);
+
 	Assignment getAssignment(long id, String type);
 
 	List<AssignmentDealExcludedFee> getApprovedAssignmentDealExcludedFeeList(long id);
