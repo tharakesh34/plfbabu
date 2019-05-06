@@ -332,7 +332,7 @@ public class ControlDumpExtract extends DatabaseDataEngine implements ControlDum
 						cd.setMaturityDate(rs.getDate("MATURITYDATE"));
 
 						int monts;
-						monts = DateUtility.getMonthsBetween(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"), true);
+						monts = DateUtility.getMonthsBetweenInclusive(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"));
 						cd.setSanctionedTenure(monts);
 
 						cd.setSchemeId(rs.getInt("PROMOTIONID"));
