@@ -5,16 +5,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
+@XmlAccessorType(XmlAccessType.NONE)
 public class ReceiptAllocationDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long receiptAllocationid = Long.MIN_VALUE;
 	private long receiptID = 0;
 	private int allocationID = 0;
+	@XmlElement
 	private String allocationType;
 	private String typeDesc;
 	private long allocationTo;
 	private BigDecimal totRecv = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal dueAmount = BigDecimal.ZERO;
 	private BigDecimal dueGST = BigDecimal.ZERO;
 	private BigDecimal totalDue = BigDecimal.ZERO;
