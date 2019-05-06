@@ -315,10 +315,10 @@ public class RepaymentProcessUtil {
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
 			if (!RepayConstants.RECEIPTMODE_EMIINADV.equals(paymentType)
-					|| !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
-					|| !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
-					|| !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
-					|| !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)) {
+					&& !RepayConstants.RECEIPTMODE_EXCESS.equals(paymentType)
+					&& !RepayConstants.RECEIPTMODE_PAYABLE.equals(paymentType)
+					&& !RepayConstants.RECEIPTMODE_ADVINT.equals(paymentType)
+					&& !RepayConstants.RECEIPTMODE_ADVEMI.equals(paymentType)) {
 				receiptFromBank = receiptFromBank.add(rcd.getAmount());
 			}
 		}
