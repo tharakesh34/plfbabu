@@ -19439,10 +19439,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onChange$advType(Event event) {
 		doChangeAdvTypes();
-
-		if (isSchdlRegenerate()) {
-			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
-		}
 	}
 
 	private void doChangeAdvTypes() {

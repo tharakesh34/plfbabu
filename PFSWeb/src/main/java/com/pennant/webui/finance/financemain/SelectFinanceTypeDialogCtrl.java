@@ -220,6 +220,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
 	boolean proceedFurther = false;
+	protected Label label_custName;
 
 	/**
 	 * default constructor.<br>
@@ -1821,8 +1822,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Customer customer = (Customer) nCustomer;
 		if (customer != null) {
 			this.custCIF.setValue(customer.getCustCIF());
+			this.label_custName.setValue(customer.getCustShrtName());
 		} else {
 			this.custCIF.setValue("");
+			this.label_custName.setValue("");
 		}
 		logger.debug("Leaving ");
 	}

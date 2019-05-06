@@ -30,7 +30,7 @@
 									<radio id="preApprovedCust" label="${c:l('label_SelectFinanceTypeDialog_PreApprovedCust.value')}" />
 								</radiogroup>
 							</row>
-							<row id="customerRow" visible="false" spans="1,3">
+							<row id="customerRow" visible="false" spans="1,2">
 								<label id="label_SelectFinanceTypeDialog_CustCIF" value="${c:l('label_SelectFinanceTypeDialog_CustCIF.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
@@ -38,6 +38,7 @@
 									<button id="btnSearchCustCIF" tooltiptext="${c:l('label_SelectFinanceTypeDialog_CustID.tooltiptext')}"
 										image="/images/icons/more.png" autodisable="btnSearchCustCIF" />
 								</hbox>
+								<label id="label_custName"/>								
 							</row>
 							<row id="row_custCtgType" spans="1,3">
 								<label id="label_SelectFinanceTypeDialog_CustType" value="${c:l('label_SelectFinanceTypeDialog_CustCtg.value')}" />
