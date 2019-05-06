@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -1374,7 +1375,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinServiceInstruction finServiceInst = finScheduleData.getFinServiceInstruction();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-
+		
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		if (receiptData.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
 			rcd.setDueAmount(rch.getReceiptAmount());
@@ -1399,6 +1400,12 @@ public class FinServiceInstController extends SummaryDetailService {
 				receiptService.setErrorToFSD(finScheduleData, returnStatus.getReturnCode(),
 						returnStatus.getReturnText());
 				return financeDetail;
+			}
+		}
+		
+		if(StringUtils.equalsIgnoreCase(receiptData.getSourceId(), APIConstants.FINSOURCE_ID_API))	{
+			if(CollectionUtils.isNotEmpty(rch.getAllocations()))	{
+				receiptData.getFinanceDetail().getFinScheduleData().setReceiptAllocationList(rch.getAllocations());
 			}
 		}
 
