@@ -3802,9 +3802,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			event = AccountEventConstants.ACCEVENT_EARLYPAY;
 		} else if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			event = AccountEventConstants.ACCEVENT_EARLYSTL;
-			finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rcd.getReceivedDate(), null,
+			/*finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rcd.getReceivedDate(), null,
 					receiptData.getFinanceDetail().getFinScheduleData().getFinPftDeatil().getTotalPriBal(),
-					CalculationConstants.EARLYPAY_ADJMUR);
+					CalculationConstants.EARLYPAY_ADJMUR);*/
 		} else if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			event = AccountEventConstants.ACCEVENT_EARLYSTL;
 		}

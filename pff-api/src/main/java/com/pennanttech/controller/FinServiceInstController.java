@@ -1526,32 +1526,32 @@ public class FinServiceInstController extends SummaryDetailService {
 				receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
 				receiptData.getReceiptHeader().setValueDate(rch.getValueDate());
 
-				boolean duesAdjusted = true;
+				receiptData.setDueAdjusted(true);
 				if (receiptPurposeCtg == 2) {
-					duesAdjusted = receiptService.checkDueAdjusted(rch.getAllocations());
+					boolean duesAdjusted = receiptService
+							.checkDueAdjusted(receiptData.getReceiptHeader().getAllocations());
 					if (!duesAdjusted) {
 						receiptData = receiptService.adjustToExcess(receiptData);
-						rch.getAllocations().clear();
 						receiptData.setDueAdjusted(false);
 					}
 				}
+				if (receiptData.isDueAdjusted()) {
+					for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
+						allocate.setPaidAvailable(allocate.getPaidAmount());
+						allocate.setWaivedAvailable(allocate.getWaivedAmount());
+						allocate.setPaidAmount(BigDecimal.ZERO);
+						allocate.setPaidGST(BigDecimal.ZERO);
+						allocate.setTotalPaid(BigDecimal.ZERO);
+						allocate.setBalance(allocate.getTotalDue());
+						allocate.setWaivedAmount(BigDecimal.ZERO);
+					}
 
-				for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
-					allocate.setPaidAvailable(allocate.getPaidAmount());
-					allocate.setWaivedAvailable(allocate.getWaivedAmount());
-					allocate.setPaidAmount(BigDecimal.ZERO);
-					allocate.setPaidGST(BigDecimal.ZERO);
-					allocate.setTotalPaid(BigDecimal.ZERO);
-					allocate.setBalance(allocate.getTotalDue());
-					allocate.setWaivedAmount(BigDecimal.ZERO);
-				}
-
-				receiptData.setBuildProcess("R");
-				if (duesAdjusted) {
+					receiptData.setBuildProcess("R");
 					receiptData = receiptCalculator.initiateReceipt(receiptData, false);
-					receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
-							tempReceiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+
 				}
+				receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
+						tempReceiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 
 				auditHeader = receiptService.doApprove(auditHeader);
 			}
