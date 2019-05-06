@@ -1744,7 +1744,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch,
+	public Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch,
 			String highPriorityState, String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode) {
 
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
@@ -1849,7 +1849,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public HashMap<String, Object> prepareGstMapping(String fromStateCode, String toStateCode) {
+	public Map<String, Object> prepareGstMapping(String fromStateCode, String toStateCode) {
 
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
 		boolean gstExempted = false;

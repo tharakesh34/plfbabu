@@ -146,6 +146,7 @@ public class RuleConstants {
 	public static final String CODE_IGST = "IGST"; // IGST
 	public static final String CODE_SGST = "SGST"; // SGST
 	public static final String CODE_UGST = "UGST"; // UGST
+	public static final String CODE_TOTAL_GST = "TOTAL_GST"; // UGST
 
 	private RuleConstants() {
 		super();

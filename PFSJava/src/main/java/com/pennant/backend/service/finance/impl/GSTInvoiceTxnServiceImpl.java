@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -338,8 +339,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 				// Invoice Transaction details preparation for Manual/Receivable advise Details if any exists
 			} else if (CollectionUtils.isNotEmpty(movements)) { // Receivable Advise
-
-				Map<String, BigDecimal> taxPercmap = getTaxPercentages(financeDetail);
+				Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(finReference);
 
 				BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 				BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
@@ -617,11 +617,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	}
 
 	/**
-	 * Method for Preparing all GST fee amounts based on configurations
 	 * 
-	 * @param manAdvList
-	 * @param financeDetail
-	 * @return
+	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#getTaxPercentages(String)}
 	 */
 	private Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);

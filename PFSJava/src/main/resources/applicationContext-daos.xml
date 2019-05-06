@@ -4552,7 +4552,7 @@
 		<!-- Assignments -->
 		<!-- <property name="assignmentDealDAO" ref="assignmentDealDAO" /> -->
 		<!-- <property name="assignmentDAO" ref="assignmentDAO" /> -->
-		
+
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -10407,6 +10407,15 @@
 	<bean name="commoditiesServiceTarget" class="com.pennanttech.pff.commodity.service.CommoditiesServiceImpl">
 		<property name="commoditiesDAO" ref="commoditiesDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<bean id="gstCalculator" class="com.pennant.app.util.GSTCalculator">
+		<constructor-arg ref="ruleDAO" />
+		<constructor-arg ref="branchDAO" />
+		<constructor-arg ref="provinceDAO" />
+		<constructor-arg ref="financeMainDAO" />
+		<constructor-arg ref="financeTaxDetailDAO" />
+		<constructor-arg ref="ruleExecutionUtil" />
 	</bean>
 
 </beans>

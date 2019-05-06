@@ -60,6 +60,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
@@ -738,8 +739,7 @@ public class AccrualService extends ServiceHelper {
 
 			// IF GST Calculation Required for LPI or LPP 
 			if (gstCalReq) {
-
-				taxPercmap = getTaxPercentages(detail, custEODEvent.getCustomer().getCustDftBranch());
+				taxPercmap = GSTCalculator.getTaxPercentages(main.getFinReference());
 
 				// Calculate LPI GST Amount
 				if (finPftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0 && lpiFeeType != null
@@ -812,7 +812,7 @@ public class AccrualService extends ServiceHelper {
 
 			if (taxPercmap == null) {
 				detail.getFinScheduleData().setFinanceMain(main);
-				taxPercmap = getTaxPercentages(detail, custEODEvent.getCustomer().getCustDftBranch());
+				taxPercmap = GSTCalculator.getTaxPercentages(main.getFinReference());
 			}
 
 			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
@@ -848,7 +848,7 @@ public class AccrualService extends ServiceHelper {
 
 			if (taxPercmap == null) {
 				detail.getFinScheduleData().setFinanceMain(main);
-				taxPercmap = getTaxPercentages(detail, custEODEvent.getCustomer().getCustDftBranch());
+				taxPercmap = GSTCalculator.getTaxPercentages(main.getFinReference());
 			}
 
 			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPPAmz(),
@@ -1319,13 +1319,10 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	/**
-	 * Method for Preparing all GST fee amounts based on configurations
 	 * 
-	 * @param manAdvList
-	 * @param financeDetail
-	 * @return
+	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#getTaxPercentages(String)}
 	 */
-	public Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail, String custDftBranch) {
+	private Map<String, BigDecimal> getTaxPercentages(FinanceDetail financeDetail, String custDftBranch) {
 
 		// Set Tax Details if Already exists
 		if (financeDetail.getFinanceTaxDetail() == null) {

@@ -62,6 +62,7 @@ import com.google.common.collect.ComparisonChain;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -422,7 +423,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		//get the Summary Details
-		Map<String, BigDecimal> taxPercmap = getTaxPercentages(finMain);
+		Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(finReference);
+		
 		String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 		List<SOASummaryReport> soaSummaryDetailsList = getSOASummaryDetails(finReference, finMain, financeProfitDetail,
@@ -1879,7 +1881,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		return soaReportGenerationDAO.getSOAFinTypes();
 	}
-
+	
+	/**
+	 * 
+	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#getTaxPercentages(String)}
+	 */
 	public Map<String, BigDecimal> getTaxPercentages(FinanceMain finMain) {
 
 		//FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finMain.FinReference(), "", false);
