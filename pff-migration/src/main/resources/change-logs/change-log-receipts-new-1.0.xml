@@ -4549,5 +4549,16 @@
 					FROM INSTRUMENTWISELIMIT T1 
 		</createView>
 	</changeSet>
+	
+	<changeSet id="62" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+	     	Insert into BMTREJECTCODES Values ('C1','Cancel on Request By Customer',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'Payment');
+			Insert into BMTREJECTCODES Values ('C2','Wrong Input By User',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'Payment');
+			Insert into BMTREJECTCODES Values ('C3','Reject reason other',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'Payment');
+			Insert into BMTREJECTCODES Values ('C4','Customer not interested',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'Payment');
+	     	]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
