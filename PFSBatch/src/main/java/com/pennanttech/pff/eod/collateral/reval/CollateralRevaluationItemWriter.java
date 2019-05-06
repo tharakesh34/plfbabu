@@ -53,7 +53,6 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
-
 			}
 		}
 	}
@@ -102,8 +101,11 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 		sql.append(", BankValuation = :CurrentBankValuation");
 		sql.append(" where CollateralRef =:CollateralRef");
 
-		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(items.toArray()));
-
+		try {
+			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(items.toArray()));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 	}
 
 	private void sendAlert(CollateralRevaluation collateral) {

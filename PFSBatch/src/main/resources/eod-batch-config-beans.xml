@@ -383,6 +383,8 @@
 		parent="sequenceDao" />
 
 	<bean id="nPABucketDAO" class="com.pennant.backend.dao.applicationmaster.impl.NPABucketDAOImpl" parent="sequenceDao" />
+	
+	<bean id="receiptAllocationDetailDAO" class="com.pennant.backend.dao.receipts.impl.ReceiptAllocationDetailDAOImpl" parent="sequenceDao" />
 
 	<bean id="repayProcessUtil" class="com.pennant.app.util.RepaymentProcessUtil" scope="prototype">
 		<property name="repayPostingUtil" ref="repayPostingUtil" />
@@ -399,6 +401,7 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="limitManagement" ref="limitManagement" />
+		<property name="allocationDetailDAO" ref="receiptAllocationDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
@@ -834,6 +837,15 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="emailEngine" ref="emailEngine" />
 		<property name="smsEngine" ref="smsEngine" />
+	</bean>
+	
+	<bean id="gstCalculator" class="com.pennant.app.util.GSTCalculator">
+		<constructor-arg ref="ruleDAO" />
+		<constructor-arg ref="branchDAO" />
+		<constructor-arg ref="provinceDAO" />
+		<constructor-arg ref="financeMainDAO" />
+		<constructor-arg ref="financeTaxDetailDAO" />
+		<constructor-arg ref="ruleExecutionUtil" />
 	</bean>
 	
 </beans>
