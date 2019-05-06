@@ -99,7 +99,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
-		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "returnStatus" })
+		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
