@@ -23,8 +23,8 @@ public class AdvancePaymentUtil {
 
 	public enum AdvanceType {
 		AE("AE", "Advance EMI"),
-		UF("UF", "Upfront Full Tenor"),
-		UT("UT", "Upfront Few Terms"),
+		UF("UF", "Upfront Interest Full Tenor"),
+		UT("UT", "Upfront Interest Few Terms"),
 		AF("AF", "Advance at Interest Frequency");
 
 		private final String code;
@@ -63,6 +63,7 @@ public class AdvancePaymentUtil {
 						continue;
 					}
 				}
+
 				list.add(new Property(type.code, type.value));
 			}
 			return list;
