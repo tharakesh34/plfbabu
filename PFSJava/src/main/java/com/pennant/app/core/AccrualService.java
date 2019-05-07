@@ -84,6 +84,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -744,16 +745,17 @@ public class AccrualService extends ServiceHelper {
 				// Calculate LPI GST Amount
 				if (finPftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0 && lpiFeeType != null
 						&& lpiFeeType.isTaxApplicable() && lpiFeeType.isAmortzReq()) {
-					BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLpiAmount(),
-							lpiFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+					BigDecimal gstAmount = GSTCalculator.getTotalGST(finPftDetail.getLpiAmount(), taxPercmap,
+							lpiFeeType.getTaxComponent());
+
 					finPftDetail.setGstLpiAmount(gstAmount);
 				}
 
 				// Calculate LPP GST Amount
 				if (finPftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
 						&& lppFeeType.isTaxApplicable() && lppFeeType.isAmortzReq()) {
-					BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLppAmount(),
-							lppFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+					BigDecimal gstAmount = GSTCalculator.getTotalGST(finPftDetail.getLppAmount(), taxPercmap,
+							lppFeeType.getTaxComponent());
 					finPftDetail.setGstLppAmount(gstAmount);
 				}
 			}
@@ -815,12 +817,19 @@ public class AccrualService extends ServiceHelper {
 				taxPercmap = GSTCalculator.getTaxPercentages(main.getFinReference());
 			}
 
-			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
-					lpiFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+			FinODAmzTaxDetail taxDetail = new FinODAmzTaxDetail();
+			TaxAmountSplit taxAmountSplit = GSTCalculator.calculateGST(aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
+					taxPercmap, lpiFeeType.getTaxComponent());
+
 			taxDetail.setFinReference(finPftDetail.getFinReference());
 			taxDetail.setTaxFor("LPI");
 			taxDetail.setAmount(aeEvent.getAeAmountCodes().getdLPIAmz());
 			taxDetail.setValueDate(custEODEvent.getEodValueDate());
+			taxDetail.setCGST(taxAmountSplit.getcGST());
+			taxDetail.setSGST(taxAmountSplit.getsGST());
+			taxDetail.setUGST(taxAmountSplit.getuGST());
+			taxDetail.setIGST(taxAmountSplit.getiGST());
+			taxDetail.setTotalGST(taxAmountSplit.gettGST());
 
 			calGstMap.put("LPI_CGST_R", taxDetail.getCGST());
 			calGstMap.put("LPI_SGST_R", taxDetail.getSGST());
@@ -829,12 +838,12 @@ public class AccrualService extends ServiceHelper {
 
 			// Save Tax Details
 			getFinODAmzTaxDetailDAO().save(taxDetail);
-			
+
 			String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-			if(StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)){
+			if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
 				addGSTInvoice = true;
 			}
-			
+
 		} else {
 			addZeroifNotContains(calGstMap, "LPI_CGST_R");
 			addZeroifNotContains(calGstMap, "LPI_SGST_R");
@@ -865,9 +874,9 @@ public class AccrualService extends ServiceHelper {
 
 			// Save Tax Details
 			getFinODAmzTaxDetailDAO().save(taxDetail);
-			
+
 			String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-			if(StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)){
+			if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
 				addGSTInvoice = true;
 			}
 		} else {
@@ -892,12 +901,13 @@ public class AccrualService extends ServiceHelper {
 		if (aeEvent.getLinkedTranId() > 0) {
 
 			// LPP Receivable Data Update for Future Accounting
-			if(aeEvent.getAeAmountCodes().getdLPPAmz().compareTo(BigDecimal.ZERO) > 0){
+			if (aeEvent.getAeAmountCodes().getdLPPAmz().compareTo(BigDecimal.ZERO) > 0) {
 
 				// Save Tax Receivable Details
-				FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO().getFinTaxReceivable(finPftDetail.getFinReference(), "LPP");
+				FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO().getFinTaxReceivable(finPftDetail.getFinReference(),
+						"LPP");
 				boolean isSave = false;
-				if(taxRcv == null){
+				if (taxRcv == null) {
 					taxRcv = new FinTaxReceivable();
 					taxRcv.setFinReference(finPftDetail.getFinReference());
 					taxRcv.setTaxFor("LPP");
@@ -914,17 +924,18 @@ public class AccrualService extends ServiceHelper {
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lppFeeType.getTaxComponent())) {
 					//gstAmount = taxRcv.getCGST().add(taxRcv.getSGST()).add(taxRcv.getIGST()).add(taxRcv.getUGST()); //check with this case
 				}
-				taxRcv.setReceivableAmount(taxRcv.getReceivableAmount().add(aeEvent.getAeAmountCodes().getdLPPAmz()).subtract(gstAmount));
+				taxRcv.setReceivableAmount(
+						taxRcv.getReceivableAmount().add(aeEvent.getAeAmountCodes().getdLPPAmz()).subtract(gstAmount));
 
-				if(isSave){
+				if (isSave) {
 					getFinODAmzTaxDetailDAO().saveTaxReceivable(taxRcv);
-				}else{
+				} else {
 					getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
 				}
 			}
-			
+
 			// GST Invoice Generation
-			if(addGSTInvoice){
+			if (addGSTInvoice) {
 				List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, lpiFeeType, taxPercmap, calGstMap, aeEvent);
 
 				if (CollectionUtils.isNotEmpty(feesList)) {
@@ -946,7 +957,7 @@ public class AccrualService extends ServiceHelper {
 		finPftDetail.setAmzTillLBDPIS(finPftDetail.getPftAmzSusp());
 		finPftDetail.setAcrTillLBD(finPftDetail.getPftAccrued());
 		finPftDetail.setAcrSuspTillLBD(finPftDetail.getPftAccrueSusp());
-		
+
 		// LPP & LPI Due Amount , Which is already marked as Income/Receivable should be updated
 		finPftDetail.setLppTillLBD(finPftDetail.getLppTillLBD().add(aeEvent.getAeAmountCodes().getdLPPAmz()));
 		finPftDetail.setGstLppTillLBD(finPftDetail.getGstLppTillLBD().add(aeEvent.getAeAmountCodes().getdGSTLPPAmz()));
@@ -967,6 +978,11 @@ public class AccrualService extends ServiceHelper {
 		logger.debug(" Leaving ");
 	}
 
+	private void calculateGST(BigDecimal getdGSTLPIAmz, Map<String, BigDecimal> taxPercmap, String taxComponent) {
+		// TODO Auto-generated method stub
+
+	}
+
 	private List<FinFeeDetail> prepareFeesList(FeeType lppFeeType, FeeType lpiFeeType,
 			Map<String, BigDecimal> taxPercMap, Map<String, BigDecimal> calGstMap, AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
@@ -985,7 +1001,7 @@ public class AccrualService extends ServiceHelper {
 			finFeeDetail.setTaxApplicable(true);
 			finFeeDetail.setOriginationFee(false);
 			finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz());
-			
+
 			if (taxPercMap != null && calGstMap != null) {
 				finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
 				finFeeDetail.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
@@ -996,9 +1012,10 @@ public class AccrualService extends ServiceHelper {
 				finTaxDetails.setNetSGST(calGstMap.get("LPP_SGST_R"));
 				finTaxDetails.setNetIGST(calGstMap.get("LPP_IGST_R"));
 				finTaxDetails.setNetUGST(calGstMap.get("LPP_UGST_R"));
-				
+
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lppFeeType.getTaxComponent())) {
-					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
+					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST())
+							.add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
 					finFeeDetail.setNetAmountOriginal(aeEvent.getAeAmountCodes().getdLPPAmz().subtract(gstAmount));
 				}
 			}
@@ -1118,8 +1135,8 @@ public class AccrualService extends ServiceHelper {
 		List<Date> monthsCopy = new ArrayList<Date>();
 		Date newMonth = null;
 
-		if (calFromFinStartDate || DateUtility.getMonthEnd(getFormatDate(finMain.getFinStartDate()))
-				.compareTo(appDateMonthEnd) == 0) {
+		if (calFromFinStartDate
+				|| DateUtility.getMonthEnd(getFormatDate(finMain.getFinStartDate())).compareTo(appDateMonthEnd) == 0) {
 
 			newMonth = new Date(DateUtility.getMonthEnd(finMain.getFinStartDate()).getTime());
 		} else {
@@ -1351,8 +1368,8 @@ public class AccrualService extends ServiceHelper {
 
 		// Map Preparation for Executing GST rules
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-		Map<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode,
-				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
+		Map<String, Object> dataMap = getFinFeeDetailService().prepareGstMappingDetails(fromBranchCode, custDftBranch,
+				highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), null);
 
 		// TODO : WRITE THIS IN CACHE
 		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
@@ -1416,7 +1433,8 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	/**
-	 * Method for Calculating Total GST Amount with the Requested Amount
+	 * 
+	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#getTotalGST(BigDecimal, Map, String)}
 	 */
 	private BigDecimal getTotalTaxAmount(Map<String, BigDecimal> taxPercmap, BigDecimal amount, String taxType,
 			String roundingMode, int roundingTarget) {
@@ -1487,6 +1505,10 @@ public class AccrualService extends ServiceHelper {
 		return gstAmount;
 	}
 
+	/**
+	 * 
+	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#calculateGST(BigDecimal, Map, String)}
+	 */
 	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType,
 			String roundingMode, int roundingTarget) {
 

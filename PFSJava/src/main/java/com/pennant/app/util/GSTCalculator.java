@@ -62,6 +62,20 @@ public class GSTCalculator {
 		return taxAmountSplit.gettGST();
 	}
 
+	public static TaxAmountSplit calculateGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages,
+			String taxComponent) {
+		TaxAmountSplit taxAmountSplit = null;
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+			taxAmountSplit = getExclusiveGST(taxableAmount, gstPercentages);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+			taxAmountSplit = getInclusiveGST(taxableAmount, gstPercentages);
+		} else {
+			taxAmountSplit = new TaxAmountSplit();
+		}
+
+		return taxAmountSplit;
+	}
+
 	public static Map<String, BigDecimal> getTaxPercentages(String finReference) {
 		Map<String, BigDecimal> gstPercentages = new HashMap<>();
 
@@ -173,6 +187,20 @@ public class GSTCalculator {
 		}
 
 		return result;
+	}
+
+	public static BigDecimal getTotalGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages,
+			String taxComponent) {
+		TaxAmountSplit taxAmountSplit = null;
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+			taxAmountSplit = getExclusiveGST(taxableAmount, gstPercentages);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+			taxAmountSplit = getInclusiveGST(taxableAmount, gstPercentages);
+		} else {
+			taxAmountSplit = new TaxAmountSplit();
+		}
+
+		return taxAmountSplit.gettGST();
 	}
 
 	public static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
