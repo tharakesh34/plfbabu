@@ -99,7 +99,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private String bankName;
 	private String status;
 
-	private Date clearingdate;
 	private Date realizationDate;
 	private boolean active;
 
@@ -152,7 +151,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("partnerBankCode");
 		excludeFields.add("partnerBankName");
 		excludeFields.add("bankBranchIFSC");
@@ -169,6 +168,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("partnerBankAcType");
 		excludeFields.add("linkedTranId");
 		excludeFields.add("apiRequest");
+		excludeFields.add("realizationDate");
 		return excludeFields;
 	}
 
@@ -314,14 +314,6 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
-	}
-
-	public Date getClearingdate() {
-		return clearingdate;
-	}
-
-	public void setClearingdate(Date clearingdate) {
-		this.clearingdate = clearingdate;
 	}
 
 	public boolean getActive() {

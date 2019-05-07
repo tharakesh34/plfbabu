@@ -56,7 +56,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.PaymentInstruction;
@@ -70,7 +69,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 @XmlType(propOrder = { "paymentId", "paymentType", "paymentAmount", "createdOn", "approvedOn", "status" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
+public class PaymentHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long paymentId = Long.MIN_VALUE;
@@ -97,20 +96,10 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 	private PaymentInstruction paymentInstruction;
 	private Beneficiary defaultBeneficiary;
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-
 	private String finSource;
-
-	public boolean isNew() {
-		return isNewRecord();
-	}
 
 	public PaymentHeader() {
 		super();
-	}
-
-	public PaymentHeader(long id) {
-		super();
-		this.setId(id);
 	}
 
 	public Set<String> getExcludeFields() {
@@ -119,7 +108,17 @@ public class PaymentHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("paymentInstruction");
 		excludeFields.add("paymentInstrType");
 		excludeFields.add("defaultBeneficiary");
+		excludeFields.add("finSource");
 		return excludeFields;
+	}
+
+	public boolean isNew() {
+		return isNewRecord();
+	}
+
+	public PaymentHeader(long id) {
+		super();
+		this.setId(id);
 	}
 
 	public long getId() {
