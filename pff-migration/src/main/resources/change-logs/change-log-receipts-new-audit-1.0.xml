@@ -123,5 +123,30 @@
 	<changeSet id="5.3" author="satyanarayana.g">
 		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="COLLECTIONAGENTID" columnDataType="bigint" />
 	</changeSet>
+	
+	<changeSet id=6_pre" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.1" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER ADD CONSTRAINT DF_ADTFINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
+				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.2" author="satyanarayana.g" dbms="postgresql,oracle">
+		<addDefaultValue columnName="ACTFINRECEIPT" tableName="ADTFINRECEIPTHEADER" defaultValue="1" />
+	</changeSet>
+
+	<changeSet id="6.3" author="satyanarayana.g">
+		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
+	</changeSet>
 
 </databaseChangeLog>
