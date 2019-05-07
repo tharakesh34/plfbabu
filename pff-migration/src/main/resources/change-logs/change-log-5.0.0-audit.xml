@@ -126,4 +126,10 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="4" author="saikiran.v">
+		<addColumn tableName="adtfintaxdetail">
+			<column name="sezCertificateNo" type="varchar(20)" />
+			<column name="sezValueDate" type="datetime" />
+			</addColumn>
+	</changeSet>
 </databaseChangeLog>

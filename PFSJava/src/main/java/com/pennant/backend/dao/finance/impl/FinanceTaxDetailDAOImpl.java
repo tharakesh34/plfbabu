@@ -78,7 +78,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" finReference, applicableFor, TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2");
-		sql.append(", addrLine3, addrLine4, country, province, city, pinCode");
+		sql.append(", addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate");
 		if (type.contains("View")) {
 			sql.append(", countryName, provinceName, cityName, pinCodeName, custCIF, custShrtName");
 		}
@@ -114,12 +114,12 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		StringBuilder sql = new StringBuilder(" insert into FinTaxDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(finReference, applicableFor,TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2, ");
-		sql.append("addrLine3, addrLine4, country, province, city, pinCode, ");
+		sql.append("addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate ,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :finReference, :applicableFor,:TaxCustId, :taxExempted, :taxNumber, :addrLine1, :addrLine2, ");
-		sql.append(" :addrLine3, :addrLine4, :country, :province, :city, :pinCode, ");
+		sql.append(" :addrLine3, :addrLine4, :country, :province, :city, :pinCode,  :sezCertificateNo , :sezValueDate ,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -148,7 +148,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				"  set applicableFor = :applicableFor,TaxCustId= :TaxCustId, taxExempted = :taxExempted, taxNumber = :taxNumber, ");
 		sql.append(" addrLine1 = :addrLine1, addrLine2 = :addrLine2, addrLine3 = :addrLine3, ");
 		sql.append(" addrLine4 = :addrLine4, country = :country, province = :province, ");
-		sql.append(" city = :city, pinCode = :pinCode, ");
+		sql.append(" city = :city, pinCode = :pinCode, sezCertificateNo = :sezCertificateNo , sezValueDate = :sezValueDate,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

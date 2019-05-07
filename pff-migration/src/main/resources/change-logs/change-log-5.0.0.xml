@@ -899,6 +899,193 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="17" author="saikiran.v">
+		<addColumn tableName="fintaxdetail">
+			<column name="sezCertificateNo" type="varchar(20)" />
+			<column name="sezValueDate" type="datetime" />
+			</addColumn>
+	</changeSet>
+	<changeSet id="18" author="saikiran.v">
+		<addColumn tableName="Fintaxdetail_Temp">
+			<column name="sezCertificateNo" type="varchar(20)" />
+			<column name="sezValueDate" type="datetime" />
+			</addColumn>
+	</changeSet>
+	<changeSet id="19" author="saikiran.v">
+	 <createView viewName="fintaxdetail_aview" replaceIfExists="true">
+			SELECT t1.finreference,
+		    t1.applicablefor,
+		    t1.taxcustid,
+		    t1.taxexempted,
+		    t1.taxnumber,
+		    t1.addrline1,
+		    t1.addrline2,
+		    t1.addrline3,
+		    t1.addrline4,
+		    t1.country,
+		    t1.province,
+		    t1.city,
+		    t1.pincode,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.countrydesc AS countryname,
+		    t3.cpprovincename AS provincename,
+		    t4.pccityname AS cityname,
+		    t5.areaname AS pincodename,
+		    t6.custcif,
+		    t6.custshrtname,
+		     t1.sezCertificateNo ,
+			t1.sezValueDate
+		   FROM fintaxdetail t1
+		     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+		     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+		     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+		     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+		     JOIN customers t6 ON t1.taxcustid = t6.custid;
+	 </createView>
+	</changeSet>
+	<changeSet id="20" author="saikiran.v">
+		<createView viewName="fintaxdetail_tview" replaceIfExists="true">
+				 SELECT t1.finreference,
+			    t1.applicablefor,
+			    t1.taxcustid,
+			    t1.taxexempted,
+			    t1.taxnumber,
+			    t1.addrline1,
+			    t1.addrline2,
+			    t1.addrline3,
+			    t1.addrline4,
+			    t1.country,
+			    t1.province,
+			    t1.city,
+			    t1.pincode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.countrydesc AS countryname,
+			    t3.cpprovincename AS provincename,
+			    t4.pccityname AS cityname,
+			    t5.areaname AS pincodename,
+			    t6.custcif,
+			    t6.custshrtname,
+		    	t1.sezCertificateNo ,
+				t1.sezValueDate
+			   FROM fintaxdetail_temp t1
+			     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+			     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+			     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+			     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+			     JOIN customers t6 ON t1.taxcustid = t6.custid;
+		</createView>
+	</changeSet>
+	<changeSet id="21" author="saikiran.v">
+		<createView viewName="fintaxdetail_view" replaceIfExists="true">
+							SELECT t1.finreference,
+				    t1.applicablefor,
+				    t1.taxcustid,
+				    t1.taxexempted,
+				    t1.taxnumber,
+				    t1.addrline1,
+				    t1.addrline2,
+				    t1.addrline3,
+				    t1.addrline4,
+				    t1.country,
+				    t1.province,
+				    t1.city,
+				    t1.pincode,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.countrydesc AS countryname,
+				    t3.cpprovincename AS provincename,
+				    t4.pccityname AS cityname,
+				    t5.areaname AS pincodename,
+				    t6.custcif,
+				    t6.custshrtname,
+				    t1.sezCertificateNo ,
+			     	t1.sezValueDate
+				   FROM fintaxdetail_temp t1
+				     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+				     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+				     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+				     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+				     JOIN customers t6 ON t1.taxcustid = t6.custid::numeric
+				UNION ALL
+				 SELECT t1.finreference,
+				    t1.applicablefor,
+				    t1.taxcustid,
+				    t1.taxexempted,
+				    t1.taxnumber,
+				    t1.addrline1,
+				    t1.addrline2,
+				    t1.addrline3,
+				    t1.addrline4,
+				    t1.country,
+				    t1.province,
+				    t1.city,
+				    t1.pincode,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.countrydesc AS countryname,
+				    t3.cpprovincename AS provincename,
+				    t4.pccityname AS cityname,
+				    t5.areaname AS pincodename,
+				    t6.custcif,
+				    t6.custshrtname,
+				    t1.sezCertificateNo ,
+			     	t1.sezValueDate
+				   FROM fintaxdetail t1
+				     LEFT JOIN bmtcountries t2 ON t1.country = t2.countrycode
+				     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
+				     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
+				     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
+				     JOIN customers t6 ON t1.taxcustid = t6.custid::numeric
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM fintaxdetail_temp
+				          WHERE fintaxdetail_temp.finreference = t1.finreference));
+		</createView>
+	</changeSet>
+	<changeSet id="22" author="saikiran.v">
+		<sql>
+			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups), 'FinanceTaxDetailDialog', 'Finance Tax Detail Dialog', 0,1000,'2017-01-03 12:41:37','Approved',NULL,NULL,NULL,NULL,NULL,0 FROM SeqSecGroups WHERE 0=0;
+						
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'FinanceTaxDetailDialog_SEZCertificateNumber','FinanceTaxDetailDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+			INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'FinanceTaxDetailDialog_SEZValueDatee','FinanceTaxDetailDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+			
+			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FinanceTaxDetailDialog'), (Select RightID from SecRights where RightName = 'FinanceTaxDetailDialog_SEZCertificateNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FinanceTaxDetailDialog'), (Select RightID from SecRights where RightName = 'FinanceTaxDetailDialog_SEZValueDatee'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
 
 	<changeSet id="18" author="shinde.b">
 		<sql>

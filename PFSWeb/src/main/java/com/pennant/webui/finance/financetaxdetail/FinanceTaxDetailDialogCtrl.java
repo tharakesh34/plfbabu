@@ -44,6 +44,7 @@ package com.pennant.webui.finance.financetaxdetail;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
@@ -88,12 +90,14 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -120,6 +124,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	protected Textbox addrLine2;
 	protected Textbox addrLine3;
 	protected Textbox addrLine4;
+	protected Textbox sezCertificateNo;
+	protected Datebox sezValueDate;
+	protected Space space_SEZValueDate;
 
 	protected North north_FinTaxDetail;
 	Tab parenttab = null;
@@ -363,6 +370,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.pinCode.setMandatoryStyle(true);
 		this.pinCode.setTextBoxWidth(143);
 
+		this.sezCertificateNo.setMaxlength(100);
+		this.sezValueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		
 		if (isTaxMand) {
 			this.space_taxNumber.setSclass(PennantConstants.mandateSclass);
 		}
@@ -674,6 +684,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_Province"), this.province);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_City"), this.city);
 		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_PinCode"), this.pinCode);
+		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_SEZCertificateNumber"), this.sezCertificateNo);
+		readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_SEZValueDatee"), this.sezValueDate);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -708,6 +720,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		readOnlyComponent(true, this.province);
 		readOnlyComponent(true, this.city);
 		readOnlyComponent(true, this.pinCode);
+		readOnlyComponent(true, this.sezCertificateNo);
+		readOnlyComponent(true, this.sezValueDate);
 	}
 
 	public void onFulfill$country(Event event) {
@@ -964,6 +978,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.addrLine2.setValue(aFinanceTaxDetail.getAddrLine2());
 		this.addrLine3.setValue(aFinanceTaxDetail.getAddrLine3());
 		this.addrLine4.setValue(aFinanceTaxDetail.getAddrLine4());
+		this.sezCertificateNo.setValue(aFinanceTaxDetail.getSezCertificateNo());
+		this.sezValueDate.setValue(aFinanceTaxDetail.getSezValueDate());
 
 		if (!enquirymode) {
 			setCustCIFFilter();
@@ -1089,6 +1105,18 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		// Pin Code
 		try {
 			aFinanceTaxDetail.setPinCode(this.pinCode.getValidatedValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//SEZ Certificate No
+		try {
+			aFinanceTaxDetail.setSezCertificateNo(this.sezCertificateNo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// SEZ Value Date
+		try {
+			aFinanceTaxDetail.setSezValueDate(this.sezValueDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1261,6 +1289,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.province.setConstraint("");
 		this.city.setConstraint("");
 		this.pinCode.setConstraint("");
+		this.sezCertificateNo.setConstraint("");
+		this.sezValueDate.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1302,6 +1332,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.province.setErrorMessage("");
 		this.city.setErrorMessage("");
 		this.pinCode.setErrorMessage("");
+		this.sezValueDate.setErrorMessage("");
+		this.sezCertificateNo.setErrorMessage("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1491,6 +1523,21 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		logger.debug("Leaving");
 	}
 
+	public void onChange$sezCertificateNo(Event event) throws ParseException {
+
+		String value = this.sezCertificateNo.getValue();
+		if (StringUtils.isNotEmpty(value)) {
+			this.sezValueDate.setSclass(PennantConstants.mandateSclass);
+			if (this.sezValueDate.isVisible() && !this.sezValueDate.isReadonly()) {
+				this.sezValueDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_FinanceTaxDetailDialog_SEZCertificateNumber.value"), true));
+			}
+		} else {
+			this.sezValueDate.setSclass("");
+			this.sezValueDate.clearErrorMessage();
+			this.sezValueDate.setConstraint("");
+		}
+	}
 	/**
 	 * used only for Loan Origination
 	 * 

@@ -43,6 +43,7 @@
 package com.pennant.backend.model.finance.financetaxdetail;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -111,6 +112,10 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
+	
+	private String sezCertificateNo;
+	private Date sezValueDate;
+	
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -348,6 +353,22 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getSezCertificateNo() {
+		return sezCertificateNo;
+	}
+
+	public void setSezCertificateNo(String sezCertificateNo) {
+		this.sezCertificateNo = sezCertificateNo;
+	}
+
+	public Date getSezValueDate() {
+		return sezValueDate;
+	}
+
+	public void setSezValueDate(Date sezValueDate) {
+		this.sezValueDate = sezValueDate;
 	}
 
 }

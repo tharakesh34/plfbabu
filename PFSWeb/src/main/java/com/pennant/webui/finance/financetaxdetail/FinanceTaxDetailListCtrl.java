@@ -69,6 +69,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.tax/FinanceTaxDetail/FinanceTaxDetailList.zul file.
@@ -225,6 +226,17 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
+
+		// ### 17-07-2018 - Start - Ticket ID : 127950
+		//check whether record present in loan queue
+		boolean isFinReferenceExitsinLQ = financeTaxDetailService.isFinReferenceExitsinLQ(finReference,
+				TableType.TEMP_TAB, false);
+
+		if (isFinReferenceExitsinLQ) {
+			MessageUtil.showError(Labels.getLabel("info.not_authorized"));
+			return;
+		}
+		// ### 17-07-2018 - End - Ticket ID : 127950
 
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  FinReference = '");
