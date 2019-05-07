@@ -23,6 +23,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.InterfaceConstants;
@@ -37,8 +38,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private long processedCount;
 
 	@Override
-	public void sendReqest(List<Long> idList,List<Long> idExcludeEmiList ,long headerId, boolean isError, boolean isPDC) throws Exception {
-
+	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList ,long headerId, boolean isError, boolean isPDC) {
 		logger.debug(Literal.ENTERING);
 
 		this.presentmentId = headerId;
@@ -113,9 +113,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private void updatePresentmentExcludeDetails(List<Long> idList, String status) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = null;
-
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
 		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where ID in (:IDList) ");
 
@@ -130,7 +128,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		try {
 			this.namedJdbcTemplate.update(sql.toString(), source);
 		} catch (Exception e) {
-			logger.error("Exception :", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 		logger.debug(Literal.LEAVING);
@@ -143,7 +141,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile(List<Long> idList, long presentmentId) throws Exception {
+	public void prepareRequestFile(List<Long> idList, long presentmentId) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -165,14 +163,13 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			throw e;
+			throw new AppException(e.getMessage());
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql = new StringBuilder();
 		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T3.ACCTYPE, T1.SCHDATE, ");
 		sql.append(" T3.ACCNUMBER, T5.CUSTSHRTNAME,T5.CUSTCOREBANK,T3.ACCHOLDERNAME, T6.BANKCODE, ");
 		sql.append(" T6.BANKNAME, T1.PRESENTMENTID, T1.PRESENTMENTAMT,");
@@ -199,7 +196,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 	private StringBuilder getPDCSqlQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql = new StringBuilder();
 		sql.append(" SELECT  T2.FINBRANCH, T1.FINREFERENCE, T4.MICR, T1.SCHDATE, ");
 		sql.append(" T3.ACCOUNTTYPE ACCTYPE, T3.ACCOUNTNO ACCNUMBER, T3.ACCHOLDERNAME, T3.CHEQUESERIALNO MANDATEREF,");
 		sql.append(" 'PDC' MANDATETYPE, T5.CUSTSHRTNAME,T5.CUSTCOREBANK, T6.BANKCODE, ");
@@ -305,14 +301,12 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	}
 
 	private void save(Presentment presentment, String tableName) {
-
 		StringBuilder sql = new StringBuilder("insert into ");
 		sql.append(tableName);
 		sql.append(" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
 		sql.append(" CustomerId, AGREEMENTNO, CHEQUEAMOUNT, EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE,");
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
-		sql.append(
-				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
+		sql.append(" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
 		sql.append(" ChequeSerialNo, ChequeDate) ");
 		sql.append(" values( :TxnReference,");
 
@@ -388,7 +382,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	}
 
 	private void saveHeader() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource parmMap;
@@ -406,22 +400,21 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				logger.debug("Entering");
 				while (rs.next()) {
 					try {
-						Presentment response = new Presentment();
-						response = mapControlTableDate(rs);
+						Presentment response = mapControlTableDate(rs);
 						saveToControlTable(response, "PRESENTMENT_REQ_HEADER");
 					} catch (Exception e) {
-						logger.error("Exception :", e);
+						logger.error(Literal.EXCEPTION, e);
 						throw e;
 					}
 				}
 				return presentmentId;
 			}
 		});
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void saveToControlTable(Presentment presentmentResponse, String tableName) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("INSERT INTO ");
 		sql.append(tableName);
@@ -443,7 +436,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	}
 
 	private Presentment mapControlTableDate(ResultSet rs) throws SQLException {
-
 		Presentment response = new Presentment();
 
 		String mnadteType = rs.getString("MANDATETYPE");
@@ -518,7 +510,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	}
 
 	private String getPaymenyMode(long presentmentId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource parmMap;
@@ -536,7 +528,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
