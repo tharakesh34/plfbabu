@@ -527,7 +527,8 @@
 		<comment>New column added for Account Types</comment>
 		<sql>
 			INSERT INTO SecRights Values ((select max(RightId)+1 from
-			SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ',' ',0);
+			SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ','
+			',0);
 		</sql>
 	</changeSet>
 
@@ -890,12 +891,34 @@ UNION ALL
 					LEFT JOIN ENTITY T8 ON T3.ENTITYCODE = T8.ENTITYCODE
  	 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="17" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				Update DATA_ENGINE_CONFIG set SKIPHEADERROW = 1 where NAME = 'COLLETARAL_VALUE_UPDATE';
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18" author="shinde.b">
+		<sql>
+			<![CDATA[
+                 Insert into REPORTCONFIGURATION values ((Select MAX(reportid)+1 from reportconfiguration),'Excel:LTV Breach Report','LTV Breach Report',1,'LTVBreachReport','pfsDatasource',1,'menu_Item_LTVBreachReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+                 Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode ='menu_Item_LTVBreachReport'),1,'FinType','LOVSEARCH','Loan Type','fm.FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+                 Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode ='menu_Item_LTVBreachReport'),2,'CustCIF','LOVSEARCH','Customer Number','cus.CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="19" author="shinde.b">
+		<sql>
+			<![CDATA[
+	            SELECT col.FinReference, fm.FinType, cus.CustCIF,cus.CustShrtName, fm.FinAmount,col.Pos, col.ValueDate, col.CollateralValue,
+				col.CurrentCollateralValue,col.BankLTV, col.CurrentBankLTV,col.ThresholdLTV
+				FROM COLLATERAL_LTV_BREACHES col
+				JOIN FinanceMain fm ON col.FinReference = fm.FinReference
+				JOIN Customers cus ON cus.CustID= fm.CustID
+           	]]>
 		</sql>
 	</changeSet>
 
