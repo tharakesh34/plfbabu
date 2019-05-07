@@ -1710,41 +1710,42 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								|| CalculationConstants.REMFEE_PART_OF_SALE_PRICE
 										.equals(finFeeDetail.getFeeScheduleMethod())) {
 
-							if (finFeeDetail.isOriginationFee()) {
+							// if (finFeeDetail.isOriginationFee()) {} Removed this as part of Advance Interest/Advance EMI Changes.
 
-								if (finFeeDetail.getRemainingFee() != null) {
-									debitAmount = finFeeDetail.getRemainingFee();
-								}
 
-								if (paidAmount != null) {
-									debitAmount = debitAmount.add(paidAmount);
-								}
-
-								if (debitAmount.compareTo(BigDecimal.ZERO) > 0) {
-
-									soaTranReport = new SOATransactionReport();
-									if (StringUtils.isNotBlank(feeTypeDesc)) {
-
-										finFeeDetailOrgination = feeTypeDesc + " Amount";
-										String taxComponent = finFeeDetail.getTaxComponent();
-										if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-											finFeeDetailOrgination = finFeeDetailOrgination + inclusive;
-										} else if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-											finFeeDetailOrgination = finFeeDetailOrgination + exclusive;
-										}
-									} else {
-										finFeeDetailOrgination = vasProduct + " Amount";
-									}
-									soaTranReport.setEvent(finFeeDetailOrgination + finRef);
-									soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
-									soaTranReport.setValueDate(finMain.getFinStartDate());
-									soaTranReport.setCreditAmount(BigDecimal.ZERO);
-									soaTranReport.setDebitAmount(debitAmount);
-									soaTranReport.setPriority(16);
-
-									soaTransactionReports.add(soaTranReport);
-								}
+							if (finFeeDetail.getRemainingFee() != null) {
+								debitAmount = finFeeDetail.getRemainingFee();
 							}
+
+							if (paidAmount != null) {
+								debitAmount = debitAmount.add(paidAmount);
+							}
+
+							if (debitAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+								soaTranReport = new SOATransactionReport();
+								if (StringUtils.isNotBlank(feeTypeDesc)) {
+
+									finFeeDetailOrgination = feeTypeDesc + " Amount";
+									String taxComponent = finFeeDetail.getTaxComponent();
+									if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+										finFeeDetailOrgination = finFeeDetailOrgination + inclusive;
+									} else if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+										finFeeDetailOrgination = finFeeDetailOrgination + exclusive;
+									}
+								} else {
+									finFeeDetailOrgination = vasProduct + " Amount";
+								}
+								soaTranReport.setEvent(finFeeDetailOrgination + finRef);
+								soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
+								soaTranReport.setValueDate(finMain.getFinStartDate());
+								soaTranReport.setCreditAmount(BigDecimal.ZERO);
+								soaTranReport.setDebitAmount(debitAmount);
+								soaTranReport.setPriority(16);
+
+								soaTransactionReports.add(soaTranReport);
+							}
+						
 						} else {
 							if (paidAmount != null && paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 								soaTranReport = new SOATransactionReport();
