@@ -389,7 +389,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private NotificationService notificationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private SubventionDetailDAO subventionDetailDAO;
-	private AdvancePaymentService advancePaymentService;
 
 	private long tempWorkflowId;
 
@@ -3829,8 +3828,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			tranType = PennantConstants.TRAN_DEL;
 			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
 			listDeletion(finScheduleData, moduleDefiner, "", isWIF);
-			getFinServiceInstructionDAO().deleteList(finScheduleData.getFinReference(),
-					moduleDefiner, "");
+			getFinServiceInstructionDAO().deleteList(finScheduleData.getFinReference(), moduleDefiner, "");
 
 			// Delete Finance Premium Details
 			if (StringUtils.equals(FinanceConstants.PRODUCT_SUKUK, productCode)) {
@@ -4097,8 +4095,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// Built,and limit change is calculated by
 					// sub old fin asset and current Fin asset
 					// =======================================
-					if (StringUtils.equals(moduleDefiner,
-							FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)
+					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_OVERDRAFTSCHD)
 							&& finScheduleData.getFinanceMain().isScheduleRegenerated()) {
 
 						BigDecimal limitChange = financeMain.getFinAssetValue()
@@ -4157,8 +4154,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// ScheduleDetails delete and save
 				// =======================================
 				listDeletion(finScheduleData, moduleDefiner, "", isWIF);
-				getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(),
-						moduleDefiner, "_Temp");
+				getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
 				listSave(finScheduleData, "", isWIF, 0, serviceUID);
 
 				// Fee Charge Details
@@ -4208,8 +4204,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<DocumentDetails> documents = financeDetail.getDocumentDetailsList();
 				if (CollectionUtils.isNotEmpty(documents)) {
 					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-					details = processingDocumentDetailsList(details, "", financeMain, moduleDefiner,
-							serviceUID);
+					details = processingDocumentDetailsList(details, "", financeMain, moduleDefiner, serviceUID);
 					auditDetails.addAll(details);
 				}
 
@@ -4488,8 +4483,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			saveFinSalPayment(finScheduleData, orgNextSchd, false);
 		}
 		if (!isWIF) {
-			getFinStageAccountingLogDAO().update(financeMain.getFinReference(), moduleDefiner,
-					false);
+			getFinStageAccountingLogDAO().update(financeMain.getFinReference(), moduleDefiner, false);
 		}
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
@@ -4660,8 +4654,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Fin Fee Details Deletion
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-					auditDetailList.addAll(
-							getFinFeeDetailService().delete(finFeeDetails, "_Temp", auditTranType, isWIF));
+					auditDetailList
+							.addAll(getFinFeeDetailService().delete(finFeeDetails, "_Temp", auditTranType, isWIF));
 				}
 
 				// Fin Fee Receipt Details Deletion
@@ -4707,7 +4701,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// tasks # >>Start Advance EMI and DSF
 			String grcAdvType = financeMain.getGrcAdvType();
 			String repayAdvType = financeMain.getAdvType();
-			
+
 			if (grcAdvType != null || repayAdvType != null) {
 				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
@@ -4722,7 +4716,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner) 
+						|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
 					processAdvancePayment(finScheduleData);
 				}
@@ -4736,8 +4730,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
 			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
 			notification.setModule("LOAN_ORG");
-			String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG
-					: moduleDefiner;
+			String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner;
 			notification.setSubModule(finEvent);
 			notification.setKeyReference(financeMain.getFinReference());
 			notification.setStage(PennantConstants.REC_ON_APPR);
@@ -4825,7 +4818,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 	}
-	
+
 	private void processAdvancePayment(FinScheduleData finScheduleData) {
 		advancePaymentService.excessAmountMovement(finScheduleData);
 	}

@@ -580,9 +580,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			getPaymentDetailDAO().deleteList(paymentDetail, tableType);
 
-			/*for (PaymentDetail detail : paymentDetailList) {
+			for (PaymentDetail detail : paymentDetailList) {
 				doReject(detail);
-			}*/
+			}
 		}
 		return auditDetails;
 	}

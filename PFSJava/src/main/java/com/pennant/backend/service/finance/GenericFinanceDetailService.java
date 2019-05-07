@@ -291,7 +291,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinAssetTypeDAO finAssetTypeDAO;
 	private DisbursementPostings disbursementPostings;
 	private InstallmentDueService installmentDueService;
-	private AdvancePaymentService advancePaymentService;
+	protected AdvancePaymentService advancePaymentService;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
 	private VehicleDealerService vehicleDealerService;
 

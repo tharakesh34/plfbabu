@@ -154,6 +154,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		finEODEvent.setFinanceMain(fm);
 		finEODEvent.setFinExcessAmounts(new ArrayList<>());
 		finEODEvent.setFinProfitDetail(profiDetails);
+		finEODEvent.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
 
 		long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_REPAY);
 
