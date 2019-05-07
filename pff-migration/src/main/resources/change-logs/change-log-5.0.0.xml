@@ -1088,7 +1088,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="17.1" author="shinde.b">
 		<sql>
 			<![CDATA[
@@ -1118,6 +1118,14 @@ UNION ALL
                  Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode ='menu_Item_LTVBreachReport'),2,'CustCIF','LOVSEARCH','Customer Number','cus.CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="24.1" author="shinde.b">
+	  <sql>
+		<![CDATA[
+		    UPDATE REPORTCONFIGURATION SET DATASOURCENAME='dataSource' WHERE REPORTID=(select reportid from reportconfiguration where menuitemcode ='menu_Item_LTVBreachReport');
+	     ]]>
+	  </sql>
 	</changeSet>
 
 </databaseChangeLog>
