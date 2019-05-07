@@ -147,10 +147,10 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update PaymentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("  set paymentId = :paymentId, amount = :amount, referenceId = :referenceId, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" set paymentId = :paymentId, amount = :amount, referenceId = :referenceId");
+		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where paymentDetailId = :paymentDetailId ");
 
 		// Execute the SQL, binding the arguments.

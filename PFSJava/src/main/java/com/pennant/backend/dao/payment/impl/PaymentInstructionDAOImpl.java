@@ -173,7 +173,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				" :paymentInstructionId, :paymentId, :paymentType, :paymentAmount, :remarks, :partnerBankId, :issuingBank,");
 		sql.append(" :favourName, :favourNumber, :payableLoc, :printingLoc, :valueDate, :postDate, ");
 		sql.append(
-				" :bankBranchId, :acctHolderName, :accountNo, :phoneCountryCode, :phoneNumber, :clearingdate, :status,");
+				" :bankBranchId, :acctHolderName, :accountNo, :phoneCountryCode, :phoneNumber, :clearingDate, :status,");
 		sql.append(" :active, :paymentCCy, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -203,17 +203,17 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update PaymentInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"  set paymentId = :paymentId, paymentType = :paymentType, paymentAmount = :paymentAmount, issuingBank = :issuingBank,");
-		sql.append(" remarks = :remarks, partnerBankId = :partnerBankId, favourName = :favourName, ");
-		sql.append(" favourNumber = :favourNumber, payableLoc = :payableLoc, printingLoc = :printingLoc, ");
-		sql.append(" valueDate = :valueDate, postDate = :postDate, bankBranchId = :bankBranchId, ");
-		sql.append(" acctHolderName = :acctHolderName, accountNo = :accountNo, phoneCountryCode = :phoneCountryCode, ");
-		sql.append(" phoneNumber = :phoneNumber, clearingdate = :clearingdate, active = :active, ");
-		sql.append(" paymentCCy = :paymentCCy, status = :status,");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" set paymentId = :paymentId, paymentType = :paymentType, paymentAmount = :paymentAmount");
+		sql.append(", issuingBank = :issuingBank, remarks = :remarks, partnerBankId = :partnerBankId");
+		sql.append(", favourName = :favourName, favourNumber = :favourNumber");
+		sql.append(", payableLoc = :payableLoc, printingLoc = :printingLoc");
+		sql.append(", valueDate = :valueDate, postDate = :postDate, bankBranchId = :bankBranchId");
+		sql.append(", AcctHolderName = :acctHolderName, accountNo = :accountNo");
+		sql.append(", phoneCountryCode = :phoneCountryCode, phoneNumber = :phoneNumber, clearingdate = :clearingDate");
+		sql.append(", active = :active, paymentCCy = :paymentCCy, status = :status");
+		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where paymentInstructionId = :paymentInstructionId ");
 
 		// Execute the SQL, binding the arguments.
