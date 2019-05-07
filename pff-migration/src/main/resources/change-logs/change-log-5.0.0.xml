@@ -909,17 +909,5 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="19" author="shinde.b">
-		<sql>
-			<![CDATA[
-	            SELECT col.FinReference, fm.FinType, cus.CustCIF,cus.CustShrtName, fm.FinAmount,col.Pos, col.ValueDate, col.CollateralValue,
-				col.CurrentCollateralValue,col.BankLTV, col.CurrentBankLTV,col.ThresholdLTV
-				FROM COLLATERAL_LTV_BREACHES col
-				JOIN FinanceMain fm ON col.FinReference = fm.FinReference
-				JOIN Customers cus ON cus.CustID= fm.CustID
-           	]]>
-		</sql>
-	</changeSet>
-
+	
 </databaseChangeLog>
