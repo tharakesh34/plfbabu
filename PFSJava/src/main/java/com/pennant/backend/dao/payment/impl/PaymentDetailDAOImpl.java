@@ -214,7 +214,7 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		}
 		// Check for the concurrency failure.
 		if (recordCount == 0) {
-			throw new ConcurrencyException();
+			//throw new ConcurrencyException();
 		}
 
 		logger.debug(Literal.LEAVING);
