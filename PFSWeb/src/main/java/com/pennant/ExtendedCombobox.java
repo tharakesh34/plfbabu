@@ -93,7 +93,7 @@ public class ExtendedCombobox extends Hbox {
 	private int displayStyle = 1;
 	private String valueColumn;
 	private DataType valueType = DataType.STRING;
-	private boolean isdisplayError = true;
+	private boolean isdisplayError = false;
 	private boolean inputAllowed = true;
 	private boolean isWindowOpened = false;
 	private boolean mandatory = false;
@@ -192,7 +192,7 @@ public class ExtendedCombobox extends Hbox {
 		this.label.setTooltiptext("");
 		Clients.clearWrongValue(this.button);
 		selctedValue = "";
-		if (list == null && inputAllowed && !this.textbox.isReadonly()) {
+		if (list == null) {
 			validateValue(false);
 		} else {
 			selectFromDefinedList();
@@ -509,7 +509,10 @@ public class ExtendedCombobox extends Hbox {
 					throw new WrongValueException(this.button, String.format(DATA_NOT_AVAILABLE, value));
 				}
 			} else {
-				Events.postEvent("onClick", this.button, Events.ON_CLICK);
+				if (!StringUtils.isBlank(this.textbox.getValue())) {
+					Events.postEvent("onClick", this.button, Events.ON_CLICK);
+				}
+				
 			}
 
 		} catch (WrongValueException e) {
