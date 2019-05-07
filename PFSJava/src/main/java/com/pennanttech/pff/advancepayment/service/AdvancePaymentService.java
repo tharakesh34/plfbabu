@@ -49,6 +49,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
@@ -110,13 +111,10 @@ public class AdvancePaymentService extends ServiceHelper {
 				if (AdvanceType.getType(fm.getGrcAdvType()) == AdvanceType.AF) {
 					if (finEODEvent.getFinanceScheduleDetails().size() > idx) {
 						nextSchd = finEODEvent.getFinanceScheduleDetails().get(idx + 1);
-						processAdvancePayments(finEODEvent, nextSchd, custEODEvent, accountingID);
 					}
-
-				} else {
-					processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 				}
 
+				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID, true);
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
@@ -130,7 +128,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					}
 				}
 
-				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
+				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID, true);
 			}
 
 		}
@@ -139,7 +137,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public List<ReturnDataSet> processBackDatedAdvansePayments(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, boolean post, String postBranch) throws Exception {
+			FinanceProfitDetail profiDetails, Date appDate, boolean post, String postBranch) {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
@@ -172,14 +170,14 @@ public class AdvancePaymentService extends ServiceHelper {
 			if (curSchd.getDefSchdDate().compareTo(DateUtility.getAppDate()) > 0) {
 				break;
 			}
-			
+
 			index = index + 1;
 			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
 				if (fm.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, fm.getBpiTreatment())) {
 					continue;
 				}
 			}
-			
+
 			FinanceScheduleDetail nextSchd = null;
 
 			if (fm.getGrcAdvType() == null && fm.getAdvType() == null) {
@@ -197,7 +195,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					}
 				}
 
-				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
+				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID, post);
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
@@ -208,11 +206,10 @@ public class AdvancePaymentService extends ServiceHelper {
 				if (AdvanceType.getType(fm.getAdvType()) == AdvanceType.AF) {
 					if (finEODEvent.getFinanceScheduleDetails().size() > index) {
 						nextSchd = finEODEvent.getFinanceScheduleDetails().get(index + 1);
-						processAdvancePayments(finEODEvent, nextSchd, custEODEvent, accountingID);
 					}
-				} else {
-					processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 				}
+
+				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID, post);
 
 			}
 		}
@@ -222,7 +219,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public void processAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd,
-			CustEODEvent custEODEvent, long accountingID) throws Exception {
+			FinanceScheduleDetail nextSchd, CustEODEvent custEODEvent, long accountingID, boolean posting) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
@@ -268,6 +265,12 @@ public class AdvancePaymentService extends ServiceHelper {
 		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
 		amountCodes.setEmiDue(advancePayment.getEmiDue());
 
+		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
+			if (nextSchd != null) {
+				amountCodes.setAdvIntDue(nextSchd.getProfitSchd());
+			}
+		}
+
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		aeEvent.setDataMap(dataMap);
@@ -275,9 +278,17 @@ public class AdvancePaymentService extends ServiceHelper {
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
 		//Postings Process and save all postings related to finance for one time accounts update
 
-		aeEvent = postAccountingEOD(aeEvent);
+		try {
+			aeEvent = postAccountingEOD(aeEvent);
+		} catch (Exception e) {
+			throw new AppException();
+		}
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+
+		if (!posting) {
+			return;
+		}
 
 		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
 			createAdvIntReceipt(advancePayment, curSchd, AccountConstants.TRANTYPE_DEBIT);
@@ -294,7 +305,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	//FIXME Back value
 
 	/**
 	 * <p>

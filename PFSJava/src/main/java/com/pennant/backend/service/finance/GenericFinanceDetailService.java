@@ -57,6 +57,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
@@ -200,6 +201,8 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.advancepayment.model.AdvancePayment;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -288,6 +291,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private FinAssetTypeDAO finAssetTypeDAO;
 	private DisbursementPostings disbursementPostings;
 	private InstallmentDueService installmentDueService;
+	private AdvancePaymentService advancePaymentService;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
 	private VehicleDealerService vehicleDealerService;
 
@@ -309,9 +313,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private RuleDAO ruleDAO;
 
 	protected CovenantsService covenantsService;
-	
+
 	protected FinOptionService finOptionService;
-	
+
 	public GenericFinanceDetailService() {
 		super();
 	}
@@ -876,7 +880,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @return
 	 */
 	public List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, String type,
-			FinanceMain financeMain, String procEdtEvent,long instructionUID) {
+			FinanceMain financeMain, String procEdtEvent, long instructionUID) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -967,11 +971,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));
 					}
-					
+
 					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
-					/*if(!StringUtils.equals(rcdType, PennantConstants.RECORD_TYPE_UPD) && documentDetails.getDocId() > 0){
-						documentDetails.setDocId(0);
-					}*/
+					/*
+					 * if(!StringUtils.equals(rcdType, PennantConstants.RECORD_TYPE_UPD) && documentDetails.getDocId() >
+					 * 0){ documentDetails.setDocId(0); }
+					 */
 					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
 					getDocumentDetailsDAO().save(documentDetails, type);
 				}
@@ -1449,7 +1454,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(recording.getProductCode());
 				aeEvent.getDataMap().put("ae_productCode", vehicleDealer.getProductShortCode());
 				aeEvent.getDataMap().put("ae_dealerCode", vehicleDealer.getDealerShortCode());
-				
+
 				aeEvent.setLinkedTranId(0);
 				if (doPostings) {
 					aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -1769,7 +1774,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		//GST Invoice Preparation
-		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0 && CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+		if (gstInvoiceTxnService != null && aeEvent.getLinkedTranId() > 0
+				&& CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
 			boolean orgination = false;
 			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				orgination = true;
@@ -1809,8 +1815,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
 				processVasAccounting(aeEvent, financeDetail.getFinScheduleData().getVasRecordingList(), true);
 			}
-			getInstallmentDueService().processbackDateInstallmentDues(financeDetail, pftDetail,
-					DateUtility.getAppDate(), true, auditHeader.getAuditBranchCode());
+			installmentDueService.processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),
+					true, auditHeader.getAuditBranchCode());
+			advancePaymentService.processBackDatedAdvansePayments(financeDetail, pftDetail, DateUtility.getAppDate(),
+					true, auditHeader.getAuditBranchCode());
 		}
 
 		doSave_PftDetails(pftDetail, isNew);
@@ -2790,9 +2798,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finMain.getFinReference(), ""));
 		}
 
-		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
-				finMain.getFinBranch(), custDftBranch, highPriorityState, highPriorityCountry,
-				financeDetail.getFinanceTaxDetail(), finMain.getFinBranch());
+		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(finMain.getFinBranch(),
+				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(),
+				finMain.getFinBranch());
 
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
@@ -3405,12 +3413,13 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
-	public InstallmentDueService getInstallmentDueService() {
-		return installmentDueService;
-	}
-
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
+	}
+
+	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
 	}
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
@@ -3485,7 +3494,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
-
 	public VehicleDealerService getVehicleDealerService() {
 		return vehicleDealerService;
 	}
@@ -3493,7 +3501,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}
-	
+
 	public void setCovenantsService(CovenantsService covenantsService) {
 		this.covenantsService = covenantsService;
 	}
@@ -3505,5 +3513,5 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setFinOptionService(FinOptionService finOptionService) {
 		this.finOptionService = finOptionService;
 	}
-		
+
 }

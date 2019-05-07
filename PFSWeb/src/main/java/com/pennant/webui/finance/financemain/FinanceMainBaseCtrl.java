@@ -339,6 +339,7 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.webui.sampling.FinSamplingDialogCtrl;
@@ -894,6 +895,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DedupValidation dedupValidation;
 	private DisbursementPostings disbursementPostings;
 	private InstallmentDueService installmentDueService;
+	private AdvancePaymentService advancePaymentService;
 	private MailTemplateService mailTemplateService;
 	private LegalDetailService legalDetailService;
 	private BaseRateService baseRateService;
@@ -13121,7 +13123,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accountingSetEntries.addAll(getFinanceDetailService().prepareVasAccounting(aeEvent,
 						finVasRecordingDialogCtrl.getVasRecordings()));
 			}
-			accountingSetEntries.addAll(getInstallmentDueService().processbackDateInstallmentDues(getFinanceDetail(),
+			accountingSetEntries.addAll(installmentDueService.processbackDateInstallmentDues(getFinanceDetail(),
+					profitDetail, appDate, false, ""));
+			accountingSetEntries.addAll(advancePaymentService.processBackDatedAdvansePayments(getFinanceDetail(),
 					profitDetail, appDate, false, ""));
 		}
 
@@ -18830,12 +18834,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.financeTaxDetailDialogCtrl = financeTaxDetailDialogCtrl;
 	}
 
-	public InstallmentDueService getInstallmentDueService() {
-		return installmentDueService;
-	}
-
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
+	}
+	
+	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
 	}
 
 	public MailTemplateService getMailTemplateService() {
