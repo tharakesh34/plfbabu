@@ -7,6 +7,12 @@
 	<property name="call.concatenate" value="||" dbms="oracle" />
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
+	
+	<changeSet id="pre_run_for_pgp" author="ADARSH" runAlways="true" dbms="postgresql">
+	<sql>
+		Set search_path = plfaudit,public,pg_catalog;
+	</sql>
+   </changeSet>
 
 	<changeSet id="1" author="Vidhya">
 		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="Remarks" newDataType="varchar2(500)" />
@@ -124,7 +130,14 @@
 		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="COLLECTIONAGENTID" columnDataType="bigint" />
 	</changeSet>
 	
-	<changeSet id=6_pre" author="satyanarayana.g">
+	<changeSet id="6" author="satyanarayana.g">
+	 <comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="ACTFINRECEIPT" type="NUMBER(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="6.0" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 1;
@@ -136,7 +149,7 @@
 		<sql>
 			<![CDATA[
 				ALTER TABLE ADTFINRECEIPTHEADER ADD CONSTRAINT DF_ADTFINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
-				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 0;
+				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 1;
 			]]>
 		</sql>
 	</changeSet>

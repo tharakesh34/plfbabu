@@ -4561,9 +4561,9 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet author="satyanarayana.g" id="63">
+	<changeSet id="63"  author="satyanarayana.g" >
 	  <comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
-		<addColumn tableName=FINRECEIPTHEADER>
+		<addColumn tableName="FINRECEIPTHEADER">
 			<column name="ActFinReceipt" type="NUMBER(1)"/>
 		</addColumn>
 		
@@ -4572,12 +4572,21 @@
 		</addColumn>
 	</changeSet>
 	
-	<changeSet author="satyanarayana.g" id="63.1">
+	<changeSet id="63.1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE FINRECEIPTHEADER set ACTFINRECEIPT = 1 where ACTFINRECEIPT is null;
+				UPDATE FINRECEIPTHEADER_TEMP set ACTFINRECEIPT = 1 where ACTFINRECEIPT is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="63.2" author="satyanarayana.g">
 		<addNotNullConstraint tableName="FINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
 		<addNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
 	</changeSet>
 	
-	<changeSet id="1.1" author="satyanarayana.g" dbms="mssql">
+	<changeSet id="63.3" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FINRECEIPTHEADER ADD CONSTRAINT DF_FINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
@@ -4586,18 +4595,9 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1.1" author="satyanarayana.g" dbms="postgresql, oracle">
+	<changeSet id="63.4" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ACTFINRECEIPT" tableName="FINRECEIPTHEADER" defaultValue="1" />
 		<addDefaultValue columnName="ACTFINRECEIPT" tableName="FINRECEIPTHEADER_TEMP" defaultValue="1" />
-	</changeSet>
-
-	<changeSet id="1.2" author="satyanarayana.g">
-		<sql>
-			<![CDATA[
-				UPDATE FINRECEIPTHEADER set ACTFINRECEIPT = 1 where ACTFINRECEIPT is null;
-				UPDATE FINRECEIPTHEADER_TEMP set ACTFINRECEIPT = 1 where ACTFINRECEIPT is null;
-			]]>
-		</sql>
 	</changeSet>
 	
 	<changeSet id="64" author="satyanarayana.g">
@@ -5185,7 +5185,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="29" author="satyanarayana.g">
+	<changeSet id="70" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="FINRECEIPTHEADER_AVIEW" replaceIfExists="true">
       		SELECT T1.RECEIPTID,
