@@ -34,6 +34,9 @@ public class GSTCalculator {
 	private static RuleExecutionUtil ruleExecutionUtil;
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 
+	private static String TAX_ROUNDING_MODE;
+	private static int TAX_ROUNDING_TARGET;
+
 	public GSTCalculator(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
 			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil) {
 		GSTCalculator.ruleDAO = ruleDAO;
@@ -172,7 +175,7 @@ public class GSTCalculator {
 		return result;
 	}
 
-	private static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
+	public static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
 		taxSplit.setcGST(getExclusiveTax(taxableAmount, gstPercentages.get(RuleConstants.CODE_CGST)));
 		taxSplit.setsGST(getExclusiveTax(taxableAmount, gstPercentages.get(RuleConstants.CODE_SGST)));
@@ -183,10 +186,11 @@ public class GSTCalculator {
 		return taxSplit;
 	}
 
-	private static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
+	public static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
 
 		BigDecimal netAmount = getInclusiveAmount(taxableAmount, gstPercentages.get(RuleConstants.CODE_TOTAL_GST));
+		taxSplit.setNetAmount(netAmount);
 		taxSplit.setcGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_CGST)));
 		taxSplit.setsGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_SGST)));
 		taxSplit.setuGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_UGST)));
@@ -196,27 +200,37 @@ public class GSTCalculator {
 	}
 
 	private static BigDecimal getExclusiveTax(BigDecimal amount, BigDecimal taxPerc) {
-		String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
-		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-
 		BigDecimal taxAmount = BigDecimal.ZERO;
 
 		if (taxPerc.compareTo(BigDecimal.ZERO) != 0) {
 			taxAmount = (amount.multiply(taxPerc)).divide(BigDecimal.valueOf(100), 9, RoundingMode.HALF_DOWN);
-			taxAmount = CalculationUtil.roundAmount(taxAmount, taxRoundMode, taxRoundingTarget);
+			taxAmount = CalculationUtil.roundAmount(taxAmount, getTaxRoundingMode(), getTaxRoundingTarget());
 		}
 
 		return taxAmount;
 	}
 
 	private static BigDecimal getInclusiveAmount(BigDecimal amount, BigDecimal taxPerc) {
-		String taxRoundMode = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
-		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-
 		BigDecimal percentage = (taxPerc.add(HUNDRED)).divide(HUNDRED, 9, RoundingMode.HALF_DOWN);
 		BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
-		actualAmt = CalculationUtil.roundAmount(actualAmt, taxRoundMode, taxRoundingTarget);
+		actualAmt = CalculationUtil.roundAmount(actualAmt, getTaxRoundingMode(), getTaxRoundingTarget());
 		return actualAmt;
+	}
+
+	private static String getTaxRoundingMode() {
+		if (TAX_ROUNDING_MODE == null) {
+			TAX_ROUNDING_MODE = SysParamUtil.getValueAsString(CalculationConstants.TAX_ROUNDINGMODE);
+		}
+
+		return TAX_ROUNDING_MODE;
+	}
+
+	private static int getTaxRoundingTarget() {
+		if (TAX_ROUNDING_TARGET == 0) {
+			TAX_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+		}
+
+		return TAX_ROUNDING_TARGET;
 	}
 
 }
