@@ -1086,11 +1086,32 @@ UNION ALL
 			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'FinanceTaxDetailDialog'), (Select RightID from SecRights where RightName = 'FinanceTaxDetailDialog_SEZValueDatee'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 		</sql>
 	</changeSet>
-
-	<changeSet id="18" author="shinde.b">
+	
+	<changeSet id="17.1" author="shinde.b">
 		<sql>
 			<![CDATA[
-                 Insert into REPORTCONFIGURATION values ((Select MAX(reportid)+1 from reportconfiguration),'Excel:LTV Breach Report','LTV Breach Report',1,'LTVBreachReport','pfsDatasource',1,'menu_Item_LTVBreachReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				
+				INSERT INTO SecGroups Values ((Select max(GrpID)+1 From SecGroups), 'LTV_BREACHES_REPORTS', 'Group for LTV Reports', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_LTVBreachReport', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'LTV_BREACHES_REPORTS'), (Select RightID from SecRights where RightName = 'menu_Item_LTVBreachReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="24" author="shinde.b">
+		<sql>
+			<![CDATA[
+			     delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_LTVBreachReport');
+	             delete from REPORTCONFIGURATION where menuitemcode='menu_Item_LTVBreachReport';
+	
+                 Insert into REPORTCONFIGURATION values ((Select MAX(reportid)+1 from reportconfiguration),'Excel:LTV Breach Report','LTV Breach Report',1,'LTVBreachReport','Datasource',1,'menu_Item_LTVBreachReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
                  Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode ='menu_Item_LTVBreachReport'),1,'FinType','LOVSEARCH','Loan Type','fm.FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
                  Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode ='menu_Item_LTVBreachReport'),2,'CustCIF','LOVSEARCH','Customer Number','cus.CustCIF',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 			]]>
