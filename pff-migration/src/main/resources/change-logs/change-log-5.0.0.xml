@@ -1127,5 +1127,14 @@ UNION ALL
 	     ]]>
 	  </sql>
 	</changeSet>
+	
+	<changeSet id="25" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			   DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ADD_DISB_DUES_WARNG' AND SYSPARMVALUE='N';
+			   INSERT INTO SMTPARAMETERS VALUES ('ADD_DISB_DUES_WARNG', 'Add Disbursement Dues Warning', 'String', 1, 'N', 1, 0, NULL, NULL,'Add Disbursement Dues Warning', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+    </changeSet>
 
 </databaseChangeLog>
