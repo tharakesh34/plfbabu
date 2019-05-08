@@ -7,10 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class AdvancePayment implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String finReference;
 	private String finBranch;
 	private String advancePaymentType;
@@ -31,10 +32,9 @@ public class AdvancePayment implements Serializable {
 	private BigDecimal emiDue = BigDecimal.ZERO;
 	private BigDecimal availableAmt = BigDecimal.ZERO;
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
-
 	private FinExcessAmount finExcessAmount;
-
 	private BigDecimal requestedAmt = BigDecimal.ZERO;
+	private FinanceScheduleDetail curSchd;
 
 	public AdvancePayment() {
 		super();
@@ -46,8 +46,7 @@ public class AdvancePayment implements Serializable {
 		this.advType = advType;
 		this.grcPeriodEndDate = grcPeriodEndDate;
 	}
-	
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -151,7 +150,7 @@ public class AdvancePayment implements Serializable {
 	public void setIntDue(BigDecimal intDue) {
 		this.intDue = intDue;
 	}
-	
+
 	public BigDecimal getAdvIntDue() {
 		return advIntDue;
 	}
@@ -214,5 +213,13 @@ public class AdvancePayment implements Serializable {
 
 	public void setRequestedAmt(BigDecimal requestedAmt) {
 		this.requestedAmt = requestedAmt;
+	}
+
+	public FinanceScheduleDetail getCurSchd() {
+		return curSchd;
+	}
+
+	public void setCurSchd(FinanceScheduleDetail curSchd) {
+		this.curSchd = curSchd;
 	}
 }

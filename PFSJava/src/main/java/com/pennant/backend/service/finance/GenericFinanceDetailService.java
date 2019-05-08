@@ -201,7 +201,6 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
-import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -1818,7 +1817,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			installmentDueService.processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),
 					true, auditHeader.getAuditBranchCode());
 			advancePaymentService.processBackDatedAdvansePayments(financeDetail, pftDetail, DateUtility.getAppDate(),
-					true, auditHeader.getAuditBranchCode());
+					auditHeader.getAuditBranchCode());
 		}
 
 		doSave_PftDetails(pftDetail, isNew);

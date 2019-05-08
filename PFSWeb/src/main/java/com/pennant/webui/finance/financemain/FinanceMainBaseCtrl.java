@@ -13126,7 +13126,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			accountingSetEntries.addAll(installmentDueService.processbackDateInstallmentDues(getFinanceDetail(),
 					profitDetail, appDate, false, ""));
 			accountingSetEntries.addAll(advancePaymentService.processBackDatedAdvansePayments(getFinanceDetail(),
-					profitDetail, appDate, false, ""));
+					profitDetail, appDate, ""));
 		}
 
 		getFinanceDetail().setReturnDataSetList(accountingSetEntries);
