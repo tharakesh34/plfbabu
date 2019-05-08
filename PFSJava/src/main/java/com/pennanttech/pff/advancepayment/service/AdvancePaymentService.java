@@ -478,7 +478,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
 
 		// 4. Repay Header		
-		FinRepayHeader rph = getRepayHeader(finReference, rch, rcd);
+		FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
 		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 		// 5. Repay Schedule Details 
@@ -554,7 +554,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
 
 		// 4. Repay Header
-		FinRepayHeader rph = getRepayHeader(finReference, rch, rcd);
+		FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
 		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 		// 5. Repay Schedule Details 
@@ -653,11 +653,11 @@ public class AdvancePaymentService extends ServiceHelper {
 		return list;
 	}
 
-	private FinRepayHeader getRepayHeader(String finReference, FinReceiptHeader rch, FinReceiptDetail rcd) {
+	private FinRepayHeader getRepayHeader(String finReference, Date valueDate, FinReceiptHeader rch, FinReceiptDetail rcd) {
 		FinRepayHeader rph = new FinRepayHeader();
 		rph.setReceiptSeqID(rcd.getReceiptSeqID());
 		rph.setFinReference(finReference);
-		rph.setValueDate(rch.getValueDate());
+		rph.setValueDate(valueDate);
 		rph.setFinEvent(rch.getReceiptPurpose());
 		rph.setRepayAmount(rcd.getAmount());
 		rph.setExcessAmount(rcd.getAmount());
