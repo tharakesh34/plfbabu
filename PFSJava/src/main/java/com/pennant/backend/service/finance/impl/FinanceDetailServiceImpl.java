@@ -10858,6 +10858,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return getFinanceMainDAO().getFinanceMainForLinkedLoans(custId);
 	}
 
+	/**
+	 * Generating all fin reference which are having dues against the customer.
+	 */
+	@Override
+	public String getCustomerDueFinReferces(long custId) {
+		List<FinODDetails> odDetailsList = getFinODDetailsDAO().getCustomerDues(custId);
+
+		if (CollectionUtils.isEmpty(odDetailsList)) {
+			return "";
+		}
+
+		StringBuilder finReferences = new StringBuilder();
+
+		for (FinODDetails finODDetails : odDetailsList) {
+			if (finODDetails.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
+				finReferences.append("\n").append(finODDetails.getFinReference());
+			}
+		}
+		return finReferences.toString();
+	}
+	
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
 	}

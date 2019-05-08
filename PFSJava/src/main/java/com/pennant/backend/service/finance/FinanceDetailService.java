@@ -314,4 +314,6 @@ public interface FinanceDetailService {
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
+	String getCustomerDueFinReferces(long custID);
+
 }

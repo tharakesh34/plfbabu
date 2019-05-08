@@ -114,6 +114,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -1237,6 +1238,17 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("HD99019", null)));
 					logger.debug("Leaving");
 					return;
+				}
+				
+				//Add Disbursement, the Application will provide a warning message if there are some unadjusted dues in customer against all loans.
+				String addDisbDuesWarningMsgReq = SysParamUtil.getValueAsString(SMTParameterConstants.ADD_DISB_DUES_WARNG);
+				
+				if (StringUtils.equals(addDisbDuesWarningMsgReq, PennantConstants.YES)) {
+					String finReferences = getFinanceDetailService().getCustomerDueFinReferces(aFinanceMain.getCustID());
+					
+					if (finReferences.length() > 0) {
+						MessageUtil.showMessage(Labels.getLabel("info.param_add_dis_warning", new Object[]{finReferences}));
+					}
 				}
 			}
 

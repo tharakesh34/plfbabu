@@ -1128,7 +1128,7 @@ UNION ALL
 	  </sql>
 	</changeSet>
 	
-	<changeSet id="25" author="satyanarayana.g">
+	<changeSet id="25.0" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 			   DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ADD_DISB_DUES_WARNG';

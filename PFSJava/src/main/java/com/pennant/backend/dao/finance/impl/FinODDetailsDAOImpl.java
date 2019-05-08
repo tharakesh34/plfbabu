@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.finance.FinODDetails;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>FinODDetails model</b> class.<br>
@@ -968,6 +970,33 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug("Leaving");
 
+	}
+	 
+	/**
+	 * Fetching the all loans dues against the customer
+	 */
+	@Override
+	public List<FinODDetails> getCustomerDues(long custId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Sum(TOTPENALTYBAL) TOTPENALTYBAL, FINREFERENCE from FINODDETAILS");
+		sql.append(" Where CustID = :CustID GROUP BY FINREFERENCE");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustID", custId);
+
+		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
+
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		logger.debug(Literal.LEAVING);
+
+		return new ArrayList<>();
 	}
 
 }
