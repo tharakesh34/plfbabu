@@ -784,7 +784,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
 										.equals(manualAdvise.getTaxComponent())) { //GST Calculation only for Exclusive case
-									BigDecimal gstAmount = GSTCalculator.calculateGST(finReference,
+									BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
 											manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
 											manualAdvise.getTaxComponent());
 									bounceZeroAdviseAmount = bounceZeroAdviseAmount.add(gstAmount);
@@ -815,7 +815,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 								if (bounceFeeType != null && FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
 										.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
-									BigDecimal gstAmount = GSTCalculator.calculateGST(finReference,
+									BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
 											manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
 											manualAdvise.getTaxComponent());
 
@@ -919,7 +919,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	/**
 	 * 
 	 * @deprecated The logic in the below method is moved to
-	 *             <{@link GSTCalculator#calculateGST(String, BigDecimal, String)}
+	 *             <{@link GSTCalculator#getTotalGST(String, BigDecimal, String)}
 	 */
 	private BigDecimal calculateGST(Map<String, BigDecimal> taxPercmap, BigDecimal feeAmount, String taxComponent,
 			String taxRoundMode, int taxRoundingTarget) {
@@ -1364,7 +1364,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						}
 
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-							gstAmount = GSTCalculator.calculateGST(finReference, manualAdvise.getAdviseAmount(),
+							gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
 								manualAdvise.getTaxComponent());
 						}
 

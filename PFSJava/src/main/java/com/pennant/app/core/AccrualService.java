@@ -818,7 +818,7 @@ public class AccrualService extends ServiceHelper {
 			}
 
 			FinODAmzTaxDetail taxDetail = new FinODAmzTaxDetail();
-			TaxAmountSplit taxAmountSplit = GSTCalculator.calculateGST(aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
+			TaxAmountSplit taxAmountSplit = GSTCalculator.getGSTTaxSplit(aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
 					taxPercmap, lpiFeeType.getTaxComponent());
 
 			taxDetail.setFinReference(finPftDetail.getFinReference());
@@ -1507,7 +1507,7 @@ public class AccrualService extends ServiceHelper {
 
 	/**
 	 * 
-	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#calculateGST(BigDecimal, Map, String)}
+	 * @deprecated The logic in the below method is moved to <{@link GSTCalculator#getGSTTaxSplit(BigDecimal, Map, String)}
 	 */
 	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType,
 			String roundingMode, int roundingTarget) {
