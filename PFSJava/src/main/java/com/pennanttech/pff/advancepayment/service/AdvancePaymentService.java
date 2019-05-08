@@ -661,7 +661,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		rph.setFinEvent(rch.getReceiptPurpose());
 		rph.setRepayAmount(rcd.getAmount());
 		rph.setExcessAmount(rcd.getAmount());
-		rph.setValueDate(rch.getValueDate());
 		return rph;
 	}
 
