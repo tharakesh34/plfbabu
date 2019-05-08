@@ -3534,4 +3534,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="23" author="murthy.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM RMTACCOUNTTYPES where ACType = 'ADVINTDUE';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
