@@ -263,6 +263,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		advancePayment.setSchdIntDue(schdIntDue);
 		advancePayment.setValueDate(valueDate);
 		advancePayment.setCurSchd(curSchd);
+		advancePayment.setNextSchd(nextSchd);
 
 		AdvancePaymentUtil.calculateDue(advancePayment);
 
@@ -308,13 +309,62 @@ public class AdvancePaymentService extends ServiceHelper {
 			createAdvIntReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
 
 			if (advancePayment.getAdvIntDue().compareTo(BigDecimal.ZERO) > 0) {
-				long feeTypeID = feeTypeDAO.getFeeTypeId(AdvanceRuleCode.ADVINT.name());
-				createReceivableAdvise(finReference, valueDate, feeTypeID, advancePayment.getAdvIntDue(), null);
+				createReceivableAdvice(advancePayment, valueDate, finReference);
 			}
 
 		} else if (AdvanceType.hasAdvEMI(fm.getAdvType())) {
 			createAdvEMIReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
 		}
+	}
+
+	/**
+	 * Create receivable advice for Frequency based advance Interest
+	 * 
+	 * @param advancePayment
+	 * @param valueDate
+	 * @param finReference
+	 */
+	private void createReceivableAdvice(AdvancePayment advancePayment, Date valueDate, String finReference) {
+		FinanceScheduleDetail nextSchd = advancePayment.getNextSchd();
+		BigDecimal advIntDue = advancePayment.getAdvIntDue();
+
+		BigDecimal schdPftPaid = nextSchd.getSchdPftPaid();
+		BigDecimal tDSPaid = nextSchd.getTDSPaid();
+
+		BigDecimal payNow = BigDecimal.ZERO;
+		BigDecimal tdsPayNow = BigDecimal.ZERO;
+		BigDecimal netPay = BigDecimal.ZERO;
+
+		if (nextSchd.isTDSApplicable()) {
+			tdsPayNow = receiptCalculator.getTDS(advIntDue);
+		}
+
+		netPay = advIntDue.subtract(tdsPayNow);
+
+		if (nextSchd.isTDSApplicable()) {
+			tdsPayNow = receiptCalculator.getTDS(netPay);
+		}
+		payNow = netPay.add(tdsPayNow);
+
+		long feeTypeID = feeTypeDAO.getFeeTypeId(AdvanceRuleCode.ADVINT.name());
+		createReceivableAdvise(finReference, valueDate, feeTypeID, advancePayment.getAdvIntDue(), null);
+
+		// 6. Schedule Details 
+		schdPftPaid = schdPftPaid.add(payNow);
+		tDSPaid = tDSPaid.add(tdsPayNow);
+		nextSchd.setSchdPftPaid(schdPftPaid);
+		nextSchd.setTDSPaid(tDSPaid);
+
+		if (schdPftPaid.equals(payNow)) {
+			nextSchd.setSchPftPaid(true);
+		}
+		financeScheduleDetailDAO.updateSchPftPaid(nextSchd);
+
+		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
+		profitDetail.setFinReference(finReference);
+		profitDetail.setTotalPftPaid(schdPftPaid);
+		profitDetail.setTdSchdPftPaid(tDSPaid);
+		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
 	}
 
 	/**
@@ -513,8 +563,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		// 6. Profit Details
 		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
 		profitDetail.setFinReference(finReference);
-		profitDetail.setTotalPriPaid(schdPftPaid);
-		profitDetail.setTdSchdPriPaid(tDSPaid);
+		profitDetail.setTotalPftPaid(schdPftPaid);
+		profitDetail.setTdSchdPftPaid(tDSPaid);
 		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
 	}
 

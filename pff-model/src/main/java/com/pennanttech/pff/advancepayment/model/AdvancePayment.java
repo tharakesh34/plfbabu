@@ -35,6 +35,7 @@ public class AdvancePayment implements Serializable {
 	private FinExcessAmount finExcessAmount;
 	private BigDecimal requestedAmt = BigDecimal.ZERO;
 	private FinanceScheduleDetail curSchd;
+	private FinanceScheduleDetail nextSchd;
 
 	public AdvancePayment() {
 		super();
@@ -222,4 +223,13 @@ public class AdvancePayment implements Serializable {
 	public void setCurSchd(FinanceScheduleDetail curSchd) {
 		this.curSchd = curSchd;
 	}
+
+	public FinanceScheduleDetail getNextSchd() {
+		return nextSchd;
+	}
+
+	public void setNextSchd(FinanceScheduleDetail nextSchd) {
+		this.nextSchd = nextSchd;
+	}
+
 }
