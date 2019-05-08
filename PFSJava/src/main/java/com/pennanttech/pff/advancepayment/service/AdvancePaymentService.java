@@ -266,7 +266,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
 		amountCodes.setEmiDue(advancePayment.getEmiDue());
 
-		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
+		if (AdvanceType.getType(fm.getGrcAdvType()) == AdvanceType.AF
+				|| AdvanceType.getType(fm.getAdvType()) == AdvanceType.AF) {
 			if (nextSchd != null) {
 				amountCodes.setAdvIntDue(nextSchd.getProfitSchd());
 			}
@@ -291,21 +292,20 @@ public class AdvancePaymentService extends ServiceHelper {
 			return;
 		}
 
-		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
-			createAdvIntReceipt(advancePayment, curSchd, AccountConstants.TRANTYPE_DEBIT);
+		if (AdvanceType.hasAdvInterest(fm.getGrcAdvType()) || AdvanceType.hasAdvInterest(fm.getAdvType())) {
+			createAdvIntReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
 
 			if (amountCodes.getAdvIntDue().compareTo(BigDecimal.ZERO) > 0) {
 				long feeTypeID = feeTypeDAO.getFeeTypeId(AdvanceRuleCode.ADVINT.name());
-				createReceivableAdvise(finReference, feeTypeID, amountCodes.getAdvIntDue(), null);
+				createReceivableAdvise(finReference, valueDate, feeTypeID, amountCodes.getAdvIntDue(), null);
 			}
 
-		} else if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVEMI) {
-			createAdvEMIReceipt(advancePayment, curSchd, AccountConstants.TRANTYPE_DEBIT);
+		} else if (AdvanceType.hasAdvEMI(fm.getAdvType())) {
+			createAdvEMIReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * <p>
@@ -352,12 +352,14 @@ public class AdvancePaymentService extends ServiceHelper {
 				BigDecimal adviseAmount = fee.getCalculatedAmount().subtract(pftChg);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
-				createPayableAdvise(finReference, fee.getFeeTypeID(), adviseAmount, financeMain.getLastMntBy());
+				createPayableAdvise(finReference, DateUtility.getAppValueDate(), fee.getFeeTypeID(), adviseAmount,
+						financeMain.getLastMntBy());
 			} else if (pftChg.compareTo(fee.getCalculatedAmount()) > 0) {
 				BigDecimal adviseAmount = pftChg.subtract(fee.getCalculatedAmount());
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
-				createReceivableAdvise(finReference, fee.getFeeTypeID(), adviseAmount, financeMain.getLastMntBy());
+				createReceivableAdvise(finReference, DateUtility.getAppValueDate(), fee.getFeeTypeID(), adviseAmount,
+						financeMain.getLastMntBy());
 			}
 		}
 	}
@@ -426,7 +428,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		return excessID;
 	}
 
-	private void createAdvIntReceipt(AdvancePayment advancePayment, FinanceScheduleDetail curSchd, String txnType) {
+	private void createAdvIntReceipt(AdvancePayment advancePayment, Date valueDate, FinanceScheduleDetail curSchd,
+			String txnType) {
 		String finReference = advancePayment.getFinReference();
 		String finBranch = advancePayment.getFinBranch();
 
@@ -460,14 +463,14 @@ public class AdvancePaymentService extends ServiceHelper {
 		long receiptID = 0;
 
 		// 1. Receipt Header
-		FinReceiptHeader rch = getReceiptHeader(payNow, finReference, finBranch, AdvanceRuleCode.ADVINT);
+		FinReceiptHeader rch = getReceiptHeader(payNow, valueDate, finReference, finBranch, AdvanceRuleCode.ADVINT);
 		finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 
 		// 2. Receipt Details
 		advancePayment.setRequestedAmt(intAdjusted);
 		receiptID = rch.getReceiptID();
 		excessID = excessAmountMovement(advancePayment, receiptID, txnType);
-		FinReceiptDetail rcd = getReceiptDetail(payNow, receiptID, excessID, AdvanceRuleCode.ADVINT);
+		FinReceiptDetail rcd = getReceiptDetail(payNow, valueDate, receiptID, excessID, AdvanceRuleCode.ADVINT);
 		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
 		// 3. Receipt Allocation Details
@@ -479,7 +482,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 		// 5. Repay Schedule Details 
-		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, allocations);
+		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
 		financeRepaymentsDAO.saveRpySchdList(list, TableType.MAIN_TAB);
 
 		// 6. Schedule Details 
@@ -501,7 +504,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
 	}
 
-	private void createAdvEMIReceipt(AdvancePayment advancePayment, FinanceScheduleDetail curSchd, String txnType) {
+	private void createAdvEMIReceipt(AdvancePayment advancePayment, Date valueDate, FinanceScheduleDetail curSchd,
+			String txnType) {
 		String finReference = curSchd.getFinReference();
 		String finBranch = advancePayment.getFinBranch();
 
@@ -535,14 +539,14 @@ public class AdvancePaymentService extends ServiceHelper {
 		long receiptID = 0;
 
 		// 1. Receipt Header
-		FinReceiptHeader rch = getReceiptHeader(payNow, finReference, finBranch, AdvanceRuleCode.ADVEMI);
+		FinReceiptHeader rch = getReceiptHeader(payNow, valueDate, finReference, finBranch, AdvanceRuleCode.ADVEMI);
 		finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 
 		// 2. Receipt Details
 		advancePayment.setRequestedAmt(emiAdjusted);
 		receiptID = rch.getReceiptID();
 		excessID = excessAmountMovement(advancePayment, receiptID, txnType);
-		FinReceiptDetail rcd = getReceiptDetail(payNow, receiptID, excessID, AdvanceRuleCode.ADVEMI);
+		FinReceiptDetail rcd = getReceiptDetail(payNow, valueDate, receiptID, excessID, AdvanceRuleCode.ADVEMI);
 		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
 		// 3. Receipt Allocation Details
@@ -554,7 +558,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 		// 5. Repay Schedule Details 
-		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, allocations);
+		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
 		financeRepaymentsDAO.saveRpySchdList(list, TableType.MAIN_TAB);
 
 		// 6. Schedule Details 
@@ -577,11 +581,11 @@ public class AdvancePaymentService extends ServiceHelper {
 
 	}
 
-	private FinReceiptHeader getReceiptHeader(BigDecimal requestedAmt, String finReference, String finBranch,
-			AdvanceRuleCode adviceType) {
+	private FinReceiptHeader getReceiptHeader(BigDecimal requestedAmt, Date valueDate, String finReference,
+			String finBranch, AdvanceRuleCode adviceType) {
 		FinReceiptHeader rch = new FinReceiptHeader();
 		rch.setReference(finReference);
-		rch.setReceiptDate(DateUtility.getAppValueDate());
+		rch.setReceiptDate(valueDate);
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
@@ -598,7 +602,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		return rch;
 	}
 
-	private FinReceiptDetail getReceiptDetail(BigDecimal payNow, long receiptID, long excessID,
+	private FinReceiptDetail getReceiptDetail(BigDecimal payNow, Date valueDate, long receiptID, long excessID,
 			AdvanceRuleCode adviceType) {
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceiptID(receiptID);
@@ -608,8 +612,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		rcd.setPayAgainstID(excessID);
 		rcd.setAmount(payNow);
 		rcd.setDueAmount(payNow);
-		rcd.setValueDate(DateUtility.getAppValueDate());
-		rcd.setReceivedDate(DateUtility.getAppValueDate());
+		rcd.setValueDate(valueDate);
+		rcd.setReceivedDate(valueDate);
 		rcd.setPartnerBankAc(null);
 		rcd.setPartnerBankAcType(null);
 		rcd.setStatus(RepayConstants.PAYSTATUS_APPROVED);
@@ -657,12 +661,12 @@ public class AdvancePaymentService extends ServiceHelper {
 		rph.setFinEvent(rch.getReceiptPurpose());
 		rph.setRepayAmount(rcd.getAmount());
 		rph.setExcessAmount(rcd.getAmount());
-		rph.setValueDate(DateUtility.getAppValueDate());
+		rph.setValueDate(rch.getValueDate());
 		return rph;
 	}
 
 	private List<RepayScheduleDetail> getRepayScheduleDetail(FinanceScheduleDetail curSchd, FinRepayHeader rph,
-			List<ReceiptAllocationDetail> allocations) {
+			Date valueDate, List<ReceiptAllocationDetail> allocations) {
 		List<RepayScheduleDetail> list = new ArrayList<>();
 
 		RepayScheduleDetail rsd = new RepayScheduleDetail();
@@ -675,7 +679,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rsd.setProfitSchdPayNow(curSchd.getSchdPftPaid());
 		rsd.setPrincipalSchdPayNow(curSchd.getSchdPriPaid());
 
-		int daysLate = DateUtility.getDaysBetween(curSchd.getSchDate(), DateUtility.getAppValueDate());
+		int daysLate = DateUtility.getDaysBetween(curSchd.getSchDate(), valueDate);
 		rsd.setDaysLate(daysLate);
 
 		rsd.setRepayBalance(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -705,7 +709,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		return list;
 	}
 
-	private void createPayableAdvise(String finReference, long feeTypeID, BigDecimal adviseAmount, long lastMntBy) {
+	private void createPayableAdvise(String finReference, Date valueDate, long feeTypeID, BigDecimal adviseAmount,
+			long lastMntBy) {
 		logger.debug(Literal.ENTERING);
 
 		ManualAdvise manualAdvise = new ManualAdvise();
@@ -720,8 +725,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		manualAdvise.setRemarks("Payble Advice for Advance Interest/EMI");
 		manualAdvise.setBounceID(0);
 		manualAdvise.setReceiptID(0);
-		manualAdvise.setValueDate(DateUtility.getAppDate());
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setValueDate(valueDate);
+		manualAdvise.setPostDate(valueDate);
 		manualAdvise.setReservedAmt(BigDecimal.ZERO);
 		manualAdvise.setBalanceAmt(adviseAmount);
 
@@ -745,7 +750,8 @@ public class AdvancePaymentService extends ServiceHelper {
 	 * 
 	 * @param vASRecording
 	 */
-	private void createReceivableAdvise(String finReference, long feeTypeID, BigDecimal adviseAmount, Long lastMntBy) {
+	private void createReceivableAdvise(String finReference, Date valueDate, long feeTypeID, BigDecimal adviseAmount,
+			Long lastMntBy) {
 		logger.debug(Literal.ENTERING);
 
 		ManualAdvise manualAdvise = new ManualAdvise();
@@ -760,8 +766,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		manualAdvise.setRemarks("Receivable Advice for Advance Interest/EMI");
 		manualAdvise.setBounceID(0);
 		manualAdvise.setReceiptID(0);
-		manualAdvise.setValueDate(DateUtility.getAppDate());
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setValueDate(valueDate);
+		manualAdvise.setPostDate(valueDate);
 		manualAdvise.setReservedAmt(BigDecimal.ZERO);
 		manualAdvise.setBalanceAmt(adviseAmount);
 
