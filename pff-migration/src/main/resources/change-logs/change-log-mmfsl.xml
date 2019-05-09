@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="vijaya.a" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCD_MANUFACTURERS" />
+	</changeSet>
+
+	<changeSet id="1.1" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SEQCD_MANUFACTURERS">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="1.2" author="vijaya.a">
+		<createTable tableName="CD_Manufacturers">
+			<column name="ManufacturerId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MANUFACTURER_ID" />
+			</column>
+			<column name="Name" type="varchar(100)">
+			</column>
+			<column name="Description" type="varchar(100)">
+			</column>
+			<column name="Channel" type="varchar(20)">
+			</column>
+			<column name="Active" type="boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="1.3" author="vijaya.a">
+		<createTable tableName="CD_Manufacturers_Temp">
+			<column name="ManufacturerId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MANUFACTURER_TEMP_ID" />
+			</column>
+			<column name="Name" type="varchar(100)">
+			</column>
+			<column name="Description" type="varchar(100)">
+			</column>
+			<column name="Channel" type="varchar(20)">
+			</column>
+			<column name="Active" type="boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="1.4" author="vijaya.a">
+		<createView viewName="CD_Manufacturers_VIEW" replaceIfExists="true">
+			  SELECT t1.manufacturerId,
+    			t1.name,
+   				t1.description,
+    			t1.channel,
+          		t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Manufacturers_Temp t1
+			UNION ALL
+ 			SELECT t1.manufacturerId,
+    			t1.name,
+   				t1.description,
+    			t1.channel,
+         		t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   				FROM CD_Manufacturers t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM CD_Manufacturers_Temp
+            WHERE CD_Manufacturers_Temp.manufacturerId = t1.manufacturerId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="1.5" author="vijaya.a">
+		<createView viewName="CD_Manufacturers_AVIEW" replaceIfExists="true">
+			  SELECT t1.manufacturerId,
+    			t1.name,
+   				t1.description,
+    			t1.channel,     
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM CD_Manufacturers t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="1.6" author="vijaya.a">
+		<createView viewName="CD_Manufacturers_TVIEW" replaceIfExists="true">
+			  SELECT t1.manufacturerId,
+    			t1.name,
+   				t1.description,
+    			t1.channel,     
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM CD_Manufacturers_Temp t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="2" author="vijaya.a" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCD_PRODUCTS" />
+	</changeSet>
+
+	<changeSet id="2.1" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SEQCD_PRODUCTS">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.2" author="vijaya.a">
+		<createTable tableName="CD_Products">
+			<column name="ProductId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_PRODUCT_ID" />
+			</column>
+			<column name="ModelId" type="varchar(8)">
+			</column>
+			<column name="ModelDescription" type="varchar(20)">
+			</column>
+			<column name="ManufacturerId" type="varchar(50)">
+			</column>
+			<column name="AssetDescription" type="Varchar(20)">
+			</column>
+			<column name="MinAmount" type="decimal(18,0)">
+			</column>
+			<column name="MaxAmount" type="decimal(18,0)">
+			</column>
+			<column name="ModelStatus" type="Varchar(20)">
+			</column>
+			<column name="Channel" type="Varchar(20)">
+			</column>
+			<column name="Active" type="boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.3" author="vijaya.a">
+		<createTable tableName="CD_Products_Temp">
+			<column name="ProductId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_PRODUCT_Temp_ID" />
+			</column>
+			<column name="ModelId" type="varchar(8)">
+			</column>
+			<column name="ModelDescription" type="varchar(20)">
+			</column>
+			<column name="ManufacturerId" type="varchar(50)">
+			</column>
+			<column name="AssetDescription" type="Varchar(20)">
+			</column>
+			<column name="MinAmount" type="decimal(18,0)">
+			</column>
+			<column name="MaxAmount" type="decimal(18,0)">
+			</column>
+			<column name="ModelStatus" type="Varchar(20)">
+			</column>
+			<column name="Channel" type="Varchar(20)">
+			</column>
+			<column name="Active" type="boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.5" author="vijaya.a">
+		<createView viewName="CD_Products_VIEW" replaceIfExists="true">
+			  SELECT t1.productId,
+    			t1.modelId,
+   				t1.modelDescription,
+    			t1.manufacturerId,     
+    			t1.assetDescription,
+    			t1.minAmount,
+    			t1.maxAmount,
+    			t1.modelStatus,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Products_Temp t1
+			UNION ALL
+ 			SELECT t1.productId,
+    			t1.modelId,
+   				t1.modelDescription,
+    			t1.manufacturerId,     
+    			t1.assetDescription,
+    			t1.minAmount,
+    			t1.maxAmount,
+    			t1.modelStatus,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   				FROM CD_Products t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM CD_Products_Temp
+            WHERE CD_Products_Temp.productId = t1.productId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="2.6" author="vijaya.a">
+		<createView viewName="CD_Products_AVIEW" replaceIfExists="true">
+			  SELECT t1.productId,
+    			t1.modelId,
+   				t1.modelDescription,
+    			t1.manufacturerId,     
+    			t1.assetDescription,
+    			t1.minAmount,
+    			t1.maxAmount,
+    			t1.modelStatus,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM CD_Products t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="2.7" author="vijaya.a">
+		<createView viewName="CD_Products_TVIEW" replaceIfExists="true">
+			  SELECT t1.productId,
+    			t1.modelId,
+   				t1.modelDescription,
+    			t1.manufacturerId,     
+    			t1.assetDescription,
+    			t1.minAmount,
+    			t1.maxAmount,
+    			t1.modelStatus,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM CD_Products_Temp t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="3" author="vijaya.a" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCD_MERCHANTS" />
+	</changeSet>
+
+	<changeSet id="3.1" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SEQCD_MERCHANTS">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="3.2" author="vijaya.a">
+		<createTable tableName="CD_Merchants">
+			<column name="MerchantId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MERCHANT_ID" />
+			</column>
+			<column name="MerchantName" type="varchar(50)">
+			</column>
+			<column name="StoreId" type="int">
+			</column>
+			<column name="StoreName" type="varchar(50)">
+			</column>
+			<column name="StoreAddressLine1" type="varchar(200)">
+			</column>
+			<column name="StoreAddressLine2" type="varchar(100)">
+			</column>
+			<column name="StoreAddressLine3" type="varchar(100)">
+			</column>
+			<column name="StoreCity" type="varchar(50)">
+			</column>
+			<column name="StoreState" type="varchar(8)">
+			</column>
+			<column name="POSID" type="int">
+			</column>
+			<column name="AvgTranPerMnth" type="int" >
+			</column>
+			<column name="AvgTranAmtPerMnth" type="int">
+			</column>
+			<column name="TranAmtPerTran" type="int">
+			</column>
+			<column name="TranAmtPerDay" type="int">
+			</column>
+			<column name="AllowRefund" type="boolean">
+			</column>
+			<column name="PeakTransPerDay" type="int">
+			</column>
+			<column name="Channel" type="int">
+			</column>
+			<column name="Active" type="bit">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="3.3" author="vijaya.a">
+		<createTable tableName="CD_Merchants_Temp">
+			<column name="MerchantId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_MERCHANT_TEMP_ID" />
+			</column>
+			<column name="MerchantName" type="varchar(50)">
+			</column>
+			<column name="StoreId" type="int">
+			</column>
+			<column name="StoreName" type="varchar(50)">
+			</column>
+			<column name="StoreAddressLine1" type="varchar(200)">
+			</column>
+			<column name="StoreAddressLine2" type="varchar(100)">
+			</column>
+			<column name="StoreAddressLine3" type="varchar(100)">
+			</column>
+			<column name="StoreCity" type="varchar(50)">
+			</column>
+			<column name="StoreState" type="varchar(8)">
+			</column>
+			<column name="POSID" type="int">
+			</column>
+			<column name="AvgTranPerMnth" type="int" >
+			</column>
+			<column name="AvgTranAmtPerMnth" type="int">
+			</column>
+			<column name="TranAmtPerTran" type="int">
+			</column>
+			<column name="TranAmtPerDay" type="int">
+			</column>
+			<column name="AllowRefund" type="bit">
+			</column>
+			<column name="PeakTransPerDay" type="int">
+			</column>
+			<column name="Channel" type="int">
+			</column>
+			<column name="Active" type="boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="3.3_post" author="vijaya.a">
+		<addUniqueConstraint tableName="CD_MERCHANTS" columnNames="StoreId"
+			constraintName="UK_CD_MERCHANTS_STOREID" />
+		<addUniqueConstraint tableName="CD_MERCHANTS_TEMP" columnNames="StoreId" constraintName="UK_CD_MERCHANTS_TEMP_STOREID" />
+	</changeSet>
+	
+	<changeSet id="3.4" author="vijaya.a">
+		<createView viewName="CD_Merchants_VIEW" replaceIfExists="true">
+			  SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants_Temp t1
+			UNION ALL
+ 			SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM CD_Merchants_Temp
+            WHERE CD_Merchants_Temp.merchantId = t1.merchantId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="3.5" author="vijaya.a">
+		<createView viewName="CD_Merchants_AVIEW" replaceIfExists="true">
+			  SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="3.6" author="vijaya.a">
+		<createView viewName="CD_Merchants_TVIEW" replaceIfExists="true">
+			  SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants_Temp t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="4" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_MANUFACTURERS_VIEW', 'Role for manufacturer enquiry', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_MANUFACTURERS_MAKER', 'Role for manufacturer maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_MANUFACTURERS_APPROVER', 'Role for manufacturer approver', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0) ;
+								
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_MANUFACTURERS_VIEW', 'Group for manufacturer enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_MANUFACTURERS_MAKER', 'Group for manufacturer maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_MANUFACTURERS_APPROVER', 'Group for manufacturer approver', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_CDManufacturers','MENU', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CDManufacturersList_PrintList','CDManufacturersList', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CDManufacturersList_NewManufacturer','CDManufacturersList', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CDManufacturersDialogue_btnNew','CDManufacturersDialogue', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CDManufacturersDialogue_btnEdit','CDManufacturersDialogue', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CDManufacturersDialogue_btnDelete','CDManufacturersDialogue', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CDManufacturersDialogue_btnSave','CDManufacturersDialogue', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CDManufacturersDialogue_Name', 'CDManufacturersDialogue', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CDManufacturersDialogue_Description','CDManufacturersDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CDManufacturersDialogue_Channel','CDManufacturersDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CDManufacturersDialogue_Active','CDManufacturersDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_VIEW'), (Select RightID from SecRights where RightName = 'button_CDManufacturersList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_CDManufacturers'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersList_NewManufacturer'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersDialogue_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersDialogue_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersDialogue_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersDialogue_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'CDManufacturersDialogue_Name'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'CDManufacturersDialogue_Description'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'CDManufacturersDialogue_Channel'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_MAKER'), (Select RightID from SecRights where RightName = 'CDManufacturersDialogue_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_CDManufacturers'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_APPROVER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MANUFACTURERS_APPROVER'), (Select RightID from SecRights where RightName = 'button_CDManufacturersDialogue_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_MANUFACTURERS_VIEW'),(select RoleID from secRoles where RoleCd='CD_MANUFACTURERS_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_MANUFACTURERS_MAKER'),(select RoleID from secRoles where RoleCd='CD_MANUFACTURERS_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_MANUFACTURERS_APPROVER'),(select RoleID from secRoles where RoleCd='CD_MANUFACTURERS_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="5" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_PRODUCT_VIEW', 'Role for product enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_PRODUCT_MAKER', 'Role for product maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_PRODUCT_APPROVER', 'Role for product approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+								
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_PRODUCT_VIEW', 'Group for product enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_PRODUCT_MAKER', 'Group for product maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_PRODUCT_APPROVER', 'Group for product approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_Product','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductList_PrintList','ProductList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductList_NewProduct','ProductList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductDialogue_btnNew','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductDialogue_btnEdit','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductDialogue_btnDelete','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductDialogue_btnSave','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_ModuleId','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_Description','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_Name','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_AssetDescription','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_MinimumAmount','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_MaximumAmount','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_ModelStatus','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_Channel','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductDialogue_Active','ProductDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_VIEW'), (Select RightID from SecRights where RightName = 'button_ProductList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Product'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductList_NewProduct'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductDialogue_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductDialogue_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductDialogue_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductDialogue_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_ModuleId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_Description'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_Name'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_AssetDescription'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_MinimumAmount'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_MaximumAmount'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_ModelStatus'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_Channel'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_MAKER'), (Select RightID from SecRights where RightName = 'ProductDialogue_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_Product'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_APPROVER'), (Select RightID from SecRights where RightName = 'button_ProductList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_PRODUCT_APPROVER'), (Select RightID from SecRights where RightName = 'button_ProductDialogue_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_PRODUCT_VIEW'),(select RoleID from secRoles where RoleCd='CD_PRODUCT_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_PRODUCT_MAKER'),(select RoleID from secRoles where RoleCd='CD_PRODUCT_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_PRODUCT_APPROVER'),(select RoleID from secRoles where RoleCd='CD_PRODUCT_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="6" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_MERCHANT_VIEW', 'Role for merchant enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_MERCHANT_MAKER', 'Role for merchant maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CD_MERCHANT_APPROVER', 'Role for merchant approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+								
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_MERCHANT_VIEW', 'Group for merchant enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_MERCHANT_MAKER', 'Group for merchant maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CD_MERCHANT_APPROVER', 'Group for merchant approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_Merchant','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MerchantList_PrintList','MerchantList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MerchantList_NewProduct','MerchantList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MerchantDialogue_btnNew','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MerchantDialogue_btnEdit','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MerchantDialogue_btnDelete','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MerchantDialogue_btnSave','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_Name','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_StoreId','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_StoreName','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_AddressLine1','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_AddressLine2','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_AddressLine3','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_City','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_State','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_Pincode','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_Active','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_TransactionsPerMonth','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_AmountPerMonth','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_LimitPerTransaction','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_LimitPerDay','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_TransactionPerDay','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_RefundAllowed','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_Channel','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_VIEW'), (Select RightID from SecRights where RightName = 'button_MerchantList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Merchant'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'button_MerchantList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'button_MerchantList_NewProduct'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'button_MerchantDialogue_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'button_MerchantDialogue_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'button_MerchantDialogue_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'button_MerchantDialogue_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_Name'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_StoreId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_StoreName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_AddressLine1'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_AddressLine2'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_AddressLine3'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_City'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_State'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_Pincode'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_TransactionsPerMonth'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_AmountPerMonth'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_LimitPerTransaction'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_LimitPerDay'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_TransactionPerDay'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_RefundAllowed'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_Channel'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_Merchant'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_APPROVER'), (Select RightID from SecRights where RightName = 'button_MerchantList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_APPROVER'), (Select RightID from SecRights where RightName = 'button_MerchantDialogue_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_MERCHANT_VIEW'),(select RoleID from secRoles where RoleCd='CD_MERCHANT_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_MERCHANT_MAKER'),(select RoleID from secRoles where RoleCd='CD_MERCHANT_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_MERCHANT_APPROVER'),(select RoleID from secRoles where RoleCd='CD_MERCHANT_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>	
