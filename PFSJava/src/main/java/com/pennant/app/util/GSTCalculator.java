@@ -74,18 +74,18 @@ public class GSTCalculator {
 	 *            The taxable component either whether the GST is include in <code>taxableAmount</code> or exclude.
 	 * @return The total calculated GST.
 	 */
-	public static BigDecimal getTotalGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages,
+	public static BigDecimal getTotalGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages,
 			String taxComponent) {
-		return getGSTTaxSplit(taxableAmount, gstPercentages, taxComponent).gettGST();
+		return getGSTTaxSplit(taxableAmount, taxPercentages, taxComponent).gettGST();
 	}
 
-	public static TaxAmountSplit getGSTTaxSplit(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages,
+	public static TaxAmountSplit getGSTTaxSplit(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages,
 			String taxComponent) {
 		TaxAmountSplit taxAmountSplit = null;
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-			taxAmountSplit = getExclusiveGST(taxableAmount, gstPercentages);
+			taxAmountSplit = getExclusiveGST(taxableAmount, taxPercentages);
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-			taxAmountSplit = getInclusiveGST(taxableAmount, gstPercentages);
+			taxAmountSplit = getInclusiveGST(taxableAmount, taxPercentages);
 		} else {
 			taxAmountSplit = new TaxAmountSplit();
 		}
@@ -93,29 +93,69 @@ public class GSTCalculator {
 		return taxAmountSplit;
 	}
 
-	
-	public static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
+	public static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
-		taxSplit.setcGST(getExclusiveTax(taxableAmount, gstPercentages.get(RuleConstants.CODE_CGST)));
-		taxSplit.setsGST(getExclusiveTax(taxableAmount, gstPercentages.get(RuleConstants.CODE_SGST)));
-		taxSplit.setuGST(getExclusiveTax(taxableAmount, gstPercentages.get(RuleConstants.CODE_UGST)));
-		taxSplit.setiGST(getExclusiveTax(taxableAmount, gstPercentages.get(RuleConstants.CODE_IGST)));
+		taxSplit.setcGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CGST)));
+		taxSplit.setsGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_SGST)));
+		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
+		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
 		taxSplit.setNetAmount(taxSplit.getAmount().add(taxSplit.gettGST()));
 		return taxSplit;
 	}
 
-	public static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> gstPercentages) {
+	public static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
 
-		BigDecimal netAmount = getInclusiveAmount(taxableAmount, gstPercentages.get(RuleConstants.CODE_TOTAL_GST));
+		BigDecimal netAmount = getInclusiveAmount(taxableAmount, taxPercentages.get(RuleConstants.CODE_TOTAL_GST));
 		taxSplit.setNetAmount(netAmount);
-		taxSplit.setcGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_CGST)));
-		taxSplit.setsGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_SGST)));
-		taxSplit.setuGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_UGST)));
-		taxSplit.setiGST(getExclusiveTax(netAmount, gstPercentages.get(RuleConstants.CODE_IGST)));
+		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CGST)));
+		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_SGST)));
+		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
+		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
 		return taxSplit;
+	}
+
+	/**
+	 * This method will return the GST percentages by executing the GST rules configured.
+	 * 
+	 * @param finReference
+	 * @return The GST percentages MAP
+	 */
+	public static Map<String, BigDecimal> getTaxPercentages(long custId, String finCCY, String finBranch) {
+		Map<String, BigDecimal> taxPercentages = new HashMap<>();
+
+		taxPercentages.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
+
+		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(custId);
+		String custBranch = (String) dataMap.get("CustBranch");
+		String custProvince = (String) dataMap.get("CustProvince");
+		String custCountry = (String) dataMap.get("CustCountry");
+
+		FinanceTaxDetail financeTaxDetail = null;
+		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);
+		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+
+		String ruleCode;
+		BigDecimal totalGST = BigDecimal.ZERO;
+		for (Rule rule : rules) {
+			BigDecimal taxPerc = BigDecimal.ZERO;
+			ruleCode = rule.getRuleCode();
+
+			taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCCY);
+			totalGST = totalGST.add(taxPerc);
+			taxPercentages.put(ruleCode, taxPerc);
+		}
+
+		taxPercentages.put("TOTALGST", totalGST);
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
+
+		return taxPercentages;
 	}
 
 	/**
