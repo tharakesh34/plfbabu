@@ -458,6 +458,14 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
+		if(!this.minAmount.isReadonly() && !this.maxAmount.isReadonly()) {
+			if(this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue())  == 1)
+			{
+				throw new WrongValueException(this.minAmount,
+						Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
+			}
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
