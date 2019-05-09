@@ -248,7 +248,7 @@ public class AdvancePaymentUtil {
 		BigDecimal emiDue;
 		BigDecimal emiAdvAvailable = advancePayment.getAvailableAmt();
 
-		emiDue = advancePayment.getSchdPriDue();
+		emiDue = advancePayment.getSchdPriDue().add(advancePayment.getSchdIntDue());
 		if (emiAdvAvailable.compareTo(emiDue) >= 0) {
 			emiAdjusted = emiDue;
 		} else {
