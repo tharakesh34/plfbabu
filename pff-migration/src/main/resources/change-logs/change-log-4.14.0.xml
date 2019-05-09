@@ -1318,7 +1318,7 @@
 			     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
  	 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="1" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
 		<sql>
@@ -1642,28 +1642,12 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="2.5" author="vijaya.a" dbms="mssql">
-		<comment>Commodity and LAS</comment>
-		<sql>
-			<![CDATA[
-				ALTER TABLE COMMODITIES_TEMP ADD CONSTRAINT DF_COMMODITIES_TEMP_ACTIVE DEFAULT 1 FOR ACTIVE;
-				ALTER TABLE COMMODITIES ADD CONSTRAINT DF_COMMODITIES_ACTIVE DEFAULT 1 FOR ACTIVE;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="2.6" author="vijaya.a" dbms="postgresql, oracle">
-		<comment>Commodity and LAS</comment>
-		<addDefaultValue columnName="Active" tableName="COMMODITIES_TEMP" defaultValue="1" />
-		<addDefaultValue columnName="Active" tableName="COMMODITIES" defaultValue="1" />
-	</changeSet>
-
 	<changeSet id="2.7" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_TEMP_CT_ID" referencedTableName="COMMODITY_TYPES"
-			baseColumnNames="CommodityType" baseTableName="COMMODITIES_TEMP" referencedColumnNames="Id" />
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CT_ID" referencedTableName="COMMODITY_TYPES"
-			baseColumnNames="CommodityType" baseTableName="COMMODITIES" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_TEMP_CT_ID" referencedTableName="COMMODITY_TYPES" baseColumnNames="CommodityType"
+			baseTableName="COMMODITIES_TEMP" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CT_ID" referencedTableName="COMMODITY_TYPES" baseColumnNames="CommodityType"
+			baseTableName="COMMODITIES" referencedColumnNames="Id" />
 	</changeSet>
 
 	<changeSet id="3" author="vijaya.a">
@@ -1674,8 +1658,7 @@
 
 	<changeSet id="3.1" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
-		<addUniqueConstraint tableName="COMMODITIES_TEMP" columnNames="CommodityType, Code"
-			constraintName="UK_COMMODITIES_TEMP_CODE_TYPE" />
+		<addUniqueConstraint tableName="COMMODITIES_TEMP" columnNames="CommodityType, Code" constraintName="UK_COMMODITIES_TEMP_CODE_TYPE" />
 		<addUniqueConstraint tableName="COMMODITIES" columnNames="CommodityType, Code" constraintName="UK_COMMODITIES_CODE_TYPE" />
 	</changeSet>
 
@@ -1846,23 +1829,23 @@
 	<changeSet id="6" author="amanullah.m">
 		<comment>Commodity and LAS</comment>
 		<addColumn tableName="CollateralStructure">
-			<column name="thresholdLtvPercentage" type="decimal(5,2)"/>
+			<column name="thresholdLtvPercentage" type="decimal(5,2)" />
 		</addColumn>
 		<addColumn tableName="CollateralStructure">
-			<column name="commodityId" type="bigint"/>
+			<column name="commodityId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="6.1" author="vijaya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE COLLATERALSTRUCTURE ADD CONSTRAINT DF_COMMODITIES_THRESHOLDLTVPERCENTAGE DEFAULT 0.0 FOR THRESHOLDLTVPERCENTAGE;
+				ALTER TABLE COLLATERALSTRUCTURE ADD CONSTRAINT DF_COLLATERALSTRUCTURE_THRESHOLDLTVPERCENTAGE DEFAULT 0.0 FOR THRESHOLDLTVPERCENTAGE;
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="6.2" author="vijaya.a"  dbms="postgresql, oracle">
-		<addDefaultValue columnName="thresholdLtvPercentage" tableName="CollateralStructure"  defaultValue="0.00"/>
+
+	<changeSet id="6.2" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="thresholdLtvPercentage" tableName="CollateralStructure" defaultValue="0.00" />
 	</changeSet>
 
 	<changeSet id="6.3" author="vijaya.a">
@@ -1876,23 +1859,23 @@
 	<changeSet id="7" author="amanullah.m">
 		<comment>Commodity and LAS</comment>
 		<addColumn tableName="CollateralStructure_Temp">
-			<column name="thresholdLtvPercentage" type="decimal(5,2)"/>
+			<column name="thresholdLtvPercentage" type="decimal(5,2)" />
 		</addColumn>
 		<addColumn tableName="CollateralStructure_Temp">
-			<column name="commodityId" type="bigint"/>
+			<column name="commodityId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="7.1" author="vijaya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE COLLATERALSTRUCTURE_TEMP ADD CONSTRAINT DF_COMMODITIES_THRESHOLDLTVPERCENTAGE DEFAULT 0.0 FOR THRESHOLDLTVPERCENTAGE;
+				ALTER TABLE COLLATERALSTRUCTURE_TEMP ADD CONSTRAINT DF_COLLATERALSTRUCTURE_TEMP_THRESHOLDLTVPERCENTAGE DEFAULT 0.00 FOR THRESHOLDLTVPERCENTAGE;
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="7.2" author="vijaya.a"  dbms="postgresql, oracle">
-		<addDefaultValue columnName="thresholdLtvPercentage" tableName="CollateralStructure_Temp"  defaultValue="0.00"/>
+
+	<changeSet id="7.2" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="thresholdLtvPercentage" tableName="CollateralStructure_Temp" defaultValue="0.00" />
 	</changeSet>
 
 	<changeSet id="7.3" author="vijaya.a">
@@ -1902,7 +1885,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8" author="amanullah.m">
 		<createView viewName="COLLATERALSTRUCTURE_VIEW" replaceIfExists="true">
 		 SELECT t1.collateraltype,
@@ -2064,9 +2047,9 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="13" author="vijaya.a">
-	<comment>Current Value File Upload</comment>
+		<comment>Current Value File Upload</comment>
 		<createTable tableName="COMMODITIES_LOG">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COMMODITIES_LOG_ID" />
@@ -2091,16 +2074,16 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="13.1" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_LOG_CT_ID" referencedTableName="COMMODITIES"
-			baseColumnNames="CommodityId" baseTableName="COMMODITIES_LOG" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_LOG_CT_ID" referencedTableName="COMMODITIES" baseColumnNames="CommodityId"
+			baseTableName="COMMODITIES_LOG" referencedColumnNames="Id" />
 	</changeSet>
-	
+
 	<changeSet id="14" author="vijaya.a">
 		<comment>commodity file upload</comment>
-			<sql>
+		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COLLETARAL_VALUE_UPDATE');
 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COLLETARAL_VALUE_UPDATE');
@@ -2124,9 +2107,9 @@
 				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 			]]>
-			</sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="vijaya.a">
 		<sql>
 		<![CDATA[
@@ -2134,9 +2117,9 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="16" author="aditya.a">
-	   <createView viewName="Postings_View" replaceIfExists="true">
+		<createView viewName="Postings_View" replaceIfExists="true">
      SELECT t1.linkedtranid,
     t1.postref,
     t1.postingid,
@@ -2154,7 +2137,7 @@
     t1.poststatus,
     t1.errorid,
     t1.errormsg,
-    t2.aeeventcodedesc AS lovdesceventcodename,
+    t2.aeeventcodedesc lovdesceventcodename,
     t1.shadowposting,
     t1.trandesc,
     t1.amounttype,
@@ -2171,7 +2154,7 @@ UNION ALL
  SELECT t1.linkedtranid,
     t1.postref,
     t1.postingid,
-    t3.primarylinkref AS finreference,
+    t3.primarylinkref finreference,
     t1.finevent,
     t1.postdate,
     t1.valuedate,
@@ -2185,7 +2168,7 @@ UNION ALL
     t1.poststatus,
     t1.errorid,
     t1.errormsg,
-    t2.aeeventcodedesc AS lovdesceventcodename,
+    t2.aeeventcodedesc lovdesceventcodename,
     t1.shadowposting,
     t1.trandesc,
     t1.amounttype,
@@ -2201,7 +2184,7 @@ UNION ALL
  SELECT t1.linkedtranid,
     t1.postref,
     t1.postingid,
-    cast(t3.reference as varchar2(20)) AS finreference,
+    t3.reference finreference,
     t1.finevent,
     t1.postdate,
     t1.valuedate,
@@ -2215,7 +2198,7 @@ UNION ALL
     t1.poststatus,
     t1.errorid,
     t1.errormsg,
-    t2.aeeventcodedesc AS lovdesceventcodename,
+    t2.aeeventcodedesc lovdesceventcodename,
     t1.shadowposting,
     t1.trandesc,
     t1.amounttype,
@@ -2226,13 +2209,12 @@ UNION ALL
     t1.transorder
    FROM postings t1
      JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-     JOIN jvpostings t3 ON cast(t3.batchreference as varchar2(20)) = t1.finreference
+     JOIN jvpostings t3 ON t3.batchreference = t1.finreference
 		</createView>
-    </changeSet>
-   
-	<!--This change log xml is Freezed dont add change sets in this version.
-		please add new change sets on change-log-{pff.version}.xml 
-		i.e pff.version  from pom.xml in pff pff-aggregator -->
-	
-	
+	</changeSet>
+
+	<!--This change log xml is Freezed dont add change sets in this version. please add new change sets on change-log-{pff.version}.xml i.e pff.version from 
+		pom.xml in pff pff-aggregator -->
+
+
 </databaseChangeLog>
