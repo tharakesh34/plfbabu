@@ -1158,8 +1158,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Update FinPftDetails set");
-		sql.append(" TotalPftPaid = TotalPftPaid+:TotalPftPaid");
-		sql.append(",TdSchdPftPaid = TdSchdPftPaid+:TdSchdPftPaid");
+		sql.append(" TotalPftPaid = :TotalPftPaid");
+		sql.append(",TdTdsPaid = :TdTdsPaid");
 		sql.append(" where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -1179,8 +1179,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
-		sql.append(" TotalPriPaid = TotalPriPaid+:TotalPriPaid");
-		sql.append(", TdSchdPriPaid = TdSchdPriPaid+:TdSchdPriPaid");
+		sql.append(" TotalPriPaid = :TotalPriPaid");
 		sql.append(" where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
