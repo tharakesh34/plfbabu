@@ -3186,6 +3186,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("ConsumerProduct", ConsumerProduct.class, new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" },
 						masterWF, new String[] { "ProductId", "modelId" }, null, 600));
 		
+		ModuleUtil.register("MerchantDetails",
+				new ModuleMapping("MerchantDetails", ConsumerProduct.class, new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" },
+						masterWF, new String[] { "MerchantId", "MerchantName" }, null, 600));
+		
 		registerCustomModules();
 	}
 
