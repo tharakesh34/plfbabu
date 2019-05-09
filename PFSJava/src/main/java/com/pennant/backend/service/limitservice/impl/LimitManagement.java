@@ -1282,33 +1282,36 @@ public class LimitManagement {
 			boolean overrideAllowed, Date date) {
 
 		// If limit expired then return error  
-		if (limitDetail != null) {
-			String param = limitDetail.getLimitLine();
-			if (param == null) {
-				param = limitDetail.getGroupCode();
-			}
+		if (limitDetail == null) {
+			return null;
+		}
 
-			if (limitDetail.getExpiryDate() != null) {
-				if (limitDetail.getExpiryDate().compareTo(date) < 0) {
-					return new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
-				}
-			}
-			BigDecimal limitAmount = BigDecimal.ZERO;
-			if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetail.getLimitChkMethod())) {
-				limitAmount = limitDetail.getReservedexposure().add(tranAmount).subtract(preLimitAmount);
-			} else if (StringUtils.equals(LimitConstants.LIMIT_CHECK_ACTUAL, limitDetail.getLimitChkMethod())) {
-				limitAmount = limitDetail.getActualexposure().add(tranAmount);
-			}
-			//If limit check  is true in Limit details 
-			if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
-				if (overrideAllowed) {
-					//return new ErrorDetails("60312", new String[] { param });
-					return new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null);
-				} else {
-					return new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null);
-				}
+		String param = limitDetail.getLimitLine();
+		if (param == null) {
+			param = limitDetail.getGroupCode();
+		}
+
+		if (limitDetail.getExpiryDate() != null) {
+			if (limitDetail.getExpiryDate().compareTo(date) < 0) {
+				return new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
 			}
 		}
+		
+		BigDecimal limitAmount = BigDecimal.ZERO;
+		if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetail.getLimitChkMethod())) {
+			limitAmount = limitDetail.getReservedexposure().add(tranAmount).subtract(preLimitAmount);
+		} else if (StringUtils.equals(LimitConstants.LIMIT_CHECK_ACTUAL, limitDetail.getLimitChkMethod())) {
+			limitAmount = limitDetail.getActualexposure().add(tranAmount);
+		}
+		//If limit check  is true in Limit details 
+		if (limitDetail.isLimitCheck() && limitDetail.getLimitSanctioned().compareTo(limitAmount) == -1) {
+			if (overrideAllowed) {
+				return new ErrorDetail(KEY_LIMITAMT, "60312", new String[] { param }, null);
+			} else {
+				return new ErrorDetail(KEY_LIMITAMT, "60314", new String[] { param }, null);
+			}
+		}
+
 		return null;
 	}
 
