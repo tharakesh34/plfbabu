@@ -4443,6 +4443,31 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 	
 	@Override
+	public Map<String, Object> getGSTDataMap(long custId) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("select cu.custdftbranch CustBranch");
+		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry");
+		sql.append(" from Customers_View cu");
+		sql.append(" inner join Customers_View cu on cu.custId = fm.custid");
+		sql.append(" inner join CustomerAddresses_View ca on ca.custId = cu.custid");
+		sql.append(" and custaddrpriority = :AddrPriority");
+		sql.append(" Where cu.CustId = :CustId");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustId", custId);
+		source.addValue("AddrPriority", PennantConstants.KYC_PRIORITY_VERY_HIGH);
+
+		try {
+			return this.jdbcTemplate.queryForMap(sql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return new HashMap<>();
+	}
+	
+	@Override
 	public boolean isFinActive(String finReference) {
 		logger.debug("Entering");
 

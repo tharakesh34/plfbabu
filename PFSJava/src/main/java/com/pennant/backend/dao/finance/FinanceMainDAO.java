@@ -361,6 +361,8 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinanceMainForLinkedLoans(String finReference);
 	
 	Map<String, Object> getGSTDataMap(String finReference);
+	
+	Map<String, Object> getGSTDataMap(long custId);
 
 	boolean isFinActive(String finReference);
 
