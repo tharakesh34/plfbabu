@@ -21,7 +21,6 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
-import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
@@ -69,7 +68,6 @@ public class AdvancePaymentService extends ServiceHelper {
 	private ReceiptCalculator receiptCalculator;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private FeeTypeDAO feeTypeDAO;
 
 	public void processAdvansePayments(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -96,7 +94,6 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
-			FinanceScheduleDetail nextSchd = null;
 
 			if (fm.getGrcAdvType() == null && fm.getAdvType() == null) {
 				continue;
@@ -111,13 +108,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					continue;
 				}
 
-				if (AdvanceType.getType(fm.getGrcAdvType()) == AdvanceType.AF) {
-					if (finEODEvent.getFinanceScheduleDetails().size() > idx) {
-						nextSchd = finEODEvent.getFinanceScheduleDetails().get(idx + 1);
-					}
-				}
-
-				advancePayment = processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID);
+				advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 
 				createReceipt(advancePayment, fm, valueDate);
 
@@ -128,13 +119,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					continue;
 				}
 
-				if (AdvanceType.getType(fm.getAdvType()) == AdvanceType.AF) {
-					if (finEODEvent.getFinanceScheduleDetails().size() > idx) {
-						nextSchd = finEODEvent.getFinanceScheduleDetails().get(idx + 1);
-					}
-				}
-
-				advancePayment = processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID);
+				advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 
 				createReceipt(advancePayment, fm, valueDate);
 			}
@@ -187,8 +172,6 @@ public class AdvancePaymentService extends ServiceHelper {
 				}
 			}
 
-			FinanceScheduleDetail nextSchd = null;
-
 			if (fm.getGrcAdvType() == null && fm.getAdvType() == null) {
 				continue;
 			}
@@ -198,13 +181,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					continue;
 				}
 
-				if (AdvanceType.getType(fm.getGrcAdvType()) == AdvanceType.AF) {
-					if (finEODEvent.getFinanceScheduleDetails().size() > index) {
-						nextSchd = finEODEvent.getFinanceScheduleDetails().get(index + 1);
-					}
-				}
-
-				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID);
+				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
@@ -212,13 +189,7 @@ public class AdvancePaymentService extends ServiceHelper {
 					continue;
 				}
 
-				if (AdvanceType.getType(fm.getAdvType()) == AdvanceType.AF) {
-					if (finEODEvent.getFinanceScheduleDetails().size() > index) {
-						nextSchd = finEODEvent.getFinanceScheduleDetails().get(index + 1);
-					}
-				}
-
-				processAdvancePayments(finEODEvent, curSchd, nextSchd, custEODEvent, accountingID);
+				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 			}
 		}
 
@@ -227,7 +198,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public AdvancePayment processAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd,
-			FinanceScheduleDetail nextSchd, CustEODEvent custEODEvent, long accountingID) {
+			CustEODEvent custEODEvent, long accountingID) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
@@ -263,7 +234,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		advancePayment.setSchdIntDue(schdIntDue);
 		advancePayment.setValueDate(valueDate);
 		advancePayment.setCurSchd(curSchd);
-		advancePayment.setNextSchd(nextSchd);
 
 		AdvancePaymentUtil.calculateDue(advancePayment);
 
@@ -273,13 +243,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		amountCodes.setEmiAdjusted(advancePayment.getEmiAdjusted());
 		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
 		amountCodes.setEmiDue(advancePayment.getEmiDue());
-
-		if (AdvanceType.getType(fm.getGrcAdvType()) == AdvanceType.AF
-				|| AdvanceType.getType(fm.getAdvType()) == AdvanceType.AF) {
-			if (nextSchd != null) {
-				advancePayment.setAdvIntDue(nextSchd.getProfitSchd());
-			}
-		}
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
@@ -301,70 +264,14 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	private void createReceipt(AdvancePayment advancePayment, FinanceMain fm, Date valueDate) {
-
-		String finReference = fm.getFinReference();
 		FinanceScheduleDetail curSchd = advancePayment.getCurSchd();
 
 		if (AdvanceType.hasAdvInterest(fm.getGrcAdvType()) || AdvanceType.hasAdvInterest(fm.getAdvType())) {
 			createAdvIntReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
 
-			if (advancePayment.getAdvIntDue().compareTo(BigDecimal.ZERO) > 0) {
-				createReceivableAdvice(advancePayment, valueDate, finReference);
-			}
-
 		} else if (AdvanceType.hasAdvEMI(fm.getAdvType())) {
 			createAdvEMIReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
 		}
-	}
-
-	/**
-	 * Create receivable advice for Frequency based advance Interest
-	 * 
-	 * @param advancePayment
-	 * @param valueDate
-	 * @param finReference
-	 */
-	private void createReceivableAdvice(AdvancePayment advancePayment, Date valueDate, String finReference) {
-		FinanceScheduleDetail nextSchd = advancePayment.getNextSchd();
-		BigDecimal advIntDue = advancePayment.getAdvIntDue();
-
-		BigDecimal schdPftPaid = nextSchd.getSchdPftPaid();
-		BigDecimal tDSPaid = nextSchd.getTDSPaid();
-
-		BigDecimal payNow = BigDecimal.ZERO;
-		BigDecimal tdsPayNow = BigDecimal.ZERO;
-		BigDecimal netPay = BigDecimal.ZERO;
-
-		if (nextSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(advIntDue);
-		}
-
-		netPay = advIntDue.subtract(tdsPayNow);
-
-		if (nextSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(netPay);
-		}
-		payNow = netPay.add(tdsPayNow);
-
-		long feeTypeID = feeTypeDAO.getFeeTypeId(AdvanceRuleCode.ADVINT.name());
-		createReceivableAdvise(finReference, valueDate, feeTypeID, advancePayment.getAdvIntDue(), null);
-
-		// 6. Schedule Details 
-		schdPftPaid = schdPftPaid.add(payNow);
-		tDSPaid = tDSPaid.add(tdsPayNow);
-		nextSchd.setSchdPftPaid(schdPftPaid);
-		nextSchd.setTDSPaid(tDSPaid);
-
-		if (schdPftPaid.equals(payNow)) {
-			nextSchd.setSchPftPaid(true);
-		}
-		financeScheduleDetailDAO.updateSchPftPaid(nextSchd);
-
-		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
-		profitDetail.setFinReference(finReference);
-		profitDetail.setTotalPftPaid(schdPftPaid);
-		profitDetail.setTdSchdPftPaid(tDSPaid);
-		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
 	}
 
 	/**
@@ -497,9 +404,8 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		BigDecimal profitSchd = curSchd.getProfitSchd();
 		BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
-		BigDecimal tDSPaid = curSchd.getTDSPaid();
-
 		BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid);
+		BigDecimal tDSPaid = curSchd.getTDSPaid();
 
 		BigDecimal payNow = BigDecimal.ZERO;
 		BigDecimal tdsPayNow = BigDecimal.ZERO;
@@ -560,12 +466,24 @@ public class AdvancePaymentService extends ServiceHelper {
 		}
 		financeScheduleDetailDAO.updateSchPftPaid(curSchd);
 
-		// 6. Profit Details
-		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
+		// 7. Profit Details
+		FinanceProfitDetail profitDetail = advancePayment.getProfitDetail();
 		profitDetail.setFinReference(finReference);
-		profitDetail.setTotalPftPaid(schdPftPaid);
-		profitDetail.setTdSchdPftPaid(tDSPaid);
+
+		BigDecimal totalPftPaid = profitDetail.getTotalPftPaid();
+		totalPftPaid = totalPftPaid.add(schdPftPaid);
+		profitDetail.setTotalPftPaid(totalPftPaid);
+
+		BigDecimal tdTdsPaid = profitDetail.getTdTdsPaid();
+		tdTdsPaid = tdTdsPaid.add(tDSPaid);
+		profitDetail.setTdTdsPaid(tdTdsPaid);
+
+		BigDecimal tdTdsBal = profitDetail.getTdTdsBal();
+		tdTdsBal = tdTdsBal.add(tDSPaid); //FIXME
+		profitDetail.setTdTdsBal(tdTdsBal);
+
 		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
+
 	}
 
 	private void createAdvEMIReceipt(AdvancePayment advancePayment, Date valueDate, FinanceScheduleDetail curSchd,
@@ -577,27 +495,35 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		BigDecimal principalSchd = curSchd.getPrincipalSchd();
 		BigDecimal schdPriPaid = curSchd.getSchdPriPaid();
-		BigDecimal tDSPaid = curSchd.getTDSPaid();
-
 		BigDecimal schdPriDue = principalSchd.subtract(schdPriPaid);
+
+		BigDecimal profitSchd = curSchd.getProfitSchd();
+		BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
+		BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid);
+		
+		BigDecimal schdEmiDue = schdPriDue.add(schdPriPaid);
+		
+		BigDecimal tDSPaid = curSchd.getTDSPaid();
 
 		BigDecimal payNow = BigDecimal.ZERO;
 		BigDecimal tdsPayNow = BigDecimal.ZERO;
 		BigDecimal netPay = BigDecimal.ZERO;
 
 		if (curSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(schdPriDue);
+			tdsPayNow = receiptCalculator.getTDS(schdIntDue);
 		}
 
-		netPay = schdPriDue.subtract(tdsPayNow);
-		if (emiAdjusted.compareTo(netPay) <= 0) {
-			netPay = emiAdjusted;
+		netPay = schdIntDue.subtract(tdsPayNow);
+		if (emiAdjusted.subtract(schdIntDue).compareTo(netPay) <= 0) {
+			netPay = emiAdjusted.subtract(schdIntDue);
 		}
 
 		if (curSchd.isTDSApplicable()) {
 			tdsPayNow = receiptCalculator.getTDS(netPay);
 		}
 		payNow = netPay.add(tdsPayNow);
+
+		payNow = payNow.add(schdEmiDue);
 
 		if (payNow.compareTo(BigDecimal.ZERO) <= 0) {
 			return;
@@ -631,9 +557,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		// 6. Schedule Details 
 		schdPriPaid = schdPriPaid.add(payNow);
-		tDSPaid = tDSPaid.add(tdsPayNow);
 		curSchd.setSchdPriPaid(schdPriPaid);
-		curSchd.setTDSPaid(tDSPaid);
 
 		if (schdPriPaid.equals(payNow)) {
 			curSchd.setSchPriPaid(true);
@@ -641,11 +565,18 @@ public class AdvancePaymentService extends ServiceHelper {
 		financeScheduleDetailDAO.updateSchPriPaid(curSchd);
 
 		// 7. Profit Details
-		FinanceProfitDetail profitDetail = new FinanceProfitDetail();
+		FinanceProfitDetail profitDetail = advancePayment.getProfitDetail();
 		profitDetail.setFinReference(finReference);
+
+		BigDecimal totalPriPaid = profitDetail.getTotalPriPaid();
+		totalPriPaid = totalPriPaid.add(schdPriPaid);
 		profitDetail.setTotalPriPaid(schdPriPaid);
-		profitDetail.setTdSchdPriPaid(tDSPaid);
-		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
+		
+		BigDecimal tdTdsBal = profitDetail.getTdTdsBal();
+		tdTdsBal = tdTdsBal.add(tDSPaid); //FIXME
+		profitDetail.setTdTdsBal(tdTdsBal);
+
+		financeProfitDetailDAO.updateSchPriPaid(profitDetail);
 
 	}
 
@@ -895,10 +826,5 @@ public class AdvancePaymentService extends ServiceHelper {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
 	}
 }
