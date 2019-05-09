@@ -1066,8 +1066,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 					StringBuffer name = new StringBuffer();
 
 					String firstName = StringUtils.trimToNull(customer.getCustFName());
-					String middleName = StringUtils.trimToNull(customer.getCustFName());
-					String lastName = StringUtils.trimToNull(customer.getCustFName());
+					String middleName = StringUtils.trimToNull(customer.getCustMName());
+					String lastName = StringUtils.trimToNull(customer.getCustLName());
 
 					if (firstName != null) {
 						name.append(firstName);
@@ -1408,13 +1408,13 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 	private void setAddressDetails(CustomerAddres address, List<CustomerPhoneNumber> phoneList, Record record) {
 		/* Address Line 1 */
-		addField(record, StringUtils.trim(address.getCustAddrHNbr()));
+		addField(record, StringUtils.trimToNull(address.getCustAddrHNbr()));
 
 		/* Address Line 2 */
-		addField(record, StringUtils.trim(address.getCustFlatNbr()));
+		addField(record, StringUtils.trimToNull(address.getCustFlatNbr()));
 
 		/* Address Line 3 */
-		addField(record, address.getCustAddrStreet());
+		addField(record, StringUtils.trimToNull(address.getCustAddrStreet()));
 
 		/* City/Town */
 		addField(record, address.getCustAddrCity());
