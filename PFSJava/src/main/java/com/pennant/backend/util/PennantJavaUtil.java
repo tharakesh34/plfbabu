@@ -442,6 +442,7 @@ import com.pennanttech.pff.commodity.model.Commodity;
 import com.pennanttech.pff.commodity.model.CommodityType;
 import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
 import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
+import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
@@ -3187,7 +3188,7 @@ public class PennantJavaUtil {
 						masterWF, new String[] { "ProductId", "modelId" }, null, 600));
 		
 		ModuleUtil.register("MerchantDetails",
-				new ModuleMapping("MerchantDetails", ConsumerProduct.class, new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" },
+				new ModuleMapping("MerchantDetails", MerchantDetails.class, new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" },
 						masterWF, new String[] { "MerchantId", "MerchantName" }, null, 600));
 		
 		registerCustomModules();
