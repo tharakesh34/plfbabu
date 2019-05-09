@@ -771,39 +771,15 @@ public class AccrualService extends ServiceHelper {
 			aeEvent.setValueDate(DateUtility.getPostDate());
 		}
 
-		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
+		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());		
+		Map<String, BigDecimal> gstExecutionMap = GSTCalculator.getTaxPercentages(main.getFinReference());
 
-		// GST parameters for State wise Account Number building
-		String custDftBranch = null;
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-
-		if (detail.getCustomerDetails() != null) {
-			custDftBranch = detail.getCustomerDetails().getCustomer().getCustDftBranch();
-			List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						highPriorityState = customerAddres.getCustAddrProvince();
-						highPriorityCountry = customerAddres.getCustAddrCountry();
-						break;
-					}
-				}
+		for (String key : gstExecutionMap.keySet()) {
+			if (StringUtils.isNotBlank(key)) {
+				aeEvent.getDataMap().put(key, gstExecutionMap.get(key));
 			}
 		}
-
-		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(main.getFinBranch(),
-				custDftBranch, highPriorityState, highPriorityCountry, detail.getFinanceTaxDetail(),
-				main.getFinBranch());
-
-		if (gstExecutionMap != null) {
-			for (String key : gstExecutionMap.keySet()) {
-				if (StringUtils.isNotBlank(key)) {
-					aeEvent.getDataMap().put(key, gstExecutionMap.get(key));
-				}
-			}
-		}
+			
 
 		// LPI GST Amount for Postings
 		Map<String, BigDecimal> calGstMap = new HashMap<>();
