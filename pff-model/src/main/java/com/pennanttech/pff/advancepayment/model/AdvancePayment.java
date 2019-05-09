@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class AdvancePayment implements Serializable {
@@ -26,7 +27,6 @@ public class AdvancePayment implements Serializable {
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
 	private BigDecimal intAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal intDue = BigDecimal.ZERO;
-	private BigDecimal advIntDue = BigDecimal.ZERO;
 	private BigDecimal emiAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
@@ -35,7 +35,7 @@ public class AdvancePayment implements Serializable {
 	private FinExcessAmount finExcessAmount;
 	private BigDecimal requestedAmt = BigDecimal.ZERO;
 	private FinanceScheduleDetail curSchd;
-	private FinanceScheduleDetail nextSchd;
+	private FinanceProfitDetail profitDetail;
 
 	public AdvancePayment() {
 		super();
@@ -152,14 +152,6 @@ public class AdvancePayment implements Serializable {
 		this.intDue = intDue;
 	}
 
-	public BigDecimal getAdvIntDue() {
-		return advIntDue;
-	}
-
-	public void setAdvIntDue(BigDecimal advIntDue) {
-		this.advIntDue = advIntDue;
-	}
-
 	public BigDecimal getEmiAdjusted() {
 		return emiAdjusted;
 	}
@@ -224,12 +216,12 @@ public class AdvancePayment implements Serializable {
 		this.curSchd = curSchd;
 	}
 
-	public FinanceScheduleDetail getNextSchd() {
-		return nextSchd;
+	public FinanceProfitDetail getProfitDetail() {
+		return profitDetail;
 	}
 
-	public void setNextSchd(FinanceScheduleDetail nextSchd) {
-		this.nextSchd = nextSchd;
+	public void setProfitDetail(FinanceProfitDetail profitDetail) {
+		this.profitDetail = profitDetail;
 	}
 
 }
