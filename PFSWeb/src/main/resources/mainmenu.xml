@@ -116,6 +116,12 @@
 			<menuItem id="menu_Item_BuilderProjcet" zulNavigation="/WEB-INF/pages/SystemMaster/BuilderProjcet/BuilderProjcetList.zul" rightName="menuItem_SystemMaster_BuilderProjcet" />
 			<menuItem id="menu_Item_VehicleDealer" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=VASM"
 				rightName="menuItem_SystemMaster_VehicleDealer" />
+			<menuItem id="menu_Item_Manufacturer" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/ManufacturerList.zul"
+				 /> <!-- rightName="menuItem_Manufacturer" -->
+			<menuItem id="manu_Item_Product" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/ConsumerProductList.zul"
+				/><!-- rightName="menuItem_Product"  -->
+			<menuItem id="menu_Item_Merchant" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/MerchantDetailsList.zul"
+				rightName="menuItem_Merchant" />			
 		</menu>
 		<menu id="menu_Category_BankMasters">
 			<menuItem id="menu_Item_BankDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul" rightName="menuItem_ApplicationMaster_BankDetail" />

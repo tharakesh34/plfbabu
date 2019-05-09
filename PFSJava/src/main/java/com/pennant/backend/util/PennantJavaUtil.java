@@ -440,6 +440,8 @@ import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.commodity.model.Commodity;
 import com.pennanttech.pff.commodity.model.CommodityType;
+import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
+import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
@@ -3170,7 +3172,20 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Commodity",
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
 						masterWF, new String[] { "Id", "CommodityTypeCode", "Code" }, null, 600));
+		
+		ModuleUtil.register("Manufacturer",
+				new ModuleMapping("Manufacturer", Manufacturer.class, new String[] { "CD_MANUFACTURERS", "CD_MANUFACTURERS_AView" },
+						masterWF, new String[] { "ManufacturerId", "Name" }, null, 600));
+		
+		ModuleUtil.register("ChannelTypes",
+				new ModuleMapping("ChannelTypes", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CHANNEL" } }, 400));
 
+		ModuleUtil.register("ConsumerProduct",
+				new ModuleMapping("ConsumerProduct", ConsumerProduct.class, new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" },
+						masterWF, new String[] { "ProductId", "modelId" }, null, 600));
+		
 		registerCustomModules();
 	}
 

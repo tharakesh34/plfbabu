@@ -10417,5 +10417,57 @@
 		<constructor-arg ref="financeTaxDetailDAO" />
 		<constructor-arg ref="ruleExecutionUtil" />
 	</bean>
+	
+	<!-- Manufacturer -->
+	<bean id="manufacturerDAO" class="com.pennattech.pff.mmfl.cd.dao.ManufacturerDAOImpl" parent="sequenceDao" />
+
+	<bean id="manufacturerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="manufacturerServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="manufacturerServiceTarget" class="com.pennanttech.pff.mmfl.cd.service.ManufacturerServiceImpl">
+		<property name="manufacturerDAO" ref="manufacturerDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<!-- ConsumerProduct -->
+	<bean id="consumerProductDAO" class="com.pennattech.pff.mmfl.cd.dao.ConsumerProductDAOImpl" parent="sequenceDao" />
+
+	<bean id="consumerProductService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="consumerProductServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="consumerProductServiceTarget" class="com.pennanttech.pff.mmfl.cd.service.ConsumerProductServiceImpl">
+		<property name="consumerProductDAO" ref="consumerProductDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
 
 </beans>

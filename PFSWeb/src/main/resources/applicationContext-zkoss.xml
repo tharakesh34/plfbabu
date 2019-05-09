@@ -5126,4 +5126,26 @@
 		<property name="commodityTypeDAO" ref="commodityTypeDAO" />
 	</bean>
 	
+	<!-- Manufacturer -->	
+	<bean id="manufacturerListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ManufacturerListCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="manufacturerService" ref="manufacturerService" />
+	</bean>
+	
+	<bean id="manufacturerDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ManufacturerDialogueCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="manufacturerService" ref="manufacturerService" />
+	</bean>
+	
+	<!-- ConsumerProduct -->	
+	<bean id="consumerProductListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ConsumerProductListCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="consumerProductService" ref="consumerProductService" />
+	</bean>
+	
+	<bean id="consumerProductDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ConsumerProductDialogueCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="consumerProductService" ref="consumerProductService" />
+	</bean>
+	
 </beans>
