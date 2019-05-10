@@ -3525,4 +3525,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="22" author="satish Karra">
+		<addColumn tableName="FinExcessMovement">
+			<column name="MovementFrom" type="varchar(8)"></column>
+			<column name="SchDate" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

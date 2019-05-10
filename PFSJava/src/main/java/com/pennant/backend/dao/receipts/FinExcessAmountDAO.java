@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.receipts;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -54,5 +55,11 @@ public interface FinExcessAmountDAO {
 	void updateExcess(FinExcessAmount excess);
 
 	FinExcessAmount getFinExcessAmount(String finreference, String amountType);
+	
+	FinExcessMovement getFinExcessMovement(long excessID, String movementFrom, Date schDate);
+
+	int updateExcessReserve(FinExcessAmount excessMovement);
+	
+	int updateReserveUtilization(FinExcessAmount excessMovement);
 
 }

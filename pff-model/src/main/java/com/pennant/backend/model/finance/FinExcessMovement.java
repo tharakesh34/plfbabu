@@ -1,6 +1,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class FinExcessMovement {
 
@@ -9,6 +10,8 @@ public class FinExcessMovement {
 	private String movementType;
 	private String tranType;
 	private BigDecimal amount = BigDecimal.ZERO;
+	private String movementFrom;
+	private Date schDate;
 
 	public FinExcessMovement() {
 		super();
@@ -56,6 +59,22 @@ public class FinExcessMovement {
 
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+	}
+
+	public String getMovementFrom() {
+		return movementFrom;
+	}
+
+	public void setMovementFrom(String movementFrom) {
+		this.movementFrom = movementFrom;
+	}
+
+	public Date getSchDate() {
+		return schDate;
+	}
+
+	public void setSchDate(Date schDate) {
+		this.schDate = schDate;
 	}
 
 }
