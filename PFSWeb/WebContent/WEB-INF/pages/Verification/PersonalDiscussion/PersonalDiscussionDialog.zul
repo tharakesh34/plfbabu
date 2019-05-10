@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_PersonalDiscussionDialog" border="normal" apply="${personalDiscussionDialogCtrl}" width="100%"
+		height="100%" sizable="false">
+
+		<borderlayout id="borderlayoutPersonalDiscussion">
+			<north id="north">
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_PersonalDiscussionDialog.title')}" sclass="label-heading" />
+						</toolbar>
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none" autoscroll="false">
+				<div width="100%" height="100%">
+					<tabbox width="100%" height="100%">
+						<tabs id="tabsIndexCenter">
+							<tab label="${c:l('label_FieldInvestigationDialog_VerificationDetails.value')}" id="verificationDetails" />
+						</tabs>
+						<tabpanels id="tabpanelsBoxIndexCenter">
+							<tabpanel style="overflow:auto" ca:data-scrollable="true">
+								<groupbox id="gb_basicDetails" sclass="gb-dialog">
+									<caption label="${c:l('gb_CustomerDetails')}">
+									</caption>
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="15%" />
+											<column width="35%" />
+											<column width="15%" />
+											<column width="35%" />
+										</columns>
+										<rows>
+											<row id="row0">
+												<label id="label_CustCIF" value="${c:l('label_PersonalDiscussionDialog_CustCIF.value')}" />
+												<hbox>
+													<space id="space_CustCIF" spacing="2px" />
+													<textbox id="custCIF" width="155px" readonly="true" />
+													<button id="btnSearchCustomerDetails" tooltiptext="${c:l('label_CustomerlSearch_CustomerCIF.tooltiptext')}"
+														image="/images/icons/more.png" />
+												</hbox>
+												<label id="label_FinReference" value="${c:l('label_PersonalDiscussionDialog_FinReference.value')}" />
+												<hbox>
+													<space id="space_FinReference" spacing="2px" />
+													<textbox id="finReference" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row1">
+												<label id="label_CustName" value="${c:l('label_PersonalDiscussionDialog_CustName.value')}" />
+												<hbox>
+													<space id="space_CustName" spacing="2px" />
+													<textbox id="custName" width="155px" readonly="true" />
+												</hbox>
+												<label id="label_AddrType" value="${c:l('label_PersonalDiscussionDialog_AddrType.value')}" />
+												<hbox>
+													<space id="space_AddrType" spacing="2px" />
+													<textbox id="addrType" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row2">
+												<label id="label_HouseNo" value="${c:l('label_PersonalDiscussionDialog_HouseNo.value')}" />
+												<hbox>
+													<space id="space_HouseNo" spacing="2px" />
+													<textbox id="houseNo" width="155px" readonly="true" />
+												</hbox>
+												<label id="label_FlatNo" value="${c:l('label_PersonalDiscussionDialog_FlatNo.value')}" />
+												<hbox>
+													<space id="space_FlatNo" spacing="2px" />
+													<textbox id="flatNo" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row3">
+												<label id="label_Street" value="${c:l('label_PersonalDiscussionDialog_Street.value')}" />
+												<hbox>
+													<space id="space_Street" spacing="2px" />
+													<textbox id="street" width="155px" readonly="true" />
+												</hbox>
+												<label id="label_AddressLine1" value="${c:l('label_PersonalDiscussionDialog_AddressLine1.value')}" />
+												<hbox>
+													<space id="space_AddressLine1" spacing="2px" />
+													<textbox id="addressLine1" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row4">
+												<label id="label_AddressLine2" value="${c:l('label_PersonalDiscussionDialog_AddressLine2.value')}" />
+												<hbox>
+													<space id="space_AddressLine2" spacing="2px" />
+													<textbox id="addressLine2" width="155px" readonly="true" />
+												</hbox>
+												<label id="label_PostBox" value="${c:l('label_PersonalDiscussionDialog_PostBox.value')}" />
+												<hbox>
+													<space id="space_PostBox" spacing="2px" />
+													<textbox id="postBox" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row5">
+												<label id="label_Country" value="${c:l('label_PersonalDiscussionDialog_Country.value')}" />
+												<hbox>
+													<space id="spaceverifications_Country" spacing="2px" />
+													<textbox id="country" width="155px" readonly="true" />
+													<label id="countryDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+												</hbox>
+												<label id="label_Province" value="${c:l('label_PersonalDiscussionDialog_Province.value')}" />
+												<hbox>
+													<space id="space_Province" spacing="2px" />
+													<textbox id="province" width="155px" readonly="true" />
+													<label id="provinceDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+												</hbox>
+											</row>
+											<row id="row6">
+												<label id="label_City" value="${c:l('label_PersonalDiscussionDialog_City.value')}" />
+												<hbox>
+													<space id="space_City" spacing="2px" />
+													<textbox id="city" width="155px" readonly="true" />
+													<label id="CityDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+												</hbox>
+												<label id="label_ZipCode" value="${c:l('label_PersonalDiscussionDialog_ZipCode.value')}" />
+												<hbox>
+													<space id="space_ZipCode" spacing="2px" />
+													<textbox id="zipCode" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row7">
+												<label id="label_ContactNumber1" value="${c:l('label_PersonalDiscussionDialog_ContactNumber1.value')}" />
+												<hbox>
+													<space id="space_ContactNumber1" spacing="2px" />
+													<textbox id="contactNumber1" width="155px" readonly="true" />
+												</hbox>
+												<label id="label_ContactNumber2" value="${c:l('label_PersonalDiscussionDialog_ContactNumber2.value')}" />
+												<hbox>
+													<space id="space_ContactNumber2" spacing="2px" />
+													<textbox id="contactNumber2" width="155px" readonly="true" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+
+								<!-- Observations -->
+								<groupbox sclass="gb-dialog">
+									<caption label="${c:l('gb_Observations')}" />
+									<tabbox width="100%" height="100%">
+										<tabs style="width:0px;height:0px;border:none;">
+											<tab style="background:none;padding:0px;height:0px;" />
+										</tabs>
+										<tabpanels>
+											<tabpanel id="observationsFieldTabPanel" style="overflow:auto" />
+										</tabpanels>
+									</tabbox>
+								</groupbox>
+
+								<groupbox id="gb_summary" sclass="gb-dialog">
+									<caption label="${c:l('gb_Summary')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="15%" />
+											<column width="35%" />
+											<column width="15%" />
+											<column width="35%" />
+										</columns>
+										<rows>
+											<row id="row8">
+												<label id="label_VerificationDate" value="${c:l('label_PersonalDiscussionDialog_VerificationDate.value')}" />
+												<hbox>
+													<space id="space_VerificationDate" spacing="2px" sclass="mandatory" />
+													<datebox id="verificationDate" width="155px" />
+												</hbox>
+												<label id="label_AgentCode" value="${c:l('label_PersonalDiscussionDialog_AgentCode.value')}" />
+												<hbox>
+													<space id="space_AgentCode" spacing="2px" sclass="mandatory" />
+													<uppercasebox id="agentCode" width="155px" />
+												</hbox>
+											</row>
+											<row id="row9">
+												<label id="label_AgentName" value="${c:l('label_PersonalDiscussionDialog_AgentName.value')}" />
+												<hbox>
+													<space id="space_AgentName" spacing="2px" sclass="mandatory" />
+													<textbox id="agentName" width="155px" />
+												</hbox>
+												<label id="label_Recommendations" value="${c:l('label_PersonalDiscussionDialog_Recommendations.value')}" />
+												<hbox>
+													<space id="space_Recommendations" spacing="2px" sclass="mandatory" />
+													<combobox id="recommendations" width="155px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row10">
+												<label id="label_Reason" value="${c:l('label_PersonalDiscussionDialog_Reason.value')}" />
+												<hbox>
+													<extendedcombobox id="reason" />
+												</hbox>
+											</row>
+											<row id="row11">
+												<cell>
+													<label id="label_summaryRemarks" value="${c:l('label_PersonalDiscussionDialog_Remarks.value')}" />
+												</cell>
+												<cell colspan="4">
+													<hbox>
+														<space id="space_AgentRemarks" spacing="2px" />
+														<textbox multiline="true" id="summaryRemarks" width="850px" height="80px" />
+													</hbox>
+												</cell>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%" closable="false">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

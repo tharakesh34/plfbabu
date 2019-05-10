@@ -345,6 +345,7 @@ import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.webui.sampling.FinSamplingDialogCtrl;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
+import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.pennanttech.webui.verification.TVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
@@ -1003,9 +1004,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Map<String, String> extValuesMap = new HashMap<String, String>();
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
+	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
 
 	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	private String isCustomerBranch = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTBRANCH);
+	
 
 	/**
 	 * default constructor.<br>
@@ -1653,6 +1656,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else if (verificationType == VerificationType.RCU.getKey()
 					&& !(financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab())) {
 				isEnquiryVisible = true;
+			} else if (verificationType == VerificationType.PD.getKey()
+					&& !(financeDetail.isPdInitTab() || financeDetail.isPdApprovalTab())) {
+				isEnquiryVisible = true;
 			}
 
 			//Check whether enquiry is visible or not.
@@ -1789,6 +1795,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			//RCU Approval Tab
 			appendRCUApprovalTab(onLoad);
+			
+			//PD Initiation Tab
+			appendPDInitiationTab(onLoad);
+
+			//PD Approval Tab
+			appendPDApprovalTab(onLoad);
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -3103,6 +3115,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_SAMPLINGAPPROVAL:
 			finSamplingDialogCtrl.renderSamplingDtails(financeDetail.getSampling());
+			break;
+		case AssetConstants.UNIQUE_ID_PDINITIATION:
+			if (pdVerificationDialogCtrl != null) {
+				pdVerificationDialogCtrl.doSetLabels(getFinBasicDetails());
+			}
 			break;
 		default:
 			break;
@@ -6982,6 +6999,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Tab rcuApprovalTab = getTab(AssetConstants.UNIQUE_ID_RCUAPPROVAL);
 		if ((rcuApprovalTab != null && rcuApprovalTab.isVisible()) && rcuVerificationDialogCtrl != null) {
 			if (!rcuVerificationDialogCtrl.doSave(aFinanceDetail, rcuApprovalTab, recSave, userAction)) {
+				return;
+			}
+
+		}
+		
+		// PD Init Verification Detail
+		Tab pdInitTab = getTab(AssetConstants.UNIQUE_ID_PDINITIATION);
+		if ((pdInitTab != null && pdInitTab.isVisible()) && pdVerificationDialogCtrl != null) {
+			pdVerificationDialogCtrl.doSave(aFinanceDetail, pdInitTab, recSave, userAction);
+		}
+
+		// PD Approval Verification Detail
+		Tab pdApprovalTab = getTab(AssetConstants.UNIQUE_ID_PDAPPROVAL);
+		if ((pdApprovalTab != null && pdApprovalTab.isVisible()) && pdVerificationDialogCtrl != null) {
+			if (!pdVerificationDialogCtrl.doSave(aFinanceDetail, pdApprovalTab, recSave, userAction)) {
 				return;
 			}
 
@@ -18128,6 +18160,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setJointAccountDetailDialogCtrl(JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl) {
 		this.jointAccountDetailDialogCtrl = jointAccountDetailDialogCtrl;
 		this.jointAccountDetailDialogCtrl.setFieldVerificationDialogCtrl(fieldVerificationDialogCtrl);
+		this.jointAccountDetailDialogCtrl.setPDVerificationDialogCtrl(pdVerificationDialogCtrl);
 	}
 
 	public AgreementDetailDialogCtrl getAgreementDetailDialogCtrl() {
@@ -19490,6 +19523,67 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 	}
+	
+	/**
+	 * Method for Rendering PDV Initiation Data in finance
+	 */
+	protected void appendPDInitiationTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isPdInitTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_PDINITIATION) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_PDINITIATION, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_PDINITIATION);
+		}
+		if (getFinanceDetail().isPdInitTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			if (financeDetail.getPdVerification() == null) {
+				financeDetail.setPdVerification(new Verification());
+			}
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", financeDetail);
+			map.put("InitType", true);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/PDInitiation.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_PDINITIATION), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	/**
+	 * Method for Rendering PDV Approval Data in finance
+	 */
+	protected void appendPDApprovalTab(boolean onLoadProcess) {
+		logger.debug(Literal.ENTERING);
+		boolean createTab = false;
+		if (!getFinanceDetail().isPdApprovalTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_PDAPPROVAL) == null) {
+			createTab = true;
+		}
+		if (createTab) {
+			createTab(AssetConstants.UNIQUE_ID_PDAPPROVAL, true);
+		} else {
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_PDAPPROVAL);
+		}
+		if (getFinanceDetail().isPdApprovalTab() && !onLoadProcess) {
+			final HashMap<String, Object> map = getDefaultArguments();
+			map.put("financeMainBaseCtrl", this);
+			map.put("finHeaderList", getFinBasicDetails());
+			map.put("financeDetail", financeDetail);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/PDApproval.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_PDAPPROVAL), map);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 
 	public void onChange$grcAdvTerms(Event event) {
 		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
@@ -19601,5 +19695,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinOptionDialogCtrl(FinOptionDialogCtrl finOptionDialogCtrl) {
 		FinOptionDialogCtrl = finOptionDialogCtrl;
+	}
+
+	public PDVerificationDialogCtrl getPdVerificationDialogCtrl() {
+		return pdVerificationDialogCtrl;
+	}
+
+	public void setPdVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
+		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
+		this.customerDialogCtrl.setPDVerificationDialogCtrl(pdVerificationDialogCtrl);
 	}
 }

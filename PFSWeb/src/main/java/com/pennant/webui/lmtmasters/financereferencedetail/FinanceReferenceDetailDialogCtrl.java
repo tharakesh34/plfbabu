@@ -1077,6 +1077,10 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		if (!validateStages(FinanceConstants.PROCEDT_SAMPLING_INIT, FinanceConstants.PROCEDT_SAMPLING_APPR, null)) {
 			return;
 		}
+		if (!validateStages(FinanceConstants.PROCEDT_VERIFICATION_PD_INIT,
+				FinanceConstants.PROCEDT_VERIFICATION_PD_APPR, VerificationType.PD)) {
+			return;
+		}
 		if (validateSamplingAndTV()) {
 			return;
 		}

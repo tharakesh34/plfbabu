@@ -147,6 +147,8 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 			super.moduleCode = "FIAGENCY";
 		} else if (module.equals("CONN")) {
 			super.moduleCode = "CONN";
+		} else if (module.equals("PDAGENCY")) {
+			super.moduleCode = "PDAGENCY";
 		}
 		super.doAddFilters();
 		Filter[] filters = new Filter[1];

@@ -272,6 +272,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					|| VerificationType.LV.getValue().equals(moduleName)
 					|| VerificationType.RCU.getValue().equals(moduleName)
 					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName)
+					|| VerificationType.PD.getValue().equals(moduleName)
 					|| VASConsatnts.MODULE_NAME.equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}

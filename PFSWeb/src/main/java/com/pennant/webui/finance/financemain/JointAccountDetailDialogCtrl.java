@@ -85,6 +85,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
+import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
 /**
@@ -132,6 +133,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private boolean fromApproved;
 	private boolean isFinanceProcess = false;
 	private String moduleName;
+	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
 	//### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules = new HashMap<>();
 
@@ -457,6 +459,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 		if (fieldVerificationDialogCtrl != null) {
 			fieldVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails, true);
+		}
+		if (pdVerificationDialogCtrl != null) {
+			pdVerificationDialogCtrl.addCoApplicantAddresses(jountAccountDetails, true);
 		}
 		if (getFinVasRecordingDialogCtrl() != null) {
 			getFinVasRecordingDialogCtrl().addCoApplicants(jountAccountDetails);
@@ -1060,6 +1065,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	public void setFinVasRecordingDialogCtrl(FinVasRecordingDialogCtrl finVasRecordingDialogCtrl) {
 		this.finVasRecordingDialogCtrl = finVasRecordingDialogCtrl;
+	}
+	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
+		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
 	}
 
 }

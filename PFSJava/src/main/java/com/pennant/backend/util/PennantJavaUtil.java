@@ -434,6 +434,7 @@ import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -504,6 +505,7 @@ public class PennantJavaUtil {
 	private final static String PaymentWF = "PAYMENTINSTRUCTION";
 	private static String insuranceDetails = "INSURANCE_DETAILS";
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
+	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -3173,6 +3175,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Commodity",
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
 						masterWF, new String[] { "Id", "CommodityTypeCode", "Code" }, null, 600));
+
+		
+		ModuleUtil.register("PersonalDiscussion", new ModuleMapping("PersonalDiscussion", PersonalDiscussion.class,
+				new String[] { "verification_pd", "verification_pd_AView" }, WF_VERIFICATION_FI, null, null, 600));
+
 		
 		ModuleUtil.register("Manufacturer",
 				new ModuleMapping("Manufacturer", Manufacturer.class, new String[] { "CD_MANUFACTURERS", "CD_MANUFACTURERS_AView" },
@@ -3182,6 +3189,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("ChannelTypes", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CHANNEL" } }, 400));
+
 
 		ModuleUtil.register("ConsumerProduct",
 				new ModuleMapping("ConsumerProduct", ConsumerProduct.class, new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" },

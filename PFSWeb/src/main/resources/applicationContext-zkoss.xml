@@ -5126,6 +5126,18 @@
 		<property name="commodityTypeDAO" ref="commodityTypeDAO" />
 	</bean>
 	
+
+	<!--============ Personal Discussion Module ============== -->
+	<bean id="personalDiscussionListCtrl" class="com.pennant.webui.verification.personaldiscussion.PersonalDiscussionListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+
+	<bean id="personalDiscussionDialogCtrl" class="com.pennant.webui.verification.personaldiscussion.PersonalDiscussionDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	
+
 	<!-- Manufacturer -->	
 	<bean id="manufacturerListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ManufacturerListCtrl" parent="basisListCtrl"
 		scope="prototype">

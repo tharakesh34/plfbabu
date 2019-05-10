@@ -85,16 +85,19 @@ import com.pennanttech.pennapps.pff.verification.RequestType;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.dao.FieldInvestigationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.LegalVerificationDAO;
+import com.pennanttech.pennapps.pff.verification.dao.PersonalDiscussionDAO;
 import com.pennanttech.pennapps.pff.verification.dao.RiskContainmentUnitDAO;
 import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
 import com.pennanttech.pennapps.pff.verification.dao.VerificationDAO;
 import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.fi.LVStatus;
+import com.pennanttech.pennapps.pff.verification.fi.PDStatus;
 import com.pennanttech.pennapps.pff.verification.fi.RCUStatus;
 import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -131,6 +134,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private TechnicalVerificationDAO technicalVerificationDAO;
 	@Autowired
 	private RiskContainmentUnitDAO riskContainmentUnitDAO;
+	
+	@Autowired
+	private transient PersonalDiscussionService personalDiscussionService;
+	
+	@Autowired
+	private PersonalDiscussionDAO personalDiscussionDAO;
 
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, VerificationType verificationType,
 			String auditTranType, boolean isInitTab) {
@@ -157,6 +166,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification = financeDetail.getRcuVerification();
 			idList = riskContainmentUnitService.getRCUVerificaationIds(verification.getVerifications(),
 					verification.getKeyReference());
+		} else if (verificationType == VerificationType.PD) {
+			verification = financeDetail.getPdVerification();
+			idList = personalDiscussionService.getPersonalDiscussionIds(verification.getVerifications(),
+					verification.getKeyReference());
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());
@@ -174,9 +187,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			setVerificationWorkflowData(verification, item);
 
 			if (isInitTab) {
-				// delete non verification Records from FI and TV
+				// delete non verification Records from FI,TV and PD
 				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI)) {// FIXME
+						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI || verificationType == VerificationType.PD)) {// FIXME
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
 				}
@@ -220,6 +233,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 							saveLV(financeDetail, item);
 						} else if (verificationType == VerificationType.RCU) {
 							saveRCU(financeDetail, item);
+						}else if (verificationType == VerificationType.PD) {
+							savePD(financeDetail, item);
 						}
 					}
 				} else if (verificationType == VerificationType.RCU) {
@@ -295,6 +310,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (verificationType != VerificationType.FI) {
 			setVerificationData(financeDetail, item, verificationType);
 		}
+		
+		if (verificationType != VerificationType.PD) {
+			setVerificationData(financeDetail, item, verificationType);
+		}
 
 		verificationDAO.save(item, TableType.MAIN_TAB);
 		reInit.setReinitid(item.getId());
@@ -329,6 +348,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (item.getReinitid() == null) {
 				saveRCU(financeDetail, item);
 			}
+		}else if (verificationType == VerificationType.LV) {
+			savePD(financeDetail, item);
 		}
 	}
 
@@ -448,6 +469,40 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					fi.setSummaryRemarks("");
 					fi.setStatus(0);
 					fieldInvestigationService.save(fi, TableType.TEMP_TAB);
+				}
+			}
+		}
+	}
+	private void savePD(FinanceDetail financeDetail, Verification item) {
+		List<CustomerDetails> customerDetails = new ArrayList<>();
+		customerDetails.add(financeDetail.getCustomerDetails());
+		for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+			customerDetails.add(customerDetailsService.getApprovedCustomerById(jointAccountDetail.getCustID()));
+		}
+		for (CustomerDetails custDetails : customerDetails) {
+			Customer customer = custDetails.getCustomer();
+
+			if (StringUtils.equals(customer.getCustCIF(), item.getReference())) {
+				item.setCustId(customer.getCustID());
+
+				if (item.getPersonalDiscussion() == null) {
+					PersonalDiscussion pd = personalDiscussionDAO.getPersonalDiscussion(item.getId(), "_view");
+
+					if (pd == null) {
+						personalDiscussionService.save(custDetails, custDetails.getCustomerPhoneNumList(), item);
+					}
+
+				} else if (item.getRequestType() == RequestType.INITIATE.getKey()) {
+					PersonalDiscussion pd = item.getPersonalDiscussion();
+					pd.setVerificationId(item.getId());
+					pd.setLastMntOn(item.getLastMntOn());
+					pd.setAgentCode("");
+					pd.setAgencyName("");
+					pd.setVerifiedDate(null);
+					pd.setReason(0L);
+					pd.setSummaryRemarks("");
+					pd.setStatus(0);
+					personalDiscussionService.save(pd, TableType.TEMP_TAB);
 				}
 			}
 		}
@@ -888,7 +943,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			} else if (verificationType == VerificationType.RCU.getKey()) {
 
-			}
+			}else if (verificationType == VerificationType.PD.getKey()) {
+				if (personalDiscussionService.isAddressChanged(verification)) {
+					verification.setLastStatus(0);
+					verification.setLastVerificationDate(null);
+					verification.setLastAgency("");
+				}
+
+			} 
 		}
 	}
 
@@ -954,6 +1016,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
+		}else if (verificationType != VerificationType.PD) {
+			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+			verification.setCustId(customer.getCustID());
+			verification.setCustomerName(customer.getCustShrtName());
 		}
 
 	}
@@ -983,6 +1049,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.getRcuDocument()) != null) {
 				exists = true;
 			}
+		}else if (verificationType == VerificationType.PD) {
+			if (personalDiscussionService.getVerificationFromRecording(verification.getId()) != null) {
+				exists = true;
+			}
 		}
 		return exists;
 	}
@@ -1005,6 +1075,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.TV.getKey()));
 		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.LV.getKey()));
 		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.RCU.getKey()));
+		list.addAll(verificationDAO.getVeriFications(finReference, VerificationType.PD.getKey()));
 
 		for (Verification verification : list) {
 			VerificationType type = VerificationType.getVerificationType(verification.getVerificationType());
@@ -1080,6 +1151,17 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					}
 				}
 				verification.setRcuVerification(riskContainmentUnit);
+				break;
+			case PD:
+				if (PDStatus.getType(verification.getStatus()).getKey() == 0) {
+					verification.setVerificationStatus(StringUtils.EMPTY);
+				} else {
+					verification.setVerificationStatus(FIStatus.getType(verification.getStatus()).getValue());
+				}
+
+				verification
+						.setPersonalDiscussion(personalDiscussionDAO.getPersonalDiscussion(verificationId, "_View"));
+
 				break;
 			}
 

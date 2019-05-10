@@ -26,7 +26,8 @@ public enum WaiverReasons {
 	FIWRES("FIWRES", "Feild Invetigation Waiver Reasons"),
 	LVWRES("LVWRES", "Legal Verification Waiver Reasons"),
 	TVWRES("TVWRES", "Technical Verification Waiver Reasons"),
-	RCUWRES("RCUWRES", "Risk Control Unit Waiver Reasons");
+	RCUWRES("RCUWRES", "Risk Control Unit Waiver Reasons"),
+	PDWRES("PDWRES", "Pesonal Discussion Waiver Reasons");
 
 	private final String key;
 	private final String value;

@@ -219,6 +219,7 @@ import com.pennanttech.pennapps.pff.verification.fi.RCUDocStatus;
 import com.pennanttech.pennapps.pff.verification.fi.RCUDocVerificationType;
 import com.pennanttech.pennapps.pff.verification.model.FieldInvestigation;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
+import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.model.RCUDocument;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
@@ -1949,6 +1950,25 @@ public class AgreementGeneration implements Serializable {
 							} else {
 								agreement.getRcuVerification().add(verificationData);
 							}
+							break;
+						case PD:
+							if (3 == verification.getRequestType()) {
+								break;
+							}
+							if (2 == verification.getRequestType()) {
+								verificationData
+										.setAddressType(StringUtils.trimToEmpty(verification.getReferenceFor()));
+							}
+							verificationData.setApplicantName(StringUtils.trimToEmpty(verification.getCustomerName()));
+							if (null != verification.getFieldInvestigation()) {
+								PersonalDiscussion personalDiscussion = verification.getPersonalDiscussion();
+								verificationData
+										.setAddressType(StringUtils.trimToEmpty(personalDiscussion.getAddressType()));
+								verificationData.setDoneBy(
+										StringUtils.trimToEmpty(personalDiscussion.getAgentCode()).concat("-")
+												.concat(StringUtils.trimToEmpty(personalDiscussion.getAgentName())));
+							}
+							agreement.getPdVerification().add(verificationData);
 							break;
 						}
 					}

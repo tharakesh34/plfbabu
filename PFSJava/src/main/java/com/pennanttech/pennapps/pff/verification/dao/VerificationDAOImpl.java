@@ -86,6 +86,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		} else if (verificationType == VerificationType.RCU.getKey()) {
 			parameterSource.addValue("dealerType", Agencies.RCUVAGENCY.getKey());
 			parameterSource.addValue("reasontypecode", WaiverReasons.RCUWRES.getKey());
+		}else if (verificationType == VerificationType.PD.getKey()) {
+			parameterSource.addValue("dealerType", Agencies.PDAGENCY.getKey());
+			parameterSource.addValue("reasontypecode", WaiverReasons.PDWRES.getKey());
 		}
 
 		parameterSource.addValue("keyReference", keyReference);
@@ -363,7 +366,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 					paramMap.addValue("documenttype", 0);
 					paramMap.addValue("documentid", 0);
 				}
-			}
+			}else if (type == VerificationType.PD.getKey()) {
+				paramMap.addValue("dealerType", Agencies.PDAGENCY.getKey());
+			} 
 
 			logger.debug(Literal.SQL + sql.toString());
 			return jdbcTemplate.queryForObject(sql.toString(), paramMap, rowMapper);

@@ -241,6 +241,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private Verification tvVerification;
 	private Verification lvVerification;
 	private Verification rcuVerification;
+	private Verification pdVerification;
 	private PSLDetail pslDetail;
 	private boolean fiApprovalTab = false;
 	private boolean fiInitTab = false;
@@ -249,7 +250,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean lvApprovalTab = false;
 	private boolean lvInitTab = false;
 	private boolean rcuApprovalTab = false;
-	private boolean rcuInitTab = false;
+	private boolean rcuInitTab = false; 
+	private boolean pdDetailTab = false;
 	private Map<String, String> showTabDetailMap = new HashMap<>();
 	@XmlElement
 	private long receiptId;
@@ -270,6 +272,8 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<InterfaceServiceDetails> interfaceDetailList = new ArrayList<>();
 	private boolean validateUpfrontFees;
 	private CollateralRevaluation collateralRevaluation = new CollateralRevaluation();
+	private boolean pdApprovalTab = false;
+	private boolean pdInitTab = false;
 
 	public FinanceDetail() {
 		super();
@@ -1331,5 +1335,37 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setCollateralRevaluation(CollateralRevaluation collateralRevaluation) {
 		this.collateralRevaluation = collateralRevaluation;
+	}
+
+	public boolean isPdDetailTab() {
+		return pdDetailTab;
+	}
+
+	public void setPdDetailTab(boolean pdDetailTab) {
+		this.pdDetailTab = pdDetailTab;
+	}
+
+	public Verification getPdVerification() {
+		return pdVerification;
+	}
+
+	public void setPdVerification(Verification pdVerification) {
+		this.pdVerification = pdVerification;
+	}
+
+	public boolean isPdApprovalTab() {
+		return pdApprovalTab;
+	}
+
+	public void setPdApprovalTab(boolean pdApprovalTab) {
+		this.pdApprovalTab = pdApprovalTab;
+	}
+
+	public boolean isPdInitTab() {
+		return pdInitTab;
+	}
+
+	public void setPdInitTab(boolean pdInitTab) {
+		this.pdInitTab = pdInitTab;
 	}
 }

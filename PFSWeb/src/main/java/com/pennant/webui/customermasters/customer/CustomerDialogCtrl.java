@@ -189,6 +189,7 @@ import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
+import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
@@ -442,6 +443,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private LVerificationCtrl lVerificationCtrl;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
+	private PDVerificationDialogCtrl PdVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
 	public boolean validateAllDetails = true;
@@ -6649,6 +6651,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
+	}
+
+	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
+		this.PdVerificationDialogCtrl = PdVerificationDialogCtrl;
+		
 	}
 
 }

@@ -45,12 +45,14 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Tab tvDetailTab;
 	protected Tab lvDetailTab;
 	protected Tab rcuDetailTab;
+	protected Tab pdDetailTab;
 
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tabpanel fiDetailTabPanel;
 	protected Tabpanel tvDetailTabPanel;
 	protected Tabpanel lvDetailTabPAnel;
 	protected Tabpanel rcuDetailTabPanel;
+	protected Tabpanel pdDetailTabPanel;
 	protected List<Integer> verificationTypes = new ArrayList<>();
 
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
@@ -92,6 +94,7 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 		tvDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
 		lvDetailTabPAnel.setHeight(getDesktopHeight() - 10 + "px");
 		rcuDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
+		pdDetailTabPanel.setHeight(getDesktopHeight() - 10 + "px");
 
 		doShowDialog();
 
@@ -176,6 +179,15 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUApproval.zul",
 							this.rcuDetailTabPanel, map);
+				}else if (verificationType == VerificationType.PD.getKey()
+						&& (!(financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()))) {
+					this.pdDetailTab.setVisible(true);
+					if (!isSelected) {
+						isSelected = true;
+						this.pdDetailTab.setSelected(true);
+					}
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/PDApproval.zul",
+							this.tvDetailTabPanel, map);
 				}
 			}
 		} catch (Exception e) {

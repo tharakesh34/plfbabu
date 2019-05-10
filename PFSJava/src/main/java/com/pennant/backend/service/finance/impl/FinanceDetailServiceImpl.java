@@ -2062,6 +2062,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		case FinanceConstants.FEE_UPFRONT_REQ:
 			financeDetail.setUpFrentFee(true);
 			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_PD_INIT:
+			financeDetail.setPdInitTab(true);
+			break;
+		case FinanceConstants.PROCEDT_VERIFICATION_PD_APPR:
+			financeDetail.setPdApprovalTab(true);
+			break;
 
 		default:
 			break;
@@ -2937,6 +2943,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab()) {
 			setVerificationWorkflowDetails(financeDetail.getRcuVerification(), financeMain);
 		}
+		// PD Verification details
+		if (financeDetail.isPdInitTab() || financeDetail.isPdApprovalTab()) {
+			setVerificationWorkflowDetails(financeDetail.getPdVerification(), financeMain);
+		}
 
 		List<AuditDetail> adtVerifications = new ArrayList<>();
 
@@ -3006,6 +3016,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		if (financeDetail.isSamplingApprover() && financeDetail.getSampling() != null) {
 			adtVerifications.add(finSamplingService.saveOrUpdate(financeDetail, auditTranType));
+		}
+		
+		// save PD Initiation details
+		// =======================================
+		if (financeDetail.isPdInitTab()) {
+			adtVerifications
+					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, true));
+		}
+		//  save pd Approval details
+		// =======================================
+		if (financeDetail.isPdApprovalTab()) {
+			adtVerifications.addAll(
+					verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, false));
 		}
 
 		// preparing audit seqno for same table(adtverifications)

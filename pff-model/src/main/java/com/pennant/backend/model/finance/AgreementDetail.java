@@ -7624,6 +7624,7 @@ public class AgreementDetail {
 	private List<VerificationDetail> technicalVerification;
 	private List<VerificationDetail> rcuVerification;
 	private List<VerificationDetail> legalVerification;
+	private List<VerificationDetail> pdVerification;
 
 	public List<VerificationDetail> getFiVerification() {
 		return fiVerification;
@@ -8705,6 +8706,14 @@ public class AgreementDetail {
 
 	public void setFinBranchRegion(String finBranchRegion) {
 		this.finBranchRegion = finBranchRegion;
+	}
+
+	public List<VerificationDetail> getPdVerification() {
+		return pdVerification;
+	}
+
+	public void setPdVerification(List<VerificationDetail> pdVerification) {
+		this.pdVerification = pdVerification;
 	}
 
 	public class KycDetail {

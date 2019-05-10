@@ -29,12 +29,14 @@
 								<tab label="${c:l('label_Technical_Verification')}" id="tvDetailTab" visible="false" />
 								<tab label="${c:l('label_Legal_Verification')}" id="lvDetailTab" visible="false" />
 								<tab label="${c:l('label_RCU_Verification')}" id="rcuDetailTab" visible="false" />
+								<tab label="${c:l('label_Personal_Discussion')}" id="pdDetailTab" visible="false" />
 							</tabs>
 							<tabpanels id="tabpanelsBoxIndexCenter">
 								<tabpanel id="fiDetailTabPanel" />
 								<tabpanel id="tvDetailTabPanel" />
 								<tabpanel id="lvDetailTabPAnel" />
 								<tabpanel id="rcuDetailTabPanel" />
+								<tabpanel id="pdDetailTabPanel" />
 							</tabpanels>
 						</tabbox>
 					</groupbox>

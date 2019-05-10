@@ -1314,6 +1314,7 @@ public class PennantStaticListUtil {
 			dealerType.add(new ValueLabel("LVAGENCY", Labels.getLabel("label_Legal_Verification")));
 			dealerType.add(new ValueLabel("RCUVAGENCY", Labels.getLabel("label_RCU_Verification")));
 			dealerType.add(new ValueLabel("TVAGENCY", Labels.getLabel("label_Technical_Verification")));
+			dealerType.add(new ValueLabel("PDAGENCY", Labels.getLabel("label_Personal_Discussion")));
 		}
 		return dealerType;
 	}
@@ -3844,6 +3845,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExtendedFieldModule_Verification_RCU.value")));
 			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_FI,
 					Labels.getLabel("label_ExtendedFieldModule_Verification_FI.value")));
+			verificatinTypes.add(new ValueLabel(ExtendedFieldConstants.VERIFICATION_PD,
+					Labels.getLabel("label_ExtendedFieldModule_Verification_PD.value")));
 		}
 		return verificatinTypes;
 	}

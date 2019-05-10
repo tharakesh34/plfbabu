@@ -16,7 +16,8 @@ public enum DocumentCategories {
 	VERIFICATION_RCU("VERIFICATION_RCU", Labels.getLabel("label_documents_category_rcu")),
 	VERIFICATION_FI("VERIFICATION_FI", Labels.getLabel("label_documents_category_fi")),
 	VERIFICATION_LV("VERIFICATION_LV", Labels.getLabel("label_documents_category_lv")),
-	SAMPLING("SAMPLING", Labels.getLabel("label_documents_category_sampling"));
+	SAMPLING("SAMPLING", Labels.getLabel("label_documents_category_sampling")),
+	VERIFICATION_PD("VERIFICATION_PD", Labels.getLabel("label_documents_category_pd"));
 
 	private final String key;
 	private final String value;
