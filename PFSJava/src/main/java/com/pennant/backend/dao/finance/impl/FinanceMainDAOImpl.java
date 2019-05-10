@@ -4287,6 +4287,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PastduePftCalMthd = :PastduePftCalMthd");
 		sql.append(", MMAId = :MMAId");
 		sql.append(", ReAgeBucket = :ReAgeBucket");
+		// For InActive Loans, Update Loan Closed Date
+		if (!financeMain.isFinIsActive()) {
+			if (financeMain.getClosedDate() == null) {
+				financeMain.setClosedDate(DateUtility.getAppDate());
+			}
+			sql.append(" ,ClosedDate = :ClosedDate ");
+		}
 		sql.append(" where FinReference = :FinReference");
 
 		// Execute the SQL, binding the arguments.

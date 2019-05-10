@@ -1376,16 +1376,23 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinServiceInstruction finServiceInst = finScheduleData.getFinServiceInstruction();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		
+		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(receiptPurpose);
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
-		if (receiptData.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
-			rcd.setDueAmount(rch.getReceiptAmount());
-			receiptData.setTotalPastDues(receiptData.getTotalPastDues().subtract(rch.getReceiptAmount()));
+		if (receiptPurposeCtg == 2) {
+			rch.getReceiptDetails().clear();
+			receiptService.createXcessRCD(receiptData);
+		}
+		BigDecimal amount = rch.getReceiptAmount().subtract(receiptData.getExcessAvailable());
+		if (receiptData.getTotalPastDues().compareTo(amount) >= 0) {
+			rcd.setDueAmount(amount);
+			receiptData.setTotalPastDues(receiptData.getTotalPastDues().subtract(amount));
 		} else {
 			rcd.setDueAmount(receiptData.getTotalPastDues());
 			receiptData.setTotalPastDues(BigDecimal.ZERO);
 		}
-
-		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(receiptPurpose);
+		if (receiptPurposeCtg == 2) {
+			rch.getReceiptDetails().add(rcd);
+		}
 
 		if (finServiceInst.isReceiptUpload()
 				&& StringUtils.equals(finServiceInst.getReqType(), APIConstants.REQTYPE_POST)
@@ -1592,7 +1599,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					finServInst.setChecker(auditHeader.getAuditUsrId());
 					finServInst.setCheckerAppDate(DateUtility.getAppDate());
 					finServInst.setCheckerSysDate(DateUtility.getSysDate());
-					finServInst.setReference(String.valueOf(receiptData.getReceiptHeader().getReceiptID()));
+					finServInst.setReference(String.valueOf(rch.getReceiptID()));
 					finServInstList.add(finServInst);
 				}
 			}

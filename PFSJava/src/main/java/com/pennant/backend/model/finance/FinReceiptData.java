@@ -103,6 +103,7 @@ public class FinReceiptData {
 	private boolean isDueAdjusted = true;
 	private boolean isFCDueChanged = false;
 	private boolean isEnquiry = false;
+	private List<XcessPayables> excessPayables = new ArrayList<>();
 
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
 	private boolean isCalReq = true;
@@ -441,6 +442,14 @@ public class FinReceiptData {
 
 	public void setCalReq(boolean isCalReq) {
 		this.isCalReq = isCalReq;
+	}
+
+	public List<XcessPayables> getExcessPayables() {
+		return excessPayables;
+	}
+
+	public void setExcessPayables(List<XcessPayables> excessPayables) {
+		this.excessPayables = excessPayables;
 	}
 
 }

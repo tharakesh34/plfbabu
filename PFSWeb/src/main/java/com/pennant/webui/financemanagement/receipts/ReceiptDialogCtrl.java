@@ -2812,7 +2812,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addDueFooter(formatter);
 		addExcessAmt();
 
-		if (receiptData.getPaidNow().compareTo(receiptData.getReceiptHeader().getReceiptAmount()) > 0) {
+		if (receiptData.getPaidNow().compareTo(receiptData.getReceiptHeader().getReceiptAmount()) > 0
+				&& !receiptData.isForeClosure()) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
 			return;
 		}
@@ -3138,6 +3139,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					adjustWaiver(allocteDtl, tdsWaived);
 				}
 			}
+			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_NPFT)) {
+					adjustWaiver(allocteDtl, npftWaived);
+				}
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_TDS)) {
+					adjustWaiver(allocteDtl, tdsWaived);
+				}
+			}
 		}
 
 		if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)) {
@@ -3152,17 +3161,39 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					adjustWaiver(allocteDtl, waivedAmount.subtract(npftWaived));
 				}
 			}
+			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
+					isEmiWaived = true;
+					netPftWaived = npftWaived;
+					adjustWaiver(allocteDtl, npftWaived);
+				}
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)) {
+					adjustWaiver(allocteDtl, waivedAmount.subtract(npftWaived));
+				}
+			}
 		}
 		// Adjusting emi waiver
 		if (isEmiWaived) {
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocationsSummary()) {
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+					priWaived = allocteDtl.getWaivedAmount();
+				}
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
+					netPftWaived = allocteDtl.getWaivedAmount();
+				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
-					allocate.setWaivedAmount(BigDecimal.ZERO);
+					allocteDtl.setWaivedAmount(BigDecimal.ZERO);
 					adjustWaiver(allocteDtl, allocteDtl.getWaivedAmount().add(priWaived.add(netPftWaived)));
 					break;
 				}
 			}
 			for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
+					priWaived = allocteDtl.getWaivedAmount();
+				}
+				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) {
+					netPftWaived = allocteDtl.getWaivedAmount();
+				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_EMI)) {
 					allocteDtl.setWaivedAmount(BigDecimal.ZERO);
 					adjustWaiver(allocteDtl, allocteDtl.getWaivedAmount().add(priWaived.add(netPftWaived)));

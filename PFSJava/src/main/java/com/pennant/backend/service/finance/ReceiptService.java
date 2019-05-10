@@ -135,4 +135,6 @@ public interface ReceiptService {
 
 	FinReceiptData adjustToExcess(FinReceiptData receiptData);
 
+	FinReceiptData createXcessRCD(FinReceiptData receiptData);
+
 }

@@ -1035,7 +1035,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						}
 
 						isRcdFound = true;
-						continue;
 					}
 
 					if (rpyHeader.getPriAmount().compareTo(BigDecimal.ZERO) > 0) {

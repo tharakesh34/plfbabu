@@ -143,7 +143,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 		if (!isPDetailsExits) {
 			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
 		}
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
+		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		header.setLogSchInPresentment(true);
 		header.setPostBranch("EOD");//FIXME
 

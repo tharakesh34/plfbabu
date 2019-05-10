@@ -636,6 +636,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// =======================================
 		long receiptID = receiptHeader.getReceiptID();
 		receiptHeader.setRcdMaintainSts("R");
+		receiptHeader.setActFinReceipt(rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			receiptHeader.setBounceDate(DateUtility.getAppDate());
 		}
@@ -830,7 +831,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		listDeletion(finReference, tableType.getSuffix());
 		// listSave(scheduleData, tableType.getSuffix(), 0, false);
 
-		if (FinanceConstants.DEPOSIT_APPROVER.equals(receiptHeader.getRoleCode())) {
+		if (FinanceConstants.DEPOSIT_APPROVER.equals(receiptHeader.getRoleCode())
+				&& !(PennantConstants.RCD_STATUS_SAVED.equals(receiptHeader.getRecordStatus())
+						|| PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()))) {
 			executeAccounting(rceiptData);
 		}
 
@@ -3804,9 +3807,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			event = AccountEventConstants.ACCEVENT_EARLYPAY;
 		} else if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			event = AccountEventConstants.ACCEVENT_EARLYSTL;
-			/*finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rcd.getReceivedDate(), null,
-					receiptData.getFinanceDetail().getFinScheduleData().getFinPftDeatil().getTotalPriBal(),
-					CalculationConstants.EARLYPAY_ADJMUR);*/
+			/*
+			 * finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rcd.getReceivedDate(), null,
+			 * receiptData.getFinanceDetail().getFinScheduleData().getFinPftDeatil().getTotalPriBal(),
+			 * CalculationConstants.EARLYPAY_ADJMUR);
+			 */
 		} else if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSTLENQ)) {
 			event = AccountEventConstants.ACCEVENT_EARLYSTL;
 		}
@@ -3815,14 +3820,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinTypeFees> finTypeFeesList = this.financeDetailService.getFinTypeFees(financeMain.getFinType(), event,
 				false, moduleID);
 		receiptData.getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
-
-		receiptData = receiptCalculator.initiateReceipt(receiptData, false);
+		FinServiceInstruction service = finScheduleData.getFinServiceInstruction();
+		rch.setExcessAmounts(finExcessAmountDAO.getExcessAmountsByRef(rch.getReference()));
+		calcuateDues(receiptData);
+		receiptData.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(service);
 
 		String allocateMthd = receiptData.getReceiptHeader().getAllocationType();
 		if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) {
-			receiptData = receiptCalculator.recalAutoAllocation(receiptData, rch.getValueDate(), false);
+			receiptData = getReceiptCalculator().recalAutoAllocation(receiptData, rch.getValueDate(), false);
 		}
-
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			if (receiptData.getReceiptHeader().getPartPayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				finScheduleData = financeDetail.getFinScheduleData();
@@ -5544,7 +5550,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.entityDAO = entityDAO;
 	}
 
-	private FinReceiptData createXcessRCD(FinReceiptData receiptData) {
+	public FinReceiptData createXcessRCD(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
@@ -5584,6 +5590,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			} else {
 				rcd.setAmount(rcd.getDueAmount());
 			}
+			rcd.setNoReserve(true);
 			rcd.setValueDate(rch.getValueDate());
 			// rcd.setReceivedDate(this.receivedDate.getValue());
 			rcd.setPayOrder(rcdList.size() + 1);
@@ -5609,7 +5616,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		// rch.setReceiptDetails(rcdList);
+		rch.setReceiptDetails(rcdList);
 		return receiptData;
 	}
 
