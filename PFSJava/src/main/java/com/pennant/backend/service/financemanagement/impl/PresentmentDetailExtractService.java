@@ -20,6 +20,7 @@ import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.util.MandateConstants;
@@ -29,6 +30,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.core.TableType;
 
@@ -165,7 +167,7 @@ public class PresentmentDetailExtractService {
 	/*
 	 * Processing the Presentments If the payment type is ECS ,NACH,DD
 	 */
-	public String savePresentments(PresentmentHeader presentmentHeader) throws Exception {
+	public String savePresentments(PresentmentHeader ph) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isEmptyRecords = false;
@@ -174,7 +176,7 @@ public class PresentmentDetailExtractService {
 		ResultSet rs = null;
 		List<Object> resultList = null;
 		try {
-			resultList = presentmentDetailDAO.getPresentmentDetails(presentmentHeader);
+			resultList = presentmentDetailDAO.getPresentmentDetails(ph);
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
 
@@ -218,7 +220,7 @@ public class PresentmentDetailExtractService {
 				pDetail.setMandateType(rs.getString("MANDATETYPE"));
 
 				pDetail.setVersion(0);
-				pDetail.setLastMntBy(presentmentHeader.getLastMntBy());
+				pDetail.setLastMntBy(ph.getLastMntBy());
 				pDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				pDetail.setWorkflowId(0);
 				pDetail.setEntityCode(rs.getString("ENTITYCODE"));
@@ -227,7 +229,7 @@ public class PresentmentDetailExtractService {
 				pDetail.setAdvType(rs.getString("ADVTYPE"));
 				pDetail.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
 
-				doCalculations(pDetail, presentmentHeader);
+				doCalculations(pDetail, ph);
 
 				if (pDetail.getExcessID() != 0) {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
@@ -240,10 +242,10 @@ public class PresentmentDetailExtractService {
 					if (!map.containsKey(defSchDate)
 							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
 							|| !map.containsKey(entity)) {
-						presentmentHeader.setSchdate(defSchDate);
-						presentmentHeader.setBankCode(bankCode);
-						presentmentHeader.setEntityCode(entity);
-						presentmentId = savePresentmentHeaderDetails(presentmentHeader);
+						ph.setSchdate(defSchDate);
+						ph.setBankCode(bankCode);
+						ph.setEntityCode(entity);
+						presentmentId = savePresentmentHeaderDetails(ph);
 						map.put(defSchDate, presentmentId);
 						map.put(bankCode, presentmentId);
 						map.put(entity, presentmentId);
@@ -312,6 +314,15 @@ public class PresentmentDetailExtractService {
 			return;
 		}
 
+		//at first advance interest and EMI then EMI advance 
+		processAdvAmounts(presentmentDetail);
+
+		// EMI IN ADVANCE
+		//if there is no due no need to proceed further.
+		if (presentmentDetail.getSchAmtDue().compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
 		// EMI IN ADVANCE
 		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
@@ -332,6 +343,11 @@ public class PresentmentDetailExtractService {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
 			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
 		}
+		
+		BigDecimal advAmount = presentmentDetail.getAdvAdjusted();
+		presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advAmount));
+		presentmentDetail.setAdvanceAmt(presentmentDetail.getAdvanceAmt().add(advAmount));
+
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -374,6 +390,17 @@ public class PresentmentDetailExtractService {
 				return;
 			}
 		}
+		
+
+		//at first advance interest and EMI then EMI advance 
+		processAdvAmounts(presentmentDetail);
+
+		// EMI IN ADVANCE
+		//if there is no due no need to proceed further.
+		if (presentmentDetail.getSchAmtDue().compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+		
 		// EMI IN ADVANCE
 		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
@@ -392,6 +419,10 @@ public class PresentmentDetailExtractService {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue().subtract(emiInAdvanceAmt));
 			presentmentDetail.setAdvanceAmt(emiInAdvanceAmt);
 		}
+		
+		BigDecimal advAmount = presentmentDetail.getAdvAdjusted();
+		presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advAmount));
+		presentmentDetail.setAdvanceAmt(presentmentDetail.getAdvanceAmt().add(advAmount));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -486,5 +517,75 @@ public class PresentmentDetailExtractService {
 
 		return true;
 
+	}
+	
+	private void processAdvAmounts(PresentmentDetail prd) {
+
+		AdvanceType advanceType = null;
+		String amountType = "";
+
+		if (prd.getSchDate().compareTo(prd.getGrcPeriodEndDate()) <= 0) {
+			advanceType = AdvanceType.getType(prd.getGrcAdvType());
+		} else {
+			advanceType = AdvanceType.getType(prd.getAdvType());
+		}
+
+		if (advanceType == null) {
+			return;
+		}
+
+		//get excess
+		String finRef = prd.getFinReference();
+		int exculdeReason = 0;
+		BigDecimal dueAmt = BigDecimal.ZERO;
+
+		if (advanceType == AdvanceType.AE) {
+			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
+			dueAmt = prd.getSchAmtDue();
+			exculdeReason = RepayConstants.PEXC_ADVEMI;
+		} else {
+			amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+			dueAmt = prd.getSchPftDue();
+			exculdeReason = RepayConstants.PEXC_ADVINT;
+		}
+
+		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(finRef, amountType);
+
+		if (finExAmt != null) {
+			BigDecimal excessBal = finExAmt.getBalanceAmt();
+			BigDecimal adjAmount = BigDecimal.ZERO;
+
+			if (dueAmt.compareTo(BigDecimal.ZERO) > 0) {
+				if (excessBal != null && excessBal.compareTo(BigDecimal.ZERO) > 0) {
+					if (dueAmt.compareTo(excessBal) >= 0) {
+						adjAmount = excessBal;
+					} else {
+						adjAmount = dueAmt;
+					}
+				}
+			}
+
+			if (adjAmount.compareTo(dueAmt) == 0) {
+				prd.setAdvAdjusted(adjAmount);
+				prd.setExcludeReason(exculdeReason);
+			}
+
+			//process advance moment
+			finExAmt.setReservedAmt(adjAmount);
+			BigDecimal amount = finExAmt.getAmount();
+			BigDecimal reservedAmt = finExAmt.getReservedAmt();
+			BigDecimal utilisedAmt = finExAmt.getUtilisedAmt();
+			finExAmt.setBalanceAmt(amount.subtract(reservedAmt).subtract(utilisedAmt));
+			finExcessAmountDAO.updateExcessReserve(finExAmt);
+			//movement
+			FinExcessMovement exMovement = new FinExcessMovement();
+			exMovement.setExcessID(finExAmt.getExcessID());
+			exMovement.setMovementFrom(RepayConstants.PAYTYPE_PRESENTMENT);
+			exMovement.setAmount(adjAmount);
+			exMovement.setSchDate(prd.getSchDate());
+			exMovement.setMovementType("I");//in process
+			exMovement.setTranType("I");//in process
+			finExcessAmountDAO.saveExcessMovement(exMovement);
+		}
 	}
 }
