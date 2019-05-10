@@ -90,6 +90,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
@@ -2857,15 +2858,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			Date valueDate) {
 		logger.debug("Entering");
 
-		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
-
+		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		String finBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+		String finCCY = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
+		
+		long custId = 0;
 		String custDftBranch = null;
 		String highPriorityState = null;
 		String highPriorityCountry = null;
 
 		if (financeDetail.getCustomerDetails() != null) {
 			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+			custId = financeDetail.getCustomerDetails().getCustomer().getCustID();
 
 			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
 			if (CollectionUtils.isNotEmpty(addressList)) {
@@ -2879,10 +2883,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		}
+		
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch);
 
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
+		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(finBranch,
 				custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
-				branch);
+				userBranch);
 
 		//Calculate Fee Rules
 		calculateFeeRules(finFeeDetailsList, finScheduleData, gstExecutionMap);
