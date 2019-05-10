@@ -90,6 +90,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private long documentId;
 	private long docRefId;
 	private String verificationStatus;
+	private PersonalDiscussion personalDiscussion;
 
 	public Verification() {
 		super();
@@ -135,6 +136,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("initiated");
 		excludeFields.add("verificationStatus");
 		excludeFields.add("save");
+		excludeFields.add("personalDiscussion");
 		return excludeFields;
 	}
 
@@ -600,6 +602,14 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setSave(boolean save) {
 		this.save = save;
+	}
+
+	public PersonalDiscussion getPersonalDiscussion() {
+		return personalDiscussion;
+	}
+
+	public void setPersonalDiscussion(PersonalDiscussion personalDiscussion) {
+		this.personalDiscussion = personalDiscussion;
 	}
 
 }
