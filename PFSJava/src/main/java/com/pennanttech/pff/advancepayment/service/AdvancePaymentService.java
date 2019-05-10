@@ -82,12 +82,6 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			fm = finEODEvent.getFinanceMain();
 
-			long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_REPAY);
-
-			if (accountingID == Long.MIN_VALUE) {
-				continue;
-			}
-
 			int idx = finEODEvent.getIdxDue();
 			if (idx == -1) {
 				continue;
@@ -107,23 +101,16 @@ public class AdvancePaymentService extends ServiceHelper {
 				if (fm.getGrcAdvType() == null) {
 					continue;
 				}
-
-				advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
-
-				createReceipt(advancePayment, fm, valueDate);
-
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
 				if (fm.getAdvType() == null) {
 					continue;
 				}
-
-				advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
-
-				createReceipt(advancePayment, fm, valueDate);
 			}
 
+			advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
+			createReceipt(advancePayment, fm, valueDate);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -180,17 +167,15 @@ public class AdvancePaymentService extends ServiceHelper {
 				if (fm.getGrcAdvType() == null) {
 					continue;
 				}
-
-				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 			}
 
 			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
 				if (fm.getAdvType() == null) {
 					continue;
 				}
-
-				processAdvancePayments(finEODEvent, curSchd, custEODEvent, accountingID);
 			}
+
+			processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -198,11 +183,10 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public AdvancePayment processAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd,
-			CustEODEvent custEODEvent, long accountingID) {
+			Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Date valueDate = custEODEvent.getEodValueDate();
 		Date schDate = curSchd.getSchDate();
 
 		List<FinExcessAmount> excessAmounts = finEODEvent.getFinExcessAmounts();
@@ -210,8 +194,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
 
 		String finEvent = AccountEventConstants.ACCEVENT_REPAY;
+		long accountingID = getAccountingID(fm, finEvent);
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(profiDetails, schedules, finEvent, valueDate, schDate);
-
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -247,8 +231,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		aeEvent.setDataMap(dataMap);
-		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
-		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
+		aeEvent.setPostDate(valueDate);
+		aeEvent.setValueDate(valueDate);
 		//Postings Process and save all postings related to finance for one time accounts update
 
 		try {
@@ -500,9 +484,9 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal profitSchd = curSchd.getProfitSchd();
 		BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
 		BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid);
-		
+
 		BigDecimal schdEmiDue = schdPriDue.add(schdPriPaid);
-		
+
 		BigDecimal tDSPaid = curSchd.getTDSPaid();
 
 		BigDecimal payNow = BigDecimal.ZERO;
@@ -571,7 +555,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal totalPriPaid = profitDetail.getTotalPriPaid();
 		totalPriPaid = totalPriPaid.add(schdPriPaid);
 		profitDetail.setTotalPriPaid(schdPriPaid);
-		
+
 		BigDecimal tdTdsBal = profitDetail.getTdTdsBal();
 		tdTdsBal = tdTdsBal.add(tDSPaid); //FIXME
 		profitDetail.setTdTdsBal(tdTdsBal);
