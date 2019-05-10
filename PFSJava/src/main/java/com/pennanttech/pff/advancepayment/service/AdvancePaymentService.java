@@ -136,12 +136,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		finEODEvent.setFinProfitDetail(profiDetails);
 		finEODEvent.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
 
-		long accountingID = getAccountingID(fm, AccountEventConstants.ACCEVENT_REPAY);
-
-		if (accountingID == Long.MIN_VALUE) {
-			return datasets;
-		}
-
 		if (fm.getFinStartDate().compareTo(DateUtility.getAppDate()) >= 0) {
 			return datasets;
 		}
