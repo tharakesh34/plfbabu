@@ -110,6 +110,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
+			advancePayment.setProfitDetail(finEODEvent.getFinProfitDetail());
 			createReceipt(advancePayment, fm, valueDate);
 		}
 

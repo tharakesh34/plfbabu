@@ -1159,7 +1159,6 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		StringBuilder sql = new StringBuilder("Update FinPftDetails set");
 		sql.append(" TotalPftPaid = :TotalPftPaid");
-		sql.append(",TdTdsPaid = :TdTdsPaid");
 		sql.append(" where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
