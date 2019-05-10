@@ -373,6 +373,42 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		return excessID;
 	}
+	
+	public long advanceExcessMovement(AdvancePayment advPayment, Long receiptID, String txnType) {
+		String finRef = advPayment.getFinReference();
+		String adviceType = advPayment.getAdvancePaymentType();
+		long excessID = Long.MIN_VALUE;
+
+		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finRef, adviceType);
+		if (excess != null) {
+			excessID = excess.getExcessID();
+			FinExcessMovement excessAmovement = finExcessAmountDAO.getFinExcessMovement(excessID,
+					RepayConstants.PAYTYPE_PRESENTMENT, advPayment.getValueDate());
+
+			if (excessAmovement != null) {
+				//reserve exist
+				excess.setReservedAmt(excess.getReservedAmt().subtract(excessAmovement.getAmount()));
+			}
+
+			BigDecimal intAdjusted = advPayment.getIntAdjusted();
+			BigDecimal emiAdjusted = advPayment.getEmiAdjusted();
+			//since both can't co-exists
+			BigDecimal adjAmount = intAdjusted.add(emiAdjusted);
+			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
+			finExcessAmountDAO.updateReserveUtilization(excess);
+
+			//movement
+			FinExcessMovement excessMovement = new FinExcessMovement();
+			excessMovement.setExcessID(excessID);
+			excessMovement.setAmount(adjAmount);
+			excessMovement.setReceiptID(receiptID);
+			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+			excessMovement.setTranType(txnType);
+			finExcessAmountDAO.saveExcessMovement(excessMovement);
+		}
+
+		return excessID;
+	}
 
 	private void createAdvIntReceipt(AdvancePayment advancePayment, Date valueDate, FinanceScheduleDetail curSchd,
 			String txnType) {
@@ -418,7 +454,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		// 2. Receipt Details
 		advancePayment.setRequestedAmt(intAdjusted);
 		receiptID = rch.getReceiptID();
-		excessID = excessAmountMovement(advancePayment, receiptID, txnType);
+		excessID = advanceExcessMovement(advancePayment, receiptID, txnType);
 		FinReceiptDetail rcd = getReceiptDetail(payNow, valueDate, receiptID, excessID, AdvanceRuleCode.ADVINT);
 		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
@@ -518,7 +554,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		// 2. Receipt Details
 		advancePayment.setRequestedAmt(emiAdjusted);
 		receiptID = rch.getReceiptID();
-		excessID = excessAmountMovement(advancePayment, receiptID, txnType);
+		excessID = advanceExcessMovement(advancePayment, receiptID, txnType);
 		FinReceiptDetail rcd = getReceiptDetail(payNow, valueDate, receiptID, excessID, AdvanceRuleCode.ADVEMI);
 		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 
