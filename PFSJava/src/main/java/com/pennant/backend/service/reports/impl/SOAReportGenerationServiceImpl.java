@@ -65,7 +65,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
