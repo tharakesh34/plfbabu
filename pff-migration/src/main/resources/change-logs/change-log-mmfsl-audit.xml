@@ -184,4 +184,83 @@
 		</createTable>
 	</changeSet> 
 	
+	<changeSet id="4" author="Nageswar.p">
+		<createTable tableName="ADTCd_Dealermapping">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerMapId" type="int">
+			</column>
+			<column name="MerchantId" type="int">
+			</column>
+			<column name="StoreId" type="int">
+			</column>
+			<column name="DealerCode" type="int">
+			</column>
+			<column name="Active" type="boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="5" author="Shhabaj.b">
+		<createTable tableName="ADTCD_DealerGroup">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerGroupId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerCode" type="varchar(8)">
+			</column>
+			<column name="DealerCategoryId" type="int">
+			</column>
+			<column name="Channel" type="varchar(8)">
+			</column>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet> 
+	
 </databaseChangeLog>	

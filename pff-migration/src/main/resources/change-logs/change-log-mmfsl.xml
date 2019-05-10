@@ -850,4 +850,437 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="6.1" author="Nageswar.p">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'DEALERMAPPING_VIEW', 'Role for DealerMapping enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'DEALERMAPPING_MAKER', 'Role for DealerMapping maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'DEALERMAPPING_APPROVER', 'Role for DealerMapping approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+							
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEALERMAPPING_VIEW', 'Group for DealerMapping enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEALERMAPPING_MAKER', 'Group for DealerMapping maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEALERMAPPING_APPROVER', 'Group for DealerMapping approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_DealerMapping','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingList_PrintList','DealerMappingList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingList_NewProduct','DealerMappingList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingDialog_btnNew','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingDialog_btnEdit','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingDialog_btnDelete','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingDialog_btnSave','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerMappingDialog_MerchantName','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerMappingDialog_StoreName','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerMappingDialog_Active','DealerMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_VIEW'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_DealerMapping'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_NewProduct'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'DealerMappingDialog_MerchantName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'DealerMappingDialog_StoreName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'DealerMappingDialog_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_DealerMapping'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'button_DealerMappingDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DEALERMAPPING_VIEW'),(select RoleID from secRoles where RoleCd='DEALERMAPPING_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DEALERMAPPING_MAKER'),(select RoleID from secRoles where RoleCd='DEALERMAPPING_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DEALERMAPPING_APPROVER'),(select RoleID from secRoles where RoleCd='DEALERMAPPING_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="7" author="Nageswar.p" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCD_DEALERMAPPING" />
+	</changeSet>
+
+	<changeSet id="7.1" author="Nageswar.p" dbms="mssql">
+		<createTable tableName="SEQCD_DEALERMAPPING">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7.2" author="Nageswar.p">
+		<createTable tableName="CD_DealerMapping">
+			<column name="DealerMapId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_DEALERMAP_ID" />
+			</column>
+			<column name="MerchantId" type="int">
+			</column>
+			<column name="StoreId" type="int">
+			</column>
+			<column name="DealerCode" type="int">
+			</column>
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7.3" author="Nageswar.p">
+		<createTable tableName="CD_DealerMapping_Temp">
+			<column name="DealerMapId" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CD_DEALERMAP_T_ID" />
+			</column>
+			<column name="MerchantId" type="int">
+			</column>
+			<column name="StoreId" type="int">
+			</column>
+			<column name="DealerCode" type="int">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean"/>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7.4" author="Nageswar.p">
+		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
+			  SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			   FROM CD_DealerMapping_Temp t1
+			UNION ALL
+ 			SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,    
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping t1
+  			WHERE NOT (EXISTS (SELECT 1
+            FROM CD_DealerMapping_Temp 
+            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="7.5" author="Nageswar.p">
+		<createView viewName="CD_DealerMapping_AVIEW" replaceIfExists="true">
+			  SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,   
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="7.6" author="Nageswar.p">
+		<createView viewName="CD_DealerMapping_TVIEW" replaceIfExists="true">
+			  SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping_Temp t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="7.7" author="Nageswar.p">
+		<sql>
+		<![CDATA[
+		INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingList_DealerMappingSearchDialog','DealerMappingList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+		INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerMappingList_NewDealerMapping','DealerMappingList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+		
+		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_VIEW'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_DealerMappingSearchDialog'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_DealerMappingSearchDialog'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_DealerMappingSearchDialog'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+		INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerMappingList_NewDealerMapping'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);	
+		]]>
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="8" author="Shahbaj.b" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCD_DEALERGROUP" />
+	</changeSet>
+
+	<changeSet id="8.1" author="Shahbaj.b" dbms="oracle">
+		<createTable tableName="SEQCD_DEALERGROUP">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="8.2" author="Shahbaj.b">
+		<createTable tableName="CD_DealerGroup">
+			<column name="DealerGroupId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerCode" type="varchar(8)">
+			</column>
+			<column name="DealerCategoryId" type="int">
+			</column>
+			<column name="Channel" type="varchar(8)">
+			</column>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="8.3" author="Shahbaj.b">
+		<createTable tableName="CD_DealerGroup_Temp">
+			<column name="DealerGroupId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerCode" type="varchar(8)">
+			</column>
+			<column name="DealerCategoryId" type="int">
+			</column>
+			<column name="Channel" type="varchar(8)">
+			</column>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="8.4" author="Shahbaj.b">
+		<createView viewName="CD_DealerGroup_VIEW" replaceIfExists="true">
+			  SELECT t1.dealerGroupId,
+    			t1.dealercode,
+   				t1.dealercategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerGroup_Temp t1
+			UNION ALL
+ 			SELECT t1.dealerGroupId,
+    			t1.dealercode,
+   				t1.dealercategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerGroup t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM CD_DealerGroup_Temp
+            WHERE CD_DealerGroup_Temp.dealerGroupId = t1.dealerGroupId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="8.5" author="Shahbaj.b">
+		<createView viewName="CD_DealerGroup_AVIEW" replaceIfExists="true">
+			  SELECT t1.dealerGroupId,
+    			t1.dealercode,
+   				t1.dealercategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerGroup t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="8.6" author="Shahbaj.b">
+		<createView viewName="CD_DealerGroup_TVIEW" replaceIfExists="true">
+			 SELECT t1.dealerGroupId,
+    			t1.dealercode,
+   				t1.dealercategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerGroup_Temp t1
+		</createView>
+	</changeSet>
+	<changeSet id="8.7" author="Shahbaj.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'DEALERGROUP_VIEW', 'Role for Dealer Group enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'DEALERGROUP_MAKER', 'Role for Dealer Group maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'DEALERGROUP_APPROVER', 'Role for Dealer Group approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+							
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEALERGROUP_VIEW', 'Group for Dealer Group enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEALERGROUP_MAKER', 'Group for Dealer Group maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'DEALERGROUP_APPROVER', 'Group for Dealer Group approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_DealerGroup','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerGroupList_PrintList','DealerGroupList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerGroupList_NewDealerGroup','DealerGroupList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerGroupDialog_btnNew','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerGroupDialog_btnEdit','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerGroupDialog_btnDelete','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_DealerGroupDialog_btnSave','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerGroupDialog_DealerCode','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerGroupDialog_DealerCategoryId','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerGroupDialog_Channel','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'DealerGroupDialog_Active','DealerGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_VIEW'), (Select RightID from SecRights where RightName = 'button_DealerGroupList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_DealerGroup'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerGroupList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerGroupList_NewDealerGroup'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerGroupDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerGroupDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerGroupDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_DealerGroupDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'DealerGroupDialog_DealerCode'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'DealerGroupDialog_DealerCategoryId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'DealerGroupDialog_Channel'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'DealerGroupDialog_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_DealerGroup'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_APPROVER'), (Select RightID from SecRights where RightName = 'button_DealerGroupList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'DEALERGROUP_APPROVER'), (Select RightID from SecRights where RightName = 'button_DealerGroupDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DEALERGROUP_VIEW'),(select RoleID from secRoles where RoleCd='DEALERGROUP_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DEALERGROUP_MAKER'),(select RoleID from secRoles where RoleCd='DEALERGROUP_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='DEALERGROUP_APPROVER'),(select RoleID from secRoles where RoleCd='DEALERGROUP_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>	
