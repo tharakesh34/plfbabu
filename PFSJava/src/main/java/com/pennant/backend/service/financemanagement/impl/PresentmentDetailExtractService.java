@@ -474,7 +474,7 @@ public class PresentmentDetailExtractService {
 
 		for (FinExcessAmount finExcessAmount : list) {
 			if (AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVINT
-					|| AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVINT) {
+					|| AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVEMI) {
 				excessAmounts.add(finExcessAmount);
 			}
 		}
