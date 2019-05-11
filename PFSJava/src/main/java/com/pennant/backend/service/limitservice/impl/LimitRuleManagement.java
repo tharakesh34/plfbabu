@@ -113,14 +113,24 @@ public class LimitRuleManagement {
 			HashMap<String, Object> fieldsandvalues = new HashMap<String, Object>();
 			Object ruleResult = null;
 
-			if (financeMain != null)
+			if (financeMain != null) {
 				fieldsandvalues.putAll(financeMain.getDeclaredFieldValues());
-			if (customer != null)
+			}
+			if (customer != null) {
 				fieldsandvalues.putAll(customer.getDeclaredFieldValues());
-			if (financeType != null)
-				fieldsandvalues.putAll(financeType.getDeclaredFieldValues());
+			}
 
-			ruleResult = ruleExecution.executeRule(details.getSqlRule(), fieldsandvalues, financeMain.getFinCcy(),
+			if (financeType != null) {
+				fieldsandvalues.putAll(financeType.getDeclaredFieldValues());
+			}
+
+			String finCCY = "";
+
+			if (financeMain != null) {
+				finCCY = financeMain.getFinCcy();
+			}
+
+			ruleResult = ruleExecution.executeRule(details.getSqlRule(), fieldsandvalues, finCCY,
 					RuleReturnType.BOOLEAN);
 
 			if (ruleResult != null && StringUtils.equals(ruleResult.toString(), "1")) {

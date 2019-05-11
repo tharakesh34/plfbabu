@@ -186,11 +186,13 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			auditDetails.addAll(dealAuditDetails);
 
 			auditDetails.addAll(saveOrUpdateDetails(finDetailList, tableType, auditHeader.getAuditTranType()));
+			
+			for (FinanceDetail financeDetail : finDetailList) {
+				saveScheduleDetails(financeDetail, "_Temp", false);
+			}
 		}
 
-		for (FinanceDetail financeDetail : finDetailList) {
-			saveScheduleDetails(financeDetail, "_Temp", false);
-		}
+		
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -543,13 +545,15 @@ public class TreasuaryFinanceServiceImpl extends GenericFinanceDetailService imp
 			List<AuditDetail> details = header.getAuditDetailMap().get("FinanceMain");
 			List<AuditDetail> dealAuditDetails = processingDeals(details, header, tableType);
 			auditDetails.addAll(dealAuditDetails);
+			
+			for (FinanceDetail financeDetail : finDetailList) {
+				saveScheduleDetails(financeDetail, "_Temp", false);
+			}
+
+			auditDetails.addAll(saveOrUpdateDetails(finDetailList, tableType, auditHeader.getAuditTranType()));
 		}
 
-		for (FinanceDetail financeDetail : finDetailList) {
-			saveScheduleDetails(financeDetail, "_Temp", false);
-		}
-
-		auditDetails.addAll(saveOrUpdateDetails(finDetailList, tableType, auditHeader.getAuditTranType()));
+		
 
 		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);

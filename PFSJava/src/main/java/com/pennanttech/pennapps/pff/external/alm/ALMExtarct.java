@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -409,7 +410,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 					}
 
 					// Due to invalid FinReference Number product flag will not set
-					if (!accrualList.isEmpty() && alm.getProductFlag() != null) {
+					if (CollectionUtils.isNotEmpty(accrualList) && alm.getProductFlag() != null) {
 						txnStatus = transManager.getTransaction(transDef);
 						saveAccruals(alm, accrualList);
 						transManager.commit(txnStatus);

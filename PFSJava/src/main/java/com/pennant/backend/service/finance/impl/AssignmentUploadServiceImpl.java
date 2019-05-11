@@ -588,8 +588,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			int effectiveDiffDays = DateUtility.getDaysBetween(assignUpload.getAssignmentDate(), curSchd.getSchDate());
 
 			//Effective days Interest amount calculation  
-			BigDecimal effectiveProfit = nextSchd.getProfitCalc().multiply(new BigDecimal(effectiveDiffDays))
-					.divide(new BigDecimal(nextSchd.getNoOfDays()), 9, RoundingMode.HALF_DOWN);
+			BigDecimal effectiveProfit = BigDecimal.ZERO;
+
+			if (nextSchd != null) {
+				effectiveProfit = nextSchd.getProfitCalc().multiply(new BigDecimal(effectiveDiffDays))
+						.divide(new BigDecimal(nextSchd.getNoOfDays()), 9, RoundingMode.HALF_DOWN);
+			}
 
 			//Total Interest calculation from Current schedule date.
 			BigDecimal afterAssignProfit = BigDecimal.ZERO;
@@ -649,12 +653,15 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			//if customer paid any Schedule amount between the assignment date and effective date
 			BigDecimal effectivePaidPriAmt = BigDecimal.ZERO;
-			if (DateUtility.compare(effectNextSchd.getSchDate(), nextSchd.getSchDate()) != 0) {
-				effectivePaidPriAmt = effectNextSchd.getSchdPriPaid().subtract(effectNextSchd.getPartialPaidAmt()); //Because of Partial Settlement Case
-				effectivePaidPriAmt = effectivePaidPriAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
-						RoundingMode.HALF_DOWN);
-				effectivePaidPriAmt = CalculationUtil.roundAmount(effectivePaidPriAmt, RoundingMode.HALF_DOWN.name(),
-						0); //if rounding required 
+
+			if (effectNextSchd != null) {
+				if (DateUtility.compare(effectNextSchd.getSchDate(), nextSchd.getSchDate()) != 0) {
+					effectivePaidPriAmt = effectNextSchd.getSchdPriPaid().subtract(effectNextSchd.getPartialPaidAmt()); //Because of Partial Settlement Case
+					effectivePaidPriAmt = effectivePaidPriAmt.multiply(sharePercent).divide(new BigDecimal(100), 9,
+							RoundingMode.HALF_DOWN);
+					effectivePaidPriAmt = CalculationUtil.roundAmount(effectivePaidPriAmt,
+							RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
+				}
 			}
 
 			//If we have any excess Amount
@@ -759,7 +766,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			amountCodes.setAlwflexi(financeMain.isAlwFlexi());
 			amountCodes.setFinbranch(financeMain.getFinBranch());
 			amountCodes.setEntitycode(financeMain.getEntityCode());
-			
+
 			aeEvent.setAeAmountCodes(amountCodes);
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			if (excludeFees != null) {
@@ -818,8 +825,13 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		//get the actual difference days from Effective date and previous schedule date
 		int effectiveDaysDiff = DateUtility.getDaysBetween(assignmentUpload.getEffectiveDate(), prvSchd.getSchDate());
 
-		BigDecimal bpi1Amount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
-				RoundingMode.HALF_DOWN); //Gives profit for 1 day
+		BigDecimal bpi1Amount = BigDecimal.ZERO;
+
+		if (curSchd != null) {
+			bpi1Amount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
+					RoundingMode.HALF_DOWN); //Gives profit for 1 day
+		}
+
 		bpi1Amount = bpi1Amount.multiply(new BigDecimal(effectiveDaysDiff));
 		bpi1Amount = bpi1Amount.multiply(sharePercent).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);//Sharing percentage
 		bpi1Amount = CalculationUtil.roundAmount(bpi1Amount, RoundingMode.HALF_DOWN.name(), 0); //if rounding required 
@@ -859,18 +871,23 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		//get the actual difference days from effective date and current schedule date
-		int effectDaysDiff = DateUtility.getDaysBetween(curSchd.getSchDate(), assignmentUpload.getEffectiveDate());
+		int effectDaysDiff = 0;
+		BigDecimal intrestAmount = BigDecimal.ZERO;
+		BigDecimal intrestAmount2 = BigDecimal.ZERO;
+		int assignDiffDays = 0;
 
-		BigDecimal intrestAmount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
-				RoundingMode.HALF_DOWN);//Gives 1 day profit
-		intrestAmount = intrestAmount.multiply(new BigDecimal(effectDaysDiff));
+		if (curSchd != null && nextSchd != null) {
+			effectDaysDiff = DateUtility.getDaysBetween(curSchd.getSchDate(), assignmentUpload.getEffectiveDate());
+			intrestAmount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
+					RoundingMode.HALF_DOWN);//Gives 1 day profit
+			intrestAmount = intrestAmount.multiply(new BigDecimal(effectDaysDiff));
+			//Difference between assignment date and current schedule date
+			assignDiffDays = DateUtility.getDaysBetween(assignmentUpload.getAssignmentDate(), curSchd.getSchDate());
 
-		//Difference between assignment date and current schedule date
-		int assignDiffDays = DateUtility.getDaysBetween(assignmentUpload.getAssignmentDate(), curSchd.getSchDate());
-
-		BigDecimal intrestAmount2 = nextSchd.getProfitCalc().divide(new BigDecimal(nextSchd.getNoOfDays()), 9,
-				RoundingMode.HALF_DOWN);
-		intrestAmount2 = intrestAmount2.multiply(new BigDecimal(assignDiffDays));
+			intrestAmount2 = nextSchd.getProfitCalc().divide(new BigDecimal(nextSchd.getNoOfDays()), 9,
+					RoundingMode.HALF_DOWN);
+			intrestAmount2 = intrestAmount2.multiply(new BigDecimal(assignDiffDays));
+		}
 
 		BigDecimal bpi2Amount = BigDecimal.ZERO;
 		bpi2Amount = bpi2Amount.add(intrestAmount).add(intrestAmount2);

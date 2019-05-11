@@ -496,6 +496,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Repay Headers setting to Receipt Details
 		List<FinExcessAmountReserve> excessReserves = new ArrayList<>();
 		List<ManualAdviseReserve> payableReserves = new ArrayList<>();
+
+		if (receiptDetailList == null) {
+			receiptDetailList = new ArrayList<>();
+		}
+		
 		for (FinReceiptDetail receiptDetail : receiptDetailList) {
 			for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 				if (finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()) {

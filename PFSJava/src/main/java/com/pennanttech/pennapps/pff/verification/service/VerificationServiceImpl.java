@@ -170,6 +170,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification = financeDetail.getPdVerification();
 			idList = personalDiscussionService.getPersonalDiscussionIds(verification.getVerifications(),
 					verification.getKeyReference());
+		} 
+		
+		if(verification == null) {
+			return auditDetails;
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(verification, verification.getExcludeFields());

@@ -1183,8 +1183,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						FinanceScheduleDetail curSchd = null;
 						boolean schdUpdated = false;
-						if (schdMap.containsKey(
-								DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
+						if (schdMap
+								.containsKey(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
 							curSchd = schdMap
 									.get(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
 
@@ -1328,25 +1328,28 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Deletion of Finance Schedule Related Details From Main Table
 				FinanceProfitDetail pftDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
-				scheduleData.setFinanceMain(financeMain);
-				if (alwSchdReversalByLog) {
-					listDeletion(finReference, "", false, 0);
 
-					// Fetching Last Log Entry Finance Details
-					scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
+				if (scheduleData != null) {
 					scheduleData.setFinanceMain(financeMain);
+					if (alwSchdReversalByLog) {
+						listDeletion(finReference, "", false, 0);
 
-					// Re-Insert Log Entry Data before Repayments Process
-					// Recalculations
-					listSave(scheduleData, "", 0);
+						// Fetching Last Log Entry Finance Details
+						scheduleData = getFinSchDataByFinRef(finReference, logKey, "_Log");
+						scheduleData.setFinanceMain(financeMain);
 
-					// Delete Data from Log Entry Tables After Inserting into
-					// Main Tables
-					for (int i = 0; i < receiptDetails.size(); i++) {
-						listDeletion(finReference, "_Log", false, receiptDetails.get(i).getLogKey());
+						// Re-Insert Log Entry Data before Repayments Process
+						// Recalculations
+						listSave(scheduleData, "", 0);
+
+						// Delete Data from Log Entry Tables After Inserting into
+						// Main Tables
+						for (int i = 0; i < receiptDetails.size(); i++) {
+							listDeletion(finReference, "_Log", false, receiptDetails.get(i).getLogKey());
+						}
+					} else {
+						scheduleData.setFinanceScheduleDetails(new ArrayList<>(schdMap.values()));
 					}
-				} else {
-					scheduleData.setFinanceScheduleDetails(new ArrayList<>(schdMap.values()));
 				}
 
 				pftDetail.setLpiAmount(receiptHeader.getLpiAmount());
@@ -1377,8 +1380,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						.equals(scheduleData.getFinanceMain().getProductCategory(), FinanceConstants.PRODUCT_GOLD)) {
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
-				List<FinODDetails> overdueList = finODDetailsDAO
-						.getFinODBalByFinRef(financeMain.getFinReference());
+				List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(financeMain.getFinReference());
 				List<FinanceRepayments> repayments = financeRepaymentsDAO
 						.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
 				overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate,

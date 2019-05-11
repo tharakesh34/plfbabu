@@ -358,7 +358,7 @@ public class CostOfFundServiceImpl extends GenericService<CostOfFund> implements
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		if (StringUtils.trimToEmpty(costOfFund.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (costOfFund != null && StringUtils.trimToEmpty(costOfFund.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_CofCode") + ": " + costOfFund.getCofCode();
 			boolean exist = this.financeTypeDAO.isCostOfFundsExist(costOfFund.getCofCode(), "_View");

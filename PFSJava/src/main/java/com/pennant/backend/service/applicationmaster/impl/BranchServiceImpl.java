@@ -237,20 +237,24 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 						revDataSet.setDrOrCr(returnDataSet.getDrOrCr());
 					}
 				}
-				returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
-						SysParamUtil.getAppCurrency(), revDataSet.getPostAmount()));
-				currAccount = returnDataSet.getAccount();
-				finReference = returnDataSet.getFinReference();
-				tranCode = returnDataSet.getTranCode();
-				if (revDataSet.getPostAmount().compareTo(BigDecimal.ZERO) != 0 && (i == existingPostings.size() - 1
-						|| !StringUtils.equals(currAccount, existingPostings.get(i + 1).getAccount())
-						|| !StringUtils.equals(finReference, existingPostings.get(i + 1).getFinReference())
-						|| !StringUtils.equals(tranCode, existingPostings.get(i + 1).getTranCode()))) {
-					if (finalPostings == null) {
-						finalPostings = new ArrayList<ReturnDataSet>();
+
+				if (revDataSet != null) {
+					returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
+							SysParamUtil.getAppCurrency(), revDataSet.getPostAmount()));
+					currAccount = returnDataSet.getAccount();
+					finReference = returnDataSet.getFinReference();
+					tranCode = returnDataSet.getTranCode();
+					if (revDataSet.getPostAmount().compareTo(BigDecimal.ZERO) != 0 && (i == existingPostings.size() - 1
+							|| !StringUtils.equals(currAccount, existingPostings.get(i + 1).getAccount())
+							|| !StringUtils.equals(finReference, existingPostings.get(i + 1).getFinReference())
+							|| !StringUtils.equals(tranCode, existingPostings.get(i + 1).getTranCode()))) {
+						if (finalPostings == null) {
+							finalPostings = new ArrayList<ReturnDataSet>();
+						}
+						finalPostings.add(revDataSet);
 					}
-					finalPostings.add(revDataSet);
 				}
+
 			}
 		}
 		if (finalPostings != null && !finalPostings.isEmpty()) {
@@ -262,8 +266,8 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 					retDataSet.setLinkedTranId(linkedTranId);
 				}
 				retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId() + "-" + seqNo));
-				retDataSet.setPostingId(retDataSet.getFinReference()
-						+ DateUtility.format(new Date(), "yyyyMMddHHmmss") + StringUtils
+				retDataSet.setPostingId(
+						retDataSet.getFinReference() + DateUtility.format(new Date(), "yyyyMMddHHmmss") + StringUtils
 								.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
 				retDataSet.setShadowPosting(false);
 				retDataSet.setPostDate(dateAppDate);
@@ -525,5 +529,5 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	@Override
 	public String getBranchDesc(String id) {
 		return getBranchDAO().getBranchDesc(id, "_View");
-		}
+	}
 }

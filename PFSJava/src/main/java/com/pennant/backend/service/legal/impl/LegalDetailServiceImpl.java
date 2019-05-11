@@ -347,7 +347,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 									}
 
 									//Query Documents
-									if (queryDetail.getDocumentDetailsList() != null
+									if (queryDetail != null && queryDetail.getDocumentDetailsList() != null
 											&& !CollectionUtils.isEmpty(queryDetail.getDocumentDetailsList())) {
 										for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 											if (documentDetails.isNew()) {

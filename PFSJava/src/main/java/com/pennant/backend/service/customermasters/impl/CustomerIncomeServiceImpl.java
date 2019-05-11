@@ -382,7 +382,9 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 					customerIncome.setMargin(incomeType.getMargin());
 				}
 			}
-			if (incomeType.getMargin() != null && customerIncome.getMargin().compareTo(new BigDecimal(10000)) > 0) {
+			
+			if (incomeType != null && incomeType.getMargin() != null
+					&& customerIncome.getMargin().compareTo(new BigDecimal(10000)) > 0) {
 				ErrorDetail errorDetail = new ErrorDetail();
 				String[] valueParm = new String[2];
 				valueParm[0] = "margin";

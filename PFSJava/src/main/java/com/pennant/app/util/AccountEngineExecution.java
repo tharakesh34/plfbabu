@@ -418,6 +418,10 @@ public class AccountEngineExecution implements Serializable {
 		if (!transactionEntries.isEmpty()) {
 			returnDataSets = prepareAccountingSetResults(aeEvent);
 		}
+		
+		if(returnDataSets == null) {
+			returnDataSets = new ArrayList<>();
+		}
 
 		//Method for Checking for Reverse Calculations Based upon Negative Amounts
 		for (ReturnDataSet set : returnDataSets) {

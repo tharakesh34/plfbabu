@@ -1422,9 +1422,11 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 			customerDocument.setNewRecord(true);
 		}
 
-		customerDocument.setCustID(financeMain.getCustID());
-		customerDocument.setLovDescCustCIF(financeMain.getCustCIF());
-		customerDocument.setLovDescCustShrtName(financeMain.getCustShrtName());
+		if (financeMain != null) {
+			customerDocument.setCustID(financeMain.getCustID());
+			customerDocument.setLovDescCustCIF(financeMain.getCustCIF());
+			customerDocument.setLovDescCustShrtName(financeMain.getCustShrtName());
+		}
 
 		customerDocument.setCustDocImage(documentDetails.getDocImage());
 		customerDocument.setCustDocImage(documentDetails.getDocImage());

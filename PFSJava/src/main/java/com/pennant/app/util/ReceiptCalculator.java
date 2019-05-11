@@ -2077,10 +2077,15 @@ public class ReceiptCalculator implements Serializable {
 		}
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 
-		BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+		BigDecimal balPri = BigDecimal.ZERO;
 		BigDecimal balAmount = BigDecimal.ZERO;
 		BigDecimal paidNow = BigDecimal.ZERO;
 		BigDecimal waivedNow = BigDecimal.ZERO;
+
+		if (curSchd != null) {
+			balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
+		}
+
 		if (balPri.compareTo(BigDecimal.ZERO) <= 0) {
 			return receiptData;
 		}

@@ -184,8 +184,12 @@ public class BulkRateChangeProcessServiceImpl extends GenericFinanceDetailServic
 		}
 		String tableType = "";
 		BulkRateChangeHeader bulkRateChangeHeader = (BulkRateChangeHeader) auditHeader.getAuditDetail().getModelData();
+		
+		if(bulkRateChangeHeader == null) {
+			return auditHeader;
+		}
 
-		if (bulkRateChangeHeader != null && bulkRateChangeHeader.getUserDetails() != null) {
+		if (bulkRateChangeHeader.getUserDetails() != null) {
 			setLoggedInUser(bulkRateChangeHeader.getUserDetails());
 		}
 

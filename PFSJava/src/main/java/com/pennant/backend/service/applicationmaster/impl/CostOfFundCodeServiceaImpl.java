@@ -352,7 +352,7 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 
 		
 		// Dependency Validation : checking COF Code in RMTFinanceTypes
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, costOfFundCode.getRecordType())) {
+		if (costOfFundCode != null && StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, costOfFundCode.getRecordType())) {
 			boolean isExists = getFinanceTypeDAO().isCostOfFundsExist(costOfFundCode.getCofCode(), "_View");
 			if (isExists) {
 				String[] parameters = new String[1];
