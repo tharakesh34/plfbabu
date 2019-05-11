@@ -87,5 +87,7 @@ public class SMTParameterConstants {
 	public static final String MAX_ODDAYS_ADDDISB = "MAX_ODDAYS_ADDDISB";//Max od days for add disbursement.
 	public static final String MAX_DAYS_FIN_AUTO_REJECT = "MAX_DAYS_FIN_AUTO_REJECT";//Cancel Loan for not adding disbursement.
 	public static final String ADD_DISB_DUES_WARNG = "ADD_DISB_DUES_WARNG";// add disbursement warning
+	// Amount field integral part default value requires zero or not. EX: If requires, value will be like 0.00, if not, value will be like .00 
+	public static final String ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO = "ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO";
 	public static final String LMS_SERVICE_LOG_REQ = "LMS_SERVICE_LOG_REQ";//LMS service log required or not
 }

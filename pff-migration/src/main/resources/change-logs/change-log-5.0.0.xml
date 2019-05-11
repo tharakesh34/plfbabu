@@ -1154,6 +1154,20 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="27" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
+			INSERT INTO SMTPARAMETERS VALUES ('ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO', 'Amount field integral part default value requires zero or not', 'String', 1, 'N', 1, 0, NULL, NULL,'Amount field integral part default value requires zero or not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+    </changeSet>
+    
+    <changeSet id="28" author="DurgaPrasad.G">
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)"/>    
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL_TEMP" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)"/>    
+    </changeSet>
+
 	<changeSet id="27" author="Saikiran.v">
 		<createTable tableName="LMSServiceLog">
 			<column name="Event" type="varchar(50)" />

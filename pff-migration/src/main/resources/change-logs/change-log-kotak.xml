@@ -28,12 +28,26 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
+
+	<changeSet id="1" author="Durgaprasad.g">
+		<sql>
+			Insert into RMTLOVFIELDDETAIL  values ((select max(fieldcodeid)+1 from RMTLOVFIELDDETAIL),'CAT_COAPP','Corporate','Corporate','1',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'0');
+		</sql>
+	</changeSet>
 	
 	<changeSet id="1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ADD_DISB_DUES_WARNG';
 			 ]]>
+		</sql>
+    </changeSet>
+    
+    <changeSet id="2" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+			UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
+			]]>
 		</sql>
     </changeSet>
 	<changeSet id="2" author="saikiran.v">

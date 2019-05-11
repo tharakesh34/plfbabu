@@ -151,7 +151,13 @@ public class PennantApplicationUtil {
 		} else {
 			String string = "0";
 			if (decPos > 0) {
-				string = "0.";
+				string = ".";
+				// Integral part of a component default value requires zero or
+				// not. EX: If requires, value will be like 0.00, if not, value
+				// will be like .00
+				if (getAlwIntegralPartZero()) {
+					string = "0.";
+				}
 				for (int i = 0; i < decPos; i++) {
 					string = string.concat("0");
 				}
@@ -162,22 +168,40 @@ public class PennantApplicationUtil {
 
 	public static String getAmountFormate(int dec) {
 		String formateString = PennantConstants.defaultAmountFormate;
+
+		boolean alwIntegralPartZero = getAlwIntegralPartZero();
+
 		if (ImplementationConstants.INDIAN_IMPLEMENTATION) {
 			switch (dec) {
 			case 0:
 				formateString = PennantConstants.in_amountFormate0;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormat0;
+				}
 				break;
 			case 1:
 				formateString = PennantConstants.in_amountFormate1;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormat1;
+				}
 				break;
 			case 2:
 				formateString = PennantConstants.in_amountFormate2;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormat2;
+				}
 				break;
 			case 3:
 				formateString = PennantConstants.in_amountFormate3;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormat3;
+				}
 				break;
 			case 4:
 				formateString = PennantConstants.in_amountFormate4;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormat4;
+				}
 				break;
 			}
 
@@ -185,22 +209,36 @@ public class PennantApplicationUtil {
 			switch (dec) {
 			case 0:
 				formateString = PennantConstants.amountFormate0;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormate0;
+				}
 				break;
 			case 1:
 				formateString = PennantConstants.amountFormate1;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormate1;
+				}
 				break;
 			case 2:
 				formateString = PennantConstants.amountFormate2;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormate2;
+				}
 				break;
 			case 3:
 				formateString = PennantConstants.amountFormate3;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormate3;
+				}
 				break;
 			case 4:
 				formateString = PennantConstants.amountFormate4;
+				if (alwIntegralPartZero) {
+					formateString = PennantConstants.integralAmtFormate4;
+				}
 				break;
 			}
 		}
-
 		return formateString;
 	}
 
@@ -333,10 +371,12 @@ public class PennantApplicationUtil {
 
 	public static String formatAccountNumber(String accountNumber) {
 		/*
-		 * if (!StringUtils.trimToEmpty(accountNumber).equals("") && accountNumber.length() == 13) { StringBuilder
-		 * builder = new StringBuilder(); builder.append(accountNumber.substring(0, 4)); builder.append("-");
-		 * builder.append(accountNumber.substring(4, 10)); builder.append("-");
-		 * builder.append(accountNumber.substring(10, 13)); return builder.toString(); }
+		 * if (!StringUtils.trimToEmpty(accountNumber).equals("") &&
+		 * accountNumber.length() == 13) { StringBuilder builder = new
+		 * StringBuilder(); builder.append(accountNumber.substring(0, 4));
+		 * builder.append("-"); builder.append(accountNumber.substring(4, 10));
+		 * builder.append("-"); builder.append(accountNumber.substring(10, 13));
+		 * return builder.toString(); }
 		 */
 		return accountNumber;
 	}
@@ -415,8 +455,6 @@ public class PennantApplicationUtil {
 					+ (StringUtils.isBlank(roleCodeDesc) ? "" : roleCodeDesc) + " successfully.";
 		}
 	}
-	
-	
 
 	public static String getSavingStatus(String roleCode, String nextRoleCode, String reference, String moduleCode,
 			String recordStatus) {
@@ -481,7 +519,7 @@ public class PennantApplicationUtil {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		return pagedListService.getBySearchObject(searchObject);
 	}
-	
+
 	public static String getUserDesc(long userID) {
 		Search search = new Search(SecurityUser.class);
 
@@ -541,8 +579,8 @@ public class PennantApplicationUtil {
 	 * @param number
 	 * @param charSequence
 	 * @param delimiter
-	 * @return Example : input number = "123456789",charSequence = new int[] {2,4,3}) , delimiter = "-" then output =
-	 *         "12-3456-789"
+	 * @return Example : input number = "123456789",charSequence = new int[]
+	 *         {2,4,3}) , delimiter = "-" then output = "12-3456-789"
 	 */
 	public static String formatSequence(String number, int[] charSequence, String delimiter) {
 		if (!StringUtils.isBlank(number)) {
@@ -582,11 +620,13 @@ public class PennantApplicationUtil {
 	}
 
 	/**
-	 * Purpose: To fetch description for master data when customer details are retrieved from interface.
+	 * Purpose: To fetch description for master data when customer details are
+	 * retrieved from interface.
 	 * 
-	 * To fetch the description from master table when the code , module and description field specified. Since method
-	 * is used for only fetching the description,it will return the null if not found. Table name is not mandatory and
-	 * null handled. All the exception are suppressed.
+	 * To fetch the description from master table when the code , module and
+	 * description field specified. Since method is used for only fetching the
+	 * description,it will return the null if not found. Table name is not
+	 * mandatory and null handled. All the exception are suppressed.
 	 * 
 	 * @param moduleName
 	 * @param filedName
@@ -734,7 +774,8 @@ public class PennantApplicationUtil {
 	}
 
 	/**
-	 * Method to get the RightName of ExtendedField Based on Module, SubModule and InputType.
+	 * Method to get the RightName of ExtendedField Based on Module, SubModule
+	 * and InputType.
 	 * 
 	 * @param detail
 	 * @return
@@ -774,7 +815,8 @@ public class PennantApplicationUtil {
 		switch (custCategory) {
 		case "RETAIL":
 			result.put("TYPE", SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL"));
-			//result.put("LABEL", "label_CoreCustomerDialog_PrimaryID_Retl.value");
+			// result.put("LABEL",
+			// "label_CoreCustomerDialog_PrimaryID_Retl.value");
 			result.put("MANDATORY",
 					"Y".equals(SysParamUtil.getValueAsString("CUST_PRIMARY_ID_REQ")) ? "true" : "false");
 			result.put("REGEX", "REGEX_" + SysParamUtil.getValueAsString("CUST_PRIMARY_ID_RETL") + "_NUMBER");
@@ -854,7 +896,7 @@ public class PennantApplicationUtil {
 
 		return defaultCountry;
 	}
-	
+
 	public static String getCashPosition(BigDecimal reOrderLimit, BigDecimal cashPositon, BigDecimal cashLimit) {
 		if (reOrderLimit == null) {
 			reOrderLimit = new BigDecimal(0);
@@ -875,5 +917,14 @@ public class PennantApplicationUtil {
 		} else {
 			return CashManagementConstants.Cash_Position_Sufficient_Desc;
 		}
+	}
+
+	private static boolean getAlwIntegralPartZero() {
+		String integralPartZeroVal = SysParamUtil
+				.getValueAsString(SMTParameterConstants.ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO);
+		if (StringUtils.equalsIgnoreCase(PennantConstants.YES, integralPartZeroVal)) {
+			return true;
+		}
+		return false;
 	}
 }

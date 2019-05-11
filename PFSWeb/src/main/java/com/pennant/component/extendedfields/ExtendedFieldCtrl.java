@@ -829,6 +829,15 @@ public class ExtendedFieldCtrl {
 	}
 
 	/**
+	 * Getting the component value.
+	 * @param componentId
+	 * @return
+	 */
+	public Component getComponent(String componentId) {
+		return generator.getWindow().getFellowIfAny(componentId);
+	}
+	
+	/**
 	 * @param parentTab
 	 *            the parentTab to set
 	 */
@@ -977,4 +986,5 @@ public class ExtendedFieldCtrl {
 	public void setValues(Map<String, Object> fieldValueMap) {
 		this.generator.setValues(extendedFieldHeader.getExtendedFieldDetails(), fieldValueMap);
 	}
+	
 }

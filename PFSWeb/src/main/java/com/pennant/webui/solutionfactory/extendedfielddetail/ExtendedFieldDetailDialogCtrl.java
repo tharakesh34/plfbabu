@@ -320,7 +320,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldLength.setMaxlength(4);
 		this.fieldPrec.setMaxlength(2);
 		this.fieldSeqOrder.setMaxlength(4);
-		this.fieldDefaultValue.setMaxlength(50);
+		this.fieldDefaultValue.setMaxlength(200);
 		this.fieldMultilinetxt.setMaxlength(2);
 
 		//story #699 Allow Additional filters for extended combobox.
@@ -486,6 +486,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					getDateDefaultType(aExtendedFieldDetail.getFieldType()), "");
 		} else {
 			this.fieldDefaultValue.setValue(aExtendedFieldDetail.getFieldDefaultValue());
+			this.fieldDefaultValue.setTooltiptext(aExtendedFieldDetail.getFieldDefaultValue());
 		}
 		this.fieldMinValue.setValue(aExtendedFieldDetail.getFieldMinValue());
 		this.fieldMaxValue.setValue(aExtendedFieldDetail.getFieldMaxValue());

@@ -132,4 +132,9 @@
 			<column name="sezValueDate" type="datetime" />
 			</addColumn>
 	</changeSet>
+	
+	<changeSet id="5" author="DurgaPrasad.G">
+		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)"/>    
+    </changeSet>
+    
 </databaseChangeLog>

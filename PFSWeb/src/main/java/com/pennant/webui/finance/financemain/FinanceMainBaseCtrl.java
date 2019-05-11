@@ -19585,6 +19585,42 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Extended fields button
+	 */
+	public void onClickExtbtnOPENURLBUTTON() {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (extendedFieldCtrl == null) {
+				return;
+			}
+
+			Component component = null;
+			
+			component = extendedFieldCtrl.getComponent("ad_KRAMANURL");
+			if (component == null) {
+				return;
+			}
+
+			Textbox url = (Textbox) component;
+			String urlVal = url.getValue();
+			
+			 
+			Executions.getCurrent().sendRedirect(urlVal, "_blank");
+			 
+		} catch (Exception e) {
+			{
+				if (e.getLocalizedMessage() != null) {
+					MessageUtil.showError(e.getLocalizedMessage());
+				} else {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
 	public void onChange$grcAdvTerms(Event event) {
 		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
