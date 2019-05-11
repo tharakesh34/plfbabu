@@ -757,7 +757,7 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 					masterValueMissedDetails.add(masterMissedDetail);
 					customer.setCustSalutationCode("");
 				}
-				if (("").equals(customer.getCustRO1())) {
+				if (customer.getCustRO1() == 0 || customer.getCustRO1() == Long.MIN_VALUE) {
 					customer.setCustRO1(0);
 				} else if (!valueExistInMaster(String.valueOf(customer.getCustRO1()), rShipOfficerCodeMasterList)) {
 					masterMissedDetail.setFieldName("CustRO1");

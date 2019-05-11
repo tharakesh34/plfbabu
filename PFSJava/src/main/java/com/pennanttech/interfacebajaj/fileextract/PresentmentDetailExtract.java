@@ -827,7 +827,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			return;
 		}
 
-		if (status.equals(CON_RESPONSE_BOUNCE)) {
+		if (status.equals(String.valueOf(CON_RESPONSE_BOUNCE))) {
 
 			Boolean isLoanActive = isLoanActive(presement_Response.getBatchId());
 
