@@ -442,9 +442,18 @@ public class BatchUploadProcessor {
 		Iterator<Row> rows = sheet.iterator();
 		while (rows.hasNext()) {
 			Row row = rows.next();
+
+			if (row == null) {
+				continue;
+			}
+
 			int rowIndex = row.getRowNum();
 			if (row != null && rowIndex > 0) {
 				for (Cell cell : row) {
+					if (cell == null) {
+						continue;
+					}
+
 					int columnIndex = cell.getColumnIndex() + 1;
 					if (cell != null && !cell.toString().trim().equals("") && columnIndex <= keyListSize) {
 						rowCount++;

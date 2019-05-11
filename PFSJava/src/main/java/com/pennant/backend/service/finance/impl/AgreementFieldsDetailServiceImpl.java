@@ -387,6 +387,10 @@ public class AgreementFieldsDetailServiceImpl extends GenericService<AgreementFi
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		AgreementFieldDetails agreementFieldDetails = (AgreementFieldDetails) auditDetail.getModelData();
+		
+		if(agreementFieldDetails == null) {
+			return auditDetail;
+		}
 
 		AgreementFieldDetails tempAgreementFieldDetails = null;
 		if (agreementFieldDetails.isWorkflow()) {

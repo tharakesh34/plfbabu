@@ -2187,11 +2187,18 @@ public class AgreementGeneration implements Serializable {
 
 	private void populateBankingDetails(AgreementDetail agreement, int formatter, String applicantType,
 			CustomerDetails custdetails) {
+		
+		if(custdetails == null) {
+			return;
+		}
+		
+		
+		
 		List<CustomerBankInfo> customerBankInfoList = custdetails.getCustomerBankInfoList();
 		for (CustomerBankInfo customerBankInfo : customerBankInfoList) {
 			BankingDetail bankingDetail = agreement.new BankingDetail();
 			bankingDetail.setApplicantType(StringUtils.trimToEmpty(applicantType));
-			if (null != custdetails && null != custdetails.getCustomer()) {
+			if (null != custdetails.getCustomer()) {
 				bankingDetail.setCustCIF(StringUtils.trimToEmpty(custdetails.getCustomer().getCustCIF()));
 				bankingDetail.setCustName(StringUtils.trimToEmpty(custdetails.getCustomer().getCustShrtName()));
 			}
