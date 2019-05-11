@@ -744,7 +744,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 							phoneNumber.setPhoneNumber(rs.getString("PHONENUMBER"));
 							phoneNumber.setPhoneTypePriority(rs.getInt("PHONETYPEPRIORITY"));
 
-							list = phoneTypes.get(phoneNumber.getPhoneCustID());
+							list = phoneTypes.get(String.valueOf(phoneNumber.getPhoneCustID()));
 							if (list == null) {
 								list = new ArrayList<>();
 								phoneTypes.put(String.valueOf(phoneNumber.getPhoneCustID()), list);
@@ -789,7 +789,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 							eMail.setCustEMail(rs.getString("CUSTEMAIL"));
 							eMail.setCustEMailPriority(rs.getInt("CUSTEMAILPRIORITY"));
 
-							list = emailTypes.get(eMail.getCustID());
+							list = emailTypes.get(String.valueOf(eMail.getCustID()));
 
 							if (list == null) {
 								list = new ArrayList<>();

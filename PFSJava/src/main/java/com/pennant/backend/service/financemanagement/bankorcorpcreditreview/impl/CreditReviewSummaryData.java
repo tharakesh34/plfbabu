@@ -140,7 +140,7 @@ public class CreditReviewSummaryData {
 				List<FinCreditRevSubCategory> listOfFinCreditRevSubCategory = this.creditApplicationReviewService
 						.getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(categoryId);
 
-				if (detailedMap.get(dataYear) != null) {
+				if (detailedMap.get(String.valueOf(dataYear)) != null) {
 					List<FinCreditReviewSummary> listOfCreditReviewSummary = this.detailsMap.get(dataYear);
 					for (FinCreditReviewSummary finCreditReviewSummary : listOfCreditReviewSummary) {
 						engine.put("YM" + finCreditReviewSummary.getSubCategoryCode(),
