@@ -599,7 +599,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				}
 			} else {
 				//pin code no givne then validate
-				String[] errParams = new String[1];
+				String[] errParams = new String[2];
 				errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label");
 				errParams[1] = taxuploadDetail.getAggrementNo();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(

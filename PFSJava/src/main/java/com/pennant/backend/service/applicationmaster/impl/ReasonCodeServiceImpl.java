@@ -343,7 +343,7 @@ public class ReasonCodeServiceImpl extends GenericService<ReasonCode> implements
 				&& reasonCodeDAO.isDuplicateKey(reasonCode.getReasonTypeID(), reasonCode.getReasonCategoryID(),
 						reasonCode.getCode().trim(),
 						reasonCode.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[2];
+			String[] parameters = new String[3];
 
 			parameters[0] = PennantJavaUtil.getLabel("label_ReasonTypeID") + ": " + reasonCode.getReasonTypeID();
 			parameters[1] = PennantJavaUtil.getLabel("label_ReasonCategoryID") + ": "
