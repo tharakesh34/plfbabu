@@ -37,7 +37,7 @@ public enum DocumentType {
 
 	public static DocumentType getType(Integer key) {
 		for (DocumentType type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}
