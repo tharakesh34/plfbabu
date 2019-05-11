@@ -26,7 +26,7 @@ public enum OrganizationType {
 
 	public static OrganizationType getType(Integer key) {
 		for (OrganizationType type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}
