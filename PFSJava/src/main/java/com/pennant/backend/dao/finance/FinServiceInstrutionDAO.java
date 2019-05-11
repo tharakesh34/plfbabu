@@ -1,9 +1,11 @@
 package com.pennant.backend.dao.finance;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.LMSServiceLog;
 
 public interface FinServiceInstrutionDAO {
 
@@ -23,4 +25,13 @@ public interface FinServiceInstrutionDAO {
 	boolean getFinServInstDetails(String finEvent, String serviceReqNo);
 
 	List<FinServiceInstruction> getFinServiceInstDetailsByServiceReqNo(String finReference, String serviceReqNo);
+
+	public void saveLMSServiceLOGList(List<LMSServiceLog> lmsServiceLog);
+
+	BigDecimal getOldRate(String finReference, Date schdate);
+
+	List<LMSServiceLog> getLMSServiceLogList(String notificationFlag);
+
+	void updateNotificationFlag(String finReference, String notificationFlag);
+
 }

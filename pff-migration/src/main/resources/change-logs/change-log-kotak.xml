@@ -36,5 +36,20 @@
 			 ]]>
 		</sql>
     </changeSet>
-
+	<changeSet id="2" author="saikiran.v">
+		<sql>
+			Insert into TEMPLATES
+			(TEMPLATEID,TEMPLATEFOR,MODULE,TEMPLATECODE,TEMPLATEDESC,SMSTEMPLATE,SMSCONTENT,EMAILTEMPLATE,EMAILCONTENT,EMAILFORMAT,EMAILSUBJECT,EMAILSENDTO,TURNAROUNDTIME,REPEAT,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,EVENT) values 
+			((Select MAX(Seqno)+1 from SeqMailTemplate),'CN','FIN','ADD_RATE_CHANGE_NOTIFICATION','Add rate change notification.',0,null,1,null,'H','${vo.LAN}',null,0,0,1,1,1000,sysdate,'Approved',null,null,null,null,null,0,'AddRateChange');
+			
+			Update SeqMailTemplate set seqno = (Select max(TEMPLATEID) from TEMPLATES_VIEW);
+		  </sql> 
+  </changeSet>
+  <changeSet id="3" author="saikiran.v">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ADD_RATE_CHANGE_NOTIFICATION';
+			 ]]>
+		</sql>
+    </changeSet>
 </databaseChangeLog>

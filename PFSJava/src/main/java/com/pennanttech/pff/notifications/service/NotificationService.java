@@ -58,6 +58,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
+import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
@@ -84,7 +85,6 @@ import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
-import com.pennanttech.pff.core.util.DataMapUtil;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -1065,9 +1065,12 @@ public class NotificationService {
 		} catch (Exception e) {
 
 		}
-		declaredFieldValues.putAll(DataMapUtil.getDataMap(aFinanceDetail));
-
-		return declaredFieldValues;
+		LMSServiceLog lmsServiceLog = aFinanceDetail.getLmsServiceLog();
+		if (lmsServiceLog != null && lmsServiceLog.getEvent() != null) {
+			declaredFieldValues.putAll(lmsServiceLog.getDeclaredFieldValues());
+		}
+	
+		return declaredFieldValues;	
 	}
 
 	private void sendEmailNotification(Notification emailMessage) {

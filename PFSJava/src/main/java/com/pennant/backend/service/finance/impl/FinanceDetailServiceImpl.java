@@ -189,6 +189,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -254,6 +255,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -4176,6 +4178,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// ScheduleDetails delete and save
 				// =======================================
+				
+				saveLMSServiceLogs(finScheduleData, "");
+				
 				listDeletion(finScheduleData, moduleDefiner, "", isWIF);
 				getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), moduleDefiner, "_Temp");
 				listSave(finScheduleData, "", isWIF, 0, serviceUID);
@@ -10900,6 +10905,55 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		return finReferences.toString();
+	}
+	
+	/**
+	 * Saving the LMS service log
+	 * @param finDetail
+	 * @param tableType
+	 */
+	public void saveLMSServiceLogs(FinScheduleData finDetail, String tableType) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinServiceInstruction> finServiceInstructions = finDetail.getFinServiceInstructions();
+
+		if (CollectionUtils.isEmpty(finServiceInstructions)) {
+			return;
+		}
+
+		if (StringUtils.isNotEmpty(tableType)) {
+			return;
+		}
+
+		String lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
+		if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
+			return;
+		}
+
+		List<LMSServiceLog> lmsServiceLogs = new ArrayList<>();
+
+		for (FinServiceInstruction instruction : finServiceInstructions) {
+			if (StringUtils.equals(instruction.getFinEvent(), FinanceConstants.FINSER_EVENT_RATECHG)
+					&& instruction.getFromDate() != null) {
+
+				BigDecimal oldRate = getFinServiceInstructionDAO().getOldRate(instruction.getFinReference(),
+						instruction.getFromDate());
+
+				LMSServiceLog lmsServiceLog = new LMSServiceLog();
+				lmsServiceLog.setOldRate(oldRate);
+				lmsServiceLog.setNewRate(instruction.getActualRate());
+				lmsServiceLog.setEvent(instruction.getFinEvent());
+				lmsServiceLog.setFinReference(instruction.getFinReference());
+				lmsServiceLog.setNotificationFlag(PennantConstants.NO);
+				lmsServiceLog.setEffectiveDate(instruction.getFromDate());
+				lmsServiceLogs.add(lmsServiceLog);
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(lmsServiceLogs)) {
+			getFinServiceInstructionDAO().saveLMSServiceLOGList(lmsServiceLogs);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 	
 	public ReasonDetailDAO getReasonDetailDAO() {

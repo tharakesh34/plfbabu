@@ -26,6 +26,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String SYS_NOTIFICATIONS_PROCESS_JOB = "SYS_NOTIFICATIONS_PROCESS_JOB";
 	private static final String AUTO_RECPT_RESPONSE_JOB = "AUTO_RECPT_RES_JOB";
 	private static final String AUTO_RECPT_RESPONSE_JOB_TRIGGER = "AUTO_RECPT_RES_JOB_TRIGGER";
+	private static final String LMS_SERVICE_LOG_ALERTS_JOB = "LMS_SERVICE_LOG_ALERTS_JOB";
 
 	@Override
 	protected void registerJobs() throws Exception {
@@ -35,6 +36,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		autoReceiptResponseJob();
 		registercovenantAlertsJob();
 		registerPutCallAlertsJob();
+		registerLMSServiceAlertsJob();
 	}
 
 	/**
@@ -159,6 +161,26 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
 
 		jobs.put(AUTO_RECPT_RESPONSE_JOB, job);
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void registerLMSServiceAlertsJob() {
+		logger.debug(Literal.ENTERING);
+
+		String jobKey = LMSServiceLogAlertsJob.JOB_KEY;
+		String trigger = LMSServiceLogAlertsJob.JOB_TRIGGER;
+		String cronExpression = LMSServiceLogAlertsJob.CRON_EXPRESSION;
+
+		Job job = new Job();
+
+		job.setJobDetail(JobBuilder.newJob(LMSServiceLogAlertsJob.class).withIdentity(jobKey, jobKey)
+				.withDescription(jobKey).build());
+		job.setTrigger(TriggerBuilder.newTrigger().withIdentity(trigger, trigger).withDescription(trigger)
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
+
+		jobs.put(LMS_SERVICE_LOG_ALERTS_JOB, job);
 
 		logger.debug(Literal.LEAVING);
 

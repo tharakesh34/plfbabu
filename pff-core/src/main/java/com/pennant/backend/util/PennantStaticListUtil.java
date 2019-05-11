@@ -2306,6 +2306,8 @@ public class PennantStaticListUtil {
 			templateEvents = new ArrayList<>(5);
 			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ORG,
 					Labels.getLabel("label_FinSerEvent_Origination")));
+			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RATECHG,
+					Labels.getLabel("label_FinSerEvent_AddRateChange")));
 			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_ADDDISB,
 					Labels.getLabel("label_FinSerEvent_AddDisbursement")));
 			templateEvents.add(new ValueLabel(FinanceConstants.FINSER_EVENT_RECEIPT,

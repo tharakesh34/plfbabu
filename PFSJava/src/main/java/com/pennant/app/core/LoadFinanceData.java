@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -18,13 +19,17 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
@@ -327,6 +332,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			// update schedule details
 			if (rateReview) {
+				saveLMSServiceLog(finEODEvent);
 				getFinanceScheduleDetailDAO().updateForRateReview(finEODEvent.getFinanceScheduleDetails());
 			}
 
@@ -478,5 +484,59 @@ public class LoadFinanceData extends ServiceHelper {
 	// customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 	// getCustomerQueuingDAO().updateFailed(customerQueuing);
 	// }
+	
+	/*
+	 * Saving the LMS service log notifications , we will change this method once Service instructions saved in EOD.
+	 */
+	public void saveLMSServiceLog(FinEODEvent finEODEvent) {
+		logger.debug(Literal.ENTERING);
+		try {
+			String lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
+			if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
+				return;
+			}
+
+			List<LMSServiceLog> lmsServiceLogs = new ArrayList<>();
+
+			String finReference = finEODEvent.getFinanceMain().getFinReference();
+			Date appDate = DateUtility.getAppDate();
+			FinanceScheduleDetail financeScheduleDetail = null;
+
+			BigDecimal oldRate = getFinServiceInstructionDAO().getOldRate(finReference, appDate);
+
+			List<FinanceScheduleDetail> scheduleDetail = finEODEvent.getFinanceScheduleDetails();
+
+			if (CollectionUtils.isEmpty(scheduleDetail)) {
+				return;
+			}
+
+			for (FinanceScheduleDetail detail : scheduleDetail) {
+				if (detail.getSchDate().compareTo(appDate) >= 0) {
+					financeScheduleDetail = detail;
+					break;
+				}
+			}
+
+			if (financeScheduleDetail == null) {
+				return;
+			}
+
+			LMSServiceLog lmsServiceLog = new LMSServiceLog();
+			lmsServiceLog.setOldRate(oldRate);
+			lmsServiceLog.setNewRate(financeScheduleDetail.getCalculatedRate());
+			lmsServiceLog.setEvent(FinanceConstants.FINSER_EVENT_RATECHG);
+			lmsServiceLog.setFinReference(finReference);
+			lmsServiceLog.setNotificationFlag(PennantConstants.NO);
+			lmsServiceLog.setEffectiveDate(appDate);
+			lmsServiceLogs.add(lmsServiceLog);
+
+			if (CollectionUtils.isNotEmpty(lmsServiceLogs)) {
+				getFinServiceInstructionDAO().saveLMSServiceLOGList(lmsServiceLogs);
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 
 }

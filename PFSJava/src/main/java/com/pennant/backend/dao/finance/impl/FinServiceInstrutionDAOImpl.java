@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -277,6 +279,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	@Override
 	public List<FinServiceInstruction> getFinServiceInstDetailsByServiceReqNo(String finReference,
 			String serviceReqNo) {
+		logger.debug("Entering");
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 		finServiceInstruction.setFinReference(finReference);
 		finServiceInstruction.setServiceReqNo(serviceReqNo);
@@ -299,4 +302,87 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
+	@Override
+	public List<LMSServiceLog> getLMSServiceLogList(String notificationFlag) {
+		logger.debug(Literal.ENTERING);
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		
+		StringBuilder sql = new StringBuilder("Select Event, FinReference, OldRate, NewRate, EffectiveDate,");
+		sql.append(" NotificationFlag From LMSServiceLog Where  NotificationFlag = :NotificationFlag ");
+		logger.debug(Literal.SQL + sql.toString());
+		
+		source.addValue("NotificationFlag", notificationFlag);
+		
+		RowMapper<LMSServiceLog> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LMSServiceLog.class);
+		
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public void updateNotificationFlag(String finReference, String notificationFlag) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder updateSql = new StringBuilder("update LMSServiceLog set NotificationFlag = :NotificationFlag");
+		updateSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + updateSql.toString());
+
+		source.addValue("NotificationFlag", notificationFlag);
+
+		try {
+			this.jdbcTemplate.update(updateSql.toString(), source);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public BigDecimal getOldRate(String finReference, Date schdate) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select calculatedrate from finscheduledetails where Finreference = :FinReference ");
+		sql.append("and Schdate = (select max(schdate) from finscheduledetails ");
+		sql.append("where Finreference = :FinReference and Schdate <= :Schdate) ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("FinReference", finReference);
+		paramSource.addValue("Schdate", schdate);
+
+		BigDecimal result = BigDecimal.ZERO;
+		try {
+			result = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		logger.debug(Literal.LEAVING);
+		return result;
+	}
+
+	@Override
+	public void saveLMSServiceLOGList(List<LMSServiceLog> lmsServiceLog) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Insert into LMSServiceLog");
+		sql.append(" (Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag)");
+		sql.append(" Values(:Event, :FinReference, :OldRate, :NewRate, :EffectiveDate, :NotificationFlag)");
+		
+		logger.trace("selectSql: " + sql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(lmsServiceLog.toArray());
+		logger.debug("Leaving");
+		try {
+			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 }

@@ -272,6 +272,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<InterfaceServiceDetails> interfaceDetailList = new ArrayList<>();
 	private boolean validateUpfrontFees;
 	private CollateralRevaluation collateralRevaluation = new CollateralRevaluation();
+	private LMSServiceLog lmsServiceLog;
 	private boolean pdApprovalTab = false;
 	private boolean pdInitTab = false;
 
@@ -1335,6 +1336,14 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setCollateralRevaluation(CollateralRevaluation collateralRevaluation) {
 		this.collateralRevaluation = collateralRevaluation;
+	}
+
+	public LMSServiceLog getLmsServiceLog() {
+		return lmsServiceLog;
+	}
+
+	public void setLmsServiceLog(LMSServiceLog lmsServiceLog) {
+		this.lmsServiceLog = lmsServiceLog;
 	}
 
 	public boolean isPdDetailTab() {

@@ -10243,6 +10243,13 @@
 		<property name="finOptionDAO" ref="finOptionDAO" />
 	</bean>
 
+	<bean id="lmsServiceLogAlerts" class="com.pennant.backend.service.finance.lmsservicelog.impl.LMSServiceLogAlerts">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="notificationService" ref="notificationService" />
+		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
+	</bean>
+
 
 	<bean id="finOptionDAO" class="com.pennant.backend.dao.finance.putcall.impl.FinOptionDAOImpl" parent="sequenceDao" />
 

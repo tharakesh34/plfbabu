@@ -1135,6 +1135,40 @@ UNION ALL
 			   INSERT INTO SMTPARAMETERS VALUES ('ADD_DISB_DUES_WARNG', 'Add Disbursement Dues Warning', 'String', 1, 'N', 1, 0, NULL, NULL,'Add Disbursement Dues Warning', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
-    </changeSet>
+	</changeSet>
 
+	<changeSet id="26" author="Saikiran.V">
+		delete from TEMPLATEFIELDS where FIELD='rc_effectiveDate';
+		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+		('FIN','rc_effectiveDate','Effective Date','A','AddRateChange');
+		delete from TEMPLATEFIELDS where FIELD='rc_finReference';
+		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+		('FIN','rc_finReference','Loan Account Number','A','AddRateChange');
+		delete from TEMPLATEFIELDS where FIELD='rc_oldRate';
+		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+		('FIN','rc_oldRate','Old Interest Rate','A','AddRateChange');
+		delete from TEMPLATEFIELDS where FIELD='rc_newRate';
+		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+		('FIN','rc_newRate','Old Interest Rate','A','AddRateChange');
+	</changeSet>
+
+	<changeSet id="27" author="Saikiran.v">
+		<createTable tableName="LMSServiceLog">
+			<column name="Event" type="varchar(50)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="OldRate" type="decimal(13,9)" />
+			<column name="NewRate" type="decimal(13,9)" />
+			<column name="EffectiveDate" type="datetime" />
+			<column name="NotificationFlag" type="varchar(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="28" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+			   DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='LMS_SERVICE_LOG_REQ';
+			   INSERT INTO SMTPARAMETERS VALUES ('LMS_SERVICE_LOG_REQ', 'LMS Service log required or not.', 'String', 1, 'N', 1, 0, NULL, NULL,'LMS Service log required or not.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -832,6 +832,7 @@ public class PennantConstants {
 
 	// Template Notification constants
 	public static final String PRESENTMENT_BOUNCE_MAIL_NOTIFICATION = "PRESENTMENT_BOUNCE_MAIL_NOTIFICATION";
+	public static final String ADD_RATE_CHANGE_NOTIFICATION = "ADD_RATE_CHANGE_NOTIFICATION";
 	public static final String CREATE_LOAN_API_MAIL_NOTIFICATION = "CREATE_LOAN_NSTP_API_TEMP";
 
 	public static final String ACCESSTYPE_ENTITY = "ENTITY";
