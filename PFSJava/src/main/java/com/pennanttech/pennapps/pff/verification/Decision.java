@@ -47,7 +47,7 @@ public enum Decision {
 
 	public static Decision getType(Integer key) {
 		for (Decision type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

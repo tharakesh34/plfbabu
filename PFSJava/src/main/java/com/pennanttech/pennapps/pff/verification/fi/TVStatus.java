@@ -29,7 +29,7 @@ public enum TVStatus {
 
 	public static TVStatus getType(Integer key) {
 		for (TVStatus type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

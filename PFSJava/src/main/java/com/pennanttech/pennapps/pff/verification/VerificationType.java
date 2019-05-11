@@ -52,7 +52,7 @@ public enum VerificationType {
 
 	public static VerificationType getVerificationType(Integer key) {
 		for (VerificationType type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

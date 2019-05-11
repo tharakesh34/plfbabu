@@ -29,7 +29,7 @@ public enum PDStatus {
 
 	public static PDStatus getType(Integer key) {
 		for (PDStatus type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

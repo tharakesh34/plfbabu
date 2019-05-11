@@ -29,7 +29,7 @@ public enum FIStatus {
 
 	public static FIStatus getType(Integer key) {
 		for (FIStatus type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

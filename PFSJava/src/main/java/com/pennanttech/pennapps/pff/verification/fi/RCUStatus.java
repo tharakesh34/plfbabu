@@ -29,7 +29,7 @@ public enum RCUStatus {
 
 	public static RCUStatus getType(Integer key) {
 		for (RCUStatus type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

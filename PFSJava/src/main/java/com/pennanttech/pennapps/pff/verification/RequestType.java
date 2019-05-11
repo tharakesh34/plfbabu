@@ -42,7 +42,7 @@ public enum RequestType {
 
 	public static RequestType getType(Integer key) {
 		for (RequestType type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}

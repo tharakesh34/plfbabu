@@ -59,7 +59,7 @@ public class FinSamplingServiceImpl implements FinSamplingService {
 
 		finSamplingDAO.updateSampling(sampling, TableType.MAIN_TAB);
 
-		if (sampling.getDecision() == Decision.RESUBMIT.getKey()
+		if (Decision.RESUBMIT.getKey().equals(sampling.getDecision())
 				&& !samplingService.isExist(sampling.getKeyReference(), "_temp")) {
 			samplingService.saveOnReSubmit(sampling);
 		} else if (sampling.getDecision() == Decision.CREDITCAM.getKey() && !financeDetail.isActionSave()) {

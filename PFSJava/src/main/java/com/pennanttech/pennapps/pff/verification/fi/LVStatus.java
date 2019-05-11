@@ -29,7 +29,7 @@ public enum LVStatus {
 
 	public static LVStatus getType(Integer key) {
 		for (LVStatus type : values()) {
-			if (type.getKey() == key) {
+			if (type.getKey().equals(key)) {
 				return type;
 			}
 		}
