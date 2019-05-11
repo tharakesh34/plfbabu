@@ -984,12 +984,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 					&& (BigDecimal.ZERO.compareTo(tb.getDebitAmount()) == 0)) {
 
 			} else if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0
-					&& BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0
 					&& BigDecimal.ZERO.compareTo(tb.getCreditAmount()) != 0
 					&& BigDecimal.ZERO.compareTo(tb.getDebitAmount()) != 0)) {
 				tempList.add(tb);
 			} else if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0)
-					|| (BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0)
 					|| (BigDecimal.ZERO.compareTo(tb.getCreditAmount()) != 0)
 					|| (BigDecimal.ZERO.compareTo(tb.getDebitAmount()) != 0)) {
 				tempList.add(tb);

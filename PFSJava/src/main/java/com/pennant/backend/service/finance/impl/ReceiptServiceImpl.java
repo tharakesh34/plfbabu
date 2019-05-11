@@ -1340,8 +1340,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
-		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())
-				&& !StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
+		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 		}
 

@@ -896,7 +896,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				recalFromDate = curSchd.getSchDate();
 			}
 			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
-					|| curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
 					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
 				if (!StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
