@@ -1138,18 +1138,20 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="26" author="Saikiran.V">
-		delete from TEMPLATEFIELDS where FIELD='rc_effectiveDate';
-		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-		('FIN','rc_effectiveDate','Effective Date','A','AddRateChange');
-		delete from TEMPLATEFIELDS where FIELD='rc_finReference';
-		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-		('FIN','rc_finReference','Loan Account Number','A','AddRateChange');
-		delete from TEMPLATEFIELDS where FIELD='rc_oldRate';
-		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-		('FIN','rc_oldRate','Old Interest Rate','A','AddRateChange');
-		delete from TEMPLATEFIELDS where FIELD='rc_newRate';
-		Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-		('FIN','rc_newRate','Old Interest Rate','A','AddRateChange');
+		<sql>
+			delete from TEMPLATEFIELDS where FIELD='rc_effectiveDate';
+			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+			('FIN','rc_effectiveDate','Effective Date','A','AddRateChange');
+			delete from TEMPLATEFIELDS where FIELD='rc_finReference';
+			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+			('FIN','rc_finReference','Loan Account Number','A','AddRateChange');
+			delete from TEMPLATEFIELDS where FIELD='rc_oldRate';
+			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+			('FIN','rc_oldRate','Old Interest Rate','A','AddRateChange');
+			delete from TEMPLATEFIELDS where FIELD='rc_newRate';
+			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+			('FIN','rc_newRate','Old Interest Rate','A','AddRateChange');
+		</sql>
 	</changeSet>
 
 	<changeSet id="27" author="Saikiran.v">
