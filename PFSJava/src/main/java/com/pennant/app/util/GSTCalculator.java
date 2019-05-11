@@ -39,12 +39,7 @@ public class GSTCalculator {
 
 	public GSTCalculator(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
 			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil) {
-		GSTCalculator.ruleDAO = ruleDAO;
-		GSTCalculator.branchDAO = branchDAO;
-		GSTCalculator.provinceDAO = provinceDAO;
-		GSTCalculator.financeMainDAO = financeMainDAO;
-		GSTCalculator.financeTaxDetailDAO = financeTaxDetailDAO;
-		GSTCalculator.ruleExecutionUtil = ruleExecutionUtil;
+		initilize(ruleDAO, branchDAO, provinceDAO, financeMainDAO, financeTaxDetailDAO, ruleExecutionUtil);
 	}
 
 	/**
@@ -78,7 +73,7 @@ public class GSTCalculator {
 			String taxComponent) {
 		return getGSTTaxSplit(taxableAmount, taxPercentages, taxComponent).gettGST();
 	}
-	
+
 	public static TaxAmountSplit getGSTTaxSplit(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages,
 			String taxComponent) {
 
@@ -113,12 +108,13 @@ public class GSTCalculator {
 	public static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages) {
 		return getInclusiveGST(taxableAmount, BigDecimal.ZERO, taxPercentages);
 	}
-	
+
 	public static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, BigDecimal waivedAmount,
 			Map<String, BigDecimal> taxPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
 
-		BigDecimal netAmount = getInclusiveAmount(taxableAmount.subtract(waivedAmount), taxPercentages.get(RuleConstants.CODE_TOTAL_GST));
+		BigDecimal netAmount = getInclusiveAmount(taxableAmount.subtract(waivedAmount),
+				taxPercentages.get(RuleConstants.CODE_TOTAL_GST));
 		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CGST)));
 		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_SGST)));
 		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
@@ -128,14 +124,14 @@ public class GSTCalculator {
 		return taxSplit;
 	}
 
-
 	/**
 	 * This method will return the GST percentages by executing the GST rules configured.
 	 * 
 	 * @param finReference
 	 * @return The GST percentages MAP
 	 */
-	public static Map<String, BigDecimal> getTaxPercentages(long custId, String finCCY, String userBranch, String finBranch) {
+	public static Map<String, BigDecimal> getTaxPercentages(long custId, String finCCY, String userBranch,
+			String finBranch) {
 		Map<String, BigDecimal> taxPercentages = new HashMap<>();
 
 		taxPercentages.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
@@ -143,7 +139,7 @@ public class GSTCalculator {
 		taxPercentages.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
 		taxPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
 		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
-		
+
 		Map<String, Object> dataMap = null;
 		String custBranch = null;
 		String custProvince = null;
@@ -226,11 +222,10 @@ public class GSTCalculator {
 
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
 		boolean gstExempted = false;
-		
+
 		if (StringUtils.isBlank(custBranch)) {
 			return gstExecutionMap;
 		}
-
 
 		if (finBranch == null) {
 			finBranch = custBranch;
@@ -250,8 +245,7 @@ public class GSTCalculator {
 
 		if (taxDetail != null && StringUtils.isNotBlank(taxDetail.getApplicableFor())
 				&& !PennantConstants.List_Select.equals(taxDetail.getApplicableFor())
-				&& StringUtils.isNotBlank(taxDetail.getProvince())
-				&& StringUtils.isNotBlank(taxDetail.getCountry())) {
+				&& StringUtils.isNotBlank(taxDetail.getProvince()) && StringUtils.isNotBlank(taxDetail.getCountry())) {
 			toStateCode = taxDetail.getProvince();
 			toCountryCode = taxDetail.getCountry();
 			gstExempted = taxDetail.isTaxExempted();
@@ -279,8 +273,6 @@ public class GSTCalculator {
 		}
 
 		gstExecutionMap.put("gstExempted", gstExempted);
-
-	
 
 		return gstExecutionMap;
 	}
@@ -335,4 +327,13 @@ public class GSTCalculator {
 		return TAX_ROUNDING_TARGET;
 	}
 
+	private void initilize(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
+			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil) {
+		GSTCalculator.ruleDAO = ruleDAO;
+		GSTCalculator.branchDAO = branchDAO;
+		GSTCalculator.provinceDAO = provinceDAO;
+		GSTCalculator.financeMainDAO = financeMainDAO;
+		GSTCalculator.financeTaxDetailDAO = financeTaxDetailDAO;
+		GSTCalculator.ruleExecutionUtil = ruleExecutionUtil;
+	}
 }
