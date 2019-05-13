@@ -469,7 +469,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		}
 
 		try {
-			if (this.mappingRef.getValue() != null && StringUtils.isNumeric(this.mappingRef.getValue())) {
+			if (StringUtils.isNotBlank(this.mappingRef.getValue()) && StringUtils.isNumeric(this.mappingRef.getValue())) {
 				aDocumentType.setPdfMappingRef(Long.parseLong(this.mappingRef.getValue()));
 			}
 		} catch (WrongValueException we) {

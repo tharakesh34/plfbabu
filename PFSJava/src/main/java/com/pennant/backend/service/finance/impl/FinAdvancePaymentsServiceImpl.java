@@ -698,11 +698,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
 
 		BigDecimal netFinAmount = totDisb.getDisbAmount();
-		
+
 		if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
 			netFinAmount = netFinAmount.subtract(financeMain.getAdvanceEMI());
 		}
-		
+
 		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		boolean checkMode = true;
 
@@ -774,7 +774,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							.equals(FinanceConstants.BPI_DISBURSMENT)) {
 						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
 					}
-					
+
 					if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
 						singletDisbursment = singletDisbursment.subtract(financeMain.getAdvanceEMI());
 					}
@@ -823,7 +823,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				if (disbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 						&& disbursement.getDisbSeq() == 1) {
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
-					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+
+					// Add Disbursement amount for first disbursement only.
+					if (list.size() == 1) {
+						totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+					}
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());

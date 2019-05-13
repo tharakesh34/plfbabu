@@ -848,8 +848,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				continue;
 			}
 			disbAmount = disbAmount.add(curDisb.getDisbAmount());
-			disbAmount = disbAmount.subtract(curDisb.getDeductFromDisb());
-			otherExp = otherExp.add(curDisb.getDeductFromDisb());
+			
+			// Add Other expense only once since sum of expense aginast to loan refernce avilable
+			if(otherExp.compareTo(BigDecimal.ZERO) == 0) {
+				otherExp = otherExp.add(curDisb.getDeductFromDisb());
+			}
+			
+			disbAmount = disbAmount.subtract(otherExp);
 		}
 		
 		/*if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) {
