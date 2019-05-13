@@ -181,6 +181,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private BigDecimal limitActualexposure = BigDecimal.ZERO;
 	@XmlElement(name = "reservedexposure")
 	private BigDecimal limitReservedexposure = BigDecimal.ZERO;
+	private boolean validateMaturityDate;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -230,6 +231,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 		excludeFields.add("limitStructureDetails");
 		excludeFields.add("limitActualexposure");
 		excludeFields.add("limitReservedexposure");
+		excludeFields.add("validateMaturityDate");
 
 		return excludeFields;
 	}
@@ -761,4 +763,11 @@ public class LimitDetails implements java.io.Serializable, Entity {
 		this.nonRvlUtilised = nonRvlUtilised;
 	}
 
+	public boolean isValidateMaturityDate() {
+		return validateMaturityDate;
+	}
+
+	public void setValidateMaturityDate(boolean validateMaturityDate) {
+		this.validateMaturityDate = validateMaturityDate;
+	}
 }

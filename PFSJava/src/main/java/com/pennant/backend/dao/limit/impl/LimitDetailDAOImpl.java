@@ -62,6 +62,7 @@ import com.pennant.backend.model.limit.LimitDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>LimitDetail model</b> class.<br>
@@ -383,24 +384,31 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 	@Override
 	public List<LimitDetails> getLimitByLineAndgroup(long headerId, String limitItem, List<String> groupcode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select DetailId, lh.LimitHeaderId, LimitLine, GroupCode, LimitStructureDetailsID, LimitChkMethod");
+		sql.append(", ExpiryDate, LimitSanctioned,  ReservedLimit, UtilisedLimit");
+		sql.append(", LimitCheck, Revolving, Currency, ValidateMaturityDate");
+		sql.append(", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From LimitLines_View ");
+		sql.append(" Inner Join LimitHeader lh on lh.LimitHeaderId = LimitHeaderId");
+		sql.append(" Where (LimitLine=:LimitLine OR GroupCode in (:GroupCodes)");
+		sql.append(" and LimitHeaderId = :LimitHeaderId ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("LimitLine", limitItem);
 		source.addValue("GroupCodes", groupcode);
 		source.addValue("LimitHeaderId", headerId);
-
-		StringBuilder selectSql = new StringBuilder(
-				"select DetailId, LimitHeaderId, LimitLine,GroupCode, LimitStructureDetailsID,LimitChkMethod, ExpiryDate, LimitSanctioned,  ReservedLimit, UtilisedLimit,");
-		selectSql.append(
-				"LimitCheck, Revolving ,  Currency,Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId from ");
-		selectSql.append(" LimitLines_View ");
-		selectSql.append(
-				" Where (LimitLine=:LimitLine OR GroupCode in (:GroupCodes)) AND  LimitHeaderId = :LimitHeaderId ");
-		logger.debug("selectSql: " + selectSql.toString());
-
+		
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
-		logger.debug("Leaving");
+		
+		logger.debug(Literal.LEAVING);
 
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override

@@ -169,6 +169,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	protected Space space_Remarks;
 	protected Checkbox active; // autoWired
 	protected Space space_Active;
+	protected Checkbox validateMaturityDate;
+	protected Space space_ValidateMaturityDate;
 
 	protected Textbox remarks;
 	protected Paging pagingLimitDetailDialog;
@@ -560,6 +562,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		setComponentAccessType("LimitHeaderDialog_ExpiryDate", tempReadOnly, expiryDate, null, label_ExpiryDate);
 		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, reviewDate, null, label_ReviewDate);
 		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, active, null, label_ReviewDate);
+		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, validateMaturityDate, null, label_ReviewDate);
 		setExtAccess("LimitHeaderDialog_LimitStructureCode", tempReadOnly, this.limitStructureCode, row4);
 		readOnlyComponent(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"), remarks);
 		btnDelete.setVisible(false);
@@ -695,6 +698,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.limitStructureCode.setValue(aLimitHeader.getLimitStructureCode());
 		this.remarks.setValue(aLimitHeader.getLimitSetupRemarks());
 		this.active.setChecked(aLimitHeader.isActive());
+		this.validateMaturityDate.setChecked(aLimitHeader.isValidateMaturityDate());
 		if (!aLimitHeader.isNew()) {
 			this.limitStructureCode.setDescription(aLimitHeader.getStructureName());
 			this.limiDialogRule.setDescription(aLimitHeader.getQueryDesc());
@@ -807,6 +811,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		// Active
 		try {
 			aLimitHeader.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// ValidateMaturityDate
+		try {
+			aLimitHeader.setValidateMaturityDate(this.validateMaturityDate.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

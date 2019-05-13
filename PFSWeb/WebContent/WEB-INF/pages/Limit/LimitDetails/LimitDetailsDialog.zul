@@ -152,6 +152,12 @@
 										<space id="space_Active" spacing="2px" />
 										<checkbox id="active" checked="false" />
 									</hbox>
+									
+									<label id="label_validateMaturityDate" value="${c:l('label_validateMaturityDate.value')}" />
+									<hbox>
+										<space id="space_validateMaturityDate" spacing="2px" />
+										<checkbox id="validateMaturityDate" checked="false" />
+									</hbox>
 								</row>
 								<row>
 									<label id="label_Remarks" value="${c:l('label_LimitHeaderDialog_Remarks.value')}" />

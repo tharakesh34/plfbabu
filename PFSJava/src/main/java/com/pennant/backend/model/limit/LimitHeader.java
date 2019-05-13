@@ -102,6 +102,8 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	private boolean active;
 	private boolean rebuild = true;
 
+	private boolean validateMaturityDate;
+
 	private String status = "";
 
 	private String showLimitsIn;
@@ -559,6 +561,14 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustMName(String custMName) {
 		this.custMName = custMName;
+	}
+
+	public boolean isValidateMaturityDate() {
+		return validateMaturityDate;
+	}
+
+	public void setValidateMaturityDate(boolean validateMaturityDate) {
+		this.validateMaturityDate = validateMaturityDate;
 	}
 
 }

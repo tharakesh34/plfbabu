@@ -69,7 +69,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		limitHeader.setCustomerId(customerId);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select HeaderId,  CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
+				"Select HeaderId,  CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild,ValidateMaturityDate");
 		selectSql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
@@ -113,7 +113,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		limitHeader.setCustomerGroup(groupCode);
 
 		StringBuilder selectSql = new StringBuilder("Select HeaderId,  CustomerGroup, ResponsibleBranch, LimitCcy, ");
-		selectSql.append(" LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild, ");
+		selectSql.append(" LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild,ValidateMaturityDate,");
 		selectSql.append("RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" , ShowLimitsIn, QueryDesc, CustGrpRO1, ResponsibleBranchName, StructureName, ");
@@ -148,7 +148,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select HeaderId,  RuleCode,RuleValue, ResponsibleBranch, LimitCcy, LimitExpiryDate , LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
-		selectSql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				",ValidateMaturityDate, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",ShowLimitsIn,QueryDesc,ResponsibleBranchName,StructureName");
 		}
@@ -196,11 +197,11 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		StringBuilder insertSql = new StringBuilder("Insert Into LimitHeader");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild");
+				" (HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild,ValidateMaturityDate");
 		insertSql.append(
 				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:HeaderId, :RuleCode, :RuleValue, :CustomerGroup, :CustomerId, :ResponsibleBranch, :LimitCcy, :LimitExpiryDate, :LimitRvwDate, :LimitStructureCode, :LimitSetupRemarks,:Active,:Rebuild");
+				" Values(:HeaderId, :RuleCode, :RuleValue, :CustomerGroup, :CustomerId, :ResponsibleBranch, :LimitCcy, :LimitExpiryDate, :LimitRvwDate, :LimitStructureCode, :LimitSetupRemarks,:Active,:Rebuild,:validateMaturityDate");
 		insertSql.append(
 				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -234,7 +235,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		updateSql.append(
 				" Set RuleCode = :RuleCode, RuleValue = :RuleValue, CustomerGroup = :CustomerGroup, CustomerId = :CustomerId, ResponsibleBranch = :ResponsibleBranch, LimitCcy = :LimitCcy, LimitExpiryDate = :LimitExpiryDate, LimitRvwDate = :LimitRvwDate, LimitStructureCode = :LimitStructureCode, LimitSetupRemarks = :LimitSetupRemarks ,Active =:Active,Rebuild =:Rebuild");
 		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+				",ValidateMaturityDate = :ValidateMaturityDate, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where HeaderId =:HeaderId");
 
 		if (!type.endsWith("_Temp")) {
@@ -304,7 +305,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		limitHeader.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active");
+				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,ValidateMaturityDate");
 		selectSql.append(
 				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -337,7 +338,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		limitHeader.setLimitStructureCode(code);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active");
+				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,ValidateMaturityDate");
 		selectSql.append(
 				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -482,7 +483,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select HeaderId, RuleCode, RuleValue, CustomerGroup, CustomerId, ResponsibleBranch, LimitCcy, LimitExpiryDate,");
-		selectSql.append(" LimitRvwDate, LimitStructureCode, LimitSetupRemarks, Active");
+		selectSql.append(" LimitRvwDate, LimitStructureCode, LimitSetupRemarks, Active, ValidateMaturityDate");
 
 		selectSql.append(" From LimitHeader");
 		selectSql.append(StringUtils.trimToEmpty(type));

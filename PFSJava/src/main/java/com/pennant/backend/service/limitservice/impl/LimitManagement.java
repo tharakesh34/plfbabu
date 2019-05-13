@@ -84,6 +84,8 @@ public class LimitManagement {
 		boolean limitrequired = finType.isLimitRequired();
 		boolean allowOverride = finType.isOverrideLimit();
 
+		Date loanMaturityDate = finMain.getMaturityDate();
+
 		if (custId != 0) {
 			custHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "_AView");
 		}
@@ -139,12 +141,12 @@ public class LimitManagement {
 				}
 			}
 
-			if(StringUtils.isNotEmpty(finMain.getFinCommitmentRef())){
+			if (StringUtils.isNotEmpty(finMain.getFinCommitmentRef())) {
 				Commitment commitment = commitmentDAO.getCommitmentById(finMain.getFinCommitmentRef(), "");
-				if(commitment != null){
+				if (commitment != null) {
 					cmtReserve = commitment.getCmtAvailable();
 				}
-			}else{
+			} else {
 				reservTranAmt = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue());
 			}
 		}
@@ -171,7 +173,7 @@ public class LimitManagement {
 
 				if (limitTranDetail != null) {
 					blockAmount = limitTranDetail.getLimitAmount();
-				}else if(StringUtils.isNotBlank(finMain.getFinCommitmentRef())){
+				} else if (StringUtils.isNotBlank(finMain.getFinCommitmentRef())) {
 					blockAmount = tranAmt;
 				}
 
@@ -194,7 +196,8 @@ public class LimitManagement {
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
 
 				List<ErrorDetail> errorsList = updateLimitOrgination(mapping, tranType, allowOverride, limitAmount,
-						overide, validateOnly, dateToValidate, limitTranDetail, blockAmount, reservLimitAmt);
+						overide, validateOnly, dateToValidate, limitTranDetail, blockAmount, reservLimitAmt,
+						loanMaturityDate);
 
 				errors.addAll(errorsList);
 
@@ -259,7 +262,8 @@ public class LimitManagement {
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
 
 				List<ErrorDetail> errorsList = updateLimitOrgination(mapping, tranType, allowOverride, limitAmount,
-						overide, validateOnly, dateToValidate, limitTranDetail, blockAmount, reservLimitAmt);
+						overide, validateOnly, dateToValidate, limitTranDetail, blockAmount, reservLimitAmt,
+						loanMaturityDate);
 
 				errors.addAll(errorsList);
 
@@ -297,7 +301,8 @@ public class LimitManagement {
 	 */
 	private List<ErrorDetail> updateLimitOrgination(LimitReferenceMapping mapping, String tranType,
 			boolean allowOverride, BigDecimal limitAmount, boolean override, boolean validateOnly, Date disbDate,
-			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount, BigDecimal reservLimitAmt) {
+			LimitTransactionDetail limitTranDetail, BigDecimal blockAmount, BigDecimal reservLimitAmt,
+			Date loanMaturityDate) {
 		logger.debug(" Entering ");
 
 		//get limit details by line and group associated with it
@@ -320,7 +325,8 @@ public class LimitManagement {
 			}
 
 			if (!override) {
-				errors.addAll(validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate));
+				errors.addAll(
+						validate(limitDetails, limitAmount, blockAmount, allowOverride, disbDate, loanMaturityDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -336,7 +342,8 @@ public class LimitManagement {
 				} else {
 					amoutToValidate = blockAmount;
 				}
-				errors.addAll(validate(limitDetails, limitAmount, amoutToValidate, allowOverride, disbDate));
+				errors.addAll(validate(limitDetails, limitAmount, amoutToValidate, allowOverride, disbDate,
+						loanMaturityDate));
 
 				if (!errors.isEmpty()) {
 					return errors;
@@ -439,6 +446,8 @@ public class LimitManagement {
 		boolean limitrequired = finType.isLimitRequired();
 		boolean allowOverride = finType.isOverrideLimit();
 
+		Date loanMaturityDate = finMain.getMaturityDate();
+
 		if (custId != 0) {
 			custHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "_AView");
 		}
@@ -514,7 +523,7 @@ public class LimitManagement {
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, custHeader.getLimitCcy(), tranAmt);
 				errors.addAll(procesServicingLimits(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						datemaxDate, validateOnly));
+						datemaxDate, validateOnly, loanMaturityDate));
 
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
@@ -544,7 +553,7 @@ public class LimitManagement {
 
 				BigDecimal limitAmount = CalculationUtil.getConvertedAmount(finCcy, groupHeader.getLimitCcy(), tranAmt);
 				errors.addAll(procesServicingLimits(mapping, tranType, allowOverride, limitAmount, disbSeq, overide,
-						datemaxDate, validateOnly));
+						datemaxDate, validateOnly, loanMaturityDate));
 				if (!errors.isEmpty()) {
 					return ErrorUtil.getErrorDetails(errors, usrlang);
 				}
@@ -566,7 +575,7 @@ public class LimitManagement {
 
 	private List<ErrorDetail> procesServicingLimits(LimitReferenceMapping mapping, String tranType,
 			boolean allowOverride, BigDecimal limitAmount, int disbSeq, boolean override, Date appdate,
-			boolean validateOnly) {
+			boolean validateOnly, Date loanMaturityDate) {
 		logger.debug(" Entering ");
 
 		String finref = mapping.getReferenceNumber();
@@ -600,7 +609,8 @@ public class LimitManagement {
 			}
 			//	validate
 			if (!override) {
-				errors.addAll(validate(limitDetails, limitAmount, BigDecimal.ZERO, allowOverride, appdate));
+				errors.addAll(
+						validate(limitDetails, limitAmount, BigDecimal.ZERO, allowOverride, appdate, loanMaturityDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -620,7 +630,8 @@ public class LimitManagement {
 						amoutToValidate = prvblock.getLimitAmount();
 					}
 				}
-				errors.addAll(validate(limitDetails, limitAmount, amoutToValidate, allowOverride, appdate));
+				errors.addAll(
+						validate(limitDetails, limitAmount, amoutToValidate, allowOverride, appdate, loanMaturityDate));
 				if (!errors.isEmpty()) {
 					return errors;
 				}
@@ -871,6 +882,7 @@ public class LimitManagement {
 		LimitHeader groupHeader = null;
 		boolean allowOverride = finType.isOverrideLimit();
 		String usrlang = finMain.getUserDetails().getLanguage();
+		Date loanMaturityDate = finMain.getMaturityDate();
 
 		if (custId != 0) {
 			custHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "_AView");
@@ -905,7 +917,7 @@ public class LimitManagement {
 				//	validate
 				if (!override) {
 					errors.addAll(validate(limitDetails, limitAmount, BigDecimal.ZERO, allowOverride,
-							DateUtility.getAppDate()));
+							DateUtility.getAppDate(), loanMaturityDate));
 					if (!errors.isEmpty()) {
 						return ErrorUtil.getErrorDetails(errors, usrlang);
 					}
@@ -940,7 +952,7 @@ public class LimitManagement {
 				//	validate
 				if (!override) {
 					errors.addAll(validate(limitDetails, limitAmount, BigDecimal.ZERO, allowOverride,
-							DateUtility.getAppDate()));
+							DateUtility.getAppDate(), loanMaturityDate));
 					if (!errors.isEmpty()) {
 						return ErrorUtil.getErrorDetails(errors, usrlang);
 					}
@@ -1257,11 +1269,12 @@ public class LimitManagement {
 	 * @return
 	 */
 	private List<ErrorDetail> validate(List<LimitDetails> limitDetails, BigDecimal limitAmount,
-			BigDecimal preLimitAmount, boolean overrideAllowed, Date appdate) {
+			BigDecimal preLimitAmount, boolean overrideAllowed, Date appdate, Date loanMaturityDate) {
 
 		ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		for (LimitDetails detail : limitDetails) {
-			ErrorDetail error = validateLimitDetail(detail, limitAmount, preLimitAmount, overrideAllowed, appdate);
+			ErrorDetail error = validateLimitDetail(detail, limitAmount, preLimitAmount, overrideAllowed, appdate,
+					loanMaturityDate);
 			if (error != null) {
 				errorDetails.add(error);
 			}
@@ -1279,7 +1292,7 @@ public class LimitManagement {
 	 * @return
 	 */
 	private ErrorDetail validateLimitDetail(LimitDetails limitDetail, BigDecimal tranAmount, BigDecimal preLimitAmount,
-			boolean overrideAllowed, Date date) {
+			boolean overrideAllowed, Date date, Date loanMaturityDate) {
 
 		// If limit expired then return error  
 		if (limitDetail == null) {
@@ -1296,7 +1309,17 @@ public class LimitManagement {
 				return new ErrorDetail(KEY_LINEEXPIRY, "60311", new String[] { param }, null);
 			}
 		}
-		
+
+		if (limitDetail.getExpiryDate() != null && limitDetail.isValidateMaturityDate()) {
+			DateUtility.compare(limitDetail.getExpiryDate(), limitDetail.getExpiryDate());
+
+			if (limitDetail.getExpiryDate().compareTo(loanMaturityDate) < 0) {
+				return new ErrorDetail(KEY_LINEEXPIRY, "60317", null,
+						new String[] { limitDetail.getExpiryDate().toString(), loanMaturityDate.toString() });
+			}
+		}
+
+
 		BigDecimal limitAmount = BigDecimal.ZERO;
 		if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetail.getLimitChkMethod())) {
 			limitAmount = limitDetail.getReservedexposure().add(tranAmount).subtract(preLimitAmount);
