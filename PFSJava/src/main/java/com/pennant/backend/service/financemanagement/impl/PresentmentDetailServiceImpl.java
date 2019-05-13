@@ -68,6 +68,8 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -358,8 +360,29 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				}
 			}
 		}
+		//reverse the excess movement
+		reverseExcessMovements(presentmentId);
+		
 		this.getPresentmentDetailDAO().deletePresentmentDetails(presentmentId);
 		this.getPresentmentDetailDAO().deletePresentmentHeader(presentmentId);
+	}
+	
+	private void reverseExcessMovements(long presentmentId) {
+		List<FinExcessMovement> advlist = finExcessAmountDAO.getFinExcessAmount(presentmentId);
+		if (advlist != null && !advlist.isEmpty()) {
+			for (FinExcessMovement finExcessAmount : advlist) {
+				//update reserver and delete the movement
+				FinExcessAmount movement = finExcessAmountDAO.getFinExcessByID(finExcessAmount.getExcessID());
+				
+				movement.setReservedAmt(movement.getReservedAmt().subtract(finExcessAmount.getAmount()));
+				BigDecimal amount = movement.getAmount();
+				BigDecimal reservedAmt = movement.getReservedAmt();
+				BigDecimal utilisedAmt = movement.getUtilisedAmt();
+				movement.setBalanceAmt(amount.subtract(reservedAmt).subtract(utilisedAmt));
+				finExcessAmountDAO.updateReserveUtilization(movement);
+			}
+		}
+		finExcessAmountDAO.deleteMovemntByPrdID(presentmentId);
 	}
 
 	@Override

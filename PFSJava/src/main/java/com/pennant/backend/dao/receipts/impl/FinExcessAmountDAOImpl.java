@@ -699,5 +699,69 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		return null;
 	}
+	
+	@Override
+	public List<FinExcessMovement> getFinExcessAmount(long presentmentid) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from FinExcessMovement");
+		sql.append(" where ReceiptID = :ReceiptID and MovementType = :MovementType");
+		sql.append(" and TranType = :TranType");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", presentmentid);
+		source.addValue("MovementType", "I");
+		source.addValue("TranType", "I");
+
+		RowMapper<FinExcessMovement> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessMovement.class);
+		return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
+	}
+	
+	@Override
+	public FinExcessAmount getFinExcessByID(long excessID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from FinExcessAmount");
+		sql.append(" where ExcessID = :ExcessID");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ExcessID", excessID);
+
+		RowMapper<FinExcessAmount> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		} finally {
+			logger.debug(Literal.LEAVING);
+		}
+
+		return null;
+	}
+
+	@Override
+	public int deleteMovemntByPrdID(long presentmentId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" DELETE from FinExcessMovement");
+		sql.append(" where ReceiptID = :ReceiptID and MovementType = :MovementType ");
+		sql.append(" and TranType = :TranType");
+		
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ReceiptID", presentmentId);
+		source.addValue("MovementType", "I");
+		source.addValue("TranType", "I");
+
+		return this.jdbcTemplate.update(sql.toString(), source);
+		
+	}
+	
 
 }

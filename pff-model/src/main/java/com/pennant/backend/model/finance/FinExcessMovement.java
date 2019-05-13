@@ -6,6 +6,7 @@ import java.util.Date;
 public class FinExcessMovement {
 
 	private long excessID = 0;
+	/** it hold the presentment id in case of movement from presentment **/
 	private Long receiptID;
 	private String movementType;
 	private String tranType;

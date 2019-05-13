@@ -62,4 +62,9 @@ public interface FinExcessAmountDAO {
 	
 	int updateReserveUtilization(FinExcessAmount excessMovement);
 
+	List<FinExcessMovement> getFinExcessAmount(long presentmentid);
+
+	FinExcessAmount getFinExcessByID(long excessID);
+
+	int deleteMovemntByPrdID(long presentmentId);
 }

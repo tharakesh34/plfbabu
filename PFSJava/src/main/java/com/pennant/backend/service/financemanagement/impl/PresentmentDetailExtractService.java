@@ -53,7 +53,7 @@ public class PresentmentDetailExtractService {
 	 */
 	public String savePDCPresentments(PresentmentHeader presentmentHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		generateID(presentmentHeader);
 		boolean isEmptyRecords = false;
 		Map<Object, Long> map = new HashMap<Object, Long>();
 		long presentmentId = 0;
@@ -169,7 +169,7 @@ public class PresentmentDetailExtractService {
 	 */
 	public String savePresentments(PresentmentHeader ph) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		generateID(ph);
 		boolean isEmptyRecords = false;
 		Map<Object, Long> map = new HashMap<Object, Long>();
 		long presentmentId = 0;
@@ -315,7 +315,7 @@ public class PresentmentDetailExtractService {
 		}
 
 		//at first advance interest and EMI then EMI advance 
-		processAdvAmounts(presentmentDetail);
+		processAdvAmounts(detailHeader, presentmentDetail);
 
 		// EMI IN ADVANCE
 		//if there is no due no need to proceed further.
@@ -393,7 +393,7 @@ public class PresentmentDetailExtractService {
 		
 
 		//at first advance interest and EMI then EMI advance 
-		processAdvAmounts(presentmentDetail);
+		processAdvAmounts(detailHeader,presentmentDetail);
 
 		// EMI IN ADVANCE
 		//if there is no due no need to proceed further.
@@ -429,10 +429,9 @@ public class PresentmentDetailExtractService {
 
 	private long savePresentmentHeaderDetails(PresentmentHeader header) {
 		logger.debug(Literal.ENTERING);
-
-		long id = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
-		String reference = StringUtils.leftPad(String.valueOf(id), 15, "0");
-		header.setId(id);
+		generateID(header);
+		
+		String reference = StringUtils.leftPad(String.valueOf(header.getId()), 15, "0");
 		header.setStatus(RepayConstants.PEXC_EXTRACT);
 		header.setPresentmentDate(DateUtility.getSysDate());
 		header.setReference(header.getMandateType().concat(reference));
@@ -445,8 +444,15 @@ public class PresentmentDetailExtractService {
 		presentmentDetailDAO.savePresentmentHeader(header);
 
 		logger.debug(Literal.LEAVING);
-		return id;
+		return header.getId();
 
+	}
+	
+	public void generateID(PresentmentHeader header) {
+		if (header.getId()==Long.MIN_VALUE) {
+			long id = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
+			header.setId(id);
+		}
 	}
 
 	private String getPresentmentRef(ResultSet rs) throws SQLException {
@@ -519,7 +525,7 @@ public class PresentmentDetailExtractService {
 
 	}
 	
-	private void processAdvAmounts(PresentmentDetail prd) {
+	private void processAdvAmounts(PresentmentHeader detailHeader, PresentmentDetail prd) {
 
 		AdvanceType advanceType = null;
 		String amountType = "";
@@ -582,6 +588,7 @@ public class PresentmentDetailExtractService {
 			//movement
 			FinExcessMovement exMovement = new FinExcessMovement();
 			exMovement.setExcessID(finExAmt.getExcessID());
+			exMovement.setReceiptID(detailHeader.getId());//Setting presentment id as unique reference
 			exMovement.setMovementFrom(RepayConstants.PAYTYPE_PRESENTMENT);
 			exMovement.setAmount(adjAmount);
 			exMovement.setSchDate(prd.getSchDate());
