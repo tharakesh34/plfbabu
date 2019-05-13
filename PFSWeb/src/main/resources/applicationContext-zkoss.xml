@@ -5135,8 +5135,6 @@
 	<bean id="personalDiscussionDialogCtrl" class="com.pennant.webui.verification.personaldiscussion.PersonalDiscussionDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-	
-	
 
 	<!-- Manufacturer -->	
 	<bean id="manufacturerListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ManufacturerListCtrl" parent="basisListCtrl"
@@ -5158,6 +5156,17 @@
 	<bean id="consumerProductDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ConsumerProductDialogueCtrl" parent="basisListCtrl"
 		scope="prototype">
 			<property name="consumerProductService" ref="consumerProductService" />
+	</bean>
+	
+	<!-- MerchantDetails -->	
+	<bean id="merchantDetailsListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.MerchantDetailsListCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="merchantDetailsService" ref="merchantDetailsService" />
+	</bean>
+	
+	<bean id="merchantDetailsDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.MerchantDetailsDialogueCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="merchantDetailsService" ref="merchantDetailsService" />
 	</bean>
 	
 </beans>

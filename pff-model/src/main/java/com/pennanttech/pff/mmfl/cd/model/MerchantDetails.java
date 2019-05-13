@@ -11,11 +11,11 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 
 	private long merchantId = Long.MIN_VALUE;
 	private String merchantName;
-	private long storeId;
+	private int storeId;
 	private String storeName;
-	private String storeAddress1;
-	private String storeAddress2;
-	private String storeAddress3;
+	private String storeAddressLine1;
+	private String storeAddressLine2;
+	private String storeAddressLine3;
 	private String storeCity;
 	private String storeState;
 	private String POSId;
@@ -24,13 +24,17 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 	private BigDecimal tranAmtPerTran;
 	private BigDecimal tranAmtPerDay;
 	private boolean allowRefund;
-	private BigDecimal peakTransPerDay;
 	private String channel;
 	private boolean active;
 	private MerchantDetails befImage;
 	private LoggedInUser userDetails;
 	private String lovValue;
 	private boolean newRecord = false;
+	private String cityName;
+	private String stateName;
+	private String storeCountry;
+	private String countryName;
+	private int peakTransPerDay;
 
 	public long getMerchantId() {
 		return merchantId;
@@ -48,11 +52,11 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 		this.merchantName = merchantName;
 	}
 
-	public long getStoreId() {
+	public int getStoreId() {
 		return storeId;
 	}
 
-	public void setStoreId(long storeId) {
+	public void setStoreId(int storeId) {
 		this.storeId = storeId;
 	}
 
@@ -62,30 +66,6 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
-	}
-
-	public String getStoreAddress1() {
-		return storeAddress1;
-	}
-
-	public void setStoreAddress1(String storeAddress1) {
-		this.storeAddress1 = storeAddress1;
-	}
-
-	public String getStoreAddress2() {
-		return storeAddress2;
-	}
-
-	public void setStoreAddress2(String storeAddress2) {
-		this.storeAddress2 = storeAddress2;
-	}
-
-	public String getStoreAddress3() {
-		return storeAddress3;
-	}
-
-	public void setStoreAddress3(String storeAddress3) {
-		this.storeAddress3 = storeAddress3;
 	}
 
 	public String getStoreCity() {
@@ -152,14 +132,6 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 		this.allowRefund = allowRefund;
 	}
 
-	public BigDecimal getPeakTransPerDay() {
-		return peakTransPerDay;
-	}
-
-	public void setPeakTransPerDay(BigDecimal peakTransPerDay) {
-		this.peakTransPerDay = peakTransPerDay;
-	}
-
 	public String getChannel() {
 		return channel;
 	}
@@ -214,6 +186,70 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 	
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public String getStoreAddressLine1() {
+		return storeAddressLine1;
+	}
+
+	public void setStoreAddressLine1(String storeAddressLine1) {
+		this.storeAddressLine1 = storeAddressLine1;
+	}
+
+	public String getStoreAddressLine2() {
+		return storeAddressLine2;
+	}
+
+	public void setStoreAddressLine2(String storeAddressLine2) {
+		this.storeAddressLine2 = storeAddressLine2;
+	}
+
+	public String getStoreAddressLine3() {
+		return storeAddressLine3;
+	}
+
+	public void setStoreAddressLine3(String storeAddressLine3) {
+		this.storeAddressLine3 = storeAddressLine3;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getStoreCountry() {
+		return storeCountry;
+	}
+
+	public void setStoreCountry(String storeCountry) {
+		this.storeCountry = storeCountry;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public int getPeakTransPerDay() {
+		return peakTransPerDay;
+	}
+
+	public void setPeakTransPerDay(int peakTransPerDay) {
+		this.peakTransPerDay = peakTransPerDay;
 	}
 
 }
