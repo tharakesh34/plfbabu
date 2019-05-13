@@ -1531,4 +1531,9 @@
 		
 	
 	</changeSet>
+	<changeSet id="9.8" author="Shahbaj.b">
+	<modifyDataType tableName="ProductGroup_Temp" columnName="channel" newDataType="varchar(8)"/>
+	<modifyDataType tableName="ProductGroup" columnName="channel" newDataType="varchar(8)"/>
+	</changeSet>
+	
 </databaseChangeLog>	
