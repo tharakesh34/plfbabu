@@ -315,13 +315,12 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 * @param securityUser
 	 *            (SecurityUsers)
 	 */
-	@SuppressWarnings("serial")
 	public void changePassword(SecurityUser securityUser) {
 		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
 		StringBuilder sql = new StringBuilder("Update SecUsers");
-		sql.append("set UsrPwd = :UsrPwd, UsrToken = :UsrToken, UsrAcExpDt = :UsrAcExpDt, PwdExpDt = :PwdExpDt");
+		sql.append(" set UsrPwd = :UsrPwd, UsrToken = :UsrToken, UsrAcExpDt = :UsrAcExpDt, PwdExpDt = :PwdExpDt");
 		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		sql.append(", RecordStatus = :RecordStatus");
 		sql.append(" Where UsrID =:UsrID");
@@ -332,11 +331,9 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
-			logger.debug("Error Update Method Count :" + recordCount);
 			ErrorDetail errorDetails = getError("41004", securityUser.getUsrLogin(),
 					securityUser.getUserDetails().getLanguage());
-			throw new AppException(errorDetails.getError()) {
-			};
+			throw new AppException(errorDetails.getError());
 		}
 		logger.debug(Literal.LEAVING);
 	}
