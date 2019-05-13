@@ -162,9 +162,25 @@
 		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
 	</changeSet>
 	
+	<changeSet id="7_Pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER DROP CONSTRAINT DF_ADTFINRECEIPTHEADER_ACTFINRECEIPT;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="7" author="satyanarayana.g">
 		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="actFinReceipt"
 			newDataType="boolean" />
+	</changeSet>
+	
+	<changeSet id="7_Post" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER ADD CONSTRAINT DF_ADTFINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>
