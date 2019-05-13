@@ -546,7 +546,9 @@ public class PresentmentDetailExtractService {
 		} else {
 			amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
 			dueAmt = prd.getSchPftDue();
-			exculdeReason = RepayConstants.PEXC_ADVINT;
+			if (prd.getSchPriDue().compareTo(BigDecimal.ZERO)==0) {
+				exculdeReason = RepayConstants.PEXC_ADVINT;
+			}
 		}
 
 		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(finRef, amountType);

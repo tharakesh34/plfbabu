@@ -649,7 +649,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excessMovement);
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set  BalanceAmt = BalanceAmt, ReservedAmt = ReservedAmt ");
+		updateSql.append(" Set  BalanceAmt = :BalanceAmt, ReservedAmt = :ReservedAmt ");
 		updateSql.append(" Where ExcessID =:ExcessID");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -665,7 +665,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excessMovement);
 
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set  BalanceAmt = BalanceAmt, ReservedAmt = ReservedAmt, UtilisedAmt=:UtilisedAmt ");
+		updateSql.append(" Set  BalanceAmt = :BalanceAmt, ReservedAmt = :ReservedAmt, UtilisedAmt=:UtilisedAmt ");
 		updateSql.append(" Where ExcessID =:ExcessID");
 
 		logger.debug("updateSql: " + updateSql.toString());
