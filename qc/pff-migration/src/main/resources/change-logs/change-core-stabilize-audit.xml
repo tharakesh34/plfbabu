@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="satyanarayana.g" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="satyanarayana.g" dbms="oracle,postgresql">
+		<addNotNullConstraint tableName="Adtbmtdocumenttypes" columnName="docispdfextrequired" />
+	</changeSet>
+	<changeSet id="1.1" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="Adtbmtdocumenttypes" columnName="docispdfextrequired"
+			columnDataType="NUMBER(1,0)" />
+	</changeSet>
+	<changeSet id="2" author="satyanarayana.g" dbms="oracle,postgresql">
+		<addNotNullConstraint tableName="AdtPinCodes" columnName="serviceable" />
+	</changeSet>
+	<!-- <changeSet id="3" author="satyanarayana.g" dbms="oracle,postgresql"> <dropNotNullConstraint tableName="Adtcustomerempdetails" 
+		columnName="custempname" /> </changeSet> -->
+
+	<changeSet id="4.2" author="satyanarayana.g">
+		<sql>
+			update AdtcustomerBankInfo set noOfMonthsBanking=0 where noOfMonthsBanking is null
+		</sql>
+	</changeSet>
+	<changeSet id="3.1" author="satyanarayana.g" dbms="mssql">
+		<dropNotNullConstraint tableName="Adtcustomerempdetails" columnName="custempname"
+			columnDataType="NUMBER(19,0)" />
+	</changeSet>
+	<changeSet id="4" author="satyanarayana.g" dbms="oracle,postgresql">
+		<addNotNullConstraint tableName="AdtcustomerBankInfo" columnName="noOfMonthsBanking" />
+	</changeSet>
+	<changeSet id="4.1" author="satyanarayana.g" dbms="mssql">
+		<addNotNullConstraint tableName="AdtcustomerBankInfo" columnName="noOfMonthsBanking"
+			columnDataType="NUMBER(38,0)" />
+	</changeSet>
+</databaseChangeLog>

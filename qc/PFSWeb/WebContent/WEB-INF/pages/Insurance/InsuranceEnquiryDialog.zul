@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_InsuranceEnquiryDialog" border="normal"
+		width="100%" height="100%" sizable="false"
+		apply="${insuranceEnquiryDialogCtrl}">
+
+		<div sclass="z-toolbar" style="padding:0">
+			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
+				width="100%" widths="35%,30%,35%">
+				<toolbar align="start" sclass="toolbar-start"></toolbar>
+
+				<toolbar align="center" sclass="toolbar-center">
+					<label id="window_title"
+						value="${c:l('window_InsuranceEnquiryDialog.title')}"
+						sclass="label-heading" />
+				</toolbar>
+
+				<toolbar align="end" sclass="toolbar-end">
+					<button id="btnClose"
+						tooltiptext="${c:l('btnClose.tooltiptext')}"
+						autodisable="btnClose" sclass="z-toolbarbutton" />
+				</toolbar>
+			</hbox>
+		</div>
+
+		<borderlayout id="borderlayout_Receipt">
+			<center border="none">
+				<tabbox id="tabBoxIndexCenter" width="99%"
+					height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="insuranceDetailsTab"
+							label="${c:l('label_InsuranceDialog_InsuranceDetails')}" />
+						<tab id="insurancePartnerDetailsTab"
+							label="${c:l('label_InsuranceDialog_InsurancePartnerDetails')}" />
+						<tab id="dispatchDetailsTab"
+							label="${c:l('label_InsuranceDialog_DispatchDetails')}" />
+						<tab id="discrepancyDetailsTab"
+							label="${c:l('label_InsuranceDialog_DiscrepancyDetails')}" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto">
+							<groupbox style="border:0px;">
+								<caption label="Vas Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceDialog_vasProductCode.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="vasProductCode" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceDialog_PostingAgainst.value')}" />
+											<textbox id="postingAgainst"
+												readonly="true" width="180px" />
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceDialog_LoanRef.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="loanReference" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceDialog_vasRef.value')}" />
+											<textbox id="vasReference"
+												readonly="true" width="180px" />
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceDialog_vasFee.value')}" />
+											<currencyBox id="vasFee"
+												readonly="true" />
+											<label
+												value="${c:l('label_InsuranceDialog_PaymentMode.value')}" />
+											<textbox id="paymentMode"
+												readonly="true" width="180px" />
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox style="border:0px;">
+								<caption label="Status Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceDialog_Status.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="status"
+													readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceDialog_Reconciled.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="reconciled" disabled="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceDialog_surrenderAmount.value')}" />
+											<currencyBox
+												id="surrenderAmount" readonly="true" />
+											<label
+												value="${c:l('label_InsuranceDialog_ClaimAmount.value')}" />
+											<currencyBox id="claimAmt"
+												readonly="true" />
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceDialog_BFLStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="bflStatus" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+								<tabbox width="100%" height="100%">
+									<tabs
+										style="width:0px;height:0px;border:none;">
+										<tab
+											style="background:none;padding:0px;height:0px;">
+										</tab>
+									</tabs>
+									<tabpanels>
+										<tabpanel
+											id="extendedFieldTabPanel" style="overflow:auto">
+										</tabpanel>
+									</tabpanels>
+								</tabbox>
+							</groupbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<caption label="Key Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="finReference" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsuranceReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="insurenceReference" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_CustCif.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custCif"
+													readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PolicyNo.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="policyNumber" readonly="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_LoanType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="loanType"
+													width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_CompanyName.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="companyName" width="180px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox style="border:0px;">
+								<caption
+									label="Insurance Partner Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsStartDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="insStartDate" readonly="true" width="180px"
+													disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsurancePendencyRsn.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="insPendencyRsn" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsEndDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox id="insEndDate"
+													readonly="true" width="180px" disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsurancePendencyResReqment.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox
+													id="insPendencyResReq" width="180px" disabled="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_IssDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox id="issDate"
+													readonly="true" width="180px" disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_FPR.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="fpr"
+													width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_IssStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="IssStatus"
+													readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_policyStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="policyStatus" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsPartnerpremium.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<currencyBox
+													id="insPartnerPremium" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_fromHandOverDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="handOverDate" width="180px" readonly="true"
+													disabled="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PartnerReceviedDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="partnerReceviedDate" readonly="true" width="180px"
+													disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsurancePendencyRsnCategory.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="insPendencyRsnCatgry" width="180px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<caption label="Key Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="finReference1" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsuranceReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="insurenceReference1" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_CustCif.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custCif1"
+													readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PolicyNo.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="policyNumber1" readonly="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_LoanType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="loanType1"
+													width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_CoverNote.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="coverNote"
+													width="180px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox style="border:0px;">
+								<caption label="Dispatch Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PODNo.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="podNo"
+													width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DispatchStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="dispatchStatus" width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_ReasonOfReturn.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="rsnOfReturn" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PODNo1.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="podNo1"
+													width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DispatchStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="dispatchStatus1" width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_ReasonOfReturn.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="rsnOfReturn1" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PODNo2.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="podNo2"
+													width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DispatchStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="dispatchStatus2" width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_ReasonOfReturn.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="rsnOfReturn2" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp1.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox id="dispatchDateAttemt1"
+													width="180px" disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp2.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="dispatchDateAttemt2" width="180px" disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp3.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="dispatchDateAttemt3" width="180px" disabled="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</tabpanel>
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<caption label="Key Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_FinReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="finReference2" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_InsuranceReference.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="insurenceReference2" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_CustCif.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custCif2"
+													readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PolicyNo.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="policyNumber2" readonly="true" width="180px" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_LoanType.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="loanType2"
+													width="180px" readonly="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_CoverNote.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="coverNote1"
+													width="180px" readonly="true" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+							<groupbox style="border:0px;">
+								<caption label="Discrepancy Details" />
+								<grid sclass="GridLayoutNoBorder"
+									fixedLayout="true" style="border:0px" width="100%">
+									<columns>
+										<column width="200px" />
+										<column />
+										<column width="200px" />
+										<column />
+									</columns>
+									<rows>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DiscrepancyDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="discrepancyDate" readonly="true" width="180px"
+													disabled="true" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PendencyReportDate.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox
+													id="pendencyReportDate" width="180px" readonly="true"
+													disabled="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_DiscrepancyRsn.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="discrepancyRsn" readonly="true" width="180px" />
+											</hbox>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_PendencyStatus.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox
+													id="pendencyStatus" width="180px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label
+												value="${c:l('label_InsuranceEnquiryDialog_FPR.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="fpr1"
+													readonly="true" width="180px" />
+											</hbox>
+										</row>
+									</rows>
+								</grid>
+							</groupbox>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
+			</center>
+			<south id="south" sclass="south-dialog">
+				<groupbox id="groupboxWf" width="98%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_ReceiptDialog_RecordStatus"
+							value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

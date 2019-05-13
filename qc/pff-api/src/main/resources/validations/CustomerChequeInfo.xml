@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Customer validations -->
+	<bean class="com.pennant.backend.model.customermasters.CustomerChequeInfo">
+
+		<field name="chequeSeq">
+			<constraint annotation="javax.validation.constraints.DecimalMin">
+				<message>chequeSeq should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>chequeSeq allow 19 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">9999999999999999999</element>
+			</constraint>
+		</field>
+
+		<field name="monthYear">
+			<constraint annotation="javax.validation.constraints.NotNull">
+				<message>monthYear is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+			</constraint>
+		</field>
+
+		<field name="totChequePayment">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>totChequePayment should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>totChequePayment allow 18 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">999999999999999999</element>
+			</constraint>
+		</field>
+
+
+		<field name="salary">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>salary should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>salary allow 18 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">999999999999999999</element>
+			</constraint>
+		</field>
+
+		<field name="returnChequeAmt">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>returnChequeAmt should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>returnChequeAmt allow 18 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">999999999999999999</element>
+			</constraint>
+		</field>
+
+
+		<field name="returnChequeCount">
+			<constraint annotation="javax.validation.constraints.Min">
+				<message>returnChequeCount should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">1</element>
+			</constraint>
+			<constraint annotation="javax.validation.constraints.DecimalMax">
+				<message>returnChequeCount allow 3 digits only</message>
+				<groups>
+					<value>com.pennant.validation.SaveValidationGroup</value>
+					<value>com.pennant.validation.UpdateValidationGroup</value>
+				</groups>
+				<element name="value">999</element>
+			</constraint>
+		</field>
+
+	</bean>
+</constraint-mappings>
+		
+		

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="01" author="Durgaprasad.g">
+		<addColumn tableName="AdtRMTFinanceTypes" >
+			<column name="PartiallySecured" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="12" author="Manoj">
+		<renameColumn tableName="AdtFinancedeviations" oldColumnName="ManualDeviation" newColumnName="DeviationCategory"/>
+	</changeSet>
+	
+	<!-- <changeSet id="13_Pre" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinancedeviations drop constraint DF_Adtfinancedeviations_manualDeviation;
+		</sql>
+	</changeSet> -->
+	<changeSet id="13" author="Manoj">
+			<modifyDataType tableName="AdtFinancedeviations" columnName="DeviationCategory" newDataType="Char(1)" />	
+	</changeSet>
+	<changeSet id="13_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinancedeviations add constraint DF_Adtfindeviation_manualDeviation default 0 for DeviationCategory ;
+		</sql>
+	</changeSet>
+	<changeSet id="2" author="Vinay">
+		<sql>
+			update adtfinancemain set eligibilitymethod=(select fieldcodeid from adtrmtlovfielddetail t2 where adtfinancemain.eligibilitymethod = t2.fieldcodevalue);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3" author="Vinay">
+		<sql>
+			update adtfinancemain set eligibilitymethod=0 where eligibilitymethod is null;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="4" author="Vinay">
+		<dropDefaultValue tableName="AdtFinanceMain" columnName="EligibilityMethod"/>
+	</changeSet>
+	
+	<changeSet id="5" author="Vinay" dbms="postgresql">
+		<sql>
+			alter table AdtFinanceMain alter column EligibilityMethod drop default;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="6" author="Vinay">
+		<modifyDataType tableName="AdtFinanceMain" columnName="EligibilityMethod" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="7" author="Vijaykumar.l">
+		<sql>
+			update AdtExtendedFieldHeader set modulename='VAS' where modulename='Vas';
+		</sql>
+	</changeSet>
+	<changeSet author="Kesav" id="8">
+		<comment>data type modified from decimal(10,0) to decimal(18,0)</comment>
+		<modifyDataType tableName="AdtCashDenominations" columnName="Amount" newDataType="decimal(18,0)" />
+	</changeSet>
+	<changeSet id="9" author="PASVarma">
+		<createView viewName="activitylog_view" replaceIfExists="true">
+			SELECT a.auditid,
+		    a.lastmnton AS auditdate,
+		    a.version,
+		    a.rolecode,
+		    a.nextrolecode,
+		    a.recordstatus,
+		    a.taskid,
+		    a.NEXTtaskid,
+		    a.recordtype,
+		    a.workflowid,
+		    a.lastmntby,
+		    a.rcdmaintainsts,
+		    u.usrlogin AS userlogin,
+		    a.finreference
+		   FROM adtfinancemain a
+		     JOIN secusers u ON u.usrid = a.lastmntby
+		  WHERE a.auditimage = 'W' and a.workflowid != 0
+		</createView>
+	</changeSet>
+	
+	<changeSet id="10" author="Kesav">
+		<comment>DepositBranch column added in FinReceiptHeader tables</comment>
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="DepositBranch" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="11" author="Kesav">
+		<comment>TransactionAmount column removing from DepositDetails</comment>
+		<dropColumn tableName="AdtDepositDetails" columnName="TransactionAmount"/>
+	</changeSet>
+	
+	<changeSet id="12" author="Vinay">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="Connector" type="bigint"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="59" author="Vinay">
+		<sql>
+			update adtfinancemain set connector=0;
+		</sql>
+	</changeSet>
+<changeSet id="13" author="Srinivasa Varma">
+	<comment>New Field Company Name added in Customer Employment Details.</comment>
+		<addColumn tableName="AdtCustomerEmpDetails" >
+			<column name="companyname" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="13" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="ADTFEEWAIVERHEADER">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WAIVERID" type="BIGINT"/>
+			<column name="FINREFERENCE" type="VARCHAR(20)"/>
+			<column name="EVENT" type="VARCHAR(20)"/>
+			<column name="REMARKS" type="VARCHAR(500)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+			<column name="POSTINGDATE" type="DATETIME"/>
+			<column name="VALUEDATE" type="DATETIME"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="14" author="Madhubabu">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERHEADER" tableName="ADTFEEWAIVERHEADER" />
+	</changeSet>
+	<changeSet id="15" author="Madhubabu">
+	<comment> New Development </comment>
+		<createTable tableName="ADTFEEWAIVERDETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="WAIVERDETAILID" type="BIGINT"/>
+			<column name="WAIVERID" type="BIGINT"/>
+			<column name="ADVISEID" type="BIGINT"/>
+			<column name="FINODSCHDDATE" type="DATETIME"/>
+			<column name="FEETYPECODE" type="VARCHAR(20)"/>
+			<column name="FEETYPEDESC" type="VARCHAR(100)"/>
+			<column name="VERSION" type="INT"/>
+			<column name="LASTMNTBY" type="BIGINT"/>
+			<column name="LASTMNTON" type="DATETIME"/>
+			<column name="RECORDSTATUS" type="VARCHAR(50)"/>
+			<column name="ROLECODE" type="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type="VARCHAR(200)"/>
+			<column name="TASKID" type="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type="BIGINT"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="16" author="Madhubabu">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFEEWAIVERDETAILS" tableName="ADTFEEWAIVERDETAILS" />
+	</changeSet>
+	<changeSet id="17" author="Madhubabu">
+	<addColumn tableName="ADTFEEWAIVERDETAILS">
+		<column name="RECEIVABLEAMOUNT" type="decimal(18,0)" />
+		<column name="RECEIVEDAMOUNT" type="decimal(18,0)" />
+		<column name="WAIVEDAMOUNT" type="decimal(18,0)" />
+		<column name="BALANCEAMOUNT" type="decimal(18,0)" />
+		<column name="CURRWAIVERAMOUNT" type="decimal(18,0)" />
+	</addColumn>
+</changeSet>
+<changeSet id="18" author="MadhuBabu">
+	<renameTable newTableName="ADTFEEWAIVERDETAIL" oldTableName="ADTFEEWAIVERDETAILS"/>
+</changeSet>
+
+	<changeSet id="19" author="Mangapathi">
+			<addColumn tableName="ADTRMTFINANCETYPES">
+				<column name="AlwAdvEmi" type="boolean" defaultValue="0"/>
+				<column name="AdvEmiMinTerms" type="Number(3,0)" defaultValue="0"/>
+				<column name="AdvEmiMaxTerms" type="Number(3,0)" defaultValue="0"/>
+				<column name="AdvEmiDftTerms" type="Number(3,0)" defaultValue="0"/>
+				<column name="AdvEmiSchdMthd" type="Varchar(8)"/>
+			</addColumn>
+	</changeSet>
+<changeSet id="19" author="Umarohini">
+		<addColumn tableName="ADTBMTAggrementDef">
+			<column name="Doctype" type="varchar(50)"/>
+			<column name="AutoGeneration" type="boolean"/>
+			<column name="AutoDownload" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="20" author="Umarohini" dbms="mssql">
+		<sql>
+			alter table ADTBMTAggrementDef add constraint df_adtbmtagremntdef_ag default 0 for AutoGeneration;
+			alter table ADTBMTAggrementDef add constraint df_adtbmtagremntdef_ad default 0 for AutoDownload;
+		</sql>
+	</changeSet>
+	<changeSet id="21" author="Umarohini" dbms="oracle,postgresql">
+		<addDefaultValue columnName="AutoGeneration" tableName="ADTBMTAggrementDef" defaultValue="0"/>
+		<addDefaultValue columnName="AutoDownload" tableName="ADTBMTAggrementDef" defaultValue="0"/>
+	</changeSet>
+	<changeSet id="22" author="Mangapathi">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="AdvanceEMI" type="decimal(18,0)" defaultValue="0"/>
+			<column name="AdvEMITerms" type="Number(3,0)" defaultValue="0"/>		
+		</addColumn>
+	</changeSet>
+	<changeSet id="23" author="Akhilesh.k">
+	    <addColumn tableName="adtcollateralassignment">	
+			<column name="HostReference" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	</databaseChangeLog>

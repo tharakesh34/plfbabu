@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="01" author="Durgaprasad G">
+		<createTable tableName="ADTVAS_VASINS_ED">
+			<column name="AUDITID" type="BIGINT" />
+			<column name="AUDITDATE" type="DATETIME" />
+			<column name="AUDITSEQ" type="INT" />
+			<column name="AUDITIMAGE" type="CHAR(1)" />
+			<column name="REFERENCE" type="VARCHAR(20)" />
+			<column name="SEQNO" type="INT" />
+			<column name="VERSION" type="INT" />
+			<column name="LASTMNTBY" type="BIGINT" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="BIGINT" />
+			<column name="GENDER" type="VARCHAR(50)" />
+			<column name="APPLICANTTYPE" type="VARCHAR(50)" />
+			<column name="CUSTOMERNAME" type="VARCHAR(100)" />
+			<column name="SUMASSURED" type="DECIMAL(18,0)" />
+			<column name="INSURANCETERMS" type="INT" />
+			<column name="BRANCHDISPATCHDATE" type="DATETIME" />
+			<column name="CRITICALILLNESS" type="BOOLEAN" />
+			<column name="DECFORGOODHEALTH" type="BOOLEAN" />
+			<column name="HEIGHT" type="INT" />
+			<column name="WEIGHT" type="INT" />
+			<column name="ADDRESS" type="VARCHAR(200)" />
+			<column name="HIDDEN_APP_VALUES" type="VARCHAR(1000)" />
+			<column name="HIDDEN_CO_APP_VAL" type="VARCHAR(1000)" />
+			<column name="CUSTCOAPPCIF" type="VARCHAR(100)" />
+			<column name="CUSTOMERCIF" type="VARCHAR(100)" />
+			<column name="DOB" type="VARCHAR(50)" />
+			<column name="APOINTEENAMEN1" type="VARCHAR(20)" />
+			<column name="NOMINEENAME1" type="VARCHAR(20)" />
+			<column name="RELATIONN1" type="VARCHAR(20)" />
+			<column name="DOBN1" type="DATETIME" />
+			<column name="AGEN1" type="VARCHAR(20)" />
+			<column name="ADDRESSN1" type="VARCHAR(1000)" />
+			<column name="APONTEE1RELATION" type="VARCHAR(20)" />
+			<column name="APPOINTEEN1DOB" type="DATETIME" />
+			<column name="APONTEEN1AGE" type="VARCHAR(20)" />
+			<column name="APOINTEEN1ADDRESS" type="VARCHAR(100)" />
+			<column name="AGE" type="VARCHAR(50)" />
+			<column name="NOMINEENAME2" type="VARCHAR(100)" />
+			<column name="RELATIONN2" type="VARCHAR(20)" />
+			<column name="DOBN2" type="DATETIME" />
+			<column name="AGEN2" type="VARCHAR(20)" />
+			<column name="ADDRESSN2" type="VARCHAR(1000)" />
+			<column name="APOINTEENAMEN2" type="VARCHAR(100)" />
+			<column name="APONTEE2RELATION" type="VARCHAR(20)" />
+			<column name="APPOINTEEN2DOB" type="DATETIME" />
+			<column name="APONTEEN2AGE" type="VARCHAR(20)" />
+			<column name="APOINTEEN2ADDRESS" type="VARCHAR(1000)" />
+			<column name="MOBILENUMBERN1" type="VARCHAR(10)" />
+			<column name="MOBILENUMBERN2" type="VARCHAR(10)" />
+			<column name="APOINTEE2MOBILENUM" type="VARCHAR(10)" />
+			<column name="APOINTEE1MOBILENUM" type="VARCHAR(10)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="02" author="Durgaprasad G">
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="AUDITID" />
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="AUDITDATE" />
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="AUDITSEQ" />
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="AUDITIMAGE" />
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="REFERENCE" />
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="SEQNO" />
+		<addNotNullConstraint tableName="ADTVAS_VASINS_ED" columnName="VERSION" />
+	</changeSet>
+	<changeSet id="03" author="Durgaprasad G">
+		<addPrimaryKey tableName="ADTVAS_VASINS_ED" columnNames="AUDITID, AUDITDATE, AUDITSEQ, AUDITIMAGE" constraintName="PK_ADTVAS_VASINS_ED" />
+	</changeSet>
+	<changeSet id="04" author="Durgaprasad G">
+		<addColumn tableName="ADTVAS_VASINS_ED">
+			<column name="LoanType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

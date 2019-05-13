@@ -1,0 +1,3044 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+
+<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+<changeSet id="1" author="Manoj">
+		<sql>
+			 Delete from SMTparameters where sysparmcode='USR_PWD_MIN_LEN';
+  			 Insert into SMTparameters values('USR_PWD_MIN_LEN', 'Password Minimum length', 'int ',1,8,3,0,null,null,'Password Minimum length',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+  
+  
+    		Delete from SMTparameters where sysparmcode='USR_PWD_SPECIAL_CHAR_COUNT';
+  			Insert into SMTparameters values('USR_PWD_SPECIAL_CHAR_COUNT', 'Password Special Character Count', 'int ',1,1,3,0,null,null,'Password Special Character Count',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="02" author="Ganesh.p">
+		<addColumn tableName="PLFAPILOGDETAILS">
+			<column name="messageid" type="VARCHAR(20)"></column>
+			<column name="entityId" type="VARCHAR(20)"></column>
+			<column name="language" type="VARCHAR(5)"></column>
+			<column name="serviceVersion" type="int"></column>
+			<column name="processed" type="Boolean"></column>
+			<column name="headerReqTime" type="datetime"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="03" author="Ganesh.p">
+		<renameColumn newColumnName="id" oldColumnName="seqid"
+			tableName="PLFAPILOGDETAILS" />
+	</changeSet>
+
+	<changeSet id="04" author="Ganesh.p">
+		<renameColumn newColumnName="restclientid" oldColumnName="cxfid"
+		tableName="PLFAPILOGDETAILS" />
+	</changeSet>
+	
+	<changeSet id="05" author="Ganesh.p">
+		<modifyDataType tableName="plfapilogdetails" columnName="request"
+			newDataType="nclob" />
+		<modifyDataType tableName="PLFAPILOGDETAILS" columnName="response"
+			newDataType="nclob" />
+	</changeSet>
+	
+	<changeSet id="06" author="Ganesh.p">
+		<addColumn tableName="PLFAPILOGDETAILS">
+			<column name="keyFields" type="VARCHAR(100)"></column>
+			</addColumn>
+	</changeSet>
+	<changeSet id="07" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('92005','EN','E','Message Id is Invalid','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="08.1" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view RMTFinanceTypes_ORGView cascade;
+			drop view RMTFinanceTypes_View cascade;
+			drop view RMTFinanceTypes_AView cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="08.2" author="Jayant" dbms="postgresql">
+		<sql>
+			drop view rmtfinancetypes_aeview cascade;
+		</sql>
+	</changeSet>
+	<changeSet id="08" author="Jayant">
+		<modifyDataType tableName="RMTFinanceTypes" columnName="developerfinance" newDataType="boolean"/>
+	</changeSet>
+	<changeSet id="08.4" author="Jayant">
+		<modifyDataType tableName="RMTFinanceTypes_Temp" columnName="developerfinance" newDataType="boolean"/>
+	</changeSet>
+	<changeSet id="09" author="Jayant">
+      <createView replaceIfExists="true" viewName="RMTFinanceTypes_ORGView">
+    SELECT		T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, 
+					T1.FinContingentAcType, T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, 
+					T1.FinIsAlwMD, T1.FinSchdMthd, T1.FInIsAlwGrace, T1.EqualRepayment, T1.FinRateType, 
+					T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, 
+					T1.FinIsIntCpz, T1.FinCpzFrq, T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, 
+					T1.FinGrcSplRate, T1.FinGrcIntRate, T1.FInGrcMinRate, T1.FinGrcMaxRate, T1.FinGrcDftIntFrq, 
+					T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, T1.FinGrcRvwFrq, T1.FinMinTerm, 
+					T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwDifferment, 
+					T1.FinMaxDifferment, T1.FinIsActive, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, 
+					T1.AlwdStepPolicies, T1.DftStepPolicy, T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,
+					T1.FinAlwRateChangeAnyDate,  T1.FinIsIntCpzAtGrcEnd, T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment, 
+					T1.PlanDeferCount, T1.PftPayAcType, T1.FinIsOpenPftPayAcc, T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, 
+					T1.FinGrcMargin, T1.FinMargin, T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, 
+					T1.FinDepreciationFrq, T1.FinBankContingentAcType, T1.FinProvisionAcType, T1.AllowRIAInvestment, 
+					T1.OverrideLimit, T1.LimitRequired, T1.FinCommitmentOvrride, T1.FinCollateralOvrride, 
+					T1.FinRepayPftOnFrq, T1.FinPftUnChanged, T1.ApplyODPenalty, T1.ODIncGrcDays, T1.ODChargeType, 
+					T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc, T1.ODAllowWaiver, T1.ODMaxWaiverPerc, 
+					T1.FinDivision, T3.DivisionCodeDesc LovDescFinDivisionName, T1.FinSuspAcType, T1.Product, 
+					T1.StartDate, T1.EndDate, T1.AllowDownpayPgm, T1.FinTypeDesc lovDescPromoFinTypeDesc, T1.Remarks, 
+					T4.PolicyDesc lovDescDftStepPolicyName, T1.PastduePftCalMthd, T1.PASTDUEPFTMARGIN, T1.AlwAdvanceRent, 
+					T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, 
+					T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule, T1.AlwMultiPartyDisb, 
+					T1.collateralType, T1.TDSApplicable, T5.RuleCode DownPayRuleDesc, T1.ApplyGrcPricing, 
+					T1.ApplyRpyPricing, T6.RuleCode GrcPricingMethodDesc, T7.RuleCode RpyPricingMethodDesc, 
+					T1.DroplineOD, T1.DroppingMethod, T1.RateChgAnyDay, T4.StepType DftStepPolicyType, 
+					T1.ManualSchedule, T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , 
+					T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax ,T1.PlanEMIHLockPeriod , 
+					T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, 
+					T1.AlwdRpyMethods, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.RoundingMode,T1.RoundingTarget, T1.FrequencyDays, 
+					T1.QuickDisb,T1.AlwReage,T1.AlwUnPlanEmiHoliday,T1.AlwMaxDisbCheckReq, T1.ProductCategory, T1.RpyHierarchy , T1.DeveloperFinance,
+					T3.EntityCode LovDescEntityCode,T8.EntityDesc LovDescEntityDesc, T1.CostOfFunds
+			FROM			RMTFinanceTypes T1 INNER JOIN
+                    SMTDivisionDetail T3 ON T1.FinDivision = T3.DivisionCode LEFT OUTER JOIN
+					                StepPolicyHeader T4 ON T1.DftStepPolicy = T4.PolicyCode LEFT OUTER JOIN
+					                Rules T5 ON T1.DownPayRule = T5.RuleId LEFT OUTER JOIN
+					                Rules T6 ON T1.GrcPricingMethod = T6.RuleId LEFT OUTER JOIN
+					                Rules T7 ON T1.RpyPricingMethod = T7.RuleId LEFT OUTER JOIN
+					                ENTITY T8 ON T3.EntityCode = T8.EntityCode	
+    
+    </createView>
+     </changeSet>
+     <changeSet id="10" author="Jayant">
+    <createView replaceIfExists="true" viewName="RMTFinanceTypes_View">
+     SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
+			           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
+					   T1.FinSchdMthd, T1.FInIsAlwGrace, T1.FinHistRetension, T1.EqualRepayment, T1.FinRateType,
+					   T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, T1.FinIsIntCpz, T1.FinCpzFrq, 
+			           T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, T1.FinGrcSplRate, T1.FinGrcIntRate,
+					   T1.FInGrcMinRate, T1.FinGrcMaxRate,T1.FinGrcDftIntFrq, T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, 
+					   T1.FinGrcRvwFrq, T1.FinMinTerm, T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwPartialRpy,
+					   T1.FinIsAlwDifferment, T1.FinMaxDifferment, T1.FinIsAlwEarlyRpy, T1.FinIsAlwEarlySettle, T1.FinODRpyTries, T1.FinEarlyPayRule,
+					   T1.FinEarlySettleRule, T1.FinDepositRestrictedTo,T1.FinAEBuyOrInception, T1.FinAESellOrMaturity, T1.FinIsActive, T1.Version,
+					   T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,
+					   T1.WorkflowId, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, T1.AlwdStepPolicies, T1.DftStepPolicy, 
+					   T4.AcTypeDesc lovDescFinContingentAcTypeName,T5.AcTypeDesc lovDescFinAcTypeName,
+			           T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,T1.FinAlwRateChangeAnyDate,T1.FinIsIntCpzAtGrcEnd,
+					  T1.FinElgRuleCode, T1.LimitElgRuleCode,T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment,
+					   T1.PlanDeferCount, T1.FinAssetType, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,T31.AcTypeDesc lovDescPftPayAcTypeName, 
+			           T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, T1.FinGrcMargin, T1.FinMargin,T1.FinScheduleOn, T1.FinGrcScheduleOn, 
+			           T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, T1.FinDepreciationFrq, T1.FinBankContingentAcType, 
+			           T1.FinProvisionAcType, T38.AcTypeDesc lovDescFinBankContAcTypeName, T39.AcTypeDesc lovDescFinProvisionAcTypeName, 
+			           T1.AllowRIAInvestment, T1.OverrideLimit, T1.LimitRequired,T1.FinCommitmentOvrride, T1.FinCollateralOvrride,
+			           T1.FinPftUnChanged,T1.ApplyODPenalty, T1.ODIncGrcDays,T1.ODChargeType, T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc,
+					   T1.ODAllowWaiver, T1.ODMaxWaiverPerc, T1.FinDivision,T48.DivisionCodeDesc LovDescFinDivisionName,T48.EntityCode LovDescEntityCode, T1.FinSuspAcType,
+					   T49.AcTypeDesc lovDescFinSuspAcTypeName, T1.Product, T1.StartDate, T1.EndDate,
+					   T1.AllowDownpayPgm, T1.FinTypeDesc lovDescPromoFinTypeDesc, 
+			          T1.Remarks, T1.AlwEarlyPayMethods, T1.PastduePftCalMthd,T1.PastduePftMargin, 
+					  T1.AlwAdvanceRent, T1.GrcAdvBaseRate,T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+			           T1.RpyAdvMargin, T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule,
+					   T59.RuleCode DownPayRuleDesc,T1.FinSuspTrigger, T1.FinSuspRemarks, T1.AlwMultiPartyDisb,T1.collateralType, T1.TDSApplicable,
+					   T1.ManualSchedule,T1.ApplyGrcPricing ,T1.GrcPricingMethod, T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.RpyHierarchy,
+					   T67.RuleCode GrcPricingMethodDesc ,T68.RuleCode RpyPricingMethodDesc , T1.DroplineOD , T1.DroppingMethod ,
+					   T1.RateChgAnyDay, T1.FinRepayPftOnFrq,
+					    T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , 
+						T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, T1.AlwdRpyMethods, 
+						T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.RoundingMode,T1.RoundingTarget, T1.FrequencyDays, T1.QuickDisb,T1.AlwMaxDisbCheckReq,
+						T1.AlwReage,T1.AlwUnPlanEmiHoliday,
+						T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory  , T2.ProductDesc FinCategoryDesc,T1.DeveloperFinance, T1.CostOfFunds
+
+			FROM       RMTFinanceTypes_Temp T1 LEFT OUTER JOIN
+					   BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
+			           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T5 ON T1.FinAcType = T5.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T31 ON T1.PftPayAcType = T31.AcType LEFT OUTER JOIN
+			           SMTDivisionDetail T48 ON T1.FinDivision = T48.DivisionCode LEFT OUTER JOIN
+			           RMTAccountTypes T49 ON T1.FinSuspAcType = T49.AcType LEFT OUTER JOIN
+			           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
+			           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
+			           Rules T68 ON T1.RpyPricingMethod = T68.RuleId LEFT OUTER JOIN 
+                       ProfitCenters T69 ON T69.ProfitCenterID = T1.ProfitCenterID
+			UNION ALL
+			SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
+			           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
+					   T1.FinSchdMthd, T1.FInIsAlwGrace, T1.FinHistRetension, T1.EqualRepayment, T1.FinRateType,
+					   T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, T1.FinIsIntCpz, T1.FinCpzFrq, 
+			           T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, T1.FinGrcSplRate, T1.FinGrcIntRate,
+					   T1.FInGrcMinRate, T1.FinGrcMaxRate,T1.FinGrcDftIntFrq, T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, 
+					   T1.FinGrcRvwFrq, T1.FinMinTerm, T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwPartialRpy,
+					   T1.FinIsAlwDifferment, T1.FinMaxDifferment, T1.FinIsAlwEarlyRpy, T1.FinIsAlwEarlySettle, T1.FinODRpyTries, T1.FinEarlyPayRule,
+					   T1.FinEarlySettleRule, T1.FinDepositRestrictedTo,T1.FinAEBuyOrInception, T1.FinAESellOrMaturity, T1.FinIsActive, T1.Version,
+					   T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,
+					   T1.WorkflowId, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, T1.AlwdStepPolicies, T1.DftStepPolicy, 
+					   T4.AcTypeDesc lovDescFinContingentAcTypeName,T5.AcTypeDesc lovDescFinAcTypeName, 
+			           T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,T1.FinAlwRateChangeAnyDate, T1.FinIsIntCpzAtGrcEnd,
+					  T1.FinElgRuleCode, T1.LimitElgRuleCode,T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment,
+					   T1.PlanDeferCount, T1.FinAssetType, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,T31.AcTypeDesc lovDescPftPayAcTypeName, 
+			           T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, T1.FinGrcMargin, T1.FinMargin,T1.FinScheduleOn, T1.FinGrcScheduleOn, 
+			           T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, T1.FinDepreciationFrq, T1.FinBankContingentAcType, 
+			           T1.FinProvisionAcType, T38.AcTypeDesc lovDescFinBankContAcTypeName, T39.AcTypeDesc lovDescFinProvisionAcTypeName, 
+			           T1.AllowRIAInvestment, T1.OverrideLimit, T1.LimitRequired, T1.FinCommitmentOvrride, T1.FinCollateralOvrride,
+			           T1.FinPftUnChanged,T1.ApplyODPenalty, T1.ODIncGrcDays,T1.ODChargeType, T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc,
+					   T1.ODAllowWaiver, T1.ODMaxWaiverPerc, T1.FinDivision,T48.DivisionCodeDesc LovDescFinDivisionName,T48.EntityCode LovDescEntityCode, T1.FinSuspAcType,
+					   T49.AcTypeDesc lovDescFinSuspAcTypeName, T1.Product, T1.StartDate, T1.EndDate,
+					  T1.AllowDownpayPgm, T1.FinTypeDesc lovDescPromoFinTypeDesc, T1.Remarks, T1.AlwEarlyPayMethods, T1.PastduePftCalMthd,T1.PastduePftMargin, 
+					   T1.AlwAdvanceRent, T1.GrcAdvBaseRate,  T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, 
+			           T1.RpyAdvMargin, T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule,
+					   T59.RuleCode DownPayRuleDesc,T1.FinSuspTrigger, T1.FinSuspRemarks, T1.AlwMultiPartyDisb,T1.collateralType, T1.TDSApplicable,
+					   T1.ManualSchedule,T1.ApplyGrcPricing ,T1.GrcPricingMethod, T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.RpyHierarchy,
+					   T67.RuleCode GrcPricingMethodDesc ,T68.RuleCode RpyPricingMethodDesc , T1.DroplineOD , T1.DroppingMethod ,
+					   T1.RateChgAnyDay,T1.FinRepayPftOnFrq,
+					    T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , 
+						T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, T1.AlwdRpyMethods, 
+						T1.MaxUnplannedEmi, T1.MaxReAgeHolidays,T1.RoundingMode,T1.RoundingTarget, T1.FrequencyDays, T1.QuickDisb,T1.AlwMaxDisbCheckReq,
+						T1.AlwReage,T1.AlwUnPlanEmiHoliday,
+						T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory , T2.ProductDesc FinCategoryDesc,T1.DeveloperFinance, T1.CostOfFunds
+
+			FROM       RMTFinanceTypes T1 LEFT OUTER JOIN
+					BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
+			           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T5 ON T1.FinAcType = T5.AcType LEFT OUTER JOIN
+			           RMTAccountTypes T31 ON T1.PftPayAcType = T31.AcType LEFT OUTER JOIN
+			           SMTDivisionDetail T48 ON T1.FinDivision = T48.DivisionCode LEFT OUTER JOIN
+			           RMTAccountTypes T49 ON T1.FinSuspAcType = T49.AcType LEFT OUTER JOIN
+			           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
+			           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
+			           Rules T68 ON T1.RpyPricingMethod = T68.RuleId LEFT OUTER JOIN 
+                       ProfitCenters T69 ON T69.ProfitCenterID = T1.ProfitCenterID
+			WHERE     (NOT EXISTS
+			                          (SELECT     1 Expr1
+			                            FROM          RMTFinanceTypes_Temp
+			                            WHERE      (FinType = T1.FinType)))
+    
+    
+    </createView>
+    
+    </changeSet>
+    
+      <changeSet id="11" author="Jayant">
+       <createView replaceIfExists="true" viewName="RMTFinanceTypes_AView">
+    SELECT     T1.FinType, T1.FinCategory, T1.FinTypeDesc, T1.FinCcy, T1.FinDaysCalType, T1.FinAcType, T1.FinContingentAcType,
+				           T1.FinIsGenRef, T1.FinMaxAmount, T1.FinMinAmount, T1.FinIsOpenNewFinAc, T1.FinDftStmtFrq, T1.FinIsAlwMD,
+						   T1.FinSchdMthd, T1.FInIsAlwGrace, T1.FinHistRetension,  T1.EqualRepayment, T1.FinRateType,
+						   T1.FinBaseRate, T1.FinSplRate, T1.FinIntRate, T1.FInMinRate, T1.FinMaxRate, T1.FinDftIntFrq, T1.FinIsIntCpz, T1.FinCpzFrq, 
+				           T1.FinIsRvwAlw, T1.FinRvwFrq, T1.FinGrcRateType, T1.FinGrcBaseRate, T1.FinGrcSplRate, T1.FinGrcIntRate,
+						   T1.FInGrcMinRate, T1.FinGrcMaxRate,T1.FinGrcDftIntFrq, T1.FinGrcIsIntCpz, T1.FinGrcCpzFrq, T1.FinGrcIsRvwAlw, 
+						   T1.FinGrcRvwFrq, T1.FinMinTerm, T1.FinMaxTerm, T1.FinDftTerms, T1.FinRpyFrq, T1.FInRepayMethod, T1.FinIsAlwPartialRpy,
+						   T1.FinIsAlwDifferment, T1.FinMaxDifferment, T1.FinIsAlwEarlyRpy, T1.FinIsAlwEarlySettle, T1.FinODRpyTries, T1.FinEarlyPayRule,
+						   T1.FinEarlySettleRule, T1.FinDepositRestrictedTo,T1.FinAEBuyOrInception, T1.FinAESellOrMaturity, T1.FinIsActive, T1.Version,
+						   T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType,
+						   T1.WorkflowId, T1.StepFinance, T1.SteppingMandatory, T1.AlwManualSteps, T1.AlwdStepPolicies, T1.DftStepPolicy, 
+						   T4.AcTypeDesc lovDescFinContingentAcTypeName,T5.AcTypeDesc lovDescFinAcTypeName,
+				           T1.FinIsDwPayRequired, T1.FinRvwRateApplFor,T1.FinAlwRateChangeAnyDate, T1.FinIsIntCpzAtGrcEnd,
+						   T1.FinElgRuleCode, T1.LimitElgRuleCode,T1.FinSchCalCodeOnRvw, T1.AlwPlanDeferment,
+						   T1.PlanDeferCount, T1.FinAssetType, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,T31.AcTypeDesc lovDescPftPayAcTypeName, 
+				           T1.FinIsAlwGrcRepay, T1.FinGrcSchdMthd, T1.FinGrcMargin, T1.FinMargin,T1.FinScheduleOn, T1.FinGrcScheduleOn, 
+				           T1.FinCommitmentReq, T1.FinCollateralReq, T1.FinDepreciationReq, T1.FinDepreciationFrq, T1.FinBankContingentAcType, 
+				           T1.FinProvisionAcType, T38.AcTypeDesc lovDescFinBankContAcTypeName, T39.AcTypeDesc lovDescFinProvisionAcTypeName, 
+				           T1.AllowRIAInvestment, T1.OverrideLimit, T1.LimitRequired,
+						   T1.FinCommitmentOvrride, T1.FinCollateralOvrride, 
+				           T1.FinPftUnChanged,T1.ApplyODPenalty, T1.ODIncGrcDays,T1.ODChargeType, T1.ODGraceDays, T1.ODChargeCalOn, T1.ODChargeAmtOrPerc,
+						   T1.ODAllowWaiver, T1.ODMaxWaiverPerc, T1.FinDivision,T48.DivisionCodeDesc LovDescFinDivisionName,T48.EntityCode LovDescEntityCode, T1.FinSuspAcType,
+						   T49.AcTypeDesc lovDescFinSuspAcTypeName,T1.Product, T1.StartDate, T1.EndDate,
+						   T1.AllowDownpayPgm, T1.Remarks, 
+						   T1.AlwEarlyPayMethods,T1.PastduePftCalMthd,T1.PastduePftMargin, 
+						   T1.AlwAdvanceRent, T1.GrcAdvBaseRate, 
+				           T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate,  
+				           T1.RpyAdvMargin, T1.RpyAdvPftRate, T1.RollOverFinance, T1.RollOverFrq, T1.DownPayRule,
+						   T59.RuleCode DownPayRuleDesc,T1.FinSuspTrigger, T1.FinSuspRemarks, T1.AlwMultiPartyDisb,T1.collateralType, T1.TDSApplicable,
+						   T1.ManualSchedule,T1.ApplyGrcPricing ,T1.GrcPricingMethod, T1.ApplyRpyPricing, T1.RpyPricingMethod, T1.RpyHierarchy,
+						   T67.RuleCode GrcPricingMethodDesc ,T68.RuleCode RpyPricingMethodDesc , T1.DroplineOD , T1.DroppingMethod ,
+						   T1.RateChgAnyDay, T1.FinRepayPftOnFrq,
+						    T1.AlwBPI , T1.BpiTreatment , T1.PftDueSchOn , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , 
+							T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz , T1.ReAgeCpz, T1.FddLockPeriod, 
+							T1.AlwdRpyMethods, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.RoundingMode,  T1.RoundingTarget,T1.FrequencyDays, T1.QuickDisb,T1.AlwReage,
+							T1.AlwUnPlanEmiHoliday,T1.AlwMaxDisbCheckReq, T1.FinTypeDesc lovDescPromoFinTypeDesc,
+							T1.ProfitCenterID, T69.ProfitCenterCode, T69.ProfitCenterDesc, T1.ProductCategory , T2.ProductDesc FinCategoryDesc , T1.DeveloperFinance, T1.CostOfFunds
+				FROM       RMTFinanceTypes T1 LEFT OUTER JOIN
+				  			BMTProduct T2 ON T1.FinCategory = T2.ProductCode LEFT OUTER JOIN
+				           RMTAccountTypes T4 ON T1.FinContingentAcType = T4.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T38 ON T1.FinBankContingentAcType = T38.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T39 ON T1.FinProvisionAcType = T39.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T5 ON T1.FinAcType = T5.AcType LEFT OUTER JOIN
+				           RMTAccountTypes T31 ON T1.PftPayAcType = T31.AcType LEFT OUTER JOIN
+				           SMTDivisionDetail T48 ON T1.FinDivision = T48.DivisionCode LEFT OUTER JOIN
+				           RMTAccountTypes T49 ON T1.FinSuspAcType = T49.AcType LEFT OUTER JOIN
+				           Rules T59 ON T1.DownPayRule = T59.RuleId LEFT OUTER JOIN
+				           Rules T67 ON T1.GrcPricingMethod = T67.RuleId  LEFT OUTER JOIN
+				           Rules T68 ON T1.RpyPricingMethod = T68.RuleId LEFT OUTER JOIN 
+                  		   ProfitCenters T69 ON T69.ProfitCenterID = T1.ProfitCenterID	
+    </createView>
+    
+      </changeSet>
+      
+       <changeSet id="12" author="Jayant">
+       <createView replaceIfExists="true" viewName="RMTFinanceTypes_AEView">
+    SELECT     T1.FinType,  '' FinDeffreq, T1.FinAcType, T1.FinCcy, T1.FinIsOpenNewFinAc, T1.PftPayAcType, T1.FinIsOpenPftPayAcc,
+           T1.FinContingentAcType, T1.FinProvisionAcType, T1.FinSuspAcType, T1.FinCategory,T1.DeveloperFinance
+                
+    FROM         RMTFinanceTypes T1
+
+    </createView>
+     </changeSet>
+     <changeSet id="13" author="Jayant">
+     	<dropTable tableName="EXPENSETYPES" cascadeConstraints="true"/>
+     </changeSet>
+      <changeSet id="14" author="Jayant">
+     	<dropTable tableName="EXPENSETYPES_Temp" cascadeConstraints="true"/>
+     </changeSet>
+     <changeSet id="15" author="Sriram">
+	<createTable tableName="EXPENSETYPES">
+		<column name="ExpenseTypeId" type="bigint" >
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="ExpenseTypeCode" type="varchar(10)" >
+				<constraints  nullable="false" />
+		</column>
+		<column name="ExpenseTypeDesc" type="varchar(200)" >
+				<constraints  nullable="false" />
+		</column>
+		<column name="AmortReq" type="boolean" defaultValue="0"/>
+        <column name="TaxApplicable" type="boolean" defaultValue="0"/>
+		<column name="Active" type="boolean" defaultValue="0"/>	
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" defaultValue="0"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="16" author="Sriram">
+	<createTable tableName="EXPENSETYPES_Temp">
+		<column name="ExpenseTypeId" type="bigint" >
+			<constraints primaryKey="true" nullable="false" />
+		</column>
+		<column name="ExpenseTypeCode" type="varchar(10)" >
+				<constraints nullable="false" />
+		</column>
+		<column name="ExpenseTypeDesc" type="varchar(200)" >
+				<constraints nullable="false" />
+		</column>
+		<column name="AmortReq" type="boolean" defaultValue="0"/>
+        <column name="TaxApplicable" type="boolean" defaultValue="0"/>
+		<column name="Active" type="boolean" defaultValue="0"/>	
+		<column name="Version" type="int" defaultValue="0" />
+		<column name="LastMntBy" type="bigint" />
+		<column name="LastMntOn" type="datetime" />
+		<column name="RecordStatus" type="varchar(50)" />
+		<column name="RoleCode" type="varchar(100)" />
+		<column name="NextRoleCode" type="varchar(200)" />
+		<column name="TaskId" type="varchar(50)" />
+		<column name="NextTaskId" type="varchar(200)" />
+		<column name="RecordType" type="varchar(50)" />
+		<column name="WorkflowId" type="bigint" defaultValue="0"/>
+	</createTable>
+</changeSet>
+
+<changeSet id="17" author="Sriram">
+	<createView viewName="EXPENSETYPES_VIEW" replaceIfExists="true">
+	  SELECT     ExpenseTypeId, ExpenseTypeCode,ExpenseTypeDesc, AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+	  FROM       ExpenseTypes_Temp
+	  UNION ALL 
+	  SELECT     ExpenseTypeId, ExpenseTypeCode,ExpenseTypeDesc,  AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+	  FROM       ExpenseTypes
+	    
+	  WHERE NOT EXISTS ( SELECT 1 FROM ExpenseTypes_Temp WHERE ExpenseTypeId = ExpenseTypes.ExpenseTypeId )
+    </createView>
+</changeSet>
+<changeSet id="18" author="Sriram">
+	<createView viewName="EXPENSETYPES_AVIEW" replaceIfExists="true">
+	  SELECT     ExpenseTypeId, ExpenseTypeCode,ExpenseTypeDesc,  AmortReq, TaxApplicable, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+	  FROM         ExpenseTypes
+	</createView>
+</changeSet>
+<changeSet id="19" author="Sriram" >
+	<createView replaceIfExists="true" viewName="FinTypeExpenses_VIEW">
+		SELECT     T1.FinType, T1.FinTypeExpenseID, T1.ExpenseTypeID,  T1.CalculationType,T1.Amount,
+				   T1.Percentage, T1.CalculateOn, T1.AmortReq, T1.TaxApplicable, T1.Active, T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				   T2.ExpenseTypeCode, T2.ExpenseTypeDesc,T1.FinEvent
+		FROM       FinTypeExpenses_Temp T1 
+				   		     INNER JOIN ExpenseTypes T2 ON T1.ExpenseTypeID = T2.ExpenseTypeID 
+		UNION ALL
+		SELECT     T1.FinType, T1.FinTypeExpenseID, T1.ExpenseTypeID,  T1.CalculationType,T1.Amount,
+				   T1.Percentage, T1.CalculateOn, T1.AmortReq, T1.TaxApplicable, T1.Active, T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				   T2.ExpenseTypeCode, T2.ExpenseTypeDesc,T1.FinEvent
+		FROM       FinTypeExpenses T1 
+				   INNER JOIN  ExpenseTypes T2 ON T1.ExpenseTypeID = T2.ExpenseTypeID 
+		
+		WHERE  NOT EXISTS (SELECT 1 FROM FinTypeExpenses_Temp  WHERE  FinTypeExpenseID =T1.FinTypeExpenseID)
+	</createView>
+</changeSet>
+
+<changeSet id="20" author="Sriram" >
+	<createView replaceIfExists="true" viewName="FinTypeExpenses_AVIEW">
+		SELECT     T1.FinType, T1.FinTypeExpenseID, T1.ExpenseTypeID,  T1.CalculationType,T1.Amount,
+				   T1.Percentage, T1.CalculateOn, T1.AmortReq, T1.TaxApplicable, T1.Active, T1.Version, T1.LastMntBy,
+				   T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				   T2.ExpenseTypeCode, T2.ExpenseTypeDesc,T1.FinEvent
+		FROM       FinTypeExpenses T1 
+				   INNER JOIN  ExpenseTypes T2 ON T1.ExpenseTypeID = T2.ExpenseTypeID
+	</createView>
+</changeSet>
+
+
+<changeSet id="21" author="Ganesh.p">
+	<addColumn tableName="RMTFinanceTypes">
+		<column name="chequeCaptureReq" type="BOOLEAN" defaultValue="false">
+		</column>
+	</addColumn>
+</changeSet>
+
+<changeSet id="22" author="Ganesh.p">
+	<addColumn tableName="RMTFinanceTypes_Temp">
+		<column name="chequeCaptureReq" type="BOOLEAN" defaultValue="false">
+		</column>
+	</addColumn>
+</changeSet>
+
+<changeSet id="23" author="Ganesh.p">
+	<createView replaceIfExists="true" viewName="RMTFINANCETYPES_VIEW">
+	SELECT t1.fintype,
+    t1.fincategory,
+    t1.fintypedesc,
+    t1.finccy,
+    t1.findayscaltype,
+    t1.finactype,
+    t1.fincontingentactype,
+    t1.finisgenref,
+    t1.finmaxamount,
+    t1.finminamount,
+    t1.finisopennewfinac,
+    t1.findftstmtfrq,
+    t1.finisalwmd,
+    t1.finschdmthd,
+    t1.finisalwgrace,
+    t1.finhistretension,
+    t1.equalrepayment,
+    t1.finratetype,
+    t1.finbaserate,
+    t1.finsplrate,
+    t1.finintrate,
+    t1.finminrate,
+    t1.finmaxrate,
+    t1.findftintfrq,
+    t1.finisintcpz,
+    t1.fincpzfrq,
+    t1.finisrvwalw,
+    t1.finrvwfrq,
+    t1.fingrcratetype,
+    t1.fingrcbaserate,
+    t1.fingrcsplrate,
+    t1.fingrcintrate,
+    t1.fingrcminrate,
+    t1.fingrcmaxrate,
+    t1.fingrcdftintfrq,
+    t1.fingrcisintcpz,
+    t1.fingrccpzfrq,
+    t1.fingrcisrvwalw,
+    t1.fingrcrvwfrq,
+    t1.finminterm,
+    t1.finmaxterm,
+    t1.findftterms,
+    t1.finrpyfrq,
+    t1.finrepaymethod,
+    t1.finisalwpartialrpy,
+    t1.finisalwdifferment,
+    t1.finmaxdifferment,
+    t1.finisalwearlyrpy,
+    t1.finisalwearlysettle,
+    t1.finodrpytries,
+    t1.finearlypayrule,
+    t1.finearlysettlerule,
+    t1.findepositrestrictedto,
+    t1.finaebuyorinception,
+    t1.finaesellormaturity,
+    t1.finisactive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.stepfinance,
+    t1.steppingmandatory,
+    t1.alwmanualsteps,
+    t1.alwdsteppolicies,
+    t1.dftsteppolicy,
+    t4.actypedesc AS lovdescfincontingentactypename,
+    t5.actypedesc AS lovdescfinactypename,
+    t1.finisdwpayrequired,
+    t1.finrvwrateapplfor,
+    t1.finalwratechangeanydate,
+    t1.finisintcpzatgrcend,
+    t1.finelgrulecode,
+    t1.limitelgrulecode,
+    t1.finschcalcodeonrvw,
+    t1.alwplandeferment,
+    t1.plandefercount,
+    t1.finassettype,
+    t1.pftpayactype,
+    t1.finisopenpftpayacc,
+    t31.actypedesc AS lovdescpftpayactypename,
+    t1.finisalwgrcrepay,
+    t1.fingrcschdmthd,
+    t1.fingrcmargin,
+    t1.finmargin,
+    t1.finscheduleon,
+    t1.fingrcscheduleon,
+    t1.fincommitmentreq,
+    t1.fincollateralreq,
+    t1.findepreciationreq,
+    t1.findepreciationfrq,
+    t1.finbankcontingentactype,
+    t1.finprovisionactype,
+    t38.actypedesc AS lovdescfinbankcontactypename,
+    t39.actypedesc AS lovdescfinprovisionactypename,
+    t1.allowriainvestment,
+    t1.overridelimit,
+    t1.limitrequired,
+    t1.fincommitmentovrride,
+    t1.fincollateralovrride,
+    t1.finpftunchanged,
+    t1.applyodpenalty,
+    t1.odincgrcdays,
+    t1.odchargetype,
+    t1.odgracedays,
+    t1.odchargecalon,
+    t1.odchargeamtorperc,
+    t1.odallowwaiver,
+    t1.odmaxwaiverperc,
+    t1.findivision,
+    t48.divisioncodedesc AS lovdescfindivisionname,
+    t48.entitycode AS lovdescentitycode,
+    t1.finsuspactype,
+    t49.actypedesc AS lovdescfinsuspactypename,
+    t1.product,
+    t1.startdate,
+    t1.enddate,
+    t1.allowdownpaypgm,
+    t1.fintypedesc AS lovdescpromofintypedesc,
+    t1.remarks,
+    t1.alwearlypaymethods,
+    t1.pastduepftcalmthd,
+    t1.pastduepftmargin,
+    t1.alwadvancerent,
+    t1.grcadvbaserate,
+    t1.grcadvmargin,
+    t1.grcadvpftrate,
+    t1.rpyadvbaserate,
+    t1.rpyadvmargin,
+    t1.rpyadvpftrate,
+    t1.rolloverfinance,
+    t1.rolloverfrq,
+    t1.downpayrule,
+    t59.rulecode AS downpayruledesc,
+    t1.finsusptrigger,
+    t1.finsuspremarks,
+    t1.alwmultipartydisb,
+    t1.collateraltype,
+    t1.tdsapplicable,
+    t1.manualschedule,
+    t1.applygrcpricing,
+    t1.grcpricingmethod,
+    t1.applyrpypricing,
+    t1.rpypricingmethod,
+    t1.rpyhierarchy,
+    t67.rulecode AS grcpricingmethoddesc,
+    t68.rulecode AS rpypricingmethoddesc,
+    t1.droplineod,
+    t1.droppingmethod,
+    t1.ratechganyday,
+    t1.finrepaypftonfrq,
+    t1.alwbpi,
+    t1.bpitreatment,
+    t1.pftdueschon,
+    t1.planemihalw,
+    t1.planemihmethod,
+    t1.planemihmaxperyear,
+    t1.planemihmax,
+    t1.planemihlockperiod,
+    t1.planemicpz,
+    t1.unplanemihlockperiod,
+    t1.unplanemicpz,
+    t1.reagecpz,
+    t1.fddlockperiod,
+    t1.alwdrpymethods,
+    t1.maxunplannedemi,
+    t1.maxreageholidays,
+    t1.roundingmode,
+    t1.roundingtarget,
+    t1.frequencydays,
+    t1.quickdisb,
+    t1.alwmaxdisbcheckreq,
+    t1.alwreage,
+    t1.alwunplanemiholiday,
+    t1.profitcenterid,
+    t69.profitcentercode,
+    t69.profitcenterdesc,
+    t1.productcategory,
+    t2.productdesc AS fincategorydesc,
+    t1.developerfinance,
+    t1.costoffunds,
+    t1.chequecapturereq
+   FROM rmtfinancetypes_temp t1
+     LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
+     LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
+     LEFT JOIN rmtaccounttypes t38 ON t1.finbankcontingentactype = t38.actype
+     LEFT JOIN rmtaccounttypes t39 ON t1.finprovisionactype = t39.actype
+     LEFT JOIN rmtaccounttypes t5 ON t1.finactype = t5.actype
+     LEFT JOIN rmtaccounttypes t31 ON t1.pftpayactype = t31.actype
+     LEFT JOIN smtdivisiondetail t48 ON t1.findivision = t48.divisioncode
+     LEFT JOIN rmtaccounttypes t49 ON t1.finsuspactype = t49.actype
+     LEFT JOIN rules t59 ON t1.downpayrule = t59.ruleid
+     LEFT JOIN rules t67 ON t1.grcpricingmethod = t67.ruleid
+     LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
+     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
+UNION ALL
+ SELECT t1.fintype,
+    t1.fincategory,
+    t1.fintypedesc,
+    t1.finccy,
+    t1.findayscaltype,
+    t1.finactype,
+    t1.fincontingentactype,
+    t1.finisgenref,
+    t1.finmaxamount,
+    t1.finminamount,
+    t1.finisopennewfinac,
+    t1.findftstmtfrq,
+    t1.finisalwmd,
+    t1.finschdmthd,
+    t1.finisalwgrace,
+    t1.finhistretension,
+    t1.equalrepayment,
+    t1.finratetype,
+    t1.finbaserate,
+    t1.finsplrate,
+    t1.finintrate,
+    t1.finminrate,
+    t1.finmaxrate,
+    t1.findftintfrq,
+    t1.finisintcpz,
+    t1.fincpzfrq,
+    t1.finisrvwalw,
+    t1.finrvwfrq,
+    t1.fingrcratetype,
+    t1.fingrcbaserate,
+    t1.fingrcsplrate,
+    t1.fingrcintrate,
+    t1.fingrcminrate,
+    t1.fingrcmaxrate,
+    t1.fingrcdftintfrq,
+    t1.fingrcisintcpz,
+    t1.fingrccpzfrq,
+    t1.fingrcisrvwalw,
+    t1.fingrcrvwfrq,
+    t1.finminterm,
+    t1.finmaxterm,
+    t1.findftterms,
+    t1.finrpyfrq,
+    t1.finrepaymethod,
+    t1.finisalwpartialrpy,
+    t1.finisalwdifferment,
+    t1.finmaxdifferment,
+    t1.finisalwearlyrpy,
+    t1.finisalwearlysettle,
+    t1.finodrpytries,
+    t1.finearlypayrule,
+    t1.finearlysettlerule,
+    t1.findepositrestrictedto,
+    t1.finaebuyorinception,
+    t1.finaesellormaturity,
+    t1.finisactive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.stepfinance,
+    t1.steppingmandatory,
+    t1.alwmanualsteps,
+    t1.alwdsteppolicies,
+    t1.dftsteppolicy,
+    t4.actypedesc AS lovdescfincontingentactypename,
+    t5.actypedesc AS lovdescfinactypename,
+    t1.finisdwpayrequired,
+    t1.finrvwrateapplfor,
+    t1.finalwratechangeanydate,
+    t1.finisintcpzatgrcend,
+    t1.finelgrulecode,
+    t1.limitelgrulecode,
+    t1.finschcalcodeonrvw,
+    t1.alwplandeferment,
+    t1.plandefercount,
+    t1.finassettype,
+    t1.pftpayactype,
+    t1.finisopenpftpayacc,
+    t31.actypedesc AS lovdescpftpayactypename,
+    t1.finisalwgrcrepay,
+    t1.fingrcschdmthd,
+    t1.fingrcmargin,
+    t1.finmargin,
+    t1.finscheduleon,
+    t1.fingrcscheduleon,
+    t1.fincommitmentreq,
+    t1.fincollateralreq,
+    t1.findepreciationreq,
+    t1.findepreciationfrq,
+    t1.finbankcontingentactype,
+    t1.finprovisionactype,
+    t38.actypedesc AS lovdescfinbankcontactypename,
+    t39.actypedesc AS lovdescfinprovisionactypename,
+    t1.allowriainvestment,
+    t1.overridelimit,
+    t1.limitrequired,
+    t1.fincommitmentovrride,
+    t1.fincollateralovrride,
+    t1.finpftunchanged,
+    t1.applyodpenalty,
+    t1.odincgrcdays,
+    t1.odchargetype,
+    t1.odgracedays,
+    t1.odchargecalon,
+    t1.odchargeamtorperc,
+    t1.odallowwaiver,
+    t1.odmaxwaiverperc,
+    t1.findivision,
+    t48.divisioncodedesc AS lovdescfindivisionname,
+    t48.entitycode AS lovdescentitycode,
+    t1.finsuspactype,
+    t49.actypedesc AS lovdescfinsuspactypename,
+    t1.product,
+    t1.startdate,
+    t1.enddate,
+    t1.allowdownpaypgm,
+    t1.fintypedesc AS lovdescpromofintypedesc,
+    t1.remarks,
+    t1.alwearlypaymethods,
+    t1.pastduepftcalmthd,
+    t1.pastduepftmargin,
+    t1.alwadvancerent,
+    t1.grcadvbaserate,
+    t1.grcadvmargin,
+    t1.grcadvpftrate,
+    t1.rpyadvbaserate,
+    t1.rpyadvmargin,
+    t1.rpyadvpftrate,
+    t1.rolloverfinance,
+    t1.rolloverfrq,
+    t1.downpayrule,
+    t59.rulecode AS downpayruledesc,
+    t1.finsusptrigger,
+    t1.finsuspremarks,
+    t1.alwmultipartydisb,
+    t1.collateraltype,
+    t1.tdsapplicable,
+    t1.manualschedule,
+    t1.applygrcpricing,
+    t1.grcpricingmethod,
+    t1.applyrpypricing,
+    t1.rpypricingmethod,
+    t1.rpyhierarchy,
+    t67.rulecode AS grcpricingmethoddesc,
+    t68.rulecode AS rpypricingmethoddesc,
+    t1.droplineod,
+    t1.droppingmethod,
+    t1.ratechganyday,
+    t1.finrepaypftonfrq,
+    t1.alwbpi,
+    t1.bpitreatment,
+    t1.pftdueschon,
+    t1.planemihalw,
+    t1.planemihmethod,
+    t1.planemihmaxperyear,
+    t1.planemihmax,
+    t1.planemihlockperiod,
+    t1.planemicpz,
+    t1.unplanemihlockperiod,
+    t1.unplanemicpz,
+    t1.reagecpz,
+    t1.fddlockperiod,
+    t1.alwdrpymethods,
+    t1.maxunplannedemi,
+    t1.maxreageholidays,
+    t1.roundingmode,
+    t1.roundingtarget,
+    t1.frequencydays,
+    t1.quickdisb,
+    t1.alwmaxdisbcheckreq,
+    t1.alwreage,
+    t1.alwunplanemiholiday,
+    t1.profitcenterid,
+    t69.profitcentercode,
+    t69.profitcenterdesc,
+    t1.productcategory,
+    t2.productdesc AS fincategorydesc,
+    t1.developerfinance,
+    t1.costoffunds,
+    t1.chequecapturereq
+   FROM rmtfinancetypes t1
+     LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
+     LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
+     LEFT JOIN rmtaccounttypes t38 ON t1.finbankcontingentactype = t38.actype
+     LEFT JOIN rmtaccounttypes t39 ON t1.finprovisionactype = t39.actype
+     LEFT JOIN rmtaccounttypes t5 ON t1.finactype = t5.actype
+     LEFT JOIN rmtaccounttypes t31 ON t1.pftpayactype = t31.actype
+     LEFT JOIN smtdivisiondetail t48 ON t1.findivision = t48.divisioncode
+     LEFT JOIN rmtaccounttypes t49 ON t1.finsuspactype = t49.actype
+     LEFT JOIN rules t59 ON t1.downpayrule = t59.ruleid
+     LEFT JOIN rules t67 ON t1.grcpricingmethod = t67.ruleid
+     LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
+     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
+  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM rmtfinancetypes_temp
+          WHERE rmtfinancetypes_temp.fintype = t1.fintype));
+	</createView>
+</changeSet>
+
+<changeSet id="24" author="Ganesh.p" >
+	<createView replaceIfExists="true" viewName="RMTFINANCETYPES_ORGVIEW">
+	SELECT t1.fintype,
+    t1.fincategory,
+    t1.fintypedesc,
+    t1.finccy,
+    t1.findayscaltype,
+    t1.finactype,
+    t1.fincontingentactype,
+    t1.finisgenref,
+    t1.finmaxamount,
+    t1.finminamount,
+    t1.finisopennewfinac,
+    t1.finisalwmd,
+    t1.finschdmthd,
+    t1.finisalwgrace,
+    t1.equalrepayment,
+    t1.finratetype,
+    t1.finbaserate,
+    t1.finsplrate,
+    t1.finintrate,
+    t1.finminrate,
+    t1.finmaxrate,
+    t1.findftintfrq,
+    t1.finisintcpz,
+    t1.fincpzfrq,
+    t1.finisrvwalw,
+    t1.finrvwfrq,
+    t1.fingrcratetype,
+    t1.fingrcbaserate,
+    t1.fingrcsplrate,
+    t1.fingrcintrate,
+    t1.fingrcminrate,
+    t1.fingrcmaxrate,
+    t1.fingrcdftintfrq,
+    t1.fingrcisintcpz,
+    t1.fingrccpzfrq,
+    t1.fingrcisrvwalw,
+    t1.fingrcrvwfrq,
+    t1.finminterm,
+    t1.finmaxterm,
+    t1.findftterms,
+    t1.finrpyfrq,
+    t1.finrepaymethod,
+    t1.finisalwdifferment,
+    t1.finmaxdifferment,
+    t1.finisactive,
+    t1.stepfinance,
+    t1.steppingmandatory,
+    t1.alwmanualsteps,
+    t1.alwdsteppolicies,
+    t1.dftsteppolicy,
+    t1.finisdwpayrequired,
+    t1.FinRvwRateApplFor,
+    t1.finalwratechangeanydate,
+    t1.finisintcpzatgrcend,
+    t1.finschcalcodeonrvw,
+    t1.alwplandeferment,
+    t1.plandefercount,
+    t1.pftpayactype,
+    t1.finisopenpftpayacc,
+    t1.finisalwgrcrepay,
+    t1.fingrcschdmthd,
+    t1.fingrcmargin,
+    t1.finmargin,
+    t1.fincommitmentreq,
+    t1.fincollateralreq,
+    t1.findepreciationreq,
+    t1.findepreciationfrq,
+    t1.finbankcontingentactype,
+    t1.finprovisionactype,
+    t1.allowriainvestment,
+    t1.overridelimit,
+    t1.limitrequired,
+    t1.fincommitmentovrride,
+    t1.fincollateralovrride,
+    t1.finrepaypftonfrq,
+    t1.finpftunchanged,
+    t1.applyodpenalty,
+    t1.odincgrcdays,
+    t1.odchargetype,
+    t1.odgracedays,
+    t1.odchargecalon,
+    t1.odchargeamtorperc,
+    t1.odallowwaiver,
+    t1.odmaxwaiverperc,
+    t1.findivision,
+    t3.divisioncodedesc AS lovdescfindivisionname,
+    t1.finsuspactype,
+    t1.product,
+    t1.startdate,
+    t1.enddate,
+    t1.allowdownpaypgm,
+    t1.fintypedesc AS lovdescpromofintypedesc,
+    t1.remarks,
+    t4.policydesc AS lovdescdftsteppolicyname,
+    t1.pastduepftcalmthd,
+    t1.pastduepftmargin,
+    t1.alwadvancerent,
+    t1.grcadvbaserate,
+    t1.grcadvmargin,
+    t1.grcadvpftrate,
+    t1.rpyadvbaserate,
+    t1.rpyadvmargin,
+    t1.rpyadvpftrate,
+    t1.rolloverfinance,
+    t1.rolloverfrq,
+    t1.downpayrule,
+    t1.alwmultipartydisb,
+    t1.collateraltype,
+    t1.tdsapplicable,
+    t5.rulecode AS downpayruledesc,
+    t1.applygrcpricing,
+    t1.applyrpypricing,
+    t6.rulecode AS grcpricingmethoddesc,
+    t7.rulecode AS rpypricingmethoddesc,
+    t1.droplineod,
+    t1.droppingmethod,
+    t1.ratechganyday,
+    t4.steptype AS dftsteppolicytype,
+    t1.manualschedule,
+    t1.alwbpi,
+    t1.bpitreatment,
+    t1.pftdueschon,
+    t1.planemihalw,
+    t1.planemihmethod,
+    t1.planemihmaxperyear,
+    t1.planemihmax,
+    t1.planemihlockperiod,
+    t1.planemicpz,
+    t1.unplanemihlockperiod,
+    t1.unplanemicpz,
+    t1.reagecpz,
+    t1.fddlockperiod,
+    t1.alwdrpymethods,
+    t1.maxunplannedemi,
+    t1.maxreageholidays,
+    t1.roundingmode,
+    t1.roundingtarget,
+    t1.frequencydays,
+    t1.quickdisb,
+    t1.alwreage,
+    t1.alwunplanemiholiday,
+    t1.alwmaxdisbcheckreq,
+    t1.productcategory,
+    t1.rpyhierarchy,
+    t1.developerfinance,
+    t3.entitycode AS lovdescentitycode,
+    t8.entitydesc AS lovdescentitydesc,
+    t1.costoffunds,
+    t1.chequecapturereq
+   FROM rmtfinancetypes t1
+     JOIN smtdivisiondetail t3 ON t1.findivision = t3.divisioncode
+     LEFT JOIN steppolicyheader t4 ON t1.dftsteppolicy = t4.policycode
+     LEFT JOIN rules t5 ON t1.downpayrule = t5.ruleid
+     LEFT JOIN rules t6 ON t1.grcpricingmethod = t6.ruleid
+     LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
+     LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode;
+	</createView>
+</changeSet>
+
+<changeSet id="25" author="Ganesh.p" >
+	<createView replaceIfExists="true" viewName="RMTFINANCETYPES_AVIEW">
+	SELECT t1.fintype,
+    t1.fincategory,
+    t1.fintypedesc,
+    t1.finccy,
+    t1.findayscaltype,
+    t1.finactype,
+    t1.fincontingentactype,
+    t1.finisgenref,
+    t1.finmaxamount,
+    t1.finminamount,
+    t1.finisopennewfinac,
+    t1.findftstmtfrq,
+    t1.finisalwmd,
+    t1.finschdmthd,
+    t1.finisalwgrace,
+    t1.finhistretension,
+    t1.equalrepayment,
+    t1.finratetype,
+    t1.finbaserate,
+    t1.finsplrate,
+    t1.finintrate,
+    t1.finminrate,
+    t1.finmaxrate,
+    t1.findftintfrq,
+    t1.finisintcpz,
+    t1.fincpzfrq,
+    t1.finisrvwalw,
+    t1.finrvwfrq,
+    t1.fingrcratetype,
+    t1.fingrcbaserate,
+    t1.fingrcsplrate,
+    t1.fingrcintrate,
+    t1.fingrcminrate,
+    t1.fingrcmaxrate,
+    t1.fingrcdftintfrq,
+    t1.fingrcisintcpz,
+    t1.fingrccpzfrq,
+    t1.fingrcisrvwalw,
+    t1.fingrcrvwfrq,
+    t1.finminterm,
+    t1.finmaxterm,
+    t1.findftterms,
+    t1.finrpyfrq,
+    t1.finrepaymethod,
+    t1.finisalwpartialrpy,
+    t1.finisalwdifferment,
+    t1.finmaxdifferment,
+    t1.finisalwearlyrpy,
+    t1.finisalwearlysettle,
+    t1.finodrpytries,
+    t1.finearlypayrule,
+    t1.finearlysettlerule,
+    t1.findepositrestrictedto,
+    t1.finaebuyorinception,
+    t1.finaesellormaturity,
+    t1.finisactive,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.stepfinance,
+    t1.steppingmandatory,
+    t1.alwmanualsteps,
+    t1.alwdsteppolicies,
+    t1.dftsteppolicy,
+    t4.actypedesc AS lovdescfincontingentactypename,
+    t5.actypedesc AS lovdescfinactypename,
+    t1.finisdwpayrequired,
+    t1.finrvwrateapplfor,
+    t1.finalwratechangeanydate,
+    t1.finisintcpzatgrcend,
+    t1.finelgrulecode,
+    t1.limitelgrulecode,
+    t1.finschcalcodeonrvw,
+    t1.alwplandeferment,
+    t1.plandefercount,
+    t1.finassettype,
+    t1.pftpayactype,
+    t1.finisopenpftpayacc,
+    t31.actypedesc AS lovdescpftpayactypename,
+    t1.finisalwgrcrepay,
+    t1.fingrcschdmthd,
+    t1.fingrcmargin,
+    t1.finmargin,
+    t1.finscheduleon,
+    t1.fingrcscheduleon,
+    t1.fincommitmentreq,
+    t1.fincollateralreq,
+    t1.findepreciationreq,
+    t1.findepreciationfrq,
+    t1.finbankcontingentactype,
+    t1.finprovisionactype,
+    t38.actypedesc AS lovdescfinbankcontactypename,
+    t39.actypedesc AS lovdescfinprovisionactypename,
+    t1.allowriainvestment,
+    t1.overridelimit,
+    t1.limitrequired,
+    t1.fincommitmentovrride,
+    t1.fincollateralovrride,
+    t1.finpftunchanged,
+    t1.applyodpenalty,
+    t1.odincgrcdays,
+    t1.odchargetype,
+    t1.odgracedays,
+    t1.odchargecalon,
+    t1.odchargeamtorperc,
+    t1.odallowwaiver,
+    t1.odmaxwaiverperc,
+    t1.findivision,
+    t48.divisioncodedesc AS lovdescfindivisionname,
+    t48.entitycode AS lovdescentitycode,
+    t1.finsuspactype,
+    t49.actypedesc AS lovdescfinsuspactypename,
+    t1.product,
+    t1.startdate,
+    t1.enddate,
+    t1.allowdownpaypgm,
+    t1.remarks,
+    t1.alwearlypaymethods,
+    t1.pastduepftcalmthd,
+    t1.pastduepftmargin,
+    t1.alwadvancerent,
+    t1.grcadvbaserate,
+    t1.grcadvmargin,
+    t1.grcadvpftrate,
+    t1.rpyadvbaserate,
+    t1.rpyadvmargin,
+    t1.rpyadvpftrate,
+    t1.rolloverfinance,
+    t1.rolloverfrq,
+    t1.downpayrule,
+    t59.rulecode AS downpayruledesc,
+    t1.finsusptrigger,
+    t1.finsuspremarks,
+    t1.alwmultipartydisb,
+    t1.collateraltype,
+    t1.tdsapplicable,
+    t1.manualschedule,
+    t1.applygrcpricing,
+    t1.grcpricingmethod,
+    t1.applyrpypricing,
+    t1.rpypricingmethod,
+    t1.rpyhierarchy,
+    t67.rulecode AS grcpricingmethoddesc,
+    t68.rulecode AS rpypricingmethoddesc,
+    t1.droplineod,
+    t1.droppingmethod,
+    t1.ratechganyday,
+    t1.finrepaypftonfrq,
+    t1.alwbpi,
+    t1.bpitreatment,
+    t1.pftdueschon,
+    t1.planemihalw,
+    t1.planemihmethod,
+    t1.planemihmaxperyear,
+    t1.planemihmax,
+    t1.planemihlockperiod,
+    t1.planemicpz,
+    t1.unplanemihlockperiod,
+    t1.unplanemicpz,
+    t1.reagecpz,
+    t1.fddlockperiod,
+    t1.alwdrpymethods,
+    t1.maxunplannedemi,
+    t1.maxreageholidays,
+    t1.roundingmode,
+    t1.roundingtarget,
+    t1.frequencydays,
+    t1.quickdisb,
+    t1.alwreage,
+    t1.alwunplanemiholiday,
+    t1.alwmaxdisbcheckreq,
+    t1.fintypedesc AS lovdescpromofintypedesc,
+    t1.profitcenterid,
+    t69.profitcentercode,
+    t69.profitcenterdesc,
+    t1.productcategory,
+    t2.productdesc AS fincategorydesc,
+    t1.developerfinance,
+    t1.costoffunds,
+    t1.chequecapturereq
+   FROM rmtfinancetypes t1
+     LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
+     LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
+     LEFT JOIN rmtaccounttypes t38 ON t1.finbankcontingentactype = t38.actype
+     LEFT JOIN rmtaccounttypes t39 ON t1.finprovisionactype = t39.actype
+     LEFT JOIN rmtaccounttypes t5 ON t1.finactype = t5.actype
+     LEFT JOIN rmtaccounttypes t31 ON t1.pftpayactype = t31.actype
+     LEFT JOIN smtdivisiondetail t48 ON t1.findivision = t48.divisioncode
+     LEFT JOIN rmtaccounttypes t49 ON t1.finsuspactype = t49.actype
+     LEFT JOIN rules t59 ON t1.downpayrule = t59.ruleid
+     LEFT JOIN rules t67 ON t1.grcpricingmethod = t67.ruleid
+     LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
+     LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid;
+	</createView>
+</changeSet>
+	
+<changeSet id="26" author="Ganesh.p">
+	<dropNotNullConstraint tableName="CHEQUEDETAIL"
+		columnName="emirefno" columnDataType="varchar(20)" />
+</changeSet>
+
+<changeSet  id="27" author="Ganesh.p">
+	<dropNotNullConstraint tableName="CHEQUEDETAIL_TEMP"
+		columnName="emirefno" columnDataType="varchar(20)" />
+</changeSet>
+
+<changeSet id="28" author="Ganesh.p" >
+	<sql>
+		Delete from SMTparameters where sysparmcode='NIYOGIN_INTERFACE_AUTHKEY';
+		INSERT INTO SMTParameters VALUES('NIYOGIN_INTERFACE_AUTHKEY','Niyogin Authorization Key to connect with Interfaces','String',1,
+		'qUmCM:rye28f16Z',100,0,'','','Niyogin Authorization Key to connect with Interfaces',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+</changeSet>
+
+<changeSet id="29" author="Manikanta.p">
+	<sql>
+		update SEQRMTLOVFIELDDETAIL set seqno=(select max(fieldcodeid) from RMTLOVFIELDDETAIL)
+	</sql>
+</changeSet>
+<changeSet id="30" author="Jayant">
+	<dropSequence sequenceName="SeqMailTemplate"/>
+</changeSet>
+<changeSet id="31" author="Jayant">
+	<createTable tableName="SeqMailTemplate">
+		<column name="Seqno" type="bigint"/>
+	</createTable>
+</changeSet>
+<changeSet id="32" author="lakshmi.n">
+	<sql>
+		update rbfielddetails set modulecode ='Customer' where modulecode ='Customers' ;
+		update rbfielddetails set modulecode ='PartnerBank' where modulecode ='PARTNERBANKS';
+		update rbfielddetails set modulecode ='Branch' where modulecode ='RMTBranches';
+		update rbfielddetails set modulecode ='Currency' where modulecode ='RMTCurrencies';
+	</sql>
+</changeSet>
+<changeSet id="32.1" author="Sreekanth" dbms="postgresql">
+<sql>
+drop view feetypes_view;
+drop view feetypes_tview;
+drop view feetypes_aview;
+</sql>
+</changeSet>
+<changeSet id="32" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes"
+			columnName="amortzreq" newDataType="citext" />
+	</changeSet>
+<changeSet id="33" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes_Temp"
+			columnName="amortzreq" newDataType="citext" />
+	</changeSet>
+	<changeSet id="34" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_aview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+	</createView>
+	</changeSet>
+	<changeSet id="35" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_tview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+	</createView>
+	</changeSet>
+	<changeSet id="36" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_view">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+UNION ALL
+ SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM feetypes_temp
+          WHERE feetypes_temp.feetypeid = t1.feetypeid))
+	</createView>
+	</changeSet>
+	
+	<changeSet id="36.1" author="Sreekanth" dbms="postgresql">
+<sql>
+drop view feetypes_view;
+drop view feetypes_tview;
+drop view feetypes_aview;
+</sql>
+</changeSet>
+<changeSet id="36.2" author="Sreekanth" dbms="postgresql">
+<sql>
+drop view fintypefees_aview;
+drop view fintypefees_view;
+</sql>
+</changeSet>
+
+
+<changeSet id="37" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes"
+			columnName="taxapplicable" newDataType="citext" />
+	</changeSet>
+<changeSet id="38" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="FeeTypes_Temp"
+			columnName="taxapplicable" newDataType="citext" />
+	</changeSet>
+	<changeSet id="39" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_aview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+	</createView>
+	</changeSet>
+	<changeSet id="40" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_tview">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+	</createView>
+	</changeSet>
+	<changeSet id="41" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="feetypes_view">
+	SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes_temp t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+UNION ALL
+ SELECT t1.feetypeid,
+    t1.feetypecode,
+    t1.feetypedesc,
+    t1.manualadvice,
+    t1.advisetype,
+    t1.accountsetid,
+    t1.hostfeetypecode,
+    t1.taxapplicable,
+    t1.taxcomponent,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.accountsetcode,
+    t2.accountsetcodename,
+    t1.amortzreq
+   FROM feetypes t1
+     LEFT JOIN rmtaccountingset t2 ON t1.accountsetid = t2.accountsetid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM feetypes_temp
+          WHERE feetypes_temp.feetypeid = t1.feetypeid))
+	</createView>
+	</changeSet>
+	<changeSet id="42" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="fintypefees_view">
+	SELECT t1.fintype,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.feeschedulemethod,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.amount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.moduleid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t2.taxapplicable,
+    t2.taxcomponent,
+    t3.rulecodedesc AS ruledesc
+   FROM fintypefees_temp t1
+     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+UNION ALL
+ SELECT t1.fintype,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.feeschedulemethod,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.amount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.moduleid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t2.taxapplicable,
+    t2.taxcomponent,
+    t3.rulecodedesc AS ruledesc
+   FROM fintypefees t1
+     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM fintypefees_temp
+          WHERE fintypefees_temp.fintype = t1.fintype AND fintypefees_temp.finevent = t1.finevent AND fintypefees_temp.feetypeid = t1.feetypeid AND fintypefees_temp.originationfee = t1.originationfee))
+	</createView>
+	</changeSet>
+	<changeSet id="43" author="Sreekanth" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="fintypefees_aview">
+	SELECT t1.fintype,
+    t1.originationfee,
+    t1.finevent,
+    t1.feetypeid,
+    t1.feeorder,
+    t1.feeschedulemethod,
+    t1.calculationtype,
+    t1.rulecode,
+    t1.amount,
+    t1.percentage,
+    t1.calculateon,
+    t1.alwdeviation,
+    t1.maxwaiverperc,
+    t1.alwmodifyfee,
+    t1.alwmodifyfeeschdmthd,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.moduleid,
+    t2.feetypecode,
+    t2.feetypedesc,
+    t2.taxapplicable,
+    t2.taxcomponent,
+    t3.rulecodedesc AS ruledesc
+   FROM fintypefees t1
+     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule = 'FEES'::citext AND t1.finevent = t3.ruleevent
+	</createView>
+	</changeSet>
+	<changeSet id="44" author="Jayant">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      		case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount 
+													FROM FINSCHEDULEDETAILS FSD 
+													INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID 
+													GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
+			COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			M.ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT, 
+     		 COALESCE((SELECT SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+     		 GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        	M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,M.EntityCode
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH 
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
+	<changeSet id="45" author="Jayant">
+		<createView viewName="limitheader_aview" replaceIfExists="true">
+			SELECT t1.headerid,
+		    t1.rulecode,
+		    t1.rulevalue,
+		    t8.querydesc,
+		    t1.customergroup,
+		    t3.custgrpcode,
+		    t3.custgrpdesc AS groupname,
+		    t3.custgrpro1,
+		    t1.customerid,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t4.custfname,
+		    t4.custmname,
+		    t4.custlname AS custfullname,
+		    t4.custcorebank,
+		    t4.custsalutationcode,
+		    t4.custdftbranch,
+		    t9.branchdesc AS custdftbranchname,
+		    t1.responsiblebranch,
+		    t5.branchdesc AS responsiblebranchname,
+		    t1.limitccy,
+		    t1.limitexpirydate,
+		    t1.limitrvwdate,
+		    t1.limitstructurecode,
+		    t6.structurename,
+		    t6.showlimitsin,
+		    t1.limitsetupremarks,
+		    t1.rebuild,
+		    t1.active,
+		    t1.version,
+		    t1.createdby,
+		    t1.createdon,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t2.usrlogin,
+		    t2.usrfname,
+		    t2.usrmname,
+		    t2.usrlname,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+   		FROM limitheader t1
+		     JOIN limitstructure t6 ON t1.limitstructurecode = t6.structurecode
+		     LEFT JOIN rmtbranches t5 ON t1.responsiblebranch = t5.branchcode
+		     LEFT JOIN customergroups t3 ON t1.customergroup = t3.custgrpid
+		     LEFT JOIN customers t4 ON t1.customerid = t4.custid
+		     left join rmtbranches t9 on t9.branchcode=t4.custdftbranch
+		     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     LEFT JOIN limitparams t8 ON t1.rulecode = t8.querycode
+		</createView>
+	</changeSet>
+	<changeSet id="46" author="Jayant">
+		<createView viewName="limitheader_view" replaceIfExists="true">
+		SELECT t1.headerid,
+		    t1.rulecode,
+		    t1.rulevalue,
+		    t8.querydesc,
+		    t1.customergroup,
+		    t3.custgrpcode,
+		    t3.custgrpdesc AS groupname,
+		    t3.custgrpro1,
+		    t1.customerid,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t4.custfname,
+		    t4.custmname,
+		    t4.custlname AS custfullname,
+		    t4.custcorebank,
+		    t4.custsalutationcode,
+		    t4.custdftbranch,
+		    t9.branchdesc AS custdftbranchname,
+		    t1.responsiblebranch,
+		    t5.branchdesc AS responsiblebranchname,
+		    t1.limitccy,
+		    t1.limitexpirydate,
+		    t1.limitrvwdate,
+		    t1.limitstructurecode,
+		    t6.structurename,
+		    t6.showlimitsin,
+		    t1.limitsetupremarks,
+		    t1.rebuild,
+		    t1.active,
+		    t1.version,
+		    t1.createdby,
+		    t1.createdon,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t2.usrlogin,
+		    t2.usrfname,
+		    t2.usrmname,
+		    t2.usrlname,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+	   FROM limitheader_temp t1
+	     JOIN limitstructure t6 ON t1.limitstructurecode = t6.structurecode
+	     LEFT JOIN rmtbranches t5 ON t1.responsiblebranch = t5.branchcode
+	     LEFT JOIN customergroups t3 ON t1.customergroup = t3.custgrpid
+	     LEFT JOIN customers t4 ON t1.customerid = t4.custid
+	     left join rmtbranches t9 on t9.branchcode=t4.custdftbranch
+	     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+	     LEFT JOIN limitparams t8 ON t1.rulecode = t8.querycode
+		UNION ALL
+		 SELECT t1.headerid,
+		    t1.rulecode,
+		    t1.rulevalue,
+		    t8.querydesc,
+		    t1.customergroup,
+		    t3.custgrpcode,
+		    t3.custgrpdesc AS groupname,
+		    t3.custgrpro1,
+		    t1.customerid,
+		    t4.custcif,
+		    t4.custshrtname,
+		    t4.custfname,
+		    t4.custmname,
+		    t4.custlname AS custfullname,
+		    t4.custcorebank,
+		    t4.custsalutationcode,
+		    t4.custdftbranch,
+		    t9.branchdesc AS custdftbranchname,
+		    t1.responsiblebranch,
+		    t5.branchdesc AS responsiblebranchname,
+		    t1.limitccy,
+		    t1.limitexpirydate,
+		    t1.limitrvwdate,
+		    t1.limitstructurecode,
+		    t6.structurename,
+		    t6.showlimitsin,
+		    t1.limitsetupremarks,
+		    t1.rebuild,
+		    t1.active,
+		    t1.version,
+		    t1.createdby,
+		    t1.createdon,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t2.usrlogin,
+		    t2.usrfname,
+		    t2.usrmname,
+		    t2.usrlname,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid
+  	 FROM limitheader t1
+	     JOIN limitstructure t6 ON t1.limitstructurecode = t6.structurecode
+	     LEFT JOIN rmtbranches t5 ON t1.responsiblebranch = t5.branchcode
+	     LEFT JOIN customergroups t3 ON t1.customergroup = t3.custgrpid
+	     LEFT JOIN customers t4 ON t1.customerid = t4.custid
+	     left join rmtbranches t9 on t9.branchcode=t4.custdftbranch
+	     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+	     LEFT JOIN limitparams t8 ON t1.rulecode = t8.querycode
+ 		WHERE NOT (EXISTS ( SELECT 1
+           FROM limitheader_temp
+          WHERE limitheader_temp.headerid = t1.headerid))
+		</createView>
+	</changeSet>
+	
+		<changeSet id="44" author="Ganesh.p">
+		<addColumn tableName="CHEQUEDETAIL_TEMP">
+			<column name="chequetype" type="VARCHAR(8)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="45" author="Ganesh.p">
+		<addColumn tableName="CHEQUEDETAIL">
+			<column name="chequetype" type="VARCHAR(8)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="46" author="Ganesh,p">
+ 		<addNotNullConstraint tableName="CHEQUEDETAIL_TEMP" columnName="chequetype"/>
+	 </changeSet>
+	 
+	 <changeSet id="47" author="Ganesh,p">
+ 		<addNotNullConstraint tableName="CHEQUEDETAIL" columnName="chequetype"/>
+	 </changeSet>
+	
+	<changeSet id="48" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetail_view">
+ 	SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype
+   FROM chequedetail_temp t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+UNION ALL
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequedetail_temp
+          WHERE chequedetail_temp.chequedetailsid = t1.chequedetailsid))
+	</createView>
+</changeSet>
+
+<changeSet id="49" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetail_aview">
+ SELECT t1.chequedetailsid,
+    t1.headerid,
+    t1.bankbranchid,
+    t2.bankcode,
+    t2.branchcode,
+    t2.branchdesc,
+    t2.micr,
+    t2.ifsc,
+    t2.city,
+    t3.bankname,
+    t1.accountno,
+    t1.chequeserialno,
+    t1.chequedate,
+    t1.emirefno,
+    t1.amount,
+    t1.chequeccy,
+    t1.status,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t1.documentname,
+    t1.documentref,
+    t1.chequetype
+   FROM chequedetail t1
+     LEFT JOIN bankbranches t2 ON t1.bankbranchid = t2.bankbranchid
+     LEFT JOIN bmtbankdetail t3 ON t2.bankcode = t3.bankcode
+	</createView>
+</changeSet>
+
+	<changeSet id="50" author="Ganesh.p" >
+		 <sql>
+		 	drop view chequeheader_view;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="51" author="Ganesh.p" >
+		 <sql>
+		 	drop view chequeheader_aview;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="52" author="Ganesh.p" >
+		 <sql>
+		 	drop view chequedetailmaintain_view;
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="53" author="Ganesh.p">
+		<dropColumn tableName="CHEQUEHEADER_TEMP" columnName="chequetype"/>
+	</changeSet>
+	
+	<changeSet id="54" author="Ganesh.p">
+		<dropColumn tableName="CHEQUEHEADER" columnName="chequetype"/>
+	</changeSet>
+	
+	<changeSet id="55" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequeheader_view">
+ 	 SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader_temp t1
+UNION ALL
+ SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequeheader_temp
+          WHERE chequeheader_temp.headerid = t1.headerid))
+	</createView>
+</changeSet>
+
+<changeSet id="56" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequeheader_aview">
+ 	SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+	</createView>
+</changeSet>
+
+	<changeSet id="57" author="Ganesh.p" >
+		<createView replaceIfExists="true" viewName="chequedetailmaintain_view">
+ 	 SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader_temp t1
+     JOIN financemain t2 ON t1.finreference = t2.finreference
+UNION ALL
+ SELECT t1.headerid,
+    t1.finreference,
+    t1.noofcheques,
+    t1.totalamount,
+    t1.active,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid
+   FROM chequeheader t1
+    JOIN financemain t2 ON t1.finreference = t2.finreference
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM chequeheader_temp
+          WHERE chequeheader_temp.headerid = t1.headerid))
+	</createView>
+</changeSet>
+
+	<changeSet id="58" author="Sriram">
+		<createTable tableName="ManualDeviations">
+		<column name="DeviationID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="Code" type="varchar(20)">
+			<constraints unique="true"/>
+		</column>
+		<column name="Description" type="varchar(100)"/>
+		<column name="Module" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Categorization" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Severity" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Active" type="boolean" defaultValue="0"/>
+		<column name="Version" type="int" defaultValue="0">
+			<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	
+	<changeSet id="59" author="Sriram">
+		<createTable tableName="ManualDeviations_Temp">
+		<column name="DeviationID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="Code" type="varchar(20)">
+			<constraints unique="true"/>
+		</column>
+		<column name="Description" type="varchar(100)"/>
+		<column name="Module" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Categorization" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Severity" type="varchar(10)">
+			<constraints nullable="false"/>
+		</column>
+		<column name="Active" type="boolean" defaultValue="0"/>
+		<column name="Version" type="int" defaultValue="0">
+			<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="60" author="Sriram">
+		<addUniqueConstraint tableName="ManualDeviations" constraintName="ManualDeviations_UK_Code" columnNames="Code" initiallyDeferred="true" />
+		<addUniqueConstraint tableName="ManualDeviations_Temp" constraintName="ManualDeviations_Temp_UK_Code" columnNames="Code" initiallyDeferred="true" />
+	</changeSet>
+	<changeSet id="61" author="Sriram">
+		<createSequence sequenceName="SeqManualDeviations" startValue="1"
+			 maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="62" author="Sriram">
+	<createView viewName="ManualDeviations_View" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations_Temp T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.FieldCodeValue
+		UNION ALL
+		
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.FieldCodeValue
+		WHERE       NOT EXISTS (SELECT 1 FROM ManualDeviations_TEMP WHERE DeviationID = T1.DeviationID)
+	</createView>
+	</changeSet>
+	<changeSet id="63" author="Sriram">
+	<createView viewName="ManualDeviations_AView" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.FieldCodeValue
+	</createView>
+	</changeSet>
+	<changeSet id="64" author="Sriram">
+		<sql>
+		Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'MANUALDEVIATION_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+		Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'MANUALDEVIATION_APPROVER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode IN('MANUALDEVIATION_MAKER','MANUALDEVIATION_APPROVER')) And RightId in(Select rightid from secrights where page IN ('ManualDeviationDialog','ManualDeviationList'));
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode IN('MANUALDEVIATION_MAKER','MANUALDEVIATION_APPROVER')) And RightId in(Select rightid from secrights where rightname = 'menuItem_Applicationmaster_ManualDeviation');
+		Delete from SecGroups where GrpCode = 'MANUALDEVIATION_MAKER';
+		Delete from SecGroups where GrpCode = 'MANUALDEVIATION_APPROVER';
+		Delete from SecRights where Page In('ManualDeviationList','ManualDeviationDialog');
+		Delete from SecRights where RightName = 'menuItem_Applicationmaster_ManualDeviation';
+		
+		
+		INSERT INTO SecGroups Values ((select max(grpid)+1 from SecGroups), 'MANUALDEVIATION_MAKER', 'WF Maker for ManualDeviation', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroups Values ((select max(grpid)+1 from SecGroups), 'MANUALDEVIATION_APPROVER', 'WF Approver for ManualDeviation', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),0,'menuItem_Applicationmaster_ManualDeviation','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationList_PrintList','ManualDeviationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationList_NewManualDeviation','ManualDeviationList',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnNew','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnEdit','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnDelete','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),2,'button_ManualDeviationDialog_btnSave','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Code','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Description','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Module','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Categorization','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Severity','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ManualDeviationDialog_Active','ManualDeviationDialog',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='menuItem_Applicationmaster_ManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationList_PrintList'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationList_NewManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnNew'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnEdit'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnDelete'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Code'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Description'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Categorization'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Severity'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_MAKER' ), (select rightid  from SecRights WHERE RightName='ManualDeviationDialog_Active'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_APPROVER' ), (select rightid  from SecRights WHERE RightName='menuItem_Applicationmaster_ManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'MANUALDEVIATION_APPROVER' ), (select rightid  from SecRights WHERE RightName='button_ManualDeviationDialog_btnSave'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		INSERT INTO SecRoleGroups Values((select max(rolegrpid)+1 from SecRoleGroups), (select grpid from SecGroups Where grpcode = 'MANUALDEVIATION_MAKER'),(select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups Values((Select max(rolegrpid)+1 from SecRoleGroups), (select grpid from SecGroups Where grpcode = 'MANUALDEVIATION_APPROVER' ), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+	<changeSet id="65" author="Sriram">
+		<dropView viewName="ManualDeviations_View"/>
+		<dropView viewName="ManualDeviations_AView"/>
+	</changeSet>
+	<changeSet id="66" author="Sriram">
+		<modifyDataType tableName="ManualDeviations" columnName="Categorization" newDataType="bigint"/>
+		<modifyDataType tableName="ManualDeviations_Temp" columnName="Categorization" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="67" author="Sriram">
+		<modifyDataType tableName="ManualDeviations" columnName="Severity" newDataType="bigint"/>
+		<modifyDataType tableName="ManualDeviations_Temp" columnName="Severity" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="68" author="Sriram">
+	<createView viewName="ManualDeviations_View" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, 
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations_Temp T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		UNION ALL
+		
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		WHERE       NOT EXISTS (SELECT 1 FROM ManualDeviations_TEMP WHERE DeviationID = T1.DeviationID)
+	</createView>
+	</changeSet>
+	<changeSet id="69" author="Sriram">
+	<createView viewName="ManualDeviations_AView" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.ValueDesc
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+	</createView>
+	</changeSet>
+	<changeSet id="70" author="Sriram">
+	<createView viewName="ManualDeviations_View" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.FieldCodeValue CategorizationCode, T2.ValueDesc CategorizationName,
+					T3.FieldCodeValue SeverityCode,T3.ValueDesc SeverityName
+		FROM    	ManualDeviations_Temp T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		UNION ALL
+		
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.FieldCodeValue CategorizationCode, T2.ValueDesc CategorizationName,
+					T3.FieldCodeValue SeverityCode,T3.ValueDesc SeverityName
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+		WHERE       NOT EXISTS (SELECT 1 FROM ManualDeviations_TEMP WHERE DeviationID = T1.DeviationID)
+	</createView>
+	</changeSet>
+	<changeSet id="71" author="Sriram">
+	<createView viewName="ManualDeviations_AView" replaceIfExists="true">
+		SELECT		T1.DeviationID, T1.Code, T1.Description, T1.Module, T1.Categorization, T1.Severity, T1.Active,		
+					T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId,
+					T1.RecordType, T1.WorkflowId, T2.FieldCodeValue CategorizationCode, T2.ValueDesc CategorizationName,
+					T3.FieldCodeValue SeverityCode,T3.ValueDesc SeverityName
+		FROM    	ManualDeviations T1 
+					INNER JOIN RMTLovFieldDetail T2 ON T1.Categorization = T2.fieldcodeid 
+					INNER JOIN RMTLovFieldDetail T3 ON T1.Severity = T3.fieldcodeid
+	</createView>
+	</changeSet>
+	<changeSet id="72" author="Sriram">
+	<sql>
+		Delete from REPORTLIST where code = 'ManualDeviation';
+		INSERT INTO REPORTLIST  Values ('ManualDeviation','ManualDeviation','listheader_Code.label,listheader_Description.label,listheader_Module.label,listheader_Categorization.label,listheader_Severity.label,listheader_Active.label',
+		'code,description,module,categorizationName,severityName,active','String,String,String,String,String,boolean',' ','ReportList06','Deviations','Application Masters',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+	</sql>
+	</changeSet>
+	<changeSet id="75" author="Sriram">
+		<addColumn tableName="BMTproduct">
+		<column name="AllowDeviation" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="76" author="Sriram">
+		<addColumn tableName="BMTproduct_Temp">
+		<column name="AllowDeviation" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="77" author="Sriram">
+		<comment>Add AllowDeviation Column</comment>
+		<createView viewName="BMTproduct_View" replaceIfExists="true">
+		SELECT 	t1.productcode,t1.productdesc,t1.productcategory,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t1.AllowDeviation
+   		FROM    BMTproduct_Temp t1
+		UNION ALL
+ 		SELECT 	t1.productcode,t1.productdesc,t1.productcategory,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid, t1.AllowDeviation
+   		FROM 	BMTproduct t1
+  		WHERE NOT (EXISTS ( SELECT 1 FROM BMTproduct_Temp WHERE productcode = t1.productcode))
+		</createView>
+	</changeSet>
+	<changeSet id="78" author="Sriram">
+		<comment>Add AllowDeviation Column</comment>
+		<createView viewName="BMTproduct_AView" replaceIfExists="true">
+ 		SELECT 	t1.productcode,t1.productdesc,t1.productcategory,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid, t1.AllowDeviation
+   		FROM 	BMTproduct t1
+		</createView>
+	</changeSet>
+	<changeSet id="79" author="Sriram">
+		<createTable tableName="ProductDeviations">
+		<column name="ProductDevID" type="bigint">
+		<constraints primaryKey="true"/>
+		</column>
+		<column name="DeviationID" type="bigint"/>
+		<column name="ProductCode" type="varchar(8)"/>
+		<column name="Version" type="int" defaultValue="0">
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="80" author="Sriram">
+		<createTable tableName="ProductDeviations_Temp">
+		<column name="ProductDevID" type="bigint">
+		<constraints primaryKey="true"/>
+		</column>
+		<column name="DeviationID" type="bigint"/>
+		<column name="ProductCode" type="varchar(8)">
+		</column>
+		<column name="Version" type="int" defaultValue="0">
+		<constraints nullable="false"/>
+		</column>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="81" author="Sriram">
+		<addForeignKeyConstraint constraintName="FK_ProductDeviations" 	
+			baseTableName="ProductDeviations" baseColumnNames="DeviationID"	
+			referencedColumnNames="DeviationID"	referencedTableName="ManualDeviations" />
+	</changeSet>
+	<changeSet id="82" author="Sriram">
+		<addForeignKeyConstraint constraintName="FK_ProdDeviations_Temp"
+			baseTableName="ProductDeviations_Temp" baseColumnNames="DeviationID"
+			referencedColumnNames="DeviationID"	referencedTableName="ManualDeviations" />
+	</changeSet>
+	<changeSet id="83" author="Sriram">
+		<createSequence sequenceName="SeqProductDeviations" startValue="1"  maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+ 	<changeSet id="84" author="Sriram">
+ 	<createView viewName="ProductDeviations_View" replaceIfExists="true">
+		SELECT		T1.ProductDevID, T1.DeviationID, T1.ProductCode, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.Code DeviationCode
+		FROM    	ProductDeviations_Temp T1 
+					INNER JOIN ManualDeviations T2 ON T1.DeviationID = T2.DeviationID					
+		UNION ALL
+		SELECT		T1.ProductDevID, T1.DeviationID, T1.ProductCode, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.Code DeviationCode
+		FROM    	ProductDeviations T1 
+					INNER JOIN ManualDeviations T2 ON T1.DeviationID = T2.DeviationID 
+		WHERE       NOT EXISTS (SELECT 1 FROM ProductDeviations_Temp WHERE ProductDevID = T1.ProductDevID)
+	</createView>	
+	</changeSet>	
+ 	<changeSet id="85" author="Sriram">
+ 	<createView viewName="ProductDeviations_AView" replaceIfExists="true">
+		SELECT		T1.ProductDevID, T1.DeviationID, T1.ProductCode, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus,
+					T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T2.Code DeviationCode
+		FROM    	ProductDeviations T1 
+					INNER JOIN ManualDeviations T2 ON T1.DeviationID = T2.DeviationID 
+	</createView>	
+	</changeSet>
+	<changeSet id="86" author="Sriram">
+		<sql>
+		Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode ='PRODUCT_MAKER') And RightId in(Select rightid from SecRights where rightName in('ProductDialog_allowDeviation','ProductDialog_btnManualDeviation'));
+		Delete from SecRights where RightName In('ProductDialog_allowDeviation','ProductDialog_btnManualDeviation');
+		
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ProductDialog_allowDeviation','ProductDialog',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		INSERT INTO SecRights Values( (select max(RightId)+1 from SecRights),3,'ProductDialog_btnManualDeviation','ProductDialog',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 );
+		
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'PRODUCT_MAKER'), (select rightid  from SecRights WHERE RightName='ProductDialog_allowDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights Values((select max(grprightid)+1 from SecGroupRights), (select grpid from SecGroups where grpcode = 'PRODUCT_MAKER'), (select rightid  from SecRights WHERE RightName='ProductDialog_btnManualDeviation'),1,0,10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		
+		Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+		Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+		</sql>
+ 	</changeSet>
+ 	<changeSet id="87" author="Sriram">
+ 		<sql>
+ 		Delete From BMTLovFieldCode where FieldCode IN('MDEV_CAT','MDEV_SEV');
+		INSERT INTO BMTLovFieldCode VALUES ('MDEV_CAT','Manual Deviation Categorization','String',0,1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		INSERT INTO BMTLovFieldCode VALUES ('MDEV_SEV','Manual Deviation Severity','String',0,1,1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="88" author="Sriram">
+ 		<sql>
+ 		Update BMTProduct set AllowDeviation = 0 where AllowDeviation is null;
+ 		Update BMTProduct_Temp set AllowDeviation = 0 where AllowDeviation is null;
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="89" author="VijayKumar.L">
+  		<sql>
+ 			alter table  CustomerQueuing  alter column eodprocess type smallint;
+			alter table  CustomerGroupQueuing  alter column eodprocess type smallint;
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="90" author="VijayKumar.L">
+ 		<sql>
+ 			Insert into data_engine_config  values ((select max(id)+1 from data_engine_config ),'POSIDEX_CUSTOMER_UPDATE_REQUEST','PosidexUpdateEODRequest.',7,null,null,null,null,0,0, null, null, null,'A',null,'DBFILE',null,0,null,null,null,'0',null,1,1);
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="91" author="VijayKumar.L">
+ 		<sql>
+			update REPORTCONFIGURATION set datasourcename = 'auditDataSource' where datasourcename = 'auditDatasource';
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="92" author="VijayKumar.L">
+ 		<sql>
+ 			insert into  tatnotificationcodes values(1,'TAT 1','30 minutes',1,30);
+			insert into  tatnotificationcodes values(2,'TAT 2','120 minutes',1,60);
+			insert into  tatnotificationcodes values(3,'TAT 3','1 Day',1,1440);
+ 		</sql>
+ 	</changeSet>
+ 	<changeSet id="93" author="Jayant">
+ 		<sql>
+ 			update RMTFinanceTypes_Temp set  finAEBuyOrInception = 0 where  finAEBuyOrInception is null;
+			update RMTFinanceTypes set  finAEBuyOrInception = 0 where  finAEBuyOrInception is null;
+			update RMTFinanceTypes_Temp set  finAESellOrMaturity = 1 where  finAESellOrMaturity is null;
+			update RMTFinanceTypes set  finAESellOrMaturity = 1 where  finAESellOrMaturity is null;
+			update RMTFinanceTypes_Temp set  chequeCaptureReq = 0 where chequeCaptureReq is null;
+			update RMTFinanceTypes set  chequeCaptureReq = 0 where chequeCaptureReq is null;
+ 		</sql>
+ 	</changeSet>
+ 	 	<changeSet id="94" author="Jayant">
+ 		<sql>
+ 			INSERT INTO data_engine_config VALUES (211, 'ME_BUILDERCOMPANY', 'Builder Companies extract', 2, '', '', '', '~', 0, 0, '', 'id,name,segmentation,groupId', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERCOMPANY_', '.dat', 0, '2018-04-03 19:12:22.264', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (212, 'ME_BUILDERPROJCET', 'Builder Projects extract', 2, '', '', '', '~', 0, 0, '', 'id,name,builderId,apfNo', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERPROJCET_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (213, 'ME_LOCALITY', 'Localities extract', 2, '', '', '', '~', 0, 0, '', 'id,name,city', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'LOCALITY_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (193, 'ME_RMTBRANCHES', 'Branches extract', 2, '', '', '', '~', 0, 0, '', 'BranchCode,BranchDesc,BranchAddrLine1,BranchAddrLine2,BranchPOBox,BranchCity,BranchProvince,BranchCountry,BranchTel,BranchIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBRANCHES_', '.dat', 0, '2017-09-08 00:00:00', '${yyyyMMdd}', '0 0 3 ? * 1', '0', 'MOVE_TO_S3_BUCKET', 1, 0);
+			INSERT INTO data_engine_config VALUES (194, 'ME_BMTBANKDETAIL', 'Banks extract', 2, '', '', '', '~', 0, 0, '', 'BankCode,BankName,Active,AccNoLength', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTBANKDETAIL_', '.dat', 0, '2018-01-28 00:00:00', '${yyyyMMdd}', '0 0 3 ? * 1', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (196, 'ME_RMTCOUNTRYVSPROVINCE', 'Country States extract', 2, '', '', '', '~', 0, 0, '', 'CPCountry,CPProvince,CPProvinceName,CPIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTCOUNTRYVSPROVINCE_', '.dat', 0, '2018-02-02 00:00:00', '${yyyyMMdd}', '0 0 3 1 * ?', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (197, 'ME_RMTPROVINCEVSCITY', 'State Cities extract', 2, '', '', '', '~', 0, 0, '', 'PCCountry,PCProvince,PCCity,PCCityName,BankRefNo,CITYISACTIVE', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTPROVINCEVSCITY_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (198, 'ME_BMTCUSTCATEGORIES', 'Customer Categories extract', 2, '', '', '', '~', 0, 0, '', 'CustCtgCode,CustCtgDesc,CustCtgType,CustCtgIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTCUSTCATEGORIES_', '.dat', 0, '2018-02-02 00:00:00', '${yyyyMMdd}', '0 0 3 1 * ?', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (199, 'ME_RMTBASERATECODES', 'Base Rate Codes extract', 2, '', '', '', '~', 0, 0, '', 'BRType,BRTypeDesc,BRTypeIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBASERATECODES_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (200, 'ME_RMTBASERATES', 'Base Rates extract', 2, '', '', '', '~', 0, 0, '', 'BRType,Currency,BREffDate,BRRate,BRTypeIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTBASERATES_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (201, 'ME_RMTSPLRATECODES', 'Special Rate Codes extract', 2, '', '', '', '~', 0, 0, '', 'SRType,SRTypeDesc,SRIsActive', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTSPLRATECODES_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (202, 'ME_RMTSPLRATES', 'Special Rates extract', 2, '', '', '', '~', 0, 0, '', 'SRType,SREffDate,SRRate', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTSPLRATES_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (203, 'ME_BMTPRODUCT', 'Products extract', 2, '', '', '', '~', 0, 0, '', 'ProductCode,ProductDesc', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BMTPRODUCT_', '.dat', 0, '2017-07-25 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 0);
+			INSERT INTO data_engine_config VALUES (204, 'ME_RMTFINANCETYPES', 'Loan Types extract', 2, '', '', '', '~', 0, 0, '', 'FinType,FinCategory,FinTypeDesc,FinMaxAmount,FinMinAmount,FinIsAlwMD,FinBaseRate,FinSplRate,FinMargin,FinIntRate,FinSchdMthd,FinGrcBaseRate,FinGrcSplRate,FinGrcMargin,FinGrcIntRate,FinIsAlwGrcRepay,FinGrcSchdMthd,FinRepayMethod,FinIsAlwPartialRpy,FinIsActive,StepFinance,SteppingMandatory,AlwdStepPolicies,PlanEMIHMaxPerYear,PlanEMIHMax,PlanEMIHLockPeriod,UnPlanEMIHLockPeriod,UnPlanEMICpz,MaxUnplannedEmi,AlwUnPlanEmiHoliday,AlwMaxDisbCheckReq', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'RMTFINANCETYPES_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (205, 'ME_PROMOTIONS', 'Promotions extract', 2, '', '', '', '~', 0, 0, '', 'FinType,FinCategory,FinTypeDesc,FinMaxAmount,FinMinAmount,FinIsAlwMD,FInIsAlwGrace,FinRateType,FinBaseRate,FinSplRate,FinMargin,FinIntRate,FInMinRate,FinMaxRate,FinSchdMthd,FinGrcRateType,FinGrcBaseRate,FinGrcSplRate,FinGrcMargin,FinMinTerm,FinMaxTerm,FInRepayMethod,FinIsActive,StepFinance,SteppingMandatory,AlwManualSteps,AlwdStepPolicies,DftStepPolicy,Product,StartDate,EndDate,AlwMultiPartyDisb,PlanEMIHAlw,PlanEMIHMethod,PlanEMIHMaxPerYear,PlanEMIHMax,PlanEMIHLockPeriod,UnPlanEMIHLockPeriod,UnPlanEMICpz,MaxUnplannedEmi,AlwUnPlanEmiHoliday,AlwMaxDisbCheckReq', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'PROMOTIONS_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (206, 'ME_FINTYPEPARTNERBANKS', 'Loan Type Partner Banks extract', 2, '', '', '', '~', 0, 0, '', 'Id,FinType,Purpose,PaymentMode,PartnerBankID', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'FINTYPEPARTNERBANKS_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (207, 'ME_VASPRODUCTTYPE', 'VAS Product Types extract', 2, '', '', '', '~', 0, 0, '', 'PRODUCTTYPE,PRODUCTTYPEDESC,PRODUCTCTG,ACTIVE', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'VASPRODUCTTYPE_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (208, 'ME_VASSTRUCTURE', 'VAS Structure extract', 2, '', '', '', '~', 0, 0, '', 'PRODUCTCODE,PRODUCTTYPE,PRODUCTDESC,FREELOCKPERIOD,REMARKS,ACTIVE,VASFEE,ALLOWFEETOMODIFY,MANUFACTURERID', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'VASSTRUCTURE_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (209, 'ME_AMTVEHICLEDEALER_VASMANF', 'VAS Manufacturers extract', 2, '', '', '', '~', 0, 0, '', 'DEALERID,DEALERNAME,DEALERTELEPHONE,DEALERFAX,DEALERADDRESS1,DEALERADDRESS2,DEALERTYPE,DEALERADDRESS3,DEALERCOUNTRY,DEALERPROVINCE,DEALERCITY,EMAIL,POBOX,ZIPCODE,Active', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'AMTVEHICLEDEALER_VASMANF_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (210, 'ME_BUILDERGROUP', 'Builder Groups extract', 2, '', '', '', '~', 0, 0, '', 'id,name,segmentation', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BUILDERGROUP_', '.dat', 0, '2018-02-24 00:00:00', '${yyyyMMdd}', '0 0 3 ? * *', '0', 'MOVE_TO_S3_BUCKET', 1, 1);
+			INSERT INTO data_engine_config VALUES (195, 'ME_BANKBRANCHES', 'Bank Branches extract', 2, '', '', '', '~', 0, 0, '', 'BankCode,BranchCode,BranchDesc,City,MICR,IFSC,Active,AddOfBranch', '${RECORD_COUNT}', 'A', '/opt/PFF/master_extract', 'BANKBRANCHES_', '.dat', 0, '2018-04-03 19:12:27.274', '${yyyyMMdd}', '0 0 3 ? * 1', '0', 'MOVE_TO_S3_BUCKET', 1, 1);	 			
+ 		</sql>
+ 	</changeSet>
+ 	
+	<changeSet id="95" author="satish">
+		<addColumn tableName="financedeviations">
+			<column name="manualDeviation" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="96" author="satish">
+		<addColumn tableName="financedeviations">
+			<column name="deviProcessed" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="97" author="satish">
+		<addColumn tableName="financedeviations">
+			<column name="remarks" type="varchar(200)" ></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="98" author="satish">
+		<addColumn tableName="financedeviations_Temp">
+			<column name="manualDeviation" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="99" author="satish">
+		<addColumn tableName="financedeviations_Temp">
+			<column name="deviProcessed" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="100" author="satish">
+		<addColumn tableName="financedeviations_Temp">
+			<column name="remarks" type="varchar(200)" ></column>
+		</addColumn>
+	</changeSet>
+ 	<changeSet id="101" author="Satish">
+ 	
+ 	<createView viewName="productdeviations_aview" replaceIfExists="true">
+ 	 SELECT t1.productdevid,
+    t1.deviationid,
+    t1.productcode,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.code AS deviationcode,
+    t2.description AS deviationdesc,
+    t2.severity
+   FROM productdeviations t1
+     JOIN manualdeviations t2 ON t1.deviationid = t2.deviationid
+ 	
+ 	</createView>
+ 	</changeSet>
+ 	<changeSet id="103" author="Jayant">
+ 		<modifyDataType tableName="BankBranches" columnName="BranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="BankBranches_Temp" columnName="BranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="PartnerBanks" columnName="BankBranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="PartnerBanks_Temp" columnName="BankBranchCode" newDataType="varchar(20)"/>
+ 	</changeSet>
+ 	<changeSet id="104" author="Durgaprasad.G">
+	<addColumn tableName="EXTENDEDFIELDDETAIL"  >
+		<column name="ExtendedType" defaultValue="0" type="int"/>
+	</addColumn>
+	<addColumn tableName="EXTENDEDFIELDDETAIL_TEMP"  >
+		<column name="ExtendedType" defaultValue="0" type="int"/>
+	</addColumn>
+</changeSet>
+
+<changeSet id="105" author="Durgaprasad.G">
+ <sql>
+	 Update EXTENDEDFIELDDETAIL Set ExtendedType = 0;
+	 Update EXTENDEDFIELDDETAIL_TEMP Set ExtendedType = 0;
+ </sql>
+</changeSet>
+ 
+<changeSet id="106" author="Durga Prasad G">
+		<createView viewName="extendedfielddetail_aview" replaceIfExists="true">
+			 SELECT t1.moduleid,  t1.fieldname,  t2.modulename AS lovdescmodulename, t2.submodulename AS lovdescsubmodulename,
+		    t1.fieldtype, t1.fieldlength,  t1.fieldprec, t1.fieldlabel, t1.fieldmandatory,
+		    t1.fieldconstraint,  t1.fieldseqorder, t1.fieldlist, t1.fielddefaultvalue,
+		    t1.fieldminvalue, t1.fieldmaxvalue, t1.fieldunique, t1.extendedtype, t1.version,
+		    t1.lastmntby, t1.lastmnton,  t1.recordstatus,  t1.rolecode, t1.nextrolecode,
+		    t1.taskid,  t1.nexttaskid, t1.recordtype,  t1.workflowid, t1.multiline,  t1.parenttag,
+		    t1.inputelement, t1.editable
+		   FROM extendedfielddetail t1 JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
+		</createView>
+	</changeSet>
+	
+	<changeSet id="107" author="Durga Prasad G">
+		<createView viewName="extendedfielddetail_view" replaceIfExists="true">
+			SELECT t1.moduleid, t1.fieldname, t2.modulename AS lovdescmodulename, t2.submodulename AS lovdescsubmodulename,
+		    t1.fieldtype, t1.fieldlength, t1.fieldprec, t1.fieldlabel,
+		    t1.fieldmandatory,
+		    t1.fieldconstraint,
+		    t1.fieldseqorder,
+		    t1.fieldlist,
+		    t1.fielddefaultvalue,
+		    t1.fieldminvalue,
+		    t1.fieldmaxvalue,
+		    t1.fieldunique,
+		    t1.extendedtype,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.multiline,
+		    t1.parenttag,
+		    t1.inputelement,
+		    t1.editable
+		   FROM extendedfielddetail_temp t1 JOIN extendedfieldheader_temp t2 ON t1.moduleid = t2.moduleid
+		UNION ALL
+		 SELECT t1.moduleid,
+		    t1.fieldname,
+		    t2.modulename AS lovdescmodulename,
+		    t2.submodulename AS lovdescsubmodulename,
+		    t1.fieldtype,
+		    t1.fieldlength,
+		    t1.fieldprec,
+		    t1.fieldlabel,
+		    t1.fieldmandatory,
+		    t1.fieldconstraint,
+		    t1.fieldseqorder,
+		    t1.fieldlist,
+		    t1.fielddefaultvalue,
+		    t1.fieldminvalue,
+		    t1.fieldmaxvalue,
+		    t1.fieldunique,
+		    t1.extendedtype,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t1.multiline,
+		    t1.parenttag,
+		    t1.inputelement,
+		    t1.editable
+		   FROM extendedfielddetail t1 JOIN extendedfieldheader t2 ON t1.moduleid = t2.moduleid
+		   WHERE NOT (EXISTS ( SELECT 1 FROM extendedfielddetail_temp WHERE extendedfielddetail_temp.moduleid = t1.moduleid AND extendedfielddetail_temp.fieldname = t1.fieldname))
+
+		</createView>
+	</changeSet>
+	<changeSet id="108" author="Sriram">
+		<sql>
+		INSERT INTO LimitCodeDetail Values((select max(limitid)+1 from LimitCodeDetail),'MDEVTR','Manual Deviation Triggering',1,(select max(id)+1 from LimitCodeDetail));
+		</sql>
+	</changeSet>
+	
+	<changeSet id="109" author="Manoj">
+		<sql>
+			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'CBIL_PROCESS_REQ';
+			INSERT INTO SMTPARAMETERS VALUES ('CBIL_PROCESS_REQ', 	'Cibil Processing required or not', 'String', 1,  'N', '1', 0, NULL, NULL, 'Cibil Processing required or not', 1, 1000, CURRENT_TIMESTAMP,	'Approved'	,NULL, NULL, NULL, NULL, NULL, 0);
+		</sql>
+	</changeSet>
+	<changeSet id="110" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90910','EN','E','Either CIF is invalid or does not match with ApplicableFor in TaxDetails.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="111" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90911','EN','E','GST number {0} should be matched with {1} properties.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="112" author="Ganesh.p">
+		<sql>
+			INSERT INTO ErrorDetails VALUES('90912','EN','E','{0} is invalid. Allowed Characters are [a-z A-Z 0-9] And size should be 15.','','Approved','','','','','',0,current_timestamp,1000,0);
+		</sql>
+	</changeSet>
+	<changeSet id="113.2" author="vijaykumar.l">
+	<comment> removed rightname duplicate</comment>
+	<sql>
+	update secrights set rightname='button_BlacklistCustomerDialog_btnSave' ,page='BlacklistCustomerDialog'  where rightname='button_blacklistCustomerList_btnSave';
+    update secrights set rightname='button_BlacklistCustomerDialog_btnEdit' , page='BlacklistCustomerDialog'  where rightname='button_blacklistCustomerList_btnEdit';
+    update secrights set rightname='button_BlacklistCustomerDialog_btnDelete' , page='BlacklistCustomerDialog'  where rightname='button_blacklistCustomerList_btnDelete';
+	</sql>
+	</changeSet>
+	<changeSet id="114" author="Jayant">
+		<sql>
+			 alter table limitcodedetail drop column id; 
+		</sql>
+	</changeSet>
+	<changeSet id="115" author="Jayant">
+    <comment> As per Observation and Compare with Niyogin,Below View is altered </comment>
+    	<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
+    		 SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                     T7.FinTypeDesc lovDescFinTypeName, 
+                      T7.FinMaxAmount lovDescFinMaxAmt, T7.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T7.FinIsAlwDifferment lovDescFinAlwDeferment, T7.FinIsDwPayRequired lovDescDwnPayReq, T7.FinMaxDifferment lovDescFinMaxDifferment, 
+                      T12.BranchDesc lovDescFinBranchName, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate, 
+                     T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, 
+                        T17.AcrTillLBD lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor,  T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, 
+                      T1.ScheduleRegenerated, T1.FinPurpose, T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T7.FinScheduleOn LovDescFinScheduleOn, T1.CustDSR, 
+                     T1.JointAccount, T1.JointCustId, 
+                      T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,  T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T7.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                     T1.SupplementRent, T1.IncreasedCost,  T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc,t28.dealername AS lovdescaccountsofficer,t28.dealercity AS lovdescsourcecity,T1.DSACode,T30.ROfficerDesc DSACodeDesc,
+					 T1.TDSApplicable, T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,
+					  T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory,T1.RoundingTarget, T36.ENTITYCODE lovDescEntityCode
+						FROM         FinanceMain_Temp T1   INNER JOIN
+                      RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                      RMTBranches T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE LEFT OUTER JOIN
+                      StepPolicyHeader T24 ON T1.StepPolicy = T24.PolicyCode LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN
+                      amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN 
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T35 ON T1.SalesDepartment = T35.GenDepartment LEFT OUTER JOIN
+					  SMTDIVISIONDETAIL T36 ON T7.FinDivision=T36.DIVISIONCODE
+			 
+	UNION ALL
+			SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                     T7.FinTypeDesc lovDescFinTypeName, 
+                      T7.FinMaxAmount lovDescFinMaxAmt, T7.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T7.FinIsAlwDifferment lovDescFinAlwDeferment, T7.FinIsDwPayRequired lovDescDwnPayReq, T7.FinMaxDifferment lovDescFinMaxDifferment, 
+                      T12.BranchDesc lovDescFinBranchName, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate, 
+                     T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, 
+                        T17.AcrTillLBD lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor, T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, 
+                      T1.ScheduleRegenerated, T1.FinPurpose, T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T7.FinScheduleOn LovDescFinScheduleOn, T1.CustDSR,  
+                     T1.JointAccount, T1.JointCustId, 
+                      T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,  T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T7.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                     T1.SupplementRent, T1.IncreasedCost,  T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc,t28.dealername AS lovdescaccountsofficer,t28.dealercity AS lovdescsourcecity,T1.DSACode,T30.ROfficerDesc DSACodeDesc,
+					 T1.TDSApplicable, T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,
+					  T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory, T1.RoundingTarget  ,T36.ENTITYCODE lovDescEntityCode
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                      RMTBranches T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE LEFT OUTER JOIN
+                      StepPolicyHeader T24 ON T1.StepPolicy = T24.PolicyCode LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN
+                      amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN 
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T35 ON T1.SalesDepartment = T35.GenDepartment LEFT OUTER JOIN 
+					   SMTDIVISIONDETAIL T36 ON T7.FinDivision=T36.DIVISIONCODE
+						WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM          FinanceMain_Temp
+                            WHERE      (FINREFERENCE = T1.FINREFERENCE)))
+    	</createView>
+    </changeSet>
+    <changeSet id="116" author="Jayant">
+    <comment> As per Observation and Compare with Niyogin,Below View is altered </comment>
+    	<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
+    		 SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, 
+                      T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, 
+                      T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment  lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T7.FinTypeDesc  lovDescFinTypeName, T7.FinMaxAmount  lovDescFinMaxAmt, T7.FinMinAmount  lovDescFinMinAmount, 
+                      T1.MinDownpayPerc, T7.FinIsAlwDifferment  lovDescFinAlwDeferment, T7.FinIsDwPayRequired  lovDescDwnPayReq, 
+                      T7.FinMaxDifferment  lovDescFinMaxDifferment,T12.BranchDesc  lovDescFinBranchName, T1.LastRepayDate, T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, 
+                       T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef, T1.DepreciationFrq, T1.FinContractDate, 
+                      T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,   T17.AcrTillLBD  lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor,  T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, 
+                      T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose, 
+                     T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.bankName, T1.iban, T1.accountType, T1.DdaReferenceNo, 
+                      T7.FinScheduleOn  LovDescFinScheduleOn, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, T1.SecurityCollateral, 
+                       T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.InvestmentRef, T1.GraceTerms, 
+                      T7.FinDivision  lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps,  T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc  LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                    T1.SupplementRent, T1.IncreasedCost, T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FINPREAPPROVEDREF, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId,T1.FinCancelAc,t28.dealername AS lovdescaccountsofficer,t28.dealercity AS lovdescsourcecity,T29.AgreeName,T29.MMAReference LovDescMMAReference,
+					  T1.DSACode,T30.ROfficerDesc DSACodeDesc,T1.TDSApplicable,  T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor, T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory, T1.RoundingTarget ,T36.ENTITYCODE lovDescEntityCode
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes  T7 ON T1.FinType = T7.FinType  LEFT OUTER JOIN
+                      RMTBranches  T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FinPftDetails  T17 ON T17.FinReference = T1.FinReference LEFT OUTER JOIN
+                      StepPolicyHeader  T24 ON T1.StepPolicy = T24.PolicyCode  LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN 
+					  amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid LEFT OUTER JOIN
+					  MMAgreements T29 ON T1.MMAId = T29.MMAId LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGENDEPARTMENTS T35 ON T1.SalesDepartment = T35.GENDEPARTMENT LEFT OUTER JOIN 
+					  SMTDIVISIONDETAIL T36 ON T7.FinDivision=T36.DIVISIONCODE
+    	</createView>
+    </changeSet>
+    <changeSet id="117" author="Jayant">
+    <comment> As per Observation and Compare with Niyogin,Below View is altered </comment>
+    	<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
+    		SELECT	T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount,  T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T2.FinTypeDesc lovDescFinTypeName, T2.FinMaxAmount lovDescFinMaxAmt, T2.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T4.BranchDesc lovDescFinBranchName, T1.LastRepayDate,  T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate,  T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,  
+                      T1.TotalRepayAmt,T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                      T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose,T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T2.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T5.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval,T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                      T1.SupplementRent, T1.IncreasedCost, T1.CreditInsAmt, T1.RolloverFrq, 
+                      T1.NextRolloverDate,  T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc, t6.dealername AS lovdescaccountsofficer,t6.dealercity AS lovdescsourcecity,T1.DSACode,T7.ROfficerDesc DSACodeDesc,
+					  T1.TDSApplicable, T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T8.ROfficerDesc ReferralIdDesc, T1.DmaCode , T9.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T10.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH,
+					  T1.BpiAmount, T1.DeductFeeDisb,T1.RvwRateApplFor,T1.SchCalOnRvw,T1.PastduePftCalMthd,T1.PastduePftMargin,T1.DroppingMethod,T1.RateChgAnyDay, T1.PromotionCode,T1.RestructureLoan,T1.OldFinReference,
+					  T1.ReAgeBucket, T1.FinCategory, T1.ProductCategory, T1.RoundingTarget ,T11.entitycode lovDescEntityCode
+			FROM      FinanceMain_Temp T1 INNER JOIN
+                      RMTFinanceTypes T2 ON T1.FinType = T2.FinType  INNER JOIN
+                      RMTBranches T4 ON T1.FinBranch = T4.BranchCode LEFT OUTER JOIN
+                      StepPolicyHeader T5 ON T1.StepPolicy = T5.PolicyCode LEFT OUTER JOIN
+                      amtvehicledealer t6 ON t1.accountsofficer = t6.dealerid LEFT OUTER JOIN
+					  RelationshipOfficers T7 ON T1.DSACode = T7.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T8 ON T1.ReferralId = T8.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T9 ON T1.DmaCode = T9.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T10 ON T1.SalesDepartment = T10.GenDepartment left outer join
+                      SMTDivisionDetail T11 ON T2.FinDivision = T11.DivisionCode
+    	</createView>
+    </changeSet>
+    <changeSet id="118" author="Ganesh.p" >
+    <comment> As per Observation and Compare with Niyogin,Below View is altered </comment>
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName,
+			  T1.DocumentRef, T1.ExternalRef,T1.EntityCode,T6.EntityDesc, T1.primarymandateid,T1.swapisactive,t1.barcodenumber
+			FROM  Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			LEFT OUTER JOIN Entity T6 ON T1.EntityCode = T6.EntityCode
+</createView>
+	</changeSet>
+
+	<changeSet id="119" author="Ganesh.p" >
+	<comment> As per Observation and Compare with Niyogin,Below View is altered </comment>
+		<createView viewName=" MANDATES_TVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID 	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			 ,T1.EntityCode,T6.EntityDesc,T1.primarymandateid,T1.swapisactive,T1.barcodenumber
+			FROM    Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			LEFT OUTER JOIN Entity T6 ON T1.EntityCode = T6.EntityCode
+</createView>
+	</changeSet>
+
+<changeSet id="120" author="Ganesh.p" >
+<comment> As per Observation and Compare with Niyogin,Below View is altered </comment>
+		<createView viewName=" MANDATES_VIEW" replaceIfExists="true">
+		SELECT T1.MandateID, T1.CustID, T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName,T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			 ,T1.EntityCode,T6.EntityDesc,t1.primarymandateid,T1.swapisactive,t1.barcodenumber
+			FROM  Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+            LEFT OUTER JOIN Entity T6 ON T1.EntityCode = T6.EntityCode
+            
+			UNION ALL
+
+			SELECT T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			 ,T1.EntityCode,T6.EntityDesc,t1.primarymandateid,T1.swapisactive,t1.barcodenumber
+			FROM   Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			LEFT OUTER JOIN Entity T6 ON T1.EntityCode = T6.EntityCode
+			WHERE  NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
+		</createView>
+	</changeSet>
+</databaseChangeLog>
+	

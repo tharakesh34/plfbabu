@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+
+
+	<changeSet id="01" author="DurgaPrasad G" dbms="oracle, postgresql">
+		<sql>
+			 Create table SeqProspectCustomer_bk as select * from SeqProspectCustomer;
+			 DROP table SeqProspectCustomer;
+			 </sql>
+	</changeSet>
+   		<changeSet id="01.1" author="DurgaPrasad G" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SeqProspectCustomer_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SeqProspectCustomer START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     		 </sql>
+     		 </changeSet>
+     		<changeSet id="01.1" author="DurgaPrasad G" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 Select SeqNo from SeqProspectCustomer_bk into ex;
+			 execute 'CREATE SEQUENCE SeqProspectCustomer START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="01.2" author="DurgaPrasad G" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SeqProspectCustomer_bk;
+		</sql>
+	</changeSet>
+
+ <changeSet id="02" author="DurgaPrasad G" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SeqProspectCustomer_bk  from SeqProspectCustomer;
+			DROP table SeqProspectCustomer;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SeqProspectCustomer_bk)T);
+			CREATE TABLE SeqProspectCustomer(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SeqProspectCustomer'', RESEED,'+@ex+' )');
+			
+			DROP table SeqProspectCustomer_bk;
+	</sql>
+</changeSet>
+
+<changeSet id="03" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQCUSTOMERBANKINFO_bk as select * from SEQCUSTOMERBANKINFO;
+			 DROP table SEQCUSTOMERBANKINFO;
+			 </sql>
+	</changeSet>
+   		<changeSet id="03.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQCUSTOMERBANKINFO_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQCUSTOMERBANKINFO START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     		 </sql>
+     		 </changeSet>
+     		 <changeSet id="03.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 Update SEQCUSTOMERBANKINFO_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQCUSTOMERBANKINFO_bk into ex;
+			 execute 'CREATE SEQUENCE SEQCUSTOMERBANKINFO START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="03.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQCUSTOMERBANKINFO_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="04" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQCUSTOMERBANKINFO_bk  from SEQCUSTOMERBANKINFO;
+			DROP table SEQCUSTOMERBANKINFO;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQCUSTOMERBANKINFO_bk)T);
+			CREATE TABLE SEQCUSTOMERBANKINFO(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQCUSTOMERBANKINFO'', RESEED,'+@ex+' )');
+			
+			DROP table SEQCUSTOMERBANKINFO_bk;
+	</sql>
+</changeSet>
+
+<changeSet id="05" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQDOCUMENTMANAGER_bk as select * from SEQDOCUMENTMANAGER;
+			 DROP table SEQDOCUMENTMANAGER;
+			 </sql>
+	</changeSet>
+   		<changeSet id="05.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQDOCUMENTMANAGER_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQDOCUMENTMANAGER START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     		 </sql>
+     		 </changeSet>
+     		 <changeSet id="05.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 
+			 Update SEQDOCUMENTMANAGER_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQDOCUMENTMANAGER_bk into ex;
+			 execute 'CREATE SEQUENCE SEQDOCUMENTMANAGER START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="05.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQDOCUMENTMANAGER_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="06" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQDOCUMENTMANAGER_bk  from SEQDOCUMENTMANAGER;
+			DROP table SEQDOCUMENTMANAGER;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQDOCUMENTMANAGER_bk)T);
+			CREATE TABLE SEQDOCUMENTMANAGER(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQDOCUMENTMANAGER'', RESEED,'+@ex+' )');
+			
+			DROP table SEQDOCUMENTMANAGER_bk;
+	</sql>
+</changeSet>
+
+<changeSet id="07" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQCUSTOMEREMPDETAILS_bk as select * from SEQCUSTOMEREMPDETAILS;
+			 DROP table SEQCUSTOMEREMPDETAILS;
+			 </sql>
+	</changeSet>
+   		<changeSet id="07.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQCUSTOMEREMPDETAILS_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQCUSTOMEREMPDETAILS START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     		 </sql>
+     		 </changeSet>
+     		  <changeSet id="07.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SEQCUSTOMEREMPDETAILS_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQCUSTOMEREMPDETAILS_bk into ex;
+			 execute 'CREATE SEQUENCE SEQCUSTOMEREMPDETAILS START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="07.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQCUSTOMEREMPDETAILS_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="08" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQCUSTOMEREMPDETAILS_bk  from SEQCUSTOMEREMPDETAILS;
+			DROP table SEQCUSTOMEREMPDETAILS;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQCUSTOMEREMPDETAILS_bk)T);
+			CREATE TABLE SEQCUSTOMEREMPDETAILS(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQCUSTOMEREMPDETAILS'', RESEED,'+@ex+' )');
+			
+			DROP table SEQCUSTOMEREMPDETAILS_bk;
+	</sql>
+</changeSet>
+
+<changeSet id="09" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQCUSTOMERDIRECTORDETAIL_bk as select * from SEQCUSTOMERDIRECTORDETAIL;
+			 DROP table SEQCUSTOMERDIRECTORDETAIL;
+			 </sql>
+	</changeSet>
+   		<changeSet id="09.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQCUSTOMERDIRECTORDETAIL_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQCUSTOMERDIRECTORDETAIL START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     		 </sql>
+     		 </changeSet>
+     		  <changeSet id="09.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 
+			 Update SEQCUSTOMERDIRECTORDETAIL_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQCUSTOMERDIRECTORDETAIL_bk into ex;
+			 execute 'CREATE SEQUENCE SEQCUSTOMERDIRECTORDETAIL START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="09.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQCUSTOMERDIRECTORDETAIL_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="10" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQCUSTOMERDIRECTORDETAIL_bk  from SEQCUSTOMERDIRECTORDETAIL;
+			DROP table SEQCUSTOMERDIRECTORDETAIL;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQCUSTOMERDIRECTORDETAIL_bk)T);
+			CREATE TABLE SEQCUSTOMERDIRECTORDETAIL(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQCUSTOMERDIRECTORDETAIL'', RESEED,'+@ex+' )');
+			
+			DROP table SEQCUSTOMERDIRECTORDETAIL_bk;
+	</sql>
+</changeSet>
+
+<changeSet id="11" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQFINREFERENCE_bk as select * from SEQFINREFERENCE;
+			 DROP table SEQFINREFERENCE;
+			 </sql>
+	</changeSet>
+   		<changeSet id="11.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQFINREFERENCE_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQFINREFERENCE START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     		 </sql>
+     		 </changeSet>
+     		  <changeSet id="11.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 
+			 Update SEQFINREFERENCE_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQFINREFERENCE_bk into ex;
+			 execute 'CREATE SEQUENCE SEQFINREFERENCE START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="11.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQFINREFERENCE_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="12" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQFINREFERENCE_bk  from SEQFINREFERENCE;
+			DROP table SEQFINREFERENCE;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQFINREFERENCE_bk)T);
+			CREATE TABLE SEQFINREFERENCE(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQFINREFERENCE'', RESEED,'+@ex+' )');
+			
+			DROP table SEQFINREFERENCE_bk;
+	</sql>
+</changeSet>
+
+<changeSet id="13" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQFINGUARANTORSDETAILS_bk as select * from SEQFINGUARANTORSDETAILS;
+			 DROP table SEQFINGUARANTORSDETAILS;
+		</sql>
+	</changeSet>
+   		<changeSet id="13.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQFINGUARANTORSDETAILS_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQFINGUARANTORSDETAILS START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	 <changeSet id="13.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 
+			 Update SEQFINGUARANTORSDETAILS_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQFINGUARANTORSDETAILS_bk into ex;
+			 execute 'CREATE SEQUENCE SEQFINGUARANTORSDETAILS START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="13.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQFINGUARANTORSDETAILS_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="14" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQFINGUARANTORSDETAILS_bk  from SEQFINGUARANTORSDETAILS;
+			DROP table SEQFINGUARANTORSDETAILS;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQFINGUARANTORSDETAILS_bk)T);
+			CREATE TABLE SEQFINGUARANTORSDETAILS(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQFINGUARANTORSDETAILS'', RESEED,'+@ex+' )');
+			
+			DROP table SEQFINGUARANTORSDETAILS_bk;
+	</sql>
+</changeSet>
+<changeSet id="15" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQFININSTRUCTION_bk as select * from SEQFININSTRUCTION;
+			 DROP table SEQFININSTRUCTION;
+		</sql>
+	</changeSet>
+   		<changeSet id="15.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQFININSTRUCTION_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQFININSTRUCTION START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="15.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 Insert into  SEQFININSTRUCTION_bk values(1);
+			 Select SeqNo from SEQFININSTRUCTION_bk into ex;
+			 execute 'CREATE SEQUENCE SEQFININSTRUCTION START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="15.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQFININSTRUCTION_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="16" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQFININSTRUCTION_bk  from SEQFININSTRUCTION;
+			DROP table SEQFININSTRUCTION;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQFININSTRUCTION_bk)T);
+			CREATE TABLE SEQFININSTRUCTION(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQFININSTRUCTION'', RESEED,'+@ex+' )');
+			
+			DROP table SEQFININSTRUCTION_bk;
+	</sql>
+</changeSet>
+<changeSet id="17" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQFININSURANCE_bk as select * from SEQFININSURANCE;
+			 DROP table SEQFININSURANCE;
+		</sql>
+	</changeSet>
+   		<changeSet id="17.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQFININSURANCE_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQFININSURANCE START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="17.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 insert into SEQFININSURANCE_bk values(1);
+			 Update SEQFININSURANCE_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQFININSURANCE_bk into ex;
+			 execute 'CREATE SEQUENCE SEQFININSURANCE START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="17.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQFININSURANCE_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="18" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQFININSURANCE_bk  from SEQFININSURANCE;
+			DROP table SEQFININSURANCE;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQFININSURANCE_bk)T);
+			CREATE TABLE SEQFININSURANCE(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQFININSURANCE'', RESEED,'+@ex+' )');
+			
+			DROP table SEQFININSURANCE_bk;
+	</sql>
+</changeSet>
+<changeSet id="19" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQFINJOINTACCOUNTDETAILS_bk as select * from SEQFINJOINTACCOUNTDETAILS;
+			 DROP table SEQFINJOINTACCOUNTDETAILS;
+		</sql>
+	</changeSet>
+   		<changeSet id="19.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQFINJOINTACCOUNTDETAILS_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQFINJOINTACCOUNTDETAILS START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="19.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SEQFINJOINTACCOUNTDETAILS_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQFINJOINTACCOUNTDETAILS_bk into ex;
+			 execute 'CREATE SEQUENCE SEQFINJOINTACCOUNTDETAILS START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="19.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQFINJOINTACCOUNTDETAILS_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="20" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQFINJOINTACCOUNTDETAILS_bk  from SEQFINJOINTACCOUNTDETAILS;
+			DROP table SEQFINJOINTACCOUNTDETAILS;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQFINJOINTACCOUNTDETAILS_bk)T);
+			CREATE TABLE SEQFINJOINTACCOUNTDETAILS(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQFINJOINTACCOUNTDETAILS'', RESEED,'+@ex+' )');
+			
+			DROP table SEQFINJOINTACCOUNTDETAILS_bk;
+	</sql>
+</changeSet>
+<changeSet id="21" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQMANDATES_bk as select * from SEQMANDATES;
+			 DROP table SEQMANDATES;
+		</sql>
+	</changeSet>
+   		<changeSet id="21.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQMANDATES_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQMANDATES START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="21.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SEQMANDATES_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQMANDATES_bk into ex;
+			 execute 'CREATE SEQUENCE SEQMANDATES START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="21.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQMANDATES_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="22" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQMANDATES_bk  from SEQMANDATES;
+			DROP table SEQMANDATES;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQMANDATES_bk)T);
+			CREATE TABLE SEQMANDATES(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQMANDATES'', RESEED,'+@ex+' )');
+			
+			DROP table SEQMANDATES_bk;
+	</sql>
+</changeSet>
+<changeSet id="23" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQLIMITTRANSACTIONDETAILS_bk as select * from SEQLIMITTRANSACTIONDETAILS;
+			 DROP table SEQLIMITTRANSACTIONDETAILS;
+		</sql>
+	</changeSet>
+   		<changeSet id="23.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQLIMITTRANSACTIONDETAILS_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQLIMITTRANSACTIONDETAILS START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="23.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 
+			  Update SEQLIMITTRANSACTIONDETAILS_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQLIMITTRANSACTIONDETAILS_bk into ex;
+			 execute 'CREATE SEQUENCE SEQLIMITTRANSACTIONDETAILS START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="23.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQLIMITTRANSACTIONDETAILS_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="24" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQLIMITTRANSACTIONDETAILS_bk  from SEQLIMITTRANSACTIONDETAILS;
+			DROP table SEQLIMITTRANSACTIONDETAILS;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQLIMITTRANSACTIONDETAILS_bk)T);
+			CREATE TABLE SEQLIMITTRANSACTIONDETAILS(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQLIMITTRANSACTIONDETAILS'', RESEED,'+@ex+' )');
+			
+			DROP table SEQLIMITTRANSACTIONDETAILS_bk;
+	</sql>
+</changeSet>
+<changeSet id="25" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQLIMITREFERENCEMAPPING_bk as select * from SEQLIMITREFERENCEMAPPING;
+			 DROP table SEQLIMITREFERENCEMAPPING;
+		</sql>
+	</changeSet>
+   		<changeSet id="25.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQLIMITREFERENCEMAPPING_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQLIMITREFERENCEMAPPING START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="25.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			  Update SEQLIMITREFERENCEMAPPING_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			   Select SeqNo from SEQLIMITREFERENCEMAPPING_bk into ex;
+			 execute 'CREATE SEQUENCE SEQLIMITREFERENCEMAPPING START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="25.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQLIMITREFERENCEMAPPING_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="26" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQLIMITREFERENCEMAPPING_bk  from SEQLIMITREFERENCEMAPPING;
+			DROP table SEQLIMITREFERENCEMAPPING;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQLIMITREFERENCEMAPPING_bk)T);
+			CREATE TABLE SEQLIMITREFERENCEMAPPING(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQLIMITREFERENCEMAPPING'', RESEED,'+@ex+' )');
+			
+			DROP table SEQLIMITREFERENCEMAPPING_bk;
+	</sql>
+</changeSet>
+<changeSet id="26" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQCOLLATERAL_bk as select * from SEQCOLLATERAL;
+			 DROP table SEQCOLLATERAL;
+		</sql>
+	</changeSet>
+   		<changeSet id="26.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQCOLLATERAL_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQCOLLATERAL START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="26.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			 insert into SEQCOLLATERAL_bk values(1);
+			 Update SEQCOLLATERAL_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			 Select SeqNo from SEQCOLLATERAL_bk into ex;
+			 execute 'CREATE SEQUENCE SEQCOLLATERAL START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="26.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQCOLLATERAL_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="27" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQCOLLATERAL_bk  from SEQCOLLATERAL;
+			DROP table SEQCOLLATERAL;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQCOLLATERAL_bk)T);
+			CREATE TABLE SEQCOLLATERAL(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQCOLLATERAL'', RESEED,'+@ex+' )');
+			
+			DROP table SEQCOLLATERAL_bk;
+	</sql>
+</changeSet>
+<changeSet id="28" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQPOSTINGS_bk as select * from SEQPOSTINGS;
+			 DROP table SEQPOSTINGS;
+		</sql>
+	</changeSet>
+   		<changeSet id="28.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQPOSTINGS_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQPOSTINGS START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="28.1" author="Prasad" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SEQPOSTINGS_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQPOSTINGS_bk into ex;
+			 execute 'CREATE SEQUENCE SEQPOSTINGS START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+			  </sql>
+     		 </changeSet>
+     	<changeSet id="28.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQPOSTINGS_bk;
+		</sql>
+	</changeSet>
+	
+ <changeSet id="29" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQPOSTINGS_bk  from SEQPOSTINGS;
+			DROP table SEQPOSTINGS;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQPOSTINGS_bk)T);
+			CREATE TABLE SEQPOSTINGS(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQPOSTINGS'', RESEED,'+@ex+' )');
+			
+			DROP table SEQPOSTINGS_bk;
+	</sql>
+</changeSet>
+<changeSet id="30" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SeqFinanceScoreHeader_bk as select * from SeqFinanceScoreHeader;
+			 DROP table SeqFinanceScoreHeader;
+		</sql>
+	</changeSet>
+   		<changeSet id="30.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SeqFinanceScoreHeader_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SeqFinanceScoreHeader START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="30.1" author="Subbarao" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SeqFinanceScoreHeader_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SeqFinanceScoreHeader_bk into ex;
+			 execute 'CREATE SEQUENCE SeqFinanceScoreHeader START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+     	</sql>
+     	</changeSet>
+     	<changeSet id="30.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SeqFinanceScoreHeader_bk;
+		</sql>
+	</changeSet>
+ <changeSet id="31" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SeqFinanceScoreHeader_bk  from SeqFinanceScoreHeader;
+			DROP table SeqFinanceScoreHeader;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SeqFinanceScoreHeader_bk)T);
+			CREATE TABLE SeqFinanceScoreHeader(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SeqFinanceScoreHeader'', RESEED,'+@ex+' )');
+			
+			DROP table SeqFinanceScoreHeader_bk;
+	</sql>
+</changeSet>
+<changeSet id="32" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQDOCUMENTDETAILS_bk as select * from SEQDOCUMENTDETAILS;
+			 DROP table SEQDOCUMENTDETAILS;
+		</sql>
+	</changeSet>
+<changeSet id="32.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQDOCUMENTDETAILS_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQDOCUMENTDETAILS START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="32.1" author="Subbarao" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SEQDOCUMENTDETAILS_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQDOCUMENTDETAILS_bk into ex;
+			 execute 'CREATE SEQUENCE SEQDOCUMENTDETAILS START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+     	</sql>
+     	</changeSet>
+     	<changeSet id="32.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQDOCUMENTDETAILS_bk;
+		</sql>
+	</changeSet>
+ <changeSet id="33" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQDOCUMENTDETAILS_bk  from SEQDOCUMENTDETAILS;
+			DROP table SEQDOCUMENTDETAILS;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQDOCUMENTDETAILS_bk)T);
+			CREATE TABLE SEQDOCUMENTDETAILS(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQDOCUMENTDETAILS'', RESEED,'+@ex+' )');
+			
+			DROP table SeqFinanceScoreHeader_bk;
+	</sql>
+</changeSet>
+<changeSet id="34" author="Subbarao" dbms="oracle, postgresql">
+		<sql>
+			 Create table SEQSECLOGINLOG_bk as select * from SEQSECLOGINLOG;
+			 DROP table SEQSECLOGINLOG;
+		</sql>
+	</changeSet>
+<changeSet id="34.1" author="Subbarao" dbms="oracle">	
+   		<sql splitStatements="false">
+   			 declare ex number;
+     		 begin
+     		 Select MAX(SeqNo)+1 into ex  from (Select SeqNo from SEQSECLOGINLOG_bk )T;
+         	 execute immediate 'CREATE SEQUENCE SEQSECLOGINLOG START WITH ' || ex || ' INCREMENT BY 1 MAXVALUE 9223372036854775807 NOCYCLE';  
+     		 end;  
+     	</sql>
+     	</changeSet>
+     	<changeSet id="34.1" author="Subbarao" dbms="postgresql">	
+   		<sql splitStatements="false">
+   			do $$
+			 declare ex integer;
+			 begin
+			
+			 Update SEQSECLOGINLOG_bk set SeqNo= (case when SeqNo=0 then 1 else SeqNo end);
+			  Select SeqNo from SEQSECLOGINLOG_bk into ex;
+			 execute 'CREATE SEQUENCE SEQSECLOGINLOG START  ' || ex || ' INCREMENT BY 1 ';  
+			 end;  
+			$$;
+     	</sql>
+     	</changeSet>
+     	<changeSet id="34.2" author="Subbarao" dbms="oracle, postgresql">	
+   		<sql>	 
+     		 DROP table SEQSECLOGINLOG_bk;
+		</sql>
+	</changeSet>
+ <changeSet id="35" author="Subbarao" dbms="mssql">
+		<sql splitStatements="false">
+			
+			Select * into SEQSECLOGINLOG_bk  from SEQSECLOGINLOG;
+			DROP table SEQSECLOGINLOG;
+   			
+			Declare @ex bigint;
+			Set  @ex = (Select MAX(SeqNo)+1 from (Select SeqNo from SEQSECLOGINLOG_bk)T);
+			CREATE TABLE SEQSECLOGINLOG(
+			SeqNo 				bigint IDENTITY(1,1) NOT NULL,
+			Value 				int NOT NULL
+			);	
+		
+			Exec('DBCC CHECKIDENT(''SEQSECLOGINLOG'', RESEED,'+@ex+' )');
+			
+			DROP table SEQSECLOGINLOG_bk;
+	</sql>
+</changeSet>
+<changeSet id="36.1" author="prasad">
+	<sql>
+	CREATE INDEX IX_UO_UID_OID ON SECUSEROPERATIONS (USRID ASC, OPRID ASC);
+	CREATE INDEX IX_OR_OID_RID ON SecOperationRoles (OprID ASC, RoleID ASC);
+	CREATE INDEX IX_R_RA ON SecRoles (RoleApp ASC);
+	</sql>
+	</changeSet>
+<changeSet id="36.2" author="prasad">
+	<sql>
+	CREATE INDEX IX_WFSD_FR ON WIFFINSCHEDULEDETAILS (FINREFERENCE ASC);
+	CREATE INDEX IX_CUST_ID_CRCPR ON CUSTOMERS (CUSTID ASC, CUSTCRCPR ASC);
+	CREATE INDEX IX_CUST_T_ID_CRCPR ON CUSTOMERS_TEMP (CUSTID ASC, CUSTCRCPR ASC);
+	CREATE INDEX IX_CUST_T_CIF ON CUSTOMERS_TEMP (CUSTCIF ASC);
+	</sql>
+	</changeSet>
+</databaseChangeLog>

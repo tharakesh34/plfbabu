@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	
+	<changeSet id="1" author="Surekha">
+		<sql>
+		  update RMTAccountTypes set OnBalanceSheet=0 ;
+		  update RMTAccountTypes_Temp set OnBalanceSheet=0;
+	  </sql>
+	</changeSet>
+	<changeSet id="2" author="Surekha">
+		<sql>
+		  update RMTAccountTypes set AllowOverDraw=0 ;
+		  update RMTAccountTypes_Temp set AllowOverDraw=0;
+	  </sql>
+	</changeSet>
+	
+	<changeSet id="3" author="Siva">
+		<sql>
+					
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+			-- Security Groups Creation
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_POSTPONEMENT_MAKER', 'Allowed for Postponement Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_POSTPONEMENT_APPROVER', 'Allowed for Postponement Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+					
+			-- Security Role Groups
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_POSTPONEMENT_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_POSTPONEMENT_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			
+			-- Security Group Rights
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnPostponement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_Postponement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_Postponement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_POSTPONEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+	<changeSet id="4" author="Surekha">
+		<addColumn tableName="BMTBankDetail">
+			<column name="AccNoLength" type="int" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	
+	</changeSet>
+	<changeSet id="5" author="Surekha">
+		<addColumn tableName="BMTBankDetail_Temp">
+			<column name="AccNoLength" type="int" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="6" author="Surekha">
+		<createView viewName="BMTBankDetail_View" replaceIfExists="true">
+			SELECT		BankCode, BankName, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail_TEMP
+				UNION ALL
+				SELECT		BankCode, BankName, Active				
+							, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+							RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+				WHERE     NOT EXISTS (SELECT 1 FROM BMTBankDetail_TEMP WHERE BankCode = BMTBankDetail.BankCode)
+		</createView>
+	</changeSet>
+	<changeSet id="7" author="Surekha">
+		<createView viewName="BMTBankDetail_AView" replaceIfExists="true">
+			SELECT		BankCode, BankName, Active	
+			, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, 
+			RecordType, WorkflowId,AccNoLength
+				FROM    	BMTBankDetail
+		</createView>
+	</changeSet>
+	<changeSet id="8" author="Surekha">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankDetailDialog_accNoLength','BankDetailDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKDETAIL_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankDetailDialog_accNoLength'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);																		
+		</sql>
+	</changeSet>
+	<changeSet id="9" author="Irfan">
+	<addColumn tableName="FinanceMain">
+	<column name="AvailedUnPlanEmi" type="int"/>
+	<column name="AvailedReAgeH" type="int"/>
+	</addColumn>
+	</changeSet>
+	<changeSet id="10" author="Irfan">
+	<addColumn tableName="FinanceMain_Temp">
+	<column name="AvailedUnPlanEmi" type="int"/>
+	<column name="AvailedReAgeH" type="int"/>
+	</addColumn>
+	</changeSet>
+	<changeSet id="11" author="Irfan">
+	<addColumn tableName="FinanceMain_PA">
+	<column name="AvailedUnPlanEmi" type="int"/>
+	<column name="AvailedReAgeH" type="int"/>
+	</addColumn>
+	</changeSet>
+	<changeSet id="12" author="Irfan">
+	<addColumn tableName="RejectFinanceMain">
+	<column name="AvailedUnPlanEmi" type="int"/>
+	<column name="AvailedReAgeH" type="int"/>
+	</addColumn>
+	</changeSet>
+	
+	<changeSet id="13" author="Irfan">
+		<createView viewName="FinanceMain_View" replaceIfExists="true">
+			SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                     T7.FinTypeDesc lovDescFinTypeName, 
+                      T7.FinMaxAmount lovDescFinMaxAmt, T7.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T7.FinIsAlwDifferment lovDescFinAlwDeferment, T7.FinIsDwPayRequired lovDescDwnPayReq, T7.FinMaxDifferment lovDescFinMaxDifferment, 
+                      T12.BranchDesc lovDescFinBranchName, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate, 
+                     T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, 
+                        T17.AcrTillLBD lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor, T7.FinGrcRvwRateApplFor, T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, 
+                      T1.ScheduleRegenerated, T1.FinPurpose, T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T7.FinScheduleOn LovDescFinScheduleOn, T1.CustDSR, 
+                     T1.JointAccount, T1.JointCustId, 
+                      T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,  T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T7.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                     T1.SupplementRent, T1.IncreasedCost,  T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T1.DSACode,T30.ROfficerDesc DSACodeDesc,
+					 T1.TDSApplicable, T32.ProductCategory,T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,
+					  T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH
+						FROM         FinanceMain_Temp T1   INNER JOIN
+                      RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                      RMTBranches T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE LEFT OUTER JOIN
+                      StepPolicyHeader T24 ON T1.StepPolicy = T24.PolicyCode LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN
+                      RMTGenDepartments T28 ON T1.AccountsOfficer = T28.GenDepartment LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN 
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T35 ON T1.SalesDepartment = T35.GenDepartment INNER JOIN  
+                      BMTProduct T32 ON T7.FinCategory = T32.ProductCode 
+			 
+	UNION ALL
+			SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                     T7.FinTypeDesc lovDescFinTypeName, 
+                      T7.FinMaxAmount lovDescFinMaxAmt, T7.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T7.FinIsAlwDifferment lovDescFinAlwDeferment, T7.FinIsDwPayRequired lovDescDwnPayReq, T7.FinMaxDifferment lovDescFinMaxDifferment, 
+                      T12.BranchDesc lovDescFinBranchName, T1.LastRepayDate, 
+                      T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate, 
+                     T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount, 
+                        T17.AcrTillLBD lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor, T7.FinGrcRvwRateApplFor, T1.TotalRepayAmt, 
+                      T1.ClosingStatus, T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, 
+                      T1.ScheduleRegenerated, T1.FinPurpose, T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T7.FinScheduleOn LovDescFinScheduleOn, T1.CustDSR,  
+                     T1.JointAccount, T1.JointCustId, 
+                      T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,  T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T7.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                     T1.SupplementRent, T1.IncreasedCost,  T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T1.DSACode,T30.ROfficerDesc DSACodeDesc,
+					 T1.TDSApplicable, T32.ProductCategory,T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,
+					  T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes T7 ON T1.FinType = T7.FinType LEFT OUTER JOIN
+                      RMTBranches T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE LEFT OUTER JOIN
+                      StepPolicyHeader T24 ON T1.StepPolicy = T24.PolicyCode LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN
+                      RMTGenDepartments T28 ON T1.AccountsOfficer = T28.GenDepartment LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN 
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T35 ON T1.SalesDepartment = T35.GenDepartment  INNER JOIN 
+                      BMTProduct T32 ON T7.FinCategory = T32.ProductCode 
+						WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM          FinanceMain_Temp
+                            WHERE      (FINREFERENCE = T1.FINREFERENCE)))
+                            </createView>
+	</changeSet>
+		<changeSet id="14" author="Irfan">
+	<createView viewName="FinanceMain_TView" replaceIfExists="true">
+		SELECT     T1.FinReference, T1.InvestmentRef, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, 
+                      T1.GrcPftFrq, T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, 
+                      T1.RepayBaseRate, T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, 
+                      T1.RepayRvwFrq, T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, 
+                      T1.GraceFlatAmount, T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, 
+                      T1.RepayRateBasis, T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, 
+                      T1.LastRepay, T1.FinStartDate, T1.FinAmount,  T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T2.FinTypeDesc lovDescFinTypeName, T2.FinMaxAmount lovDescFinMaxAmt, T2.FinMinAmount lovDescFinMinAmount, T1.MinDownpayPerc, 
+                      T4.BranchDesc lovDescFinBranchName, T1.LastRepayDate,  T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate,  
+                      T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef,
+                      T1.DepreciationFrq, T1.FinContractDate,  T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,  
+                      T1.TotalRepayAmt,T1.FinApprovedDate, T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                       T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose,T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.BankName, T1.iban, 
+                      T1.AccountType, T1.DdaReferenceNo, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, 
+                      T1.SecurityCollateral,  T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.GraceTerms, 
+                      T2.FinDivision lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps, T1.LinkedFinRef, T1.NextUserId, T1.Priority, T5.PolicyDesc LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                     T1.DeviationApproval,T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                      T1.SupplementRent, T1.IncreasedCost, T1.CreditInsAmt, T1.RolloverFrq, 
+                      T1.NextRolloverDate,  T1.ShariaStatus, T1.InitiateDate, T1.FinPreApprovedRef, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId, T1.FinCancelAc, T6.GenDeptDesc lovDescAccountsOfficer,T1.DSACode,T7.ROfficerDesc DSACodeDesc,
+					  T1.TDSApplicable, T3.ProductCategory,T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T8.ROfficerDesc ReferralIdDesc, T1.DmaCode , T9.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T10.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH
+			FROM         FinanceMain_Temp T1 INNER JOIN
+                      RMTFinanceTypes T2 ON T1.FinType = T2.FinType  INNER JOIN
+                      BMTProduct T3 ON T2.FinCategory = T3.ProductCode INNER JOIN
+                      RMTBranches T4 ON T1.FinBranch = T4.BranchCode LEFT OUTER JOIN
+                      StepPolicyHeader T5 ON T1.StepPolicy = T5.PolicyCode LEFT OUTER JOIN
+                      RMTGenDepartments T6 ON T1.AccountsOfficer = T6.GenDepartment LEFT OUTER JOIN
+					  RelationshipOfficers T7 ON T1.DSACode = T7.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T8 ON T1.ReferralId = T8.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T9 ON T1.DmaCode = T9.ROfficerCode LEFT OUTER JOIN
+					  RMTGenDepartments T10 ON T1.SalesDepartment = T10.GenDepartment
+		 </createView>
+	</changeSet>
+	
+	<changeSet id="15" author="Irfan">
+	<createView viewName="FinanceMain_AView" replaceIfExists="true">
+	SELECT     T1.FinReference, T1.NumberOfTerms, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.GraceBaseRate, T1.GraceSpecialRate, T1.GrcPftRate, T1.GrcPftFrq, 
+                      T1.NextGrcPftDate, T1.AllowGrcPftRvw, T1.GrcPftRvwFrq, T1.NextGrcPftRvwDate, T1.AllowGrcCpz, T1.GrcCpzFrq, T1.NextGrcCpzDate, T1.RepayBaseRate, 
+                      T1.RepaySpecialRate, T1.RepayProfitRate, T1.RepayFrq, T1.NextRepayDate, T1.RepayPftFrq, T1.NextRepayPftDate, T1.AllowRepayRvw, T1.RepayRvwFrq, 
+                      T1.NextRepayRvwDate, T1.AllowRepayCpz, T1.RepayCpzFrq, T1.NextRepayCpzDate, T1.MaturityDate, T1.CpzAtGraceEnd, T1.DownPayment, T1.GraceFlatAmount, 
+                      T1.ReqRepayAmount, T1.TotalProfit, T1.TotalCpz, T1.TotalGrossPft, T1.TotalGrossGrcPft, T1.TotalGracePft, T1.TotalGraceCpz, T1.GrcRateBasis, T1.RepayRateBasis, 
+                      T1.FinType, T1.FinRemarks, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, T1.ReqMaturity, T1.CalTerms, T1.CalMaturity, T1.FirstRepay, T1.LastRepay, 
+                      T1.FinStartDate, T1.FinAmount, T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment  lovDescFinancingAmount, T1.FinRepaymentAmount, T1.CustID, 
+                      T1.Defferments, T1.PlanDeferCount, T1.FinBranch, T1.FinSourceID, T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.AllowedDefFrqChange, 
+                      T1.AvailedDefFrqChange, T1.RecalType, T1.FinAssetValue, T1.DisbAccountId, T1.RepayAccountId, T1.FinIsActive, T1.LimitValid, T1.OverrideLimit, T1.SecurityDeposit, 
+                      T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, 
+                      T7.FinTypeDesc  lovDescFinTypeName, T7.FinMaxAmount  lovDescFinMaxAmt, T7.FinMinAmount  lovDescFinMinAmount, 
+                      T1.MinDownpayPerc, T7.FinIsAlwDifferment  lovDescFinAlwDeferment, T7.FinIsDwPayRequired  lovDescDwnPayReq, 
+                      T7.FinMaxDifferment  lovDescFinMaxDifferment,T12.BranchDesc  lovDescFinBranchName, T1.LastRepayDate, T1.LastRepayPftDate, T1.LastRepayRvwDate, T1.LastRepayCpzDate, 
+                       T1.AllowGrcRepay, T1.GrcSchdMthd, T1.GrcMargin, T1.RepayMargin, T1.FinCurrAssetValue, T1.FinCommitmentRef, T1.FinLimitRef, T1.DepreciationFrq, T1.FinContractDate, 
+                      T1.NextDepDate, T1.LastDepDate, T1.FinAccount, T1.FinCustPftAccount,   T17.AcrTillLBD  lovDescAccruedTillLBD, 
+                      T7.FinRvwRateApplFor, T7.FinGrcRvwRateApplFor, T1.TotalRepayAmt, T1.ClosingStatus, T1.FinApprovedDate, 
+                      T1.FeeChargeAmt, T1.Blacklisted, T1.FinRepayPftOnFrq, T1.AnualizedPercRate, T1.EffectiveRateOfReturn, 
+                     T1.MigratedFinance, T1.ScheduleMaintained, T1.ScheduleRegenerated, T1.FinPurpose, 
+                     T1.FinStatus, T1.FinStsReason, T1.InitiateUser, T1.bankName, T1.iban, T1.accountType, T1.DdaReferenceNo, 
+                      T7.FinScheduleOn  LovDescFinScheduleOn, T1.CustDSR,
+                      T1.JointAccount, T1.JointCustId, T1.DownPayBank, T1.DownPaySupl, T1.DownPayAccount, T1.SecurityCollateral, 
+                       T1.Approved,   T1.Discrepancy, T1.LimitApproved, T1.InvestmentRef, T1.GraceTerms, 
+                      T7.FinDivision  lovDescFinDivision, T1.RcdMaintainSts, T1.FinRepayMethod, T1.GrcProfitDaysBasis, T1.StepFinance,T1.StepType, T1.StepPolicy, T1.AlwManualSteps, 
+                      T1.NoOfSteps,  T1.LinkedFinRef, T1.NextUserId, T1.Priority, T24.PolicyDesc  LovDescStepPolicyName, T1.GrcMinRate, T1.GrcMaxRate, T1.RpyMinRate, T1.RpyMaxRate, 
+                      T1.DeviationApproval, T1.ManualSchedule, T1.TakeOverFinance, T1.GrcAdvBaseRate, T1.GrcAdvMargin, T1.GrcAdvPftRate, T1.RpyAdvBaseRate, T1.RpyAdvMargin, T1.RpyAdvPftRate, 
+                    T1.SupplementRent, T1.IncreasedCost, T1.RolloverFrq, 
+                      T1.NextRolloverDate, T27.CustStsDescription, T1.ShariaStatus, T1.InitiateDate, T1.FINPREAPPROVEDREF, T1.MMAId, T1.AccountsOfficer, 
+                      T1.feeAccountId,T1.FinCancelAc,T28.GenDeptDesc lovDescAccountsOfficer,T29.AgreeName,T29.MMAReference LovDescMMAReference,
+					  T1.DSACode,T30.ROfficerDesc DSACodeDesc,T1.TDSApplicable,  T32.ProductCategory,T1.MandateID,T1.DroplineFrq,T1.FirstDroplineDate,
+					  T1.PftServicingODLimit,T1.InsuranceAmt,T1.DeductInsDisb,T1.AlwBPI , T1.BpiTreatment , T1.PlanEMIHAlw , T1.PlanEMIHMethod , 
+					  T1.PlanEMIHMaxPerYear , T1.PlanEMIHMax , T1.PlanEMIHLockPeriod , T1.PlanEMICpz , T1.CalRoundingMode , T1.AlwMultiDisb , T1.ApplicationNo ,
+					  T1.ReferralId , T33.ROfficerDesc ReferralIdDesc, T1.DmaCode , T34.ROfficerDesc DmaCodeDesc,  T1.SalesDepartment , T35.GenDeptDesc SalesDepartmentDesc , T1.QuickDisb , T1.WifReference,
+					  T1.UnPlanEMIHLockPeriod , T1.UnPlanEMICpz, T1.ReAgeCpz, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays, T1.AvailedUnPlanEmi, T1.AvailedReAgeH
+						FROM         FinanceMain T1 INNER JOIN
+                      RMTFinanceTypes  T7 ON T1.FinType = T7.FinType  LEFT OUTER JOIN
+                      RMTBranches  T12 ON T1.FinBranch = T12.BranchCode LEFT OUTER JOIN
+                      FinPftDetails  T17 ON T17.FinReference = T1.FinReference LEFT OUTER JOIN
+                      StepPolicyHeader  T24 ON T1.StepPolicy = T24.PolicyCode  LEFT OUTER JOIN
+                      BMTCustStatusCodes T27 ON T1.finStatus = T27.CustStsCode LEFT OUTER JOIN 
+					  RMTGENDEPARTMENTS T28 ON T1.ACCOUNTSOFFICER = T28.GENDEPARTMENT LEFT OUTER JOIN
+					  MMAgreements T29 ON T1.MMAId = T29.MMAId LEFT OUTER JOIN
+					  RelationshipOfficers T30 ON T1.DSACode = T30.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T33 ON T1.ReferralId = T33.ROfficerCode LEFT OUTER JOIN
+					  RelationshipOfficers T34 ON T1.DmaCode = T34.ROfficerCode LEFT OUTER JOIN
+					  RMTGENDEPARTMENTS T35 ON T1.SalesDepartment = T35.GENDEPARTMENT  INNER JOIN  
+                      BMTProduct T32 ON T7.FinCategory = T32.ProductCode
+		 </createView>
+	</changeSet>
+	
+<changeSet id="16" author="Irfan">
+	<createView viewName="FinanceMaintenance_View" replaceIfExists="true">	
+	SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision, T1.RepayRateBasis,
+                   T1.ManualSchedule , T1.TakeOverFinance , T1.NextRolloverDate,
+                   COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		   T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF, T1.AvailedUnPlanEmi, T1.AvailedReAgeH
+                  
+            FROM           FinanceMain_Temp T1 INNER JOIN
+			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+
+ UNION ALL
+SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt,T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,  
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision,  T1.RepayRateBasis ,
+                   T1.ManualSchedule , T1.TakeOverFinance  , T1.NextRolloverDate,
+                    COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		    T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF,  T1.AvailedUnPlanEmi, T1.AvailedReAgeH
+            FROM           FinanceMain T1 INNER JOIN
+	    			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FinanceMain_Temp
+                            WHERE      (FinReference = T1.FinReference)))
+		 </createView>
+	</changeSet>
+	<changeSet id="17" author="Irfan">
+	<sql>
+	  update RejectFinanceMain set AvailedUnPlanEmi=0 ;
+	  update RejectFinanceMain set AvailedReAgeH=0 ;
+	  update FinanceMain set AvailedUnPlanEmi=0 ;
+	  update FinanceMain set AvailedReAgeH=0 ;
+	  update FinanceMain_Temp set AvailedUnPlanEmi=0 ;
+	  update FinanceMain_Temp set AvailedReAgeH=0 ;
+	  update FinanceMain_PA set AvailedUnPlanEmi=0 ;
+	  update FinanceMain_PA set AvailedReAgeH=0 ;
+	  </sql>
+	  </changeSet>
+	  <changeSet id="18" author="Irfan">
+	<createView viewName="FinanceMaintenance_View" replaceIfExists="true">	
+	SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt, T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision, T1.RepayRateBasis,
+                   T1.ManualSchedule , T1.TakeOverFinance , T1.NextRolloverDate,
+                   COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		   T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF, T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays
+                  
+            FROM           FinanceMain_Temp T1 INNER JOIN
+			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+
+ UNION ALL
+SELECT      T1.FinReference, T1.FinBranch, T1.FinType, T1.FinCcy, T1.ScheduleMethod, T1.ProfitDaysBasis, 
+                  T1.FinStartDate, T1.NumberOfTerms, T1.CustID, T1.FinAmount, T1.MaturityDate, T1.FinRepaymentAmount, 
+                  T1.FinIsActive, T1.Blacklisted, T1.FeeChargeAmt,T1.InsuranceAmt, T1.GraceTerms,T1.AllowGrcPeriod,T1.GrcPeriodEndDate,  
+                  T1.AlwMultiDisb, T3.FinIsAlwDifferment lovDescFinAlwDeferment,T1.Defferments, 
+                  T1.NextRoleCode, T1.RecordStatus, T1.RecordType, T1.allowgrcpftrvw, T1.allowrepayrvw, T1.lastrepaydate, T1.lastrepaypftdate,
+                  T1.AllowedDefRpyChange, T1.AvailedDefRpyChange, T1.RcdMaintainSts, T1.MigratedFinance, T1.ClosingStatus, T3.FinDivision LovDescFinDivision,  T1.RepayRateBasis ,
+                   T1.ManualSchedule , T1.TakeOverFinance  , T1.NextRolloverDate,
+                    COALESCE(T5.RoleDesc, ${add.schema}FN_GET_ROLEDESC(T1.NextRoleCode)) LovDescRequestStage,T1.DownPayment,
+		    T4.ProductCategory, T3.FinCategory LovDescProductCodeName, T2.CustCIF LovDescCustCIF,  T1.AvailedUnPlanEmi, T1.AvailedReAgeH, T1.MaxUnplannedEmi, T1.MaxReAgeHolidays
+            FROM           FinanceMain T1 INNER JOIN
+	    			Customers T2 ON T1.CustId = T2.CustId INNER JOIN
+                       RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN
+              SecRoles T5 ON T1.NextRoleCode = T5.RoleCd INNER JOIN
+                       BMTProduct T4 ON T3.FinCategory = T4.ProductCode
+WHERE     (NOT EXISTS
+                          (SELECT     1 Expr1
+                            FROM           FinanceMain_Temp
+                            WHERE      (FinReference = T1.FinReference)))
+		 </createView>
+	</changeSet>
+
+	<changeSet id="19" author="Siva">
+		<sql>
+			Update LMTFinanceWorkFlowDef set FinEvent = 'Postponement' where FinEvent = 'AddDefferment';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="20" author="Siva">
+		<sql>
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		
+		-- Security Groups Creation
+		
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_UNPLANEMIH_MAKER', 'Allowed for UnPlanned EMI Holidays Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_UNPLANEMIH_APPROVER', 'Allowed for UnPlanned EMI Holidays Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+		-- Security Role Groups
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_UNPLANEMIH_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_UNPLANEMIH_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		
+		--Sec rights
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinanceMainDialog_btnUnPlanEMIH','FinanceMainDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_FinanceManagement_UnPlannedEmi','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		
+		-- Security Group Rights
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnUnPlanEMIH'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_UnPlannedEmi'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_UnPlannedEmi'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_UNPLANEMIH_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceMainDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		</sql>
+	</changeSet>
+
+	<!--  <changeSet id="21" author="Surekha">
+		<addColumn tableName="BankBranches">
+			<column name="AddOfBranch" type="varchar(100)" />
+			<column name="Nach" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dd" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dda" type="boolean" defaultValueBoolean="false"/>
+			<column name="Ecs" type="boolean" defaultValueBoolean="false"/>
+			<column name="Cheque" type="boolean" defaultValueBoolean="false"/>
+			<column name="Active" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="22" author="Surekha">
+		<addColumn tableName="BankBranches_Temp">
+			<column name="AddOfBranch" type="varchar(100)" />
+			<column name="Nach" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dd" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dda" type="boolean" defaultValueBoolean="false"/>
+			<column name="Ecs" type="boolean" defaultValueBoolean="false"/>
+			<column name="Cheque" type="boolean" defaultValueBoolean="false"/>
+			<column name="Active" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet> -->
+	<changeSet id="21" author="Surekha">
+		<addColumn tableName="BankBranches">
+			<column name="AddOfBranch" type="varchar(100)" />
+			<column name="Nach" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dd" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dda" type="boolean" defaultValueBoolean="false"/>
+			<column name="Ecs" type="boolean" defaultValueBoolean="false"/>
+			<column name="Cheque" type="boolean" defaultValueBoolean="false"/>
+			<column name="Active" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="22" author="Surekha">
+		<addColumn tableName="BankBranches_Temp">
+			<column name="AddOfBranch" type="varchar(100)" />
+			<column name="Nach" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dd" type="boolean" defaultValueBoolean="false"/>
+			<column name="Dda" type="boolean" defaultValueBoolean="false"/>
+			<column name="Ecs" type="boolean" defaultValueBoolean="false"/>
+			<column name="Cheque" type="boolean" defaultValueBoolean="false"/>
+			<column name="Active" type="boolean" defaultValueBoolean="false"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="23" author="Surekha">
+		<createView viewName="BankBranches_View" replaceIfExists="true">
+			 	  	SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,t1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
+						, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				FROM    	BankBranches_Temp T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode 
+				UNION ALL
+			
+				SELECT		T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City, T1.MICR, T1.IFSC,T2.BankName, T1.ECS,t1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
+						, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				FROM    	BankBranches T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode 
+				WHERE     NOT EXISTS (SELECT 1 FROM BankBranches_TEMP WHERE BankBranchID = T1.BankBranchID)
+		</createView>
+	</changeSet>
+	<changeSet id="24" author="Surekha">
+		<createView viewName="BankBranches_TView" replaceIfExists="true">
+			 	  	SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,t1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
+						, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				FROM    	BankBranches_Temp T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode 
+		</createView>
+	</changeSet>
+	<changeSet id="25" author="Surekha">
+		<createView viewName="BankBranches_AView" replaceIfExists="true">
+			 	  	SELECT T1.BankBranchID, T1.BankCode, T1.BranchCode, T1.BranchDesc, T1.City, T1.MICR, T1.IFSC,T2.BankName,T1.ECS,t1.DDA,T1.NACH,T1.DD,T1.AddOfBranch,T1.Cheque,T1.Active
+						, T1.Version , T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				FROM    	BankBranches T1 INNER JOIN
+			            BMTBankDetail T2  ON T1.BankCode=T2.BankCode 
+		</createView>
+	</changeSet>
+	<changeSet id="26" author="Surekha">
+		<sql>
+		  update BankBranches set Nach=0 ;
+		  update BankBranches set Dd=0 ;
+		  update BankBranches set Dda=0 ;
+		  update BankBranches set Ecs=0 ;
+		  update BankBranches set Cheque=0 ;
+		  update BankBranches set Active=0 ;
+		  update BankBranches_Temp set Nach=0;
+		  update BankBranches_Temp set Dd=0;
+		  update BankBranches_Temp set Dda=0;
+		  update BankBranches_Temp set Ecs=0;
+		  update BankBranches_Temp set Cheque=0;
+		  update BankBranches_Temp set Active=0;
+	  </sql>
+	</changeSet>
+	<changeSet id="27" author="Surekha">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_AddOfBranch','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_ECS','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_DDA','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_DD','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_NACH','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_Cheque','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'BankBranchDialog_Active','BankBranchDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_AddOfBranch'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_ECS'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_DDA'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_DD'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_NACH'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_Cheque'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BANKBRANCH_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='BankBranchDialog_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);																		
+		</sql>
+	</changeSet>
+	
+		<changeSet id="28" author="satish">
+	<insert tableName="ErrorDetails">
+			<column name="ErrorCode">60405</column>
+			<column name="ErrorLanguage">EN</column>
+			<column name="ErrorSeverity">E</column>
+			<column name="ErrorMessage">Multiple disbursement not allowed in quick disbursement.</column>
+			<column name="ErrorExtendedMessage"></column>
+			<column name="RecordStatus">Approved</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>
+			<column name="RecordType"></column>
+			<column name="WorkflowId">0</column>
+			<column name="LastMntOn"></column>
+			<column name="LastMntBy">1000</column>
+			<column name="Version">0</column>
+</insert>
+	</changeSet>
+	
+	<changeSet id="29" author="Siva">
+		<sql>
+					
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+		
+		-- sec groups
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_MANUALREPAY_MAKER', 'Allowed for Finance Manual Repayment Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_MANUALREPAY_APPROVER', 'Allowed for Finance Manual Repayment Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_EARLYSETTLEMENT_MAKER', 'Allowed for Early Settlement Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_EARLYSETTLEMENT_APPROVER', 'Allowed for Early Settlement Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_PARTSETTLE_MAKER', 'Finance Partial Settlement Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FIN_PARTSETTLE_APPROVER', 'Finance Partial Settlement Approver', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+		
+		-- Sec Role groups
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_MANUALREPAY_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_MANUALREPAY_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_EARLYSETTLEMENT_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_EARLYSETTLEMENT_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_PARTSETTLE_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_OFFICER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='FIN_PARTSETTLE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='OPERATIONS_MANAGER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+		
+		-- Sec Group Rights
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_paymentApportionment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_SchdlRepayment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_SchdlRepayment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnPay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnPay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnChangeRepay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnCalRepay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_RepayAccount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_RepayAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_refundPft'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_MANUALREPAY_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_EarlyPayDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_AdvRepayment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_AdvRepayment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_paymentApportionment'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_EarlySettlement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_EarlySettlement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuCat_FinanceManagement'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnPay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnPay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnPay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnPay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnChangeRepay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_ManualPaymentDialog_btnCalRepay'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_RepayAccount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_RepayAccount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_RepayAmount'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_refundPft'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_refundPft'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_insRefund'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_PARTSETTLE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_EarlyPayDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FIN_EARLYSETTLEMENT_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ManualPaymentDialog_EarlyPayDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		
+		UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);																		
+		</sql>
+	</changeSet>
+	<changeSet id="30" author="Siva">
+		<sql>
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_LOAN_ENQUIRY') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Enquiry_EarlySettlementEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="31" author="Chaitanya.ch">
+		<sql>
+		Delete from secRoleGroups where RoleID In (select RoleID from secRoles where RoleCd = 'CL_DISB_CO_MAKER') and GrpID IN (Select GrpID from secGroups where GrpCode = 'CL_ORIGINATION_MAKER');
+		Insert into secRoleGroups Values((Select max(RoleGrpID) +1  from secRoleGroups), 
+		(select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'),
+		(Select RoleID from secRoles where RoleCd = 'CL_DISB_CO_MAKER'), 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+		UPDATE SEQsecRoleGroups SET SEQNO = (SELECT MAX(RoleGrpID) FROM secRoleGroups); 
+		</sql>
+	</changeSet>
+	
+		<changeSet id="32" author="Chaitanya.ch">
+		<sql>
+		Delete from SecGroupRights where GrpID IN (select GrpID from secGroups where GrpCode = 'CL_ORIGINATION_MAKER')and 
+		RightId in (select rightId from secRights where RightName = 'FinFeeDetailListCtrl_AlwFeeMaintenance');
+		Insert into SecGroupRights Values((Select max(GrpRightID) +1  from SecGroupRights), 
+		(select GrpID from SecGroups where GrpCode = 'CL_ORIGINATION_MAKER'),
+		(Select RightId from SecRights where RightName = 'FinFeeDetailListCtrl_AlwFeeMaintenance'), 1, 0, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+		</sql>
+	</changeSet>
+	<changeSet id="33" author="SreeRavali">
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'ReinstateFinance_Approver', 'ReinstateFinance Approver ', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'ReinstateFinance_Maker', 'ReinstateFinance Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+
+			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((Select max(GrpRightID) + 1 from SecGroupRights),(Select  grpid from secgroups where GrpCode='ReinstateFinance_Maker'),(select rightid from secrights where rightname ='menuItem_FinanceManagement_ReinstateFinance'),1,0,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((Select max(GrpRightID) + 1 from SecGroupRights),(Select  grpid from secgroups where GrpCode='ReinstateFinance_Maker'),(select rightid from secrights where rightname ='button_ReinstateFinanceList_NewReinstateFinance'),1,0,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((Select max(GrpRightID) + 1 from SecGroupRights),(Select  grpid from secgroups where GrpCode='ReinstateFinance_Maker'),(select rightid from secrights where rightname ='button_ReinstateFinanceDialog_btnDelete'),1,0,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((Select max(GrpRightID) + 1 from SecGroupRights),(Select  grpid from secgroups where GrpCode='ReinstateFinance_Maker'),(select rightid from secrights where rightname ='button_ReinstateFinanceDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+
+			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((Select max(GrpRightID) + 1 from SecGroupRights),(Select  grpid from secgroups where GrpCode='ReinstateFinance_Approver'),(select rightid from secrights where rightname ='menuItem_FinanceManagement_ReinstateFinance'),1,0,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((Select max(GrpRightID) + 1 from SecGroupRights),(Select  grpid from secgroups where GrpCode='ReinstateFinance_Approver'),(select rightid from secrights where rightname ='button_ReinstateFinanceDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'ReinstateFinance_Maker'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'OPERATIONS_OFFICER'), 0, 1000, null, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'ReinstateFinance_Approver'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'OPERATIONS_MANAGER'), 0, 1000, null, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			
+		</sql>
+	</changeSet>
+		
+	</databaseChangeLog>

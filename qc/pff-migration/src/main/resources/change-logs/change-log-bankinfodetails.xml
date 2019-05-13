@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+<changeSet id="1" author="Vinay">
+		<createTable tableName="BankInfoDetail">
+			<column name="BankId" type="bigint">
+			<constraints nullable="false" foreignKeyName="FK_BankInfoDetail_BankId" references="CustomerBankInfo(BankId)"/>
+			</column>
+			<column name="MonthYear" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Balance" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="DebitNo" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="DebitAmt" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="CreditNo" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="CreditAmt" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="BounceIn" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="BounceOut" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="ClosingBal" type="decimal(18,0)" />
+			<column name="ODCCLimit" type="decimal(18,0)" />
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>	
+		</createTable>
+	</changeSet>
+	<changeSet id="2" author="Vinay">
+		<createTable tableName="BankInfoDetail_Temp">
+			<column name="BankId" type="bigint">
+			<constraints nullable="false" foreignKeyName="FK_BankInfoDetail_Temp_BankId" references="CustomerBankInfo(BankId)"/>
+			</column>
+			<column name="MonthYear" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Balance" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="DebitNo" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="DebitAmt" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="CreditNo" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="CreditAmt" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="BounceIn" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="BounceOut" type="decimal(18,0)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="ClosingBal" type="decimal(18,0)" />
+			<column name="ODCCLimit" type="decimal(18,0)" />
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>	
+		</createTable>
+	</changeSet>
+	<changeSet id="3" author="Vinay">
+		<addPrimaryKey tableName="BankInfoDetail" columnNames="BankId,MonthYear"/>
+		<addPrimaryKey tableName="BankInfoDetail_Temp" columnNames="BankId,MonthYear"/>
+	</changeSet>
+	<changeSet id="4" author="Vinay">
+		<createTable tableName="BankInfoSubDetail">
+			<column name="BankId" type="bigint">
+			<constraints nullable="false" foreignKeyName="FK_BankInfoSubDetail_BankId" references="CustomerBankInfo(BankId)"/>
+			</column>
+			<column name="MonthYear" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Day" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>	
+		</createTable>
+	</changeSet>
+	<changeSet id="5" author="Vinay">
+		<createTable tableName="BankInfoSubDetail_Temp">
+			<column name="BankId" type="bigint">
+			<constraints nullable="false" foreignKeyName="FK_BISDetail_Temp_BankId" references="CustomerBankInfo(BankId)"/>
+			</column>
+			<column name="MonthYear" type="datetime">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Day" type="int">
+			<constraints nullable="false"/>
+			</column>
+			<column name="version" type="int"/>
+			<column name="lastmntby" type="bigint"/>
+			<column name="lastmnton" type="datetime"/>
+			<column name="recordstatus" type="varchar(50)"/>
+			<column name="rolecode" type="varchar(100)"/>
+			<column name="nextrolecode" type="varchar(200)"/>
+			<column name="taskid" type="varchar(50)"/>
+			<column name="nexttaskid" type="varchar(200)"/>
+			<column name="recordtype" type="varchar(50)"/>
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false"/>
+			</column>	
+		</createTable>
+	</changeSet>
+	<changeSet id="6" author="Vinay">
+		<addPrimaryKey tableName="BankInfoSubDetail" columnNames="BankId,MonthYear,Day"/>
+		<addPrimaryKey tableName="BankInfoSubDetail_Temp" columnNames="BankId,MonthYear,Day"/>
+	</changeSet>
+	
+	<changeSet id="7" author="Vinay">
+		<createView viewName="BankInfoDetail_View" replaceIfExists="true">
+			SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Balance, 
+				t1.DebitNo, 
+				t1.DebitAmt, 
+				t1.CreditNo,
+				t1.CreditAmt, 
+				t1.BounceIn, 
+				t1.BounceOut, 
+				t1.ClosingBal, 
+				t1.ODCCLimit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfodetail_temp t1
+				UNION ALL
+				SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Balance, 
+				t1.DebitNo, 
+				t1.DebitAmt, 
+				t1.CreditNo,
+				t1.CreditAmt, 
+				t1.BounceIn, 
+				t1.BounceOut, 
+				t1.ClosingBal, 
+				t1.ODCCLimit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfodetail t1
+				WHERE NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM bankinfodetail_temp
+				          WHERE bankinfodetail_temp.BankId = t1.BankId and MonthYear = t1.MonthYear))
+		</createView>
+	</changeSet>
+	<changeSet id="8" author="Vinay">
+		<createView viewName="bankinfodetail_aview">
+			SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Balance, 
+				t1.DebitNo, 
+				t1.DebitAmt, 
+				t1.CreditNo,
+				t1.CreditAmt, 
+				t1.BounceIn, 
+				t1.BounceOut, 
+				t1.ClosingBal, 
+				t1.ODCCLimit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfodetail t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="9.1" author="Vinay">
+		<sql>
+			delete from SMTPARAMETERS  where sysparmcode='BANKINFO_MONTH_YEAR';
+			delete from SMTPARAMETERS  where sysparmcode='BANKINFO_DAYS';
+			delete from SMTPARAMETERS  where sysparmcode='MONTHLY_INCOME_REQ';
+			Insert into SMTPARAMETERS values ('BANKINFO_MONTH_YEAR','Bank Info Month and Year','Date','0','2018-09-05',200,0,null,null,'Bank Info Month and Year',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SMTPARAMETERS values ('BANKINFO_DAYS','Bank Info Days','int','0','3',1,0,'NULL','NULL','Bank Info Days',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SMTPARAMETERS values ('MONTHLY_INCOME_REQ','Monthly bank information details required.','String','0','Y',1,0,null,null,'Monthly bank information details required.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10" author="Vinay">
+		<dropAllForeignKeyConstraints baseTableName="BankInfoDetail_Temp"/>
+		<dropAllForeignKeyConstraints baseTableName="BankInfoSubDetail_Temp"/>
+	</changeSet>
+	
+	<changeSet id="11" author="Vinay">
+		<createView viewName="BankInfoSubDetail_View" replaceIfExists="true">
+			SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Day, 
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfosubdetail_temp t1
+				UNION ALL
+				SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Day, 
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfosubdetail t1
+				WHERE NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM bankinfosubdetail_temp
+				          WHERE bankinfosubdetail_temp.BankId = t1.BankId and MonthYear = t1.MonthYear and day = t1.day))
+		</createView>
+	</changeSet>
+	<changeSet id="12" author="Vinay">
+		<createView viewName="bankinfosubdetail_aview">
+			SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Day, 
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfosubdetail t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="13.0" author="Vinay">
+		<addColumn tableName="BankInfoSubDetail">
+			<column name="Balance" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="14.0" author="Vinay">
+		<addColumn tableName="BankInfoSubDetail_Temp">
+			<column name="Balance" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="15" author="Vinay">
+		<createView viewName="bankinfosubdetail_aview" replaceIfExists="true">
+			SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Day, 
+				t1.balance,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfosubdetail t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="16" author="Vinay">
+		<createView viewName="BankInfoSubDetail_View" replaceIfExists="true">
+			SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Day, 
+				t1.balance,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfosubdetail_temp t1
+				UNION ALL
+				SELECT 
+				t1.BankId, 
+				t1.MonthYear, 
+				t1.Day, 
+				t1.balance,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid
+				FROM bankinfosubdetail t1
+				WHERE NOT (EXISTS ( SELECT 1 AS expr1
+				           FROM bankinfosubdetail_temp
+				          WHERE bankinfosubdetail_temp.BankId = t1.BankId and MonthYear = t1.MonthYear and day = t1.day))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="17" author="Vinay">
+		<sql>
+			Insert into RMTLOVFIELDDETAIL values ((select (seqno)+1 from seqRMTLovFieldDetail),'ACC_TYPE','OD','Over Draft Account','1',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0,'0');
+		</sql>
+	</changeSet>
+	<changeSet id="18_Pre" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_save_and_drop_dependencies('plf','bankinfodetail');
+			select deps_save_and_drop_dependencies('plf','bankinfodetail_temp');
+		</sql>
+	</changeSet>
+	<changeSet id="18" author="Vinay">
+		<modifyDataType tableName="bankinfodetail" columnName="debitno" newDataType="int"/>
+		<modifyDataType tableName="bankinfodetail_Temp" columnName="debitno" newDataType="int"/>
+		<modifyDataType tableName="bankinfodetail" columnName="creditno" newDataType="int"/>
+		<modifyDataType tableName="bankinfodetail_temp" columnName="creditno" newDataType="int"/>
+	</changeSet>
+	<changeSet id="18_Post" author="Vinay" dbms="postgresql">
+		<sql>
+			select deps_restore_dependencies('plf','bankinfodetail');
+			select deps_restore_dependencies('plf','bankinfodetail_temp');
+		</sql>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)"
+		dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')"
+		dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')"
+		dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)"
+		dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')"
+		dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')"
+		dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE"
+		dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE"
+		dbms="postgresql" />
+		<changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="01" author="Irfan">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+		<column name="ODRuleCode" type="Varchar2(8)"/>
+		</addColumn>
+	</changeSet>
+		<changeSet id="02" author="Irfan">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+		<column name="AlwZeroIntAcc" type="boolean"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="03" author="saikiran.v">
+		<createTable tableName="AdtHoldDisbursement">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Hold" type="char" />
+			<column name="TotalLoanAmt" type="decimal" />
+			<column name="DisbursedAmount" type="decimal" />
+			<column name="HoldLimitAmount" type="decimal" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="04" author="Irfan">
+		<modifyDataType tableName="AdtHoldDisbursement" columnName="Hold" newDataType="smallint"/>
+		<modifyDataType tableName="AdtHoldDisbursement" columnName="TotalLoanAmt" newDataType="Number(18,0)"/>
+		<modifyDataType tableName="AdtHoldDisbursement" columnName="DisbursedAmount" newDataType="Number(18,0)"/>
+		<modifyDataType tableName="AdtHoldDisbursement" columnName="HoldLimitAmount" newDataType="Number(18,0)"/>
+		</changeSet>
+
+</databaseChangeLog>

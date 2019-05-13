@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql" />
+	<property name="call.maindb" value="PLF." dbms="oracle" />
+
+	<changeSet author="Siva" id="1">
+		<createTable tableName="AdtFinTaxDetail">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="TaxNumber" type="varchar(100)" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="02" author="Irfan">
+		<addColumn tableName="ADTFINSCHEDULEDETAILS">
+			<column name="PartialPaidAmt" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Madhubabu" id="03" dbms="oracle">
+		<createTable tableName="AdtFinTaxDetailUpload">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="03" dbms="mssql">
+		<createTable tableName="AdtFinTaxDetailUpload">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="03.1" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinTaxDetailUpload add constraint DF_ADTFINTAXDETUPLD_VER
+			default 0 for Version;
+		</sql>
+	</changeSet>
+	<changeSet id="04" author="Satya">
+		<addColumn tableName="AdtDocumentDetails">
+			<column name="DocReceived" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="05" author="Jayant">
+		<createTable tableName="ADTVAS_VASFFR01_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="06" author="Jayant">
+		<createTable tableName="ADTVAS_VASPD01_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="07" author="Jayant">
+		<createTable tableName="ADTVAS_VASEC01_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="08" author="Jayant">
+		<createTable tableName="ADTVAS_VASCC01_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="09" author="Jayant">
+		<createTable tableName="ADTVAS_ETOUCHLI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="10" author="Jayant">
+		<createTable tableName="ADTVAS_GCPPLI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11" author="Jayant">
+		<createTable tableName="ADTVAS_GPGI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="12" author="Jayant">
+		<createTable tableName="ADTVAS_CCPGI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="13" author="Jayant">
+		<createTable tableName="ADTVAS_IHGI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14" author="Jayant">
+		<createTable tableName="ADTVAS_STGI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="15" author="Jayant">
+		<createTable tableName="ADTVAS_TMGI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="16" author="Jayant">
+		<createTable tableName="ADTVAS_FWGI_ED">
+			<column name="AUDITID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="CHAR(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="REFERENCE" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SEQNO" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="DATETIME" />
+			<column name="RECORDSTATUS" type="VARCHAR(50)" />
+			<column name="ROLECODE" type="VARCHAR(100)" />
+			<column name="NEXTROLECODE" type="VARCHAR(200)" />
+			<column name="TASKID" type="VARCHAR(50)" />
+			<column name="NEXTTASKID" type="VARCHAR(200)" />
+			<column name="RECORDTYPE" type="VARCHAR(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="17" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_VASFFR01_ED" tableName="ADTVAS_VASFFR01_ED" />
+	</changeSet>
+	<changeSet id="18" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_VASPD01_ED" tableName="ADTVAS_VASPD01_ED" />
+	</changeSet>
+	<changeSet id="19" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_VASEC01_ED" tableName="ADTVAS_VASEC01_ED" />
+	</changeSet>
+	<changeSet id="20" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_VASCC01_ED" tableName="ADTVAS_VASCC01_ED" />
+	</changeSet>
+	<changeSet id="21" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_ETOUCHLI_ED" tableName="ADTVAS_ETOUCHLI_ED" />
+	</changeSet>
+	<changeSet id="22" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_GCPPLI_ED" tableName="ADTVAS_GCPPLI_ED" />
+	</changeSet>
+	<changeSet id="23" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_GPGI_ED" tableName="ADTVAS_GPGI_ED" />
+	</changeSet>
+	<changeSet id="24" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_CCPGI_ED" tableName="ADTVAS_CCPGI_ED" />
+	</changeSet>
+	<changeSet id="25" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_IHGI_ED" tableName="ADTVAS_IHGI_ED" />
+	</changeSet>
+	<changeSet id="26" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_STGI_ED" tableName="ADTVAS_STGI_ED" />
+	</changeSet>
+	<changeSet id="27" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_TMGI_ED" tableName="ADTVAS_TMGI_ED" />
+	</changeSet>
+	<changeSet id="28" author="Jayant">
+		<addPrimaryKey columnNames="AUDITID, AUDITDATE,AUDITSEQ,AUDITIMAGE"
+			constraintName="PK_ADTVAS_FWGI_ED" tableName="ADTVAS_FWGI_ED" />
+	</changeSet>
+	<changeSet id="29" author="Jayant" dbms="oracle">
+		<sql>
+			Update ADTvasStructure set Productdesc=substr(productdesc,1,20);
+		</sql>
+	</changeSet>
+	<changeSet id="29" author="Jayant" dbms="mssql">
+		<sql>
+			Update ADTvasStructure set Productdesc=substring(productdesc,1,20);
+		</sql>
+	</changeSet>
+	<changeSet id="30" author="SreeRavali">
+		<addColumn tableName="ADTFinTaxDetail">
+			<column name="ApplicableForCustId" type="NUMBER(19)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="31" author="Durgaprasad G">
+		<sql>
+			Update ADTFinTaxDetail set ApplicableForCustId = 0;
+		</sql>
+	</changeSet>
+	<changeSet author="Madhubabu" id="32" dbms="oracle">
+		<createTable tableName="ADTFinTaxUploadHeader">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BatchReference" type="varchar(20)" />
+			<column name="FileName" type="varchar(20)" />
+			<column name="NumberofRecords" type="nvarchar(10)" />
+			<column name="BatchCreatedDate" type="datetime" />
+			<column name="BatchApprovedDate" type="datetime" />
+			<column name="Status" type="nvarchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="32" dbms="mssql">
+		<createTable tableName="ADTFinTaxUploadHeader">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BatchReference" type="varchar(20)" />
+			<column name="FileName" type="varchar(20)" />
+			<column name="NumberofRecords" type="nvarchar(10)" />
+			<column name="BatchCreatedDate" type="datetime" />
+			<column name="BatchApprovedDate" type="datetime" />
+			<column name="Status" type="nvarchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="32.1" author="Jayant" dbms="mssql">
+		<sql>
+			alter table ADTFinTaxUploadHeader add constraint ADTFINTAXUPLDHDR_VER
+			default 0 for Version;
+		</sql>
+	</changeSet>
+	<changeSet id="33" author="Madhubabu">
+		<dropTable tableName="AdtFinTaxDetailUpload" />
+	</changeSet>
+
+
+	<changeSet author="Madhubabu" id="34" dbms="oracle">
+		<createTable tableName="AdtFinTaxUploadDetail">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Madhubabu" id="34" dbms="mssql">
+		<createTable tableName="AdtFinTaxUploadDetail">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="TaxCode" type="varchar2(50)" />
+			<column name="AggrementNo" type="nvarchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApplicableFor" type="varchar(1)" />
+			<column name="Applicant" type="VARCHAR2(20)" />
+			<column name="TaxExempted" type="boolean" />
+			<column name="AddrLine1" type="varchar(100)" />
+			<column name="AddrLine2" type="varchar(100)" />
+			<column name="AddrLine3" type="varchar(100)" />
+			<column name="AddrLine4" type="varchar(100)" />
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(50)" />
+			<column name="PinCode" type="varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="34.1" author="Jayant" dbms="mssql">
+		<sql>
+			alter table AdtFinTaxUploadDetail add constraint ADTFINTAXUPLDDET_VER
+			default 0 for Version;
+		</sql>
+	</changeSet>
+	<changeSet author="Kesav" id="35">
+		<renameColumn columnDataType="number(19,0)"
+			newColumnName="TAXCUSTID" oldColumnName="APPLICABLEFORCUSTID"
+			tableName="AdtFinTaxDetail" />
+	</changeSet>
+	<changeSet author="Madhubabu" id="36">
+		<addColumn tableName="Adtfintaxuploaddetail">
+			<column name="BatchReference" type="varchar(20)" />
+			<column name="seqno" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Siva" id="37">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="RoundingTarget" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="38" author="Durgaprsasd.g">
+		<addColumn tableName="ADTBMTPhoneTypes">
+			<column name="PhoneTypeRegex" type="varchar(30)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="39" author="Madhubabu" dbms="oracle">
+		<sql>
+			alter table ADTCUSTOMERDOCUMENTS modify (CUSTDOCTYPE null);
+
+		</sql>
+	</changeSet>
+	<changeSet id="39" author="Madhubabu" dbms="mssql">
+		<sql>
+			alter table ADTCUSTOMERDOCUMENTS alter column CUSTDOCTYPE varchar(10)
+			null;
+
+		</sql>
+	</changeSet>
+	<changeSet id="40" author="Madhubabu">
+		<modifyDataType tableName="ADTCUSTOMERPHONENUMBERS"
+			columnName="PHONENUMBER" newDataType="varchar(20)" />
+	</changeSet>
+	<changeSet id="41" author="Irfan">
+		<addColumn tableName="AdtEntity">
+			<column name="Address" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Kesav" id="42">
+		<addColumn tableName="AdtRMTAccountTypes">
+			<column name="ExtractionType" type="varchar(3)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="43" author="Irfan">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+		<column name="BounceDate" type="datetime"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="44" author="Madhubabu" dbms="oracle">
+	<sql>
+		ALTER TABLE ADTfintaxuploadheader MODIFY FILENAME VARCHAR(100);
+	</sql>
+	</changeSet>
+	<changeSet id="44" author="Madhubabu" dbms="mssql">
+	<sql>
+		ALTER TABLE ADTfintaxuploadheader alter column FILENAME VARCHAR(100);
+	</sql>
+	</changeSet>
+	<changeSet id="45" author="Somasekhar">
+		<dropColumn tableName="ADTENTITY" columnName="EntityAddrLine1"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityAddrLine2"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityAddrHNbr"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityFlatNbr"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityAddrStreet"/>
+	 <dropColumn tableName="ADTENTITY" columnName="EntityPOBox"/>
+	</changeSet>
+	
+	<changeSet id="46" author="Somasekhar">
+		<addColumn tableName="ADTENTITY">
+	 <column name="EntityAddrLine1" type="varchar(50)"/>
+	 <column name="EntityAddrLine2" type="varchar(50)"/>
+	 <column name="EntityAddrHNbr" type="varchar(50)"/>
+	 <column name="EntityFlatNbr" type="varchar(50)"/>
+	 <column name="EntityAddrStreet" type="varchar(50)"/>
+	 <column name="EntityPOBox" type="varchar(8)"/>
+	 </addColumn>
+	</changeSet>
+	
+	<changeSet id="47" author="Sriram">
+		<dropColumn tableName="ADTFEETYPES" columnName="HostFeeTypeCode"/>
+		<addColumn tableName="ADTFEETYPES">
+			<column name="HostFeeTypeCode" type="varchar(50)"/>
+		</addColumn>
+	 </changeSet>
+	
+	<changeSet id="48" author="Vinay">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="REMARKS" type="VARCHAR2(200)" />
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="49" author="Kesav">
+		<dropTable tableName="AdtPromotions" /> 
+	</changeSet>
+    
+    <changeSet id="50" author="Kesav">
+        <createTable tableName="AdtPromotions">
+            <column name="AuditId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditSeq" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditImage" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PromotionId" remarks="PromotionId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+			 <column name="PromotionCode" remarks="Promotion Code" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="PromotionDesc" remarks="Promotion Code Description" type="varchar(50)"/>
+            <column name="FinType" remarks="Finance Type" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="StartDate" type="datetime"/>
+            <column name="EndDate" type="datetime"/>
+            <column name="FinIsDwPayRequired" type="boolean"/>
+			<column name="DownPayRule" type="bigint"/>
+			<column name="ActualInterestRate" type="decimal(13, 9)"/>
+			<column name="FinBaseRate" type="varchar(8)"/>
+            <column name="FinSplRate" type="varchar(8)"/>
+            <column name="FinMargin" type="decimal(13, 9)"/>
+			<column name="ApplyRpyPricing" type="boolean"/>
+			<column name="RpyPricingMethod" type="bigint"/>
+			<column name="FinMinTerm" remarks="Minimum Terms" type="decimal(3, 0)"/>
+            <column name="FinMaxTerm" remarks="Maximum Terms" type="decimal(3, 0)"/>
+			<column name="FinMinAmount" remarks="Minimum Finance Amount" type="decimal(18, 0)"/>
+			<column name="FinMaxAmount" remarks="Maximum Finance Amount" type="decimal(18, 0)"/>
+            <column name="FinMinRate" type="decimal(13, 9)"/>
+            <column name="FinMaxRate" type="decimal(13, 9)"/>
+			<column name="Active" type="boolean"/>
+			<column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column defaultValueNumeric="0" name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="51" author="Kesava">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_AdtPromotions" tableName="AdtPromotions" />
+	</changeSet>
+	
+	<changeSet id="52" author="Vinay">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="RcdMaintainSts" type="char(1)" />
+		</addColumn>
+	</changeSet>
+<changeSet author="Srikanth" id="53">
+<sql>
+update ADtCustomers set CUSTADDLDEC1 = null;
+</sql>
+<modifyDataType tableName="ADTCustomers" columnName="CUSTADDLDEC1" newDataType="number(18,0)"/>
+</changeSet>
+<changeSet id="54" author="Irfan">
+  	<createTable tableName="AdtFinWaiverHeader">
+			<column name="WaiverID"  type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false" />
+			</column>
+			<column name="TotalWaiver" type="number(18,0)"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+  </changeSet>
+   <changeSet id="54" author="Pruthvi">
+	 <addColumn tableName="ADTREPORTCONFIGURATION">
+        <column name="WHERECONDITION" type="Boolean"/>
+    </addColumn>
+    </changeSet>
+    
+    <changeSet id="55" author="Pruthvi">
+    <sql>
+    update ADTREPORTCONFIGURATION set WHERECONDITION=0;
+    </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,32 @@
+
+
+Definitions for Declared Short Names
+-----------------------------------------------
+
+1.	DD/dd		:	Disbursement
+2.	MDD/mdd		:	Multiple Disbursement
+3.	CR/cr		:	Change Repay
+4.	MCR/mcr		:	Multiple Change Repay
+5.	RC/rc		:	Rate Change
+6.	MRC/mrc		:	Multiple Rate Change
+7.	Grace		:	Allowed Grace Period is TRUE
+8.	AT			:	Add Terms
+9.	DFR/dfr		:	Deferment
+
+
+Package Declaration Names
+------------------------------------------------
+
+1.	grc			:	Grace Period
+2.	grcpft		: 	Grace Profit
+3.	grcnopay	:	Grace with No Repayment
+4.	grcnorpy	:	Grace with No Repayment by uncheck Allowed Repayment option
+5.	adjterm		:	Adjust Terms Method
+6.	tilldate	:	Till Date Method
+7.	adjmdt		: 	Adjust Maturity Method
+8.	tillmdt		:	Till Maturity Date
+9.	nograce		:	No Grace Period
+10.	curprd		:	Curent Period Method
+11.	lastrpyzero	:	Last schedule Term before Maturity repayment amount is ZERO
+12.	addterm		:	Adding Terms to Maturity
+

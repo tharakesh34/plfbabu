@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FINENQ_FinanceCalculationDetailsEligibilitysubRpt" pageWidth="478" pageHeight="130" columnWidth="478" leftMargin="0" rightMargin="0" topMargin="60" bottomMargin="0" isIgnorePagination="true" uuid="29be931e-24a9-494d-b6c5-a7165a75466a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="ruleCode" class="java.lang.String"/>
+	<field name="eligibilityLimit" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="overrideEL" class="java.lang.String"/>
+	<field name="override" class="java.lang.String"/>
+	<columnHeader>
+		<band height="40">
+			<frame>
+				<reportElement uuid="84e628d2-1a3c-4e04-ac1d-ee7fe907125c" x="0" y="0" width="478" height="20"/>
+				<staticText>
+					<reportElement uuid="289329d0-97fb-4aea-82d8-49eda16d89d7" style="Detail Header" mode="Transparent" x="0" y="0" width="478" height="20" backcolor="#AABFB5"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Eligibility Details]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="84e628d2-1a3c-4e04-ac1d-ee7fe907125c" x="0" y="20" width="478" height="20"/>
+				<staticText>
+					<reportElement uuid="289329d0-97fb-4aea-82d8-49eda16d89d7" style="Detail Header" mode="Transparent" x="0" y="0" width="95" height="20" backcolor="#AABFB5"/>
+					<box>
+						<leftPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Rule code]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="289329d0-97fb-4aea-82d8-49eda16d89d7" style="Detail Header" mode="Transparent" x="95" y="0" width="152" height="20" backcolor="#AABFB5"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="289329d0-97fb-4aea-82d8-49eda16d89d7" style="Detail Header" mode="Transparent" x="247" y="0" width="77" height="20" backcolor="#AABFB5"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Eligibility Limit]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="289329d0-97fb-4aea-82d8-49eda16d89d7" style="Detail Header" mode="Transparent" x="418" y="0" width="60" height="20" backcolor="#AABFB5"/>
+					<box>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Override]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="289329d0-97fb-4aea-82d8-49eda16d89d7" style="Detail Header" mode="Transparent" x="324" y="0" width="94" height="20" backcolor="#AABFB5"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Override Elg. Limit]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15">
+			<frame>
+				<reportElement uuid="7fc153f7-25ac-41e0-9ec5-9508a1fb967c" mode="Opaque" x="0" y="0" width="478" height="15" isPrintInFirstWholeBand="true"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="2048cbfe-e3d1-4099-9e5d-f1a9f8b01461" style="Detail Value" x="95" y="0" width="152" height="15"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement uuid="86db8e43-95ae-4ee7-b8c2-9dcf927b2619" style="Detail Value" x="0" y="0" width="95" height="15"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ruleCode}+" "]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="2048cbfe-e3d1-4099-9e5d-f1a9f8b01461" style="Detail Value" x="247" y="0" width="77" height="15"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{eligibilityLimit}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="2048cbfe-e3d1-4099-9e5d-f1a9f8b01461" style="Detail Value" x="418" y="0" width="60" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{override}]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement uuid="2048cbfe-e3d1-4099-9e5d-f1a9f8b01461" style="Detail Value" x="324" y="0" width="94" height="15"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{overrideEL}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,3293 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	 
+	<changeSet id="1.0" author="Durgaprasad G">
+		<createTable tableName="verification_lv">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="Date" type="datetime" />	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="1.1" author="Durgaprasad G">
+		<createTable tableName="verification_lv_temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_TEMP_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="Date" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="1.2" author="Durgaprasad G" dbms="postgresql">
+		<createTable tableName="verification_lv_stage">
+			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="Date" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.2" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="verification_lv_stage">
+			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="Date" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.2" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="verification_lv_stage">
+			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" />
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="Date" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="1.2_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_lv_stage add constraint df_status default 0 for Status;
+		</sql>
+	</changeSet>
+	<changeSet id="2.0" author="Durgaprasad G">
+		<createTable tableName="verification_lv_details">
+			<column name="LvId" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET"/>
+			</column>
+			<column name="seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.1" author="Durgaprasad G">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="LvId" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_T"/>
+			</column>
+			<column name="seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_T"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.2" author="Durgaprasad G">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="LvId" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_S"/>
+			</column>
+			<column name="seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_S"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="2.3" author="Durgaprasad G">
+		<addForeignKeyConstraint constraintName="fk_verf_det_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_lvid" referencedTableName="verification_lv_temp" baseColumnNames="LvId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_lvid" referencedTableName="verification_lv_stage" baseColumnNames="LvId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
+		
+		<addForeignKeyConstraint constraintName="fk_verification_lv_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verification_lv_temp_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_temp" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verification_lv_stage_verid" referencedTableName="verifications" baseColumnNames="VerificationId" baseTableName="verification_lv_stage" referencedColumnNames="Id"/>
+	</changeSet>
+	<changeSet id="2.1" author="Jayant" dbms="oracle">
+		<comment> Renaming column because it is a keyword </comment>
+		<renameColumn tableName="verification_lv" oldColumnName="Date" newColumnName="IntitatedDate"/>
+	</changeSet>	
+	<changeSet id="3.1" author="Jayant" dbms="oracle">
+		<comment> Renaming column because it is a keyword </comment>
+		<renameColumn tableName="verification_lv_temp" oldColumnName="Date" newColumnName="IntitatedDate"/>
+	</changeSet>	
+	<changeSet id="3.0" author="Durgaprasad G" dbms="oracle">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.IntitatedDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.IntitatedDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="3.0" author="Durgaprasad G" dbms="postgresql">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.date, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.date, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="4.0" author="durgaprasad.g">
+		<createView viewName="verification_legal_doc_view" replaceIfExists="true">	
+			select * from ( select dt.lvreq , 3 docType, dt.doctypecode code, dt.doctypedesc description,  c.custCIF, fm.FinReference, c.custid DocumentId, dd.custdoccategory DocumentSubId, custDocName DocName, '' collateralRef from Financemain_temp fm
+			inner join customers c on c.custId = fm.custId
+			inner join customerDocuments_view dd on dd.custId = c.custId
+			inner join bmtdocumenttypes dt on dt.doctypecode = dd.custdoccategory
+			union all
+			select dt.lvreq, 2 docType, dt.doctypecode code, dt.doctypedesc description, c.custCIF, fm.FinReference, docid DocumentId, '' DocumentSubId, DocName, '' collateralRef  from Financemain_temp fm
+			inner join customers c on c.custId = fm.custId
+			inner join documentDetails_view dd on dd.ReferenceId = fm.FinReference
+			inner join bmtdocumenttypes dt on dt.doctypecode = dd.doccategory
+			union all 
+			select dt.lvreq, 1 docType, dt.doctypecode code, dt.doctypedesc description, c.custCIF, fm.FinReference, docid DocumentId, '' DocumentSubId, DocName, cs.collateralRef from Financemain_temp fm
+			inner join customers c on c.custId = fm.custId
+			inner join collateralsetup cs on cs.depositorId = c.custId
+			inner join documentDetails_view dd on dd.ReferenceId = cs.collateralRef
+			inner join bmtdocumenttypes dt on dt.doctypecode = dd.doccategory
+			) T 
+		</createView>
+	</changeSet>
+	<changeSet id="4.1" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			doc.docRefId,  
+			lvd.DocumentSubId, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			doc.docRefId, 
+			lvd.DocumentSubId, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.id = lvd.lvid
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					   FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.lvid = lvd.lvid))
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			custdocType docType, 
+    		'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			custdocType docType,
+    		'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					  FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.lvid = lvd.lvid))
+			) t
+		</createView>
+	</changeSet>
+	<changeSet id="5.0" author="manikanta.p">
+		<sql>
+			<![CDATA[
+			delete from  LimitCodeDetail where LimitCode = 'LVINIT';
+			delete from  LimitCodeDetail where LimitCode = 'LVAPPR';
+	
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'LVINIT','Legal Verification Initiation',1);
+			INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'LVAPPR','Legal Verification Approval',1);
+			]]>
+		</sql>
+	</changeSet>
+	 <changeSet id="6.0" author="lakshmi.n">
+		<sql>
+			<![CDATA[
+			Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where Page IN('LegalVerificationDialog','LegalVerificationList'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_LegalVerification');
+			Delete from SecGroups where GrpCode IN('LEGALVERIFICATION_MAKER','LEGALVERIFICATION_APPROVER');
+			Delete from SecRights where page IN('LegalVerificationDialog','LegalVerificationList');
+			Delete from SecRights where RightName = 'menuItem_Verification_LegalVerification';
+
+
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_LegalVerification', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationList_btnNew', 'LegalVerificationList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationDialog_btnEdit', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationDialog_btnDelete', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_LegalVerificationDialog_btnSave', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_LegalVerificationExtFields', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_VerificationDate', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_AgentCode', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_AgentName', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Recommendations', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Reason', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks1', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks2', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Remarks3', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'LegalVerificationDialog_Documents', 'LegalVerificationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'LEGALVERIFICATION_MAKER','WF Maker for  LegalVerification',0 ,1000,current_timestamp,'Approved','','','','','',0);
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'LEGALVERIFICATION_APPROVER','WF Approver for LegalVerification',0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_LegalVerification'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_LegalVerificationExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_VerificationDate'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_AgentCode'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_AgentName'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Recommendations'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Reason'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks1'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks2'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Remarks3'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='LegalVerificationDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_LegalVerification'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_APPROVER'),(select RightId from secRights where RightName='button_LegalVerificationDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='LEGALVERIFICATION_MAKER'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='LEGALVERIFICATION_APPROVER'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+       		    ]]>
+			</sql>
+		</changeSet>
+
+	<changeSet id="6.1" author="lakshmi.n">
+		<sql> 
+			<![CDATA[ 
+			delete from REPORTLIST Where Code = 'LegalVerification'; 
+			INSERT INTO REPORTLIST Values ('LegalVerification','LegalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label', 'cif,collateralType,referenceFor,keyReference','String,String,String,String',' ','ReportList04','Legal Verification','Legal Verification'
+			,0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0); 
+  		    ]]>
+		</sql> 
+	</changeSet>
+
+	<changeSet id="7.0" author="durgaprasad g">
+		 <dropView viewName="verification_lv_view "/>
+		 <dropView viewName="verification_lv_details_view"/>
+		 <dropTable tableName="verification_lv_details"/>
+		 <dropTable tableName="verification_lv_details_temp"/>
+		 <dropTable tableName="verification_lv_details_stage"/>
+	</changeSet>
+	
+	
+	<changeSet id="7.1" author="durgaprasad g">
+		<createTable tableName="verification_lv_details">
+			<column name="LvId" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET"/>
+			</column>
+			<column name="seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	 
+	<changeSet id="7.2" author="Durgaprasad G">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="LvId" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_T"/>
+			</column>
+			<column name="seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_T"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7.3" author="Durgaprasad G">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="LvId" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_S"/>
+			</column>
+			<column name="seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_DET_S"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="7.4" author="durgaprasad g">
+		<addForeignKeyConstraint constraintName="fk_verf_det_lvid" referencedTableName="verification_lv" baseColumnNames="LvId" baseTableName="verification_lv_details" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_lvid" referencedTableName="verification_lv_temp" baseColumnNames="LvId" baseTableName="verification_lv_details_temp" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_lvid" referencedTableName="verification_lv_stage" baseColumnNames="LvId" baseTableName="verification_lv_details_stage" referencedColumnNames="Id"/>
+	</changeSet>
+	
+	<changeSet id="7.5" author="Durgaprasad G" dbms="oracle">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.IntitatedDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.IntitatedDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="7.6" author="Durgaprasad G" dbms="postgresql">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.date, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.date, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="7.6" author="Durgaprasad G" dbms="mssql">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.date, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.VerificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.date, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="8.0" author="durgaprasad g">
+		<dropView viewName="verification_lv_view"/>
+		<dropTable tableName="verification_lv"/>
+		<dropTable tableName="verification_lv_temp"/>
+		<dropTable tableName="verification_lv_stage"/>
+	</changeSet>
+	 
+	 <changeSet id="8.1" author="Durgaprasad G">
+		<createTable tableName="verification_lv">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="8.2" author="Durgaprasad G">
+		<createTable tableName="verification_lv_temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_TEMP_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="8.3" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="verification_lv_stage">
+			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="8.3" author="Durgaprasad G" dbms="postgresql">
+		<createTable tableName="verification_lv_stage">
+			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="8.3" author="Durgaprasad G" dbms="mssql">
+		<createTable tableName="verification_lv_stage">
+			<column name="Id" type="bigint" autoIncrement="true" startWith="1">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_VERIFICATION_LV_STAGE_ID"/>
+			</column>
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="8.3_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_lv_stage add constraint df_status default 0 for status;
+		</sql>	
+	</changeSet>
+	<changeSet id="8.4" author="Durgaprasad G" dbms="oracle">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="8.5" author="Durgaprasad G" dbms="postgresql">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verification_lv_details_temp lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.Id, 
+				lv.verificationId,  
+				lvd.documentId,
+				lvd.documentSubId,
+				lvd.documentRefId,
+				lvd.documentUri,
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verification_lv_details lvd on lvd.lvid = lv.id
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.id = lv.id))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="9.0" author="durgaprasad g">
+	   <sql> 
+			<![CDATA[ 
+				delete from reasons where reasontypeid IN (select id from reasontypes where code IN ('LVWRES', 'LVSTATUS')) and reasoncategoryId IN (select id from reasoncategory where code IN ('TVWRES', 'TVSTATUS'));
+				delete from reasontypes where code IN ('LVWRES', 'LVSTATUS');
+				delete from reasoncategory where code IN ('LVWRES', 'LVSTATUS');
+
+				update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+				update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+				update seqreasons set seqno = (select coalesce(max(Id), 0) from reasons_view);
+
+				insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'LVWRES', 'Legal verification waiver reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'LVSTATUS', 'Legal verification status reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+
+				insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'LVWRES', 'Legal verification waiver reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				insert into reasoncategory values((select coalesce(max(Id), 0)+1 from reasoncategory_view), 'LVSTATUS', 'Legal verification status reason category.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+				update seqreasoncategory set seqno = (select coalesce(max(Id), 0) from reasoncategory_view);
+  		    ]]>
+		</sql> 
+	</changeSet>
+	
+	<changeSet id="10.0" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.id = lvd.lvid
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					   FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.lvid = lvd.lvid))
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			custdocType docType, 
+    		'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			lvd.lvid, 
+			lvd.SeqNo, 
+			custdocType docType,
+    		'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					  FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.lvid = lvd.lvid))
+			) t
+		</createView>
+	</changeSet>
+	
+	<changeSet id="11" author="durgaprasad.g">
+		<dropView viewName="verification_lv_details_view"/>
+		<dropView viewName="verification_lv_view"/>		
+		<dropTable tableName="verification_lv_details"/>
+		<dropTable tableName="verification_lv_details_temp"/>
+		<dropTable tableName="verification_lv_details_stage"/>
+		<dropTable tableName="verification_lv"/>
+		<dropTable tableName="verification_lv_temp"/>
+		<dropTable tableName="verification_lv_stage"/>
+	</changeSet>
+	 <changeSet id="11.1" author="durgaprasad.g">
+		<createTable tableName="verification_lv">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.2" author="durgaprasad.g">
+		<createTable tableName="verification_lv_temp">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_temp_lv_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.3" author="durgaprasad.g" dbms="oracle">
+		<createTable tableName="verification_lv_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_stage_lv_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.3" author="durgaprasad.g" dbms="postgresql">
+		<createTable tableName="verification_lv_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_stage_lv_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.3" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_stage_lv_vrfid"/>
+			</column>
+			<column name="VerificationFormName" type="varchar(30)"/>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Status" type="int"/>
+			<column name="Reason" type="bigint" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="VerificationDate" type="datetime" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.3_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_lv_stage add constraint df_status default 0 for status;
+		</sql>	
+	</changeSet>
+	<changeSet id="11.4" author="durgaprasad.g">
+		<createTable tableName="verification_lv_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.5" author="durgaprasad.g">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.6" author="durgaprasad.g">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="11.7" author="durgaprasad.g">
+		<addForeignKeyConstraint constraintName="fk_verf_lv_vrfid" baseTableName="verification_lv" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_lv_temp_vrfid" baseTableName="verification_lv_temp" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_lv_stage_vrfid" baseTableName="verification_lv_stage" baseColumnNames="VerificationId"  referencedTableName="verifications" referencedColumnNames="Id"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_vrfid" baseTableName="verification_lv_details" baseColumnNames="VerificationId"  referencedTableName="verification_lv" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_vrfid" baseTableName="verification_lv_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_lv_temp" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_vrfid" baseTableName="verification_lv_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_lv_stage" referencedColumnNames="VerificationId"/>
+	</changeSet>
+	<changeSet id="11.8" author="durgaprasad.g">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.verificationId,  
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.verificationId,  
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.verificationId = lv.verificationId))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="11.9" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.verificationId = lvd.verificationId
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					   FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo ))
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType, 
+    		'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType,
+    		'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					  FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo))
+			) t
+		</createView>
+	</changeSet>
+	<changeSet id="10.0" author="lakshmi.n">
+	   <sql> 
+			<![CDATA[ 
+			Delete from secGrouprights where rightid in(SELECT rightid from secrights WHERE rightname='FieldInvestigationDialog_FieldInvestigationExtFields');
+
+			Delete from secGrouprights where rightid in(SELECT rightid from secrights WHERE rightname='menuItem_Verification_LegalVerification_Enquiry');
+			
+			delete from secrights where rightname='FieldInvestigationDialog_FieldInvestigationExtFields';
+			
+			delete from secrights where rightname='menuItem_Verification_LegalVerification_Enquiry';
+			
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'FieldInvestigationDialog_FieldInvestigationExtFields', 'FieldInvestigationDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_LegalVerification_Enquiry', 'MENU', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='FIELDINVESTIGATION_MAKER'),(select RightId from secRights where RightName='FieldInvestigationDialog_FieldInvestigationExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_LegalVerification_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='LEGALVERIFICATION_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_LegalVerification_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			]]>
+		</sql> 
+	</changeSet>
+	<changeSet id="12" author="durgaprasad.g">
+		<createView viewName="verification_lv_view" replaceIfExists="true">	
+			select  * from (
+			select 
+				lv.verificationId,  
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv_temp lv
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			union all 
+			 select 
+				lv.verificationId,  
+				lv.verificationFormName,			
+				lv.agentcode,  
+				lv.agentname, 
+				lv.verificationDate, 
+				lv.status,
+				lv.reason, 
+				r1.code as reasoncode, 
+				r1.description as reasondesc, 
+				lv.version, 
+				lv.lastmntby, 
+				lv.lastmnton, 
+				lv.recordstatus, 
+				lv.rolecode, 
+				lv.nextrolecode,
+				lv.taskid, 
+				lv.nexttaskid, 
+				lv.recordtype, 
+				lv.workflowid, 
+				lv.Remarks,  
+				c.custcif as cif,
+				v.keyreference, 
+				v.referenceFor, 
+				v.createdon, 
+				v.agency,
+				c.custId, 
+				c.custcif, 
+				c.custshrtname as custname,
+				cs.collateralType,
+				a.dealerName agencyName
+			from verification_lv lv
+			inner join verifications v on v.id = lv.verificationId
+			inner join customers c on c.custCif = v.reference
+			inner join collateralsetup cs on cs.collateralref = v.referenceFor
+			left join reasons_aview r1 on r1.id = lv.reason
+			left join amtvehicledealer a on a.dealerid = v.agency
+			 where not (exists ( select 1 from verification_lv_temp where verification_lv_temp.verificationId = lv.verificationId))
+			) t
+		 </createView>
+	</changeSet>
+	<changeSet id="12.1" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+    		doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.verificationId = lvd.verificationId
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					   FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo ))
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType, 
+    		'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType,
+    		'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid, 
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+            lvd.lastmntby,
+            lvd.lastmnton,
+            lvd.recordstatus,
+            lvd.rolecode,
+            lvd.nextrolecode,
+            lvd.taskid,
+            lvd.nexttaskid,
+            lvd.recordtype,
+            lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+					  FROM verification_lv_details_temp
+					  WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo))
+			) t
+		</createView>
+	</changeSet>
+	<changeSet id="13" author="lakshmi.n">
+	   <sql> 
+			<![CDATA[ 
+			Delete from SecRoleGroups where roleid in(Select roleid from secroles where rolecd in('MSTGRP1_MAKER','MSTGRP1_APPROVER')) and grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER')) and rightid in(Select rightid from SecRights where Page IN('RiskContainmentUnitDialog','RiskContainmentUnitList'));
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit_Enquiry');
+			Delete from Secgrouprights where grpid in(Select grpid from secgroups where grpcode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER')) and rightid in(Select rightid from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit');
+			Delete from SecGroups where GrpCode IN('RiskContainmentUnit_MAKER','RiskContainmentUnit_APPROVER');
+			Delete from SecRights where page IN('RiskContainmentUnitDialog','RiskContainmentUnitList');
+			Delete from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit';
+			Delete from SecRights where RightName = 'menuItem_Verification_RiskContainmentUnit_Enquiry';
+			
+			INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_RiskContainmentUnit', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_RiskContainmentUnit_Enquiry', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitList_btnNew', 'RiskContainmentUnitList', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitDialog_btnEdit', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitDialog_btnDelete', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 2, 'button_RiskContainmentUnitDialog_btnSave', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_VerificationType', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_RCUStatus', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_PagesEyeBalled', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_PagesSampled', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Remarks', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_VerificationDate', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_AgentCode', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_AgentName', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Recommendations', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Reason', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_SummaryRemarks', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_Documents', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'RiskContainmentUnitDialog_RiskContainmentUnitExtFields', 'RiskContainmentUnitDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+			
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'RiskContainmentUnit_MAKER','WF Maker for  RiskContainmentUnit',0 ,1000,current_timestamp,'Approved','','','','','',0);
+			Insert Into secGroups values((Select MAX(GrpID)+1 From secGroups),'RiskContainmentUnit_APPROVER','WF Approver for RiskContainmentUnit',0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnEdit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnDelete'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_VerificationType'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_RCUStatus'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_PagesEyeBalled'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_PagesSampled'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Remarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_VerificationDate'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_AgentCode'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_AgentName'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Recommendations'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Reason'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_SummaryRemarks'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_MAKER'),(select RightId from secRights where RightName='RiskContainmentUnitDialog_RiskContainmentUnitExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_RiskContainmentUnit_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='RiskContainmentUnit_APPROVER'),(select RightId from secRights where RightName='button_RiskContainmentUnitDialog_btnSave'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+			
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='RiskContainmentUnit_MAKER'),(select RoleID from secRoles where RoleCd='MSTGRP1_MAKER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			Insert into secRoleGroups values((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='RiskContainmentUnit_APPROVER'),(select RoleID from secRoles where RoleCd='MSTGRP1_APPROVER'),0,1000,current_timestamp,'Approved','','','','','',0);
+			
+			delete from REPORTLIST Where Code = 'RiskContainmentUnit'; 
+			INSERT INTO REPORTLIST Values ('RiskContainmentUnit','RiskContainmentUnit','listheader_CIF.label,listheader_LoanReference.label,listheader_Agency.label,listheader_CreatedOn.label', 'cif,keyReference,agencyName,createdOn','String,String,String,Date',' ','ReportList04','Risk Containment Unit','Risk Containment Unit'
+			,0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0)
+			]]>
+		</sql> 
+	</changeSet>
+	<changeSet id="14" author="durgaprasad.g">
+		<dropView viewName="verification_lv_details_view"/>
+		<dropTable tableName="verification_lv_details_temp"/>
+		<dropTable tableName="verification_lv_details_stage"/>
+	</changeSet>
+	<changeSet id="14.0" author="murthy.y">
+		<dropTable tableName="verification_lv_details"/>
+	</changeSet>
+	<changeSet id="14.1" author="durgaprasad.g" dbms="postgresql">
+		<createTable tableName="verification_lv_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.1" author="durgaprasad.g" dbms="oracle">
+		<createTable tableName="verification_lv_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.1" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_details">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" >
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="14.2" author="durgaprasad.g" dbms="postgresql">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.2" author="durgaprasad.g" dbms="oracle">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.2" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_details_temp">
+			<column name="VerificationID" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_t"/>
+			</column>
+			<column name="DocumentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.3" author="durgaprasad.g" dbms="oracle">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+				<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.3" author="durgaprasad.g" dbms="mssql">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+				<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14.3" author="durgaprasad.g" dbms="postgresql">
+		<createTable tableName="verification_lv_details_stage">
+			<column name="VerificationID" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+			<column name="Seqno" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_lv_det_s"/>
+			</column>
+				<column name="DocumentId" type="bigint"/>
+			<column name="DocumentType" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentSubId" type="varchar(50)"/>
+			<column name="DocumentRefId" type="bigint"/>
+			<column name="DocumentUri" type="varchar(2000)"/>
+			<column name="Remarks1" type="varchar(500)" />
+			<column name="Remarks2" type="varchar(500)" />
+			<column name="Remarks3" type="varchar(500)" />
+	
+			<column name="Version" type="int">
+			<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="14._Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table verification_lv_details add constraint df_vdtl_DocumentType default 0 for DocumentType;
+			alter table verification_lv_details_temp add constraint df_vdtl_t_DocumentType default 0 for DocumentType;
+			alter table verification_lv_details_stage add constraint df_vdtlstg_DocumentType default 0 for DocumentType;
+		</sql>
+	</changeSet>
+	<changeSet id="14.4" author="durgaprasad.g">
+		<addForeignKeyConstraint constraintName="fk_verf_det_vrfid" baseTableName="verification_lv_details" baseColumnNames="VerificationId"  referencedTableName="verification_lv" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_temp_vrfid" baseTableName="verification_lv_details_temp" baseColumnNames="VerificationId"  referencedTableName="verification_lv_temp" referencedColumnNames="VerificationId"/>
+		<addForeignKeyConstraint constraintName="fk_verf_det_stage_vrfid" baseTableName="verification_lv_details_stage" baseColumnNames="VerificationId"  referencedTableName="verification_lv_stage" referencedColumnNames="VerificationId"/>
+	</changeSet>
+	<changeSet id="14.5" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+			doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			lvd.DocumentType,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+			doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			lvd.DocumentType,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.verificationId = lvd.verificationId
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo ))
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType, 
+			'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			lvd.DocumentType,
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType,
+			'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			lvd.DocumentType,
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo))
+			) t
+		</createView>
+	</changeSet>
+	<changeSet id="16" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+			doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			where lvd.documenttype in(1, 2)
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+			doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.verificationId = lvd.verificationId
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo ))
+			and lvd.documenttype in(1, 2)
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType, 
+			'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			where lvd.documenttype in(3)
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType,
+			'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid  
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo))
+			and lvd.documenttype in(3)
+			) t
+		</createView>
+	</changeSet>
+	<changeSet id="17" author="durgaprasad.g">
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">	
+			select * from (
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+			doc.docModule, 
+			doccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId,  
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			where lvd.documenttype in(1, 2)
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			doc.docType, 
+			doc.docModule,
+			doccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId, 
+			lvd.DocumentSubId,
+			lvd.documentRefId,
+			lvd.documentUri,  
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details lvd
+			inner join verification_lv lv on lv.verificationId = lvd.verificationId
+			inner join documentdetails_view doc on doc.docid = lvd.documentid
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo ))
+			and lvd.documenttype in(1, 2)
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType, 
+			'Customer' docModule,
+			custdoccategory docName,
+			dt.doctypecode code,
+			dt.doctypedesc description, 
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid 
+			from verification_lv_details_temp lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			where lvd.documenttype in(3)
+			union all
+			select 
+			lvd.verificationId, 
+			lvd.SeqNo, 
+			custdocType docType,
+			'Customer' docModule,
+			custdoccategory docName, 
+			dt.doctypecode code,
+			dt.doctypedesc description,
+			lvd.documentid,
+			lvd.documentType,
+			doc.docRefId,
+			lvd.DocumentSubId, 
+			lvd.documentRefId,
+			lvd.documentUri, 
+			lvd.Remarks1, 
+			lvd.Remarks2, 
+			lvd.Remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid  
+			from verification_lv_details lvd
+			inner join customerdocuments_view doc on doc.custid = lvd.documentid and doc.custdoccategory = lvd.DocumentSubId
+			inner join bmtdocumenttypes dt on dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationId = lvd.verificationId and verification_lv_details_temp.SeqNo = lvd.SeqNo))
+			and lvd.documenttype in(3)
+			) t
+		</createView>
+	</changeSet>
+	<changeSet id="18" author="murthy.y">
+		<modifyDataType tableName="Verification_lv_details" columnName="documentsubid" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verification_lv_details_temp" columnName="documentsubid" newDataType="varchar(50)"/>
+		<modifyDataType tableName="Verification_lv_details_stage" columnName="documentsubid" newDataType="varchar(50)"/>
+	</changeSet>
+	<changeSet id="19.1" author="murthy.y">
+		<comment> Removed ARRAY[] function replaced with IN</comment>
+		<createView viewName="verification_lv_details_view" replaceIfExists="true">
+			SELECT t.verificationid,
+			t.seqno,
+			t.doctype,
+			t.docmodule,
+			t.docname,
+			t.referenceid,
+			t.code,
+			t.description,
+			t.documentid,
+			t.documenttype,
+			t.docrefid,
+			t.documentsubid,
+			t.documentrefid,
+			t.documenturi,
+			t.remarks1,
+			t.remarks2,
+			t.remarks3,
+			t.version,
+			t.lastmntby,
+			t.lastmnton,
+			t.recordstatus,
+			t.rolecode,
+			t.nextrolecode,
+			t.taskid,
+			t.nexttaskid,
+			t.recordtype,
+			t.workflowid
+			FROM ( SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details_temp lvd
+			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE lvd.documenttype in(1, 2)
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.doctype,
+			doc.docmodule,
+			doc.doccategory AS docname,
+			doc.referenceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details lvd
+			JOIN verification_lv lv ON lv.verificationid = lvd.verificationid
+			JOIN documentdetails_view doc ON doc.docid = lvd.documentid
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.doccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND (lvd.documenttype in(1, 2))
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.custdoctype AS doctype,
+			'Customer' AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details_temp lvd
+			JOIN customerdocuments_view doc ON doc.custid = lvd.documentid AND doc.custdoccategory= lvd.documentsubid
+			JOIN customers_view c on c.custid = doc.custid    
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE lvd.documenttype = 3
+			UNION ALL
+			SELECT lvd.verificationid,
+			lvd.seqno,
+			doc.custdoctype AS doctype,
+			'Customer' AS docmodule,
+			doc.custdoccategory AS docname,
+			c.custcif as refereceid,
+			dt.doctypecode AS code,
+			dt.doctypedesc AS description,
+			lvd.documentid,
+			lvd.documenttype,
+			doc.docrefid,
+			lvd.documentsubid,
+			lvd.documentrefid,
+			lvd.documenturi,
+			lvd.remarks1,
+			lvd.remarks2,
+			lvd.remarks3,
+			lvd.version,
+			lvd.lastmntby,
+			lvd.lastmnton,
+			lvd.recordstatus,
+			lvd.rolecode,
+			lvd.nextrolecode,
+			lvd.taskid,
+			lvd.nexttaskid,
+			lvd.recordtype,
+			lvd.workflowid
+			FROM verification_lv_details lvd
+			JOIN customerdocuments_view doc ON doc.custid = lvd.documentid AND doc.custdoccategory = lvd.documentsubid
+			JOIN customers_view c on c.custid = doc.custid        
+			JOIN bmtdocumenttypes dt ON dt.doctypecode = doc.custdoccategory
+			WHERE NOT (EXISTS ( SELECT 1
+			FROM verification_lv_details_temp
+			WHERE verification_lv_details_temp.verificationid = lvd.verificationid AND verification_lv_details_temp.seqno = lvd.seqno)) AND lvd.documenttype = 3) t
+		</createView>
+	</changeSet>
+	<changeSet id="20" author="lakshmi.n">
+	<sql>
+		<![CDATA[
+	       Delete from reportlist where code='LegalVerification';
+           INSERT INTO REPORTLIST Values ('LegalVerification','LegalVerification','listheader_CIF.label,listheader_CollateralType.label,listheader_CollateralReference.label,listheader_LoanReference.label,listheader_Agency.label,listheader_CreatedOn.label', 'cif,collateralType,referenceFor,keyReference,agencyName,createdOn','String,String,String,String,String,Date',' ','ReportList06','Legal Verification',
+          'Legal Verification',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);		
+  		]]>
+	</sql>
+	</changeSet>
+</databaseChangeLog>
+ 

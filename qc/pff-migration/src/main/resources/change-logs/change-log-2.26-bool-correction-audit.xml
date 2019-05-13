@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<changeSet id="sys-1-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AdtCollateralStructure set Active = 0 where Active is null;
+			alter table AdtCollateralStructure alter column Active bit not null;
+
+			update AdtCollateralStructure set AllowLtvWaiver = 0 where AllowLtvWaiver is null;
+			alter table AdtCollateralStructure alter column AllowLtvWaiver bit not null;
+
+			update AdtCollateralStructure set CollateralLocReq = 0 where CollateralLocReq is null;
+			alter table AdtCollateralStructure alter column CollateralLocReq bit not null;
+
+			update AdtCollateralStructure set CollateralValuatorReq = 0 where CollateralValuatorReq is null;
+			alter table AdtCollateralStructure alter column CollateralValuatorReq bit not null;
+
+			update AdtCollateralStructure set MarketableSecurities = 0 where MarketableSecurities is null;
+			alter table AdtCollateralStructure alter column MarketableSecurities bit not null;
+
+			update AdtCollateralStructure set PostValidationReq = 0 where PostValidationReq is null;
+			alter table AdtCollateralStructure alter column PostValidationReq bit not null;
+
+			update AdtCollateralStructure set PreValidationReq = 0 where PreValidationReq is null;
+			alter table AdtCollateralStructure alter column PreValidationReq bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-1-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AdtCollateralStructure set Active = 0 where Active is null;
+			alter table AdtCollateralStructure modify Active number(1) not null;
+
+			update AdtCollateralStructure set AllowLtvWaiver = 0 where AllowLtvWaiver is null;
+			alter table AdtCollateralStructure modify AllowLtvWaiver number(1) not null;
+
+			update AdtCollateralStructure set CollateralLocReq = 0 where CollateralLocReq is null;
+			alter table AdtCollateralStructure modify CollateralLocReq number(1) not null;
+
+			update AdtCollateralStructure set CollateralValuatorReq = 0 where CollateralValuatorReq is null;
+			alter table AdtCollateralStructure modify CollateralValuatorReq number(1) not null;
+
+			update AdtCollateralStructure set MarketableSecurities = 0 where MarketableSecurities is null;
+			alter table AdtCollateralStructure modify MarketableSecurities number(1) not null;
+
+			update AdtCollateralStructure set PostValidationReq = 0 where PostValidationReq is null;
+			alter table AdtCollateralStructure modify PostValidationReq number(1) not null;
+
+			update AdtCollateralStructure set PreValidationReq = 0 where PreValidationReq is null;
+			alter table AdtCollateralStructure modify PreValidationReq number(1) not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-2-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AdtFinanceMain set AlwBPI = 0 where AlwBPI is null;
+			alter table AdtFinanceMain alter column AlwBPI bit not null;
+
+			update AdtFinanceMain set AlwMultiDisb = 0 where AlwMultiDisb is null;
+			alter table AdtFinanceMain alter column AlwMultiDisb bit not null;
+
+			update AdtFinanceMain set PlanEMICpz = 0 where PlanEMICpz is null;
+			alter table AdtFinanceMain alter column PlanEMICpz bit not null;
+
+			update AdtFinanceMain set PlanEMIHAlw = 0 where PlanEMIHAlw is null;
+			alter table AdtFinanceMain alter column PlanEMIHAlw bit not null;
+
+			update AdtFinanceMain set ReAgeCpz = 0 where ReAgeCpz is null;
+			alter table AdtFinanceMain alter column ReAgeCpz bit not null;
+
+			update AdtFinanceMain set UnPlanEMICpz = 0 where UnPlanEMICpz is null;
+			alter table AdtFinanceMain alter column UnPlanEMICpz bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-2-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AdtFinanceMain set AlwBPI = 0 where AlwBPI is null;
+			alter table AdtFinanceMain modify AlwBPI number(1) not null;
+
+			update AdtFinanceMain set AlwMultiDisb = 0 where AlwMultiDisb is null;
+			alter table AdtFinanceMain modify AlwMultiDisb number(1) not null;
+
+			update AdtFinanceMain set PlanEMICpz = 0 where PlanEMICpz is null;
+			alter table AdtFinanceMain modify PlanEMICpz number(1) not null;
+
+			update AdtFinanceMain set PlanEMIHAlw = 0 where PlanEMIHAlw is null;
+			alter table AdtFinanceMain modify PlanEMIHAlw number(1) not null;
+
+			update AdtFinanceMain set ReAgeCpz = 0 where ReAgeCpz is null;
+			alter table AdtFinanceMain modify ReAgeCpz number(1) not null;
+
+			update AdtFinanceMain set UnPlanEMICpz = 0 where UnPlanEMICpz is null;
+			alter table AdtFinanceMain modify UnPlanEMICpz number(1) not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-3-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AdtFinJointAccountDetails set IncludeRepay = 0 where IncludeRepay is null;
+			alter table AdtFinJointAccountDetails alter column IncludeRepay bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-3-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AdtFinJointAccountDetails set IncludeRepay = 0 where IncludeRepay is null;
+			alter table AdtFinJointAccountDetails modify IncludeRepay number(1) not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-4-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AdtFinTypeInsurances set AlwRateChange = 0 where AlwRateChange is null;
+			alter table AdtFinTypeInsurances alter column AlwRateChange bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="sys-5-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AdtRMTFinanceTypes set AlwBPI = 0 where AlwBPI is null;
+			alter table AdtRMTFinanceTypes alter column AlwBPI bit not null;
+
+			update AdtRMTFinanceTypes set PlanEMICpz = 0 where PlanEMICpz is null;
+			alter table AdtRMTFinanceTypes alter column PlanEMICpz bit not null;
+
+			update AdtRMTFinanceTypes set PlanEMIHAlw = 0 where PlanEMIHAlw is null;
+			alter table AdtRMTFinanceTypes alter column PlanEMIHAlw bit not null;
+
+			update AdtRMTFinanceTypes set ReAgeCpz = 0 where ReAgeCpz is null;
+			alter table AdtRMTFinanceTypes alter column ReAgeCpz bit not null;
+
+			update AdtRMTFinanceTypes set UnPlanEMICpz = 0 where UnPlanEMICpz is null;
+			alter table AdtRMTFinanceTypes alter column UnPlanEMICpz bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-5-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AdtRMTFinanceTypes set AlwBPI = 0 where AlwBPI is null;
+			alter table AdtRMTFinanceTypes modify AlwBPI number(1) not null;
+
+			update AdtRMTFinanceTypes set PlanEMICpz = 0 where PlanEMICpz is null;
+			alter table AdtRMTFinanceTypes modify PlanEMICpz number(1) not null;
+
+			update AdtRMTFinanceTypes set PlanEMIHAlw = 0 where PlanEMIHAlw is null;
+			alter table AdtRMTFinanceTypes modify PlanEMIHAlw number(1) not null;
+
+			update AdtRMTFinanceTypes set ReAgeCpz = 0 where ReAgeCpz is null;
+			alter table AdtRMTFinanceTypes modify ReAgeCpz number(1) not null;
+
+			update AdtRMTFinanceTypes set UnPlanEMICpz = 0 where UnPlanEMICpz is null;
+			alter table AdtRMTFinanceTypes modify UnPlanEMICpz number(1) not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-6-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AdtVASRecording set FinanceProcess = 0 where FinanceProcess is null;
+			alter table AdtVASRecording alter column FinanceProcess bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-6-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AdtVASRecording set FinanceProcess = 0 where FinanceProcess is null;
+			alter table AdtVASRecording modify FinanceProcess number(1) not null;
+		]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>

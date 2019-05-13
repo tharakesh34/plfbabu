@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+<changeSet id="1" author="Prasad" dbms="mssql">
+		<sql>
+		<![CDATA[	
+			alter table adtFinScheduleDetails alter column SchPriPaid bit not null;		
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="1" author="Prasad" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table adtFinScheduleDetails modify SchPriPaid number(1);
+			alter table adtFinScheduleDetails modify SchPriPaid number(1) not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="1" author="Prasad" dbms="postgresql">
+		<sql>
+		<![CDATA[
+			alter table adtFinScheduleDetails alter column SchPriPaid type smallint using SchPriPaid::smallint ;
+			alter table adtFinScheduleDetails alter column SchPriPaid SET NOT NULL;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="2">
+		<addColumn tableName="AdtFinTypeFees">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="3">
+		<addColumn tableName="AdtFinTypeInsurances">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="4">
+		<addColumn tableName="AdtFinTypeAccounting">
+			<column name="ModuleId" type="int" />
+		</addColumn>
+	</changeSet>
+	
+</databaseChangeLog>

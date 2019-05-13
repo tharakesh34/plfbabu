@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+		
+
+	<changeSet id="2" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_PARSERS(
+	ID 					number(5,0) 			NOT NULL,
+	TYPE 				CHAR(6) 			NOT NULL,
+	NAME 				VARCHAR2(10 CHAR) 	NOT NULL,
+	CLASSNAME 			VARCHAR2(250 CHAR) 	NOT NULL,
+	CONSTRAINT 			PK_DE_PARSERS_ID 		PRIMARY KEY (ID)
+);
+</sql>
+</changeSet>
+<changeSet id="3" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_CONFIG(	
+	ID 						NUMBER(19,0) 			NOT NULL,
+	NAME 					VARCHAR2(50 CHAR) 		NOT NULL,
+	DESCRIPTION 			VARCHAR2(250 CHAR) 		NULL,
+	PARSER					number(5,0) 				NOT NULL,
+	WORKSHEET 				VARCHAR2(50 CHAR) 		NULL,
+	TEXTQUALIFIER 			CHAR(1 CHAR) 			NULL,
+	ROWDELIMITER 			VARCHAR2(4 CHAR) 		NULL,
+	COLUMNDELIMITER 		CHAR(1 CHAR) 			NULL,
+	STARTINGROW	 			number(5,0)				DEFAULT(0) NOT NULL,
+	SKIPHEADERROW	 		NUMBER(1, 0)			DEFAULT(0) NOT NULL,
+	FIELDNAMES				CLOB					NULL,
+	HEADER					CLOB					NULL,
+	TRAILER					CLOB					NULL,
+	UPLOADLOCATION 			CHAR(1 CHAR) 			NOT NULL,
+	UPLOADPATH 				VARCHAR2(250 CHAR) 		NULL,
+	FILEPREFIXNAME		 	VARCHAR2(50 CHAR) 		NOT NULL,
+	FILEEXTENSION			VARCHAR2(250 CHAR) 		NOT NULL,
+	FILESEQUENCENO			NUMBER(19,0)			DEFAULT(0) NOT NULL,
+	LASTPROCESSEDON			DATE					NULL,
+	FILENAMEFORMAT			VARCHAR2(250 CHAR)		NULL,
+	CRONEXPRESSION			VARCHAR2(50 CHAR) 		NULL,
+	NOTIFICATIONSTATUSEMAIL	VARCHAR2(254 CHAR) 		NULL,
+	POSTEVENT				VARCHAR2(100 CHAR) 		NULL,
+	BACKUPFILE				NUMBER(1, 0),
+	ACTIVE					NUMBER(1, 0),
+	CONSTRAINT 				PK_DE_CONFIG_ID 	PRIMARY KEY (ID),
+	CONSTRAINT 				FK_DE_CONFIG_PARSER FOREIGN  KEY (PARSER) REFERENCES DATA_ENGINE_PARSERS(ID),
+	CONSTRAINT 				UK_DE_CONFIG_NAME 	UNIQUE (NAME)
+);
+</sql>
+</changeSet>
+<changeSet id="4" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_TABLE(
+	ID 						NUMBER(19, 0) 				NOT NULL,
+	CONFIGID 				NUMBER(19, 0) 				NOT NULL,
+	NAME 					VARCHAR2(50 CHAR) 			NOT NULL,
+	OPERATION				NUMBER(1, 0),			
+	KEYFIELDS			 	VARCHAR2(200 CHAR) 			NOT NULL,
+	FILTER					VARCHAR2(1000 CHAR) 		NULL,
+	STATUSUPDATE			VARCHAR2(200 CHAR) 			NULL,
+	SKIPROWS                VARCHAR2(100 CHAR),
+	IDENTIFIER 				VARCHAR2(4 CHAR) 			NULL,
+	DESCRIPTION             VARCHAR2(50 CHAR) 			NULL,
+	STARTINDEX 				NUMBER(5, 0),
+	ENDINDEX 				NUMBER(5, 0),
+	RECORDLENGTH 			NUMBER(5, 0)				DEFAULT(0) 	NOT NULL,
+	MULTIROW                NUMBER(1, 0),
+	PREPAREXML 				NUMBER(1, 0),
+	XMLFIELD				VARCHAR2(30 CHAR),
+	CONSTRAINT 				PK_DE_TABLE_ID 				PRIMARY KEY (ID),
+	CONSTRAINT 				FK_DE_TABLE_CONFIGID 		FOREIGN  KEY (CONFIGID) REFERENCES DATA_ENGINE_CONFIG(ID)
+);
+</sql>
+</changeSet>
+<changeSet id="5" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_COLUMN(
+	ID 						NUMBER(19, 0) 						NOT NULL,
+	TABLEID 				NUMBER(19, 0) 						NOT NULL,
+	NAME 					VARCHAR2(50 CHAR) 					NOT NULL,
+	SKIP					NUMBER(1, 0)			DEFAULT(0),
+	SEQTYPE		 			CHAR(1)					DEFAULT('N'),
+	SEQOBJECT 				VARCHAR2(30 CHAR) 					NULL,
+	DEFAULTVALUE			VARCHAR2(100 CHAR) 					NULL,
+	DERIVEDFROM  			VARCHAR2(100 CHAR) 					NULL,
+	CHILDREFERENCE			NUMBER(1, 0)			DEFAULT(0),
+	PARENTNAME              VARCHAR2(50 CHAR) 					NULL,                                
+	STARTINDEX 				VARCHAR2(10 CHAR)					NULL,
+	ENDINDEX 				VARCHAR2(10 CHAR)					NULL,
+	RULEFORVALUE			VARCHAR2(2000 CHAR) 				NULL,
+	QUERYFORVALUE			VARCHAR2(2000 CHAR) 				NULL,
+	FORMAT 					VARCHAR2(30 CHAR) 					NULL,
+	XMLTAG	 				NUMBER(1, 0),
+	CONSTRAINT 				PK_DE_COLUMN_ID 		PRIMARY KEY (ID),
+	CONSTRAINT 				FK_DE_COLUMN_TABLEID 	FOREIGN  KEY (TABLEID) REFERENCES DATA_ENGINE_TABLE(ID)
+ );
+ </sql>
+</changeSet>
+<changeSet id="6" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_STATUS(
+	ID 					NUMBER(19, 0) 						NOT NULL,
+	NAME 				VARCHAR2(100 CHAR) 					NOT NULL,
+	STATUS 				CHAR(1) 							NOT NULL,
+	FILENAME 			VARCHAR2(100 CHAR) 					NULL,
+	REFERENCE 			VARCHAR2(100 CHAR) 					NULL,
+	VALUEDATE 			DATE,
+	TOTALRECORDS 		NUMBER(10)				DEFAULT(0) 	NOT NULL,
+	PROCESSEDRECORDS 	NUMBER(10)				DEFAULT(0) 	NOT NULL,
+	SUCCESSRECORDS 		NUMBER(10)				DEFAULT(0) 	NOT NULL,
+	FAILEDRECORDS 		NUMBER(10)				DEFAULT(0) 	NOT NULL,
+	STARTTIME 			DATE 								NOT NULL,
+	ENDTIME 			DATE 								NULL,
+	USERID 				NUMBER(19, 0) 						NOT NULL,
+	REMARKS 			VARCHAR2(2000 CHAR) 				NULL,	
+ 	CONSTRAINT 			PK_DES_ID 				PRIMARY KEY (ID)
+ );
+</sql>
+</changeSet>
+ <changeSet id="7" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_LOG(
+	ID			 	NUMBER(19, 0) 				NOT NULL,
+	KEYID 		 	VARCHAR2(50 CHAR)			NOT NULL,
+	STATUS 			CHAR(1) 					NOT NULL,
+	REASON 			VARCHAR2(2000 CHAR) 		NULL,
+	CONSTRAINT 		FK_DEL_ID FOREIGN KEY (ID) 	REFERENCES DATA_ENGINE_STATUS(ID)
+);
+</sql>
+</changeSet>
+<changeSet id="8" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_TABLES(
+	ID 				NUMBER(19, 0) 			NOT NULL,
+	NAME 			VARCHAR2(30 CHAR) 		NOT NULL,
+	CONSTRAINT 		UK_DE_T_NAME 			UNIQUE (NAME)
+);
+</sql>
+</changeSet>
+<changeSet id="8.1" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE DATA_ENGINE_EXECUTION_FIELDS(
+	ID						NUMBER(19, 0) 				NOT NULL,
+	FIELD1					VARCHAR2(50 CHAR) 			NULL,
+	FIELD2					VARCHAR2(200 CHAR) 			NULL,
+	FIELD3					VARCHAR2(200 CHAR) 			NULL,
+	CONSTRAINT 				FK_DE_ED_ID FOREIGN KEY (ID) REFERENCES DATA_ENGINE_STATUS(ID)
+ );
+ </sql>
+</changeSet>
+<changeSet id="9" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE SEQ_DATA_ENGINE_CONFIG(
+	SEQNO NUMBER NOT NULL
+);
+</sql>
+</changeSet>
+<changeSet id="10" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE SEQ_DATA_ENGINE_TABLE(
+	SEQNO NUMBER NOT NULL
+);
+</sql>
+</changeSet>
+<changeSet id="11" author="durgaprasad" dbms="Oracle">
+	<sql>
+CREATE TABLE SEQ_DATA_ENGINE_COLUMN(
+	SEQNO NUMBER NOT NULL
+);
+</sql>
+</changeSet>
+<changeSet id="12" author="durgaprasad" dbms="Oracle">
+	<sql>
+
+CREATE TABLE SEQ_DATA_ENGINE_STATUS(
+	SEQNO NUMBER NOT NULL
+);
+</sql>
+</changeSet>
+<changeSet id="13" author="durgaprasad" dbms="Oracle">
+	<sql>
+DELETE FROM SEQ_DATA_ENGINE_CONFIG;
+DELETE FROM SEQ_DATA_ENGINE_TABLE;
+DELETE FROM SEQ_DATA_ENGINE_COLUMN;
+DELETE FROM SEQ_DATA_ENGINE_STATUS;
+</sql>
+</changeSet>
+<changeSet id="14" author="durgaprasad" dbms="Oracle">
+	<sql>
+
+INSERT INTO SEQ_DATA_ENGINE_CONFIG VALUES(0);
+INSERT INTO SEQ_DATA_ENGINE_TABLE  VALUES(0);
+INSERT INTO SEQ_DATA_ENGINE_COLUMN VALUES(0);
+INSERT INTO SEQ_DATA_ENGINE_STATUS VALUES(0);
+</sql>
+</changeSet>
+
+</databaseChangeLog>

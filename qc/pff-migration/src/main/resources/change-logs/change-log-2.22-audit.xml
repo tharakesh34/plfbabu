@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+ 	
+ 	<changeSet author="Madhubabu" id="1">
+    <createTable tableName="AdtFinSchFrqInsurance">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+				<column name="Reference" type="nvarchar(20)">
+				<constraints nullable="false" />
+				</column>
+				<column name="Module" type="nvarchar(10)" >
+				<constraints nullable="false" />
+				</column>
+				<column name="InsuranceType" type="varchar(8)" >
+				<constraints nullable="false" />
+				</column>
+				<column name="InsReference" type="nvarchar(20)" >
+				<constraints nullable="false" />
+				</column>
+				<column name="InsuranceRate" type="decimal(13,9)" />
+				<column name="InsuranceFrq" type="nvarchar(5)" />
+				<column name="Amount" type="decimal(18,0)" />
+				<column name="Version" type="int" defaultValue="0" />
+				<column name="LastMntBy" type="bigint" />
+				<column name="LastMntOn" type="datetime" />
+				<column name="RecordStatus" type="nvarchar(50)" />
+				<column name="RoleCode" type="nvarchar(100)" />
+				<column name="NextRoleCode" type="nvarchar(200)" />
+				<column name="TaskId" type="nvarchar(50)" />
+				<column name="NextTaskId" type="nvarchar(200)" />
+				<column name="RecordType" type="nvarchar(50)" />
+				<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		
+		<changeSet author="Madhubabu" id="2">
+		<modifyDataType tableName="AdtFinSchFrqInsurance" columnName="InsReference"
+			newDataType="nvarchar(20)" />
+	</changeSet>
+	
+	<changeSet author="MadhuBabu" id="3">
+	<addColumn tableName="AdtFinSchFrqInsurance">
+		<column name="InsSchDate" type="datetime"/>
+	</addColumn>
+	</changeSet>
+	
+	<changeSet author="Surekha" id="4">
+    <createTable tableName="AdtPresentmentReasonCode">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+				<column name="Code" type="nvarchar(8)">
+				<constraints nullable="false" />
+				</column>
+				<column name="Description" type="nvarchar(200)" />
+				<column name="Active" type="nchar(1)" />
+				<column name="Version" type="int" defaultValue="0" />
+				<column name="LastMntBy" type="bigint" />
+				<column name="LastMntOn" type="datetime" />
+				<column name="RecordStatus" type="nvarchar(50)" />
+				<column name="RoleCode" type="nvarchar(100)" />
+				<column name="NextRoleCode" type="nvarchar(200)" />
+				<column name="TaskId" type="nvarchar(50)" />
+				<column name="NextTaskId" type="nvarchar(200)" />
+				<column name="RecordType" type="nvarchar(50)" />
+				<column name="WorkflowId" type="bigint" />
+		</createTable>
+		</changeSet>
+		<changeSet author="Surekha" id="surekha20">
+			<addColumn tableName="AdtRMTProvinceVsCity">
+				<column name="PCCityClassification" type="nvarchar(25)"/>
+			</addColumn>
+	</changeSet>
+	
+	<!-- Modification Columns from Finance Types -->
+	<changeSet author="Siva" id="27">
+	
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="AlwBpiTreatment" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="DftBpiTreatment" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="PftDueSchOn" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="AlwPlannedEmiHoliday" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="EmiHolidayPftTreatment" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="EmiHolidayFrq" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="EmiHolidayLockPeriod" />
+		
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="AlwBPI" type="boolean" />
+			<column name="BpiTreatment" type="char(1)" />
+			<column name="PftDueSchOn" type="char(1)" />
+			<column name="PlanEMIHAlw" type="boolean" />
+			<column name="PlanEMIHMethod" type="char(1)" />
+			<column name="PlanEMIHMaxPerYear" type="int" />
+			<column name="PlanEMIHMax" type="int" />
+			<column name="PlanEMIHLockPeriod" type="int" />
+			<column name="PlanEMICpz" type="boolean" />
+			<column name="UnPlanEMIHLockPeriod" type="int" />
+			<column name="UnPlanEMICpz" type="boolean" />
+			<column name="ReAgeCpz" type="boolean" />
+			<column name="FddLockPeriod" type="int" />
+			<column name="AlwdRpyMethods" type="char(100)" />
+			<column name="MaxUnplannedEmi" type="int" />
+			<column name="MaxReAgeHolidays" type="int" />
+			<column name="CalRoundingMode" type="char(10)" />
+		</addColumn>
+		
+	</changeSet>
+	<changeSet id="28" author="Irfan">
+	<dropTable tableName="AdtFinAssetTypes"/>
+	</changeSet>
+	
+	<changeSet id="29" author="Irfan">
+	  <createTable tableName="AdtFinAssetTypes">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+				<column name="AssetType" type="nvarchar(8)">
+				<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="SeqNo" type="int" >
+				<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="Reference" type="nvarchar(20)" >
+				<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="Version" type="int" defaultValue="0" />
+				<column name="LastMntBy" type="bigint" />
+				<column name="LastMntOn" type="datetime" />
+				<column name="RecordStatus" type="nvarchar(50)" />
+				<column name="RoleCode" type="nvarchar(100)" />
+				<column name="NextRoleCode" type="nvarchar(200)" />
+				<column name="TaskId" type="nvarchar(50)" />
+				<column name="NextTaskId" type="nvarchar(200)" />
+				<column name="RecordType" type="nvarchar(50)" />
+				<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet author="Siva" id="30">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="FrequencyDays" type="varchar(100)" />
+		</addColumn>
+	</changeSet>	
+	
+	<changeSet author="Siva" id="31">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="AlwBPI" type="boolean" />
+			<column name="BpiTreatment" type="char(1)" />
+			<column name="PlanEMIHAlw" type="boolean" />
+			<column name="PlanEMIHMethod" type="char(1)" />
+			<column name="PlanEMIHMaxPerYear" type="int" />
+			<column name="PlanEMIHMax" type="int" />
+			<column name="PlanEMIHLockPeriod" type="int" />
+			<column name="PlanEMICpz" type="boolean" />
+			<column name="CalRoundingMode" type="char(10)" />
+			<column name="AlwMultiDisb" type="boolean" />
+		</addColumn>
+		</changeSet>	
+		
+	<changeSet author="Madhubabu" id="32">
+	<addColumn tableName="Adtfininsurances">
+		<column name="InsId" type="bigint" />
+	</addColumn>
+	</changeSet>
+	
+	<changeSet author="Madhubabu" id="33">
+		<addNotNullConstraint tableName="Adtfininsurances"
+			columnName="InsId" columnDataType="bigint" />
+	</changeSet>
+    <changeSet author="Madhubabu" id="34">
+		<dropColumn columnName="Reference" tableName="ADTFinSchFrqInsurance" />
+		<dropColumn columnName="Module" tableName="ADTFinSchFrqInsurance" />
+		<dropColumn columnName="InsuranceType" tableName="ADTFinSchFrqInsurance" />
+		<dropColumn columnName="InsReference" tableName="ADTFinSchFrqInsurance" />
+	</changeSet>
+	<changeSet author="Madhubabu" id="35">
+		<addColumn tableName="AdtFinSchFrqInsurance">
+			<column name="InsId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="Madhubabu" id="36">
+		<addNotNullConstraint tableName="AdtFinSchFrqInsurance"
+			columnName="InsId" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet author="Irfan" id="37">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ApplicationNo" type="nvarchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="MandateAudit1" author="satish">
+		<addColumn tableName="AdtMandates">
+			<column name="OrgReference" type="nvarchar(25)" />
+	</addColumn>
+	</changeSet>
+	<changeSet author="Irfan" id="38">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ReferralId" type="nvarchar(8)"/>
+			<column name="DmaCode" type="nvarchar(8)"/>
+			<column name="SalesDepartment" type="nvarchar(8)"/>
+			<column name="QuickDisb" type="nchar(1)"/>
+			<column name="WifReference" type="nvarchar(20)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet author="Irfan" id="irfan01">
+	<addDefaultValue tableName="AdtFinanceMain" defaultValue="0" columnName="QuickDisb" columnDataType="nchar"/>
+	</changeSet>
+	<changeSet author="Subbarao" id="39">
+	<sql>
+		alter table ADTCOMMITMENTS  ALTER COLUMN CMTACCOUNT nvarchar(50) NULL;
+	</sql>
+	</changeSet>
+			
+</databaseChangeLog>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Checks" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="6aa2473e-5770-4e47-a869-729c712931e2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="whereCondition" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="custName" class="java.lang.String"/>
+	<field name="finBranchName" class="java.lang.String"/>
+	<field name="finReference" class="java.lang.String"/>
+	<field name="disbAccountId" class="java.lang.String"/>
+	<field name="repayAmount" class="java.lang.String"/>
+	<field name="appDate" class="java.lang.String"/>
+	<field name="repayAmountinWords" class="java.lang.String"/>
+	<detail>
+		<band height="211" splitType="Immediate">
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement uuid="32ffe101-8a98-4007-bf82-93c31e355117" x="401" y="33" width="154" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{appDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f640480d-181c-4a6b-b2f1-73752455b9aa" x="60" y="68" width="193" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{finBranchName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="44370082-ebdc-46d2-a67e-7284c5a0a4d9" x="0" y="137" width="226" height="18"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{custName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f9878e5a-73f8-4771-81da-63155dac50b2" x="0" y="154" width="226" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{disbAccountId}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4576166d-9051-46f9-a1e4-3cd3733542f1" x="0" y="169" width="226" height="15"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{finReference}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3f33dcb1-09e7-4a16-b8a2-9c68a68f8f17" x="401" y="85" width="96" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{repayAmount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="eabc93c3-dc6f-4c8c-93f8-ce070789cb01" x="455" y="159" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="7a8be6fd-af88-4e21-9451-ff8f856c2323" x="0" y="209" width="555" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="2eb85169-3892-48a9-a639-3aa02ce2ef17" x="0" y="1" width="555" height="1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3f33dcb1-09e7-4a16-b8a2-9c68a68f8f17" x="0" y="97" width="380" height="40"/>
+				<textElement textAlignment="Left">
+					<paragraph lineSpacing="Double"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{repayAmountinWords}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

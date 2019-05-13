@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+
+	<changeSet id="1" author="Somasekhar" dbms="oracle">
+		<sql>
+			ALTER TABLE FINASSETTYPES RENAME COLUMN assetTypeId TO FinAssetTypeId;
+			ALTER TABLE FINASSETTYPES_Temp RENAME COLUMN assetTypeId TO FinAssetTypeId;
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="Somasekhar" dbms="mssql">
+		<sql>
+			EXEC sp_RENAME 'FINASSETTYPES.ASSETTYPEID' ,'FINASSETTYPEID','COLUMN';
+			EXEC sp_RENAME 'FINASSETTYPES_Temp.ASSETTYPEID' ,'FINASSETTYPEID','COLUMN';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3" author="Somasekhar">
+		<createView viewName="FINASSETTYPES_TVIEW" replaceIfExists="true">
+		SELECT     T1.FinAssetTypeId,T1.AssetType, T1.SeqNo, T1.Reference,
+		  			T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode,
+		 			 T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+		FROM   FinAssetTypes_Temp T1
+		</createView>
+	</changeSet>
+	
+</databaseChangeLog>

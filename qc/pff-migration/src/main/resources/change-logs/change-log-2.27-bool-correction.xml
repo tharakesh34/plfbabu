@@ -1,0 +1,4430 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<changeSet id="sys-1-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table Accounts drop constraint DF_Accounts_AcActive;
+ 
+			update Accounts set acActive = 0 where acActive is null;
+			alter table Accounts alter column acActive bit not null;
+
+			update Accounts set acBlocked = 0 where acBlocked is null;
+			alter table Accounts alter column acBlocked bit not null;
+
+			update Accounts set acClosed = 0 where acClosed is null;
+			alter table Accounts alter column acClosed bit not null;
+
+			update Accounts set custSysAc = 0 where custSysAc is null;
+			alter table Accounts alter column custSysAc bit not null;
+
+			update Accounts set internalAc = 0 where internalAc is null;
+			alter table Accounts alter column internalAc bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-1-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table Accounts modify acActive default null;
+ 
+			update Accounts set acActive = 0 where acActive is null;
+			update Accounts set acBlocked = 0 where acBlocked is null;
+			update Accounts set acClosed = 0 where acClosed is null;
+			update Accounts set custSysAc = 0 where custSysAc is null;
+			update Accounts set internalAc = 0 where internalAc is null;
+ 
+			create table sai_temp as select * from Accounts;
+ 
+			alter table Accounts modify (acActive NULL);
+			alter table Accounts modify (acBlocked NULL);
+			alter table Accounts modify (acClosed NULL);
+			alter table Accounts modify (custSysAc NULL);
+			alter table Accounts modify (internalAc NULL);
+ 
+			update Accounts set acActive = null, acBlocked = null, acClosed = null, custSysAc = null, internalAc = null;
+ 
+			alter table Accounts modify acActive number(1);
+			alter table Accounts modify acBlocked number(1);
+			alter table Accounts modify acClosed number(1);
+			alter table Accounts modify custSysAc number(1);
+			alter table Accounts modify internalAc number(1);
+ 
+			update Accounts m set (m.acActive, m.acBlocked, m.acClosed, m.custSysAc, m.internalAc) = (select t.acActive, t.acBlocked, t.acClosed, t.custSysAc, t.internalAc from sai_temp t where t.AccountId = m.AccountId) where exists (select 1 from sai_temp t where t.AccountId = m.AccountId);
+ 
+			alter table Accounts modify acActive number(1) not null;
+			alter table Accounts modify acBlocked number(1) not null;
+			alter table Accounts modify acClosed number(1) not null;
+			alter table Accounts modify custSysAc number(1) not null;
+			alter table Accounts modify internalAc number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-2-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table Accounts_Temp drop constraint DF_Accounts_Temp_AcActive;
+ 
+			update Accounts_Temp set acActive = 0 where acActive is null;
+			alter table Accounts_Temp alter column acActive bit not null;
+
+			update Accounts_Temp set acBlocked = 0 where acBlocked is null;
+			alter table Accounts_Temp alter column acBlocked bit not null;
+
+			update Accounts_Temp set acClosed = 0 where acClosed is null;
+			alter table Accounts_Temp alter column acClosed bit not null;
+
+			update Accounts_Temp set custSysAc = 0 where custSysAc is null;
+			alter table Accounts_Temp alter column custSysAc bit not null;
+
+			update Accounts_Temp set internalAc = 0 where internalAc is null;
+			alter table Accounts_Temp alter column internalAc bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-2-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table Accounts_Temp modify acActive default null;
+ 
+			update Accounts_Temp set acActive = 0 where acActive is null;
+			update Accounts_Temp set acBlocked = 0 where acBlocked is null;
+			update Accounts_Temp set acClosed = 0 where acClosed is null;
+			update Accounts_Temp set custSysAc = 0 where custSysAc is null;
+			update Accounts_Temp set internalAc = 0 where internalAc is null;
+ 
+			create table sai_temp as select * from Accounts_Temp;
+ 
+			alter table Accounts_Temp modify (acActive NULL);
+			alter table Accounts_Temp modify (acBlocked NULL);
+			alter table Accounts_Temp modify (acClosed NULL);
+			alter table Accounts_Temp modify (custSysAc NULL);
+			alter table Accounts_Temp modify (internalAc NULL);
+ 
+			update Accounts_Temp set acActive = null, acBlocked = null, acClosed = null, custSysAc = null, internalAc = null;
+ 
+			alter table Accounts_Temp modify acActive number(1);
+			alter table Accounts_Temp modify acBlocked number(1);
+			alter table Accounts_Temp modify acClosed number(1);
+			alter table Accounts_Temp modify custSysAc number(1);
+			alter table Accounts_Temp modify internalAc number(1);
+ 
+			update Accounts_Temp m set (m.acActive, m.acBlocked, m.acClosed, m.custSysAc, m.internalAc) = (select t.acActive, t.acBlocked, t.acClosed, t.custSysAc, t.internalAc from sai_temp t where t.AccountID = m.AccountID) where exists (select 1 from sai_temp t where t.AccountID = m.AccountID);
+ 
+			alter table Accounts_Temp modify acActive number(1) not null;
+			alter table Accounts_Temp modify acBlocked number(1) not null;
+			alter table Accounts_Temp modify acClosed number(1) not null;
+			alter table Accounts_Temp modify custSysAc number(1) not null;
+			alter table Accounts_Temp modify internalAc number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-3-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTAEEvents set active = 0 where active is null;
+			alter table BMTAEEvents alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-3-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTAEEvents set active = 0 where active is null;
+ 
+			create table sai_temp as select * from BMTAEEvents;
+ 
+			update BMTAEEvents set active = null;
+ 
+			alter table BMTAEEvents modify active number(1);
+ 
+			update BMTAEEvents m set (m.active) = (select t.active from sai_temp t where t.AEEventCode = m.AEEventCode) where exists (select 1 from sai_temp t where t.AEEventCode = m.AEEventCode);
+ 
+			alter table BMTAEEvents modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-4-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTAEEvents_Temp set active = 0 where active is null;
+			alter table BMTAEEvents_Temp alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-4-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTAEEvents_Temp set active = 0 where active is null;
+ 
+			create table sai_temp as select * from BMTAEEvents_Temp;
+ 
+			update BMTAEEvents_Temp set active = null;
+ 
+			alter table BMTAEEvents_Temp modify active number(1);
+ 
+			update BMTAEEvents_Temp m set (m.active) = (select t.active from sai_temp t where t.AEEventCode = m.AEEventCode) where exists (select 1 from sai_temp t where t.AEEventCode = m.AEEventCode);
+ 
+			alter table BMTAEEvents_Temp modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-5-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTAccountingSet set entryByInvestment = 0 where entryByInvestment is null;
+			alter table RMTAccountingSet alter column entryByInvestment bit not null;
+
+			update RMTAccountingSet set SystemDefault = 0 where SystemDefault is null;
+			alter table RMTAccountingSet alter column SystemDefault bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-5-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTAccountingSet set entryByInvestment = 0 where entryByInvestment is null;
+			update RMTAccountingSet set SystemDefault = 0 where SystemDefault is null;
+ 
+			create table sai_temp as select * from RMTAccountingSet;
+ 
+			update RMTAccountingSet set entryByInvestment = null, SystemDefault = null;
+ 
+			alter table RMTAccountingSet modify entryByInvestment number(1);
+			alter table RMTAccountingSet modify SystemDefault number(1);
+ 
+			update RMTAccountingSet m set (m.entryByInvestment, m.SystemDefault) = (select t.entryByInvestment, t.SystemDefault from sai_temp t where t.AccountSetid = m.AccountSetid) where exists (select 1 from sai_temp t where t.AccountSetid = m.AccountSetid);
+ 
+			alter table RMTAccountingSet modify entryByInvestment number(1) not null;
+			alter table RMTAccountingSet modify SystemDefault number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-6-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTAccountingSet_Temp set entryByInvestment = 0 where entryByInvestment is null;
+			alter table RMTAccountingSet_Temp alter column entryByInvestment bit not null;
+
+			update RMTAccountingSet_Temp set SystemDefault = 0 where SystemDefault is null;
+			alter table RMTAccountingSet_Temp alter column SystemDefault bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-6-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTAccountingSet_Temp set entryByInvestment = 0 where entryByInvestment is null;
+			update RMTAccountingSet_Temp set SystemDefault = 0 where SystemDefault is null;
+ 
+			create table sai_temp as select * from RMTAccountingSet_Temp;
+ 
+			update RMTAccountingSet_Temp set entryByInvestment = null, SystemDefault = null;
+ 
+			alter table RMTAccountingSet_Temp modify entryByInvestment number(1);
+			alter table RMTAccountingSet_Temp modify SystemDefault number(1);
+ 
+			update RMTAccountingSet_Temp m set (m.entryByInvestment, m.SystemDefault) = (select t.entryByInvestment, t.SystemDefault from sai_temp t where t.AccountSetid = m.AccountSetid) where exists (select 1 from sai_temp t where t.AccountSetid = m.AccountSetid);
+ 
+			alter table RMTAccountingSet_Temp modify entryByInvestment number(1) not null;
+			alter table RMTAccountingSet_Temp modify SystemDefault number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-7-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_DETAILS set Active = 0 where Active is null;
+			alter table API_CHANNEL_DETAILS alter column Active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-7-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_DETAILS set Active = 0 where Active is null;
+ 
+			create table sai_temp as select * from API_CHANNEL_DETAILS;
+ 
+			update API_CHANNEL_DETAILS set Active = null;
+ 
+			alter table API_CHANNEL_DETAILS modify Active number(1);
+ 
+			update API_CHANNEL_DETAILS m set (m.Active) = (select t.Active from sai_temp t where t.Id = m.Id) where exists (select 1 from sai_temp t where t.Id = m.Id);
+ 
+			alter table API_CHANNEL_DETAILS modify Active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-8-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_DETAILS_TEMP set Active = 0 where Active is null;
+			alter table API_CHANNEL_DETAILS_TEMP alter column Active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-8-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_DETAILS_TEMP set Active = 0 where Active is null;
+ 
+			create table sai_temp as select * from API_CHANNEL_DETAILS_TEMP;
+ 
+			update API_CHANNEL_DETAILS_TEMP set Active = null;
+ 
+			alter table API_CHANNEL_DETAILS_TEMP modify Active number(1);
+ 
+			update API_CHANNEL_DETAILS_TEMP m set (m.Active) = (select t.Active from sai_temp t where t.Id = m.Id) where exists (select 1 from sai_temp t where t.Id = m.Id);
+ 
+			alter table API_CHANNEL_DETAILS_TEMP modify Active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-9-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_IP_DETAILS set Active = 0 where Active is null;
+			alter table API_CHANNEL_IP_DETAILS alter column Active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-9-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_IP_DETAILS set Active = 0 where Active is null;
+ 
+			create table sai_temp as select * from API_CHANNEL_IP_DETAILS;
+ 
+			update API_CHANNEL_IP_DETAILS set Active = null;
+ 
+			alter table API_CHANNEL_IP_DETAILS modify Active number(1);
+ 
+			update API_CHANNEL_IP_DETAILS m set (m.Active) = (select t.Active from sai_temp t where t.ChannelId = m.ChannelId and t.Id = m.Id) where exists (select 1 from sai_temp t where t.ChannelId = m.ChannelId and t.Id = m.Id);
+ 
+			alter table API_CHANNEL_IP_DETAILS modify Active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-10-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_IP_DETAILS_TEMP set Active = 0 where Active is null;
+			alter table API_CHANNEL_IP_DETAILS_TEMP alter column Active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-10-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update API_CHANNEL_IP_DETAILS_TEMP set Active = 0 where Active is null;
+ 
+			create table sai_temp as select * from API_CHANNEL_IP_DETAILS_TEMP;
+ 
+			update API_CHANNEL_IP_DETAILS_TEMP set Active = null;
+ 
+			alter table API_CHANNEL_IP_DETAILS_TEMP modify Active number(1);
+ 
+			update API_CHANNEL_IP_DETAILS_TEMP m set (m.Active) = (select t.Active from sai_temp t where t.ChannelId = m.ChannelId and t.Id = m.Id) where exists (select 1 from sai_temp t where t.ChannelId = m.ChannelId and t.Id = m.Id);
+ 
+			alter table API_CHANNEL_IP_DETAILS_TEMP modify Active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-11-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AssetTypes set active = 0 where active is null;
+			alter table AssetTypes alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-11-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AssetTypes set active = 0 where active is null;
+ 
+			create table sai_temp as select * from AssetTypes;
+ 
+			update AssetTypes set active = null;
+ 
+			alter table AssetTypes modify active number(1);
+ 
+			update AssetTypes m set (m.active) = (select t.active from sai_temp t where t.AssetType = m.AssetType) where exists (select 1 from sai_temp t where t.AssetType = m.AssetType);
+ 
+			alter table AssetTypes modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-12-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update AssetTypes_Temp set active = 0 where active is null;
+			alter table AssetTypes_Temp alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-12-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update AssetTypes_Temp set active = 0 where active is null;
+ 
+			create table sai_temp as select * from AssetTypes_Temp;
+ 
+			update AssetTypes_Temp set active = null;
+ 
+			alter table AssetTypes_Temp modify active number(1);
+ 
+			update AssetTypes_Temp m set (m.active) = (select t.active from sai_temp t where t.AssetType = m.AssetType) where exists (select 1 from sai_temp t where t.AssetType = m.AssetType);
+ 
+			alter table AssetTypes_Temp modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-13-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTAddressTypes drop constraint DF_BMTAddressTypes_AddrTypeIA;
+ 
+			update BMTAddressTypes set addrTypeIsActive = 0 where addrTypeIsActive is null;
+			alter table BMTAddressTypes alter column addrTypeIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-13-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTAddressTypes modify addrTypeIsActive default null;
+ 
+			update BMTAddressTypes set addrTypeIsActive = 0 where addrTypeIsActive is null;
+ 
+			create table sai_temp as select * from BMTAddressTypes;
+ 
+			alter table BMTAddressTypes modify (addrTypeIsActive NULL);
+ 
+			update BMTAddressTypes set addrTypeIsActive = null;
+ 
+			alter table BMTAddressTypes modify addrTypeIsActive number(1);
+ 
+			update BMTAddressTypes m set (m.addrTypeIsActive) = (select t.addrTypeIsActive from sai_temp t where t.AddrTypeCode = m.AddrTypeCode) where exists (select 1 from sai_temp t where t.AddrTypeCode = m.AddrTypeCode);
+ 
+			alter table BMTAddressTypes modify addrTypeIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-14-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTAddressTypes_Temp drop constraint DF_BMTAddrTypes_T_AddrTypeIA;
+ 
+			update BMTAddressTypes_Temp set addrTypeIsActive = 0 where addrTypeIsActive is null;
+			alter table BMTAddressTypes_Temp alter column addrTypeIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-14-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTAddressTypes_Temp modify addrTypeIsActive default null;
+ 
+			update BMTAddressTypes_Temp set addrTypeIsActive = 0 where addrTypeIsActive is null;
+ 
+			create table sai_temp as select * from BMTAddressTypes_Temp;
+ 
+			alter table BMTAddressTypes_Temp modify (addrTypeIsActive NULL);
+ 
+			update BMTAddressTypes_Temp set addrTypeIsActive = null;
+ 
+			alter table BMTAddressTypes_Temp modify addrTypeIsActive number(1);
+ 
+			update BMTAddressTypes_Temp m set (m.addrTypeIsActive) = (select t.addrTypeIsActive from sai_temp t where t.AddrTypeCode = m.AddrTypeCode) where exists (select 1 from sai_temp t where t.AddrTypeCode = m.AddrTypeCode);
+ 
+			alter table BMTAddressTypes_Temp modify addrTypeIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-15-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTAggrementDef set aggIsActive = 0 where aggIsActive is null;
+			alter table BMTAggrementDef alter column aggIsActive bit not null;
+
+			update BMTAggrementDef set allowMultiple = 0 where allowMultiple is null;
+			alter table BMTAggrementDef alter column allowMultiple bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-15-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTAggrementDef set aggIsActive = 0 where aggIsActive is null;
+			update BMTAggrementDef set allowMultiple = 0 where allowMultiple is null;
+ 
+			create table sai_temp as select * from BMTAggrementDef;
+ 
+			update BMTAggrementDef set aggIsActive = null, allowMultiple = null;
+ 
+			alter table BMTAggrementDef modify aggIsActive number(1);
+			alter table BMTAggrementDef modify allowMultiple number(1);
+ 
+			update BMTAggrementDef m set (m.aggIsActive, m.allowMultiple) = (select t.aggIsActive, t.allowMultiple from sai_temp t where t.AggId = m.AggId) where exists (select 1 from sai_temp t where t.AggId = m.AggId);
+ 
+			alter table BMTAggrementDef modify aggIsActive number(1) not null;
+			alter table BMTAggrementDef modify allowMultiple number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-16-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTAggrementDef_Temp set aggIsActive = 0 where aggIsActive is null;
+			alter table BMTAggrementDef_Temp alter column aggIsActive bit not null;
+
+			update BMTAggrementDef_Temp set allowMultiple = 0 where allowMultiple is null;
+			alter table BMTAggrementDef_Temp alter column allowMultiple bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-16-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTAggrementDef_Temp set aggIsActive = 0 where aggIsActive is null;
+			update BMTAggrementDef_Temp set allowMultiple = 0 where allowMultiple is null;
+ 
+			create table sai_temp as select * from BMTAggrementDef_Temp;
+ 
+			update BMTAggrementDef_Temp set aggIsActive = null, allowMultiple = null;
+ 
+			alter table BMTAggrementDef_Temp modify aggIsActive number(1);
+			alter table BMTAggrementDef_Temp modify allowMultiple number(1);
+ 
+			update BMTAggrementDef_Temp m set (m.aggIsActive, m.allowMultiple) = (select t.aggIsActive, t.allowMultiple from sai_temp t where t.AggId = m.AggId) where exists (select 1 from sai_temp t where t.AggId = m.AggId);
+ 
+			alter table BMTAggrementDef_Temp modify aggIsActive number(1) not null;
+			alter table BMTAggrementDef_Temp modify allowMultiple number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="sys-18-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTBankDetail set active = 0 where active is null;
+			alter table BMTBankDetail alter column active bit not null;
+
+			update BMTBankDetail set cheque = 0 where cheque is null;
+			alter table BMTBankDetail alter column cheque bit not null;
+
+			update BMTBankDetail set dd = 0 where dd is null;
+			alter table BMTBankDetail alter column dd bit not null;
+
+			update BMTBankDetail set dda = 0 where dda is null;
+			alter table BMTBankDetail alter column dda bit not null;
+
+			update BMTBankDetail set ecs = 0 where ecs is null;
+			alter table BMTBankDetail alter column ecs bit not null;
+
+			update BMTBankDetail set nach = 0 where nach is null;
+			alter table BMTBankDetail alter column nach bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-18-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTBankDetail set active = 0 where active is null;
+			update BMTBankDetail set cheque = 0 where cheque is null;
+			update BMTBankDetail set dd = 0 where dd is null;
+			update BMTBankDetail set dda = 0 where dda is null;
+			update BMTBankDetail set ecs = 0 where ecs is null;
+			update BMTBankDetail set nach = 0 where nach is null;
+ 
+			create table sai_temp as select * from BMTBankDetail;
+ 
+			alter table BMTBankDetail modify (active NULL);
+ 
+			update BMTBankDetail set active = null, cheque = null, dd = null, dda = null, ecs = null, nach = null;
+ 
+			alter table BMTBankDetail modify active number(1);
+			alter table BMTBankDetail modify cheque number(1);
+			alter table BMTBankDetail modify dd number(1);
+			alter table BMTBankDetail modify dda number(1);
+			alter table BMTBankDetail modify ecs number(1);
+			alter table BMTBankDetail modify nach number(1);
+ 
+			update BMTBankDetail m set (m.active, m.cheque, m.dd, m.dda, m.ecs, m.nach) = (select t.active, t.cheque, t.dd, t.dda, t.ecs, t.nach from sai_temp t where t.BankCode = m.BankCode) where exists (select 1 from sai_temp t where t.BankCode = m.BankCode);
+ 
+			alter table BMTBankDetail modify active number(1) not null;
+			alter table BMTBankDetail modify cheque number(1) not null;
+			alter table BMTBankDetail modify dd number(1) not null;
+			alter table BMTBankDetail modify dda number(1) not null;
+			alter table BMTBankDetail modify ecs number(1) not null;
+			alter table BMTBankDetail modify nach number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-19-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTBankDetail_TEMP set active = 0 where active is null;
+			alter table BMTBankDetail_TEMP alter column active bit not null;
+
+			update BMTBankDetail_TEMP set cheque = 0 where cheque is null;
+			alter table BMTBankDetail_TEMP alter column cheque bit not null;
+
+			update BMTBankDetail_TEMP set dd = 0 where dd is null;
+			alter table BMTBankDetail_TEMP alter column dd bit not null;
+
+			update BMTBankDetail_TEMP set dda = 0 where dda is null;
+			alter table BMTBankDetail_TEMP alter column dda bit not null;
+
+			update BMTBankDetail_TEMP set ecs = 0 where ecs is null;
+			alter table BMTBankDetail_TEMP alter column ecs bit not null;
+
+			update BMTBankDetail_TEMP set nach = 0 where nach is null;
+			alter table BMTBankDetail_TEMP alter column nach bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-19-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTBankDetail_TEMP set active = 0 where active is null;
+			update BMTBankDetail_TEMP set cheque = 0 where cheque is null;
+			update BMTBankDetail_TEMP set dd = 0 where dd is null;
+			update BMTBankDetail_TEMP set dda = 0 where dda is null;
+			update BMTBankDetail_TEMP set ecs = 0 where ecs is null;
+			update BMTBankDetail_TEMP set nach = 0 where nach is null;
+ 
+			create table sai_temp as select * from BMTBankDetail_TEMP;
+ 
+			alter table BMTBankDetail_TEMP modify (active NULL);
+ 
+			update BMTBankDetail_TEMP set active = null, cheque = null, dd = null, dda = null, ecs = null, nach = null;
+ 
+			alter table BMTBankDetail_TEMP modify active number(1);
+			alter table BMTBankDetail_TEMP modify cheque number(1);
+			alter table BMTBankDetail_TEMP modify dd number(1);
+			alter table BMTBankDetail_TEMP modify dda number(1);
+			alter table BMTBankDetail_TEMP modify ecs number(1);
+			alter table BMTBankDetail_TEMP modify nach number(1);
+ 
+			update BMTBankDetail_TEMP m set (m.active, m.cheque, m.dd, m.dda, m.ecs, m.nach) = (select t.active, t.cheque, t.dd, t.dda, t.ecs, t.nach from sai_temp t where t.BankCode = m.BankCode) where exists (select 1 from sai_temp t where t.BankCode = m.BankCode);
+ 
+			alter table BMTBankDetail_TEMP modify active number(1) not null;
+			alter table BMTBankDetail_TEMP modify cheque number(1) not null;
+			alter table BMTBankDetail_TEMP modify dd number(1) not null;
+			alter table BMTBankDetail_TEMP modify dda number(1) not null;
+			alter table BMTBankDetail_TEMP modify ecs number(1) not null;
+			alter table BMTBankDetail_TEMP modify nach number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-20-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes drop constraint DF_BMTBlackListRsnCodes_BLIA;
+ 
+			update BMTBlackListRsnCodes set bLIsActive = 0 where bLIsActive is null;
+			alter table BMTBlackListRsnCodes alter column bLIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-20-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes modify bLIsActive default null;
+ 
+			update BMTBlackListRsnCodes set bLIsActive = 0 where bLIsActive is null;
+ 
+			create table sai_temp as select * from BMTBlackListRsnCodes;
+ 
+			alter table BMTBlackListRsnCodes modify (bLIsActive NULL);
+ 
+			update BMTBlackListRsnCodes set bLIsActive = null;
+ 
+			alter table BMTBlackListRsnCodes modify bLIsActive number(1);
+ 
+			update BMTBlackListRsnCodes m set (m.bLIsActive) = (select t.bLIsActive from sai_temp t where t.BLRsnCode = m.BLRsnCode) where exists (select 1 from sai_temp t where t.BLRsnCode = m.BLRsnCode);
+ 
+			alter table BMTBlackListRsnCodes modify bLIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-21-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes_Temp drop constraint DF_BMTBlackListRsnCodes_T_BLIA;
+ 
+			update BMTBlackListRsnCodes_Temp set bLIsActive = 0 where bLIsActive is null;
+			alter table BMTBlackListRsnCodes_Temp alter column bLIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-21-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes_Temp modify bLIsActive default null;
+ 
+			update BMTBlackListRsnCodes_Temp set bLIsActive = 0 where bLIsActive is null;
+ 
+			create table sai_temp as select * from BMTBlackListRsnCodes_Temp;
+ 
+			alter table BMTBlackListRsnCodes_Temp modify (bLIsActive NULL);
+ 
+			update BMTBlackListRsnCodes_Temp set bLIsActive = null;
+ 
+			alter table BMTBlackListRsnCodes_Temp modify bLIsActive number(1);
+ 
+			update BMTBlackListRsnCodes_Temp m set (m.bLIsActive) = (select t.bLIsActive from sai_temp t where t.BLRsnCode = m.BLRsnCode) where exists (select 1 from sai_temp t where t.BLRsnCode = m.BLRsnCode);
+ 
+			alter table BMTBlackListRsnCodes_Temp modify bLIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-22-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table RMTAccountTypes drop constraint DF_RMTAccountTypes_AcTypeIA;
+ 
+			update RMTAccountTypes set acTypeIsActive = 0 where acTypeIsActive is null;
+			alter table RMTAccountTypes alter column acTypeIsActive bit not null;
+
+			update RMTAccountTypes set custSysAc = 0 where custSysAc is null;
+			alter table RMTAccountTypes alter column custSysAc bit not null;
+
+			update RMTAccountTypes set internalAc = 0 where internalAc is null;
+			alter table RMTAccountTypes alter column internalAc bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-22-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table RMTAccountTypes modify acTypeIsActive default null;
+ 
+			update RMTAccountTypes set acTypeIsActive = 0 where acTypeIsActive is null;
+			update RMTAccountTypes set custSysAc = 0 where custSysAc is null;
+			update RMTAccountTypes set internalAc = 0 where internalAc is null;
+ 
+			create table sai_temp as select * from RMTAccountTypes;
+ 
+			alter table RMTAccountTypes modify (acTypeIsActive NULL);
+			alter table RMTAccountTypes modify (custSysAc NULL);
+			alter table RMTAccountTypes modify (internalAc NULL);
+ 
+			update RMTAccountTypes set acTypeIsActive = null, custSysAc = null, internalAc = null;
+ 
+			alter table RMTAccountTypes modify acTypeIsActive number(1);
+			alter table RMTAccountTypes modify custSysAc number(1);
+			alter table RMTAccountTypes modify internalAc number(1);
+ 
+			update RMTAccountTypes m set (m.acTypeIsActive, m.custSysAc, m.internalAc) = (select t.acTypeIsActive, t.custSysAc, t.internalAc from sai_temp t where t.AcType = m.AcType) where exists (select 1 from sai_temp t where t.AcType = m.AcType);
+ 
+			alter table RMTAccountTypes modify acTypeIsActive number(1) not null;
+			alter table RMTAccountTypes modify custSysAc number(1) not null;
+			alter table RMTAccountTypes modify internalAc number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-23-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table RMTAccountTypes_Temp drop constraint DF_RMTAcctTypes_T_AcTypeIA_1;
+ 
+			update RMTAccountTypes_Temp set acTypeIsActive = 0 where acTypeIsActive is null;
+			alter table RMTAccountTypes_Temp alter column acTypeIsActive bit not null;
+
+			update RMTAccountTypes_Temp set custSysAc = 0 where custSysAc is null;
+			alter table RMTAccountTypes_Temp alter column custSysAc bit not null;
+
+			update RMTAccountTypes_Temp set internalAc = 0 where internalAc is null;
+			alter table RMTAccountTypes_Temp alter column internalAc bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-23-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table RMTAccountTypes_Temp modify acTypeIsActive default null;
+ 
+			update RMTAccountTypes_Temp set acTypeIsActive = 0 where acTypeIsActive is null;
+			update RMTAccountTypes_Temp set custSysAc = 0 where custSysAc is null;
+			update RMTAccountTypes_Temp set internalAc = 0 where internalAc is null;
+ 
+			create table sai_temp as select * from RMTAccountTypes_Temp;
+ 
+			alter table RMTAccountTypes_Temp modify (acTypeIsActive NULL);
+			alter table RMTAccountTypes_Temp modify (custSysAc NULL);
+			alter table RMTAccountTypes_Temp modify (internalAc NULL);
+ 
+			update RMTAccountTypes_Temp set acTypeIsActive = null, custSysAc = null, internalAc = null;
+ 
+			alter table RMTAccountTypes_Temp modify acTypeIsActive number(1);
+			alter table RMTAccountTypes_Temp modify custSysAc number(1);
+			alter table RMTAccountTypes_Temp modify internalAc number(1);
+ 
+			update RMTAccountTypes_Temp m set (m.acTypeIsActive, m.custSysAc, m.internalAc) = (select t.acTypeIsActive, t.custSysAc, t.internalAc from sai_temp t where t.AcType = m.AcType) where exists (select 1 from sai_temp t where t.AcType = m.AcType);
+ 
+			alter table RMTAccountTypes_Temp modify acTypeIsActive number(1) not null;
+			alter table RMTAccountTypes_Temp modify custSysAc number(1) not null;
+			alter table RMTAccountTypes_Temp modify internalAc number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-24-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTBaseRates set delExistingRates = 0 where delExistingRates is null;
+			alter table RMTBaseRates alter column delExistingRates bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-24-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTBaseRates set delExistingRates = 0 where delExistingRates is null;
+ 
+			create table sai_temp as select * from RMTBaseRates;
+ 
+			update RMTBaseRates set delExistingRates = null;
+ 
+			alter table RMTBaseRates modify delExistingRates number(1);
+ 
+			update RMTBaseRates m set (m.delExistingRates) = (select t.delExistingRates from sai_temp t where t.BRType = m.BRType and t.Currency = m.Currency and t.BREffDate = m.BREffDate) where exists (select 1 from sai_temp t where t.BRType = m.BRType and t.Currency = m.Currency and t.BREffDate = m.BREffDate);
+ 
+			alter table RMTBaseRates modify delExistingRates number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-25-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTBaseRates_Temp set delExistingRates = 0 where delExistingRates is null;
+			alter table RMTBaseRates_Temp alter column delExistingRates bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-25-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTBaseRates_Temp set delExistingRates = 0 where delExistingRates is null;
+ 
+			create table sai_temp as select * from RMTBaseRates_Temp;
+ 
+			update RMTBaseRates_Temp set delExistingRates = null;
+ 
+			alter table RMTBaseRates_Temp modify delExistingRates number(1);
+ 
+			update RMTBaseRates_Temp m set (m.delExistingRates) = (select t.delExistingRates from sai_temp t where t.BRType = m.BRType and t.Currency = m.Currency and t.BREffDate = m.BREffDate) where exists (select 1 from sai_temp t where t.BRType = m.BRType and t.Currency = m.Currency and t.BREffDate = m.BREffDate);
+ 
+			alter table RMTBaseRates_Temp modify delExistingRates number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-26-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTBlackListRsnCodes set bLIsActive = 0 where bLIsActive is null;
+			alter table BMTBlackListRsnCodes alter column bLIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-26-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTBlackListRsnCodes set bLIsActive = 0 where bLIsActive is null;
+ 
+			create table sai_temp as select * from BMTBlackListRsnCodes;
+ 
+			alter table BMTBlackListRsnCodes modify (bLIsActive NULL);
+ 
+			update BMTBlackListRsnCodes set bLIsActive = null;
+ 
+			alter table BMTBlackListRsnCodes modify bLIsActive number(1);
+ 
+			update BMTBlackListRsnCodes m set (m.bLIsActive) = (select t.bLIsActive from sai_temp t where t.BLRsnCode = m.BLRsnCode) where exists (select 1 from sai_temp t where t.BLRsnCode = m.BLRsnCode);
+ 
+			alter table BMTBlackListRsnCodes modify bLIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-27-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTBlackListRsnCodes_Temp set bLIsActive = 0 where bLIsActive is null;
+			alter table BMTBlackListRsnCodes_Temp alter column bLIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-27-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTBlackListRsnCodes_Temp set bLIsActive = 0 where bLIsActive is null;
+ 
+			create table sai_temp as select * from BMTBlackListRsnCodes_Temp;
+ 
+			alter table BMTBlackListRsnCodes_Temp modify (bLIsActive NULL);
+ 
+			update BMTBlackListRsnCodes_Temp set bLIsActive = null;
+ 
+			alter table BMTBlackListRsnCodes_Temp modify bLIsActive number(1);
+ 
+			update BMTBlackListRsnCodes_Temp m set (m.bLIsActive) = (select t.bLIsActive from sai_temp t where t.BLRsnCode = m.BLRsnCode) where exists (select 1 from sai_temp t where t.BLRsnCode = m.BLRsnCode);
+ 
+			alter table BMTBlackListRsnCodes_Temp modify bLIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-28-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTCheckList set active = 0 where active is null;
+			alter table BMTCheckList alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-28-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTCheckList set active = 0 where active is null;
+ 
+			create table sai_temp as select * from BMTCheckList;
+ 
+			update BMTCheckList set active = null;
+ 
+			alter table BMTCheckList modify active number(1);
+ 
+			update BMTCheckList m set (m.active) = (select t.active from sai_temp t where t.CheckListId = m.CheckListId) where exists (select 1 from sai_temp t where t.CheckListId = m.CheckListId);
+ 
+			alter table BMTCheckList modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-29-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTCheckList_Temp set active = 0 where active is null;
+			alter table BMTCheckList_Temp alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-29-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTCheckList_Temp set active = 0 where active is null;
+ 
+			create table sai_temp as select * from BMTCheckList_Temp;
+ 
+			update BMTCheckList_Temp set active = null;
+ 
+			alter table BMTCheckList_Temp modify active number(1);
+ 
+			update BMTCheckList_Temp m set (m.active) = (select t.active from sai_temp t where t.CheckListId = m.CheckListId) where exists (select 1 from sai_temp t where t.CheckListId = m.CheckListId);
+ 
+			alter table BMTCheckList_Temp modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-30-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes drop constraint DF_BMTCorpRelCodes_CorpRelIA;
+ 
+			update BMTCorpRelationCodes set corpRelationIsActive = 0 where corpRelationIsActive is null;
+			alter table BMTCorpRelationCodes alter column corpRelationIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-30-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes modify corpRelationIsActive default null;
+ 
+			update BMTCorpRelationCodes set corpRelationIsActive = 0 where corpRelationIsActive is null;
+ 
+			create table sai_temp as select * from BMTCorpRelationCodes;
+ 
+			alter table BMTCorpRelationCodes modify (corpRelationIsActive NULL);
+ 
+			update BMTCorpRelationCodes set corpRelationIsActive = null;
+ 
+			alter table BMTCorpRelationCodes modify corpRelationIsActive number(1);
+ 
+			update BMTCorpRelationCodes m set (m.corpRelationIsActive) = (select t.corpRelationIsActive from sai_temp t where t.CorpRelationCode = m.CorpRelationCode) where exists (select 1 from sai_temp t where t.CorpRelationCode = m.CorpRelationCode);
+ 
+			alter table BMTCorpRelationCodes modify corpRelationIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-31-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes_Temp drop constraint DF_BMTCorpRelCodes_T_CorpRelIA;
+ 
+			update BMTCorpRelationCodes_Temp set corpRelationIsActive = 0 where corpRelationIsActive is null;
+			alter table BMTCorpRelationCodes_Temp alter column corpRelationIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-31-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes_Temp modify corpRelationIsActive default null;
+ 
+			update BMTCorpRelationCodes_Temp set corpRelationIsActive = 0 where corpRelationIsActive is null;
+ 
+			create table sai_temp as select * from BMTCorpRelationCodes_Temp;
+ 
+			alter table BMTCorpRelationCodes_Temp modify (corpRelationIsActive NULL);
+ 
+			update BMTCorpRelationCodes_Temp set corpRelationIsActive = null;
+ 
+			alter table BMTCorpRelationCodes_Temp modify corpRelationIsActive number(1);
+ 
+			update BMTCorpRelationCodes_Temp m set (m.corpRelationIsActive) = (select t.corpRelationIsActive from sai_temp t where t.CorpRelationCode = m.CorpRelationCode) where exists (select 1 from sai_temp t where t.CorpRelationCode = m.CorpRelationCode);
+ 
+			alter table BMTCorpRelationCodes_Temp modify corpRelationIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-32-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BMTRBFldDetails set rbForBldFlds = 0 where rbForBldFlds is null;
+			alter table BMTRBFldDetails alter column rbForBldFlds bit not null;
+
+			update BMTRBFldDetails set rbForCalFlds = 0 where rbForCalFlds is null;
+			alter table BMTRBFldDetails alter column rbForCalFlds bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-32-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BMTRBFldDetails set rbForBldFlds = 0 where rbForBldFlds is null;
+			update BMTRBFldDetails set rbForCalFlds = 0 where rbForCalFlds is null;
+ 
+			create table sai_temp as select * from BMTRBFldDetails;
+ 
+			update BMTRBFldDetails set rbForBldFlds = null, rbForCalFlds = null;
+ 
+			alter table BMTRBFldDetails modify rbForBldFlds number(1);
+			alter table BMTRBFldDetails modify rbForCalFlds number(1);
+ 
+			update BMTRBFldDetails m set (m.rbForBldFlds, m.rbForCalFlds) = (select t.rbForBldFlds, t.rbForCalFlds from sai_temp t where t.RBModule = m.RBModule and t.RBEvent = m.RBEvent and t.RBFldName = m.RBFldName) where exists (select 1 from sai_temp t where t.RBModule = m.RBModule and t.RBEvent = m.RBEvent and t.RBFldName = m.RBFldName);
+ 
+			alter table BMTRBFldDetails modify rbForBldFlds number(1) not null;
+			alter table BMTRBFldDetails modify rbForCalFlds number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-34-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BulkProcessHeader set excludeDeferement = 0 where excludeDeferement is null;
+			alter table BulkProcessHeader alter column excludeDeferement bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-34-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BulkProcessHeader set excludeDeferement = 0 where excludeDeferement is null;
+ 
+			create table sai_temp as select * from BulkProcessHeader;
+ 
+			update BulkProcessHeader set excludeDeferement = null;
+ 
+			alter table BulkProcessHeader modify excludeDeferement number(1);
+ 
+			update BulkProcessHeader m set (m.excludeDeferement) = (select t.excludeDeferement from sai_temp t where t.BulkProcessId = m.BulkProcessId) where exists (select 1 from sai_temp t where t.BulkProcessId = m.BulkProcessId);
+ 
+			alter table BulkProcessHeader modify excludeDeferement number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-35-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BulkProcessHeader_Temp set excludeDeferement = 0 where excludeDeferement is null;
+			alter table BulkProcessHeader_Temp alter column excludeDeferement bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-35-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BulkProcessHeader_Temp set excludeDeferement = 0 where excludeDeferement is null;
+ 
+			create table sai_temp as select * from BulkProcessHeader_Temp;
+ 
+			update BulkProcessHeader_Temp set excludeDeferement = null;
+ 
+			alter table BulkProcessHeader_Temp modify excludeDeferement number(1);
+ 
+			update BulkProcessHeader_Temp m set (m.excludeDeferement) = (select t.excludeDeferement from sai_temp t where t.BulkProcessId = m.BulkProcessId) where exists (select 1 from sai_temp t where t.BulkProcessId = m.BulkProcessId);
+ 
+			alter table BulkProcessHeader_Temp modify excludeDeferement number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-37-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BundledProductsDetail set crossSellCard = 0 where crossSellCard is null;
+			alter table BundledProductsDetail alter column crossSellCard bit not null;
+
+			update BundledProductsDetail set urgentIssuance = 0 where urgentIssuance is null;
+			alter table BundledProductsDetail alter column urgentIssuance bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-37-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BundledProductsDetail set crossSellCard = 0 where crossSellCard is null;
+			update BundledProductsDetail set urgentIssuance = 0 where urgentIssuance is null;
+ 
+			create table sai_temp as select * from BundledProductsDetail;
+ 
+			update BundledProductsDetail set crossSellCard = null, urgentIssuance = null;
+ 
+			alter table BundledProductsDetail modify crossSellCard number(1);
+			alter table BundledProductsDetail modify urgentIssuance number(1);
+ 
+			update BundledProductsDetail m set (m.crossSellCard, m.urgentIssuance) = (select t.crossSellCard, t.urgentIssuance from sai_temp t where t.FinReference = m.FinReference) where exists (select 1 from sai_temp t where t.FinReference = m.FinReference);
+ 
+			alter table BundledProductsDetail modify crossSellCard number(1) not null;
+			alter table BundledProductsDetail modify urgentIssuance number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-38-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update BundledProductsDetail_Temp set crossSellCard = 0 where crossSellCard is null;
+			alter table BundledProductsDetail_Temp alter column crossSellCard bit not null;
+
+			update BundledProductsDetail_Temp set urgentIssuance = 0 where urgentIssuance is null;
+			alter table BundledProductsDetail_Temp alter column urgentIssuance bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-38-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update BundledProductsDetail_Temp set crossSellCard = 0 where crossSellCard is null;
+			update BundledProductsDetail_Temp set urgentIssuance = 0 where urgentIssuance is null;
+ 
+			create table sai_temp as select * from BundledProductsDetail_Temp;
+ 
+			update BundledProductsDetail_Temp set crossSellCard = null, urgentIssuance = null;
+ 
+			alter table BundledProductsDetail_Temp modify crossSellCard number(1);
+			alter table BundledProductsDetail_Temp modify urgentIssuance number(1);
+ 
+			update BundledProductsDetail_Temp m set (m.crossSellCard, m.urgentIssuance) = (select t.crossSellCard, t.urgentIssuance from sai_temp t where t.FinReference = m.FinReference) where exists (select 1 from sai_temp t where t.FinReference = m.FinReference);
+ 
+			alter table BundledProductsDetail_Temp modify crossSellCard number(1) not null;
+			alter table BundledProductsDetail_Temp modify urgentIssuance number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-39-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update ChequePurpose set active = 0 where active is null;
+			alter table ChequePurpose alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-39-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update ChequePurpose set active = 0 where active is null;
+ 
+			create table sai_temp as select * from ChequePurpose;
+ 
+			alter table ChequePurpose modify (active NULL);
+ 
+			update ChequePurpose set active = null;
+ 
+			alter table ChequePurpose modify active number(1);
+ 
+			update ChequePurpose m set (m.active) = (select t.active from sai_temp t where t.Code = m.Code) where exists (select 1 from sai_temp t where t.Code = m.Code);
+ 
+			alter table ChequePurpose modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-40-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update ChequePurpose_Temp set active = 0 where active is null;
+			alter table ChequePurpose_Temp alter column active bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-40-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update ChequePurpose_Temp set active = 0 where active is null;
+ 
+			create table sai_temp as select * from ChequePurpose_Temp;
+ 
+			alter table ChequePurpose_Temp modify (active NULL);
+ 
+			update ChequePurpose_Temp set active = null;
+ 
+			alter table ChequePurpose_Temp modify active number(1);
+ 
+			update ChequePurpose_Temp m set (m.active) = (select t.active from sai_temp t where t.Code = m.Code) where exists (select 1 from sai_temp t where t.Code = m.Code);
+ 
+			alter table ChequePurpose_Temp modify active number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-41-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CollateralCoOwners set bankCustomer = 0 where bankCustomer is null;
+			alter table CollateralCoOwners alter column bankCustomer bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-41-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CollateralCoOwners set bankCustomer = 0 where bankCustomer is null;
+ 
+			create table sai_temp as select * from CollateralCoOwners;
+ 
+			alter table CollateralCoOwners modify (bankCustomer NULL);
+ 
+			update CollateralCoOwners set bankCustomer = null;
+ 
+			alter table CollateralCoOwners modify bankCustomer number(1);
+ 
+			update CollateralCoOwners m set (m.bankCustomer) = (select t.bankCustomer from sai_temp t where t.CollateralRef = m.CollateralRef and t.CoOwnerId = m.CoOwnerId) where exists (select 1 from sai_temp t where t.CollateralRef = m.CollateralRef and t.CoOwnerId = m.CoOwnerId);
+ 
+			alter table CollateralCoOwners modify bankCustomer number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-42-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CollateralCoOwners_Temp set bankCustomer = 0 where bankCustomer is null;
+			alter table CollateralCoOwners_Temp alter column bankCustomer bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-42-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CollateralCoOwners_Temp set bankCustomer = 0 where bankCustomer is null;
+ 
+			create table sai_temp as select * from CollateralCoOwners_Temp;
+ 
+			alter table CollateralCoOwners_Temp modify (bankCustomer NULL);
+ 
+			update CollateralCoOwners_Temp set bankCustomer = null;
+ 
+			alter table CollateralCoOwners_Temp modify bankCustomer number(1);
+ 
+			update CollateralCoOwners_Temp m set (m.bankCustomer) = (select t.bankCustomer from sai_temp t where t.CollateralRef = m.CollateralRef and t.CoOwnerId = m.CoOwnerId) where exists (select 1 from sai_temp t where t.CollateralRef = m.CollateralRef and t.CoOwnerId = m.CoOwnerId);
+ 
+			alter table CollateralCoOwners_Temp modify bankCustomer number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-43-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table CollateralMarkLog drop constraint DF_CollateralMarkLog_Processed;
+ 
+			update CollateralMarkLog set Processed = 0 where Processed is null;
+			alter table CollateralMarkLog alter column Processed bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-43-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table CollateralMarkLog modify Processed default null;
+ 
+			update CollateralMarkLog set Processed = 0 where Processed is null;
+ 
+			create table sai_temp as select * from CollateralMarkLog;
+ 
+			alter table CollateralMarkLog modify (Processed NULL);
+ 
+			update CollateralMarkLog set Processed = null;
+ 
+			alter table CollateralMarkLog modify Processed number(1);
+ 
+			update CollateralMarkLog m set (m.Processed) = (select t.Processed from sai_temp t where t.FinCollateralId = m.FinCollateralId) where exists (select 1 from sai_temp t where t.FinCollateralId = m.FinCollateralId);
+ 
+			alter table CollateralMarkLog modify Processed number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-44-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CollateralSetUp set multiLoanAssignment = 0 where multiLoanAssignment is null;
+			alter table CollateralSetUp alter column multiLoanAssignment bit not null;
+
+			update CollateralSetUp set thirdPartyAssignment = 0 where thirdPartyAssignment is null;
+			alter table CollateralSetUp alter column thirdPartyAssignment bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-44-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CollateralSetUp set multiLoanAssignment = 0 where multiLoanAssignment is null;
+			update CollateralSetUp set thirdPartyAssignment = 0 where thirdPartyAssignment is null;
+ 
+			create table sai_temp as select * from CollateralSetUp;
+ 
+			alter table CollateralSetUp modify (multiLoanAssignment NULL);
+			alter table CollateralSetUp modify (thirdPartyAssignment NULL);
+ 
+			update CollateralSetUp set multiLoanAssignment = null, thirdPartyAssignment = null;
+ 
+			alter table CollateralSetUp modify multiLoanAssignment number(1);
+			alter table CollateralSetUp modify thirdPartyAssignment number(1);
+ 
+			update CollateralSetUp m set (m.multiLoanAssignment, m.thirdPartyAssignment) = (select t.multiLoanAssignment, t.thirdPartyAssignment from sai_temp t where t.CollateralRef = m.CollateralRef) where exists (select 1 from sai_temp t where t.CollateralRef = m.CollateralRef);
+ 
+			alter table CollateralSetUp modify multiLoanAssignment number(1) not null;
+			alter table CollateralSetUp modify thirdPartyAssignment number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-45-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CollateralSetUp_Temp set multiLoanAssignment = 0 where multiLoanAssignment is null;
+			alter table CollateralSetUp_Temp alter column multiLoanAssignment bit not null;
+
+			update CollateralSetUp_Temp set thirdPartyAssignment = 0 where thirdPartyAssignment is null;
+			alter table CollateralSetUp_Temp alter column thirdPartyAssignment bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-45-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CollateralSetUp_Temp set multiLoanAssignment = 0 where multiLoanAssignment is null;
+			update CollateralSetUp_Temp set thirdPartyAssignment = 0 where thirdPartyAssignment is null;
+ 
+			create table sai_temp as select * from CollateralSetUp_Temp;
+ 
+			alter table CollateralSetUp_Temp modify (multiLoanAssignment NULL);
+			alter table CollateralSetUp_Temp modify (thirdPartyAssignment NULL);
+ 
+			update CollateralSetUp_Temp set multiLoanAssignment = null, thirdPartyAssignment = null;
+ 
+			alter table CollateralSetUp_Temp modify multiLoanAssignment number(1);
+			alter table CollateralSetUp_Temp modify thirdPartyAssignment number(1);
+ 
+			update CollateralSetUp_Temp m set (m.multiLoanAssignment, m.thirdPartyAssignment) = (select t.multiLoanAssignment, t.thirdPartyAssignment from sai_temp t where t.CollateralRef = m.CollateralRef) where exists (select 1 from sai_temp t where t.CollateralRef = m.CollateralRef);
+ 
+			alter table CollateralSetUp_Temp modify multiLoanAssignment number(1) not null;
+			alter table CollateralSetUp_Temp modify thirdPartyAssignment number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-46-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CollateralStructure set active = 0 where active is null;
+			alter table CollateralStructure alter column active bit not null;
+
+			update CollateralStructure set allowLtvWaiver = 0 where allowLtvWaiver is null;
+			alter table CollateralStructure alter column allowLtvWaiver bit not null;
+
+			update CollateralStructure set collateralLocReq = 0 where collateralLocReq is null;
+			alter table CollateralStructure alter column collateralLocReq bit not null;
+
+			update CollateralStructure set collateralValuatorReq = 0 where collateralValuatorReq is null;
+			alter table CollateralStructure alter column collateralValuatorReq bit not null;
+
+			update CollateralStructure set marketableSecurities = 0 where marketableSecurities is null;
+			alter table CollateralStructure alter column marketableSecurities bit not null;
+
+			update CollateralStructure set postValidationReq = 0 where postValidationReq is null;
+			alter table CollateralStructure alter column postValidationReq bit not null;
+
+			update CollateralStructure set preValidationReq = 0 where preValidationReq is null;
+			alter table CollateralStructure alter column preValidationReq bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-46-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CollateralStructure set active = 0 where active is null;
+			update CollateralStructure set allowLtvWaiver = 0 where allowLtvWaiver is null;
+			update CollateralStructure set collateralLocReq = 0 where collateralLocReq is null;
+			update CollateralStructure set collateralValuatorReq = 0 where collateralValuatorReq is null;
+			update CollateralStructure set marketableSecurities = 0 where marketableSecurities is null;
+			update CollateralStructure set postValidationReq = 0 where postValidationReq is null;
+			update CollateralStructure set preValidationReq = 0 where preValidationReq is null;
+ 
+			create table sai_temp as select * from CollateralStructure;
+ 
+			alter table CollateralStructure modify (active NULL);
+			alter table CollateralStructure modify (allowLtvWaiver NULL);
+			alter table CollateralStructure modify (collateralLocReq NULL);
+			alter table CollateralStructure modify (collateralValuatorReq NULL);
+			alter table CollateralStructure modify (marketableSecurities NULL);
+			alter table CollateralStructure modify (postValidationReq NULL);
+			alter table CollateralStructure modify (preValidationReq NULL);
+ 
+			update CollateralStructure set active = null, allowLtvWaiver = null, collateralLocReq = null, collateralValuatorReq = null, marketableSecurities = null, postValidationReq = null, preValidationReq = null;
+ 
+			alter table CollateralStructure modify active number(1);
+			alter table CollateralStructure modify allowLtvWaiver number(1);
+			alter table CollateralStructure modify collateralLocReq number(1);
+			alter table CollateralStructure modify collateralValuatorReq number(1);
+			alter table CollateralStructure modify marketableSecurities number(1);
+			alter table CollateralStructure modify postValidationReq number(1);
+			alter table CollateralStructure modify preValidationReq number(1);
+ 
+			update CollateralStructure m set (m.active, m.allowLtvWaiver, m.collateralLocReq, m.collateralValuatorReq, m.marketableSecurities, m.postValidationReq, m.preValidationReq) = (select t.active, t.allowLtvWaiver, t.collateralLocReq, t.collateralValuatorReq, t.marketableSecurities, t.postValidationReq, t.preValidationReq from sai_temp t where t.CollateralType = m.CollateralType) where exists (select 1 from sai_temp t where t.CollateralType = m.CollateralType);
+ 
+			alter table CollateralStructure modify active number(1) not null;
+			alter table CollateralStructure modify allowLtvWaiver number(1) not null;
+			alter table CollateralStructure modify collateralLocReq number(1) not null;
+			alter table CollateralStructure modify collateralValuatorReq number(1) not null;
+			alter table CollateralStructure modify marketableSecurities number(1) not null;
+			alter table CollateralStructure modify postValidationReq number(1) not null;
+			alter table CollateralStructure modify preValidationReq number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-47-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CollateralStructure_Temp set active = 0 where active is null;
+			alter table CollateralStructure_Temp alter column active bit not null;
+
+			update CollateralStructure_Temp set allowLtvWaiver = 0 where allowLtvWaiver is null;
+			alter table CollateralStructure_Temp alter column allowLtvWaiver bit not null;
+
+			update CollateralStructure_Temp set collateralLocReq = 0 where collateralLocReq is null;
+			alter table CollateralStructure_Temp alter column collateralLocReq bit not null;
+
+			update CollateralStructure_Temp set collateralValuatorReq = 0 where collateralValuatorReq is null;
+			alter table CollateralStructure_Temp alter column collateralValuatorReq bit not null;
+
+			update CollateralStructure_Temp set marketableSecurities = 0 where marketableSecurities is null;
+			alter table CollateralStructure_Temp alter column marketableSecurities bit not null;
+
+			update CollateralStructure_Temp set postValidationReq = 0 where postValidationReq is null;
+			alter table CollateralStructure_Temp alter column postValidationReq bit not null;
+
+			update CollateralStructure_Temp set preValidationReq = 0 where preValidationReq is null;
+			alter table CollateralStructure_Temp alter column preValidationReq bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-47-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CollateralStructure_Temp set active = 0 where active is null;
+			update CollateralStructure_Temp set allowLtvWaiver = 0 where allowLtvWaiver is null;
+			update CollateralStructure_Temp set collateralLocReq = 0 where collateralLocReq is null;
+			update CollateralStructure_Temp set collateralValuatorReq = 0 where collateralValuatorReq is null;
+			update CollateralStructure_Temp set marketableSecurities = 0 where marketableSecurities is null;
+			update CollateralStructure_Temp set postValidationReq = 0 where postValidationReq is null;
+			update CollateralStructure_Temp set preValidationReq = 0 where preValidationReq is null;
+ 
+			create table sai_temp as select * from CollateralStructure_Temp;
+ 
+			alter table CollateralStructure_Temp modify (active NULL);
+			alter table CollateralStructure_Temp modify (allowLtvWaiver NULL);
+			alter table CollateralStructure_Temp modify (collateralLocReq NULL);
+			alter table CollateralStructure_Temp modify (collateralValuatorReq NULL);
+			alter table CollateralStructure_Temp modify (marketableSecurities NULL);
+			alter table CollateralStructure_Temp modify (postValidationReq NULL);
+			alter table CollateralStructure_Temp modify (preValidationReq NULL);
+ 
+			update CollateralStructure_Temp set active = null, allowLtvWaiver = null, collateralLocReq = null, collateralValuatorReq = null, marketableSecurities = null, postValidationReq = null, preValidationReq = null;
+ 
+			alter table CollateralStructure_Temp modify active number(1);
+			alter table CollateralStructure_Temp modify allowLtvWaiver number(1);
+			alter table CollateralStructure_Temp modify collateralLocReq number(1);
+			alter table CollateralStructure_Temp modify collateralValuatorReq number(1);
+			alter table CollateralStructure_Temp modify marketableSecurities number(1);
+			alter table CollateralStructure_Temp modify postValidationReq number(1);
+			alter table CollateralStructure_Temp modify preValidationReq number(1);
+ 
+			update CollateralStructure_Temp m set (m.active, m.allowLtvWaiver, m.collateralLocReq, m.collateralValuatorReq, m.marketableSecurities, m.postValidationReq, m.preValidationReq) = (select t.active, t.allowLtvWaiver, t.collateralLocReq, t.collateralValuatorReq, t.marketableSecurities, t.postValidationReq, t.preValidationReq from sai_temp t where t.CollateralType = m.CollateralType) where exists (select 1 from sai_temp t where t.CollateralType = m.CollateralType);
+ 
+			alter table CollateralStructure_Temp modify active number(1) not null;
+			alter table CollateralStructure_Temp modify allowLtvWaiver number(1) not null;
+			alter table CollateralStructure_Temp modify collateralLocReq number(1) not null;
+			alter table CollateralStructure_Temp modify collateralValuatorReq number(1) not null;
+			alter table CollateralStructure_Temp modify marketableSecurities number(1) not null;
+			alter table CollateralStructure_Temp modify postValidationReq number(1) not null;
+			alter table CollateralStructure_Temp modify preValidationReq number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-48-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table Commitments drop constraint DF_Commitments_CmtActive_1;
+			alter table Commitments drop constraint DF_Cmtmts_CmtStopRateRange_1;
+			alter table Commitments drop constraint DF_Commitments_NonPerforming_1;
+ 
+			update Commitments set cmtActive = 0 where cmtActive is null;
+			alter table Commitments alter column cmtActive bit not null;
+
+			update Commitments set cmtStopRateRange = 0 where cmtStopRateRange is null;
+			alter table Commitments alter column cmtStopRateRange bit not null;
+
+			update Commitments set collateralRequired = 0 where collateralRequired is null;
+			alter table Commitments alter column collateralRequired bit not null;
+
+			update Commitments set multiBranch = 0 where multiBranch is null;
+			alter table Commitments alter column multiBranch bit not null;
+
+			update Commitments set nonPerforming = 0 where nonPerforming is null;
+			alter table Commitments alter column nonPerforming bit not null;
+
+			update Commitments set openAccount = 0 where openAccount is null;
+			alter table Commitments alter column openAccount bit not null;
+
+			update Commitments set revolving = 0 where revolving is null;
+			alter table Commitments alter column revolving bit not null;
+
+			update Commitments set sharedCmt = 0 where sharedCmt is null;
+			alter table Commitments alter column sharedCmt bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-48-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			
+ 			alter table Commitments modify cmtActive default null;
+			alter table Commitments modify cmtStopRateRange default null;
+			alter table Commitments modify nonPerforming default null;
+ 
+			update Commitments set cmtActive = 0 where cmtActive is null;
+			update Commitments set cmtStopRateRange = 0 where cmtStopRateRange is null;
+			update Commitments set collateralRequired = 0 where collateralRequired is null;
+			update Commitments set multiBranch = 0 where multiBranch is null;
+			update Commitments set multiBranch = 1 where multiBranch ='Y';
+			update Commitments set multiBranch = 0 where multiBranch ='N';
+			update Commitments set nonPerforming = 0 where nonPerforming is null;
+			update Commitments set openAccount = 0 where openAccount is null;
+			update Commitments set revolving = 0 where revolving is null;
+			update Commitments set sharedCmt = 0 where sharedCmt is null;
+ 
+			create table sai_temp as select * from Commitments;
+ 
+			alter table Commitments modify (openAccount NULL);
+ 
+			update Commitments set cmtActive = null, cmtStopRateRange = null, collateralRequired = null, multiBranch = null, nonPerforming = null, openAccount = null, revolving = null, sharedCmt = null;
+ 
+			alter table Commitments modify cmtActive number(1);
+			alter table Commitments modify cmtStopRateRange number(1);
+			alter table Commitments modify collateralRequired number(1);
+			alter table Commitments modify multiBranch number(1);
+			alter table Commitments modify nonPerforming number(1);
+			alter table Commitments modify openAccount number(1);
+			alter table Commitments modify revolving number(1);
+			alter table Commitments modify sharedCmt number(1);
+			
+			update Commitments m set (m.cmtActive, m.cmtStopRateRange, m.collateralRequired, m.multiBranch, 
+			m.nonPerforming, m.openAccount, m.revolving, m.sharedCmt)
+			 = (select t.cmtActive, t.cmtStopRateRange, t.collateralRequired, t.multiBranch, t.nonPerforming,
+			  t.openAccount, t.revolving, t.sharedCmt from sai_temp t where t.CmtReference = m.CmtReference) 
+			  where exists (select 1 from sai_temp t where t.CmtReference = m.CmtReference);
+ 
+			alter table Commitments modify cmtActive number(1) not null;
+			alter table Commitments modify cmtStopRateRange number(1) not null;
+			alter table Commitments modify collateralRequired number(1) not null;
+			alter table Commitments modify multiBranch number(1) not null;
+			alter table Commitments modify nonPerforming number(1) not null;
+			alter table Commitments modify openAccount number(1) not null;
+			alter table Commitments modify revolving number(1) not null;
+			alter table Commitments modify sharedCmt number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-49-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table Commitments_Temp drop constraint DF_Commitments_Temp_CmtActive;
+			alter table Commitments_Temp drop constraint DF_Cmtmts_T_CmtStopRateRange;
+			alter table Commitments_Temp drop constraint DF_Commitments_T_NonPerforming;
+ 
+			update Commitments_Temp set cmtActive = 0 where cmtActive is null;
+			alter table Commitments_Temp alter column cmtActive bit not null;
+
+			update Commitments_Temp set cmtStopRateRange = 0 where cmtStopRateRange is null;
+			alter table Commitments_Temp alter column cmtStopRateRange bit not null;
+
+			update Commitments_Temp set collateralRequired = 0 where collateralRequired is null;
+			alter table Commitments_Temp alter column collateralRequired bit not null;
+
+			update Commitments_Temp set multiBranch = 0 where multiBranch is null;
+			alter table Commitments_Temp alter column multiBranch bit not null;
+
+			update Commitments_Temp set nonPerforming = 0 where nonPerforming is null;
+			alter table Commitments_Temp alter column nonPerforming bit not null;
+
+			update Commitments_Temp set openAccount = 0 where openAccount is null;
+			alter table Commitments_Temp alter column openAccount bit not null;
+
+			update Commitments_Temp set revolving = 0 where revolving is null;
+			alter table Commitments_Temp alter column revolving bit not null;
+
+			update Commitments_Temp set sharedCmt = 0 where sharedCmt is null;
+			alter table Commitments_Temp alter column sharedCmt bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-49-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table Commitments_Temp modify cmtActive default null;
+			alter table Commitments_Temp modify cmtStopRateRange default null;
+			alter table Commitments_Temp modify nonPerforming default null;
+ 
+			update Commitments_Temp set cmtActive = 0 where cmtActive is null;
+			update Commitments_Temp set cmtStopRateRange = 0 where cmtStopRateRange is null;
+			update Commitments_Temp set collateralRequired = 0 where collateralRequired is null;
+			update Commitments_Temp set multiBranch = 0 where multiBranch is null;
+			update Commitments_Temp set nonPerforming = 0 where nonPerforming is null;
+			update Commitments_Temp set openAccount = 0 where openAccount is null;
+			update Commitments_Temp set revolving = 0 where revolving is null;
+			update Commitments_Temp set sharedCmt = 0 where sharedCmt is null;
+ 
+			create table sai_temp as select * from Commitments_Temp;
+ 
+			alter table Commitments_Temp modify (openAccount NULL);
+ 
+			update Commitments_Temp set cmtActive = null, cmtStopRateRange = null, collateralRequired = null, multiBranch = null, nonPerforming = null, openAccount = null, revolving = null, sharedCmt = null;
+ 
+			alter table Commitments_Temp modify cmtActive number(1);
+			alter table Commitments_Temp modify cmtStopRateRange number(1);
+			alter table Commitments_Temp modify collateralRequired number(1);
+			alter table Commitments_Temp modify multiBranch number(1);
+			alter table Commitments_Temp modify nonPerforming number(1);
+			alter table Commitments_Temp modify openAccount number(1);
+			alter table Commitments_Temp modify revolving number(1);
+			alter table Commitments_Temp modify sharedCmt number(1);
+ 
+			update Commitments_Temp m set (m.cmtActive, m.cmtStopRateRange, m.collateralRequired, m.multiBranch, m.nonPerforming, m.openAccount, m.revolving, m.sharedCmt) = (select t.cmtActive, t.cmtStopRateRange, t.collateralRequired, t.multiBranch, t.nonPerforming, t.openAccount, t.revolving, t.sharedCmt from sai_temp t where t.CmtReference = m.CmtReference) where exists (select 1 from sai_temp t where t.CmtReference = m.CmtReference);
+ 
+			alter table Commitments_Temp modify cmtActive number(1) not null;
+			alter table Commitments_Temp modify cmtStopRateRange number(1) not null;
+			alter table Commitments_Temp modify collateralRequired number(1) not null;
+			alter table Commitments_Temp modify multiBranch number(1) not null;
+			alter table Commitments_Temp modify nonPerforming number(1) not null;
+			alter table Commitments_Temp modify openAccount number(1) not null;
+			alter table Commitments_Temp modify revolving number(1) not null;
+			alter table Commitments_Temp modify sharedCmt number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-50-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update FCMTCommodityInventory set bulkPurchase = 0 where bulkPurchase is null;
+			alter table FCMTCommodityInventory alter column bulkPurchase bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-50-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update FCMTCommodityInventory set bulkPurchase = 0 where bulkPurchase is null;
+ 
+			create table sai_temp as select * from FCMTCommodityInventory;
+ 
+			alter table FCMTCommodityInventory modify (bulkPurchase NULL);
+ 
+			update FCMTCommodityInventory set bulkPurchase = null;
+ 
+			alter table FCMTCommodityInventory modify bulkPurchase number(1);
+ 
+			update FCMTCommodityInventory m set (m.bulkPurchase) = (select t.bulkPurchase from sai_temp t where t.CommodityInvId = m.CommodityInvId) where exists (select 1 from sai_temp t where t.CommodityInvId = m.CommodityInvId);
+ 
+			alter table FCMTCommodityInventory modify bulkPurchase number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-51-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update FCMTCommodityInventory_Temp set bulkPurchase = 0 where bulkPurchase is null;
+			alter table FCMTCommodityInventory_Temp alter column bulkPurchase bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-51-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update FCMTCommodityInventory_Temp set bulkPurchase = 0 where bulkPurchase is null;
+ 
+			create table sai_temp as select * from FCMTCommodityInventory_Temp;
+ 
+			alter table FCMTCommodityInventory_Temp modify (bulkPurchase NULL);
+ 
+			update FCMTCommodityInventory_Temp set bulkPurchase = null;
+ 
+			alter table FCMTCommodityInventory_Temp modify bulkPurchase number(1);
+ 
+			update FCMTCommodityInventory_Temp m set (m.bulkPurchase) = (select t.bulkPurchase from sai_temp t where t.CommodityInvId = m.CommodityInvId) where exists (select 1 from sai_temp t where t.CommodityInvId = m.CommodityInvId);
+ 
+			alter table FCMTCommodityInventory_Temp modify bulkPurchase number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-52-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table LMTCarLoanDetail drop constraint DF_LMTCarLoanDetail_MrtCanSts;
+ 
+			update LMTCarLoanDetail set loanRefType = 0 where loanRefType is null;
+			alter table LMTCarLoanDetail alter column loanRefType bit not null;
+
+			update LMTCarLoanDetail set mortgageCancelSts = 0 where mortgageCancelSts is null;
+			alter table LMTCarLoanDetail alter column mortgageCancelSts bit not null;
+
+			update LMTCarLoanDetail set thirdPartyReg = 0 where thirdPartyReg is null;
+			alter table LMTCarLoanDetail alter column thirdPartyReg bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-52-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table LMTCarLoanDetail modify mortgageCancelSts default null;
+ 
+			update LMTCarLoanDetail set loanRefType = 0 where loanRefType is null;
+			update LMTCarLoanDetail set mortgageCancelSts = 0 where mortgageCancelSts is null;
+			update LMTCarLoanDetail set thirdPartyReg = 0 where thirdPartyReg is null;
+ 
+			create table sai_temp as select * from LMTCarLoanDetail;
+ 
+			update LMTCarLoanDetail set loanRefType = null, mortgageCancelSts = null, thirdPartyReg = null;
+ 
+			alter table LMTCarLoanDetail modify loanRefType number(1);
+			alter table LMTCarLoanDetail modify mortgageCancelSts number(1);
+			alter table LMTCarLoanDetail modify thirdPartyReg number(1);
+ 
+			update LMTCarLoanDetail m set (m.loanRefType, m.mortgageCancelSts, m.thirdPartyReg) = (select t.loanRefType, t.mortgageCancelSts, t.thirdPartyReg from sai_temp t where t.LoanRefNumber = m.LoanRefNumber and t.ItemNumber = m.ItemNumber) where exists (select 1 from sai_temp t where t.LoanRefNumber = m.LoanRefNumber and t.ItemNumber = m.ItemNumber);
+ 
+			alter table LMTCarLoanDetail modify loanRefType number(1) not null;
+			alter table LMTCarLoanDetail modify mortgageCancelSts number(1) not null;
+			alter table LMTCarLoanDetail modify thirdPartyReg number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-53-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table LMTCarLoanDetail_Temp drop constraint DF_LMTCarLoanDtl_T_MrtCanSts;
+ 
+			update LMTCarLoanDetail_Temp set loanRefType = 0 where loanRefType is null;
+			alter table LMTCarLoanDetail_Temp alter column loanRefType bit not null;
+
+			update LMTCarLoanDetail_Temp set mortgageCancelSts = 0 where mortgageCancelSts is null;
+			alter table LMTCarLoanDetail_Temp alter column mortgageCancelSts bit not null;
+
+			update LMTCarLoanDetail_Temp set thirdPartyReg = 0 where thirdPartyReg is null;
+			alter table LMTCarLoanDetail_Temp alter column thirdPartyReg bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-53-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table LMTCarLoanDetail_Temp modify mortgageCancelSts default null;
+ 
+			update LMTCarLoanDetail_Temp set loanRefType = 0 where loanRefType is null;
+			update LMTCarLoanDetail_Temp set mortgageCancelSts = 0 where mortgageCancelSts is null;
+			update LMTCarLoanDetail_Temp set thirdPartyReg = 0 where thirdPartyReg is null;
+ 
+			create table sai_temp as select * from LMTCarLoanDetail_Temp;
+ 
+			update LMTCarLoanDetail_Temp set loanRefType = null, mortgageCancelSts = null, thirdPartyReg = null;
+ 
+			alter table LMTCarLoanDetail_Temp modify loanRefType number(1);
+			alter table LMTCarLoanDetail_Temp modify mortgageCancelSts number(1);
+			alter table LMTCarLoanDetail_Temp modify thirdPartyReg number(1);
+ 
+			update LMTCarLoanDetail_Temp m set (m.loanRefType, m.mortgageCancelSts, m.thirdPartyReg) = (select t.loanRefType, t.mortgageCancelSts, t.thirdPartyReg from sai_temp t where t.LoanRefNumber = m.LoanRefNumber and t.ItemNumber = m.ItemNumber) where exists (select 1 from sai_temp t where t.LoanRefNumber = m.LoanRefNumber and t.ItemNumber = m.ItemNumber);
+ 
+			alter table LMTCarLoanDetail_Temp modify loanRefType number(1) not null;
+			alter table LMTCarLoanDetail_Temp modify mortgageCancelSts number(1) not null;
+			alter table LMTCarLoanDetail_Temp modify thirdPartyReg number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-54-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table RMTBranches drop constraint DF_RMTBranches_BranchIsActive;
+ 
+			update RMTBranches set branchIsActive = 0 where branchIsActive is null;
+			alter table RMTBranches alter column branchIsActive bit not null;
+
+			update RMTBranches set miniBranch = 0 where miniBranch is null;
+			alter table RMTBranches alter column miniBranch bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-54-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table RMTBranches modify branchIsActive default null;
+ 
+			update RMTBranches set branchIsActive = 0 where branchIsActive is null;
+			update RMTBranches set miniBranch = 0 where miniBranch is null;
+ 
+			create table sai_temp as select * from RMTBranches;
+ 
+			alter table RMTBranches modify (branchIsActive NULL);
+ 
+			update RMTBranches set branchIsActive = null, miniBranch = null;
+ 
+			alter table RMTBranches modify branchIsActive number(1);
+			alter table RMTBranches modify miniBranch number(1);
+ 
+			update RMTBranches m set (m.branchIsActive, m.miniBranch) = (select t.branchIsActive, t.miniBranch from sai_temp t where t.BranchCode = m.BranchCode) where exists (select 1 from sai_temp t where t.BranchCode = m.BranchCode);
+ 
+			alter table RMTBranches modify branchIsActive number(1) not null;
+			alter table RMTBranches modify miniBranch number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-55-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table RMTBranches_Temp drop constraint DF_RMTBranches_T_BranchIA;
+ 
+			update RMTBranches_Temp set branchIsActive = 0 where branchIsActive is null;
+			alter table RMTBranches_Temp alter column branchIsActive bit not null;
+
+			update RMTBranches_Temp set miniBranch = 0 where miniBranch is null;
+			alter table RMTBranches_Temp alter column miniBranch bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-55-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table RMTBranches_Temp modify branchIsActive default null;
+ 
+			update RMTBranches_Temp set branchIsActive = 0 where branchIsActive is null;
+			update RMTBranches_Temp set miniBranch = 0 where miniBranch is null;
+ 
+			create table sai_temp as select * from RMTBranches_Temp;
+ 
+			alter table RMTBranches_Temp modify (branchIsActive NULL);
+ 
+			update RMTBranches_Temp set branchIsActive = null, miniBranch = null;
+ 
+			alter table RMTBranches_Temp modify branchIsActive number(1);
+			alter table RMTBranches_Temp modify miniBranch number(1);
+ 
+			update RMTBranches_Temp m set (m.branchIsActive, m.miniBranch) = (select t.branchIsActive, t.miniBranch from sai_temp t where t.BranchCode = m.BranchCode) where exists (select 1 from sai_temp t where t.BranchCode = m.BranchCode);
+ 
+			alter table RMTBranches_Temp modify branchIsActive number(1) not null;
+			alter table RMTBranches_Temp modify miniBranch number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-56-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTCheckListDetails set docRequired = 0 where docRequired is null;
+			alter table RMTCheckListDetails alter column docRequired bit not null;
+
+			update RMTCheckListDetails set remarksAllow = 0 where remarksAllow is null;
+			alter table RMTCheckListDetails alter column remarksAllow bit not null;
+
+			update RMTCheckListDetails set remarksMand = 0 where remarksMand is null;
+			alter table RMTCheckListDetails alter column remarksMand bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-56-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTCheckListDetails set docRequired = 0 where docRequired is null;
+			update RMTCheckListDetails set remarksAllow = 0 where remarksAllow is null;
+			update RMTCheckListDetails set remarksMand = 0 where remarksMand is null;
+ 
+			create table sai_temp as select * from RMTCheckListDetails;
+ 
+			alter table RMTCheckListDetails modify (docRequired NULL);
+			alter table RMTCheckListDetails modify (remarksAllow NULL);
+			alter table RMTCheckListDetails modify (remarksMand NULL);
+ 
+			update RMTCheckListDetails set docRequired = null, remarksAllow = null, remarksMand = null;
+ 
+			alter table RMTCheckListDetails modify docRequired number(1);
+			alter table RMTCheckListDetails modify remarksAllow number(1);
+			alter table RMTCheckListDetails modify remarksMand number(1);
+ 
+			update RMTCheckListDetails m set (m.docRequired, m.remarksAllow, m.remarksMand) = (select t.docRequired, t.remarksAllow, t.remarksMand from sai_temp t where t.CheckListId = m.CheckListId and t.AnsSeqNo = m.AnsSeqNo) where exists (select 1 from sai_temp t where t.CheckListId = m.CheckListId and t.AnsSeqNo = m.AnsSeqNo);
+ 
+			alter table RMTCheckListDetails modify docRequired number(1) not null;
+			alter table RMTCheckListDetails modify remarksAllow number(1) not null;
+			alter table RMTCheckListDetails modify remarksMand number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-57-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTCheckListDetails_Temp set docRequired = 0 where docRequired is null;
+			alter table RMTCheckListDetails_Temp alter column docRequired bit not null;
+
+			update RMTCheckListDetails_Temp set remarksAllow = 0 where remarksAllow is null;
+			alter table RMTCheckListDetails_Temp alter column remarksAllow bit not null;
+
+			update RMTCheckListDetails_Temp set remarksMand = 0 where remarksMand is null;
+			alter table RMTCheckListDetails_Temp alter column remarksMand bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-57-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTCheckListDetails_Temp set docRequired = 0 where docRequired is null;
+			update RMTCheckListDetails_Temp set remarksAllow = 0 where remarksAllow is null;
+			update RMTCheckListDetails_Temp set remarksMand = 0 where remarksMand is null;
+ 
+			create table sai_temp as select * from RMTCheckListDetails_Temp;
+ 
+			alter table RMTCheckListDetails_Temp modify (docRequired NULL);
+			alter table RMTCheckListDetails_Temp modify (remarksAllow NULL);
+			alter table RMTCheckListDetails_Temp modify (remarksMand NULL);
+ 
+			update RMTCheckListDetails_Temp set docRequired = null, remarksAllow = null, remarksMand = null;
+ 
+			alter table RMTCheckListDetails_Temp modify docRequired number(1);
+			alter table RMTCheckListDetails_Temp modify remarksAllow number(1);
+			alter table RMTCheckListDetails_Temp modify remarksMand number(1);
+ 
+			update RMTCheckListDetails_Temp m set (m.docRequired, m.remarksAllow, m.remarksMand) = (select t.docRequired, t.remarksAllow, t.remarksMand from sai_temp t where t.CheckListId = m.CheckListId and t.AnsSeqNo = m.AnsSeqNo) where exists (select 1 from sai_temp t where t.CheckListId = m.CheckListId and t.AnsSeqNo = m.AnsSeqNo);
+ 
+			alter table RMTCheckListDetails_Temp modify docRequired number(1) not null;
+			alter table RMTCheckListDetails_Temp modify remarksAllow number(1) not null;
+			alter table RMTCheckListDetails_Temp modify remarksMand number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-58-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTCountries drop constraint DF_BMTCountries_CountryIA;
+			alter table BMTCountries drop constraint DF__BMTCountr__Syste__49D47310;
+ 
+			update BMTCountries set countryIsActive = 0 where countryIsActive is null;
+			alter table BMTCountries alter column countryIsActive bit not null;
+
+			update BMTCountries set systemDefault = 0 where systemDefault is null;
+			alter table BMTCountries alter column systemDefault bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-58-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTCountries modify countryIsActive default null;
+			alter table BMTCountries modify systemDefault default null;
+ 
+			update BMTCountries set countryIsActive = 0 where countryIsActive is null;
+			update BMTCountries set systemDefault = 0 where systemDefault is null;
+ 
+			create table sai_temp as select * from BMTCountries;
+ 
+			alter table BMTCountries modify (countryIsActive NULL);
+ 
+			update BMTCountries set countryIsActive = null, systemDefault = null;
+ 
+			alter table BMTCountries modify countryIsActive number(1);
+			alter table BMTCountries modify systemDefault number(1);
+ 
+			update BMTCountries m set (m.countryIsActive, m.systemDefault) = (select t.countryIsActive, t.systemDefault from sai_temp t where t.CountryCode = m.CountryCode) where exists (select 1 from sai_temp t where t.CountryCode = m.CountryCode);
+ 
+			alter table BMTCountries modify countryIsActive number(1) not null;
+			alter table BMTCountries modify systemDefault number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-59-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTCountries_Temp drop constraint DF_BMTCountries_T_CountryIA;
+			alter table BMTCountries_Temp drop constraint DF__BMTCountr__Syste__4AC89749;
+ 
+			update BMTCountries_Temp set countryIsActive = 0 where countryIsActive is null;
+			alter table BMTCountries_Temp alter column countryIsActive bit not null;
+
+			update BMTCountries_Temp set systemDefault = 0 where systemDefault is null;
+			alter table BMTCountries_Temp alter column systemDefault bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-59-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTCountries_Temp modify countryIsActive default null;
+			alter table BMTCountries_Temp modify systemDefault default null;
+ 
+			update BMTCountries_Temp set countryIsActive = 0 where countryIsActive is null;
+			update BMTCountries_Temp set systemDefault = 0 where systemDefault is null;
+ 
+			create table sai_temp as select * from BMTCountries_Temp;
+ 
+			alter table BMTCountries_Temp modify (countryIsActive NULL);
+ 
+			update BMTCountries_Temp set countryIsActive = null, systemDefault = null;
+ 
+			alter table BMTCountries_Temp modify countryIsActive number(1);
+			alter table BMTCountries_Temp modify systemDefault number(1);
+ 
+			update BMTCountries_Temp m set (m.countryIsActive, m.systemDefault) = (select t.countryIsActive, t.systemDefault from sai_temp t where t.CountryCode = m.CountryCode) where exists (select 1 from sai_temp t where t.CountryCode = m.CountryCode);
+ 
+			alter table BMTCountries_Temp modify countryIsActive number(1) not null;
+			alter table BMTCountries_Temp modify systemDefault number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-60-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table Customers drop constraint DF_Customers_Custsuspsts;
+			alter table Customers drop constraint DF__Customers__Dedup__13A1B43A;
+			alter table Customers drop constraint DF__Customers__SkipD__1495D873;
+ 
+			update Customers set custIsActive = 0 where custIsActive is null;
+			alter table Customers alter column custIsActive bit not null;
+
+			update Customers set custIsBlackListed = 0 where custIsBlackListed is null;
+			alter table Customers alter column custIsBlackListed bit not null;
+
+			update Customers set custIsBlocked = 0 where custIsBlocked is null;
+			alter table Customers alter column custIsBlocked bit not null;
+
+			update Customers set custIsClosed = 0 where custIsClosed is null;
+			alter table Customers alter column custIsClosed bit not null;
+
+			update Customers set custIsDecease = 0 where custIsDecease is null;
+			alter table Customers alter column custIsDecease bit not null;
+
+			update Customers set custIsDelinquent = 0 where custIsDelinquent is null;
+			alter table Customers alter column custIsDelinquent bit not null;
+
+			update Customers set custIsDormant = 0 where custIsDormant is null;
+			alter table Customers alter column custIsDormant bit not null;
+
+			update Customers set custIsMinor = 0 where custIsMinor is null;
+			alter table Customers alter column custIsMinor bit not null;
+
+			update Customers set custIsRejected = 0 where custIsRejected is null;
+			alter table Customers alter column custIsRejected bit not null;
+
+			update Customers set custIsStaff = 0 where custIsStaff is null;
+			alter table Customers alter column custIsStaff bit not null;
+
+			update Customers set custIsStmtCombined = 0 where custIsStmtCombined is null;
+			alter table Customers alter column custIsStmtCombined bit not null;
+
+			update Customers set custIsTradeFinCust = 0 where custIsTradeFinCust is null;
+			alter table Customers alter column custIsTradeFinCust bit not null;
+
+			update Customers set custSuspSts = 0 where custSuspSts is null;
+			alter table Customers alter column custSuspSts bit not null;
+
+			update Customers set dedupFound = 0 where dedupFound is null;
+			alter table Customers alter column dedupFound bit not null;
+
+			update Customers set jointCust = 0 where jointCust is null;
+			alter table Customers alter column jointCust bit not null;
+
+			update Customers set salariedCustomer = 0 where salariedCustomer is null;
+			alter table Customers alter column salariedCustomer bit not null;
+
+			update Customers set skipDedup = 0 where skipDedup is null;
+			alter table Customers alter column skipDedup bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-60-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table Customers modify custSuspSts default null;
+			alter table Customers modify dedupFound default null;
+			alter table Customers modify skipDedup default null;
+ 
+			update Customers set custIsActive = 0 where custIsActive is null;
+			update Customers set custIsBlackListed = 0 where custIsBlackListed is null;
+			update Customers set custIsBlocked = 0 where custIsBlocked is null;
+			update Customers set custIsClosed = 0 where custIsClosed is null;
+			update Customers set custIsDecease = 0 where custIsDecease is null;
+			update Customers set custIsDelinquent = 0 where custIsDelinquent is null;
+			update Customers set custIsDormant = 0 where custIsDormant is null;
+			update Customers set custIsMinor = 0 where custIsMinor is null;
+			update Customers set custIsRejected = 0 where custIsRejected is null;
+			update Customers set custIsStaff = 0 where custIsStaff is null;
+			update Customers set custIsStmtCombined = 0 where custIsStmtCombined is null;
+			update Customers set custIsTradeFinCust = 0 where custIsTradeFinCust is null;
+			update Customers set custSuspSts = 0 where custSuspSts is null;
+			update Customers set dedupFound = 0 where dedupFound is null;
+			update Customers set jointCust = 0 where jointCust is null;
+			update Customers set salariedCustomer = 0 where salariedCustomer is null;
+			update Customers set skipDedup = 0 where skipDedup is null;
+			
+			update Customers set custIsActive = 0 where custIsActive =' ';
+			update Customers set custIsBlackListed = 0 where custIsBlackListed =' ';
+			update Customers set custIsBlocked = 0 where custIsBlocked =' ';
+			update Customers set custIsClosed = 0 where custIsClosed =' ';
+			update Customers set custIsDecease = 0 where custIsDecease =' ';
+			update Customers set custIsDelinquent = 0 where custIsDelinquent =' ';
+			update Customers set custIsDormant = 0 where custIsDormant =' ';
+			update Customers set custIsMinor = 0 where custIsMinor =' ';
+			update Customers set custIsRejected = 0 where custIsRejected =' ';
+			update Customers set custIsStaff = 0 where custIsStaff =' ';
+			update Customers set custIsStmtCombined = 0 where custIsStmtCombined =' ';
+			update Customers set custIsTradeFinCust = 0 where custIsTradeFinCust =' ';
+			update Customers set custSuspSts = 0 where custSuspSts =' ';
+			update Customers set dedupFound = 0 where dedupFound =' ';
+			update Customers set jointCust = 0 where jointCust =' ';
+			update Customers set salariedCustomer = 0 where salariedCustomer =' ';
+			update Customers set skipDedup = 0 where skipDedup =' ';
+ 
+			create table sai_temp as select * from Customers;
+ 
+			alter table Customers modify (custIsActive NULL);
+			alter table Customers modify (custIsBlocked NULL);
+			alter table Customers modify (custIsClosed NULL);
+			alter table Customers modify (custIsDecease NULL);
+			alter table Customers modify (custIsDelinquent NULL);
+			alter table Customers modify (custIsDormant NULL);
+			alter table Customers modify (custIsStaff NULL);
+			alter table Customers modify (custIsTradeFinCust NULL);
+ 
+			update Customers set custIsActive = null, custIsBlackListed = null, custIsBlocked = null, custIsClosed = null, custIsDecease = null, custIsDelinquent = null, custIsDormant = null, custIsMinor = null, custIsRejected = null, custIsStaff = null, custIsStmtCombined = null, custIsTradeFinCust = null, custSuspSts = null, dedupFound = null, jointCust = null, salariedCustomer = null, skipDedup = null;
+ 
+			alter table Customers modify custIsActive number(1);
+			alter table Customers modify custIsBlackListed number(1);
+			alter table Customers modify custIsBlocked number(1);
+			alter table Customers modify custIsClosed number(1);
+			alter table Customers modify custIsDecease number(1);
+			alter table Customers modify custIsDelinquent number(1);
+			alter table Customers modify custIsDormant number(1);
+			alter table Customers modify custIsMinor number(1);
+			alter table Customers modify custIsRejected number(1);
+			alter table Customers modify custIsStaff number(1);
+			alter table Customers modify custIsStmtCombined number(1);
+			alter table Customers modify custIsTradeFinCust number(1);
+			alter table Customers modify custSuspSts number(1);
+			alter table Customers modify dedupFound number(1);
+			alter table Customers modify jointCust number(1);
+			alter table Customers modify salariedCustomer number(1);
+			alter table Customers modify skipDedup number(1);
+ 
+			update Customers m set (m.custIsActive, m.custIsBlackListed, m.custIsBlocked, m.custIsClosed, m.custIsDecease, m.custIsDelinquent, m.custIsDormant, m.custIsMinor, m.custIsRejected, m.custIsStaff, m.custIsStmtCombined, m.custIsTradeFinCust, m.custSuspSts, m.dedupFound, m.jointCust, m.salariedCustomer, m.skipDedup) = (select t.custIsActive, t.custIsBlackListed, t.custIsBlocked, t.custIsClosed, t.custIsDecease, t.custIsDelinquent, t.custIsDormant, t.custIsMinor, t.custIsRejected, t.custIsStaff, t.custIsStmtCombined, t.custIsTradeFinCust, t.custSuspSts, t.dedupFound, t.jointCust, t.salariedCustomer, t.skipDedup from sai_temp t where t.CustID = m.CustID) where exists (select 1 from sai_temp t where t.CustID = m.CustID);
+ 
+			alter table Customers modify custIsActive number(1) not null;
+			alter table Customers modify custIsBlackListed number(1) not null;
+			alter table Customers modify custIsBlocked number(1) not null;
+			alter table Customers modify custIsClosed number(1) not null;
+			alter table Customers modify custIsDecease number(1) not null;
+			alter table Customers modify custIsDelinquent number(1) not null;
+			alter table Customers modify custIsDormant number(1) not null;
+			alter table Customers modify custIsMinor number(1) not null;
+			alter table Customers modify custIsRejected number(1) not null;
+			alter table Customers modify custIsStaff number(1) not null;
+			alter table Customers modify custIsStmtCombined number(1) not null;
+			alter table Customers modify custIsTradeFinCust number(1) not null;
+			alter table Customers modify custSuspSts number(1) not null;
+			alter table Customers modify dedupFound number(1) not null;
+			alter table Customers modify jointCust number(1) not null;
+			alter table Customers modify salariedCustomer number(1) not null;
+			alter table Customers modify skipDedup number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-61-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table Customers_Temp drop constraint DF_customers_Temp_custSuspSts;
+			alter table Customers_Temp drop constraint DF__Custs_T__Dedup__13A1B43A;
+			alter table Customers_Temp drop constraint DF__Custs_T__SkipD__1495D873;
+ 
+			update Customers_Temp set custIsActive = 0 where custIsActive is null;
+			alter table Customers_Temp alter column custIsActive bit not null;
+
+			update Customers_Temp set custIsBlackListed = 0 where custIsBlackListed is null;
+			alter table Customers_Temp alter column custIsBlackListed bit not null;
+
+			update Customers_Temp set custIsBlocked = 0 where custIsBlocked is null;
+			alter table Customers_Temp alter column custIsBlocked bit not null;
+
+			update Customers_Temp set custIsClosed = 0 where custIsClosed is null;
+			alter table Customers_Temp alter column custIsClosed bit not null;
+
+			update Customers_Temp set custIsDecease = 0 where custIsDecease is null;
+			alter table Customers_Temp alter column custIsDecease bit not null;
+
+			update Customers_Temp set custIsDelinquent = 0 where custIsDelinquent is null;
+			alter table Customers_Temp alter column custIsDelinquent bit not null;
+
+			update Customers_Temp set custIsDormant = 0 where custIsDormant is null;
+			alter table Customers_Temp alter column custIsDormant bit not null;
+
+			update Customers_Temp set custIsMinor = 0 where custIsMinor is null;
+			alter table Customers_Temp alter column custIsMinor bit not null;
+
+			update Customers_Temp set custIsRejected = 0 where custIsRejected is null;
+			alter table Customers_Temp alter column custIsRejected bit not null;
+
+			update Customers_Temp set custIsStaff = 0 where custIsStaff is null;
+			alter table Customers_Temp alter column custIsStaff bit not null;
+
+			update Customers_Temp set custIsStmtCombined = 0 where custIsStmtCombined is null;
+			alter table Customers_Temp alter column custIsStmtCombined bit not null;
+
+			update Customers_Temp set custIsTradeFinCust = 0 where custIsTradeFinCust is null;
+			alter table Customers_Temp alter column custIsTradeFinCust bit not null;
+
+			update Customers_Temp set custSuspSts = 0 where custSuspSts is null;
+			alter table Customers_Temp alter column custSuspSts bit not null;
+
+			update Customers_Temp set dedupFound = 0 where dedupFound is null;
+			alter table Customers_Temp alter column dedupFound bit not null;
+
+			update Customers_Temp set jointCust = 0 where jointCust is null;
+			alter table Customers_Temp alter column jointCust bit not null;
+
+			update Customers_Temp set salariedCustomer = 0 where salariedCustomer is null;
+			alter table Customers_Temp alter column salariedCustomer bit not null;
+
+			update Customers_Temp set skipDedup = 0 where skipDedup is null;
+			alter table Customers_Temp alter column skipDedup bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-61-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table Customers_Temp modify custSuspSts default null;
+			alter table Customers_Temp modify dedupFound default null;
+			alter table Customers_Temp modify skipDedup default null;
+ 
+			update Customers_Temp set custIsActive = 0 where custIsActive is null;
+			update Customers_Temp set custIsBlackListed = 0 where custIsBlackListed is null;
+			update Customers_Temp set custIsBlocked = 0 where custIsBlocked is null;
+			update Customers_Temp set custIsClosed = 0 where custIsClosed is null;
+			update Customers_Temp set custIsDecease = 0 where custIsDecease is null;
+			update Customers_Temp set custIsDelinquent = 0 where custIsDelinquent is null;
+			update Customers_Temp set custIsDormant = 0 where custIsDormant is null;
+			update Customers_Temp set custIsMinor = 0 where custIsMinor is null;
+			update Customers_Temp set custIsRejected = 0 where custIsRejected is null;
+			update Customers_Temp set custIsStaff = 0 where custIsStaff is null;
+			update Customers_Temp set custIsStmtCombined = 0 where custIsStmtCombined is null;
+			update Customers_Temp set custIsTradeFinCust = 0 where custIsTradeFinCust is null;
+			update Customers_Temp set custSuspSts = 0 where custSuspSts is null;
+			update Customers_Temp set dedupFound = 0 where dedupFound is null;
+			update Customers_Temp set jointCust = 0 where jointCust is null;
+			update Customers_Temp set salariedCustomer = 0 where salariedCustomer is null;
+			update Customers_Temp set skipDedup = 0 where skipDedup is null;
+ 
+			create table sai_temp as select * from Customers_Temp;
+ 
+			alter table Customers_Temp modify (custIsActive NULL);
+			alter table Customers_Temp modify (custIsBlocked NULL);
+			alter table Customers_Temp modify (custIsClosed NULL);
+			alter table Customers_Temp modify (custIsDecease NULL);
+			alter table Customers_Temp modify (custIsDelinquent NULL);
+			alter table Customers_Temp modify (custIsDormant NULL);
+			alter table Customers_Temp modify (custIsStaff NULL);
+			alter table Customers_Temp modify (custIsTradeFinCust NULL);
+ 
+			update Customers_Temp set custIsActive = null, custIsBlackListed = null, custIsBlocked = null, custIsClosed = null, custIsDecease = null, custIsDelinquent = null, custIsDormant = null, custIsMinor = null, custIsRejected = null, custIsStaff = null, custIsStmtCombined = null, custIsTradeFinCust = null, custSuspSts = null, dedupFound = null, jointCust = null, salariedCustomer = null, skipDedup = null;
+ 
+			alter table Customers_Temp modify custIsActive number(1);
+			alter table Customers_Temp modify custIsBlackListed number(1);
+			alter table Customers_Temp modify custIsBlocked number(1);
+			alter table Customers_Temp modify custIsClosed number(1);
+			alter table Customers_Temp modify custIsDecease number(1);
+			alter table Customers_Temp modify custIsDelinquent number(1);
+			alter table Customers_Temp modify custIsDormant number(1);
+			alter table Customers_Temp modify custIsMinor number(1);
+			alter table Customers_Temp modify custIsRejected number(1);
+			alter table Customers_Temp modify custIsStaff number(1);
+			alter table Customers_Temp modify custIsStmtCombined number(1);
+			alter table Customers_Temp modify custIsTradeFinCust number(1);
+			alter table Customers_Temp modify custSuspSts number(1);
+			alter table Customers_Temp modify dedupFound number(1);
+			alter table Customers_Temp modify jointCust number(1);
+			alter table Customers_Temp modify salariedCustomer number(1);
+			alter table Customers_Temp modify skipDedup number(1);
+ 
+			update Customers_Temp m set (m.custIsActive, m.custIsBlackListed, m.custIsBlocked, m.custIsClosed, m.custIsDecease, m.custIsDelinquent, m.custIsDormant, m.custIsMinor, m.custIsRejected, m.custIsStaff, m.custIsStmtCombined, m.custIsTradeFinCust, m.custSuspSts, m.dedupFound, m.jointCust, m.salariedCustomer, m.skipDedup) = (select t.custIsActive, t.custIsBlackListed, t.custIsBlocked, t.custIsClosed, t.custIsDecease, t.custIsDelinquent, t.custIsDormant, t.custIsMinor, t.custIsRejected, t.custIsStaff, t.custIsStmtCombined, t.custIsTradeFinCust, t.custSuspSts, t.dedupFound, t.jointCust, t.salariedCustomer, t.skipDedup from sai_temp t where t.CustID = m.CustID) where exists (select 1 from sai_temp t where t.CustID = m.CustID);
+ 
+			alter table Customers_Temp modify custIsActive number(1) not null;
+			alter table Customers_Temp modify custIsBlackListed number(1) not null;
+			alter table Customers_Temp modify custIsBlocked number(1) not null;
+			alter table Customers_Temp modify custIsClosed number(1) not null;
+			alter table Customers_Temp modify custIsDecease number(1) not null;
+			alter table Customers_Temp modify custIsDelinquent number(1) not null;
+			alter table Customers_Temp modify custIsDormant number(1) not null;
+			alter table Customers_Temp modify custIsMinor number(1) not null;
+			alter table Customers_Temp modify custIsRejected number(1) not null;
+			alter table Customers_Temp modify custIsStaff number(1) not null;
+			alter table Customers_Temp modify custIsStmtCombined number(1) not null;
+			alter table Customers_Temp modify custIsTradeFinCust number(1) not null;
+			alter table Customers_Temp modify custSuspSts number(1) not null;
+			alter table Customers_Temp modify dedupFound number(1) not null;
+			alter table Customers_Temp modify jointCust number(1) not null;
+			alter table Customers_Temp modify salariedCustomer number(1) not null;
+			alter table Customers_Temp modify skipDedup number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-62-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTCurrencies set ccyIsActive = 0 where ccyIsActive is null;
+			alter table RMTCurrencies alter column ccyIsActive bit not null;
+
+			update RMTCurrencies set ccyIsAlwForAc = 0 where ccyIsAlwForAc is null;
+			alter table RMTCurrencies alter column ccyIsAlwForAc bit not null;
+
+			update RMTCurrencies set ccyIsAlwForDepo = 0 where ccyIsAlwForDepo is null;
+			alter table RMTCurrencies alter column ccyIsAlwForDepo bit not null;
+
+			update RMTCurrencies set ccyIsAlwForLoans = 0 where ccyIsAlwForLoans is null;
+			alter table RMTCurrencies alter column ccyIsAlwForLoans bit not null;
+
+			update RMTCurrencies set ccyIsGroup = 0 where ccyIsGroup is null;
+			alter table RMTCurrencies alter column ccyIsGroup bit not null;
+
+			update RMTCurrencies set ccyIsIntRounding = 0 where ccyIsIntRounding is null;
+			alter table RMTCurrencies alter column ccyIsIntRounding bit not null;
+
+			update RMTCurrencies set ccyIsMember = 0 where ccyIsMember is null;
+			alter table RMTCurrencies alter column ccyIsMember bit not null;
+
+			update RMTCurrencies set ccyIsReceprocal = 0 where ccyIsReceprocal is null;
+			alter table RMTCurrencies alter column ccyIsReceprocal bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-62-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTCurrencies set ccyIsActive = 0 where ccyIsActive is null;
+			update RMTCurrencies set ccyIsAlwForAc = 0 where ccyIsAlwForAc is null;
+			update RMTCurrencies set ccyIsAlwForDepo = 0 where ccyIsAlwForDepo is null;
+			update RMTCurrencies set ccyIsAlwForLoans = 0 where ccyIsAlwForLoans is null;
+			update RMTCurrencies set ccyIsGroup = 0 where ccyIsGroup is null;
+			update RMTCurrencies set ccyIsIntRounding = 0 where ccyIsIntRounding is null;
+			update RMTCurrencies set ccyIsMember = 0 where ccyIsMember is null;
+			update RMTCurrencies set ccyIsReceprocal = 0 where ccyIsReceprocal is null;
+ 
+			create table sai_temp as select * from RMTCurrencies;
+ 
+			alter table RMTCurrencies modify (ccyIsAlwForAc NULL);
+			alter table RMTCurrencies modify (ccyIsAlwForDepo NULL);
+			alter table RMTCurrencies modify (ccyIsAlwForLoans NULL);
+			alter table RMTCurrencies modify (ccyIsIntRounding NULL);
+			alter table RMTCurrencies modify (ccyIsReceprocal NULL);
+ 
+			update RMTCurrencies set ccyIsActive = null, ccyIsAlwForAc = null, ccyIsAlwForDepo = null, ccyIsAlwForLoans = null, ccyIsGroup = null, ccyIsIntRounding = null, ccyIsMember = null, ccyIsReceprocal = null;
+ 
+			alter table RMTCurrencies modify ccyIsActive number(1);
+			alter table RMTCurrencies modify ccyIsAlwForAc number(1);
+			alter table RMTCurrencies modify ccyIsAlwForDepo number(1);
+			alter table RMTCurrencies modify ccyIsAlwForLoans number(1);
+			alter table RMTCurrencies modify ccyIsGroup number(1);
+			alter table RMTCurrencies modify ccyIsIntRounding number(1);
+			alter table RMTCurrencies modify ccyIsMember number(1);
+			alter table RMTCurrencies modify ccyIsReceprocal number(1);
+ 
+			update RMTCurrencies m set (m.ccyIsActive, m.ccyIsAlwForAc, m.ccyIsAlwForDepo, m.ccyIsAlwForLoans, m.ccyIsGroup, m.ccyIsIntRounding, m.ccyIsMember, m.ccyIsReceprocal) = (select t.ccyIsActive, t.ccyIsAlwForAc, t.ccyIsAlwForDepo, t.ccyIsAlwForLoans, t.ccyIsGroup, t.ccyIsIntRounding, t.ccyIsMember, t.ccyIsReceprocal from sai_temp t where t.CcyCode = m.CcyCode) where exists (select 1 from sai_temp t where t.CcyCode = m.CcyCode);
+ 
+			alter table RMTCurrencies modify ccyIsActive number(1) not null;
+			alter table RMTCurrencies modify ccyIsAlwForAc number(1) not null;
+			alter table RMTCurrencies modify ccyIsAlwForDepo number(1) not null;
+			alter table RMTCurrencies modify ccyIsAlwForLoans number(1) not null;
+			alter table RMTCurrencies modify ccyIsGroup number(1) not null;
+			alter table RMTCurrencies modify ccyIsIntRounding number(1) not null;
+			alter table RMTCurrencies modify ccyIsMember number(1) not null;
+			alter table RMTCurrencies modify ccyIsReceprocal number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-63-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update RMTCurrencies_Temp set ccyIsActive = 0 where ccyIsActive is null;
+			alter table RMTCurrencies_Temp alter column ccyIsActive bit not null;
+
+			update RMTCurrencies_Temp set ccyIsAlwForAc = 0 where ccyIsAlwForAc is null;
+			alter table RMTCurrencies_Temp alter column ccyIsAlwForAc bit not null;
+
+			update RMTCurrencies_Temp set ccyIsAlwForDepo = 0 where ccyIsAlwForDepo is null;
+			alter table RMTCurrencies_Temp alter column ccyIsAlwForDepo bit not null;
+
+			update RMTCurrencies_Temp set ccyIsAlwForLoans = 0 where ccyIsAlwForLoans is null;
+			alter table RMTCurrencies_Temp alter column ccyIsAlwForLoans bit not null;
+
+			update RMTCurrencies_Temp set ccyIsGroup = 0 where ccyIsGroup is null;
+			alter table RMTCurrencies_Temp alter column ccyIsGroup bit not null;
+
+			update RMTCurrencies_Temp set ccyIsIntRounding = 0 where ccyIsIntRounding is null;
+			alter table RMTCurrencies_Temp alter column ccyIsIntRounding bit not null;
+
+			update RMTCurrencies_Temp set ccyIsMember = 0 where ccyIsMember is null;
+			alter table RMTCurrencies_Temp alter column ccyIsMember bit not null;
+
+			update RMTCurrencies_Temp set ccyIsReceprocal = 0 where ccyIsReceprocal is null;
+			alter table RMTCurrencies_Temp alter column ccyIsReceprocal bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-63-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update RMTCurrencies_Temp set ccyIsActive = 0 where ccyIsActive is null;
+			update RMTCurrencies_Temp set ccyIsAlwForAc = 0 where ccyIsAlwForAc is null;
+			update RMTCurrencies_Temp set ccyIsAlwForDepo = 0 where ccyIsAlwForDepo is null;
+			update RMTCurrencies_Temp set ccyIsAlwForLoans = 0 where ccyIsAlwForLoans is null;
+			update RMTCurrencies_Temp set ccyIsGroup = 0 where ccyIsGroup is null;
+			update RMTCurrencies_Temp set ccyIsIntRounding = 0 where ccyIsIntRounding is null;
+			update RMTCurrencies_Temp set ccyIsMember = 0 where ccyIsMember is null;
+			update RMTCurrencies_Temp set ccyIsReceprocal = 0 where ccyIsReceprocal is null;
+ 
+			create table sai_temp as select * from RMTCurrencies_Temp;
+ 
+			alter table RMTCurrencies_Temp modify (ccyIsAlwForAc NULL);
+			alter table RMTCurrencies_Temp modify (ccyIsAlwForDepo NULL);
+			alter table RMTCurrencies_Temp modify (ccyIsAlwForLoans NULL);
+			alter table RMTCurrencies_Temp modify (ccyIsIntRounding NULL);
+			alter table RMTCurrencies_Temp modify (ccyIsReceprocal NULL);
+ 
+			update RMTCurrencies_Temp set ccyIsActive = null, ccyIsAlwForAc = null, ccyIsAlwForDepo = null, ccyIsAlwForLoans = null, ccyIsGroup = null, ccyIsIntRounding = null, ccyIsMember = null, ccyIsReceprocal = null;
+ 
+			alter table RMTCurrencies_Temp modify ccyIsActive number(1);
+			alter table RMTCurrencies_Temp modify ccyIsAlwForAc number(1);
+			alter table RMTCurrencies_Temp modify ccyIsAlwForDepo number(1);
+			alter table RMTCurrencies_Temp modify ccyIsAlwForLoans number(1);
+			alter table RMTCurrencies_Temp modify ccyIsGroup number(1);
+			alter table RMTCurrencies_Temp modify ccyIsIntRounding number(1);
+			alter table RMTCurrencies_Temp modify ccyIsMember number(1);
+			alter table RMTCurrencies_Temp modify ccyIsReceprocal number(1);
+ 
+			update RMTCurrencies_Temp m set (m.ccyIsActive, m.ccyIsAlwForAc, m.ccyIsAlwForDepo, m.ccyIsAlwForLoans, m.ccyIsGroup, m.ccyIsIntRounding, m.ccyIsMember, m.ccyIsReceprocal) = (select t.ccyIsActive, t.ccyIsAlwForAc, t.ccyIsAlwForDepo, t.ccyIsAlwForLoans, t.ccyIsGroup, t.ccyIsIntRounding, t.ccyIsMember, t.ccyIsReceprocal from sai_temp t where t.CcyCode = m.CcyCode) where exists (select 1 from sai_temp t where t.CcyCode = m.CcyCode);
+ 
+			alter table RMTCurrencies_Temp modify ccyIsActive number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsAlwForAc number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsAlwForDepo number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsAlwForLoans number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsGroup number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsIntRounding number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsMember number(1) not null;
+			alter table RMTCurrencies_Temp modify ccyIsReceprocal number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-64-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTCustCategories drop constraint DF_BMTCustCategories_CustCtgIA;
+ 
+			update BMTCustCategories set custCtgIsActive = 0 where custCtgIsActive is null;
+			alter table BMTCustCategories alter column custCtgIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-64-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTCustCategories modify custCtgIsActive default null;
+ 
+			update BMTCustCategories set custCtgIsActive = 0 where custCtgIsActive is null;
+ 
+			create table sai_temp as select * from BMTCustCategories;
+ 
+			alter table BMTCustCategories modify (custCtgIsActive NULL);
+ 
+			update BMTCustCategories set custCtgIsActive = null;
+ 
+			alter table BMTCustCategories modify custCtgIsActive number(1);
+ 
+			update BMTCustCategories m set (m.custCtgIsActive) = (select t.custCtgIsActive from sai_temp t where t.CustCtgCode = m.CustCtgCode) where exists (select 1 from sai_temp t where t.CustCtgCode = m.CustCtgCode);
+ 
+			alter table BMTCustCategories modify custCtgIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-65-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table BMTCustCategories_Temp drop constraint DF_BMTCustCtg_T_CustCtgIA;
+ 
+			update BMTCustCategories_Temp set custCtgIsActive = 0 where custCtgIsActive is null;
+			alter table BMTCustCategories_Temp alter column custCtgIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-65-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table BMTCustCategories_Temp modify custCtgIsActive default null;
+ 
+			update BMTCustCategories_Temp set custCtgIsActive = 0 where custCtgIsActive is null;
+ 
+			create table sai_temp as select * from BMTCustCategories_Temp;
+ 
+			alter table BMTCustCategories_Temp modify (custCtgIsActive NULL);
+ 
+			update BMTCustCategories_Temp set custCtgIsActive = null;
+ 
+			alter table BMTCustCategories_Temp modify custCtgIsActive number(1);
+ 
+			update BMTCustCategories_Temp m set (m.custCtgIsActive) = (select t.custCtgIsActive from sai_temp t where t.CustCtgCode = m.CustCtgCode) where exists (select 1 from sai_temp t where t.CustCtgCode = m.CustCtgCode);
+ 
+			alter table BMTCustCategories_Temp modify custCtgIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-66-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table CustomerBankInfo drop constraint DF_CustBankInfo_SalaryAccount;
+ 
+			update CustomerBankInfo set salaryAccount = 0 where salaryAccount is null;
+			alter table CustomerBankInfo alter column salaryAccount bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-66-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table CustomerBankInfo modify salaryAccount default null;
+ 
+			update CustomerBankInfo set salaryAccount = 0 where salaryAccount is null;
+ 
+			create table sai_temp as select * from CustomerBankInfo;
+ 
+			alter table CustomerBankInfo modify (salaryAccount NULL);
+ 
+			update CustomerBankInfo set salaryAccount = null;
+ 
+			alter table CustomerBankInfo modify salaryAccount number(1);
+ 
+			update CustomerBankInfo m set (m.salaryAccount) = (select t.salaryAccount from sai_temp t where t.BankId = m.BankId) where exists (select 1 from sai_temp t where t.BankId = m.BankId);
+ 
+			alter table CustomerBankInfo modify salaryAccount number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-67-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table CustomerBankInfo_Temp drop constraint DF_CustBankInfo_Temp_SalaryAccount;
+ 
+			update CustomerBankInfo_Temp set salaryAccount = 0 where salaryAccount is null;
+			alter table CustomerBankInfo_Temp alter column salaryAccount bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-67-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table CustomerBankInfo_Temp modify salaryAccount default null;
+ 
+			update CustomerBankInfo_Temp set salaryAccount = 0 where salaryAccount is null;
+ 
+			create table sai_temp as select * from CustomerBankInfo_Temp;
+ 
+			alter table CustomerBankInfo_Temp modify (salaryAccount NULL);
+ 
+			update CustomerBankInfo_Temp set salaryAccount = null;
+ 
+			alter table CustomerBankInfo_Temp modify salaryAccount number(1);
+ 
+			update CustomerBankInfo_Temp m set (m.salaryAccount) = (select t.salaryAccount from sai_temp t where t.BankId = m.BankId) where exists (select 1 from sai_temp t where t.BankId = m.BankId);
+ 
+			alter table CustomerBankInfo_Temp modify salaryAccount number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-68-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CustomerDocuments set custDocIsAcrive = 0 where custDocIsAcrive is null;
+			alter table CustomerDocuments alter column custDocIsAcrive bit not null;
+
+			update CustomerDocuments set custDocIsVerified = 0 where custDocIsVerified is null;
+			alter table CustomerDocuments alter column custDocIsVerified bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-68-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CustomerDocuments set custDocIsAcrive = 0 where custDocIsAcrive is null;
+			update CustomerDocuments set custDocIsVerified = 0 where custDocIsVerified is null;
+ 
+			create table sai_temp as select * from CustomerDocuments;
+ 
+			alter table CustomerDocuments modify (custDocIsAcrive NULL);
+ 
+			update CustomerDocuments set custDocIsAcrive = null, custDocIsVerified = null;
+ 
+			alter table CustomerDocuments modify custDocIsAcrive number(1);
+			alter table CustomerDocuments modify custDocIsVerified number(1);
+ 
+			update CustomerDocuments m set (m.custDocIsAcrive, m.custDocIsVerified) = (select t.custDocIsAcrive, t.custDocIsVerified from sai_temp t where t.CustID = m.CustID and t.CustDocCategory = m.CustDocCategory) where exists (select 1 from sai_temp t where t.CustID = m.CustID and t.CustDocCategory = m.CustDocCategory);
+ 
+			alter table CustomerDocuments modify custDocIsAcrive number(1) not null;
+			alter table CustomerDocuments modify custDocIsVerified number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-69-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CustomerDocuments_Temp set custDocIsAcrive = 0 where custDocIsAcrive is null;
+			alter table CustomerDocuments_Temp alter column custDocIsAcrive bit not null;
+
+			update CustomerDocuments_Temp set custDocIsVerified = 0 where custDocIsVerified is null;
+			alter table CustomerDocuments_Temp alter column custDocIsVerified bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-69-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CustomerDocuments_Temp set custDocIsAcrive = 0 where custDocIsAcrive is null;
+			update CustomerDocuments_Temp set custDocIsVerified = 0 where custDocIsVerified is null;
+ 
+			create table sai_temp as select * from CustomerDocuments_Temp;
+ 
+			alter table CustomerDocuments_Temp modify (custDocIsAcrive NULL);
+ 
+			update CustomerDocuments_Temp set custDocIsAcrive = null, custDocIsVerified = null;
+ 
+			alter table CustomerDocuments_Temp modify custDocIsAcrive number(1);
+			alter table CustomerDocuments_Temp modify custDocIsVerified number(1);
+ 
+			update CustomerDocuments_Temp m set (m.custDocIsAcrive, m.custDocIsVerified) = (select t.custDocIsAcrive, t.custDocIsVerified from sai_temp t where t.CustID = m.CustID and t.CustDocCategory = m.CustDocCategory) where exists (select 1 from sai_temp t where t.CustID = m.CustID and t.CustDocCategory = m.CustDocCategory);
+ 
+			alter table CustomerDocuments_Temp modify custDocIsAcrive number(1) not null;
+			alter table CustomerDocuments_Temp modify custDocIsVerified number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-70-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table CustomerEmpDetails drop constraint DF_CustEmpDs_CurrentEmployer;
+ 
+			update CustomerEmpDetails set currentEmployer = 0 where currentEmployer is null;
+			update CustomerEmpDetails set currentEmployer = 0 where currentEmployer= 'N';
+			alter table CustomerEmpDetails alter column currentEmployer bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-70-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table CustomerEmpDetails modify currentEmployer default null;
+ 
+			update CustomerEmpDetails set currentEmployer = 0 where currentEmployer is null;
+			update CustomerEmpDetails set currentEmployer = 0 where currentEmployer= 'N';
+ 
+			create table sai_temp as select * from CustomerEmpDetails;
+ 
+			alter table CustomerEmpDetails modify (currentEmployer NULL);
+ 
+			update CustomerEmpDetails set currentEmployer = null;
+ 
+			alter table CustomerEmpDetails modify currentEmployer number(1);
+ 
+			update CustomerEmpDetails m set (m.currentEmployer) = (select t.currentEmployer from sai_temp t where t.CustEmpId = m.CustEmpId) where exists (select 1 from sai_temp t where t.CustEmpId = m.CustEmpId);
+ 
+			alter table CustomerEmpDetails modify currentEmployer number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-71-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table CustomerEmpDetails_Temp drop constraint DF_CustEmpDs_Temp_CurrentEmployer;
+ 
+			update CustomerEmpDetails_Temp set currentEmployer = 0 where currentEmployer is null;
+			alter table CustomerEmpDetails_Temp alter column currentEmployer bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-71-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table CustomerEmpDetails_Temp modify currentEmployer default null;
+ 
+			update CustomerEmpDetails_Temp set currentEmployer = 0 where currentEmployer is null;
+ 
+			create table sai_temp as select * from CustomerEmpDetails_Temp;
+ 
+			alter table CustomerEmpDetails_Temp modify (currentEmployer NULL);
+ 
+			update CustomerEmpDetails_Temp set currentEmployer = null;
+ 
+			alter table CustomerEmpDetails_Temp modify currentEmployer number(1);
+ 
+			update CustomerEmpDetails_Temp m set (m.currentEmployer) = (select t.currentEmployer from sai_temp t where t.CustEmpId = m.CustEmpId) where exists (select 1 from sai_temp t where t.CustEmpId = m.CustEmpId);
+ 
+			alter table CustomerEmpDetails_Temp modify currentEmployer number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-72-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			update CustomerGroups set custGrpIsActive = 0 where custGrpIsActive is null;
+			alter table CustomerGroups alter column custGrpIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-72-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			update CustomerGroups set custGrpIsActive = 0 where custGrpIsActive is null;
+ 
+			create table sai_temp as select * from CustomerGroups;
+ 
+			alter table CustomerGroups modify (custGrpIsActive NULL);
+ 
+			update CustomerGroups set custGrpIsActive = null;
+ 
+			alter table CustomerGroups modify custGrpIsActive number(1);
+ 
+			update CustomerGroups m set (m.custGrpIsActive) = (select t.custGrpIsActive from sai_temp t where t.CustGrpID = m.CustGrpID) where exists (select 1 from sai_temp t where t.CustGrpID = m.CustGrpID);
+ 
+			alter table CustomerGroups modify custGrpIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-73-mssql" author="sys" dbms="mssql">
+		<sql>
+		<![CDATA[
+			alter table CustomerGroups_Temp drop constraint DF_CustomerGroups_T_CustGrpIA;
+ 
+			update CustomerGroups_Temp set custGrpIsActive = 0 where custGrpIsActive is null;
+			alter table CustomerGroups_Temp alter column custGrpIsActive bit not null;
+		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="sys-73-oracle" author="sys" dbms="oracle">
+		<sql>
+		<![CDATA[
+			alter table CustomerGroups_Temp modify custGrpIsActive default null;
+ 
+			update CustomerGroups_Temp set custGrpIsActive = 0 where custGrpIsActive is null;
+ 
+			create table sai_temp as select * from CustomerGroups_Temp;
+ 
+			alter table CustomerGroups_Temp modify (custGrpIsActive NULL);
+ 
+			update CustomerGroups_Temp set custGrpIsActive = null;
+ 
+			alter table CustomerGroups_Temp modify custGrpIsActive number(1);
+ 
+			update CustomerGroups_Temp m set (m.custGrpIsActive) = (select t.custGrpIsActive from sai_temp t where t.CustGrpID = m.CustGrpID) where exists (select 1 from sai_temp t where t.CustGrpID = m.CustGrpID);
+ 
+			alter table CustomerGroups_Temp modify custGrpIsActive number(1) not null;
+ 
+			drop table sai_temp;
+		]]>
+		</sql>
+	</changeSet>
+<changeSet id="sys-1.1-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table Accounts add constraint sys_000DF1 default 0 for AcActive;
+			alter table Accounts add constraint sys_000DF2 default 0 for AcBlocked;
+			alter table Accounts add constraint sys_000DF3 default 0 for AcClosed;
+			alter table Accounts add constraint sys_000DF4 default 0 for CustSysAc;
+			alter table Accounts add constraint sys_000DF5 default 0 for InternalAc;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.1-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table Accounts modify (AcActive default 0);
+			alter table Accounts modify (AcBlocked default 0);
+			alter table Accounts modify (AcClosed default 0);
+			alter table Accounts modify (CustSysAc default 0);
+			alter table Accounts modify (InternalAc default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.2-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table Accounts_Temp add constraint sys_000DF6 default 0 for AcActive;
+			alter table Accounts_Temp add constraint sys_000DF7 default 0 for AcBlocked;
+			alter table Accounts_Temp add constraint sys_000DF8 default 0 for AcClosed;
+			alter table Accounts_Temp add constraint sys_000DF9 default 0 for CustSysAc;
+			alter table Accounts_Temp add constraint sys_000DF10 default 0 for InternalAc;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.2-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table Accounts_Temp modify (AcActive default 0);
+			alter table Accounts_Temp modify (AcBlocked default 0);
+			alter table Accounts_Temp modify (AcClosed default 0);
+			alter table Accounts_Temp modify (CustSysAc default 0);
+			alter table Accounts_Temp modify (InternalAc default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.3-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_DETAILS add constraint sys_000DF11 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.3-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_DETAILS modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.4-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_DETAILS_TEMP add constraint sys_000DF12 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.4-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_DETAILS_TEMP modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.5-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_IP_DETAILS add constraint sys_000DF13 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.5-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_IP_DETAILS modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.6-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_IP_DETAILS_TEMP add constraint sys_000DF14 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.6-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table API_CHANNEL_IP_DETAILS_TEMP modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.7-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table AssetTypes add constraint sys_000DF15 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.7-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table AssetTypes modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.8-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table AssetTypes_Temp add constraint sys_000DF16 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.8-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table AssetTypes_Temp modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.9-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTAddressTypes add constraint sys_000DF17 default 0 for AddrTypeIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.9-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTAddressTypes modify (AddrTypeIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.10-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTAddressTypes_Temp add constraint sys_000DF18 default 0 for AddrTypeIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.10-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTAddressTypes_Temp modify (AddrTypeIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.11-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTAEEvents add constraint sys_000DF19 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.11-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTAEEvents modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.12-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTAEEvents_Temp add constraint sys_000DF20 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.12-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTAEEvents_Temp modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.13-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTAggrementDef add constraint sys_000DF21 default 0 for AggIsActive;
+			alter table BMTAggrementDef add constraint sys_000DF22 default 0 for AllowMultiple;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.13-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTAggrementDef modify (AggIsActive default 0);
+			alter table BMTAggrementDef modify (AllowMultiple default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.14-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTAggrementDef_Temp add constraint sys_000DF23 default 0 for AggIsActive;
+			alter table BMTAggrementDef_Temp add constraint sys_000DF24 default 0 for AllowMultiple;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.14-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTAggrementDef_Temp modify (AggIsActive default 0);
+			alter table BMTAggrementDef_Temp modify (AllowMultiple default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.15-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTBankDetail add constraint sys_000DF25 default 0 for Active;
+			alter table BMTBankDetail add constraint sys_000DF26 default 0 for Cheque;
+			alter table BMTBankDetail add constraint sys_000DF27 default 0 for Dd;
+			alter table BMTBankDetail add constraint sys_000DF28 default 0 for Dda;
+			alter table BMTBankDetail add constraint sys_000DF29 default 0 for Ecs;
+			alter table BMTBankDetail add constraint sys_000DF30 default 0 for Nach;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.15-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTBankDetail modify (Active default 0);
+			alter table BMTBankDetail modify (Cheque default 0);
+			alter table BMTBankDetail modify (Dd default 0);
+			alter table BMTBankDetail modify (Dda default 0);
+			alter table BMTBankDetail modify (Ecs default 0);
+			alter table BMTBankDetail modify (Nach default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.16-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTBankDetail_TEMP add constraint sys_000DF31 default 0 for Active;
+			alter table BMTBankDetail_TEMP add constraint sys_000DF32 default 0 for Cheque;
+			alter table BMTBankDetail_TEMP add constraint sys_000DF33 default 0 for Dd;
+			alter table BMTBankDetail_TEMP add constraint sys_000DF34 default 0 for Dda;
+			alter table BMTBankDetail_TEMP add constraint sys_000DF35 default 0 for Ecs;
+			alter table BMTBankDetail_TEMP add constraint sys_000DF36 default 0 for Nach;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.16-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTBankDetail_TEMP modify (Active default 0);
+			alter table BMTBankDetail_TEMP modify (Cheque default 0);
+			alter table BMTBankDetail_TEMP modify (Dd default 0);
+			alter table BMTBankDetail_TEMP modify (Dda default 0);
+			alter table BMTBankDetail_TEMP modify (Ecs default 0);
+			alter table BMTBankDetail_TEMP modify (Nach default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.17-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes add constraint sys_000DF37 default 0 for BLIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.17-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes modify (BLIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.18-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes_Temp add constraint sys_000DF38 default 0 for BLIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.18-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTBlackListRsnCodes_Temp modify (BLIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.19-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCheckList add constraint sys_000DF39 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.19-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCheckList modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.20-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCheckList_Temp add constraint sys_000DF40 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.20-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCheckList_Temp modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.21-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes add constraint sys_000DF41 default 0 for CorpRelationIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.21-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes modify (CorpRelationIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.22-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes_Temp add constraint sys_000DF42 default 0 for CorpRelationIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.22-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCorpRelationCodes_Temp modify (CorpRelationIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.23-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCountries add constraint sys_000DF43 default 0 for CountryIsActive;
+			alter table BMTCountries add constraint sys_000DF44 default 0 for SystemDefault;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.23-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCountries modify (CountryIsActive default 0);
+			alter table BMTCountries modify (SystemDefault default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.24-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCountries_Temp add constraint sys_000DF45 default 0 for CountryIsActive;
+			alter table BMTCountries_Temp add constraint sys_000DF46 default 0 for SystemDefault;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.24-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCountries_Temp modify (CountryIsActive default 0);
+			alter table BMTCountries_Temp modify (SystemDefault default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.25-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCustCategories add constraint sys_000DF47 default 0 for CustCtgIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.25-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCustCategories modify (CustCtgIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.26-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTCustCategories_Temp add constraint sys_000DF48 default 0 for CustCtgIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.26-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTCustCategories_Temp modify (CustCtgIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.27-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BMTRBFldDetails add constraint sys_000DF49 default 0 for RBForBldFlds;
+			alter table BMTRBFldDetails add constraint sys_000DF50 default 0 for RBForCalFlds;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.27-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BMTRBFldDetails modify (RBForBldFlds default 0);
+			alter table BMTRBFldDetails modify (RBForCalFlds default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.28-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BulkProcessHeader add constraint sys_000DF51 default 0 for ExcludeDeferement;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.28-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BulkProcessHeader modify (ExcludeDeferement default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.29-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BulkProcessHeader_Temp add constraint sys_000DF52 default 0 for ExcludeDeferement;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.29-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BulkProcessHeader_Temp modify (ExcludeDeferement default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.30-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BundledProductsDetail add constraint sys_000DF53 default 0 for CrossSellCard;
+			alter table BundledProductsDetail add constraint sys_000DF54 default 0 for UrgentIssuance;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.30-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BundledProductsDetail modify (CrossSellCard default 0);
+			alter table BundledProductsDetail modify (UrgentIssuance default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.31-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table BundledProductsDetail_Temp add constraint sys_000DF55 default 0 for CrossSellCard;
+			alter table BundledProductsDetail_Temp add constraint sys_000DF56 default 0 for UrgentIssuance;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.31-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table BundledProductsDetail_Temp modify (CrossSellCard default 0);
+			alter table BundledProductsDetail_Temp modify (UrgentIssuance default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.32-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table ChequePurpose add constraint sys_000DF57 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.32-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table ChequePurpose modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.33-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table ChequePurpose_Temp add constraint sys_000DF58 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.33-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table ChequePurpose_Temp modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.34-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralCoOwners add constraint sys_000DF59 default 0 for BankCustomer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.34-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralCoOwners modify (BankCustomer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.35-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralCoOwners_Temp add constraint sys_000DF60 default 0 for BankCustomer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.35-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralCoOwners_Temp modify (BankCustomer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.36-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralMarkLog add constraint sys_000DF61 default 0 for Processed;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.36-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralMarkLog modify (Processed default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.37-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralSetUp add constraint sys_000DF62 default 0 for MultiLoanAssignment;
+			alter table CollateralSetUp add constraint sys_000DF63 default 0 for ThirdPartyAssignment;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.37-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralSetUp modify (MultiLoanAssignment default 0);
+			alter table CollateralSetUp modify (ThirdPartyAssignment default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.38-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralSetUp_Temp add constraint sys_000DF64 default 0 for MultiLoanAssignment;
+			alter table CollateralSetUp_Temp add constraint sys_000DF65 default 0 for ThirdPartyAssignment;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.38-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralSetUp_Temp modify (MultiLoanAssignment default 0);
+			alter table CollateralSetUp_Temp modify (ThirdPartyAssignment default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.39-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralStructure add constraint sys_000DF66 default 0 for Active;
+			alter table CollateralStructure add constraint sys_000DF67 default 0 for AllowLtvWaiver;
+			alter table CollateralStructure add constraint sys_000DF68 default 0 for CollateralLocReq;
+			alter table CollateralStructure add constraint sys_000DF69 default 0 for CollateralValuatorReq;
+			alter table CollateralStructure add constraint sys_000DF70 default 0 for MarketableSecurities;
+			alter table CollateralStructure add constraint sys_000DF71 default 0 for PostValidationReq;
+			alter table CollateralStructure add constraint sys_000DF72 default 0 for PreValidationReq;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.39-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralStructure modify (Active default 0);
+			alter table CollateralStructure modify (AllowLtvWaiver default 0);
+			alter table CollateralStructure modify (CollateralLocReq default 0);
+			alter table CollateralStructure modify (CollateralValuatorReq default 0);
+			alter table CollateralStructure modify (MarketableSecurities default 0);
+			alter table CollateralStructure modify (PostValidationReq default 0);
+			alter table CollateralStructure modify (PreValidationReq default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.40-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CollateralStructure_Temp add constraint sys_000DF73 default 0 for Active;
+			alter table CollateralStructure_Temp add constraint sys_000DF74 default 0 for AllowLtvWaiver;
+			alter table CollateralStructure_Temp add constraint sys_000DF75 default 0 for CollateralLocReq;
+			alter table CollateralStructure_Temp add constraint sys_000DF76 default 0 for CollateralValuatorReq;
+			alter table CollateralStructure_Temp add constraint sys_000DF77 default 0 for MarketableSecurities;
+			alter table CollateralStructure_Temp add constraint sys_000DF78 default 0 for PostValidationReq;
+			alter table CollateralStructure_Temp add constraint sys_000DF79 default 0 for PreValidationReq;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.40-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CollateralStructure_Temp modify (Active default 0);
+			alter table CollateralStructure_Temp modify (AllowLtvWaiver default 0);
+			alter table CollateralStructure_Temp modify (CollateralLocReq default 0);
+			alter table CollateralStructure_Temp modify (CollateralValuatorReq default 0);
+			alter table CollateralStructure_Temp modify (MarketableSecurities default 0);
+			alter table CollateralStructure_Temp modify (PostValidationReq default 0);
+			alter table CollateralStructure_Temp modify (PreValidationReq default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.41-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table Commitments add constraint sys_000DF80 default 0 for CmtActive;
+			alter table Commitments add constraint sys_000DF81 default 0 for CmtStopRateRange;
+			alter table Commitments add constraint sys_000DF82 default 0 for CollateralRequired;
+			alter table Commitments add constraint sys_000DF83 default 0 for MultiBranch;
+			alter table Commitments add constraint sys_000DF84 default 0 for NonPerforming;
+			alter table Commitments add constraint sys_000DF85 default 0 for OpenAccount;
+			alter table Commitments add constraint sys_000DF86 default 0 for Revolving;
+			alter table Commitments add constraint sys_000DF87 default 0 for SharedCmt;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.41-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table Commitments modify (CmtActive default 0);
+			alter table Commitments modify (CmtStopRateRange default 0);
+			alter table Commitments modify (CollateralRequired default 0);
+			alter table Commitments modify (MultiBranch default 0);
+			alter table Commitments modify (NonPerforming default 0);
+			alter table Commitments modify (OpenAccount default 0);
+			alter table Commitments modify (Revolving default 0);
+			alter table Commitments modify (SharedCmt default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.42-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table Commitments_Temp add constraint sys_000DF88 default 0 for CmtActive;
+			alter table Commitments_Temp add constraint sys_000DF89 default 0 for CmtStopRateRange;
+			alter table Commitments_Temp add constraint sys_000DF90 default 0 for CollateralRequired;
+			alter table Commitments_Temp add constraint sys_000DF91 default 0 for MultiBranch;
+			alter table Commitments_Temp add constraint sys_000DF92 default 0 for NonPerforming;
+			alter table Commitments_Temp add constraint sys_000DF93 default 0 for OpenAccount;
+			alter table Commitments_Temp add constraint sys_000DF94 default 0 for Revolving;
+			alter table Commitments_Temp add constraint sys_000DF95 default 0 for SharedCmt;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.42-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table Commitments_Temp modify (CmtActive default 0);
+			alter table Commitments_Temp modify (CmtStopRateRange default 0);
+			alter table Commitments_Temp modify (CollateralRequired default 0);
+			alter table Commitments_Temp modify (MultiBranch default 0);
+			alter table Commitments_Temp modify (NonPerforming default 0);
+			alter table Commitments_Temp modify (OpenAccount default 0);
+			alter table Commitments_Temp modify (Revolving default 0);
+			alter table Commitments_Temp modify (SharedCmt default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.43-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerBankInfo add constraint sys_000DF96 default 0 for SalaryAccount;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.43-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerBankInfo modify (SalaryAccount default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.44-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerBankInfo_Temp add constraint sys_000DF97 default 0 for SalaryAccount;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.44-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerBankInfo_Temp modify (SalaryAccount default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.45-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerDocuments add constraint sys_000DF98 default 0 for CustDocIsAcrive;
+			alter table CustomerDocuments add constraint sys_000DF99 default 0 for CustDocIsVerified;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.45-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerDocuments modify (CustDocIsAcrive default 0);
+			alter table CustomerDocuments modify (CustDocIsVerified default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.46-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerDocuments_Temp add constraint sys_000DF100 default 0 for CustDocIsAcrive;
+			alter table CustomerDocuments_Temp add constraint sys_000DF101 default 0 for CustDocIsVerified;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.46-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerDocuments_Temp modify (CustDocIsAcrive default 0);
+			alter table CustomerDocuments_Temp modify (CustDocIsVerified default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.47-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerEmpDetails add constraint sys_000DF102 default 0 for CurrentEmployer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.47-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerEmpDetails modify (CurrentEmployer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.48-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerEmpDetails_Temp add constraint sys_000DF103 default 0 for CurrentEmployer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.48-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerEmpDetails_Temp modify (CurrentEmployer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.49-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerGroups add constraint sys_000DF104 default 0 for CustGrpIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.49-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerGroups modify (CustGrpIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.50-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table CustomerGroups_Temp add constraint sys_000DF105 default 0 for CustGrpIsActive;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.50-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table CustomerGroups_Temp modify (CustGrpIsActive default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.51-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table Customers add constraint sys_000DF106 default 0 for CustIsActive;
+			alter table Customers add constraint sys_000DF107 default 0 for CustIsBlackListed;
+			alter table Customers add constraint sys_000DF108 default 0 for CustIsBlocked;
+			alter table Customers add constraint sys_000DF109 default 0 for CustIsClosed;
+			alter table Customers add constraint sys_000DF110 default 0 for CustIsDecease;
+			alter table Customers add constraint sys_000DF111 default 0 for CustIsDelinquent;
+			alter table Customers add constraint sys_000DF112 default 0 for CustIsDormant;
+			alter table Customers add constraint sys_000DF113 default 0 for CustIsMinor;
+			alter table Customers add constraint sys_000DF114 default 0 for CustIsRejected;
+			alter table Customers add constraint sys_000DF115 default 0 for CustIsStaff;
+			alter table Customers add constraint sys_000DF116 default 0 for CustIsStmtCombined;
+			alter table Customers add constraint sys_000DF117 default 0 for CustIsTradeFinCust;
+			alter table Customers add constraint sys_000DF118 default 0 for custSuspSts;
+			alter table Customers add constraint sys_000DF119 default 0 for DedupFound;
+			alter table Customers add constraint sys_000DF120 default 0 for JointCust;
+			alter table Customers add constraint sys_000DF121 default 0 for SalariedCustomer;
+			alter table Customers add constraint sys_000DF122 default 0 for SkipDedup;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.51-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table Customers modify (CustIsActive default 0);
+			alter table Customers modify (CustIsBlackListed default 0);
+			alter table Customers modify (CustIsBlocked default 0);
+			alter table Customers modify (CustIsClosed default 0);
+			alter table Customers modify (CustIsDecease default 0);
+			alter table Customers modify (CustIsDelinquent default 0);
+			alter table Customers modify (CustIsDormant default 0);
+			alter table Customers modify (CustIsMinor default 0);
+			alter table Customers modify (CustIsRejected default 0);
+			alter table Customers modify (CustIsStaff default 0);
+			alter table Customers modify (CustIsStmtCombined default 0);
+			alter table Customers modify (CustIsTradeFinCust default 0);
+			alter table Customers modify (custSuspSts default 0);
+			alter table Customers modify (DedupFound default 0);
+			alter table Customers modify (JointCust default 0);
+			alter table Customers modify (SalariedCustomer default 0);
+			alter table Customers modify (SkipDedup default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.52-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table Customers_Temp add constraint sys_000DF123 default 0 for CustIsActive;
+			alter table Customers_Temp add constraint sys_000DF124 default 0 for CustIsBlackListed;
+			alter table Customers_Temp add constraint sys_000DF125 default 0 for CustIsBlocked;
+			alter table Customers_Temp add constraint sys_000DF126 default 0 for CustIsClosed;
+			alter table Customers_Temp add constraint sys_000DF127 default 0 for CustIsDecease;
+			alter table Customers_Temp add constraint sys_000DF128 default 0 for CustIsDelinquent;
+			alter table Customers_Temp add constraint sys_000DF129 default 0 for CustIsDormant;
+			alter table Customers_Temp add constraint sys_000DF130 default 0 for CustIsMinor;
+			alter table Customers_Temp add constraint sys_000DF131 default 0 for CustIsRejected;
+			alter table Customers_Temp add constraint sys_000DF132 default 0 for CustIsStaff;
+			alter table Customers_Temp add constraint sys_000DF133 default 0 for CustIsStmtCombined;
+			alter table Customers_Temp add constraint sys_000DF134 default 0 for CustIsTradeFinCust;
+			alter table Customers_Temp add constraint sys_000DF135 default 0 for custSuspSts;
+			alter table Customers_Temp add constraint sys_000DF136 default 0 for DedupFound;
+			alter table Customers_Temp add constraint sys_000DF137 default 0 for JointCust;
+			alter table Customers_Temp add constraint sys_000DF138 default 0 for SalariedCustomer;
+			alter table Customers_Temp add constraint sys_000DF139 default 0 for SkipDedup;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.52-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table Customers_Temp modify (CustIsActive default 0);
+			alter table Customers_Temp modify (CustIsBlackListed default 0);
+			alter table Customers_Temp modify (CustIsBlocked default 0);
+			alter table Customers_Temp modify (CustIsClosed default 0);
+			alter table Customers_Temp modify (CustIsDecease default 0);
+			alter table Customers_Temp modify (CustIsDelinquent default 0);
+			alter table Customers_Temp modify (CustIsDormant default 0);
+			alter table Customers_Temp modify (CustIsMinor default 0);
+			alter table Customers_Temp modify (CustIsRejected default 0);
+			alter table Customers_Temp modify (CustIsStaff default 0);
+			alter table Customers_Temp modify (CustIsStmtCombined default 0);
+			alter table Customers_Temp modify (CustIsTradeFinCust default 0);
+			alter table Customers_Temp modify (custSuspSts default 0);
+			alter table Customers_Temp modify (DedupFound default 0);
+			alter table Customers_Temp modify (JointCust default 0);
+			alter table Customers_Temp modify (SalariedCustomer default 0);
+			alter table Customers_Temp modify (SkipDedup default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.53-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table DATABASECHANGELOGLOCK add constraint sys_000DF140 default 0 for LOCKED;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.53-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table DATABASECHANGELOGLOCK modify (LOCKED default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.54-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FCMTCommodityInventory add constraint sys_000DF141 default 0 for BulkPurchase;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.54-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FCMTCommodityInventory modify (BulkPurchase default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.55-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FCMTCommodityInventory_Temp add constraint sys_000DF142 default 0 for BulkPurchase;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.55-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FCMTCommodityInventory_Temp modify (BulkPurchase default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.56-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinanceMain add constraint sys_000DF143 default 0 for AlwBPI;
+			alter table FinanceMain add constraint sys_000DF144 default 0 for AlwMultiDisb;
+			alter table FinanceMain add constraint sys_000DF145 default 0 for PlanEMICpz;
+			alter table FinanceMain add constraint sys_000DF146 default 0 for PlanEMIHAlw;
+			alter table FinanceMain add constraint sys_000DF147 default 0 for ReAgeCpz;
+			alter table FinanceMain add constraint sys_000DF148 default 0 for UnPlanEMICpz;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.56-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinanceMain modify (AlwBPI default 0);
+			alter table FinanceMain modify (AlwMultiDisb default 0);
+			alter table FinanceMain modify (PlanEMICpz default 0);
+			alter table FinanceMain modify (PlanEMIHAlw default 0);
+			alter table FinanceMain modify (ReAgeCpz default 0);
+			alter table FinanceMain modify (UnPlanEMICpz default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.57-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinanceMain_PA add constraint sys_000DF149 default 0 for AlwBPI;
+			alter table FinanceMain_PA add constraint sys_000DF150 default 0 for AlwMultiDisb;
+			alter table FinanceMain_PA add constraint sys_000DF151 default 0 for PlanEMICpz;
+			alter table FinanceMain_PA add constraint sys_000DF152 default 0 for PlanEMIHAlw;
+			alter table FinanceMain_PA add constraint sys_000DF153 default 0 for ReAgeCpz;
+			alter table FinanceMain_PA add constraint sys_000DF154 default 0 for UnPlanEMICpz;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.57-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinanceMain_PA modify (AlwBPI default 0);
+			alter table FinanceMain_PA modify (AlwMultiDisb default 0);
+			alter table FinanceMain_PA modify (PlanEMICpz default 0);
+			alter table FinanceMain_PA modify (PlanEMIHAlw default 0);
+			alter table FinanceMain_PA modify (ReAgeCpz default 0);
+			alter table FinanceMain_PA modify (UnPlanEMICpz default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.58-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinanceMain_Temp add constraint sys_000DF155 default 0 for AlwBPI;
+			alter table FinanceMain_Temp add constraint sys_000DF156 default 0 for AlwMultiDisb;
+			alter table FinanceMain_Temp add constraint sys_000DF157 default 0 for PlanEMICpz;
+			alter table FinanceMain_Temp add constraint sys_000DF158 default 0 for PlanEMIHAlw;
+			alter table FinanceMain_Temp add constraint sys_000DF159 default 0 for ReAgeCpz;
+			alter table FinanceMain_Temp add constraint sys_000DF160 default 0 for UnPlanEMICpz;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.58-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinanceMain_Temp modify (AlwBPI default 0);
+			alter table FinanceMain_Temp modify (AlwMultiDisb default 0);
+			alter table FinanceMain_Temp modify (PlanEMICpz default 0);
+			alter table FinanceMain_Temp modify (PlanEMIHAlw default 0);
+			alter table FinanceMain_Temp modify (ReAgeCpz default 0);
+			alter table FinanceMain_Temp modify (UnPlanEMICpz default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.59-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinGuarantorsDetails add constraint sys_000DF161 default 0 for BankCustomer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.59-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinGuarantorsDetails modify (BankCustomer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.60-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinGuarantorsDetails_PA add constraint sys_000DF162 default 0 for BankCustomer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.60-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinGuarantorsDetails_PA modify (BankCustomer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.61-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinGuarantorsDetails_Temp add constraint sys_000DF163 default 0 for BankCustomer;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.61-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinGuarantorsDetails_Temp modify (BankCustomer default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.62-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinJointAccountDetails add constraint sys_000DF164 default 0 for IncludeRepay;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.62-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinJointAccountDetails modify (IncludeRepay default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.63-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinJointAccountDetails_PA add constraint sys_000DF165 default 0 for IncludeRepay;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.63-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinJointAccountDetails_PA modify (IncludeRepay default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.64-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinJointAccountDetails_Temp add constraint sys_000DF166 default 0 for IncludeRepay;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.64-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinJointAccountDetails_Temp modify (IncludeRepay default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.69-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinTypeInsurances add constraint sys_000DF167 default 0 for AlwRateChange;
+			alter table FinTypeInsurances add constraint sys_000DF168 default 0 for Mandatory;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.69-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinTypeInsurances modify (AlwRateChange default 0);
+			alter table FinTypeInsurances modify (Mandatory default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.70-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table FinTypeInsurances_Temp add constraint sys_000DF169 default 0 for AlwRateChange;
+			alter table FinTypeInsurances_Temp add constraint sys_000DF170 default 0 for Mandatory;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.70-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table FinTypeInsurances_Temp modify (AlwRateChange default 0);
+			alter table FinTypeInsurances_Temp modify (Mandatory default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.71-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table InsurancePolicy add constraint sys_000DF171 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.71-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table InsurancePolicy modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.72-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table InsurancePolicy_Temp add constraint sys_000DF172 default 0 for Active;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.72-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table InsurancePolicy_Temp modify (Active default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.73-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RejectFinanceMain add constraint sys_000DF173 default 0 for AlwBPI;
+			alter table RejectFinanceMain add constraint sys_000DF174 default 0 for AlwMultiDisb;
+			alter table RejectFinanceMain add constraint sys_000DF175 default 0 for PlanEMICpz;
+			alter table RejectFinanceMain add constraint sys_000DF176 default 0 for PlanEMIHAlw;
+			alter table RejectFinanceMain add constraint sys_000DF177 default 0 for ReAgeCpz;
+			alter table RejectFinanceMain add constraint sys_000DF178 default 0 for UnPlanEMICpz;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.73-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RejectFinanceMain modify (AlwBPI default 0);
+			alter table RejectFinanceMain modify (AlwMultiDisb default 0);
+			alter table RejectFinanceMain modify (PlanEMICpz default 0);
+			alter table RejectFinanceMain modify (PlanEMIHAlw default 0);
+			alter table RejectFinanceMain modify (ReAgeCpz default 0);
+			alter table RejectFinanceMain modify (UnPlanEMICpz default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.75-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountingSet add constraint sys_000DF179 default 0 for EntryByInvestment;
+			alter table RMTAccountingSet add constraint sys_000DF180 default 0 for SystemDefault;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.75-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountingSet modify (EntryByInvestment default 0);
+			alter table RMTAccountingSet modify (SystemDefault default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.76-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountingSet_Temp add constraint sys_000DF181 default 0 for EntryByInvestment;
+			alter table RMTAccountingSet_Temp add constraint sys_000DF182 default 0 for SystemDefault;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.76-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountingSet_Temp modify (EntryByInvestment default 0);
+			alter table RMTAccountingSet_Temp modify (SystemDefault default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.77-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountTypes add constraint sys_000DF183 default 0 for AcTypeIsActive;
+			alter table RMTAccountTypes add constraint sys_000DF184 default 0 for CustSysAc;
+			alter table RMTAccountTypes add constraint sys_000DF185 default 0 for InternalAc;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.77-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountTypes modify (AcTypeIsActive default 0);
+			alter table RMTAccountTypes modify (CustSysAc default 0);
+			alter table RMTAccountTypes modify (InternalAc default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.78-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountTypes_Temp add constraint sys_000DF186 default 0 for AcTypeIsActive;
+			alter table RMTAccountTypes_Temp add constraint sys_000DF187 default 0 for CustSysAc;
+			alter table RMTAccountTypes_Temp add constraint sys_000DF188 default 0 for InternalAc;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.78-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTAccountTypes_Temp modify (AcTypeIsActive default 0);
+			alter table RMTAccountTypes_Temp modify (CustSysAc default 0);
+			alter table RMTAccountTypes_Temp modify (InternalAc default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.79-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTBaseRates add constraint sys_000DF189 default 0 for DelExistingRates;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.79-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTBaseRates modify (DelExistingRates default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.80-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTBaseRates_Temp add constraint sys_000DF190 default 0 for DelExistingRates;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.80-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTBaseRates_Temp modify (DelExistingRates default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.81-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTBranches add constraint sys_000DF191 default 0 for BranchIsActive;
+			alter table RMTBranches add constraint sys_000DF192 default 0 for MiniBranch;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.81-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTBranches modify (BranchIsActive default 0);
+			alter table RMTBranches modify (MiniBranch default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.82-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTBranches_Temp add constraint sys_000DF193 default 0 for BranchIsActive;
+			alter table RMTBranches_Temp add constraint sys_000DF194 default 0 for MiniBranch;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.82-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTBranches_Temp modify (BranchIsActive default 0);
+			alter table RMTBranches_Temp modify (MiniBranch default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.83-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTCheckListDetails add constraint sys_000DF195 default 0 for DocRequired;
+			alter table RMTCheckListDetails add constraint sys_000DF196 default 0 for RemarksAllow;
+			alter table RMTCheckListDetails add constraint sys_000DF197 default 0 for RemarksMand;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.83-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTCheckListDetails modify (DocRequired default 0);
+			alter table RMTCheckListDetails modify (RemarksAllow default 0);
+			alter table RMTCheckListDetails modify (RemarksMand default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.84-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTCheckListDetails_Temp add constraint sys_000DF198 default 0 for DocRequired;
+			alter table RMTCheckListDetails_Temp add constraint sys_000DF199 default 0 for RemarksAllow;
+			alter table RMTCheckListDetails_Temp add constraint sys_000DF200 default 0 for RemarksMand;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.84-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTCheckListDetails_Temp modify (DocRequired default 0);
+			alter table RMTCheckListDetails_Temp modify (RemarksAllow default 0);
+			alter table RMTCheckListDetails_Temp modify (RemarksMand default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.85-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTCurrencies add constraint sys_000DF201 default 0 for CcyIsActive;
+			alter table RMTCurrencies add constraint sys_000DF202 default 0 for CcyIsAlwForAc;
+			alter table RMTCurrencies add constraint sys_000DF203 default 0 for CcyIsAlwForDepo;
+			alter table RMTCurrencies add constraint sys_000DF204 default 0 for CcyIsAlwForLoans;
+			alter table RMTCurrencies add constraint sys_000DF205 default 0 for CcyIsGroup;
+			alter table RMTCurrencies add constraint sys_000DF206 default 0 for CcyIsIntRounding;
+			alter table RMTCurrencies add constraint sys_000DF207 default 0 for CcyIsMember;
+			alter table RMTCurrencies add constraint sys_000DF208 default 0 for CcyIsReceprocal;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.85-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTCurrencies modify (CcyIsActive default 0);
+			alter table RMTCurrencies modify (CcyIsAlwForAc default 0);
+			alter table RMTCurrencies modify (CcyIsAlwForDepo default 0);
+			alter table RMTCurrencies modify (CcyIsAlwForLoans default 0);
+			alter table RMTCurrencies modify (CcyIsGroup default 0);
+			alter table RMTCurrencies modify (CcyIsIntRounding default 0);
+			alter table RMTCurrencies modify (CcyIsMember default 0);
+			alter table RMTCurrencies modify (CcyIsReceprocal default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.86-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTCurrencies_Temp add constraint sys_000DF209 default 0 for CcyIsActive;
+			alter table RMTCurrencies_Temp add constraint sys_000DF210 default 0 for CcyIsAlwForAc;
+			alter table RMTCurrencies_Temp add constraint sys_000DF211 default 0 for CcyIsAlwForDepo;
+			alter table RMTCurrencies_Temp add constraint sys_000DF212 default 0 for CcyIsAlwForLoans;
+			alter table RMTCurrencies_Temp add constraint sys_000DF213 default 0 for CcyIsGroup;
+			alter table RMTCurrencies_Temp add constraint sys_000DF214 default 0 for CcyIsIntRounding;
+			alter table RMTCurrencies_Temp add constraint sys_000DF215 default 0 for CcyIsMember;
+			alter table RMTCurrencies_Temp add constraint sys_000DF216 default 0 for CcyIsReceprocal;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.86-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTCurrencies_Temp modify (CcyIsActive default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsAlwForAc default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsAlwForDepo default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsAlwForLoans default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsGroup default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsIntRounding default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsMember default 0);
+			alter table RMTCurrencies_Temp modify (CcyIsReceprocal default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.87-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTFinanceTypes add constraint sys_000DF217 default 0 for AlwBPI;
+			alter table RMTFinanceTypes add constraint sys_000DF218 default 0 for PlanEMICpz;
+			alter table RMTFinanceTypes add constraint sys_000DF219 default 0 for PlanEMIHAlw;
+			alter table RMTFinanceTypes add constraint sys_000DF220 default 0 for ReAgeCpz;
+			alter table RMTFinanceTypes add constraint sys_000DF221 default 0 for UnPlanEMICpz;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.87-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTFinanceTypes modify (AlwBPI default 0);
+			alter table RMTFinanceTypes modify (PlanEMICpz default 0);
+			alter table RMTFinanceTypes modify (PlanEMIHAlw default 0);
+			alter table RMTFinanceTypes modify (ReAgeCpz default 0);
+			alter table RMTFinanceTypes modify (UnPlanEMICpz default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.88-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table RMTFinanceTypes_Temp add constraint sys_000DF222 default 0 for AlwBPI;
+			alter table RMTFinanceTypes_Temp add constraint sys_000DF223 default 0 for PlanEMICpz;
+			alter table RMTFinanceTypes_Temp add constraint sys_000DF224 default 0 for PlanEMIHAlw;
+			alter table RMTFinanceTypes_Temp add constraint sys_000DF225 default 0 for ReAgeCpz;
+			alter table RMTFinanceTypes_Temp add constraint sys_000DF226 default 0 for UnPlanEMICpz;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.88-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table RMTFinanceTypes_Temp modify (AlwBPI default 0);
+			alter table RMTFinanceTypes_Temp modify (PlanEMICpz default 0);
+			alter table RMTFinanceTypes_Temp modify (PlanEMIHAlw default 0);
+			alter table RMTFinanceTypes_Temp modify (ReAgeCpz default 0);
+			alter table RMTFinanceTypes_Temp modify (UnPlanEMICpz default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.89-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table VASRecording add constraint sys_000DF227 default 0 for FinanceProcess;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.89-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table VASRecording modify (FinanceProcess default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.90-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table VASRecording_Temp add constraint sys_000DF228 default 0 for FinanceProcess;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.90-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table VASRecording_Temp modify (FinanceProcess default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.91-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table WIFFinanceMain add constraint sys_000DF229 default 0 for AlwBPI;
+			alter table WIFFinanceMain add constraint sys_000DF230 default 0 for AlwMultiDisb;
+			alter table WIFFinanceMain add constraint sys_000DF231 default 0 for PlanEMICpz;
+			alter table WIFFinanceMain add constraint sys_000DF232 default 0 for PlanEMIHAlw;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.91-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table WIFFinanceMain modify (AlwBPI default 0);
+			alter table WIFFinanceMain modify (AlwMultiDisb default 0);
+			alter table WIFFinanceMain modify (PlanEMICpz default 0);
+			alter table WIFFinanceMain modify (PlanEMIHAlw default 0);
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.92-mssql" author="sys" dbms="mssql">
+  <sql>
+		<![CDATA[
+			alter table WIFFinanceMain_Temp add constraint sys_000DF233 default 0 for AlwBPI;
+			alter table WIFFinanceMain_Temp add constraint sys_000DF234 default 0 for AlwMultiDisb;
+			alter table WIFFinanceMain_Temp add constraint sys_000DF235 default 0 for PlanEMICpz;
+			alter table WIFFinanceMain_Temp add constraint sys_000DF236 default 0 for PlanEMIHAlw;
+		]]>
+  </sql>
+</changeSet>
+<changeSet id="sys-1.92-oracle" author="sys" dbms="oracle">
+  <sql>
+		<![CDATA[
+			alter table WIFFinanceMain_Temp modify (AlwBPI default 0);
+			alter table WIFFinanceMain_Temp modify (AlwMultiDisb default 0);
+			alter table WIFFinanceMain_Temp modify (PlanEMICpz default 0);
+			alter table WIFFinanceMain_Temp modify (PlanEMIHAlw default 0);
+		]]>
+  </sql>
+</changeSet>
+		
+
+</databaseChangeLog>

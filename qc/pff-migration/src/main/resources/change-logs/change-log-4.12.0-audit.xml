@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+<changeSet id="2" author="aditya">
+<comment>New column added for Loan Type Details(extended details)</comment>
+	<addColumn tableName="adtrmtfinancetypes">
+	    <column name="odmincapamount" type="decimal(18,0)" defaultValueNumeric="0.00"/>
+	</addColumn>
+</changeSet>
+
+<changeSet author="Vinay" id="3">
+		<createTable tableName="AdtFinTypeReceiptModes">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinType" type="nvarchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="ReceiptMode" type="nvarchar(8)">
+			<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="nvarchar(50)" />
+			<column name="RoleCode" type="nvarchar(100)" />
+			<column name="NextRoleCode" type="nvarchar(200)" />
+			<column name="TaskId" type="nvarchar(50)" />
+			<column name="NextTaskId" type="nvarchar(200)" />
+			<column name="RecordType" type="nvarchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="3" author="swami.v">
+	<comment>New Column of "reenterbeneficiaryaccno" added for Disbursements  tab</comment>
+	<addColumn tableName="adtfinadvancepayments">
+		<column name="reenterbeneficiaryaccno" type="nvarchar(20)" />
+
+	</addColumn>
+</changeSet>
+
+	<changeSet id="4" author="aditya">
+	<comment>changing data type of batchreference from varchar to bigint</comment>
+	<modifyDataType tableName="adtfintaxuploadheader" columnName="batchreference" newDataType="bigint"/>
+	</changeSet>
+	
+	<changeSet id="5" author="swami.v">
+	<comment>Added Refundable of new column in Fee type Details</comment>
+	<addColumn tableName="adtFeeTypes">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+	
+	<changeSet id="6" author="swami.v">
+	<comment>Added Refundable of new column </comment>
+	<addColumn tableName="adtfinfeedetail">
+		<column name="Refundable" type="boolean" defaultValueBoolean="false" />
+	</addColumn>
+</changeSet>
+	<changeSet id="7" author="Sai Krishna">
+		<addColumn tableName="AdtDeviationDetails">
+			<column name="DelegatorGrade" type="bigint" defaultValueNumeric="0" />
+		</addColumn>
+	</changeSet>
+	
+<changeSet id="8" author="Ganesh.p">
+<comment>New column added in FinanceTypes for Auto Fin Rejection days</comment>
+	<addColumn tableName="ADTRmtfinancetypes">
+			<column name="AutoRejectionDays" type="Number(3,0)" defaultValue="0"/>
+	</addColumn>
+</changeSet>	
+
+<changeSet id="9" author="swami.v">
+  <comment>Added new column of "DocBarcode" </comment>
+    <addColumn tableName="adtdocumentdetails">
+	<column name="DocBarcode"  type="varchar(50)"/>
+  </addColumn>
+</changeSet>
+
+
+      <changeSet id="10" author="Rahul">
+      <comment>Added new column of "PartnerBankId" </comment>
+		<addColumn tableName="ADTMandates">
+		  <column name="PartnerBankId" type="bigint" defaultValue="0"/>
+		</addColumn>
+	  </changeSet>
+
+<changeSet id="11" author="aditya">
+<comment>New column "TaxNoMand" added for Loan Type Details(Loan basic details)</comment>
+  <addColumn tableName="ADTRmtfinancetypes"> 
+     <column name="TaxNoMand" type="boolean" defaultValueBoolean="false"/>
+  </addColumn>
+</changeSet>
+</databaseChangeLog>

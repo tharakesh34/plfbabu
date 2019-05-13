@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<zk>
+	<window title="upload" border="normal">
+		<hbox>
+			<textbox width="150px" maxlength="200" readonly="true" />
+			<button label="Browse" upload="true" />
+		</hbox>
+	</window>
+</zk>

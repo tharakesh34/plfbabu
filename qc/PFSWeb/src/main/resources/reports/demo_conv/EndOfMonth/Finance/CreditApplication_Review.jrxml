@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CreditApplication/Review" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="538a81b6-d7cc-4588-8a46-3a45d6f16e79">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="subDataSource1" class="java.lang.Object"/>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="customerId" class="java.lang.String"/>
+	<field name="bankName" class="java.lang.String"/>
+	<field name="auditors" class="java.lang.String"/>
+	<field name="consolOrUnConsol" class="java.lang.String"/>
+	<field name="location" class="java.lang.String"/>
+	<field name="auditedDate" class="java.lang.String"/>
+	<field name="conversionRate" class="java.lang.String"/>
+	<field name="auditYear" class="java.lang.String"/>
+	<field name="noOfShares" class="java.lang.String"/>
+	<field name="marketPrice" class="java.lang.String"/>
+	<field name="auditPeriod" class="java.lang.String"/>
+	<field name="allowBankName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="76">
+			<rectangle>
+				<reportElement uuid="9f0fe77d-77c5-4639-8e64-e85354800d1c" x="0" y="0" width="802" height="55"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="67127abd-874d-45b0-8b15-d9837e2a06a0" x="0" y="10" width="802" height="35"/>
+				<image>
+					<reportElement uuid="c00e4853-56be-4fed-8ca6-1ee4b6494287" x="18" y="0" width="200" height="35"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement uuid="c7aa274c-740b-4380-a3a0-c732fc241433" style="Title Header" x="168" y="0" width="402" height="35"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Credit Application/Review]]></text>
+				</staticText>
+			</frame>
+			<rectangle>
+				<reportElement uuid="f0938fb8-88de-4ec4-a009-1e5a071d0969" x="0" y="55" width="802" height="17" backcolor="#E1B778"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="1242e5f1-d0ac-4ebe-8f4e-3c4419b738bb" x="2" y="55" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="2df3bc79-e150-44f0-9f91-8612837820a6" style="Title Description header" x="0" y="0" width="70" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Description :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="a7f95388-0275-4880-99ea-e0fa174a2622" style="Title Description" x="70" y="0" width="345" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[This report will display the Details of Credit Application/Review .]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="106">
+			<frame>
+				<reportElement uuid="cd6bba85-4b5c-4f4d-9905-3ed8033ba2e0" x="0" y="91" width="802" height="15" isRemoveLineWhenBlank="true"/>
+				<staticText>
+					<reportElement uuid="21556c5b-e14d-4f55-95f4-d1366195afdb" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Audit Period]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="64f6ddb7-17f1-4de3-902f-84901940f813" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="ef75ec25-ac87-446e-91c7-d70dfec1383b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="157" height="15"/>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{auditPeriod}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="cd6bba85-4b5c-4f4d-9905-3ed8033ba2e0" x="0" y="76" width="802" height="15" isRemoveLineWhenBlank="true"/>
+				<staticText>
+					<reportElement uuid="21556c5b-e14d-4f55-95f4-d1366195afdb" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Number Of Shares]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="64f6ddb7-17f1-4de3-902f-84901940f813" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="ef75ec25-ac87-446e-91c7-d70dfec1383b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="157" height="15"/>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{noOfShares}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="acd4ba44-7ba6-4a0e-80a2-254f55ede611" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="400" y="0" width="150" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Market Price]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d7b87733-4838-4fc9-a9e4-55ca153e457c" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="555" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="3c5da4d4-193e-4f31-b6a9-968f587f6948" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="565" y="0" width="230" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{marketPrice}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="cd6bba85-4b5c-4f4d-9905-3ed8033ba2e0" x="0" y="61" width="802" height="15" isRemoveLineWhenBlank="true"/>
+				<staticText>
+					<reportElement uuid="21556c5b-e14d-4f55-95f4-d1366195afdb" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Conversion Rate ($)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="64f6ddb7-17f1-4de3-902f-84901940f813" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="ef75ec25-ac87-446e-91c7-d70dfec1383b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="157" height="15"/>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{conversionRate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="acd4ba44-7ba6-4a0e-80a2-254f55ede611" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="400" y="0" width="150" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Audit Year]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="d7b87733-4838-4fc9-a9e4-55ca153e457c" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="555" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="3c5da4d4-193e-4f31-b6a9-968f587f6948" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="565" y="0" width="230" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{auditYear}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="aaf9e8ba-495b-4e99-ad8d-64c0132ce9df" x="0" y="46" width="802" height="15" isRemoveLineWhenBlank="true"/>
+				<staticText>
+					<reportElement uuid="7c4dc8fc-479a-4a88-8b35-52c40823816d" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Location]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="95501efc-135b-4a98-8f59-59523a2eba2f" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="c8b6eab8-a19b-48a0-ba1e-c682e6e6180f" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="240" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{location}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="6848fc48-39ba-4cb2-b620-4806de53275d" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="400" y="0" width="150" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Audit Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4bfaa173-fda9-400b-89f9-34a0ae4012e6" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="555" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+					<reportElement uuid="f2a1080d-5229-42bc-a04d-808afd1e84e5" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="565" y="0" width="230" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{auditedDate}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="9353f0ec-4df5-444b-85d7-fced5f2052dc" x="0" y="31" width="802" height="15" isRemoveLineWhenBlank="true"/>
+				<staticText>
+					<reportElement uuid="ed621d03-4b86-41b1-a7e7-50ed0c75bf3a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Auditors]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b0a05fd2-6216-4022-b0e5-be9e9a99330b" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="e6bf6fc2-d213-4d9b-8867-89c8c6dbda34" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="240" height="15"/>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{auditors}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="6598d050-7607-4814-afe8-cdeb16755870" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="400" y="0" width="150" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Consolidated/UnConsolidated]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="5e3e5acd-f758-4a22-8573-0861ecaef6f1" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="555" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="1da674a8-ba75-4466-82e9-085a9098b437" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="565" y="0" width="230" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{consolOrUnConsol}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="4247cfdd-add4-4838-97f2-4d9ace393e06" x="0" y="16" width="802" height="15" isRemoveLineWhenBlank="true"/>
+				<staticText>
+					<reportElement uuid="a0fe461c-a9ae-4ae9-9977-4bbe6341675f" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="20" y="0" width="110" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer CIF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="21196133-b909-430d-93e9-252bcd20bf55" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="5" height="15"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="dd7fd455-1336-44c3-914c-d821a8eae1b9" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="145" y="0" width="240" height="15"/>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{customerId}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="6beadbc0-3dac-4409-8a25-529ec86c38b3" x="400" y="0" width="395" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{allowBankName}.equals("TRUE")]]></printWhenExpression>
+					</reportElement>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="1da674a8-ba75-4466-82e9-085a9098b437" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="165" y="0" width="230" height="15"/>
+						<textElement textAlignment="Left">
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{bankName}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="8ddf8573-699c-40f4-b6b8-02288325295a" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="155" y="0" width="5" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="c8132488-da61-4ed3-9b81-c7ad962c1540" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="150" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="2"/>
+						</textElement>
+						<text><![CDATA[Bank Name]]></text>
+					</staticText>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement uuid="5ac4ffd8-e56e-47ad-9854-50ef5213d847" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="802" height="14" isRemoveLineWhenBlank="true" backcolor="#DAD3C4"/>
+				<staticText>
+					<reportElement uuid="f5caa604-0715-4aa9-9fb9-8b80c984405b" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="8" y="0" width="231" height="14"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[Credit Application/Review-Bank SpreadSheet]]></text>
+				</staticText>
+			</frame>
+		</band>
+		<band height="30">
+			<subreport>
+				<reportElement uuid="cf77bcf9-bbf9-41f0-ac97-e000c34c3612" x="0" y="0" width="87" height="30"/>
+				<dataSourceExpression><![CDATA[$P{subDataSource1}]]></dataSourceExpression>
+				<subreportExpression><![CDATA["CreditApplication_Review_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement uuid="a62aca9a-47b6-47cb-aa1e-baf5326e29a8" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#E1B778"/>
+				<staticText>
+					<reportElement uuid="34a87bb6-a06f-471b-bb28-90480bf66328" style="Footer Info" x="2" y="0" width="50" height="15"/>
+					<textElement/>
+					<text><![CDATA[Printed By :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="1b1cf3d6-61f3-4e08-a52a-dfa9062d4bb2" style="Footer Info" x="51" y="0" width="280" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{userName}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="a84c1994-b317-4356-adc4-40dbcb12a88e" style="Footer Info" x="151" y="0" width="500" height="15"/>
+					<staticText>
+						<reportElement uuid="5fe765be-73b4-4f81-966c-9ae1d600f858" style="Footer Info" x="3" y="0" width="250" height="15"/>
+						<textElement textAlignment="Right"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd/MM/yyyy h.mm a">
+						<reportElement uuid="580eb531-3a60-4e80-8799-0de5c4c7a2be" style="Footer Info" x="253" y="0" width="247" height="15"/>
+						<textElement verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement uuid="13566ac4-2f76-43a9-808f-f0f2f7788b33" style="Footer Info" x="651" y="0" width="120" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement uuid="30df532e-0ff9-42d9-b05f-2b16d895600e" style="Footer Info" x="770" y="0" width="30" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="b807b9fe-f823-4eed-821f-1a118ab442e9" style="Generated By" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Report Generated by penApps PFS]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

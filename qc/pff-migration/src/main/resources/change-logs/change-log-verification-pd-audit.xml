@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="01" author="Varaprasad.K">
+		<createTable tableName="adtverification_pd">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_adtverifications_pd"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_adtverifications_pd"/>
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_adtverifications_pd"/>
+			</column>
+			<column name="AuditImage" type="char(1)">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_adtverifications_pd"/>
+			</column>
+			<column name="VerificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgentCode" type="varchar(20)" />
+			<column name="AgentName" type="varchar(50)" />
+			<column name="Type" type="int" defaultValue="0"/>
+			<column name="VerifiedDate" type="datetime" />
+			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Reason" type="bigint" />
+			<column name="SummaryRemarks" type="varchar(500)" />			
+
+			<column name="Version" type="int" defaultValue="0">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="df_adtverifications_pd_ver"/>
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+
+			<column name="AddressType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HouseNumber" type="varchar(50)" />
+			<column name="FlatNumber" type="varchar(50)" />
+			<column name="Street" type="varchar(50)" />
+			<column name="AddressLine1" type="varchar(50)" />
+			<column name="AddressLine2" type="varchar(50)" />
+			<column name="AddressLine3" type="varchar(50)" />
+			<column name="AddressLine4" type="varchar(50)" />
+			<column name="AddressLine5" type="varchar(50)" />
+			<column name="Country" type="char(2)" />
+			<column name="Province" type="varchar(8)" />
+			<column name="City" type="varchar(8)" />
+			<column name="ContactNumber1" type="varchar(20)" />
+			<column name="ContactNumber2" type="varchar(20)" />
+			<column name="PoBox" type="varchar(20)" />
+			<column name="ZipCode" type="varchar(20)" />
+			
+			<!-- Observations -->
+			<column name="OwnershipStatus" type="int" defaultValue="0">
+			      <constraints  primaryKey="true" primaryKeyName="df_adtverifications_pd_Owner"/>
+			</column>
+			
+			
+			<column name="YearsAtPresentAddress" type="int" >
+				<constraints  primaryKey="true" primaryKeyName="df_adtverifications_pd_YearsAt"/>
+			</column>
+			<column name="PersonMet" type="varchar(50)" />
+			<column name="Relationship" type="varchar(8)" />
+			<column name="ContactNumber" type="varchar(20)" />
+			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0">
+				<constraints  primaryKey="true" primaryKeyName="df_adtverifications_pd_nhf"/>
+			</column>
+			<column name="LivingStandard" type="int"  defaultValue="0">
+				<constraints  primaryKey="true" primaryKeyName="df_adtverifications_pd_lsd"/>
+			</column>
+			<column name="NegativeCheck" type="smallint" defaultValue="0">
+				<constraints  primaryKey="true" primaryKeyName="df_adtverifications_pd_ncheck"/>
+			</column>
+			<column name="NoofAttempts" type="int" defaultValue="0">
+				<constraints  primaryKey="true" primaryKeyName="df_adtverifications_pd_noofat"/>
+			</column>
+			<column name="ObservationRemarks" type="varchar(500)" />
+			
+		</createTable>
+		
+		</changeSet>
+		
+		<changeSet id="02" author="Varaprasad.K" dbms="postgresql">
+		<addDefaultValue columnName="OwnershipStatus" 		tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="LivingStandard" 		tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="NegativeCheck" 		tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="NoofAttempts" 			tableName="adtverification_pd" defaultValue="0"/>
+	  </changeSet>
+	<changeSet id="03" author="Varaprasad.K" dbms="oracle">
+		<addDefaultValue columnName="OwnershipStatus" 		tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="LivingStandard" 		tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="NegativeCheck" 		tableName="adtverification_pd" defaultValue="0"/>
+		<addDefaultValue columnName="NoofAttempts" 			tableName="adtverification_pd" defaultValue="0"/>
+	</changeSet>
+</databaseChangeLog>

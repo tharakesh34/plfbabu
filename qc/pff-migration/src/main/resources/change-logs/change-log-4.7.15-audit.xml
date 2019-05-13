@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	
+	
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Manoj" id="1">
+		<dropNotNullConstraint tableName="AdtSecUsers"
+			columnName="usrpwd" columnDataType="VARCHAR2(100)" />
+	</changeSet>
+	
+	<changeSet id="02" author="Ganesh.p">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="chequeCaptureReq" type="BOOLEAN" defaultValue="false">
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet  id="03" author="Ganesh.p">
+		<dropNotNullConstraint tableName="ADTchequedetail"
+			columnName="emirefno" columnDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="04" author="Manikanta.p">
+	<modifyDataType columnName="name" newDataType="varchar(50)"
+		tableName="adtlocality"/>
+	</changeSet>
+	<changeSet id="05" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="ADTFINTYPEVASPRODUCTS"
+			columnName="Mandatory" newDataType="citext" />
+	</changeSet>
+	<changeSet id="06" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="AdtFeeTypes"
+			columnName="amortzreq" newDataType="citext" />
+	</changeSet>
+	
+	<changeSet id="07" author="Sreekanth" dbms="postgresql">
+		<modifyDataType tableName="AdtFeeTypes"
+			columnName="taxapplicable" newDataType="citext" />
+	</changeSet>
+	
+	<changeSet id="08" author="Ganesh.p">
+		<addColumn tableName="ADTCHEQUEDETAIL">
+			<column name="chequetype" type="VARCHAR(8)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="09" author="Ganesh.p">
+		<dropColumn tableName="ADTCHEQUEHEADER" columnName="chequetype"/>
+	</changeSet>
+	<changeSet id="10" author="Sriram">
+		<createTable tableName="AdtManualDeviations">
+		<column name="AUDITID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITDATE" type="datetime">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITSEQ" type="int">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITIMAGE" type="varchar(1)">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="DeviationID" type="bigint"/>
+		<column name="Code" type="varchar(20)"/>
+		<column name="Description" type="varchar(100)"/>
+		<column name="Module" type="varchar(10)"/>
+		<column name="Categorization" type="varchar(10)"/>
+		<column name="Severity" type="varchar(10)"/>
+		<column name="Active" type="boolean" defaultValue="0"/>
+		<column name="Version" type="int" defaultValue="0"/>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="11" author="Sriram">
+		<modifyDataType tableName="AdtManualDeviations" columnName="Categorization" newDataType="bigint"/>
+		<modifyDataType tableName="AdtManualDeviations" columnName="Severity" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="13" author="Sriram">
+		<createTable tableName="AdtProductDeviations">
+		<column name="AUDITID" type="bigint">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITDATE" type="datetime">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITSEQ" type="int">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="AUDITIMAGE" type="varchar(1)">
+			<constraints primaryKey="true"/>
+		</column>
+		<column name="ProductDevID" type="bigint"/>
+		<column name="DeviationID" type="bigint"/>
+		<column name="ProductCode" type="varchar(8)"/>
+		<column name="Version" type="int" defaultValue="0"/>
+		<column name="LastMntBy" type="bigint" defaultValue="0"/>
+		<column name="LastMntOn" type="datetime"/>
+		<column name="RecordStatus" type="varchar(50)"/>
+		<column name="RoleCode" type="varchar(100)"/>
+		<column name="NextRoleCode" type="varchar(200)"/>
+		<column name="TaskId" type="varchar(100)"/>
+		<column name="NextTaskId" type="varchar(200)"/>
+		<column name="RecordType" type="varchar(50)"/>
+		<column name="WorkflowId" type="bigint"/>
+		</createTable>	
+	</changeSet>
+	<changeSet id="14" author="Sriram">
+		<addColumn tableName="AdtBMTproduct">
+		<column name="allowDeviation" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="15" author="satish">
+		<addColumn tableName="Adtfinancedeviations">
+			<column name="manualDeviation" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="16" author="satish">
+		<addColumn tableName="Adtfinancedeviations">
+			<column name="deviProcessed" type="boolean" defaultValue="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="17" author="satish">
+		<addColumn tableName="Adtfinancedeviations">
+			<column name="remarks" type="varchar(200)" ></column>
+		</addColumn>
+	</changeSet>
+		<changeSet id="18" author="Jayant">
+ 		<modifyDataType tableName="AdtBankBranches" columnName="BranchCode" newDataType="varchar(20)"/>
+ 		<modifyDataType tableName="AdtPartnerBanks" columnName="BankBranchCode" newDataType="varchar(20)"/>
+ 	</changeSet>
+	
+	 <changeSet id="19" author="Durgaprasad.G">
+		<addColumn tableName="ADTEXTENDEDFIELDDETAIL" >
+			<column name="ExtendedType" defaultValue="0" type="int"/>
+		</addColumn>
+		</changeSet>
+	</databaseChangeLog>

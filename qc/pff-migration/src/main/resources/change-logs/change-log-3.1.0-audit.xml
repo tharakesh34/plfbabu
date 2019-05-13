@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+<changeSet author="Irfan" id="01">
+		<dropNotNullConstraint tableName="ADTMANUALADVISE"
+			columnName="Remarks" columnDataType="varchar(100)" />
+	</changeSet>
+	<changeSet id="02" author="Irfan">
+		<addColumn tableName="AdtManualAdvise">
+		<column name="ValueDate" type="datetime">
+		</column>
+		<column name="PostDate" type="datetime">
+		</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="03" author="Irfan">
+	<sql>
+		Update AdtManualAdvise set ValueDate='05-MAY-17'; 
+		Update AdtManualAdvise set PostDate='05-MAY-17';
+	</sql>
+	</changeSet>
+	<changeSet id="04" author="Irfan">
+	<addNotNullConstraint tableName="AdtManualAdvise" columnName="ValueDate" columnDataType="datetime"/>
+	<addNotNullConstraint tableName="AdtManualAdvise" columnName="PostDate" columnDataType="datetime"/>
+	</changeSet>
+	<changeSet id="05" author="Irfan">
+	<sql>
+	Update AdtManualAdvise set ValueDate=CURRENT_TIMESTAMP; 
+	Update AdtManualAdvise set PostDate=CURRENT_TIMESTAMP;
+	</sql>
+	</changeSet>
+	<changeSet id="6" author="pruthvi">
+		<dropColumn columnName="ACPRVDAYBAL" tableName="ADTACCOUNTS" />
+		<dropColumn columnName="ACTODAYDR" tableName="ADTACCOUNTS" />
+		<dropColumn columnName="ACTODAYCR" tableName="ADTACCOUNTS" />
+		<dropColumn columnName="ACTODAYNET" tableName="ADTACCOUNTS" />
+	</changeSet>
+	
+	
+	<changeSet author="pruthvi" id="7">
+		<renameColumn columnDataType="decimal(18,0)" newColumnName="SHADOWBAL"
+			oldColumnName="ACACCRUALBAL" tableName="ADTACCOUNTS" />
+				<renameColumn columnDataType="decimal(18,0)" newColumnName="ACBALANCE"
+			oldColumnName="ACTODAYBAL" tableName="ADTACCOUNTS" />
+	</changeSet>
+	<changeSet id="8" author="Srikanth" dbms="mssql">
+		<createView viewName="ADTACCOUNTS_VIEW" replaceIfExists="true">
+	SELECT     TH.AuditId, TH.AuditDate AuditDateTime, CONVERT(varchar(20),TH.AuditDate, 106) AuditDate, CONVERT(varchar(20),TH.AuditDate, 108) AuditTime,
+				COALESCE(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, 
+			    dbo.FN_CustomerName(T1.UsrFName, T1.UsrMName, T1.UsrLName)  AS AuditUserName,
+			     dbo.FN_TranType(TH.AuditTranType) AuditTranType, 
+						  Aft.AccountId AftAccountId, Aft.AcCcy AftAcCcy,Aft.AcType AftAcType,
+						  Aft.AcBranch AftAcBranch, Aft.AcCustId AftAcCustId,Aft.AcFullName AftAcFullName,
+						  Aft.AcShortName AftAcShortName, Aft.AcPurpose AftAcPurpose,Aft.InternalAc AftInternalAc,
+						  Aft.CustSysAc AftCustSysAc,Aft.SHADOWBAL AftSHADOWBAL,
+						  Aft.ACBALANCE AftACBALANCE, Aft.AcOpenDate AftAcOpenDate,Aft.AcCloseDate AftAcCloseDate,
+						  Aft.AcLastCustTrnDate AftAcLastCustTrnDate, Aft.AcLastSysTrnDate AftAcLastSysTrnDate,Aft.AcActive AftAcActive,
+						  Aft.AcBlocked AftAcBlocked, Aft.AcClosed AftAcClosed,Aft.HostAcNumber AftHostAcNumber,
+						  
+						  Bef.AccountId BefAccountId, Bef.AcCcy BefAcCcy, Bef.AcType BefAcType,
+						  Bef.AcBranch BefAcBranch, Bef.AcCustId BefAcCustId, Bef.AcFullName BefAcFullName,
+						  Bef.AcShortName BefAcShortName, Bef.AcPurpose BefAcPurpose, Bef.InternalAc BefInternalAc,
+						  Bef.CustSysAc BefCustSysAc, Bef.SHADOWBAL BefSHADOWBAL,
+						  Bef.ACBALANCE BefACBALANCE, Bef.AcOpenDate BefAcOpenDate, Bef.AcCloseDate BefAcCloseDate,
+						  Bef.AcLastCustTrnDate BefAcLastCustTrnDate, Bef.AcLastSysTrnDate BefAcLastSysTrnDate, Bef.AcActive BefAcActive,
+						  Bef.AcBlocked BefAcBlocked, Bef.AcClosed BefAcClosed, Bef.HostAcNumber BefHostAcNumber
+						  
+	FROM        AuditHeader TH   INNER JOIN
+						   SecUsers_View T1   ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+						  AdtAccounts AFT   ON TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+						  AdtAccounts BEF   ON TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+	WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'Accounts')
+					</createView>
+	</changeSet>
+	<changeSet id="8" author="Srikanth" dbms="oracle">
+		<createView viewName="ADTACCOUNTS_VIEW" replaceIfExists="true">
+	SELECT     TH.AuditId, TH.AuditDate AuditDateTime, to_char(TH.AuditDate, 'DD-MON-YYYY') AuditDate, to_char( TH.AuditDate, 'HH24:MI:SS') AuditTime,
+				COALESCE(AFT.AuditSeq, BEF.AuditSeq)  AuditSeq, TH.AuditUsrId, 
+			    FN_CustomerName(T1.UsrFName, T1.UsrMName, T1.UsrLName)  AS AuditUserName,
+			     FN_TranType(TH.AuditTranType) AuditTranType, 
+						  Aft.AccountId AftAccountId, Aft.AcCcy AftAcCcy,Aft.AcType AftAcType,
+						  Aft.AcBranch AftAcBranch, Aft.AcCustId AftAcCustId,Aft.AcFullName AftAcFullName,
+						  Aft.AcShortName AftAcShortName, Aft.AcPurpose AftAcPurpose,Aft.InternalAc AftInternalAc,
+						  Aft.CustSysAc AftCustSysAc,Aft.SHADOWBAL AftSHADOWBAL,
+						  Aft.ACBALANCE AftACBALANCE, Aft.AcOpenDate AftAcOpenDate,Aft.AcCloseDate AftAcCloseDate,
+						  Aft.AcLastCustTrnDate AftAcLastCustTrnDate, Aft.AcLastSysTrnDate AftAcLastSysTrnDate,Aft.AcActive AftAcActive,
+						  Aft.AcBlocked AftAcBlocked, Aft.AcClosed AftAcClosed,Aft.HostAcNumber AftHostAcNumber,
+						  
+						  Bef.AccountId BefAccountId, Bef.AcCcy BefAcCcy, Bef.AcType BefAcType,
+						  Bef.AcBranch BefAcBranch, Bef.AcCustId BefAcCustId, Bef.AcFullName BefAcFullName,
+						  Bef.AcShortName BefAcShortName, Bef.AcPurpose BefAcPurpose, Bef.InternalAc BefInternalAc,
+						  Bef.CustSysAc BefCustSysAc, Bef.SHADOWBAL BefSHADOWBAL,
+						  Bef.ACBALANCE BefACBALANCE, Bef.AcOpenDate BefAcOpenDate, Bef.AcCloseDate BefAcCloseDate,
+						  Bef.AcLastCustTrnDate BefAcLastCustTrnDate, Bef.AcLastSysTrnDate BefAcLastSysTrnDate, Bef.AcActive BefAcActive,
+						  Bef.AcBlocked BefAcBlocked, Bef.AcClosed BefAcClosed, Bef.HostAcNumber BefHostAcNumber
+						  
+	FROM        AuditHeader TH   INNER JOIN
+						   SecUsers_View T1   ON TH.AuditUsrId = T1.UsrID LEFT OUTER JOIN
+						  AdtAccounts AFT   ON TH.AuditId = AFT.AuditId AND TH.AuditDate = AFT.AuditDate AND AFT.AuditImage = 'A' FULL OUTER JOIN
+						  AdtAccounts BEF   ON TH.AuditId = BEF.AuditId AND TH.AuditDate = BEF.AuditDate AND BEF.AuditImage = 'B'
+	WHERE     (TH.AuditTranType != 'W') AND (TH.AuditModule = 'Accounts')
+					</createView>
+	</changeSet>
+	<changeSet id="9" author="Siva">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="RealizationDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>

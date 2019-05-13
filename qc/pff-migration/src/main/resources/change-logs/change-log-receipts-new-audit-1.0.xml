@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.maindb" value="PLF.." dbms="mssql" />
+	<property name="call.maindb" value="PLF." dbms="oracle" />
+	
+	<changeSet id="pre_run_for_pgp" author="ADARSH" runAlways="true" dbms="postgresql">
+	<sql>
+		Set search_path = plfaudit,public,pg_catalog;
+	</sql>
+   </changeSet>
+
+	<changeSet id="1" author="Vidhya">
+		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="Remarks" newDataType="varchar2(500)" />
+	</changeSet>
+
+	<changeSet id="2" author="Vidhya">
+		<addColumn tableName="ADTSECUSERS">
+			<column name="ACCESSTOALLBRANCHES" type="number(1,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="2.1_pre" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE ADTSECUSERS set ACCESSTOALLBRANCHES = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTSECUSERS ADD CONSTRAINT DF_ADTSECUSERS_ACCESSTOALLBRANCHES DEFAULT 0 FOR ACCESSTOALLBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.1" author="satyanarayana.g" dbms="postgresql,oracle">
+		<addDefaultValue columnName="ACCESSTOALLBRANCHES" tableName="ADTSECUSERS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.2" author="shinde.b">
+		<addNotNullConstraint tableName="ADTSECUSERS" columnName="ACCESSTOALLBRANCHES" columnDataType="number(1,0)" />
+	</changeSet>
+
+	<changeSet id="3" author="satyanarayana.g">
+		<addColumn tableName="AdtFINRECEIPTHEADER">
+			<column name="FinDivision" type="varchar2(8)" />
+			<column name="PostBranch" type="varchar2(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="4" author="satyanarayana.g">
+		<createTable tableName="ADTFinReceiptDetail">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="receiptID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptSeqID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptType" type="char(1)" />
+			<column name="PaymentTo" type="char(1)" />
+			<column name="PaymentType" type="nvarchar(8)" />
+			<column name="PayAgainstID" type="bigint" />
+			<column name="Amount" type="number(18,0)" />
+			<column name="FavourNumber" type="varchar(50)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="BankCode" type="varchar(8)" />
+			<column name="FavourName" type="varchar(100)" />
+			<column name="DepositDate" type="datetime" />
+			<column name="DepositNo" type="varchar(50)" />
+			<column name="PaymentRef" type="varchar(50)" />
+			<column name="TransactionRef" type="varchar(50)" />
+			<column name="ChequeAcNo" type="nvarchar(50)" />
+			<column name="FundingAc" type="nvarchar(50)" />
+			<column name="ReceivedDate" type="datetime" />
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="nvarchar(200)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="5" author="satyanarayana.g">
+		<addColumn tableName="AdtFinReceiptHeader">
+			<column name="panNumber" type="varchar(20)" />
+			<column name="receivedFrom" type="varchar(20)" />
+			<column name="collectionAgentId" type="bigint" />
+			<column name="receiptChannel" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="5.1_pre" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINRECEIPTHEADER set COLLECTIONAGENTID = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5.1" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER ADD CONSTRAINT DF_ADTFINRECEIPTHEADER_COLLECTIONAGENTID DEFAULT 0 FOR COLLECTIONAGENTID;
+				UPDATE ADTFINRECEIPTHEADER set COLLECTIONAGENTID = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5.2" author="satyanarayana.g" dbms="postgresql,oracle">
+		<addDefaultValue columnName="COLLECTIONAGENTID" tableName="ADTFINRECEIPTHEADER" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="5.3" author="satyanarayana.g">
+		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="COLLECTIONAGENTID" columnDataType="bigint" />
+	</changeSet>
+	
+	<changeSet id="6" author="satyanarayana.g">
+	 <comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="ACTFINRECEIPT" type="NUMBER(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="6.0" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.1" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINRECEIPTHEADER ADD CONSTRAINT DF_ADTFINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
+				UPDATE ADTFINRECEIPTHEADER set ACTFINRECEIPT = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.2" author="satyanarayana.g" dbms="postgresql,oracle">
+		<addDefaultValue columnName="ACTFINRECEIPT" tableName="ADTFINRECEIPTHEADER" defaultValue="1" />
+	</changeSet>
+
+	<changeSet id="6.3" author="satyanarayana.g">
+		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
+	</changeSet>
+
+</databaseChangeLog>

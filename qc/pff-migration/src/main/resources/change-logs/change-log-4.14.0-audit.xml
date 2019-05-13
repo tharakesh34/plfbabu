@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	 <changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<createTable tableName="ADTCOMMODITY_TYPES">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CommodityType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UnitType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="1.1" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<addPrimaryKey tableName="ADTCOMMODITY_TYPES" columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_ADTCOMMODITY_TYPES" />
+	</changeSet>
+
+	<changeSet id="1.2" author="vijaya.a" dbms="mssql">
+		<comment>Commodity and LAS</comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTCOMMODITY_TYPES ADD CONSTRAINT DF_COMMODITY_TYPES_UNITTYPE DEFAULT 0 FOR UNITTYPE;
+				ALTER TABLE ADTCOMMODITY_TYPES ADD CONSTRAINT DF_COMMODITY_TYPES_ACTIVE DEFAULT 1 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.3" author="vijaya.a" dbms="postgresql, oracle">
+		<comment>Commodity and LAS</comment>
+		<addDefaultValue columnName="UnitType" tableName="ADTCOMMODITY_TYPES" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="ADTCOMMODITY_TYPES" defaultValue="1" />
+	</changeSet>
+
+	<changeSet id="2" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<createTable tableName="ADTCOMMODITIES">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CommodityType" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrentValue" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNCode" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="2.1" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<addPrimaryKey tableName="ADTCOMMODITIES" columnNames="AuditId, AuditDate, AuditSeq, AuditImage"
+			constraintName="PK_ADTCOMMODITIES" />
+	</changeSet>
+
+	<changeSet id="2.3" author="vijaya.a" dbms="postgresql, oracle">
+		<comment>Commodity and LAS</comment>
+		<addDefaultValue columnName="Active" tableName="ADTCOMMODITIES" defaultValue="1" />
+	</changeSet>
+	
+	<changeSet id="3" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<renameColumn tableName="ADTCOMMODITY_TYPES" oldColumnName="CommodityType" newColumnName="Code"/>
+	</changeSet>
+	
+	<changeSet id="4" author="amanullah.m">
+		<comment>Commodity and LAS</comment>
+		<addColumn tableName="ADTCOLLATERALSTRUCTURE">
+			<column name="thresholdLtvPercentage" type="decimal(5,2)" />
+		</addColumn>
+		<addColumn tableName="ADTCOLLATERALSTRUCTURE">
+			<column name="commodityId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="4.1" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTCOLLATERALSTRUCTURE ADD CONSTRAINT DF_COMMODITIES_THRESHOLDLTVPERCENTAGE DEFAULT 0.0 FOR THRESHOLDLTVPERCENTAGE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="4.2" author="vijaya.a"  dbms="postgresql, oracle">
+		<addDefaultValue columnName="thresholdLtvPercentage" tableName="ADTCOLLATERALSTRUCTURE"  defaultValue="0.00"/>
+	</changeSet>
+	
+	<changeSet id="4.3" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update ADTCOLLATERALSTRUCTURE set THRESHOLDLTVPERCENTAGE = 0.0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+		<!--This change log xml is Freezed dont add change sets in this version.
+		please add new change sets on change-log-{pff.version}-audit.xml 
+		i.e pff.version  from pom.xml in pff pff-aggregator -->
+</databaseChangeLog>

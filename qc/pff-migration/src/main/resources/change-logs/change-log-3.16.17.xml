@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+	
+	<changeSet author="Veeravenkata" id="1">
+		<addColumn tableName="LimitDetails">
+			<column name="NonRvlUtilised" type="decimal(21, 0)"/>
+		</addColumn>
+		
+		<addColumn tableName="LimitDetails_Temp">
+			<column name="NonRvlUtilised" type="decimal(21, 0)"/>
+		</addColumn>
+	</changeSet>
+ 
+	<changeSet author="Veeravenkata" id="2">
+		<createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
+		
+			SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode, T3.GroupName,T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
+                       T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+                       T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                       T1.WorkflowId, T1.NonRvlUtilised
+                      
+			FROM      LimitDetails  T1 INNER JOIN
+                      SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                      LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+                      LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+                      Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+						
+		</createView>
+		
+		<createView viewName="LIMITDETAILS_TVIEW" replaceIfExists="true">
+		
+			SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
+                       T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq,T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+                       T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                       T1.WorkflowId, T1.NonRvlUtilised
+		   	
+		   	FROM      LimitDetails_Temp  T1 INNER JOIN
+                      SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                      LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+                      LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+                      Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+						
+		</createView>
+		
+		<createView viewName="LIMITDETAILS_VIEW" replaceIfExists="true">
+		
+			SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc,COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving ,T1.ExpiryDate, T1.LimitSanctioned,  
+                       T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+                       T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+                       T1.WorkflowId, T1.NonRvlUtilised
+			
+			FROM       LimitDetails_Temp  T1 INNER JOIN
+                       SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                       LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+                       LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+                       Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+                       
+			UNION ALL
+			
+			SELECT   	T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc,COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
+	                    T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+	                    T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+	                    T1.WorkflowId, T1.NonRvlUtilised
+	                    
+			FROM        LimitDetails  T1 INNER JOIN
+                        SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+                        LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+                        LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+                       Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+			
+			WHERE     NOT EXISTS
+			                          (SELECT     1
+			                            FROM          LimitDetails_Temp
+			                            WHERE      DetailId = T1.DetailId)
+						
+		</createView>
+		
+		<createView viewName="LIMITLINES_VIEW" replaceIfExists="true">
+		
+			Select 	T.DetailId, T.LimitHeaderId, T1.RuleCode,T1.RuleValue,T1.CustomerId,T1.CustomerGroup,T.LimitLine,R.SqlRule,R.RuleCodeDesc  LimitLineDesc,T.GroupCode, T.
+					LimitStructureDetailsID,T.LimitChkMethod, T.ExpiryDate, T.LimitSanctioned,  T.ReservedLimit, T.UtilisedLimit,T.LimitCheck,COALESCE(T.Revolving,0)Revolving ,T1.LimitCcy  Currency,T.Version , T.
+					CreatedBy,T.CreatedOn,T.LastMntBy, T.LastMntOn, T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId, T.NonRvlUtilised 
+			
+			From 	LimitDetails_AView  T INNER JOIN
+					LimitHeader  T1 ON T1.HeaderId=T.LimitHeaderId  Left Outer Join 
+					Rules R ON T.LimitLine= R.RuleCode and RuleModule='LMTLINE' where  T1.Active=1
+						
+		</createView>
+	</changeSet>
+	
+	<changeSet author="Veeravenkata" id="3">
+		<createView viewName="LIMITGROUPLINES_AVIEW" replaceIfExists="true">
+		
+		SELECT		T1.LimitGroupCode, T5.LimitCategory, T1.GroupCode, T3.GroupName,T1.LimitLine,  T1.LimitLines ,	T4.RuleCodeDesc LimitLineDesc,T1.ItemSeq,	
+					T1.Version ,T1.CreatedBy,T1.CreatedOn, T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, 
+					T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T4.Revolving, 1) Revolving
+		
+		FROM	   	 LimitGroupLines T1 INNER JOIN
+		 			 LimitGroup_View T5 ON T1.LimitGroupCode = T5.GroupCode INNER JOIN
+		             SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT JOIN
+		             LimitGroup T3 ON T1.GroupCode = T3.GroupCode LEFT JOIN
+		             Rules T4 ON T1.LimitLine = T4.Rulecode and RuleModule='LMTLINE'
+		</createView>
+
+		<createView viewName="LIMITGROUPLINES_TVIEW" replaceIfExists="true">
+		
+		SELECT		T1.LimitGroupCode,T5.LimitCategory, T1.GroupCode,T3.GroupName, T1.LimitLine,  T1.LimitLines ,	T4.RuleCodeDesc LimitLineDesc,T1.ItemSeq,
+					T1.Version ,T1.CreatedBy,T1.CreatedOn, T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, 
+					T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T4.Revolving, 1) Revolving
+					
+		FROM    	LimitGroupLines_Temp T1 INNER JOIN
+			 		LimitGroup_View T5 ON T1.LimitGroupCode = T5.GroupCode INNER JOIN
+             		SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT JOIN
+             		LimitGroup T3 ON T1.GroupCode = T3.GroupCode LEFT JOIN
+             		Rules T4 ON T1.LimitLine = T4.Rulecode and  RuleModule='LMTLINE'
+             		
+		</createView>
+		
+		<createView viewName="LIMITGROUPLINES_VIEW" replaceIfExists="true">
+		
+		 SELECT		T1.LimitGroupCode,T5.LimitCategory, T1.GroupCode, T3.GroupName,T1.LimitLine , T1. LimitLines,	T4.RuleCodeDesc LimitLineDesc,T1.ItemSeq,
+					T1.Version ,T1.CreatedBy,T1.CreatedOn, T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, 
+					T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T4.Revolving, 1) Revolving
+					
+		FROM    	LimitGroupLines_Temp T1 INNER JOIN
+					LimitGroup_View T5 ON T1.LimitGroupCode = T5.GroupCode INNER JOIN
+		            SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT JOIN
+		            LimitGroup T3 ON T1.GroupCode = T3.GroupCode LEFT JOIN
+		            Rules T4 ON T1.LimitLine = T4.Rulecode and  RuleModule='LMTLINE'
+		UNION ALL
+
+		SELECT		T1.LimitGroupCode, T5.LimitCategory, T1.GroupCode, T3.GroupName,T1.LimitLine , T1.LimitLines ,	T4.RuleCodeDesc LimitLineDesc,T1.ItemSeq,	
+					T1.Version ,T1.CreatedBy,T1.CreatedOn, T1.LastMntBy, T1.LastMntOn,T2.UsrLogin,T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, 
+					T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, COALESCE(T4.Revolving, 1) Revolving
+					
+		FROM    	LimitGroupLines T1 INNER JOIN
+					LimitGroup_View T5 ON T1.LimitGroupCode = T5.GroupCode INNER JOIN
+		            SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT JOIN
+		            LimitGroup T3 ON T1.GroupCode = T3.GroupCode LEFT JOIN
+		            Rules T4 ON T1.LimitLine = T4.Rulecode and  RuleModule='LMTLINE'
+		
+		WHERE     NOT EXISTS (SELECT 1 FROM LimitGroupLines_Temp WHERE LimitGroupCode = T1.LimitGroupCode AND (GroupCode=T1.GroupCode  OR LimitLine=T1.LimitLine))
+             		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="4" author="Veeravenkata">
+		<sql>
+			Update LimitDetails set NonRvlUtilised = 0 Where NonRvlUtilised IS NULL;
+			Update LimitDetails_Temp set NonRvlUtilised = 0 Where NonRvlUtilised IS NULL;
+		</sql>
+	</changeSet>
+</databaseChangeLog>

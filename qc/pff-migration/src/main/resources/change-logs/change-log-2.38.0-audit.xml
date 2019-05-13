@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+	<changeSet id="1" author="Kesava" dbms="mssql">
+		<sql>
+			Select * into AdtFinFeeDetail_Backup from AdtFinFeeDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1.1" author="Kesava" dbms="oracle, postgresql">
+		<sql>
+			create table AdtFinFeeDetail_Backup as  Select * from AdtFinFeeDetail;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2" author="Kesava">
+		<dropTable tableName="AdtFinFeeDetail" />
+	</changeSet>
+	
+	<changeSet id="3" author="Kesava">
+        <createTable tableName="AdtFinFeeDetail">
+            <column name="AuditId" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditDate" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditSeq" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AuditImage" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinReference" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OriginationFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FinEvent" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+			<column name="FeeSeq" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeTypeID" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FeeOrder" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CalculatedAmount" type="decimal(18, 0)"/>
+            <column name="ActualAmount" type="decimal(18, 0)"/>
+            <column name="WaivedAmount" type="decimal(18, 0)"/>
+            <column name="PaidAmount" type="decimal(18, 0)"/>
+            <column name="Terms" type="int"/>
+            <column name="RemainingFee" type="decimal(18, 0)"/>
+            <column name="PaymentRef" type="varchar(20)"/>
+            <column name="FeeScheduleMethod" type="varchar(8)"/>
+            <column name="CalculationType" type="varchar(8)"/>
+            <column name="RuleCode" type="varchar(8)"/>
+            <column name="FixedAmount" type="decimal(18, 0)"/>
+            <column name="Percentage" type="decimal(5, 2)"/>
+            <column name="CalculateOn" type="varchar(8)"/>
+            <column name="AlwDeviation" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MaxWaiverPerc" type="decimal(5, 2)"/>
+            <column name="AlwModifyFee" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AlwModifyFeeSchdMthd" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="Version" type="int"/>
+            <column name="LastMntBy" type="bigint"/>
+            <column name="LastMntOn" type="datetime"/>
+            <column name="RecordStatus" type="varchar(50)"/>
+            <column name="RoleCode" type="varchar(100)"/>
+            <column name="NextRoleCode" type="varchar(200)"/>
+            <column name="TaskId" type="varchar(50)"/>
+            <column name="NextTaskId" type="varchar(200)"/>
+            <column name="RecordType" type="varchar(50)"/>
+            <column name="WorkflowId" type="bigint"/>
+        </createTable>
+    </changeSet>
+	
+	<changeSet id="4" author="Kesava">
+		<addPrimaryKey columnNames="AuditId, AuditDate, AuditSeq, AuditImage" constraintName="PK_ADTFINFEEDETAIL" tableName="AdtFinFeeDetail" />
+	</changeSet>
+	
+  <changeSet id="5" author="Kesava">
+  	<sql>
+  		Insert into AdtFinFeeDetail
+			SELECT  AuditId, AuditDate, AuditSeq, AuditImage,ROW_NUMBER() OVER(Order by finReference ASC) FeeID, FinReference, OriginationFee, FinEvent,
+					FeeTypeID, 1 FeeSeq,  FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, Terms, RemainingFee, PaymentRef, 
+					FeeScheduleMethod, CalculationType, RuleCode, FixedAmount, Percentage, CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, 
+					AlwModifyFeeSchdMthd, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId
+			from AdtFinFeeDetail_Backup; 
+  	</sql>
+  </changeSet>
+	<changeSet id="6" author="Surekha">
+		<dropDefaultValue  columnName="Cheque"  tableName="AdtBMTBankDetail"/>
+		<dropDefaultValue  columnName="Ecs"  tableName="AdtBMTBankDetail"/>
+		<dropDefaultValue  columnName="Dd"  tableName="AdtBMTBankDetail"/>
+		<dropDefaultValue  columnName="Dda"  tableName="AdtBMTBankDetail"/>
+		<dropDefaultValue  columnName="Nach"  tableName="AdtBMTBankDetail"/>
+		<dropColumn columnName="Nach"  tableName="AdtBMTBankDetail"/>
+		<dropColumn columnName="Ecs"  tableName="AdtBMTBankDetail"/>
+		<dropColumn columnName="Dd"  tableName="AdtBMTBankDetail"/>
+		<dropColumn columnName="Dda"  tableName="AdtBMTBankDetail"/>
+		<dropColumn columnName="Cheque"  tableName="AdtBMTBankDetail"/>
+	</changeSet>
+</databaseChangeLog>

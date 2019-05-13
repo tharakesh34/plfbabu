@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="shinde.b">
+		<dropTable tableName="ADTCOMMODITIES" />
+	</changeSet>
+
+	<changeSet id="1.1" author="shinde.b">
+		<comment>Commodity and LAS</comment>
+		<createTable tableName="ADTCOMMODITIES">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CommodityType" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrentValue" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HSNCode" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertsRequired" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertType" type="varchar(10)" />
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="UserTemplate" type="bigint" />
+			<column name="CustomerTemplate" type="bigint" />
+			<column name="Active" type="boolean" defaultValue="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="1.2" author="shinde.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTCOMMODITIES ADD CONSTRAINT DF_ADTCOMMODITIES_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.2" author="shinde.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ALERTSREQUIRED" tableName="ADTCOMMODITIES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2" author="aditya.a">
+		<addColumn tableName="AdtRMTAccountTypes">
+			<column name="ControlAc" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="3_pre" author="aditya.a">
+		<sql>
+			<![CDATA[
+				UPDATE AdtRMTAccountTypes SET ControlAc = 0 where ControlAc is null;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="4" author="saikiran.v">
+		<addColumn tableName="adtfintaxdetail">
+			<column name="sezCertificateNo" type="varchar(20)" />
+			<column name="sezValueDate" type="datetime" />
+			</addColumn>
+	</changeSet>
+	
+	<changeSet id="5" author="DurgaPrasad.G">
+		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)"/>    
+    </changeSet>
+    
+</databaseChangeLog>

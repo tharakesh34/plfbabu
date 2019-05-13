@@ -1,0 +1,2401 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	
+<!-- <changeSet id="1" author="Prakash">
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql" >
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>	</changeSet>
+
+	<!-- <changeSet id="1" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SystemMaster');		
+            delete from secrights where rightname='menuCat_SystemMaster';
+		</sql>
+</changeSet>
+<changeSet id="2" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_ApplicationMaster');		
+            delete from secrights where rightname='menuCat_ApplicationMaster';
+		</sql>
+</changeSet>
+<changeSet id="3" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerMasters');		
+            delete from secrights where rightname='menuCat_CustomerMasters';
+		</sql>
+</changeSet>
+<changeSet id="4" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_eod');		
+            delete from secrights where rightname='menuCat_eod';
+		</sql>
+</changeSet>
+<changeSet id="5" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Mandates');		
+            delete from secrights where rightname='menuCat_Mandates';
+		</sql>
+</changeSet>
+<changeSet id="6" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Disbursement');		
+            delete from secrights where rightname='menuCat_Disbursement';
+		</sql>
+</changeSet>
+<changeSet id="7" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SAPGL');		
+            delete from secrights where rightname='menuCat_SAPGL';
+		</sql>
+</changeSet>
+<changeSet id="8" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menu_Category_CIBIL');		
+            delete from secrights where rightname='menu_Category_CIBIL';
+		</sql>
+</changeSet>
+<changeSet id="9" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_RulesFactory');		
+            delete from secrights where rightname='menuCat_RulesFactory';
+		</sql>
+</changeSet>
+<changeSet id="10" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_SolutionFactory');		
+            delete from secrights where rightname='menuCat_SolutionFactory';
+		</sql>
+</changeSet>
+<changeSet id="11" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Finance');		
+            delete from secrights where rightname='menuCat_Finance';
+		</sql>
+</changeSet>
+<changeSet id="12" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Administration');		
+            delete from secrights where rightname='menuCat_Administration';
+		</sql>
+</changeSet>
+<changeSet id="13" author="Prakash">
+		<sql>
+            delete from secrights where rightname='menuCat_StaticParms';
+		</sql>
+</changeSet>
+<changeSet id="14" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceManagement');		
+            delete from secrights where rightname='menuCat_FinanceManagement';
+		</sql>
+</changeSet>
+<changeSet id="15" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinanceEnquiry');		
+            delete from secrights where rightname='menuCat_FinanceEnquiry';
+		</sql>
+</changeSet>
+<changeSet id="16" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerEnquiry');		
+            delete from secrights where rightname='menuCat_CustomerEnquiry';
+		</sql>
+</changeSet>
+<changeSet id="17" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Reports');		
+            delete from secrights where rightname='menuCat_Reports';
+		</sql>
+</changeSet>
+<changeSet id="18" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CustomerTemplates');		
+            delete from secrights where rightname='menuCat_CustomerTemplates';
+		</sql>
+</changeSet>
+<changeSet id="19" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_CreditReports');		
+            delete from secrights where rightname='menuCat_CreditReports';
+		</sql>
+</changeSet>
+<changeSet id="20" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DelinquencyReports');		
+            delete from secrights where rightname='menuCat_DelinquencyReports';
+		</sql>
+</changeSet>
+<changeSet id="21" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinReports');		
+            delete from secrights where rightname='menuCat_FinReports';
+		</sql>
+</changeSet>
+<changeSet id="22" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_FinDeptReports');		
+            delete from secrights where rightname='menuCat_FinDeptReports';
+		</sql>
+</changeSet>
+<changeSet id="23" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_Limit');		
+            delete from secrights where rightname='menuCat_Limit';
+		</sql>
+</changeSet>
+<changeSet id="24" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_LimitEnquiry');		
+            delete from secrights where rightname='menuCat_LimitEnquiry';
+		</sql>
+</changeSet>
+<changeSet id="25" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_PresentmentDetails');		
+            delete from secrights where rightname='menuCat_PresentmentDetails';
+		</sql>
+</changeSet>
+<changeSet id="26" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_payment_PaymentInstructions');		
+            delete from secrights where rightname='menuCat_payment_PaymentInstructions';
+		</sql>
+</changeSet>
+<changeSet id="27" author="Prakash">
+		<sql>
+            delete from SecGroupRights where rightid in (select rightid from secrights where rightname ='menuCat_DashBoard');		
+            delete from secrights where rightname='menuCat_DashBoard';
+		</sql>
+</changeSet> -->
+
+<changeSet id="28" author="Amit">
+	<addColumn tableName="BMTDocumentTypes">
+		<column name="IsPdfExtRequired" type="boolean" />
+		<column name="IsPasswordProtected" type="boolean" />
+		<column name="MappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+	<addColumn tableName="BMTDocumentTypes_temp">
+		<column name="IsPdfExtRequired" type="boolean" />
+		<column name="IsPasswordProtected" type="boolean" />
+		<column name="MappingRef" type="NUMBER(19,0)" />
+	</addColumn>
+</changeSet>
+ -->
+	<changeSet id="29" author="amit">
+		<renameColumn newColumnName="DocIsPdfExtRequired"
+			oldColumnName="IsPdfExtRequired" tableName="BMTDocumentTypes" />
+		<renameColumn newColumnName="DocIsPasswordProtected"
+			oldColumnName="IsPasswordProtected" tableName="BMTDocumentTypes" />
+		<renameColumn newColumnName="PdfMappingRef"
+			oldColumnName="MappingRef" tableName="BMTDocumentTypes" />
+
+		<renameColumn newColumnName="DocIsPdfExtRequired"
+			oldColumnName="IsPdfExtRequired" tableName="BMTDocumentTypes_Temp" />
+		<renameColumn newColumnName="DocIsPasswordProtected"
+			oldColumnName="IsPasswordProtected" tableName="BMTDocumentTypes_Temp" />
+		<renameColumn newColumnName="PdfMappingRef"
+			oldColumnName="MappingRef" tableName="BMTDocumentTypes_Temp" />
+	</changeSet>
+  
+  <changeSet id="30" author="Amit" >
+	<createView viewName="BMTDocumentTypes_View" replaceIfExists="true">
+		  	SELECT DocTypeCode ,
+           DocTypeDesc ,
+           DocIsMandatory ,
+           DocTypeIsActive ,
+           DocIsCustDoc ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId ,
+           DocExpDateIsMand ,
+           DocIssueDateMand ,
+           DocIdNumMand ,
+           DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef 
+     FROM BMTDocumentTypes_Temp 
+   UNION ALL 
+   SELECT DocTypeCode ,
+           DocTypeDesc ,
+           DocIsMandatory ,
+           DocTypeIsActive ,
+           DocIsCustDoc ,
+           Version ,
+           LastMntBy ,
+           LastMntOn ,
+           RecordStatus ,
+           RoleCode ,
+           NextRoleCode ,
+           TaskId ,
+           NextTaskId ,
+           RecordType ,
+           WorkflowId ,
+           DocExpDateIsMand ,
+           DocIssueDateMand ,
+           DocIdNumMand ,
+           DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef  
+     FROM BMTDocumentTypes 
+     WHERE NOT EXISTS ( SELECT 1 
+                        FROM BMTDocumentTypes_Temp 
+                          WHERE DocTypeCode = BMTDocumentTypes.DocTypeCode )
+	</createView>
+</changeSet>
+  
+  <changeSet id="31" author="Amit" >
+	<createView viewName="BMTDOCUMENTTYPES_AVIEW" replaceIfExists="true">
+		  	SELECT DocTypeCode ,
+          DocTypeDesc ,
+          DocIsMandatory ,
+          DocTypeIsActive ,
+          DocIsCustDoc ,
+          Version ,
+          LastMntBy ,
+          LastMntOn ,
+          RecordStatus ,
+          RoleCode ,
+          NextRoleCode ,
+          TaskId ,
+          NextTaskId ,
+          RecordType ,
+          WorkflowId ,
+          DocExpDateIsMand ,
+          DocIssueDateMand ,
+          DocIdNumMand ,
+          DocIssuedAuthorityMand,
+           DocIsPdfExtRequired,
+           DocIsPasswordProtected,
+           PdfMappingRef   
+     FROM BMTDocumentTypes
+	</createView>
+</changeSet>
+
+<changeSet id="32" author="Amit">
+		<sql>		
+	Update BMTDOCUMENTTYPES set DOCISPDFEXTREQUIRED=0 , DOCISPASSWORDPROTECTED=0 , PDFMAPPINGREF=0;
+	Update BMTDOCUMENTTYPES_Temp set DOCISPDFEXTREQUIRED=0 , DOCISPASSWORDPROTECTED=0 , PDFMAPPINGREF=0;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="33" author="Amit">
+	<sql>
+		INSERT INTO SecRights SELECT (select (SeqNo+1) from
+		SeqSecRights),3,'DocumentTypeDialog_mappingRef','DocumentTypeDialog',0,1000,sysdate,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+		Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+		INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+		SeqSecGroupRights ), (select GrpID from SecGroups where
+		GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+		RightName='DocumentTypeDialog_mappingRef'),1,0,10000,sysdate,'Approved','
+		',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+		Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+		SecGroupRights);
+	</sql>
+</changeSet>
+
+
+	<changeSet id="34" author="Amit">
+		<sql>
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),3,'DocumentTypeDialog_docIsPasswordProtected','DocumentTypeDialog',0,1000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights ), (select GrpID from SecGroups where
+			GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+			RightName='DocumentTypeDialog_docIsPasswordProtected'),1,0,10000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+			Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+			SecGroupRights);
+		</sql>
+	</changeSet>
+
+	<changeSet id="35" author="Amit">
+		<sql>
+			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			SeqSecRights),3,'DocumentTypeDialog_docIsPdfExtRequired','DocumentTypeDialog',0,1000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+
+			Update SeqSecRights set seqno = (select max(rightid)+1 from SecRights);
+
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			SeqSecGroupRights ), (select GrpID from SecGroups where
+			GrpCode ='DOCUMENTTYPE_MAKER'), (select RightID from SecRights WHERE
+			RightName='DocumentTypeDialog_docIsPdfExtRequired'),1,0,10000,sysdate,'Approved','
+			',' ',' ',' ',' ',0 FROM SeqSecGroupRights;
+
+			Update SeqSecGroupRights set seqno = (select max(grprightid)+1 from
+			SecGroupRights)
+		</sql>
+	</changeSet>
+	
+	<changeSet id="36" author="Amit" >
+		<createTable tableName="DocumentDataConfig">
+			<column name="Type" type="VARCHAR2(50)"/>
+			<column name="Year" type="VARCHAR2(50)"/>
+			<column name="Label" type="VARCHAR2(50)"/>
+			<column name="LabelText" type="VARCHAR2(250)"/>
+			<column name="LabelValueType" type="VARCHAR2(50)" />
+			<column name="DefaultValue" type="VARCHAR2(50)"/>
+			<column name="FormulaExecutionType" type="VARCHAR2(50)"/>
+			<column name="IndexOf" type="VARCHAR2(50)"/>
+			<column name="ExternalRef" type="VARCHAR2(250)" />
+			<column name="MappingValue" type="NUMBER(19,0)" />
+			<column name="IsActive" type="NUMBER(1,0)"  defaultValue="1"/>
+			<column name="Formula" type="VARCHAR2(500)" />
+		</createTable>
+		
+		<createTable tableName="DocumentDataMapping">
+			<column name="MappingId" type="NUMBER(19,0)">
+			<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Type" type="VARCHAR2(50)"/>
+		</createTable>
+   </changeSet>
+
+<changeSet id="37" author="Amit">
+		<sql>		
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','13','Repairs to machinery','int','-1','horizontal','0','repairsToMachinery',1,1,null);
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16',' ',' ','Double','-1',' ','0','totalIndirectExpenses',1,1,'rents+powerNFuel+repairsToMachinery');
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','10','Power and fuel','int','-1','horizontal','0','powerNFuel',1,1,null);
+	Insert into DOCUMENTDATACONFIG (TYPE,YEAR,LABEL,LABELTEXT,LABELVALUETYPE,DEFAULTVALUE,FORMULAEXECUTIONTYPE,INDEXOF,EXTERNALREF,MAPPINGVALUE,ISACTIVE,FORMULA) values ('ITR-4','2015-16','11','Rents','int','-1','horizontal','0','rents',1,1,null);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="38" author="Amit">
+		<sql>		
+	Insert into PLFDEV.DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (1,'ITR4');
+	Insert into PLFDEV.DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (2,'ITR5');
+	Insert into PLFDEV.DOCUMENTDATAMAPPING (MAPPINGID,TYPE) values (3,'ST3');	
+	</sql>
+	</changeSet>
+
+	<changeSet id="31" author="Ganesh.p">
+	<sql>
+		Delete from ErrorDetails where ErrorCode = '90351';
+		INSERT INTO ErrorDetails VALUES('90351','EN','E','No extended field details configured against given module and submodule.',
+		'test','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+	<changeSet id="32" author="Srikanth">
+	<sql>
+	Delete from ErrorDetails where ErrorCode = '90337';
+	INSERT INTO ErrorDetails VALUES('90337','EN','E','{0} is invalid, applicable values are {1}.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+	</sql>
+	</changeSet>
+
+	<changeSet id="33" author="Ganesh.p">
+		<addColumn tableName="EXTENDEDFIELDDETAIL">
+			<column name="PARENTTAG" type="VARCHAR(18)"></column>
+			<column name="INPUTELEMENT" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="34" author="Ganesh.p">
+		<addColumn tableName="EXTENDEDFIELDDETAIL_TEMP">
+			<column name="PARENTTAG" type="VARCHAR(18)"></column>
+			<column name="INPUTELEMENT" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="35" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_VIEW" replaceIfExists="true">
+		  SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                      T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail_TEMP  T1 INNER JOIN
+                      ExtendedFieldHeader_TEMP  T2 ON T1.ModuleId = T2.ModuleId
+			UNION ALL
+		SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                     T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId , T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+			WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          ExtendedFieldDetail_TEMP
+                            WHERE      ModuleId = T1.ModuleId AND FieldName = T1.FieldName)
+
+		</createView> 
+	</changeSet>
+	<changeSet id="36" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_AVIEW" replaceIfExists="true">
+  			SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, T1.FieldType, 
+                      T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, 
+                      T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, 
+                      T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.MultiLine, T1.ParentTag, T1.InputElement
+			FROM         		  ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+
+
+		</createView> 
+	</changeSet>
+	<changeSet id="37" author="Ganesh.p">
+		<sql>
+			Insert into SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+		values ((Select MAX(RightID)+1 From SecRights),3,'ExtendedFieldDetailDialog_parentTag','ExtendedFieldDetailDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+		</sql>
+	</changeSet>
+	<changeSet id="38" author="Ganesh.p">
+		<sql>
+		Insert Into secGrouprights (GrpRightID,GrpID,RightID,AccessType,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)
+		values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='EXTENDEDFIELDDETAIL_MAKER'),(select RightId from secRights where RightName='ExtendedFieldDetailDialog_parentTag')
+		,1,0,1000,CURRENT_timestamp, '','','','','','',0);
+
+		</sql>
+	</changeSet>
+	<changeSet id="39" author="Ganesh.p">
+		<sql>
+			update SMTParameters set sysparmvalue = 'N' where sysparmcode = 'GCD_FINONE_PROC_REQD';
+		</sql>
+	</changeSet>
+	
+	<changeSet id="40" author="Ganesh.p">
+		<dropView viewName="EXTENDEDFIELDDETAIL_VIEW" />
+		<dropView viewName="EXTENDEDFIELDDETAIL_AVIEW"/>
+	</changeSet>
+	<changeSet id="41" author="Ganesh.p">
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL_TEMP" columnName="PARENTTAG" newDataType="VARCHAR(50)"/>
+	</changeSet>
+	<changeSet id="42" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_VIEW" replaceIfExists="true">
+		  SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                      T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail_TEMP  T1 INNER JOIN
+                      ExtendedFieldHeader_TEMP  T2 ON T1.ModuleId = T2.ModuleId
+			UNION ALL
+		SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                     T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId , T1.MultiLine,T1.ParentTag,T1.InputElement
+		FROM         ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+			WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          ExtendedFieldDetail_TEMP
+                            WHERE      ModuleId = T1.ModuleId AND FieldName = T1.FieldName)
+
+		</createView> 
+	</changeSet>
+	<changeSet id="43" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_AVIEW" replaceIfExists="true">
+  			SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, T1.FieldType, 
+                      T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, 
+                      T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, 
+                      T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.MultiLine, T1.ParentTag, T1.InputElement
+			FROM         		  ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+
+
+		</createView> 
+	</changeSet>
+	<changeSet id="44" author="Jayant" dbms="postgresql">
+		<createView viewName="rpt_finguarantordtls_pvt_view"
+			replaceIfExists="true">
+			SELECT pvt.finreference,
+				pvt.co_gur1,
+				pvt.co_gur2,
+				pvt.co_gur3
+			   FROM crosstab('Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+					  from FinGuarantorsDetails fj inner join customers c on c.custcif = fj.GUarantorcif '::text) pvt(finreference text, co_gur1 text, co_gur2 text, co_gur3 text)
+	</createView>
+</changeSet>
+
+<changeSet id="45" author="Jayant" dbms="postgresql">
+		<createView viewName="rpt_finjointactdtls_pvt_view"
+			replaceIfExists="true">
+			 SELECT pvt.finreference,
+				pvt.co_app1,
+				pvt.co_app2,
+				pvt.co_app3
+			   FROM crosstab('Select row_number() over(partition by Finreference order by Finreference) row_num,Finreference,custshrtname
+					  from FinJointAccountDetails fj inner join customers c on c.custcif = fj.custcif'::text) pvt(finreference text, co_app1 text, co_app2 text, co_app3 text)
+
+	</createView>
+</changeSet>
+
+<changeSet id="46" author="Jayant" dbms="postgresql">
+		<createView viewName="rpt_transactionentry_view"
+			replaceIfExists="true">
+			<![CDATA[ SELECT t2.fintype AS product_code,
+    t2.finbranch AS loan_branch,
+    t1.loan_ref,
+    t1.txndate,
+    t1.particlulars,
+    t1.txnamount,
+    t1.event,
+    t1.ordby,
+    c.ccyminorccyunits,
+    c.ccyeditfield
+   FROM ( SELECT t1_1.finreference AS loan_ref,
+            t1_1.finapproveddate AS txndate,
+            'Disbursed Amount'::text AS particlulars,
+            t1_1.finamount AS txnamount,
+            'ADDDISB' AS event,
+            1 AS ordby
+           FROM financemain t1_1
+          WHERE t1_1.finamount <> 0
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Deduct from Disbursement Amount'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'DISB'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Add to Loan Amount '::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'POSP'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Schedule to First Installment Amount'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'STFI'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Schedule to Entire Tenor'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'STET'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Schedule to N Terms'::text,
+            t2_1.actualamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.actualamount <> 0 AND t2_1.feeschedulemethod = 'STNI'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Paid Amount'::text,
+            t2_1.paidamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.paidamount <> 0 AND t2_1.feeschedulemethod = 'PBCU'
+        UNION ALL
+         SELECT t2_1.finreference,
+            t2_1.lastmnton,
+            t3.feetypedesc::text || ' Waived'::text,
+            t2_1.waivedamount,
+            t2_1.finevent,
+            2 AS ordby
+           FROM financemain t1_1
+             JOIN finfeedetail t2_1 ON t1_1.finreference = t2_1.finreference
+             JOIN feetypes t3 ON t2_1.feetypeid = t3.feetypeid
+          WHERE t2_1.waivedamount <> 0 AND t2_1.feeschedulemethod = 'WVEB'
+        UNION ALL
+         SELECT t1_1.finreference,
+            t1_1.lastmnton,
+            'Payment to customer vide '::text || t1_1.paymenttype::text,
+            t1_1.amttobereleased,
+            'DISBINS' AS event,
+            3 AS ordby
+           FROM finadvancepayments t1_1
+             JOIN financemain t2_1 ON t2_1.finreference = t1_1.finreference
+          WHERE (t1_1.status <> 'CANCELED' OR t1_1.status IS NULL) AND t1_1.amttobereleased <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            t5.feetypedesc::text || ' Paid'::text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+             JOIN finfeedetail t4 ON t4.feeid = t3.allocationto
+             JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'FEE' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Principal Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'PRI' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Interest Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'PFT' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Penalty/Late Pay Charges Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'ODC' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Late Payment Interest Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'LPFT' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            t5.feetypedesc::text || '-Receivable Paid'::text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+             JOIN manualadvise t4 ON t4.adviseid = t3.allocationto
+             JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'MANADV' AND t4.advisetype = 1 AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0
+        UNION ALL
+         SELECT t1_1.reference,
+            t1_1.lastmnton,
+            'Bounce Charges Paid'::text AS text,
+            t3.paidamount,
+                CASE
+                    WHEN t1_1.receiptpurpose = 'EarlySettlement' THEN 'EARLYSTL'
+                    WHEN t1_1.receiptpurpose = 'SchdlRepayment' THEN 'REPAY'
+                    WHEN t1_1.receiptpurpose = 'EarlyPayment' THEN 'EARLYPAY'
+                    ELSE t1_1.receiptpurpose
+                END AS event,
+            4 AS ordby
+           FROM finreceiptheader t1_1
+             JOIN receiptallocationdetail t3 ON t3.receiptid = t1_1.receiptid
+          WHERE ((t1_1.receiptmodestatus <> ALL (ARRAY['C', 'B'])) OR t1_1.receiptmodestatus IS NULL) AND t3.allocationid = 1 AND t3.allocationtype = 'BOUNCE' AND t1_1.lastmnton IS NOT NULL AND t3.paidamount <> 0) t1
+     JOIN finpftdetails t2 ON t2.finreference = t1.loan_ref
+     JOIN rmtcurrencies c ON c.ccycode = t2.finccy
+  WHERE t1.txnamount <> 0]]>
+
+	</createView>
+</changeSet>
+<changeSet id="47" author="Ganesh">
+	<createView viewName="customeraddresses_aview" replaceIfExists="true">
+		SELECT t1.custid,
+    t1.custaddrtype,
+    t2.addrtypedesc AS lovdesccustaddrtypename,
+    t1.custaddrhnbr,
+    t1.custflatnbr,
+    t1.custaddrstreet,
+    t1.custaddrline1,
+    t1.custaddrline2,
+    t1.custpobox,
+    t1.custaddrcity,
+    t1.typeofresidence,
+    t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,
+    t4.cpprovincename AS lovdesccustaddrprovincename,
+    t1.custaddrcountry,
+    t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,
+    t1.custaddrphone,
+    t1.custaddrfrom,
+    t1.custaddrpriority,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+	 LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+	</createView>
+</changeSet>
+<changeSet id="48" author="Jayant" dbms="postgresql">
+	<modifyDataType tableName="workflowdetails" columnName="workflowxml" newDataType="text" />
+</changeSet>
+ <changeSet id="49" author="pruthvi">
+<sql>
+update workflowdetails set WorkFlowActive='0' where WorkFlowType='PLF_NFL_ORG';
+</sql>
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(Seqno) + 1 from SeqWorkFlowDetails)"/>
+			<column name="WorkFlowType">PLF_NFL_ORG</column>
+			<column name="WorkFlowSubType">PLF_NFL_ORG</column>
+			<column name="WorkFlowDesc">Niyogin origination process</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+            <column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">NFL_CREDIT_MAKER;NFL_CREDIT_REVIEWER;NFL_CREDIT_APPROVER;ADD_DISB_MAKER;NFL_OPERATIONS_MAKER;NFL_OPERATIONS_APPROVER</column>
+			<column name="FirstTaskOwner">NFL_CREDIT_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">5</column>
+			<column name="LastMntBy">1000</column>		
+			<column name="LastMntOn" valueDate="current_timestamp"/>
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode"></column>
+			<column name="NextRoleCode"></column>
+			<column name="TaskId"></column>
+			<column name="NextTaskId"></column>	
+     		<column name="RecordType">NULL</column>		
+		</insert>	
+	</changeSet>
+	<changeSet id="50" author="pruthvi">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":1439,"properties":{"process_id":"PLF_NFL_ORG","name":"PLF_NFL_ORG","documentation":"Niyogin origination process","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-F1E29EB0-C9F8-4183-81BD-E7639408D371"}],"bounds":{"lowerRight":{"x":130,"y":185},"upperLeft":{"x":100,"y":155}},"dockers":[]},{"resourceId":"sid-14837E2C-B793-4E1F-8195-CA2DF840A63C","properties":{"overrideid":"","name":"Credit Decision Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"NFL_CREDIT_MAKER","firstName":"NFL_CREDIT_MAKER","fullName":"NFL_CREDIT_MAKER","id":"NFL_CREDIT_MAKER","roledesc":"NFL Credit Decision Maker","$$hashKey":"object:1508"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-1A3935E9-D703-40A2-A5D6-65114EF94F33"}],"bounds":{"lowerRight":{"x":280,"y":210},"upperLeft":{"x":180,"y":130}},"dockers":[]},{"resourceId":"sid-46C5080E-3B02-4FB7-983B-04196B3569D4","properties":{"overrideid":"","name":"Experian Dedup","servicetaskexpression":"executeExperianDedup","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"ServiceTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CE49BCF0-8438-462D-987E-FFA9518CA7D9"}],"bounds":{"lowerRight":{"x":460,"y":210},"upperLeft":{"x":360,"y":130}},"dockers":[]},{"resourceId":"sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E","properties":{"overrideid":"","name":"Experian Hunter","servicetaskexpression":"executeHunter","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"ServiceTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9C153B85-7EC1-40C5-8A30-25EB00520D6A"}],"bounds":{"lowerRight":{"x":610,"y":210},"upperLeft":{"x":510,"y":130}},"dockers":[]},{"resourceId":"sid-310447D1-E6BA-4456-AE6A-6253C0624E9D","properties":{"overrideid":"","name":"Experian Bureau","servicetaskexpression":"executeBureau","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"ServiceTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-C3820D05-EBE4-4EF3-82AB-3B8A58823C34"}],"bounds":{"lowerRight":{"x":760,"y":210},"upperLeft":{"x":660,"y":130}},"dockers":[]},{"resourceId":"sid-CE49BCF0-8438-462D-987E-FFA9518CA7D9","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E"}],"bounds":{"lowerRight":{"x":509.78125,"y":170},"upperLeft":{"x":460.21875,"y":170}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E"}},{"resourceId":"sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9","properties":{"overrideid":"","name":"Credit Review and Update","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"NFL_CREDIT_REVIEWER","firstName":"NFL_CREDIT_REVIEWER","fullName":"NFL_CREDIT_REVIEWER","id":"NFL_CREDIT_REVIEWER","roledesc":"NFL Credit Review and Update","$$hashKey":"object:3914"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-50084B6A-25B5-441A-B0CB-3FB5C6B362D0"},{"resourceId":"sid-B31EBA1E-C41D-4F7E-B90A-A13F7FE41CCC"}],"bounds":{"lowerRight":{"x":925,"y":210},"upperLeft":{"x":825,"y":130}},"dockers":[]},{"resourceId":"sid-9C153B85-7EC1-40C5-8A30-25EB00520D6A","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-310447D1-E6BA-4456-AE6A-6253C0624E9D"}],"bounds":{"lowerRight":{"x":659.78125,"y":170},"upperLeft":{"x":610.21875,"y":170}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-310447D1-E6BA-4456-AE6A-6253C0624E9D"}},{"resourceId":"sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1153,"y":484},"upperLeft":{"x":1125,"y":456}},"dockers":[]},{"resourceId":"sid-C3820D05-EBE4-4EF3-82AB-3B8A58823C34","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9"}],"bounds":{"lowerRight":{"x":824.37109375,"y":170},"upperLeft":{"x":760.62890625,"y":170}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9"}},{"resourceId":"sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9","properties":{"overrideid":"","name":"Experian BRE","servicetaskexpression":"executeExperianBRE","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"ServiceTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-CBF04205-DEBF-419F-9E7B-028A3EAAEF93"}],"bounds":{"lowerRight":{"x":1150,"y":215},"upperLeft":{"x":1050,"y":135}},"dockers":[]},{"resourceId":"sid-EE9C749C-4E46-481E-A980-67602E3C8123","properties":{"overrideid":"","name":"Credit Approval","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"NFL_CREDIT_APPROVER","firstName":"NFL_CREDIT_APPROVER","fullName":"NFL_CREDIT_APPROVER","id":"NFL_CREDIT_APPROVER","roledesc":"NFL Credit Approval","$$hashKey":"object:1932"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9FB8EDC0-E069-4EE0-A441-709A8BE15705"},{"resourceId":"sid-B67DAFAB-35BA-4564-AF19-50D00696BDEC"}],"bounds":{"lowerRight":{"x":730,"y":345},"upperLeft":{"x":630,"y":265}},"dockers":[]},{"resourceId":"sid-A1F7D830-DFD9-4088-8530-334120080E35","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-3EDE1041-E350-4E55-AC69-61EC8B6B1403"},{"resourceId":"sid-8EBCEC34-207A-4EDF-A995-70784922E30B"}],"bounds":{"lowerRight":{"x":520,"y":325},"upperLeft":{"x":480,"y":285}},"dockers":[]},{"resourceId":"sid-87507ED6-6289-4B8B-A504-1829C75FA32D","properties":{"overrideid":"","name":"RCU","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"ADD_DISB_MAKER","firstName":"ADD_DISB_MAKER","fullName":"ADD_DISB_MAKER","id":"ADD_DISB_MAKER","roledesc":"Add Disbursement Role Maker Details","$$hashKey":"object:7358"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-1B5A2C76-EE29-419F-9413-409D81BB2341"}],"bounds":{"lowerRight":{"x":400,"y":345},"upperLeft":{"x":300,"y":265}},"dockers":[]},{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2","properties":{"overrideid":"","name":"Operation Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"NFL_OPERATIONS_MAKER","firstName":"NFL_OPERATIONS_MAKER","fullName":"NFL_OPERATIONS_MAKER","id":"NFL_OPERATIONS_MAKER","roledesc":"NFL Operation Maker","$$hashKey":"object:6080"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-38422CD8-9C8D-4447-A6F3-94A3EB4B5713"}],"bounds":{"lowerRight":{"x":550,"y":510},"upperLeft":{"x":450,"y":430}},"dockers":[]},{"resourceId":"sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0","properties":{"overrideid":"","name":"Operation Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"NFL_OPERATIONS_APPROVER","firstName":"NFL_OPERATIONS_APPROVER","fullName":"NFL_OPERATIONS_APPROVER","id":"NFL_OPERATIONS_APPROVER","roledesc":"NFL Operation Approver","$$hashKey":"object:834"}}}},"additionalforms":"","formkeydefinition":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-F3601009-FF53-4AB0-A5E4-F128DD18D2D7"}],"bounds":{"lowerRight":{"x":760,"y":510},"upperLeft":{"x":660,"y":430}},"dockers":[]},{"resourceId":"sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0","properties":{"overrideid":"","name":"Complete Process","servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-895F43FA-8122-459E-892C-9DB45ECBE8EA"}],"bounds":{"lowerRight":{"x":1060,"y":510},"upperLeft":{"x":960,"y":430}},"dockers":[]},{"resourceId":"sid-F1E29EB0-C9F8-4183-81BD-E7639408D371","properties":{"overrideid":"","name":"Start","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-14837E2C-B793-4E1F-8195-CA2DF840A63C"}],"bounds":{"lowerRight":{"x":179.5859375,"y":170},"upperLeft":{"x":130.375,"y":170}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-14837E2C-B793-4E1F-8195-CA2DF840A63C"}},{"resourceId":"sid-1A3935E9-D703-40A2-A5D6-65114EF94F33","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-46C5080E-3B02-4FB7-983B-04196B3569D4"}],"bounds":{"lowerRight":{"x":359.5074462890625,"y":170},"upperLeft":{"x":280.6849365234375,"y":170}},"dockers":[{"x":99,"y":40},{"x":6.671875,"y":40}],"target":{"resourceId":"sid-46C5080E-3B02-4FB7-983B-04196B3569D4"}},{"resourceId":"sid-1B5A2C76-EE29-419F-9413-409D81BB2341","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"}],"bounds":{"lowerRight":{"x":449.78125,"y":470},"upperLeft":{"x":350,"y":345.9609375}},"dockers":[{"x":50,"y":40},{"x":350,"y":470},{"x":50,"y":40}],"target":{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"}},{"resourceId":"sid-65441C5C-09ED-4587-AD39-803CA0A56CF3","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-18C681BD-BDF2-4A94-B5CC-4800AE9B9FF7"},{"resourceId":"sid-86FB888C-BB84-4E86-AE94-437F91D97D89"},{"resourceId":"sid-0F1D592E-C597-4493-9D6B-E43280DA95EC"}],"bounds":{"lowerRight":{"x":865,"y":490},"upperLeft":{"x":825,"y":450}},"dockers":[]},{"resourceId":"sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B","properties":{"overrideid":"","name":"Cancel Process","servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None"},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-491CB274-1DCE-496E-A890-351F6DF3A496"}],"bounds":{"lowerRight":{"x":895,"y":660},"upperLeft":{"x":795,"y":580}},"dockers":[]},{"resourceId":"sid-0F1D592E-C597-4493-9D6B-E43280DA95EC","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"}],"bounds":{"lowerRight":{"x":845.5,"y":449.4609375},"upperLeft":{"x":541.671875,"y":383}},"dockers":[{"x":20.5,"y":20.5},{"x":845.5,"y":385},{"x":541.671875,"y":383},{"x":91.671875,"y":4}],"target":{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"}},{"resourceId":"sid-86FB888C-BB84-4E86-AE94-437F91D97D89","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B"}],"bounds":{"lowerRight":{"x":845.4341555370994,"y":579.2890680927317},"upperLeft":{"x":845.1361569629006,"y":490.18749440726833}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B"}},{"resourceId":"sid-18C681BD-BDF2-4A94-B5CC-4800AE9B9FF7","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0"}],"bounds":{"lowerRight":{"x":959.5214889942897,"y":470.4383667503626},"upperLeft":{"x":865.7773391307103,"y":470.1534301246374}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0"}},{"resourceId":"sid-895F43FA-8122-459E-892C-9DB45ECBE8EA","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F"}],"bounds":{"lowerRight":{"x":1124.8984375,"y":470},"upperLeft":{"x":1060.3828125,"y":470}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F"}},{"resourceId":"sid-B188572E-AE1C-403A-AB40-065CF13B276B","properties":{"overrideid":"","name":"End"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1003,"y":634},"upperLeft":{"x":975,"y":606}},"dockers":[]},{"resourceId":"sid-491CB274-1DCE-496E-A890-351F6DF3A496","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-B188572E-AE1C-403A-AB40-065CF13B276B"}],"bounds":{"lowerRight":{"x":974.5,"y":620},"upperLeft":{"x":895.5,"y":620}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-B188572E-AE1C-403A-AB40-065CF13B276B"}},{"resourceId":"sid-38422CD8-9C8D-4447-A6F3-94A3EB4B5713","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0"}],"bounds":{"lowerRight":{"x":659.78125,"y":470},"upperLeft":{"x":550.21875,"y":470}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0"}},{"resourceId":"sid-F3601009-FF53-4AB0-A5E4-F128DD18D2D7","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-65441C5C-09ED-4587-AD39-803CA0A56CF3"}],"bounds":{"lowerRight":{"x":824.3867255581166,"y":470.4220912382218},"upperLeft":{"x":760.7538994418834,"y":470.1872837617782}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-65441C5C-09ED-4587-AD39-803CA0A56CF3"}},{"resourceId":"sid-B31EBA1E-C41D-4F7E-B90A-A13F7FE41CCC","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-14837E2C-B793-4E1F-8195-CA2DF840A63C"}],"bounds":{"lowerRight":{"x":875,"y":129.7109375},"upperLeft":{"x":230,"y":63}},"dockers":[{"x":50,"y":40},{"x":875,"y":63},{"x":230,"y":63},{"x":50,"y":40}],"target":{"resourceId":"sid-14837E2C-B793-4E1F-8195-CA2DF840A63C"}},{"resourceId":"sid-CBF04205-DEBF-419F-9E7B-028A3EAAEF93","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-EE9C749C-4E46-481E-A980-67602E3C8123"}],"bounds":{"lowerRight":{"x":1100,"y":305},"upperLeft":{"x":730.21875,"y":215.609375}},"dockers":[{"x":50,"y":40},{"x":1100,"y":305},{"x":50,"y":40}],"target":{"resourceId":"sid-EE9C749C-4E46-481E-A980-67602E3C8123"}},{"resourceId":"sid-8EBCEC34-207A-4EDF-A995-70784922E30B","properties":{"overrideid":"","name":"Yes","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.rcu==true"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-87507ED6-6289-4B8B-A504-1829C75FA32D"}],"bounds":{"lowerRight":{"x":479.5117242686572,"y":305.4302715091982},"upperLeft":{"x":400.3828069813428,"y":305.1673847408018}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-87507ED6-6289-4B8B-A504-1829C75FA32D"}},{"resourceId":"sid-3EDE1041-E350-4E55-AC69-61EC8B6B1403","properties":{"overrideid":"","name":"No","repruseaction":"false","conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.rcu==false"}},"defaultflow":"false","action":"","state":"","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"}],"bounds":{"lowerRight":{"x":500.4383667503626,"y":429.1601608692897},"upperLeft":{"x":500.1241332496374,"y":325.7773391307103}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"}},{"resourceId":"sid-B67DAFAB-35BA-4564-AF19-50D00696BDEC","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9"}],"bounds":{"lowerRight":{"x":875,"y":264.625},"upperLeft":{"x":680,"y":210.609375}},"dockers":[{"x":50,"y":40},{"x":680,"y":235},{"x":875,"y":235},{"x":50,"y":40}],"target":{"resourceId":"sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9"}},{"resourceId":"sid-50084B6A-25B5-441A-B0CB-3FB5C6B362D0","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9"}],"bounds":{"lowerRight":{"x":1049.4058837890625,"y":170},"upperLeft":{"x":925.3789672851562,"y":170}},"dockers":[{"x":50,"y":40},{"x":13.671875,"y":35}],"target":{"resourceId":"sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9"}},{"resourceId":"sid-9FB8EDC0-E069-4EE0-A441-709A8BE15705","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false"},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-A1F7D830-DFD9-4088-8530-334120080E35"}],"bounds":{"lowerRight":{"x":629.78125,"y":305},"upperLeft":{"x":519.984375,"y":305}},"dockers":[{"x":50,"y":40},{"x":20,"y":20}],"target":{"resourceId":"sid-A1F7D830-DFD9-4088-8530-334120080E35"}}],"bounds":{"lowerRight":{"x":1253,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+     		<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test"><process id="PLF_NFL_ORG" name="PLF_NFL_ORG" isExecutable="true"><documentation>Niyogin origination process</documentation><startEvent id="startEvent1" name="Start" /><userTask id="sid-14837E2C-B793-4E1F-8195-CA2DF840A63C" name="Credit Decision Maker" activiti:actor="NFL_CREDIT_MAKER" activiti:assignmentLevel="Role Queue" /><serviceTask id="sid-46C5080E-3B02-4FB7-983B-04196B3569D4" name="Experian Dedup" activiti:operation="executeExperianDedup" /><serviceTask id="sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E" name="Experian Hunter" activiti:operation="executeHunter" /><serviceTask id="sid-310447D1-E6BA-4456-AE6A-6253C0624E9D" name="Experian Bureau" activiti:operation="executeBureau" /><sequenceFlow id="sid-CE49BCF0-8438-462D-987E-FFA9518CA7D9" sourceRef="sid-46C5080E-3B02-4FB7-983B-04196B3569D4" targetRef="sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E" representsUserAction="false" mandateNotes="false" /><userTask id="sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9" name="Credit Review and Update" activiti:actor="NFL_CREDIT_REVIEWER" activiti:assignmentLevel="Role Queue" /><sequenceFlow id="sid-9C153B85-7EC1-40C5-8A30-25EB00520D6A" sourceRef="sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E" targetRef="sid-310447D1-E6BA-4456-AE6A-6253C0624E9D" representsUserAction="false" mandateNotes="false" /><endEvent id="sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F" name="Approved" /><sequenceFlow id="sid-C3820D05-EBE4-4EF3-82AB-3B8A58823C34" sourceRef="sid-310447D1-E6BA-4456-AE6A-6253C0624E9D" targetRef="sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9" representsUserAction="false" mandateNotes="false" /><serviceTask id="sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9" name="Experian BRE" activiti:operation="executeExperianBRE" /><userTask id="sid-EE9C749C-4E46-481E-A980-67602E3C8123" name="Credit Approval" activiti:actor="NFL_CREDIT_APPROVER" activiti:assignmentLevel="Role Queue" /><exclusiveGateway id="sid-A1F7D830-DFD9-4088-8530-334120080E35" /><userTask id="sid-87507ED6-6289-4B8B-A504-1829C75FA32D" name="RCU" activiti:actor="ADD_DISB_MAKER" activiti:assignmentLevel="Role Queue" /><userTask id="sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2" name="Operation Maker" activiti:actor="NFL_OPERATIONS_MAKER" activiti:assignmentLevel="Role Queue" /><userTask id="sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0" name="Operation Approver" activiti:actor="NFL_OPERATIONS_APPROVER" activiti:assignmentLevel="Role Queue" /><serviceTask id="sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0" name="Complete Process" activiti:operation="doApprove" /><sequenceFlow id="sid-F1E29EB0-C9F8-4183-81BD-E7639408D371" name="Start" sourceRef="startEvent1" targetRef="sid-14837E2C-B793-4E1F-8195-CA2DF840A63C" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-1A3935E9-D703-40A2-A5D6-65114EF94F33" name="Submit" sourceRef="sid-14837E2C-B793-4E1F-8195-CA2DF840A63C" targetRef="sid-46C5080E-3B02-4FB7-983B-04196B3569D4" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-1B5A2C76-EE29-419F-9413-409D81BB2341" name="Submit" sourceRef="sid-87507ED6-6289-4B8B-A504-1829C75FA32D" targetRef="sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><exclusiveGateway id="sid-65441C5C-09ED-4587-AD39-803CA0A56CF3" /><serviceTask id="sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B" name="Cancel Process" activiti:operation="doReject" /><sequenceFlow id="sid-0F1D592E-C597-4493-9D6B-E43280DA95EC" name="Resubmit" sourceRef="sid-65441C5C-09ED-4587-AD39-803CA0A56CF3" targetRef="sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-86FB888C-BB84-4E86-AE94-437F91D97D89" name="Reject" sourceRef="sid-65441C5C-09ED-4587-AD39-803CA0A56CF3" targetRef="sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression></sequenceFlow><sequenceFlow id="sid-18C681BD-BDF2-4A94-B5CC-4800AE9B9FF7" name="Approve" sourceRef="sid-65441C5C-09ED-4587-AD39-803CA0A56CF3" targetRef="sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression></sequenceFlow><sequenceFlow id="sid-895F43FA-8122-459E-892C-9DB45ECBE8EA" sourceRef="sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0" targetRef="sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F" representsUserAction="false" mandateNotes="false" /><endEvent id="sid-B188572E-AE1C-403A-AB40-065CF13B276B" name="End" /><sequenceFlow id="sid-491CB274-1DCE-496E-A890-351F6DF3A496" sourceRef="sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B" targetRef="sid-B188572E-AE1C-403A-AB40-065CF13B276B" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-38422CD8-9C8D-4447-A6F3-94A3EB4B5713" name="Submit" sourceRef="sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2" targetRef="sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-F3601009-FF53-4AB0-A5E4-F128DD18D2D7" sourceRef="sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0" targetRef="sid-65441C5C-09ED-4587-AD39-803CA0A56CF3" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-B31EBA1E-C41D-4F7E-B90A-A13F7FE41CCC" name="Resubmit" sourceRef="sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9" targetRef="sid-14837E2C-B793-4E1F-8195-CA2DF840A63C" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-CBF04205-DEBF-419F-9E7B-028A3EAAEF93" sourceRef="sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9" targetRef="sid-EE9C749C-4E46-481E-A980-67602E3C8123" representsUserAction="false" mandateNotes="false" /><sequenceFlow id="sid-8EBCEC34-207A-4EDF-A995-70784922E30B" name="Yes" sourceRef="sid-A1F7D830-DFD9-4088-8530-334120080E35" targetRef="sid-87507ED6-6289-4B8B-A504-1829C75FA32D" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.rcu==true</conditionExpression></sequenceFlow><sequenceFlow id="sid-3EDE1041-E350-4E55-AC69-61EC8B6B1403" name="No" sourceRef="sid-A1F7D830-DFD9-4088-8530-334120080E35" targetRef="sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2" representsUserAction="false" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.rcu==false</conditionExpression></sequenceFlow><sequenceFlow id="sid-B67DAFAB-35BA-4564-AF19-50D00696BDEC" name="Resubmit" sourceRef="sid-EE9C749C-4E46-481E-A980-67602E3C8123" targetRef="sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-50084B6A-25B5-441A-B0CB-3FB5C6B362D0" name="Submit" sourceRef="sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9" targetRef="sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow><sequenceFlow id="sid-9FB8EDC0-E069-4EE0-A441-709A8BE15705" name="Submit" sourceRef="sid-EE9C749C-4E46-481E-A980-67602E3C8123" targetRef="sid-A1F7D830-DFD9-4088-8530-334120080E35" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false"><conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression></sequenceFlow></process><bpmndi:BPMNDiagram id="BPMNDiagram_PLF_NFL_ORG"><bpmndi:BPMNPlane bpmnElement="PLF_NFL_ORG" id="BPMNPlane_PLF_NFL_ORG"><bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1"><omgdc:Bounds height="30.0" width="30.0" x="100.0" y="155.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-14837E2C-B793-4E1F-8195-CA2DF840A63C" id="BPMNShape_sid-14837E2C-B793-4E1F-8195-CA2DF840A63C"><omgdc:Bounds height="80.0" width="100.0" x="180.0" y="130.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-46C5080E-3B02-4FB7-983B-04196B3569D4" id="BPMNShape_sid-46C5080E-3B02-4FB7-983B-04196B3569D4"><omgdc:Bounds height="80.0" width="100.0" x="360.0" y="130.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E" id="BPMNShape_sid-319FA9AB-82A0-4029-9F85-B9FCE44A9E2E"><omgdc:Bounds height="80.0" width="100.0" x="510.0" y="130.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-310447D1-E6BA-4456-AE6A-6253C0624E9D" id="BPMNShape_sid-310447D1-E6BA-4456-AE6A-6253C0624E9D"><omgdc:Bounds height="80.0" width="100.0" x="660.0" y="130.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9" id="BPMNShape_sid-AF2630E3-A555-4DF4-ACC3-5182F5DA18F9"><omgdc:Bounds height="80.0" width="100.0" x="825.0" y="130.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F" id="BPMNShape_sid-18AE9C6E-ACFE-4AA6-ABD3-C2C61CB9741F"><omgdc:Bounds height="28.0" width="28.0" x="1125.0" y="456.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9" id="BPMNShape_sid-5DB8E844-40AA-40B1-B5B7-04A072B3C7D9"><omgdc:Bounds height="80.0" width="100.0" x="1050.0" y="135.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-EE9C749C-4E46-481E-A980-67602E3C8123" id="BPMNShape_sid-EE9C749C-4E46-481E-A980-67602E3C8123"><omgdc:Bounds height="80.0" width="100.0" x="630.0" y="265.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-A1F7D830-DFD9-4088-8530-334120080E35" id="BPMNShape_sid-A1F7D830-DFD9-4088-8530-334120080E35"><omgdc:Bounds height="40.0" width="40.0" x="480.0" y="285.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-87507ED6-6289-4B8B-A504-1829C75FA32D" id="BPMNShape_sid-87507ED6-6289-4B8B-A504-1829C75FA32D"><omgdc:Bounds height="80.0" width="100.0" x="300.0" y="265.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2" id="BPMNShape_sid-4C0BAE88-9CA5-4D01-BE54-F129FACA4AF2"><omgdc:Bounds height="80.0" width="100.0" x="450.0" y="430.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0" id="BPMNShape_sid-29A16E7F-9F77-477F-8C4D-8A468BCD8DD0"><omgdc:Bounds height="80.0" width="100.0" x="660.0" y="430.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0" id="BPMNShape_sid-BED9F48D-CB62-4E08-9B43-1D55EE95DED0"><omgdc:Bounds height="80.0" width="100.0" x="960.0" y="430.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-65441C5C-09ED-4587-AD39-803CA0A56CF3" id="BPMNShape_sid-65441C5C-09ED-4587-AD39-803CA0A56CF3"><omgdc:Bounds height="40.0" width="40.0" x="825.0" y="450.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B" id="BPMNShape_sid-D073D4CA-76D1-4015-9CFD-B1E1D379621B"><omgdc:Bounds height="80.0" width="100.0" x="795.0" y="580.0" /></bpmndi:BPMNShape><bpmndi:BPMNShape bpmnElement="sid-B188572E-AE1C-403A-AB40-065CF13B276B" id="BPMNShape_sid-B188572E-AE1C-403A-AB40-065CF13B276B"><omgdc:Bounds height="28.0" width="28.0" x="975.0" y="606.0" /></bpmndi:BPMNShape><bpmndi:BPMNEdge bpmnElement="sid-9FB8EDC0-E069-4EE0-A441-709A8BE15705" id="BPMNEdge_sid-9FB8EDC0-E069-4EE0-A441-709A8BE15705"><omgdi:waypoint x="630.0" y="305.0" /><omgdi:waypoint x="520.0" y="305.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-38422CD8-9C8D-4447-A6F3-94A3EB4B5713" id="BPMNEdge_sid-38422CD8-9C8D-4447-A6F3-94A3EB4B5713"><omgdi:waypoint x="550.0" y="470.0" /><omgdi:waypoint x="660.0" y="470.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1B5A2C76-EE29-419F-9413-409D81BB2341" id="BPMNEdge_sid-1B5A2C76-EE29-419F-9413-409D81BB2341"><omgdi:waypoint x="350.0" y="345.0" /><omgdi:waypoint x="350.0" y="470.0" /><omgdi:waypoint x="450.0" y="470.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-86FB888C-BB84-4E86-AE94-437F91D97D89" id="BPMNEdge_sid-86FB888C-BB84-4E86-AE94-437F91D97D89"><omgdi:waypoint x="845.4362416107383" y="489.56375838926175" /><omgdi:waypoint x="845.133779264214" y="580.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-CBF04205-DEBF-419F-9E7B-028A3EAAEF93" id="BPMNEdge_sid-CBF04205-DEBF-419F-9E7B-028A3EAAEF93"><omgdi:waypoint x="1100.0" y="215.0" /><omgdi:waypoint x="1100.0" y="305.0" /><omgdi:waypoint x="730.0" y="305.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-895F43FA-8122-459E-892C-9DB45ECBE8EA" id="BPMNEdge_sid-895F43FA-8122-459E-892C-9DB45ECBE8EA"><omgdi:waypoint x="1060.0" y="470.0" /><omgdi:waypoint x="1125.0" y="470.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-8EBCEC34-207A-4EDF-A995-70784922E30B" id="BPMNEdge_sid-8EBCEC34-207A-4EDF-A995-70784922E30B"><omgdi:waypoint x="480.43333333333334" y="305.43333333333334" /><omgdi:waypoint x="400.0" y="305.16611295681065" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-9C153B85-7EC1-40C5-8A30-25EB00520D6A" id="BPMNEdge_sid-9C153B85-7EC1-40C5-8A30-25EB00520D6A"><omgdi:waypoint x="610.0" y="170.0" /><omgdi:waypoint x="660.0" y="170.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-18C681BD-BDF2-4A94-B5CC-4800AE9B9FF7" id="BPMNEdge_sid-18C681BD-BDF2-4A94-B5CC-4800AE9B9FF7"><omgdi:waypoint x="864.5579268292682" y="470.4420731707317" /><omgdi:waypoint x="960.0" y="470.15197568389056" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-491CB274-1DCE-496E-A890-351F6DF3A496" id="BPMNEdge_sid-491CB274-1DCE-496E-A890-351F6DF3A496"><omgdi:waypoint x="895.0" y="620.0" /><omgdi:waypoint x="975.0" y="620.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-0F1D592E-C597-4493-9D6B-E43280DA95EC" id="BPMNEdge_sid-0F1D592E-C597-4493-9D6B-E43280DA95EC"><omgdi:waypoint x="845.5" y="450.5" /><omgdi:waypoint x="845.5" y="385.0" /><omgdi:waypoint x="541.671875" y="383.0" /><omgdi:waypoint x="541.671875" y="430.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-F3601009-FF53-4AB0-A5E4-F128DD18D2D7" id="BPMNEdge_sid-F3601009-FF53-4AB0-A5E4-F128DD18D2D7"><omgdi:waypoint x="760.0" y="470.1845018450185" /><omgdi:waypoint x="825.4259259259259" y="470.4259259259259" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-1A3935E9-D703-40A2-A5D6-65114EF94F33" id="BPMNEdge_sid-1A3935E9-D703-40A2-A5D6-65114EF94F33"><omgdi:waypoint x="280.0" y="170.0" /><omgdi:waypoint x="360.0" y="170.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-CE49BCF0-8438-462D-987E-FFA9518CA7D9" id="BPMNEdge_sid-CE49BCF0-8438-462D-987E-FFA9518CA7D9"><omgdi:waypoint x="460.0" y="170.0" /><omgdi:waypoint x="510.0" y="170.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-B31EBA1E-C41D-4F7E-B90A-A13F7FE41CCC" id="BPMNEdge_sid-B31EBA1E-C41D-4F7E-B90A-A13F7FE41CCC"><omgdi:waypoint x="875.0" y="130.0" /><omgdi:waypoint x="875.0" y="63.0" /><omgdi:waypoint x="230.0" y="63.0" /><omgdi:waypoint x="230.0" y="130.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-3EDE1041-E350-4E55-AC69-61EC8B6B1403" id="BPMNEdge_sid-3EDE1041-E350-4E55-AC69-61EC8B6B1403"><omgdi:waypoint x="500.4420731707317" y="324.5579268292683" /><omgdi:waypoint x="500.12158054711244" y="430.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-B67DAFAB-35BA-4564-AF19-50D00696BDEC" id="BPMNEdge_sid-B67DAFAB-35BA-4564-AF19-50D00696BDEC"><omgdi:waypoint x="680.0" y="265.0" /><omgdi:waypoint x="680.0" y="235.0" /><omgdi:waypoint x="875.0" y="235.0" /><omgdi:waypoint x="875.0" y="210.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-F1E29EB0-C9F8-4183-81BD-E7639408D371" id="BPMNEdge_sid-F1E29EB0-C9F8-4183-81BD-E7639408D371"><omgdi:waypoint x="130.0" y="170.0" /><omgdi:waypoint x="180.0" y="170.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-50084B6A-25B5-441A-B0CB-3FB5C6B362D0" id="BPMNEdge_sid-50084B6A-25B5-441A-B0CB-3FB5C6B362D0"><omgdi:waypoint x="925.0" y="170.0" /><omgdi:waypoint x="1050.0" y="170.0" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge bpmnElement="sid-C3820D05-EBE4-4EF3-82AB-3B8A58823C34" id="BPMNEdge_sid-C3820D05-EBE4-4EF3-82AB-3B8A58823C34"><omgdi:waypoint x="760.0" y="170.0" /><omgdi:waypoint x="825.0" y="170.0" /></bpmndi:BPMNEdge></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>]]></column>
+			<where>workflowtype='PLF_NFL_ORG'and workflowactive=1</where>
+		</update>
+	</changeSet>
+	<changeSet id="51" author="Pruthvi">
+	<sql>
+		UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+	</sql>
+</changeSet>
+
+<changeSet id="52" author="Durga Prasad D">
+		<sql>
+		-- SecRoles
+		delete from SecOperationRoles where RoleID in(select RoleID from SecRoles where rolecd in('NFL_CREDIT_MAKER','NFL_CREDIT_REVIEWER','NFL_CREDIT_APPROVER', 'NFL_OPERATIONS_MAKER', 'NFL_OPERATIONS_APPROVER'));
+ 		delete from SecRoleGroups where RoleID in(select RoleID from SecRoles where rolecd in('NFL_CREDIT_MAKER','NFL_CREDIT_REVIEWER','NFL_CREDIT_APPROVER', 'NFL_OPERATIONS_MAKER', 'NFL_OPERATIONS_APPROVER'));
+		delete from SecRoles where rolecd in('NFL_CREDIT_MAKER','NFL_CREDIT_REVIEWER','NFL_CREDIT_APPROVER', 'NFL_OPERATIONS_MAKER', 'NFL_OPERATIONS_APPROVER');
+		
+		update SeqsecRoles set SeqNo = (SELECT MAX(RoleId) from SecRoles);
+		INSERT INTO SecRoles values ((SELECT MAX(RoleId + 1) FROM  SecRoles),  1, 'NFL_CREDIT_MAKER','NFL Credit Decision Maker.','',1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
+		INSERT INTO SecRoles values ((SELECT MAX(RoleId + 1) FROM  SecRoles),  1, 'NFL_CREDIT_REVIEWER','NFL Credit Review and Update.','',1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
+		INSERT INTO SecRoles values ((SELECT MAX(RoleId + 1) FROM  SecRoles),  1, 'NFL_CREDIT_APPROVER','NFL Credit Approval.','',1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
+		INSERT INTO SecRoles values ((SELECT MAX(RoleId + 1) FROM  SecRoles),  1, 'NFL_OPERATIONS_MAKER','NFL Operation Maker.','',1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+		INSERT INTO SecRoles values ((SELECT MAX(RoleId + 1) FROM  SecRoles),  1, 'NFL_OPERATIONS_APPROVER','NFL Operation Approver.','',1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+		update SeqsecRoles set SeqNo = (SELECT MAX(RoleId) from SecRoles );
+
+		update SeqSecRoleGroups set SeqNo=(select MAX(RoleGrpID) from SecRoleGroups);
+		INSERT INTO SecRoleGroups values ((select MAX(RoleGrpID)+1 from SecRoleGroups), (select grpId from SecGroups WHERE GrpCode='BFSD_ORIGINATION_MAKER'), (select RoleID from SecRoles where RoleCd='NFL_CREDIT_MAKER'), 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values ((select MAX(RoleGrpID)+1 from SecRoleGroups), (select grpId from SecGroups WHERE GrpCode='BFSD_ORIGINATION_MAKER'), (select RoleID from SecRoles where RoleCd='NFL_CREDIT_REVIEWER'), 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values ((select MAX(RoleGrpID)+1 from SecRoleGroups), (select grpId from SecGroups WHERE GrpCode='BFSD_ORIGINATION_MAKER'), (select RoleID from SecRoles where RoleCd='NFL_OPERATIONS_MAKER'), 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values ((select MAX(RoleGrpID)+1 from SecRoleGroups), (select grpId from SecGroups WHERE GrpCode='BFSD_ORIGINATION_APPROVER'), (select RoleID from SecRoles where RoleCd='NFL_CREDIT_APPROVER'), 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups values ((select MAX(RoleGrpID)+1 from SecRoleGroups), (select grpId from SecGroups WHERE GrpCode='BFSD_ORIGINATION_APPROVER'), (select RoleID from SecRoles where RoleCd='NFL_OPERATIONS_APPROVER'), 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		update SeqSecRoleGroups set SeqNo=(select MAX(RoleGrpID) from SecRoleGroups);
+
+
+		update SeqSecOperationRoles set SeqNo=(select MAX(OprRoleID) from SecOperationRoles);
+		INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='MAKER'), (select RoleID from SecRoles where RoleCd='NFL_CREDIT_MAKER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='MAKER'), (select RoleID from SecRoles where RoleCd='NFL_CREDIT_REVIEWER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='MAKER'), (select RoleID from SecRoles where RoleCd='NFL_OPERATIONS_MAKER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='APPROVER'), (select RoleID from SecRoles where RoleCd='NFL_CREDIT_APPROVER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecOperationRoles values ((select MAX(OprRoleID)+1 from SecOperationRoles), (select OprID from SecOperations WHERE OprCode='APPROVER'), (select RoleID from SecRoles where RoleCd='NFL_OPERATIONS_APPROVER'),1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0);
+		update SeqSecOperationRoles set SeqNo=(select MAX(OprRoleID) from SecOperationRoles);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="53" author="Prakash">
+		<addColumn tableName="Mandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+
+      <changeSet id="54" author="Prakash">
+		<addColumn tableName="Mandates_Temp">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="55" author="Prakash">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef
+			FROM  Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="56" author="Prakash">
+		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef
+			FROM    Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="57" author="Prakash">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+		SELECT		T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName,T1.DocumentName, T1.DocumentRef
+			FROM    	Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+            
+			UNION ALL
+
+			SELECT T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef
+			FROM   Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			WHERE  NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
+		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="58" author="Prakash">
+	<sql>
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+		SECGROUPRIGHTS);
+
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+		'MandateDialog_BtnUploadDoc','MandateDialog',0,1000,CURRENT_TIMESTAMP,'
+		',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+		SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+		GRPCODE='MANDATE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+		RIGHTNAME='MandateDialog_BtnUploadDoc'), 1,
+		0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+		UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+		SECGROUPRIGHTS);
+	</sql>
+    </changeSet>
+
+	<changeSet id="59" author="Prakash">
+		<sql>
+		 	update Mandates set DocumentRef = 0 where DocumentRef is null;
+		 	update Mandates_Temp set DocumentRef = 0 where DocumentRef is null;
+		</sql>	 
+	</changeSet>
+	
+	<changeSet id="60" author="Prakash">
+		<addColumn tableName="Mandates">
+			<column name="ExternalRef" type="varchar(2000)" />
+		</addColumn> 
+	</changeSet>
+	
+	 <changeSet id="61" author="Prakash">
+		<addColumn tableName="Mandates_Temp">
+			<column name="ExternalRef" type="varchar(2000)" />
+		</addColumn> 
+	</changeSet>
+
+    <changeSet id="62" author="Prakash">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName,
+			  T1.DocumentRef, T1.ExternalRef
+			FROM  Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="63" author="Prakash">
+		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID 	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM    Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="64" author="Prakash">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+			SELECT T1.MandateID, T1.CustID, T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName,T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM  Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+            
+			UNION ALL
+
+			SELECT T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM   Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			WHERE  NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
+		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="65" author="Prakash">
+		<addColumn tableName="Mandates">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+
+      <changeSet id="66" author="Prakash">
+		<addColumn tableName="Mandates_Temp">
+			<column name="DocumentName" type="VARCHAR(200) " />
+			<column name="DocumentRef" type="NUMBER(19,0)" />
+		</addColumn>
+	</changeSet>
+
+    <changeSet id="67" author="Prakash">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate, T1.InputDate FromDate, T1.InputDate ToDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName,
+			  T1.DocumentRef, T1.ExternalRef
+			FROM  Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="68" author="Prakash">
+		<createView viewName="MANDATES_TVIEW" replaceIfExists="true">
+		SELECT	T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID 	
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM    Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="69" author="Prakash">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+		SELECT T1.MandateID, T1.CustID, T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active, 0 useExisting,T1.OrgReference,T5.PcCityName,T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM  Mandates_Temp T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+            
+			UNION ALL
+
+			SELECT T1.MandateID, T1.CustID,   T1.MandateRef, T1.MandateType,T1.BankBranchID, T1.AccNumber, T1.AccHolderName,
+			T1.JointAccHolderName, T1.AccType, T1.OpenMandate, T1.StartDate, T1.ExpiryDate, T1.MaxLimit,
+			T1.Periodicity, T1.PhoneCountryCode, T1.PhoneAreaCode, T1.PhoneNumber, T1.Status, T1.ApprovalID		
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId,
+			 T1.NextTaskId, T1.RecordType, T1.WorkflowId,T1.Reason,T1.MandateCcy,T2.CustCIF,T2.CustShrtName, T3.BankCode, T3.BranchCode,T3.BranchDesc,T3.MICR,
+			 T3.IFSC, T3.City, T4.BankName, T1.InputDate,T1.Active,1 useExisting,T1.OrgReference,T5.PcCityName, T1.DocumentName, T1.DocumentRef, T1.ExternalRef
+			FROM   Mandates T1 INNER JOIN
+			Customers T2  ON T1.CustID = T2.CustID LEFT OUTER JOIN 
+			BankBranches T3 ON T1.BankBranchID = T3.BankBranchID  LEFT OUTER JOIN
+			BMTBankDetail T4  ON T3.BankCode=T4.BankCode LEFT OUTER JOIN
+			RMTProvincevsCity T5 ON T3.city=T5.PCCity
+			WHERE  NOT EXISTS (SELECT 1 FROM Mandates_TEMP WHERE MandateID = T1.MandateID)
+		
+		</createView>
+	</changeSet>
+
+	<changeSet id="70" author="Prakash">
+		<sql>
+		 	update Mandates set DocumentRef = 0 where DocumentRef is null;
+		 	update Mandates_Temp set DocumentRef = 0 where DocumentRef is null;
+		</sql>	 
+	</changeSet>
+	<changeSet id="53" author="Surekha">
+		<addColumn tableName="CustomerAddresses">
+		<column name="CustAddrLine3" type="nvarchar(50)"/>
+		<column name="CustAddrLine4" type="nvarchar(50)"/>
+		<column name="CustDistrict" type="nvarchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="54" author="Surekha">
+		<addColumn tableName="CustomerAddresses_temp">
+		<column name="CustAddrLine3" type="nvarchar(50)"/>
+		<column name="CustAddrLine4" type="nvarchar(50)"/>
+		<column name="CustDistrict" type="nvarchar(50)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="55" author="Surekha">
+	<createView viewName="CUSTOMERADDRESSES_VIEW" replaceIfExists="true">
+		SELECT t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses_temp t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+UNION ALL
+ SELECT  t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM customeraddresses_temp
+          WHERE customeraddresses_temp.custid = t1.custid AND customeraddresses_temp.custaddrtype = t1.custaddrtype));
+	</createView>
+	</changeSet>
+	
+	<changeSet id="56" author="Surekha">
+	<createView viewName="CUSTOMERADDRESSES_AVIEW" replaceIfExists="true">
+		SELECT t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+     </createView>
+     </changeSet>
+     <changeSet id="57" author="Surekha">
+     <sql>
+     		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerAddresDialog_custCareOfAddr','CustomerAddresDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerAddresDialog_custSubDist','CustomerAddresDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerAddresDialog_custDistrict','CustomerAddresDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custCareOfAddr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custCareOfAddr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERADDRES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custCareOfAddr'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custSubDist'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custSubDist'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERADDRES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custSubDist'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custDistrict'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custDistrict'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMERADDRES_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerAddresDialog_custDistrict'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+	</sql>
+     </changeSet>
+     <changeSet id="58" author="Surekha">
+		<addColumn tableName="PinCodes">
+		<column name="groupId" type="BIGINT"/>
+		<column name="serviceable" type="nchar(1)"/>
+		</addColumn>
+	</changeSet>
+	 <changeSet id="59" author="Surekha">
+		<addColumn tableName="PinCodes_temp">
+		<column name="groupId" type="BIGINT"/>
+		<column name="serviceable" type="nchar(1)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="60" author="Surekha">
+	<createView viewName="pincodes_view" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes_temp t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+UNION ALL
+ SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pincodes_temp
+          WHERE pincodes_temp.pincodeid = t1.pincodeid));
+	</createView>
+		
+	</changeSet>
+	<changeSet id="61" author="Surekha">
+	<createView viewName="pincodes_Aview" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+     </createView>
+     </changeSet>
+     <changeSet id="62" author="Surekha">
+		<sql>
+			update pincodes set groupId=0;
+			update pincodes_Temp set groupId=0;
+		</sql>
+     </changeSet>
+      <changeSet id="63" author="Surekha">
+     <sql>
+     		UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PinCodeDialog_GroupId','PinCodeDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PinCodeDialog_IsServiceable','PinCodeDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PINCODE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PinCodeDialog_GroupId'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='PINCODE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PinCodeDialog_IsServiceable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		</sql>
+		</changeSet>
+		<changeSet id="64" author="Surekha">
+		<sql>
+			update SecRoles set roledesc='prequal1' where rolecd='CUSTOMER_MAKER';
+			update SecRoles set roledesc='prequal2' where rolecd='CUSTOMER_APPROVER';
+		</sql>
+		</changeSet>
+		<changeSet id="65" author="Surekha">
+			<createView viewName="customers_lview" replaceIfExists="true">
+			  SELECT c.custid,c.custcif,c.custcorebank,c.custctgcode,c.custtypecode,c.custshrtname,c.custdftbranch,c.recordstatus,c.rolecode,
+			    c.nextrolecode,c.recordtype,ct.custtypedesc AS lovdesccusttypecodename,t1.custctgdesc AS lovdesccustctgcodename,
+			     COALESCE(t2.roledesc::character varying, fn_get_roledesc(c.nextrolecode::character varying)) AS lovdescrequeststage
+			   FROM customers_temp c
+			     LEFT JOIN rmtcusttypes ct ON c.custtypecode = ct.custtypecode
+			     LEFT JOIN bmtcustcategories t1 ON c.custctgcode = t1.custctgcode
+			      LEFT JOIN secroles t2 ON c.nextrolecode = t2.rolecd
+			UNION ALL
+			 SELECT c.custid,c.custcif,c.custcorebank,c.custctgcode,c.custtypecode,c.custshrtname,c.custdftbranch,
+			    c.recordstatus,c.rolecode,c.nextrolecode,c.recordtype,ct.custtypedesc AS lovdesccusttypecodename,t1.custctgdesc AS lovdesccustctgcodename,
+			     COALESCE(t2.roledesc::character varying, fn_get_roledesc(c.nextrolecode::character varying)) AS lovdescrequeststage
+			   FROM customers c
+			     LEFT JOIN rmtcusttypes ct ON c.custtypecode = ct.custtypecode
+			     LEFT JOIN bmtcustcategories t1 ON c.custctgcode = t1.custctgcode
+			      LEFT JOIN secroles t2 ON c.nextrolecode = t2.rolecd
+			     
+			  WHERE NOT (c.custid IN ( SELECT customers_temp.custid
+			           FROM customers_temp
+			          WHERE customers_temp.custid = c.custid))
+
+			</createView>
+		</changeSet>
+	 <changeSet id="66" author="Surekha">
+		<sql>
+			update pincodes set serviceable=0;
+			update pincodes_Temp set serviceable=0;
+		</sql>
+     </changeSet>
+     <changeSet id="67" author="Surekha">
+     <sql>
+     	insert into BMTLovFieldCode values('CofCo-app','Care Of Co-applicant','String',1,1,1,1007,current_timestamp,'Approved','','','','','',0);
+     </sql>
+     </changeSet>
+     <changeSet id="68" author="Surekha">
+     <addColumn tableName="RMTLovFieldDetail">
+		<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+		</addColumn>
+     </changeSet>
+     <changeSet id="69" author="Surekha">
+     <addColumn tableName="RMTLovFieldDetail_temp">
+		<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+		</addColumn>
+     </changeSet>
+     <changeSet id="70" author="Surekha">
+     <createView viewName="rmtlovfielddetail_view" replaceIfExists="true">
+		     
+		     SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail_temp t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		UNION ALL
+		 SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM rmtlovfielddetail_temp
+		          WHERE rmtlovfielddetail_temp.fieldcodeid = t1.fieldcodeid))
+		          
+   </createView>
+     </changeSet>
+     <changeSet id="71" author="Surekha">
+     <createView viewName="rmtlovfielddetail_Aview" replaceIfExists="true">
+		     
+		     SELECT t1.fieldcodeid,t1.fieldcode,t2.fieldcodedesc AS lovdescfieldcodename,t1.fieldcodevalue,t1.valuedesc,t1.isactive,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.systemdefault,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.recordtype,
+		    t1.workflowid,t1.nexttaskid
+		   FROM rmtlovfielddetail t1
+		     JOIN bmtlovfieldcode t2 ON t1.fieldcode = t2.fieldcode
+		
+   </createView>
+     </changeSet>
+     <changeSet id="72" author="Surekha">
+     <addColumn tableName="FinJointAccountDetails">
+     	<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+     </addColumn>
+     </changeSet>
+      <changeSet id="73" author="Surekha">
+     <addColumn tableName="FinJointAccountDetails_Temp">
+     	<column name="CatOfcoApplicant" type="nvarchar(50)"/>
+     </addColumn>
+     </changeSet>
+     <changeSet id="74" author="Surekha">
+     <createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails_temp t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		UNION ALL
+		 SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM finjointaccountdetails_temp
+		          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid));
+     </createView>
+     </changeSet>
+     <changeSet id="75" author="Surekha">
+     <createView viewName="finjointaccountdetails_Tview" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails_temp t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		
+     </createView>
+     </changeSet>
+      <changeSet id="76" author="Surekha">
+     <createView viewName="finjointaccountdetails_Aview" replaceIfExists="true">
+		     	SELECT t1.jointaccountid,t1.finreference,t1.custcif,t1.includerepay,t1.repayaccountid,t1.CatOfcoApplicant,
+		    t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+		    t1.recordtype,t1.workflowid,t2.usrlogin,t2.usrfname,t2.usrmname,t2.usrlname,t3.custshrtname AS lovdesccifname,t3.custid
+		   FROM finjointaccountdetails t1
+		     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+		     JOIN customers t3 ON t1.custcif = t3.custcif
+		
+     </createView>
+     </changeSet>
+     <changeSet id="79" author="Surekha">
+     <dropView viewName="pincodes_view"/>
+     <dropView viewName="pincodes_Aview"/>
+     </changeSet>
+     <changeSet id="77" author="Surekha">
+		<modifyDataType tableName="pincodes" columnName="serviceable" newDataType="smallint"/>
+     </changeSet>
+      <changeSet id="78" author="Surekha">
+		<modifyDataType tableName="pincodes_temp" columnName="serviceable" newDataType="smallint"/>
+     </changeSet>
+     <changeSet id="80" author="Surekha">
+	<createView viewName="pincodes_view" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes_temp t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+UNION ALL
+ SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM pincodes_temp
+          WHERE pincodes_temp.pincodeid = t1.pincodeid));
+	</createView>
+		
+	</changeSet>
+	<changeSet id="81" author="Surekha">
+	<createView viewName="pincodes_Aview" replaceIfExists="true">
+		SELECT t1.pincodeid,t1.pincode,t1.groupId,t1.city,t2.pccityname,t2.pccountry,t2.lovdescpccountryname,t2.pcprovince,t2.lovdescpcprovincename,
+    t1.areaname,t1.active,t1.serviceable,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t3.taxstatecode AS gstin
+   FROM pincodes t1
+     JOIN rmtprovincevscity_view t2 ON t1.city = t2.pccity
+     JOIN rmtcountryvsprovince t3 ON t2.pcprovince = t3.cpprovince
+     </createView>
+     </changeSet>
+     <changeSet id="82" author="Surekha">
+     	<sql>
+     		insert into ErrorDetails values('81005','EN','E','{0} Is Not Serviceable.','test','Approved','','','','','',0,current_timestamp,1000,0);
+     	</sql>
+     </changeSet>
+     
+     <changeSet id="83" author="Surekha">
+     <sql>
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'JountAccountDetailDialog_catOfCoApplicant','JountAccountDetailDialog',0,1000,current_timestamp,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+		
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='JountAccountDetailDialog_catOfCoApplicant'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='JountAccountDetailDialog_catOfCoApplicant'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINJOINTACCDETAIL_SER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='JountAccountDetailDialog_catOfCoApplicant'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+     </changeSet>
+     <changeSet id="84" author="Ganesh.p">
+     	<sql>
+     		Insert into SECRIGHTS (RIGHTID,RIGHTTYPE,RIGHTNAME,PAGE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+			values ((Select MAX(RightID)+1 From SecRights),3,'ExtendedFieldDetailDialog_fieldEditable','ExtendedFieldDetailDialog',1,1000,CURRENT_timestamp,'','','','','','',0);
+     	</sql>
+     </changeSet>
+     <changeSet id="85" author="Ganesh.p">
+     	<sql>
+     		Insert Into secGrouprights (GrpRightID,GrpID,RightID,AccessType,Version,LastMntBy,LastMntOn,RecordStatus,RoleCode,NextRoleCode,TaskId,NextTaskId,RecordType,WorkflowId)
+			values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='EXTENDEDFIELDDETAIL_MAKER'),(select RightId from secRights where RightName='ExtendedFieldDetailDialog_fieldEditable')
+			,1,0,1000,CURRENT_timestamp, '','','','','','',0);
+     	</sql>
+     </changeSet>
+     <changeSet id="86" author="Ganesh.p">
+		<addColumn tableName="EXTENDEDFIELDDETAIL">
+			<column name="EDITABLE" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="87" author="Ganesh.p">
+		<addColumn tableName="EXTENDEDFIELDDETAIL_TEMP">
+			<column name="EDITABLE" type="BOOLEAN" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="88" author="Ganesh.p">
+		<dropView viewName="EXTENDEDFIELDDETAIL_VIEW" />
+		<dropView viewName="EXTENDEDFIELDDETAIL_AVIEW"/>
+	</changeSet>
+	<changeSet id="89" author="Ganesh.p">
+	<createView viewName="EXTENDEDFIELDDETAIL_VIEW" replaceIfExists="true">
+		  SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                      T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ,T1.MultiLine,T1.ParentTag,T1.InputElement,
+                      T1.EDITABLE
+		FROM         ExtendedFieldDetail_TEMP  T1 INNER JOIN
+                      ExtendedFieldHeader_TEMP  T2 ON T1.ModuleId = T2.ModuleId
+			UNION ALL
+		SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, 
+                     T1.FieldType, T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, 
+                      T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, 
+                      T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId , T1.MultiLine,T1.ParentTag,T1.InputElement,
+                      T1.EDITABLE
+		FROM         ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+			WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          ExtendedFieldDetail_TEMP
+                            WHERE      ModuleId = T1.ModuleId AND FieldName = T1.FieldName)
+
+	</createView> 
+	</changeSet>
+	<changeSet id="90" author="Ganesh.p">
+		<createView viewName="EXTENDEDFIELDDETAIL_AVIEW" replaceIfExists="true">
+  			SELECT     T1.ModuleId, T1.FieldName, T2.ModuleName  lovDescModuleName, T2.SubModuleName  lovDescSubModuleName, T1.FieldType, 
+                      T1.FieldLength, T1.FieldPrec, T1.FieldLabel, T1.FieldMandatory, T1.FieldConstraint, T1.FieldSeqOrder, T1.FieldList, T1.FieldDefaultValue, 
+                      T1.FieldMinValue, T1.FieldMaxValue, T1.FieldUnique, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, 
+                      T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.MultiLine, T1.ParentTag, T1.InputElement, T1.EDITABLE
+			FROM         		  ExtendedFieldDetail  T1 INNER JOIN
+                      ExtendedFieldHeader  T2 ON T1.ModuleId = T2.ModuleId
+
+		</createView> 
+	</changeSet>
+	<changeSet id="91" author="Surekha">
+	<createView viewName="customers_aeview" replaceIfExists="true">
+	 SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custshrtname,
+    t1.custfname,
+    t1.custlname,
+    t1.custdob,
+    t1.custnationality,
+    t1.custsector,
+    t1.custsubsector,
+    t2.phonenumber,
+    t2.phoneareacode,
+    t2.phonecountrycode,
+    t1.custcrcpr,
+    t1.custpassportno,
+    t3.custemail AS emailid,
+    t1.custaddlvar82,
+    t4.custtypedesc AS lovdesccusttypecodename,
+    t1.custbaseccy,
+    t4.custtypectg AS lovdesccustctgtype,
+    t5.custctgdesc AS lovdesccustctgcodename,
+    t6.custstsdescription AS lovdesccuststsname,
+    t1.custdftbranch,
+    t7.branchdesc AS lovdesccustdftbranchname,
+     COALESCE(t32.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage
+   FROM customers t1
+     LEFT JOIN customerphonenumbers t2 ON t1.custid = t2.phonecustid AND t2.phonetypecode = 'MOBILE'::citext
+     LEFT JOIN customeremails t3 ON t1.custid = t3.custid AND t3.custemailtypecode = 'OFFICE'::citext
+     LEFT JOIN rmtcusttypes t4 ON t1.custtypecode = t4.custtypecode
+     LEFT JOIN bmtcustcategories t5 ON t1.custctgcode = t5.custctgcode
+     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+     LEFT JOIN rmtbranches t7 ON t1.custdftbranch = t7.branchcode
+      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
+	</createView>
+	</changeSet>
+	<changeSet id="92.1" author="Surekha" dbms="postgresql">
+		 <sql>
+		 	drop view customers_aview cascade;
+		 </sql>
+	</changeSet>
+	<changeSet id="92" author="Surekha">
+	<createView viewName="customers_aview" replaceIfExists="true">
+		SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custsalutationcode,
+    t1.custfname,
+    t1.custmname,
+    t1.custlname,
+    t1.custshrtname,
+    t1.custfnamelcllng,
+    t1.custmnamelcllng,
+    t1.custlnamelcllng,
+    t1.custshrtnamelcllng,
+    t1.custdftbranch,
+    t1.custgendercode,
+    t1.custdob,
+    t1.custpob,
+    t1.custcob,
+    t1.custpassportno,
+    t1.custmothermaiden,
+    t1.custisminor,
+    t1.custreferedby,
+    t1.custdsa,
+    t1.custdsadept,
+    t1.custro1,
+    t1.custro2,
+    t1.custgroupid,
+    t1.custsts,
+    t1.custstschgdate,
+    t1.custgroupsts,
+    t1.custisblocked,
+    t1.custisactive,
+    t1.custisclosed,
+    t1.custinactivereason,
+    t1.custisdecease,
+    t1.custisdormant,
+    t1.custisdelinquent,
+    t1.custistradefincust,
+    t1.custtradelicencenum,
+    t1.custtradelicenceexpiry,
+    t1.custpassportexpiry,
+    t1.custvisanum,
+    t1.custvisaexpiry,
+    t1.custisstaff,
+    t1.custstaffid,
+    t1.custindustry,
+    t1.custsector,
+    t1.custsubsector,
+    t1.custprofession,
+    t1.custtotalincome,
+    t1.custmaritalsts,
+    t1.custempsts,
+    t1.custsegment,
+    t1.custsubsegment,
+    t1.custisblacklisted,
+    t1.custblrsncode,
+    t1.custisrejected,
+    t1.custrejectedrsn,
+    t1.custbaseccy,
+    t1.custlng,
+    t1.custparentcountry,
+    t1.custresdcountry,
+    t1.custriskcountry,
+    t1.custnationality,
+    t1.custclosedon,
+    t1.custstmtfrq,
+    t1.custisstmtcombined,
+    t1.custstmtlastdate,
+    t1.custstmtnextdate,
+    t1.custstmtdispatchmode,
+    t1.custfirstbusinessdate,
+    t1.custaddlvar81,
+    t1.custaddlvar82,
+    t1.custaddlvar83,
+    t1.custaddlvar84,
+    t1.custaddlvar85,
+    t1.custaddlvar86,
+    t1.custaddlvar87,
+    t1.custaddlvar88,
+    t1.custaddlvar89,
+    t1.custaddldate1,
+    t1.custaddldate2,
+    t1.custaddldate3,
+    t1.custaddldate4,
+    t1.custaddldate5,
+    t1.custaddlvar1,
+    t1.custaddlvar2,
+    t1.custaddlvar3,
+    t1.custaddlvar4,
+    t1.custaddlvar5,
+    t1.custaddlvar6,
+    t1.custaddlvar7,
+    t1.custaddlvar8,
+    t1.custaddlvar9,
+    t1.custaddlvar10,
+    t1.custaddlvar11,
+    t1.custaddldec1,
+    t1.custaddldec2,
+    t1.custaddldec3,
+    t1.custaddldec4,
+    t1.custaddldec5,
+    t1.custaddlint1,
+    t1.custaddlint2,
+    t1.custaddlint3,
+    t1.custaddlint4,
+    t1.custaddlint5,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.custtypedesc AS lovdesccusttypecodename,
+    t3.maritalstsdesc AS lovdesccustmaritalstsname,
+    t4.empstsdesc AS lovdesccustempstsname,
+    t6.custstsdescription AS lovdesccuststsname,
+    t7.industrydesc AS lovdesccustindustryname,
+    t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,
+    t10.professiondesc AS lovdesccustprofessionname,
+    t11.countrydesc AS lovdesccustcobname,
+    t20.segmentdesc AS lovdesccustsegmentname,
+    t12.nationalitydesc AS lovdesccustnationalityname,
+    t13.genderdesc AS lovdesccustgendercodename,
+    t14.deptdesc AS lovdesccustdsadeptname,
+    t15.rofficerdesc AS lovdesccustro1name,
+    t16.grpstsdescription AS lovdesccustgroupstsname,
+    t17.branchdesc AS lovdesccustdftbranchname,
+    t18.custctgdesc AS lovdesccustctgcodename,
+    t2.custtypectg AS lovdesccustctgtype,
+    t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,
+    t22.countrydesc AS lovdesccustresdcountryname,
+    t23.countrydesc AS lovdesccustriskcountryname,
+    t24.rofficerdesc AS lovdesccustro2name,
+    t25.blrsndesc AS lovdesccustblrsncodename,
+    t26.rejectdesc AS lovdesccustrejectedrsnname,
+    t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,
+    t29.lngdesc AS lovdesccustlngname,
+    t30.dispatchmodedesc AS lovdescdispatchmodedescname,
+    t1.dedupfound,
+    t1.skipdedup,
+    t1.custtotalexpense,
+    t1.custblacklistdate,
+    t1.noofdependents,
+    t1.custcrcpr,
+    t1.jointcust,
+    t1.jointcustname,
+    t1.jointcustdob,
+    t27.custgrpcode AS lovdesccustgroupcode,
+    t1.custrelation,
+    t1.contactpersonname,
+    t1.phonenumber,
+    t1.emailid,
+    t1.salariedcustomer,
+    t31.targetdesc AS lovdesctargetname,
+    t1.custsuspsts,
+    t1.custsuspdate,
+    t1.custsusptrigger,
+     COALESCE(t32.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage
+   FROM customers t1
+     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+     LEFT JOIN relationshipofficers t15 ON t1.custro1 = t15.rofficercode
+     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+      LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
+	</createView>
+	</changeSet>
+	<changeSet id="93" author="Surekha" dbms="postgresql">
+		 <sql>
+		 	drop view customers_view cascade;
+		 </sql>
+	</changeSet>
+	<changeSet id="94" author="Surekha">
+		<createView viewName="customers_view" replaceIfExists="true">
+			SELECT t1.custid,t1.custcif,t1.custcorebank,t1.custctgcode,t1.custtypecode,t1.custsalutationcode,t1.custfname,t1.custmname,
+    t1.custlname,t1.custshrtname,t1.custfnamelcllng,t1.custmnamelcllng,t1.custlnamelcllng,t1.custshrtnamelcllng,t1.custdftbranch, t1.custgendercode,t1.custdob,
+    t1.custpob,t1.custcob,t1.custpassportno,t1.custmothermaiden,t1.custisminor,t1.custreferedby,t1.custdsa,t1.custdsadept,t1.custro1,t1.custro2,
+    t1.custgroupid,t1.custsts,t1.custstschgdate,t1.custgroupsts,t1.custisblocked,t1.custisactive,t1.custisclosed,t1.custinactivereason,t1.custisdecease,
+    t1.custisdormant,t1.custisdelinquent,t1.custistradefincust,t1.custtradelicencenum,t1.custtradelicenceexpiry,t1.custpassportexpiry,t1.custvisanum,
+    t1.custvisaexpiry,t1.custisstaff,t1.custstaffid,t1.custindustry,t1.custsector,t1.custsubsector,t1.custprofession,t1.custtotalincome,t1.custmaritalsts,t1.custempsts,
+    t1.custsegment,t1.custsubsegment,t1.custisblacklisted,t1.custblrsncode, t1.custisrejected,t1.custrejectedrsn,t1.custbaseccy,t1.custlng,
+    t1.custparentcountry,t1.custresdcountry,t1.custriskcountry,t1.custnationality,t1.custclosedon,t1.custstmtfrq,t1.custisstmtcombined,t1.custstmtlastdate,
+    t1.custstmtnextdate,t1.custstmtdispatchmode,t1.custfirstbusinessdate,t1.custaddlvar81,t1.custaddlvar82,t1.custaddlvar83,t1.custaddlvar84,
+    t1.custaddlvar85,t1.custaddlvar86,t1.custaddlvar87,t1.custaddlvar88,t1.custaddlvar89,t1.custaddldate1,t1.custaddldate2,t1.custaddldate3,
+    t1.custaddldate4,t1.custaddldate5,t1.custaddlvar1,t1.custaddlvar2,t1.custaddlvar3,t1.custaddlvar4,t1.custaddlvar5,t1.custaddlvar6,t1.custaddlvar7,t1.custaddlvar8,t1.custaddlvar9,t1.custaddlvar10,
+    t1.custaddlvar11,t1.custaddldec1,t1.custaddldec2,t1.custaddldec3,t1.custaddldec4,t1.custaddldec5,t1.custaddlint1,t1.custaddlint2,t1.custaddlint3,
+    t1.custaddlint4,t1.custaddlint5,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+    t1.recordtype,t1.workflowid,t2.custtypedesc AS lovdesccusttypecodename,t3.maritalstsdesc AS lovdesccustmaritalstsname,t4.empstsdesc AS lovdesccustempstsname,t6.custstsdescription AS lovdesccuststsname,t7.industrydesc AS lovdesccustindustryname,t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,t10.professiondesc AS lovdesccustprofessionname,t11.countrydesc AS lovdesccustcobname,t20.segmentdesc AS lovdesccustsegmentname, t12.nationalitydesc AS lovdesccustnationalityname,t13.genderdesc AS lovdesccustgendercodename,t14.deptdesc AS lovdesccustdsadeptname,t15.rofficerdesc AS lovdesccustro1name,
+    t16.grpstsdescription AS lovdesccustgroupstsname,t17.branchdesc AS lovdesccustdftbranchname,t18.custctgdesc AS lovdesccustctgcodename,t2.custtypectg AS lovdesccustctgtype,t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,t22.countrydesc AS lovdesccustresdcountryname,t23.countrydesc AS lovdesccustriskcountryname,t24.rofficerdesc AS lovdesccustro2name,t25.blrsndesc AS lovdesccustblrsncodename,t26.rejectdesc AS lovdesccustrejectedrsnname,t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,t29.lngdesc AS lovdesccustlngname,t30.dispatchmodedesc AS lovdescdispatchmodedescname,t1.dedupfound,t1.skipdedup,t1.custtotalexpense,t1.custblacklistdate,t1.noofdependents,t1.custcrcpr,
+    t1.jointcust,t1.jointcustname,t1.jointcustdob,t27.custgrpcode AS lovdesccustgroupcode,t1.custrelation,t1.contactpersonname,
+    t1.phonenumber,t1.emailid,t1.salariedcustomer,t31.targetdesc AS lovdesctargetname,t1.custsuspsts,t1.custsuspdate,t1.custsusptrigger,
+     COALESCE(t32.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage
+   FROM customers_temp t1
+     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+     LEFT JOIN relationshipofficers t15 ON t1.custro1 = t15.rofficercode
+     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+     LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
+UNION ALL
+ SELECT t1.custid,t1.custcif,t1.custcorebank,t1.custctgcode,t1.custtypecode,t1.custsalutationcode,t1.custfname,t1.custmname,
+    t1.custlname,t1.custshrtname,t1.custfnamelcllng,t1.custmnamelcllng,t1.custlnamelcllng,t1.custshrtnamelcllng,t1.custdftbranch, t1.custgendercode,t1.custdob,
+    t1.custpob,t1.custcob,t1.custpassportno,t1.custmothermaiden,t1.custisminor,t1.custreferedby,t1.custdsa,t1.custdsadept,t1.custro1,t1.custro2,
+    t1.custgroupid,t1.custsts,t1.custstschgdate,t1.custgroupsts,t1.custisblocked,t1.custisactive,t1.custisclosed,t1.custinactivereason,t1.custisdecease,
+    t1.custisdormant,t1.custisdelinquent,t1.custistradefincust,t1.custtradelicencenum,t1.custtradelicenceexpiry,t1.custpassportexpiry,t1.custvisanum,
+    t1.custvisaexpiry,t1.custisstaff,t1.custstaffid,t1.custindustry,t1.custsector,t1.custsubsector,t1.custprofession,t1.custtotalincome,t1.custmaritalsts,t1.custempsts,
+    t1.custsegment,t1.custsubsegment,t1.custisblacklisted,t1.custblrsncode, t1.custisrejected,t1.custrejectedrsn,t1.custbaseccy,t1.custlng,
+    t1.custparentcountry,t1.custresdcountry,t1.custriskcountry,t1.custnationality,t1.custclosedon,t1.custstmtfrq,t1.custisstmtcombined,t1.custstmtlastdate,
+    t1.custstmtnextdate,t1.custstmtdispatchmode,t1.custfirstbusinessdate,t1.custaddlvar81,t1.custaddlvar82,t1.custaddlvar83,t1.custaddlvar84,
+    t1.custaddlvar85,t1.custaddlvar86,t1.custaddlvar87,t1.custaddlvar88,t1.custaddlvar89,t1.custaddldate1,t1.custaddldate2,t1.custaddldate3,
+    t1.custaddldate4,t1.custaddldate5,t1.custaddlvar1,t1.custaddlvar2,t1.custaddlvar3,t1.custaddlvar4,t1.custaddlvar5,t1.custaddlvar6,t1.custaddlvar7,t1.custaddlvar8,t1.custaddlvar9,t1.custaddlvar10,
+    t1.custaddlvar11,t1.custaddldec1,t1.custaddldec2,t1.custaddldec3,t1.custaddldec4,t1.custaddldec5,t1.custaddlint1,t1.custaddlint2,t1.custaddlint3,
+    t1.custaddlint4,t1.custaddlint5,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+    t1.recordtype,t1.workflowid,t2.custtypedesc AS lovdesccusttypecodename,t3.maritalstsdesc AS lovdesccustmaritalstsname,t4.empstsdesc AS lovdesccustempstsname,t6.custstsdescription AS lovdesccuststsname,t7.industrydesc AS lovdesccustindustryname,t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,t10.professiondesc AS lovdesccustprofessionname,t11.countrydesc AS lovdesccustcobname,t20.segmentdesc AS lovdesccustsegmentname, t12.nationalitydesc AS lovdesccustnationalityname,t13.genderdesc AS lovdesccustgendercodename,t14.deptdesc AS lovdesccustdsadeptname,t15.rofficerdesc AS lovdesccustro1name,
+    t16.grpstsdescription AS lovdesccustgroupstsname,t17.branchdesc AS lovdesccustdftbranchname,t18.custctgdesc AS lovdesccustctgcodename,t2.custtypectg AS lovdesccustctgtype,t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,t22.countrydesc AS lovdesccustresdcountryname,t23.countrydesc AS lovdesccustriskcountryname,t24.rofficerdesc AS lovdesccustro2name,t25.blrsndesc AS lovdesccustblrsncodename,t26.rejectdesc AS lovdesccustrejectedrsnname,t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,t29.lngdesc AS lovdesccustlngname,t30.dispatchmodedesc AS lovdescdispatchmodedescname,t1.dedupfound,t1.skipdedup,t1.custtotalexpense,t1.custblacklistdate,t1.noofdependents,t1.custcrcpr,
+    t1.jointcust,t1.jointcustname,t1.jointcustdob,t27.custgrpcode AS lovdesccustgroupcode,t1.custrelation,t1.contactpersonname,
+    t1.phonenumber,t1.emailid,t1.salariedcustomer,t31.targetdesc AS lovdesctargetname,t1.custsuspsts,t1.custsuspdate,t1.custsusptrigger,
+     COALESCE(t32.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage
+   FROM customers t1
+     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+     LEFT JOIN relationshipofficers t15 ON t1.custro1 = t15.rofficercode
+     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+     LEFT JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+     LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
+  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+           FROM customers_temp
+          WHERE customers_temp.custid = t1.custid))
+		</createView>
+	</changeSet>
+	<changeSet id="95" author="Surekha">
+		<createView viewName="customers_tview" replaceIfExists="true">
+		SELECT t1.custid,
+    t1.custcif,
+    t1.custcorebank,
+    t1.custctgcode,
+    t1.custtypecode,
+    t1.custsalutationcode,
+    t1.custfname,
+    t1.custmname,
+    t1.custlname,
+    t1.custshrtname,
+    t1.custfnamelcllng,
+    t1.custmnamelcllng,
+    t1.custlnamelcllng,
+    t1.custshrtnamelcllng,
+    t1.custdftbranch,
+    t1.custgendercode,
+    t1.custdob,
+    t1.custpob,
+    t1.custcob,
+    t1.custpassportno,
+    t1.custmothermaiden,
+    t1.custisminor,
+    t1.custreferedby,
+    t1.custdsa,
+    t1.custdsadept,
+    t1.custro1,
+    t1.custro2,
+    t1.custgroupid,
+    t1.custsts,
+    t1.custstschgdate,
+    t1.custgroupsts,
+    t1.custisblocked,
+    t1.custisactive,
+    t1.custisclosed,
+    t1.custinactivereason,
+    t1.custisdecease,
+    t1.custisdormant,
+    t1.custisdelinquent,
+    t1.custistradefincust,
+    t1.custtradelicencenum,
+    t1.custtradelicenceexpiry,
+    t1.custpassportexpiry,
+    t1.custvisanum,
+    t1.custvisaexpiry,
+    t1.custisstaff,
+    t1.custstaffid,
+    t1.custindustry,
+    t1.custsector,
+    t1.custsubsector,
+    t1.custprofession,
+    t1.custtotalincome,
+    t1.custmaritalsts,
+    t1.custempsts,
+    t1.custsegment,
+    t1.custsubsegment,
+    t1.custisblacklisted,
+    t1.custblrsncode,
+    t1.custisrejected,
+    t1.custrejectedrsn,
+    t1.custbaseccy,
+    t1.custlng,
+    t1.custparentcountry,
+    t1.custresdcountry,
+    t1.custriskcountry,
+    t1.custnationality,
+    t1.custclosedon,
+    t1.custstmtfrq,
+    t1.custisstmtcombined,
+    t1.custstmtlastdate,
+    t1.custstmtnextdate,
+    t1.custstmtdispatchmode,
+    t1.custfirstbusinessdate,
+    t1.custaddlvar81,
+    t1.custaddlvar82,
+    t1.custaddlvar83,
+    t1.custaddlvar84,
+    t1.custaddlvar85,
+    t1.custaddlvar86,
+    t1.custaddlvar87,
+    t1.custaddlvar88,
+    t1.custaddlvar89,
+    t1.custaddldate1,
+    t1.custaddldate2,
+    t1.custaddldate3,
+    t1.custaddldate4,
+    t1.custaddldate5,
+    t1.custaddlvar1,
+    t1.custaddlvar2,
+    t1.custaddlvar3,
+    t1.custaddlvar4,
+    t1.custaddlvar5,
+    t1.custaddlvar6,
+    t1.custaddlvar7,
+    t1.custaddlvar8,
+    t1.custaddlvar9,
+    t1.custaddlvar10,
+    t1.custaddlvar11,
+    t1.custaddldec1,
+    t1.custaddldec2,
+    t1.custaddldec3,
+    t1.custaddldec4,
+    t1.custaddldec5,
+    t1.custaddlint1,
+    t1.custaddlint2,
+    t1.custaddlint3,
+    t1.custaddlint4,
+    t1.custaddlint5,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.custtypedesc AS lovdesccusttypecodename,
+    t3.maritalstsdesc AS lovdesccustmaritalstsname,
+    t4.empstsdesc AS lovdesccustempstsname,
+    t6.custstsdescription AS lovdesccuststsname,
+    t7.industrydesc AS lovdesccustindustryname,
+    t8.sectordesc AS lovdesccustsectorname,
+    t9.subsectordesc AS lovdesccustsubsectorname,
+    t10.professiondesc AS lovdesccustprofessionname,
+    t11.countrydesc AS lovdesccustcobname,
+    t20.segmentdesc AS lovdesccustsegmentname,
+    t12.nationalitydesc AS lovdesccustnationalityname,
+    t13.genderdesc AS lovdesccustgendercodename,
+    t14.deptdesc AS lovdesccustdsadeptname,
+    t15.rofficerdesc AS lovdesccustro1name,
+    t16.grpstsdescription AS lovdesccustgroupstsname,
+    t17.branchdesc AS lovdesccustdftbranchname,
+    t18.custctgdesc AS lovdesccustctgcodename,
+    t2.custtypectg AS lovdesccustctgtype,
+    t19.saluationdesc AS lovdesccustsalutationcodename,
+    t21.countrydesc AS lovdesccustparentcountryname,
+    t22.countrydesc AS lovdesccustresdcountryname,
+    t23.countrydesc AS lovdesccustriskcountryname,
+    t24.rofficerdesc AS lovdesccustro2name,
+    t25.blrsndesc AS lovdesccustblrsncodename,
+    t26.rejectdesc AS lovdesccustrejectedrsnname,
+    t27.custgrpdesc AS lovdesccustgroupidname,
+    t28.subsegmentdesc AS lovdesccustsubsegmentname,
+    t29.lngdesc AS lovdesccustlngname,
+    t30.dispatchmodedesc AS lovdescdispatchmodedescname,
+    t1.dedupfound,
+    t1.skipdedup,
+    t1.custtotalexpense,
+    t1.custblacklistdate,
+    t1.noofdependents,
+    t1.custcrcpr,
+    t1.jointcust,
+    t1.jointcustname,
+    t1.jointcustdob,
+    t27.custgrpcode AS lovdesccustgroupcode,
+    t1.contactpersonname,
+    t1.phonenumber,
+    t1.emailid,
+    t1.salariedcustomer,
+    t31.targetdesc AS lovdesctargetname,
+    t1.custrelation,
+    t1.custsuspsts,
+    t1.custsuspdate,
+    t1.custsusptrigger,
+     COALESCE(t32.roledesc::character varying, fn_get_roledesc(t1.nextrolecode::character varying)) AS lovdescrequeststage
+   FROM customers_temp t1
+     LEFT JOIN rmtcusttypes t2 ON t1.custtypecode = t2.custtypecode
+     LEFT JOIN bmtmaritalstatuscodes t3 ON t1.custmaritalsts = t3.maritalstscode
+     LEFT JOIN bmtempstscodes t4 ON t1.custempsts = t4.empstscode
+     LEFT JOIN bmtcuststatuscodes t6 ON t1.custsts = t6.custstscode
+     LEFT JOIN bmtindustries t7 ON t1.custindustry = t7.industrycode
+     LEFT JOIN bmtsectors t8 ON t1.custsector = t8.sectorcode
+     LEFT JOIN bmtsubsectors t9 ON t1.custsector = t9.sectorcode AND t1.custsubsector = t9.subsectorcode
+     LEFT JOIN bmtprofessions t10 ON t1.custprofession = t10.professioncode
+     LEFT JOIN bmtcountries t11 ON t1.custcob = t11.countrycode
+     LEFT JOIN bmtnationalitycodes t12 ON t1.custnationality = t12.nationalitycode
+     LEFT JOIN bmtgenders t13 ON t1.custgendercode = t13.gendercode
+     LEFT JOIN bmtdepartments t14 ON t1.custdsadept = t14.deptcode
+     LEFT JOIN relationshipofficers t15 ON t1.custro1 = t15.rofficercode
+     LEFT JOIN bmtgrpstatuscodes t16 ON t1.custgroupsts = t16.grpstscode
+     LEFT JOIN rmtbranches t17 ON t1.custdftbranch = t17.branchcode
+     LEFT JOIN bmtcustcategories t18 ON t1.custctgcode = t18.custctgcode
+     LEFT JOIN bmtsalutations t19 ON t1.custsalutationcode = t19.salutationcode
+     LEFT JOIN bmtsegments t20 ON t1.custsegment = t20.segmentcode
+     JOIN bmtcountries t21 ON t1.custparentcountry = t21.countrycode
+     LEFT JOIN bmtcountries t22 ON t1.custresdcountry = t22.countrycode
+     LEFT JOIN bmtcountries t23 ON t1.custriskcountry = t23.countrycode
+     LEFT JOIN relationshipofficers t24 ON t1.custro2 = t24.rofficercode
+     LEFT JOIN bmtblacklistrsncodes t25 ON t1.custblrsncode = t25.blrsncode
+     LEFT JOIN bmtrejectcodes t26 ON t1.custrejectedrsn::text = t26.rejectcode::text
+     LEFT JOIN customergroups t27 ON t1.custgroupid = t27.custgrpid
+     LEFT JOIN bmtsubsegments t28 ON t1.custsubsegment = t28.subsegmentcode
+     LEFT JOIN bmtlanguage t29 ON t1.custlng = t29.lngcode
+     LEFT JOIN bmtdispatchmodes t30 ON t1.custstmtdispatchmode = t30.dispatchmodecode
+     LEFT JOIN targetdetails t31 ON t1.custaddlvar82 = t31.targetcode
+     LEFT JOIN secroles t32 ON t1.nextrolecode = t32.rolecd
+		</createView>
+	</changeSet>
+	
+	<changeSet id="96" author="Prakash" dbms="postgresql">
+	<sql>
+		INSERT INTO plf.SMTParameters VALUES('REPAY_PDC','Repay Post Dated Check','String',1,
+		'PDC',8,0,'','','Repay Post Dated Check',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="97" author="Prakash" dbms="postgresql">
+	<sql>
+	INSERT INTO plf.BMTDocumentTypes
+	VALUES('PDC',0,0,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Post Dated Check');
+	</sql>
+	</changeSet>
+	<changeSet id="97" author="Prakash" dbms="oracle">
+	<sql>
+	INSERT INTO plf.BMTDocumentTypes
+	VALUES('PDC','Post Dated Check',0,0,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="98" author="Prakash" dbms="postgresql">
+	<sql>
+		Update plf.SMTParameters set SYSPARMDESC = 'Repay Post Dated Cheque',SYSPARMDESCRIPTION = 'Repay Post Dated Cheque'
+		where SYSPARMCODE = 'REPAY_PDC';
+	</sql>
+	</changeSet>
+	
+	<changeSet id="99" author="Prakash" dbms="postgresql">
+	<sql>
+	   Update plf.BMTDocumentTypes set DOCTYPEDESC = 'Post Dated Cheque' where DOCTYPECODE = 'PDC';
+	</sql>
+	</changeSet>
+	<changeSet id="100" author="Surekha">
+	<createView viewName="CUSTOMERADDRESSES_VIEW" replaceIfExists="true">
+		SELECT t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses_temp t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+UNION ALL
+ SELECT  t1.custid,t1.custaddrtype,t2.addrtypedesc AS lovdesccustaddrtypename,t1.custaddrhnbr,t1.custflatnbr,t1.custaddrstreet,
+    t1.custaddrline1,t1.custaddrline2,t1.CustAddrLine3,t1.CustAddrLine4,t1.CustDistrict,t1.custpobox, t1.custaddrcity,t1.typeofresidence, t3.pccityname AS lovdesccustaddrcityname,
+    t1.custaddrprovince,t4.cpprovincename AS lovdesccustaddrprovincename,t1.custaddrcountry,t5.countrydesc AS lovdesccustaddrcountryname,
+    t1.custaddrzip,t1.custaddrphone,t1.custaddrfrom,t1.custaddrpriority,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+    t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t6.areaname AS lovdesccustaddrzip
+   FROM customeraddresses t1
+     LEFT JOIN bmtaddresstypes t2 ON t1.custaddrtype = t2.addrtypecode
+     LEFT JOIN rmtprovincevscity t3 ON t1.custaddrcountry = t3.pccountry AND t1.custaddrprovince = t3.pcprovince AND t1.custaddrcity = t3.pccity
+     LEFT JOIN rmtcountryvsprovince t4 ON t1.custaddrcountry = t4.cpcountry AND t1.custaddrprovince = t4.cpprovince
+     LEFT JOIN bmtcountries t5 ON t1.custaddrcountry = t5.countrycode
+     LEFT JOIN pincodes t6 ON t1.custaddrzip = t6.pincode
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM customeraddresses_temp
+          WHERE customeraddresses_temp.custid = t1.custid AND customeraddresses_temp.custaddrtype = t1.custaddrtype))
+	</createView>
+	</changeSet>
+	<changeSet id="101" author="somasekhar">
+      <addColumn tableName="RECEIPTALLOCATIONDETAIL">
+			<column name="receiptAllocationid" type="bigint"/>
+		</addColumn>
+</changeSet>
+<changeSet id="102" author="somasekhar" dbms="oracle"> 
+  	<sql>
+        update RECEIPTALLOCATIONDETAIL set receiptAllocationid = Rownum;
+  	</sql>
+  </changeSet>
+  <changeSet id="102" author="somasekhar" dbms="postgresql"> 
+  	<sql>
+       update RECEIPTALLOCATIONDETAIL set receiptAllocationid = 
+ (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
+  	</sql>
+  </changeSet>
+ 
+  
+  <changeSet id="103" author="somasekhar">
+ <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="receiptAllocationid"/>
+  </changeSet>
+<changeSet id="104" author="somasekhar">
+       <addColumn tableName="RECEIPTALLOCATIONDETAIL_TEMP">
+			<column name="receiptAllocationid" type="bigint"/>
+		</addColumn>
+</changeSet>
+<changeSet id="105" author="somasekhar" dbms="oracle"> 
+  	<sql>
+        update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = Rownum;
+  	</sql>
+  </changeSet>
+   <changeSet id="105" author="somasekhar" dbms="postgresql"> 
+  	<sql>
+       update RECEIPTALLOCATIONDETAIL_TEMP set receiptAllocationid = 
+ (select row_number() over(order by receiptid) from RECEIPTALLOCATIONDETAIL);
+  	</sql>
+  </changeSet>
+<changeSet id="106" author="somasekhar">
+ <addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="receiptAllocationid"/>
+  </changeSet>
+	<changeSet id="108" author="Durga Prasad D">
+		<createTable tableName="ServiceTaskDetails">
+			<column name="taskExecutionId" type="bigint">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="Module" type="nvarchar(10)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Reference" type="nvarchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ServiceTaskId" type="bigint"/>
+			<column name="serviceTaskName" type="nvarchar(20)"/>
+			<column name="UserId" type="bigint" />
+			<column name="ExecutedTime" type="datetime"/>
+			<column name="Status" type="nvarchar(20)"/>
+			<column name="Remarks" type="nvarchar(200)"/>
+		</createTable>
+	</changeSet>
+	 <changeSet id="109" author="Satyanarayana.G" dbms="oracle">
+	<dropTable tableName="PTMENUDETAILS"/>
+	</changeSet>
+	<changeSet id="110" author="Satyanarayana.G" dbms="oracle">
+	<dropTable tableName="SEQPTMENUDETAILS"/>
+	</changeSet>
+	
+	<changeSet id="109" author="Prakash" dbms="postgresql">
+	<sql>
+		INSERT INTO SMTParameters VALUES('REPAY_PDC','Repay Post Dated Cheque','String',1,
+		'PDC',8,0,'','','Repay Post Dated Cheque',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="110" author="Prakash" dbms="postgresql">
+	<sql>
+	   INSERT INTO BMTDocumentTypes
+	   VALUES('PDC',0,1,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Post Dated Cheque');
+	</sql>
+	</changeSet>
+	 <changeSet id="111" author="Durga Prasad D">
+		<createSequence sequenceName="SeqServiceTaskDetails" startValue="1"
+			 maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+	<changeSet id="112" author="Jayant">
+		<createView viewName="LIMITHEADER_VIEW" replaceIfExists="true">
+			 SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue,T8.QueryDesc , T1.CustomerGroup,T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, T1.CustomerId, T4.CustCIF,
+T4.CustShrtName, 
+                      T4.CustFName CustFName, T4.CustMName CustMName,T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName, T1.LimitCcy,
+T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName,T6.ShowLimitsIn, T1.LimitSetupRemarks,T1.Rebuild,T1.Active, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.
+LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader_Temp T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID  LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode 
+
+UNION ALL 
+SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue, T8.QueryDesc ,T1.CustomerGroup, T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, T1.CustomerId,T4.CustCIF, 
+T4.CustShrtName, 
+                      T4.CustFName CustFName,T4.CustMName CustMName,T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName,  T1.LimitCcy,T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName, T6.ShowLimitsIn,T1.LimitSetupRemarks,T1.Rebuild,T1.Active,T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.
+LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
+
+WHERE     NOT EXISTS
+                          (SELECT     1
+                            FROM          LimitHeader_Temp
+                            WHERE      HeaderId = T1.HeaderId)
+		</createView>
+	</changeSet>
+	<changeSet id="113" author="Jayant">
+		<createView viewName="LIMITHEADER_AVIEW" replaceIfExists="true">
+			 SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue, T8.QueryDesc ,T1.CustomerGroup,T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, 
+T1.CustomerId,T4.CustCIF, 
+T4.CustShrtName, 
+                      T4.CustFName CustFName,T4.CustMName CustMName, T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName, T1.LimitCcy,T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName,T6.ShowLimitsIn, T1.LimitSetupRemarks, T1.Rebuild,T1.Active, T1.Version, 
+T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
+		</createView>
+	</changeSet>
+	<changeSet id="114" author="Jayant">
+		<createView viewName="LIMITHEADER_TVIEW" replaceIfExists="true">
+			SELECT     T1.HeaderId, T1.RuleCode, T1.RuleValue, T8.QueryDesc ,T1.CustomerGroup,T3.CustGrpCode  , T3.CustGrpDesc GroupName, T3.CustGrpRO1, T1.CustomerId,T4.CustCIF, 
+T4.CustShrtName, 
+                      T4.CustFName CustFName, T4.CustMName CustMName,T4.CustLName CustFullName, T4.CustCoreBank, T4.CustSalutationCode, T4.CustDftBranch, 
+                      T4.lovDescCustDftBranchName CustDftBranchName, T1.ResponsibleBranch, T5.BranchDesc ResponsibleBranchName, T1.LimitCcy,T1.LimitExpiryDate, 
+                      T1.LimitRvwDate, T1.LimitStructureCode, T6.StructureName, T6.ShowLimitsIn,T1.LimitSetupRemarks,T1.Rebuild,T1.Active,  T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1
+.LastMntOn, T2.UsrLogin, 
+                      T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.
+WorkflowId
+FROM          LimitHeader_Temp T1 INNER JOIN
+                       LimitStructure T6 ON T1.LimitStructureCode = T6.StructureCode LEFT OUTER JOIN
+                       RMTBranches T5 ON T1.ResponsibleBranch = T5.BranchCode LEFT OUTER JOIN
+                       CustomerGroups T3 ON T1.CustomerGroup = T3.CustGrpID LEFT OUTER JOIN
+                       Customers_AView T4 ON T1.CustomerId = T4.CustID LEFT OUTER JOIN
+                       SecUsers T2 ON T1.LastMntBy = T2.UsrID LEFT OUTER JOIN
+					   LimitParams T8 ON T1.RuleCode = T8.QueryCode
+		</createView>
+	</changeSet>
+	
+	<changeSet id="115" author="Durga Prasad D">
+		<renameColumn tableName="ServiceTaskDetails" oldColumnName="Module" newColumnName="ServiceModule"/>
+	</changeSet>
+	
+	<changeSet id="116" author="Durga Prasad D">
+		<modifyDataType tableName="ServiceTaskDetails" columnName="ServiceTaskId" newDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet id="117" author="Prakash" dbms="postgresql">
+	<sql>
+		INSERT INTO SMTParameters VALUES('DISB_DOC','Disbursement Document','String',1,
+		'CAN_CHEQUE',8,0,'','','Disbursement Document',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+	</sql>
+	</changeSet>
+	
+	<changeSet id="118" author="Prakash" dbms="postgresql">
+	<sql>
+	   INSERT INTO BMTDocumentTypes
+	   VALUES('CAN_CHEQUE',0,1,0,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0,0,0,0,'Cancel Cheque');
+	</sql>
+	</changeSet>
+	
+	<changeSet id="119" author="Prakash" dbms="postgresql">
+	<sql>
+		delete from SMTParameters where sysparmcode = 'REPAY_PDC';
+	</sql>
+	</changeSet>
+	
+	<changeSet id="120" author="Prakash" dbms="postgresql">
+	<sql>
+	   delete from BMTDocumentTypes where doctypecode = 'PDC';
+	</sql>
+	</changeSet>
+	
+	 <changeSet id="121" author="Prakash">
+     <sql>
+     	insert into BMTLovFieldCode values('CAT_COAPP','Categeory Of Co-applicant','String',1,1,1,1007,current_timestamp,'Approved','','','','','',0);
+     </sql>
+     </changeSet>
+     
+</databaseChangeLog>

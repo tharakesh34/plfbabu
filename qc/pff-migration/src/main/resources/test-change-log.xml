@@ -1,0 +1,43 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<!-- Create Table with Primary key constraint -->
+	<changeSet id="kittu-jrg-1" author="Sai">
+		<createTable tableName="Person">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Photo" type="blob" />
+			<column name="Married" type="boolean" />
+			<column name="code" type="char(10)" />
+			<column name="info" type="clob" />
+			<column name="dob" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
+			<column name="last_maintained_on" type="datetime2" />
+			<column name="salary" type="decimal(18,2)" />
+			<column name="additional_income" type="float" />
+			<column name="id_proof" type="image" />
+			<column name="income" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="code_l" type="nchar(10)" />
+			<column name="info_l" type="nclob" />
+			<column name="additional_info_l" type="ntext" />
+			<column name="name_l" type="nvarchar(50)" />
+			<column name="additional_expense" type="number(18,2)" />
+			<column name="savings" type="smallint" />
+			<column name="additional_info" type="text" />
+			<column name="age" type="tinyint" defaultValueNumeric="0" />
+			<column name="name" type="varchar(50)" defaultValue="Pennant">
+				<constraints nullable="false" />
+			</column>
+			<column name="photo_loc" type="varbinary(50)" />
+			<column name="process_flow" type="xml" />
+			<column name="sql_rule" type="varchar(4000)" />
+			<column name="actual_block" type="varchar(4000)" />
+			<column name="add_field_1" type="float" />
+			<column name="add_field_2" type="binary(50)" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

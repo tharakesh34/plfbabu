@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+<changeSet id="01" author="Surekha">
+		<createTable tableName="AdtPinCodes">
+		<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PinCodeId" type="bigint"/>
+			<column name="PinCode" type="varchar(10)"/>
+			<column name="City" type="varchar(8)" />
+			<column name="Active" type="boolean"/>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="02" author="Surekha">
+		<addColumn tableName="AdtPartnerBanks">
+			<column name="fileName" type="varchar(30)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="3" author="Siva">
+		<addColumn tableName="ADTFINFEEDETAIL">
+			<column name="Status" type="varchar(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="4" author="Durgaprasad.g">
+ 		<renameTable newTableName="ADTPAYMENTDETAILS" oldTableName="ADTPAYMENTDEATILS"/>
+	</changeSet>
+	
+</databaseChangeLog>

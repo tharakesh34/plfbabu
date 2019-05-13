@@ -1,0 +1,1631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Vijaya.A" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf, public, pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'COVENANT_TYPES_VIEW', 		'Role for Covenant Types enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'COVENANT_TYPES_MAKER', 		'Role for Covenant Types maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'COVENANT_TYPES_APPROVER', 	'Role for Covenant Types approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+								
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'COVENANT_TYPES_VIEW',			'Group for Covenant Types enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'COVENANT_TYPES_MAKER',			'Group for Covenant Types maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'COVENANT_TYPES_APPROVER',		'Group for Covenant Types approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+							
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_CovenantType','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_CovenantTypeEnquiry','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CovenantTypeList_PrintList','CovenantTypeList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CovenantTypeList_NewCovenantType','CovenantTypeList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CovenantTypeDialog_btnNew','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CovenantTypeDialog_btnEdit','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CovenantTypeDialog_btnDelete','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CovenantTypeDialog_btnSave','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_Id','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_Code','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_Category','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_CovenantType','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_DocType','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_Description','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_AllowPostPonement','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_MaxAllowedDays','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_AllowedPaymentModes','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_AlertsRequired','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_Frequency','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_GraceDays','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_AlertDays','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_AlertType','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_AlertToRoles','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_UserTemplate','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantTypeDialog_CustomerTemplate','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_VIEW'), (Select RightID from SecRights where RightName = 'menuItem_CovenantTypeEnquiry'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_VIEW'), (Select RightID from SecRights where RightName = 'button_CovenantTypeList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_CovenantType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeList_NewCovenantType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_Id'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_Code'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_Category'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_CovenantType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_DocType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_Description'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_AllowPostPonement'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_MaxAllowedDays'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_AllowedPaymentModes'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_AlertsRequired'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_Frequency'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_GraceDays'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_AlertDays'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_AlertType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_AlertToRoles'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_UserTemplate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_MAKER'), (Select RightID from SecRights where RightName = 'CovenantTypeDialog_CustomerTemplate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_CovenantType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_APPROVER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_TYPES_APPROVER'), (Select RightID from SecRights where RightName = 'button_CovenantTypeDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+							
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='COVENANT_TYPES_VIEW'),(select RoleID from secRoles where RoleCd='COVENANT_TYPES_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='COVENANT_TYPES_MAKER'),(select RoleID from secRoles where RoleCd='COVENANT_TYPES_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='COVENANT_TYPES_APPROVER'),(select RoleID from secRoles where RoleCd='COVENANT_TYPES_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId)  from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.6" author="vijayKumar.l">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+							
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Description','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Los','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Mandatoryrole','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Otc','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Pdd','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Receivabledate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Allowwaiver','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Maxalloweddays','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Documentreceived','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Documentreceiveddate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Allowpostponement','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Extendeddate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Frequency','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Nextfrequencydate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_DueDate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Gracedays','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Graceduedate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantDialog_AlertsRequired','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CovenantDialog_AlertType','CovenantTypeDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Alerttoroles','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Alertdays','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Internaluse','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Remarks','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Additionalfield1','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Additionalfield2','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Additionalfield3','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Additionalfield4','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_Category','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_CovenantType','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_DocReceivedDate','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_DocumentName','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3,'CovenantDialog_btnUploadDoc','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CovenantDialog_btnNew','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CovenantDialog_btnEdit','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CovenantDialog_btnSave','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CovenantDialog_btnDelete','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2,'button_CovenantDialog_btnCancle','CovenantDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+										
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'COVENANT_VIEW','Group for COVENANT enquiry',1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'COVENANT_MAKER','Group for COVENANT maker',1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'button_CovenantDialog_btnCancle'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL,0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_btnUploadDoc'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Description'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Los'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Mandatoryrole'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Otc'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Pdd'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Receivabledate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Allowwaiver'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Maxalloweddays'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Documentreceived'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Documentreceiveddate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Allowpostponement'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Extendeddate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Frequency'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Nextfrequencydate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_DueDate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Gracedays'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Graceduedate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_AlertsRequired'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_AlertType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Alerttoroles'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Alertdays'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Internaluse'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Remarks'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Additionalfield1'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Additionalfield2'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Additionalfield3'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Additionalfield4'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_Category'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_CovenantType'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_DocReceivedDate'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_MAKER'), (Select RightID from SecRights where RightName = 'CovenantDialog_DocumentName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'COVENANT_VIEW', 'Role for Covenant Types enquiry',NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'COVENANT_MAKER', 'Role for Covenant Types maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+					
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='COVENANT_VIEW'),(select RoleID from secRoles where RoleCd='COVENANT_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='COVENANT_MAKER'),(select RoleID from secRoles where RoleCd='COVENANT_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId)  from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="vijaya.a" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCOVENANT_TYPES" />
+	</changeSet>
+
+	<changeSet id="2" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SEQCOVENANT_TYPES">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3" author="vijaya.a">
+		<createTable tableName="COVENANT_TYPES">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANT_TYPES_ID" />
+			</column>
+			<column name="Code" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantType" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Category" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocType" type="varchar(50)" />
+			<column name="AllowPostPonement" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MaxAllowedDays" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AllowedPaymentModes" type="varchar(100)" />
+			<column name="AlertsRequired" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Frequency" type="varchar(8)" />
+			<column name="GraceDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertType" type="varchar(10)" />
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="UserTemplate" type="bigint" />
+			<column name="CustomerTemplate" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3.1_pre" author="vijaya.a" dbms="postgresql">
+		<modifyDataType tableName="COVENANT_TYPES" columnName="DocType" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="3.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_CT_DOC_TYPES_DOCTYPE" referencedTableName="BMTDOCUMENTTYPES"
+			referencedColumnNames="DocTypeCode" baseTableName="COVENANT_TYPES" baseColumnNames="DocType" />
+	</changeSet>
+
+	<changeSet id="3.2" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_CT_TEMPLATE_USER_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="COVENANT_TYPES" baseColumnNames="UserTemplate" />
+	</changeSet>
+
+	<changeSet id="3.3" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_CT_TEMPLATE_CUST_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="COVENANT_TYPES" baseColumnNames="CustomerTemplate" />
+	</changeSet>
+
+	<changeSet id="3.4" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COVENANT_TYPES ADD CONSTRAINT DF_COVENANT_TYPES_ALLOWPOSTPONEMENT DEFAULT 0 FOR ALLOWPOSTPONEMENT;
+				ALTER TABLE COVENANT_TYPES ADD CONSTRAINT DF_COVENANT_TYPES_MAXALLOWEDDAYS DEFAULT 0 FOR MAXALLOWEDDAYS;
+				ALTER TABLE COVENANT_TYPES ADD CONSTRAINT DF_COVENANT_TYPES_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+				ALTER TABLE COVENANT_TYPES ADD CONSTRAINT DF_COVENANT_TYPES_GRACEDAYS DEFAULT 0 FOR GRACEDAYS;
+				ALTER TABLE COVENANT_TYPES ADD CONSTRAINT DF_COVENANT_TYPES_ALERTDAYS DEFAULT 0 FOR ALERTDAYS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3.5" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AllowPostPonement" tableName="COVENANT_TYPES" defaultValue="0" />
+		<addDefaultValue columnName="MaxAllowedDays" tableName="COVENANT_TYPES" defaultValue="0" />
+		<addDefaultValue columnName="AlertsRequired" tableName="COVENANT_TYPES" defaultValue="0" />
+		<addDefaultValue columnName="GraceDays" tableName="COVENANT_TYPES" defaultValue="0" />
+		<addDefaultValue columnName="AlertDays" tableName="COVENANT_TYPES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="4" author="vijaya.a">
+		<createTable tableName="COVENANT_TYPES_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANT_TYPES_TEMP_ID" />
+			</column>
+			<column name="Code" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantType" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Category" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocType" type="varchar(50)" />
+			<column name="AllowPostPonement" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MaxAllowedDays" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AllowedPaymentModes" type="varchar(100)" />
+			<column name="AlertsRequired" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Frequency" type="varchar(8)" />
+			<column name="GraceDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertType" type="varchar(10)" />
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="UserTemplate" type="bigint" />
+			<column name="CustomerTemplate" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="4.1_pre" author="vijaya.a" dbms="postgresql">
+		<modifyDataType tableName="COVENANT_TYPES_TEMP" columnName="DocType" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="4.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_CT_T_DOC_TYPES_DOCTYPE" referencedTableName="BMTDOCUMENTTYPES"
+			referencedColumnNames="DocTypeCode" baseTableName="COVENANT_TYPES" baseColumnNames="DocType" />
+	</changeSet>
+
+	<changeSet id="4.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_CT_T_TEMPLATE_USER_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="COVENANT_TYPES" baseColumnNames="UserTemplate" />
+	</changeSet>
+
+	<changeSet id="4.3" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_CT_T_TEMPLATE_CUST_TEMPLATE" referencedTableName="TEMPLATES"
+			referencedColumnNames="TemplateId" baseTableName="COVENANT_TYPES" baseColumnNames="CustomerTemplate" />
+	</changeSet>
+
+	<changeSet id="4.4" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COVENANT_TYPES_TEMP ADD CONSTRAINT DF_COVENANT_TYPES_TEMP_ALLOWPOSTPONEMENT DEFAULT 0 FOR ALLOWPOSTPONEMENT;
+				ALTER TABLE COVENANT_TYPES_TEMP ADD CONSTRAINT DF_COVENANT_TYPES_TEMP_MAXALLOWEDDAYS DEFAULT 0 FOR MAXALLOWEDDAYS;
+				ALTER TABLE COVENANT_TYPES_TEMP ADD CONSTRAINT DF_COVENANT_TYPES_TEMP_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+				ALTER TABLE COVENANT_TYPES_TEMP ADD CONSTRAINT DF_COVENANT_TYPES_TEMP_GRACEDAYSD DEFAULT 0 FOR GRACEDAYS;
+				ALTER TABLE COVENANT_TYPES_TEMP ADD CONSTRAINT DF_COVENANT_TYPES_TEMP_ALERTDAYS DEFAULT 0 FOR ALERTDAYS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4.5" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AllowPostPonement" tableName="COVENANT_TYPES_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="MaxAllowedDays" tableName="COVENANT_TYPES" defaultValue="0" />
+		<addDefaultValue columnName="AlertsRequired" tableName="COVENANT_TYPES_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="GraceDays" tableName="COVENANT_TYPES_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AlertDays" tableName="COVENANT_TYPES_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="5" author="vijaya.a">
+		<createView viewName="COVENANT_TYPES_VIEW">
+			SELECT T1.Id,
+			  T1.Code,
+			  T1.Description,
+			  T1.CovenantType,
+			  T1.Category,
+			  T1.DocType,
+			  T2.DOCTYPEDESC docTypeName,
+			  T1.AllowPostPonement,
+			  T1.MaxAllowedDays,
+			  T1.AllowedPaymentModes,
+			  T1.AlertsRequired,
+			  T1.Frequency,
+			  T1.GraceDays,
+			  T1.AlertDays,
+			  T1.AlertType,
+			  T1.AlertToRoles,
+			  T1.UserTemplate,
+			  T3.TemplateCode UserTemplateCode,
+			  T3.TemplateDesc UserTemplateName,
+			  T1.CustomerTemplate,
+			  T4.TemplateCode CustomerTemplateCode,
+			  T4.TemplateDesc CustomerTemplateName,
+			  T1.Version ,
+			  T1.LastMntBy,
+			  T1.LastMntOn,
+			  T1.RecordStatus,
+			  T1.RoleCode,
+			  T1.NextRoleCode,
+			  T1.TaskId,
+			  T1.NextTaskId,
+			  T1.RecordType,
+			  T1.WorkflowId
+			FROM COVENANT_TYPES_Temp T1
+			LEFT JOIN BMTDOCUMENTTYPES T2 ON T2.DocTypeCode = T1.DocType
+			LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
+			UNION ALL
+			 SELECT T1.Id,
+			  T1.Code,
+			  T1.Description,
+			  T1.CovenantType,
+			  T1.Category,
+			  T1.DocType,
+			  T2.DOCTYPEDESC docTypeName,
+			  T1.AllowPostPonement,
+			  T1.MaxAllowedDays,
+			  T1.AllowedPaymentModes,
+			  T1.AlertsRequired,
+			  T1.Frequency,
+			  T1.GraceDays,
+			  T1.AlertDays,
+			  T1.AlertType,
+			  T1.AlertToRoles,
+			  T1.UserTemplate,
+			  T3.TemplateCode userTemplateCode,
+			  T3.TemplateDesc userTemplateName,
+			  T1.CustomerTemplate,
+			  T4.TemplateCode customerTemplateCode,
+			  T4.TemplateDesc customerTemplateName,
+			  T1.Version ,
+			  T1.LastMntBy,
+			  T1.LastMntOn,
+			  T1.RecordStatus,
+			  T1.RoleCode,
+			  T1.NextRoleCode,
+			  T1.TaskId,
+			  T1.NextTaskId,
+			  T1.RecordType,
+			  T1.WorkflowId
+			FROM COVENANT_TYPES T1
+			LEFT JOIN BMTDOCUMENTTYPES T2 ON T2.DocTypeCode = T1.DocType
+			LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
+			WHERE NOT EXISTS (SELECT 1 FROM COVENANT_TYPES_TEMP WHERE Id = T1.Id)
+		</createView>
+	</changeSet>
+
+	<changeSet id="6" author="vijaya.a">
+		<createView viewName="COVENANT_TYPES_AVIEW">
+			  SELECT T1.Id,
+			  T1.Code,
+			  T1.Description,
+			  T1.CovenantType,
+			  T1.Category,
+			  T1.DocType,
+			  T2.DOCTYPEDESC docTypeName,
+			  T1.AllowPostPonement,
+			  T1.MaxAllowedDays,
+			  T1.AllowedPaymentModes,
+			  T1.AlertsRequired,
+			  T1.Frequency,
+			  T1.GraceDays,
+			  T1.AlertDays,
+			  T1.AlertType,
+			  T1.AlertToRoles,
+			  T1.UserTemplate,
+			  T3.TemplateCode userTemplateCode,
+			  T3.TemplateDesc userTemplateName,
+			  T1.CustomerTemplate,
+			  T4.TemplateCode customerTemplateCode,
+			  T4.TemplateDesc customerTemplateName,
+			  T1.Version ,
+			  T1.LastMntBy,
+			  T1.LastMntOn,
+			  T1.RecordStatus,
+			  T1.RoleCode,
+			  T1.NextRoleCode,
+			  T1.TaskId,
+			  T1.NextTaskId,
+			  T1.RecordType,
+			  T1.WorkflowId
+			FROM COVENANT_TYPES T1
+			INNER JOIN BMTDOCUMENTTYPES T2 ON T2.DocTypeCode = T1.DocType
+			LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
+		</createView>
+	</changeSet>
+
+	<changeSet id="7" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				insert into COVENANT_TYPES 			
+				select ROW_NUMBER() OVER (ORDER BY CovenantType, LOS, PDD, OTC), 
+                CovenantType, 
+                DocTypeDesc, 
+                COALESCE(CASE WHEN LOS=1 THEN 'LOS' ELSE NULL END,
+				CASE WHEN PDD=1 THEN 'PDD' ELSE NULL END,
+				CASE WHEN OTC=1 THEN 'OTC' ELSE NULL END, 'LOS'
+				) CTYPE, 'SC',  CovenantType, 0, 0, NULL, 0, NULL, 0, 0, NULL,  NULL, NULL, NULL, 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0 from (
+				select distinct * from (select CovenantType, DT.DocTypeDesc, case when (mandrole <> '' or mandrole <> NULL) then 1 else 0 end LOS, alwPostPone PDD, alwotc OTC
+				from fincovenanttype CT
+				inner join BMTDOCUMENTTYPES DT on DT.DocTypeCode = CT.covenantType
+				UNION ALL
+				select CovenantType, DT.DocTypeDesc, case when (mandrole <> '' or mandrole <> NULL) then 1 else 0 end LOS, alwPostPone PDD, alwotc OTC
+				from fincovenanttype_Temp CT
+				inner join BMTDOCUMENTTYPES DT on DT.DocTypeCode = CT.covenantType) covenants) T
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7.1" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				 select setval('SEQCOVENANT_TYPES',(select Max(id) from COVENANT_TYPES_VIEW));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7.1" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				DECLARE @SEQNO INT
+				SELECT @SEQNO  = COALESCE(MAX(ID), 0) FROM COVENANT_TYPES_VIEW
+
+				DBCC CHECKIDENT ('SEQCOVENANT_TYPES', RESEED,  @SEQNO)
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7.1" author="vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+				 ALTER SEQUENCE SEQCOVENANT_TYPES RESTART WITH (select Max(id) from COVENANT_TYPES_VIEW);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7.2" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update COVENANT_TYPES set MaxAllowedDays = (select CAST(sysparmvalue as int) from smtparameters where sysparmcode = 'FUTUREDAYS_COV_RECEIVED_DATE') where CovenantType = 'PDD';
+				update COVENANT_TYPES set AllowedPaymentModes = (select sysparmvalue from smtparameters where sysparmcode = 'COVENANT_REPAY_OTC_TYPE') where CovenantType = 'OTC';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="vijaya.a" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCOVENANTS" />
+	</changeSet>
+
+	<changeSet id="8" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SEQCOVENANTS">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="9" author="vijaya.a">
+		<createTable tableName="COVENANTS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANTS_ID" />
+			</column>
+			<column name="KeyReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Module" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantTypeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOS" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MandatoryRole" type="varchar(100)" />
+			<column name="OTC" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="PDD" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableDate" type="datetime" />
+			<column name="AllowWaiver" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MaxAllowedDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentReceived" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentReceivedDate" type="datetime" />
+			<column name="AllowPostPonement" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtendedDate" type="datetime" />
+			<column name="AllowedPaymentModes" type="varchar(100)" />
+			<column name="Frequency" type="varchar(8)" />
+			<column name="NextFrequencyDate" type="datetime" />
+			<column name="GraceDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="GraceDueDate" type="datetime" />
+			<column name="AlertsRequired" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertType" type="varchar(10)" />
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="AlertDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="InternalUse" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdditionalField1" type="varchar(500)" />
+			<column name="AdditionalField2" type="varchar(500)" />
+			<column name="AdditionalField3" type="varchar(500)" />
+			<column name="AdditionalField4" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="9.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_COVENANTS_COVENT_TYPE" referencedTableName="COVENANT_TYPES"
+			referencedColumnNames="Id" baseTableName="COVENANTS" baseColumnNames="covenantTypeId" />
+	</changeSet>
+
+	<changeSet id="9.2" author="murthy.y">
+		<createIndex tableName="COVENANTS" indexName="IX_COVENANTS_KEYREF_MODULE">
+			<column name="KeyReference" />
+			<column name="Module" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="9.3" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_LOS DEFAULT 0 FOR LOS;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_OTC DEFAULT 0 FOR OTC;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_PDD DEFAULT 0 FOR PDD;
+				
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_ALLOWWAIVER DEFAULT 0 FOR ALLOWWAIVER;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_MAXALLOWEDDAYS DEFAULT 0 FOR MAXALLOWEDDAYS;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_DOCUMENTRECEIVED DEFAULT 0 FOR DOCUMENTRECEIVED;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_ALLOWPOSTPONEMENT DEFAULT 0 FOR ALLOWPOSTPONEMENT;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_GRACEDAYS DEFAULT 0 FOR GRACEDAYS;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_ALERTDAYS DEFAULT 0 FOR ALERTDAYS;
+				ALTER TABLE COVENANTS ADD CONSTRAINT DF_COVENANTS_INTERNALUSE DEFAULT 0 FOR INTERNALUSE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="9.3" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="LOS" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="OTC" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="PDD" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="AllowWaiver" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="MaxAllowedDays" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="DocumentReceived" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="AllowPostPonement" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="AlertsRequired" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="GraceDays" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="AlertDays" tableName="COVENANTS" defaultValue="0" />
+		<addDefaultValue columnName="InternalUse" tableName="COVENANTS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="10" author="vijaya.a">
+		<createTable tableName="COVENANTS_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANTS_TEMP_ID" />
+			</column>
+			<column name="KeyReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Module" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantTypeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOS" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MandatoryRole" type="varchar(100)" />
+			<column name="OTC" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="PDD" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableDate" type="datetime" />
+			<column name="AllowWaiver" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MaxAllowedDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentReceived" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentReceivedDate" type="datetime" />
+			<column name="AllowPostPonement" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExtendedDate" type="datetime" />
+			<column name="AllowedPaymentModes" type="varchar(100)" />
+			<column name="Frequency" type="varchar(8)" />
+			<column name="NextFrequencyDate" type="datetime" />
+			<column name="GraceDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="GraceDueDate" type="datetime" />
+			<column name="AlertsRequired" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertType" type="varchar(10)" />
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="AlertDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="InternalUse" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdditionalField1" type="varchar(500)" />
+			<column name="AdditionalField2" type="varchar(500)" />
+			<column name="AdditionalField3" type="varchar(500)" />
+			<column name="AdditionalField4" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="10.1" author="murthy.y">
+		<addForeignKeyConstraint constraintName="FK_COVENANTS_TEMP_COVENT_TYPE" referencedTableName="COVENANT_TYPES"
+			referencedColumnNames="Id" baseTableName="COVENANTS_TEMP" baseColumnNames="covenantTypeId" />
+	</changeSet>
+
+	<changeSet id="10.2" author="murthy.y">
+		<createIndex tableName="COVENANTS_TEMP" indexName="IX_COVENANTS_T_KEYREF_MODULE">
+			<column name="KeyReference" />
+			<column name="Module" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="10.3" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_LOS DEFAULT 0 FOR LOS;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_OTC DEFAULT 0 FOR OTC;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_PDD DEFAULT 0 FOR PDD;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_ALLOWWAIVER DEFAULT 0 FOR ALLOWWAIVER;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_MAXALLOWEDDAYS DEFAULT 0 FOR MAXALLOWEDDAYS;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_DOCUMENTRECEIVED DEFAULT 0 FOR DOCUMENTRECEIVED;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_ALLOWPOSTPONEMENT DEFAULT 0 FOR ALLOWPOSTPONEMENT;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_GRACEDAYS DEFAULT 0 FOR GRACEDAYS;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_ALERTDAYS DEFAULT 0 FOR ALERTDAYS;
+				ALTER TABLE COVENANTS_TEMP ADD CONSTRAINT DF_COVENANTS_TEMP_INTERNALUSE DEFAULT 0 FOR INTERNALUSE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10.3" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="LOS" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="OTC" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="PDD" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AllowWaiver" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="MaxAllowedDays" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="DocumentReceived" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AllowPostPonement" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AlertsRequired" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="GraceDays" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AlertDays" tableName="COVENANTS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="InternalUse" tableName="COVENANTS_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="11" author="vijaya.a">
+		<createView viewName="COVENANTS_AVIEW">
+			SELECT T1.ID
+			,KeyReference
+			,Module
+			,CovenantTypeId
+			,T2.Code CovenantTypeCode
+			,T2.Description CovenantTypeDescription
+			,T2.CovenantType
+			,T2.Category
+			,T1.LOS
+			,MANDATORYROLE
+			,T1.OTC
+			,T1.PDD
+			,RECEIVABLEDATE
+			,ALLOWWAIVER
+			,T1.MaxAllowedDays
+			,DOCUMENTRECEIVED
+			,DOCUMENTRECEIVEDDATE
+			,T1.ALLOWPOSTPONEMENT
+			,T1.AllowedPaymentModes
+			,EXTENDEDDATE
+			,T1.FREQUENCY
+			,NEXTFREQUENCYDATE
+			,T1.GRACEDAYS
+			,GRACEDUEDATE
+			,T1.AlertsRequired
+			,T1.AlertType
+			,T1.ALERTTOROLES
+			,T1.ALERTDAYS
+			,INTERNALUSE
+			,REMARKS
+			,ADDITIONALFIELD1
+			,ADDITIONALFIELD2
+			,ADDITIONALFIELD3
+			,ADDITIONALFIELD4
+			,T1.VERSION
+			,T1.LASTMNTBY
+			,T1.LASTMNTON
+			,T1.RECORDSTATUS
+			,T1.ROLECODE
+			,T1.NEXTROLECODE
+			,T1.TASKID
+			,T1.NEXTTASKID
+			,T1.RECORDTYPE
+			,T1.WORKFLOWID
+			from COVENANTS T1
+			INNER JOIN COVENANT_TYPES T2 ON T2.ID = T1.CovenantTypeId
+		</createView>
+	</changeSet>
+	<changeSet id="12" author="vijaya.a">
+		<createView viewName="COVENANTS_VIEW">
+			SELECT T1.ID
+			,KeyReference
+			,Module
+			,CovenantTypeId
+			,T2.Code CovenantTypeCode
+			,T2.Description CovenantTypeDescription
+			,T2.CovenantType
+			,T2.Category
+			,T1.LOS
+			,MANDATORYROLE
+			,T1.OTC
+			,T1.PDD
+			,RECEIVABLEDATE
+			,ALLOWWAIVER
+			,T1.MaxAllowedDays
+			,DOCUMENTRECEIVED
+			,DOCUMENTRECEIVEDDATE
+			,T1.ALLOWPOSTPONEMENT
+			,T1.AllowedPaymentModes
+			,EXTENDEDDATE
+			,T1.FREQUENCY
+			,NEXTFREQUENCYDATE
+			,T1.GRACEDAYS
+			,GRACEDUEDATE
+			,T1.AlertsRequired
+			,T1.AlertType
+			,T1.ALERTTOROLES
+			,T1.ALERTDAYS
+			,INTERNALUSE
+			,REMARKS
+			,ADDITIONALFIELD1
+			,ADDITIONALFIELD2
+			,ADDITIONALFIELD3
+			,ADDITIONALFIELD4
+			,T1.VERSION
+			,T1.LASTMNTBY
+			,T1.LASTMNTON
+			,T1.RECORDSTATUS
+			,T1.ROLECODE
+			,T1.NEXTROLECODE
+			,T1.TASKID
+			,T1.NEXTTASKID
+			,T1.RECORDTYPE
+			,T1.WORKFLOWID
+			from COVENANTS_TEMP T1
+			INNER JOIN COVENANT_TYPES T2 ON T2.ID = T1.CovenantTypeId
+			UNION ALL
+			SELECT T1.ID
+			,KeyReference
+			,Module
+			,CovenantTypeId
+			,T2.Code CovenantTypeCode
+			,T2.Description CovenantTypeDescription
+			,T2.CovenantType
+			,T2.Category
+			,T1.LOS
+			,MANDATORYROLE
+			,T1.OTC
+			,T1.PDD
+			,RECEIVABLEDATE
+			,ALLOWWAIVER
+			,T1.MaxAllowedDays
+			,DOCUMENTRECEIVED
+			,DOCUMENTRECEIVEDDATE
+			,T1.ALLOWPOSTPONEMENT
+			,T1.AllowedPaymentModes
+			,EXTENDEDDATE
+			,T1.FREQUENCY
+			,NEXTFREQUENCYDATE
+			,T1.GRACEDAYS
+			,GRACEDUEDATE
+			,T1.AlertsRequired
+			,T1.AlertType
+			,T1.ALERTTOROLES
+			,T1.ALERTDAYS
+			,INTERNALUSE
+			,REMARKS
+			,ADDITIONALFIELD1
+			,ADDITIONALFIELD2
+			,ADDITIONALFIELD3
+			,ADDITIONALFIELD4
+			,T1.VERSION
+			,T1.LASTMNTBY
+			,T1.LASTMNTON
+			,T1.RECORDSTATUS
+			,T1.ROLECODE
+			,T1.NEXTROLECODE
+			,T1.TASKID
+			,T1.NEXTTASKID
+			,T1.RECORDTYPE
+			,T1.WORKFLOWID
+			from COVENANTS T1
+			INNER JOIN COVENANT_TYPES T2 ON T2.ID = T1.CovenantTypeId
+			WHERE NOT EXISTS (SELECT 1 FROM COVENANTS_TEMP WHERE Id = T1.Id)
+		</createView>
+	</changeSet>
+	<changeSet id="13" author="vijaya.a">
+		<createTable tableName="COVENANTS_DM">
+			<column name="Id" type="bigint" autoIncrement="true" />
+			<column name="KeyReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Module" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantTypeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="LOS" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MandatoryRole" type="varchar(100)" />
+			<column name="OTC" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="PDD" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableDate" type="datetime" />
+			<column name="AllowWaiver" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="MaxAllowedDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentReceived" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="DocumentReceivedDate" type="datetime" />
+			<column name="AllowPostPonement" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AllowedPaymentModes" type="varchar(100)" />
+			<column name="ExtendedDate" type="datetime" />
+			<column name="Frequency" type="varchar(8)" />
+			<column name="NextFrequencyDate" type="datetime" />
+			<column name="GraceDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="GraceDueDate" type="datetime" />
+			<column name="AlertsRequired" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertType" type="varchar(10)" />
+			<column name="AlertToRoles" type="varchar(1000)" />
+			<column name="AlertDays" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="InternalUse" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdditionalField1" type="varchar(500)" />
+			<column name="AdditionalField2" type="varchar(500)" />
+			<column name="AdditionalField3" type="varchar(500)" />
+			<column name="AdditionalField4" type="varchar(500)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+			<column name="TableType" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="13.1" author="murthy.y" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_LOS DEFAULT 0 FOR LOS;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_OTC DEFAULT 0 FOR OTC;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_PDD DEFAULT 0 FOR PDD;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_ALLOWWAIVER DEFAULT 0 FOR ALLOWWAIVER;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_MAXALLOWEDDAYS DEFAULT 0 FOR MAXALLOWEDDAYS;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_DOCUMENTRECEIVED DEFAULT 0 FOR DOCUMENTRECEIVED;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_ALLOWPOSTPONEMENT DEFAULT 0 FOR ALLOWPOSTPONEMENT;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_ALERTSREQUIRED DEFAULT 0 FOR ALERTSREQUIRED;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_GRACEDAYS DEFAULT 0 FOR GRACEDAYS;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_ALERTDAYS DEFAULT 0 FOR ALERTDAYS;
+				ALTER TABLE COVENANTS_DM ADD CONSTRAINT DF_COVENANTS_DM_INTERNALUSE DEFAULT 0 FOR INTERNALUSE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="13.1" author="murthy.y" dbms="postgresql, oracle">
+		<addDefaultValue columnName="LOS" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="OTC" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="PDD" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="AllowWaiver" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="MaxAllowedDays" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="DocumentReceived" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="AllowPostPonement" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="GraceDays" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="AlertsRequired" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="AlertDays" tableName="COVENANTS_DM" defaultValue="0" />
+		<addDefaultValue columnName="InternalUse" tableName="COVENANTS_DM" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="14_pre" author="vijaya.a" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQCOVENANT_DOCUMENTS" />
+	</changeSet>
+
+	<changeSet id="14_pre" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SEQCOVENANT_DOCUMENTS">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="14" author="vijaya.a">
+		<createTable tableName="COVENANT_DOCUMENTS_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANT_DOCUMENTS_TEMP_ID" />
+			</column>
+			<column name="CovenantId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantType" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableDate" type="datetime" />
+			<column name="FrequencyDate" type="datetime" />
+			<column name="DocumentReceivedDate" type="datetime" />
+			<column name="DocumentId" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="14.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_COVENANT_DOCUMENTS_TEMP_CID" referencedTableName="COVENANTS_TEMP"
+			referencedColumnNames="Id" baseTableName="COVENANT_DOCUMENTS_TEMP" baseColumnNames="CovenantId" />
+	</changeSet>
+
+	<changeSet id="14.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_COVENANT_DOCUMENTS_TEMP_DID" referencedTableName="DOCUMENTDETAILS_TEMP"
+			referencedColumnNames="DocId" baseTableName="COVENANT_DOCUMENTS_TEMP" baseColumnNames="DocumentId" />
+	</changeSet>
+
+	<changeSet id="15" author="vijaya.a">
+		<createTable tableName="COVENANT_DOCUMENTS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANT_DOCUMENTS_ID" />
+			</column>
+			<column name="CovenantId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CovenantType" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableDate" type="datetime" />
+			<column name="FrequencyDate" type="datetime" />
+			<column name="DocumentReceivedDate" type="datetime" />
+			<column name="DocumentId" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="15.1" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_COVENANT_DOCUMENTS_CID" referencedTableName="COVENANTS"
+			referencedColumnNames="Id" baseTableName="COVENANT_DOCUMENTS" baseColumnNames="CovenantId" />
+	</changeSet>
+
+	<changeSet id="15.2" author="vijaya.a">
+		<addForeignKeyConstraint constraintName="FK_COVENANT_DOCUMENTS_DID" referencedTableName="DOCUMENTDETAILS"
+			referencedColumnNames="DocId" baseTableName="COVENANT_DOCUMENTS" baseColumnNames="DocumentId" />
+	</changeSet>
+
+	<changeSet id="15.3" author="vijaya.a">
+		<createView viewName="COVENANT_DOCUMENTS_VIEW">
+			select 
+			cd.Id
+			,cd.Covenantid
+			,cd.Covenanttype
+			,cd.Receivabledate
+			,cd.Documentreceiveddate
+			,cd.FrequencyDate
+			,cd.Documentid
+			,dd.docRefId
+			,dd.docCategory
+			,dd.docType
+			,dd.docName
+			,cd.Version
+			,cd.Lastmntby
+			,cd.Lastmnton
+			,cd.Recordstatus
+			,cd.Rolecode
+			,cd.Nextrolecode
+			,cd.Taskid
+			,cd.Nexttaskid
+			,cd.Recordtype
+			,cd.Workflowid
+			from covenant_documents_temp cd
+			left join documentDetails_temp dd on dd.docId = cd.documentId
+			union all
+			select 
+			cd.Id
+			,cd.Covenantid
+			,cd.Covenanttype
+			,cd.Receivabledate
+			,cd.Documentreceiveddate
+			,cd.FrequencyDate
+			,cd.Documentid
+			,dd.docRefId
+			,dd.docCategory
+			,dd.docType
+			,dd.docName
+			,cd.Version
+			,cd.Lastmntby
+			,cd.Lastmnton
+			,cd.Recordstatus
+			,cd.Rolecode
+			,cd.Nextrolecode
+			,cd.Taskid
+			,cd.Nexttaskid
+			,cd.Recordtype
+			,cd.Workflowid
+			from covenant_documents cd
+			left join documentDetails dd on dd.docId = cd.documentId
+			WHERE NOT EXISTS (SELECT 1 FROM covenant_documents_temp WHERE Id = cd.Id)
+		</createView>
+	</changeSet>
+	<changeSet id="15.4" author="vijaya.a">
+		<createView viewName="COVENANT_DOCUMENTS_AVIEW">
+			select 
+			cd.Id
+			,cd.Covenantid
+			,cd.Covenanttype
+			,cd.Receivabledate
+			,cd.Documentreceiveddate
+			,cd.FrequencyDate
+			,cd.Documentid
+			,dd.docCategory
+			,dd.docType
+			,dd.docName
+			,cd.Version
+			,cd.Lastmntby
+			,cd.Lastmnton
+			,cd.Recordstatus
+			,cd.Rolecode
+			,cd.Nextrolecode
+			,cd.Taskid
+			,cd.Nexttaskid
+			,cd.Recordtype
+			,cd.Workflowid
+			from covenant_documents cd
+			left join documentDetails dd on dd.docId = cd.documentId
+		</createView>
+	</changeSet>
+
+	<changeSet id="16" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				insert into COVENANTS_DM (
+				KeyReference
+				,Module
+				,covenanttypeid
+				,los
+				,mandatoryrole
+				,otc
+				,pdd
+				,receivabledate
+				,allowwaiver
+				,MaxAllowedDays
+				,internaluse
+				,remarks
+				,version
+				,lastmntby
+				,lastmnton
+				,recordstatus
+				,rolecode
+				,nextrolecode
+				,taskid
+				,nexttaskid
+				,recordtype
+				,workflowid
+				,tableType) 
+				select FinReference, 'Loan', CT.Id, case when (mandrole <> '' or mandrole <> NULL) then 1 else 0 end LOS, mandrole, alwotc OTC, alwPostPone PDD, ReceivableDate, alwwaiver, MaxAllowedDays, InternalUse, C.Description, C.Version,  C.LastMntBy,  C.LastMntOn,  C.RecordStatus,  C.RoleCode,  C.NextRoleCode,  C.TaskId,  C.NextTaskId,  C.RecordType, 
+				C.WorkflowId, 'M' Record
+				from fincovenanttype C
+				INNER JOIN COVENANT_TYPES  CT ON CT.Code = C.CovenantType
+				union all
+				select FinReference, 'Loan', CT.Id, case when (mandrole <> '' or mandrole <> NULL) then 1 else 0 end LOS, mandrole, alwotc OTC, alwPostPone PDD, ReceivableDate, alwwaiver, MaxAllowedDays, InternalUse, C.Description, C.Version,  C.LastMntBy,  C.LastMntOn,  C.RecordStatus,  C.RoleCode,  C.NextRoleCode,  C.TaskId,  C.NextTaskId,  C.RecordType, 
+				 C.WorkflowId, 'T' Record
+				from fincovenanttype_Temp C
+				INNER JOIN COVENANT_TYPES  CT ON CT.Code = C.CovenantType;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="16.1" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				insert into COVENANTS (
+				Id
+				,KeyReference
+				,Module
+				,covenanttypeid
+				,los
+				,mandatoryrole
+				,otc
+				,pdd
+				,receivabledate
+				,allowwaiver
+				,MaxAllowedDays
+				,internaluse
+				,remarks
+				,version
+				,lastmntby
+				,lastmnton
+				,recordstatus
+				,rolecode
+				,nextrolecode
+				,taskid
+				,nexttaskid
+				,recordtype
+				,workflowid) 
+				select Id, KeyReference, Module, covenanttypeid, los, mandatoryrole, otc, pdd, receivabledate, allowwaiver, MaxAllowedDays, internaluse, remarks, Version, LastMntBy, LastMntOn,  RecordStatus,  RoleCode, NextRoleCode,  TaskId,  NextTaskId, RecordType, 
+				WorkflowId from COVENANTS_DM where tableType = 'M' and KeyReference in (select finreference from financemain);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="16.2" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				insert into COVENANTS_TEMP (
+				Id
+				,KeyReference
+				,Module
+				,covenanttypeid
+				,los
+				,mandatoryrole
+				,otc
+				,pdd
+				,receivabledate
+				,allowwaiver
+				,MaxAllowedDays
+				,internaluse
+				,remarks
+				,version
+				,lastmntby
+				,lastmnton
+				,recordstatus
+				,rolecode
+				,nextrolecode
+				,taskid
+				,nexttaskid
+				,recordtype
+				,workflowid) 
+				select Id, KeyReference, Module, covenanttypeid, los, mandatoryrole, otc, pdd, receivabledate, allowwaiver, MaxAllowedDays, internaluse, remarks, Version, LastMntBy, LastMntOn,  RecordStatus,  RoleCode, NextRoleCode,  TaskId,  NextTaskId, RecordType, 
+				WorkflowId from COVENANTS_DM where tableType = 'T' and KeyReference in (select finreference from financemain_temp);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16.3" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				 select setval('SEQCOVENANTS',(select Max(id) from COVENANTS_VIEW));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16.3" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				DECLARE @SEQNO INT
+				SELECT @SEQNO  = COALESCE(MAX(ID), 0) FROM COVENANT_TYPES_VIEW
+
+				DBCC CHECKIDENT ('SEQCOVENANTS', RESEED,  @SEQNO)
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16.3" author="vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+				declare st varchar2(200);
+ 						nu integer;
+				begin
+		   		Select Coalesce(max(id),0) into nu from (Select max(id)+1 id from COVENANT_TYPES_VIEW );
+		   				st:= 'ALTER SEQUENCE SEQCOVENANTS RESTART START WITH ' ||nu ;
+		      	execute immediate st;
+				end;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="murthy.y">
+		<sql>
+			<![CDATA[
+				INSERT INTO COVENANT_DOCUMENTS select ROW_NUMBER() OVER (ORDER BY C.ID), c.ID, CT.COVENANTTYPE, C.ReceivableDate, NULL, DD.DocReceivedDate, DD.DOCID, 
+				DD.Version,  DD.LastMntBy,  DD.LastMntOn,  DD.RecordStatus,  DD.RoleCode,  DD.NextRoleCode, DD.TaskId,  DD.NextTaskId, DD.RecordType, 
+				DD.WorkflowId  from COVENANTS_DM C
+				inner join covenants ccc on ccc.id = c.id
+				INNER JOIN COVENANT_TYPES CT on CT.ID = C.COVENANTTYPEID
+				INNER JOIN DOCUMENTDETAILs DD ON DD.DOCCATEGORY = CT.DOCTYPE and DocMOdule = 'Finance'  and C.tableType = 'M'
+			]]>
+		</sql>
+
+		<sql>
+			<![CDATA[
+				INSERT INTO COVENANT_DOCUMENTS_TEMP select ROW_NUMBER() OVER (ORDER BY C.ID), c.ID, CT.COVENANTTYPE, C.ReceivableDate, NULL, DD.DocReceivedDate, DD.DOCID, 
+				DD.Version,  DD.LastMntBy,  DD.LastMntOn,  DD.RecordStatus,  DD.RoleCode,  DD.NextRoleCode, DD.TaskId,  DD.NextTaskId, DD.RecordType, 
+				DD.WorkflowId  from COVENANTS_DM C
+				inner join covenants_temp ccc on ccc.id = c.id
+				INNER JOIN COVENANT_TYPES CT on CT.ID = C.COVENANTTYPEID
+				INNER JOIN DOCUMENTDETAILs DD ON DD.DOCCATEGORY = CT.DOCTYPE and DocMOdule = 'Finance'  and C.tableType = 'T'
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17.1" author="vijaya.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				 select setval('SEQCOVENANT_DOCUMENTS',(select Max(id) from COVENANT_DOCUMENTS_VIEW));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17.1" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				DECLARE @SEQNO INT
+				SELECT @SEQNO  = COALESCE(MAX(ID), 0) FROM COVENANT_DOCUMENTS_VIEW
+
+				DBCC CHECKIDENT ('SEQCOVENANT_DOCUMENTS', RESEED,  @SEQNO)
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17.1" author="vijaya.a" dbms="oracle">
+		<sql>
+			<![CDATA[
+				declare st varchar2(200);
+ 					nu integer;
+				begin
+		  		Select Coalesce(max(id),0) into nu from (Select max(id)+1 id from COVENANT_DOCUMENTS_VIEW );
+		   			st:= 'ALTER SEQUENCE SEQCOVENANT_DOCUMENTS RESTART START WITH ' ||nu ;
+		      	execute immediate st;
+				end;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18" author="vijaya.a">
+		<createTable tableName="COVENANT_ALERTS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_COVENANT_ALERTS" />
+			</column>
+			<column name="CovenantId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FrequencyDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="NotificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AlertSentOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="18.1" author="amanullah.m">
+		<addForeignKeyConstraint constraintName="FK_COVENANT_ALERTS_CID" referencedTableName="COVENANTS"
+			baseColumnNames="CovenantId" baseTableName="COVENANT_ALERTS" referencedColumnNames="id" />
+	</changeSet>
+
+	<changeSet id="19" author="vijaya.a">
+		<createView viewName="COVENANT_ALERTS_VIEW">
+			select 
+			 c.Id
+			,c.CovenantTypeId
+			,ct.Code
+			,ct.Description
+			,c.KeyReference
+			,fm.FinType
+			,c.frequency
+			,c.nextfrequencydate
+			,c.alertDays
+			,ct.docType
+			,dt.docTypeDesc docTypeName
+			 from covenants c
+			inner join covenant_Types ct on ct.id = c.covenantTypeId
+			left join bmtdocumenttypes dt on dt.doctypeCode = ct.docType
+			inner join financemain fm on fm.finreference = c.KeyReference and closingstatus is null
+			left join covenant_documents cd on cd.covenantid = c.id
+			where c.pdd = 1 and cd.frequencydate is null or cd.frequencydate != c.nextfrequencydate 
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="20" author="vijaya.a">
+		<createView viewName="operation_roles_view">
+			select distinct roleCd, RoleDesc from SecRoles r
+			inner join SecOPerationRoles opr on opr.roleid = r.roleid
+		</createView>
+	</changeSet>
+
+	<changeSet id="21" author="amanulla.m">
+		<sql>
+			<![CDATA[
+				DELETE FROM TEMPLATEFIELDS WHERE EVENT = 'Covenants';
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'fm_finReference', 'Loan Reference Number', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'fm_finType', 'Loan Type', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'fm_lovDescFinTypeName', 'Loan Type Description', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'ct_custShrtName', 'Customer Name', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_code', 'Covenant Type Code', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_category', 'Covenant Category', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_description', 'Covenant Description', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_docType', 'Document Type', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_frequency', 'Covenant Frequency', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_nextFrequencyDate', 'Covenant Next Frequency Date', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_receivableDate', 'Covenant Receivable date', 'A', 'Covenants');
+				INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'cvnt_docTypeName', 'Document Type', 'A', 'Covenants');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="22" author="amanulla.m">
+		<sql>
+			<![CDATA[
+				insert into ErrorDetails (Code, Language, Severity, Message, RecordStatus, WorkflowId, LastMntBy, Version) values ('ADM004', 'EN', 'E', 'The {0} covenant is due for the frequency {1}.', 'Approved', 0, 1000, 1);
+			]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="23" author="vijaya.a">
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS_TEMP" constraintName="FK_COVENANT_DOCUMENTS_TEMP_DID" />
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_CID" />
+	</changeSet>
+
+	<changeSet id="24" author="shinde.b">
+		<sql>
+			<![CDATA[
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION), 'Excel:Covenant Details Report', 'Covenant Details Report', 1, 'CovenantDetailsReport', 'dataSource', 1, 'menu_Item_CovenantDetailsReport', 1, 1000, null, null, null, null, null, null, 0, current_timestamp, 0, 1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport'), 1, 'Reference', 'LOVSEARCH', 'Reference', 'T.KeyReference', null, 'FinanceMain', 'getFinReference', 'getFinReference', 1, 0, 0, 0, 1, 1, null, null, null, null, 150, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport'), 2, 'Cust CIF', 'LOVSEARCH', 'Customer Number', 't2.custcif', null, 'Customer', 'getCustCIF', 'getCustShrtName', 1, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="25" author="shinde.b">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				
+				INSERT INTO SecGroups Values ((Select max(GrpID)+1 From SecGroups), 'COVENANT_REPORTS', 'Group for Covenant Reports', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_CovenantDetailsReport', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'COVENANT_REPORTS'), (Select RightID from SecRights where RightName = 'menu_Item_CovenantDetailsReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="26" author="shinde.b">
+		<sql>
+			<![CDATA[
+				delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport');
+	            delete from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport';
+	            
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION), 'Excel:Covenant Details Report', 'Covenant Details Report', 1, 'CovenantDetailsReport', 'dataSource', 1, 'menu_Item_CovenantDetailsReport', 1, 1000, null, null, null, null, null, null, 0, current_timestamp, 0, 1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport'), 1, 'Reference', 'LOVSEARCH', 'Reference', 'T.KeyReference', null, 'FinanceMain', 'getFinReference', 'getFinReference', 1, 0, 0, 0, 1, 1, null, null, null, null, 150, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantDetailsReport'), 2, 'Cust CIF', 'LOVSEARCH', 'Customer Number', 't2.custcif', null, 'Customer', 'getCustCIF', 'getCustShrtName', 1, 0, 0, 0, 2, 0, ' ', ' ', ' ', ' ', 250, 0, '=', 1, 1000, 'Approved', null, null, null, null, null, 0, current_timestamp, null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="27" author="shinde.b">
+		<sql>
+			<![CDATA[
+	            delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport');
+	            delete from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport';
+	
+	            Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Put Call Report','Put Call Report',1,'PutCallReport','dataSource',1,'menu_Item_PutCallReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+	            Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport'),1,'Division','LOVSEARCH','Division','fincategory',null,'DivisionDetail','getDivisionCode','getDivisionCodeDesc',1,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	            Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport'),2,'FinType','LOVSEARCH','Loan Type','fintype',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+	            Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_PutCallReport'),3,'CustCIF1','LOVSEARCH','Customer Number','custcif',null,'Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BRIEF DEAL INFORMATION" language="groovy" pageWidth="842" pageHeight="595" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="94d75d8e-97ff-4cd9-9adc-cc38e21748bb">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.keep.first.band.1" value="columnHeader"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.sheet.names.1" value="BriefDealInformation"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<parameter name="userName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="searchCriteria" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="whereCondition" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="appCcy" class="java.lang.String"/>
+	<parameter name="appDate" class="java.util.Date"/>
+	<parameter name="appccyEditField" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[Select * from RPT_briefDealinformation_view $P!{whereCondition}  ORDER BY BranchCode,ProductCode,FinType,FinCCY]]>
+	</queryString>
+	<field name="BranchCode" class="java.lang.String"/>
+	<field name="FinBranch" class="java.lang.String"/>
+	<field name="FinCCY" class="java.lang.String"/>
+	<field name="FinTypeDesc" class="java.lang.String"/>
+	<field name="CcyDesc" class="java.lang.String"/>
+	<field name="CcyEditField" class="java.math.BigDecimal"/>
+	<field name="FinType" class="java.lang.String"/>
+	<field name="ProductCode" class="java.lang.String"/>
+	<field name="FinReference" class="java.lang.String"/>
+	<field name="CustCIF" class="java.lang.String"/>
+	<field name="CustShrtName" class="java.lang.String"/>
+	<field name="insTotal" class="java.lang.Long"/>
+	<field name="insSetteled" class="java.lang.Long"/>
+	<field name="insRemaining" class="java.lang.Long"/>
+	<field name="finTotal" class="java.math.BigDecimal"/>
+	<field name="finSetteled" class="java.math.BigDecimal"/>
+	<field name="ConExchgfinTotal" class="java.math.BigDecimal"/>
+	<field name="ConExchgfinSetteled" class="java.math.BigDecimal"/>
+	<field name="FinStartDate" class="java.sql.Timestamp"/>
+	<field name="FinisActive" class="java.lang.String"/>
+	<variable name="FinanceTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="FinBranch" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgfinTotal}]]></variableExpression>
+	</variable>
+	<variable name="FinanceSetteled" class="java.math.BigDecimal" resetType="Group" resetGroup="FinBranch" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgfinSetteled}]]></variableExpression>
+	</variable>
+	<variable name="FinanceProductcodeTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgfinTotal}]]></variableExpression>
+	</variable>
+	<variable name="FinanceProductcodeSetteled" class="java.math.BigDecimal" resetType="Group" resetGroup="Productcode" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgfinSetteled}]]></variableExpression>
+	</variable>
+	<variable name="FinanceFintypeTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="Fintype" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgfinTotal}]]></variableExpression>
+	</variable>
+	<variable name="FinanceFintypeSetteled" class="java.math.BigDecimal" resetType="Group" resetGroup="Fintype" calculation="Sum">
+		<variableExpression><![CDATA[$F{ConExchgfinSetteled}]]></variableExpression>
+	</variable>
+	<variable name="FinanceFinCcyTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="FinCcy" calculation="Sum">
+		<variableExpression><![CDATA[$F{finTotal}]]></variableExpression>
+	</variable>
+	<variable name="FinanceFinCcySetteled" class="java.math.BigDecimal" resetType="Group" resetGroup="FinCcy" calculation="Sum">
+		<variableExpression><![CDATA[$F{finSetteled}]]></variableExpression>
+	</variable>
+	<group name="FinBranch" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{FinBranch}]]></groupExpression>
+		<groupHeader>
+			<band height="48">
+				<frame>
+					<reportElement uuid="5f45dd80-06fe-4399-9342-a1db8151db13" style="Group Header" mode="Opaque" x="0" y="0" width="802" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC">
+						<printWhenExpression><![CDATA[$F{FinBranch}==null]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textField>
+						<reportElement uuid="d94d04ca-6284-4b09-a8ca-251f0a34b41a" style="Group Header" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#B69898"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[$F{FinBranch}==null?" No Records Found " :" "]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="16" width="802" height="15" forecolor="#B89F7D" backcolor="#CCCCCC"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="318" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Totals ]]></text>
+					</staticText>
+				</frame>
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="32" width="802" height="15" forecolor="#B89F7D" backcolor="#F2EBDF"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="106" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Branch                  :]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="147b97e0-046d-4ce9-80ae-fc06a1489f35" style="Detail Value" x="106" y="0" width="696" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="318" y="16" width="484" height="15"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<leftPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+						<rightPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph leftIndent="3" rightIndent="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA["The Total Amounts are in the Default Currency "+$P{appCcy}+" except Loan Currency totals"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#F2EBDF"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="FinBranch" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?($V{FinanceTotal}-$V{FinanceSetteled}):" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="FinBranch" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="478" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?$V{FinanceTotal}:" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="478" height="15"/>
+						<textElement textAlignment="Center">
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Branch Totals]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="FinBranch" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="586" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?$V{FinanceSetteled}:" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Productcode">
+		<groupExpression><![CDATA[$F{ProductCode}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#C8CCB8"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="106" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Product                 :]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="147b97e0-046d-4ce9-80ae-fc06a1489f35" style="Detail Value" x="106" y="0" width="696" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{ProductCode}==null?" ":$F{ProductCode}+" "]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#E6EBD4"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="478" height="15"/>
+						<textElement textAlignment="Center">
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Product Totals]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Productcode" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="478" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?$V{FinanceProductcodeTotal}:" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Productcode" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="586" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?$V{FinanceProductcodeSetteled}:" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Productcode" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?($V{FinanceProductcodeTotal}-$V{FinanceProductcodeSetteled}):" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="Fintype">
+		<groupExpression><![CDATA[$F{FinType}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#D0C5B3"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="106" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Loan Type        :]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="147b97e0-046d-4ce9-80ae-fc06a1489f35" style="Detail Value" x="106" y="0" width="696" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinTypeDesc}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#F0ECE7"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="478" height="15"/>
+						<textElement textAlignment="Center">
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Loan Type Totals]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Fintype" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="478" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?$V{FinanceFintypeTotal}:" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Fintype" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="586" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?$V{FinanceFintypeSetteled}:" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Fintype" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{FinBranch}!=null?($V{FinanceFintypeTotal}-$V{FinanceFintypeSetteled}):" "]]></textFieldExpression>
+						<patternExpression><![CDATA[$P{appccyEditField}==0 ?"#,##0":
+$P{appccyEditField}==1 ?"#,##0.0":
+$P{appccyEditField}==2 ?"#,##0.00":
+$P{appccyEditField}==3 ?"#,##0.000":
+$P{appccyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="FinCcy">
+		<groupExpression><![CDATA[$F{FinCCY}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#C9DCE0"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="106" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Loan Currency :]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+						<reportElement uuid="147b97e0-046d-4ce9-80ae-fc06a1489f35" style="Detail Value" x="106" y="0" width="696" height="15"/>
+						<textElement>
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CcyDesc}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="17">
+				<frame>
+					<reportElement uuid="1b6e8528-e328-40a3-bab9-8969e8ecf769" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#E6F1F5"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="0" y="0" width="478" height="15"/>
+						<textElement textAlignment="Center">
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3"/>
+						</textElement>
+						<text><![CDATA[Loan Currency Totals]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="FinCcy" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="478" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?($V{FinanceFinCcyTotal}):
+$F{CcyEditField}==1 ?(($V{FinanceFinCcyTotal})/10):
+$F{CcyEditField}==2 ?(($V{FinanceFinCcyTotal})/100):
+$F{CcyEditField}==3 ?(($V{FinanceFinCcyTotal})/1000):
+$F{CcyEditField}==4 ?(($V{FinanceFinCcyTotal})/10000):(($V{FinanceFinCcyTotal})/100000)]]></textFieldExpression>
+						<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
+$F{CcyEditField}==1 ?"#,##0.0":
+$F{CcyEditField}==2 ?"#,##0.00":
+$F{CcyEditField}==3 ?"#,##0.000":
+$F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="FinCcy" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="586" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?($V{FinanceFinCcySetteled}):
+$F{CcyEditField}==1 ?(($V{FinanceFinCcySetteled})/10):
+$F{CcyEditField}==2 ?(($V{FinanceFinCcySetteled})/100):
+$F{CcyEditField}==3 ?(($V{FinanceFinCcySetteled})/1000):
+$F{CcyEditField}==4 ?(($V{FinanceFinCcySetteled})/10000):(($V{FinanceFinCcySetteled})/100000)]]></textFieldExpression>
+						<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
+$F{CcyEditField}==1 ?"#,##0.0":
+$F{CcyEditField}==2 ?"#,##0.00":
+$F{CcyEditField}==3 ?"#,##0.000":
+$F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+					<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="FinCcy" pattern="" isBlankWhenNull="true">
+						<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="0" width="108" height="15"/>
+						<textElement textAlignment="Right">
+							<font isPdfEmbedded="true"/>
+							<paragraph rightIndent="2"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?(($V{FinanceFinCcyTotal}-$V{FinanceFinCcySetteled})):
+$F{CcyEditField}==1 ?((($V{FinanceFinCcyTotal}-$V{FinanceFinCcySetteled}))/10):
+$F{CcyEditField}==2 ?((($V{FinanceFinCcyTotal}-$V{FinanceFinCcySetteled}))/100):
+$F{CcyEditField}==3 ?((($V{FinanceFinCcyTotal}-$V{FinanceFinCcySetteled}))/1000):
+$F{CcyEditField}==4 ?((($V{FinanceFinCcyTotal}-$V{FinanceFinCcySetteled}))/10000):((($V{FinanceFinCcyTotal}-$V{FinanceFinCcySetteled}))/100000)]]></textFieldExpression>
+						<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
+$F{CcyEditField}==1 ?"#,##0.0":
+$F{CcyEditField}==2 ?"#,##0.00":
+$F{CcyEditField}==3 ?"#,##0.000":
+$F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupFooter>
+	</group>
+	<columnHeader>
+		<band height="129">
+			<frame>
+				<reportElement uuid="c261d61d-edcb-41ff-bef5-57cde087d43d" x="0" y="0" width="802" height="55"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<frame>
+					<reportElement uuid="062791cd-50fa-4068-b111-405816383962" x="0" y="10" width="802" height="45"/>
+					<image hAlign="Center" vAlign="Middle">
+						<reportElement uuid="191dc9c0-d24b-4d40-b0d2-8a4dd0415629" x="0" y="0" width="106" height="45"/>
+						<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+					</image>
+					<staticText>
+						<reportElement uuid="ce8aa4d0-a410-4e32-95a9-39fee0f119cd" style="Title Header" x="106" y="0" width="480" height="35"/>
+						<textElement textAlignment="Center"/>
+						<text><![CDATA[Brief Deal Information]]></text>
+					</staticText>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="586" y="0" width="108" height="18"/>
+						<textElement textAlignment="Right" verticalAlignment="Bottom">
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3" rightIndent="3"/>
+						</textElement>
+						<text><![CDATA[Application Date :]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" pattern="dd-MMM-yyyy" isBlankWhenNull="true">
+						<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="0" width="108" height="18"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<leftPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.0" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Bottom">
+							<paragraph leftIndent="3" rightIndent="3"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$P{appDate}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement uuid="917d5704-5b0c-434f-9af4-229fd54eaee3" style="Detail Header" x="586" y="18" width="108" height="17"/>
+						<textElement textAlignment="Right">
+							<font pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+							<paragraph leftIndent="3" rightIndent="3"/>
+						</textElement>
+						<text><![CDATA[Application Ccy :]]></text>
+					</staticText>
+					<textField isStretchWithOverflow="true" pattern="dd-MMM-yy" isBlankWhenNull="true">
+						<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="18" width="108" height="17"/>
+						<box>
+							<topPen lineWidth="0.0" lineColor="#666666"/>
+							<leftPen lineWidth="0.0" lineColor="#666666"/>
+							<bottomPen lineWidth="0.0" lineColor="#666666"/>
+							<rightPen lineWidth="0.0" lineColor="#666666"/>
+						</box>
+						<textElement textAlignment="Left" verticalAlignment="Middle">
+							<paragraph leftIndent="3" rightIndent="3"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$P{appCcy}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement uuid="edacad44-77c5-49f4-812a-f58644756f9e" mode="Opaque" x="0" y="55" width="802" height="20" backcolor="#E1B778"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<staticText>
+					<reportElement uuid="9b77a10b-92ef-4888-893e-ec05276658bc" style="Title Description header" x="0" y="0" width="106" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Report Description :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="bf059788-4468-4585-b6a2-1015318ee95c" style="Title Description" x="106" y="0" width="696" height="20"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[This report will display the Brief Deal Information details with below report selection]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement uuid="ef627e63-8085-4829-90ed-346e833cf62e" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="78" width="802" height="18" isRemoveLineWhenBlank="true" backcolor="#F0F0F0">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineColor="#666666"/>
+					<topPen lineWidth="0.5" lineColor="#666666"/>
+					<leftPen lineWidth="0.5" lineColor="#666666"/>
+					<bottomPen lineWidth="0.5" lineColor="#666666"/>
+					<rightPen lineWidth="0.5" lineColor="#666666"/>
+				</box>
+				<staticText>
+					<reportElement uuid="bd6e56f6-d800-4825-bae4-25c73f68212c" style="Title Description header" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="106" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement verticalAlignment="Top"/>
+					<text><![CDATA[Report Selection :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="cb7c3728-0044-453a-8808-812ae69d1aad" style="Title Description" positionType="Float" stretchType="RelativeToTallestObject" x="106" y="0" width="696" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineColor="#666666"/>
+						<bottomPen lineWidth="0.0" lineColor="#666666"/>
+					</box>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{searchCriteria}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="2375b4ec-3bac-4c49-aba8-1132712cfe60" positionType="FixRelativeToBottom" x="0" y="97" width="802" height="32"/>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="0" y="0" width="66" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="318" y="0" width="160" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Installments]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="43a623c3-f10a-4d15-9c97-0f4af6597d94" style="Detail Header" x="318" y="15" width="50" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="19e53f70-07cb-4dcb-b94d-6c451ee635c0" style="Detail Header" x="368" y="15" width="50" height="15"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Setteled]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0cd6a233-919a-43a3-bd90-b4c7d5689b9e" style="Detail Header" x="586" y="15" width="108" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Setteled]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b225487f-93a9-49c5-97dd-e2caa8e8a901" style="Detail Header" x="694" y="15" width="108" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Remaining]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="19e53f70-07cb-4dcb-b94d-6c451ee635c0" style="Detail Header" x="478" y="15" width="108" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="66" y="0" width="125" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Customer Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="191" y="0" width="127" height="30"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Loan Reference]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="19e53f70-07cb-4dcb-b94d-6c451ee635c0" style="Detail Header" x="418" y="15" width="60" height="15"/>
+					<box>
+						<pen lineWidth="0.5" lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Remaining]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="615a708f-e8e0-411b-91e2-018c5d8d2a75" style="Detail Header" x="478" y="0" width="324" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Loan Amount (P+P)]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement uuid="6357e981-933d-4235-835d-698636072ec5" x="0" y="0" width="802" height="15"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="66" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CustCIF}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="318" y="0" width="50" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{insTotal}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="66" y="0" width="125" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CustShrtName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="8e60470e-4c21-4775-8a83-9fb63d2095f6" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="191" y="0" width="127" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Left">
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FinReference}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="368" y="0" width="50" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{insSetteled}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="418" y="0" width="60" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{insRemaining}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="478" y="0" width="108" height="15"/>
+					<box>
+						<pen lineColor="#666666"/>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<leftPen lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?($F{finTotal}):
+$F{CcyEditField}==1 ?(($F{finTotal})/10):
+$F{CcyEditField}==2 ?(($F{finTotal})/100):
+$F{CcyEditField}==3 ?(($F{finTotal})/1000):
+$F{CcyEditField}==4 ?(($F{finTotal})/10000):(($F{finTotal})/100000)]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
+$F{CcyEditField}==1 ?"#,##0.0":
+$F{CcyEditField}==2 ?"#,##0.00":
+$F{CcyEditField}==3 ?"#,##0.000":
+$F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="586" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?($F{finSetteled}):
+$F{CcyEditField}==1 ?(($F{finSetteled})/10):
+$F{CcyEditField}==2 ?(($F{finSetteled})/100):
+$F{CcyEditField}==3 ?(($F{finSetteled})/1000):
+$F{CcyEditField}==4 ?(($F{finSetteled})/10000):(($F{finSetteled})/100000)]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
+$F{CcyEditField}==1 ?"#,##0.0":
+$F{CcyEditField}==2 ?"#,##0.00":
+$F{CcyEditField}==3 ?"#,##0.000":
+$F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement uuid="db79a8cf-2d3a-449e-aa01-d5d7c8202610" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="694" y="0" width="108" height="15"/>
+					<box>
+						<topPen lineWidth="0.5" lineColor="#666666"/>
+						<bottomPen lineWidth="0.5" lineColor="#666666"/>
+						<rightPen lineWidth="0.5" lineColor="#666666"/>
+					</box>
+					<textElement textAlignment="Right">
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CcyEditField}==0 ?(($F{finTotal}-$F{finSetteled})):
+$F{CcyEditField}==1 ?((($F{finTotal}-$F{finSetteled}))/10):
+$F{CcyEditField}==2 ?((($F{finTotal}-$F{finSetteled}))/100):
+$F{CcyEditField}==3 ?((($F{finTotal}-$F{finSetteled}))/1000):
+$F{CcyEditField}==4 ?((($F{finTotal}-$F{finSetteled}))/10000):((($F{finTotal}-$F{finSetteled}))/100000)]]></textFieldExpression>
+					<patternExpression><![CDATA[$F{CcyEditField}==0 ?"#,##0":
+$F{CcyEditField}==1 ?"#,##0.0":
+$F{CcyEditField}==2 ?"#,##0.00":
+$F{CcyEditField}==3 ?"#,##0.000":
+$F{CcyEditField}==4 ?"#,##0.0000":"#,##0.00000"]]></patternExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement uuid="e5b0ea51-0c57-4895-924c-66f66dc65576" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#E1B778"/>
+				<staticText>
+					<reportElement uuid="e2bfd7d8-eb09-46e2-a48d-18c4106a21f7" style="Footer Info" x="2" y="0" width="64" height="15"/>
+					<textElement/>
+					<text><![CDATA[Printed By :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="0d26725b-94b7-427a-9237-7551d50e456f" style="Footer Info" x="66" y="0" width="252" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{userName}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="da9c203b-5aba-4cf6-a4b5-fc0918f6e365" style="Footer Info" x="191" y="0" width="503" height="15"/>
+					<staticText>
+						<reportElement uuid="2fa52993-1872-4e7c-836e-49802ea59665" style="Footer Info" x="40" y="0" width="177" height="15"/>
+						<textElement textAlignment="Right"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd/MM/yyyy h.mm a">
+						<reportElement uuid="592ba544-e4f2-4b2d-8c2b-1df99829819e" style="Footer Info" x="217" y="0" width="178" height="15"/>
+						<textElement verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement uuid="fb1be053-8f46-464b-9404-56d2374ce8d2" style="Footer Info" x="586" y="0" width="185" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement uuid="1add4587-8edb-40fd-ad8b-6fc7bf2d4994" style="Footer Info" x="770" y="0" width="32" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="02193518-fd20-463b-a160-35ac4cdb602d" style="Generated By" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Report Generated by pennApps PFS]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

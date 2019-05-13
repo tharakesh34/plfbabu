@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+<property name="call.concatenate" value="+" dbms="mssql" />
+<property name="call.concatenate" value="||" dbms="oracle" />
+<property name="call.maindb" value="PLF.." dbms="mssql"/>
+<property name="call.maindb" value="PLF." dbms="oracle"/>
+
+<changeSet id="1" author="Surekha">
+		<addColumn tableName="AdtBMTBankDetail">
+			<column name="AccNoLength" type="int" defaultValueNumeric="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="Irfan">
+	<addColumn tableName="AdtFinanceMain">
+	<column name="AvailedUnPlanEmi" type="int"/>
+	<column name="AvailedReAgeH" type="int"/>
+	</addColumn>
+	</changeSet>
+	
+	<changeSet id="3" author="Irfan">
+	<sql>
+	  update AdtFinanceMain set AvailedUnPlanEmi=0 ;
+	  update AdtFinanceMain set AvailedReAgeH=0 ;
+	  </sql>
+	  </changeSet>
+	<changeSet id="4" author="Surekha">
+		<addColumn tableName="AdtBankBranches">
+			<column name="AddOfBranch" type="varchar(100)" />
+			<column name="Nach" type="boolean" />
+			<column name="Dd" type="boolean" />
+			<column name="Dda" type="boolean" />
+			<column name="Ecs" type="boolean" />
+			<column name="Cheque" type="boolean" />
+			<column name="Active" type="boolean" />
+		</addColumn>
+	</changeSet>
+	</databaseChangeLog>

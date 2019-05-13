@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Beneficiary" language="groovy" pageWidth="842" pageHeight="595" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="89b9564c-1893-41dd-85af-815cb7565a8e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA["../StyleSheet/Template.jrtx"]]></template>
+	<style name="style1">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[($V{REPORT_COUNT} % 2) == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F2EBDF"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="fieldLabel01" class="java.lang.String"/>
+	<parameter name="fieldLabel02" class="java.lang.String"/>
+	<parameter name="fieldLabel03" class="java.lang.String"/>
+	<parameter name="fieldLabel04" class="java.lang.String"/>
+	<parameter name="fieldLabel05" class="java.lang.String"/>
+	<parameter name="fieldLabel06" class="java.lang.String"/>
+	<parameter name="moduleType" class="java.lang.String"/>
+	<parameter name="reportHeading" class="java.lang.String"/>
+	<parameter name="userId" class="java.lang.String"/>
+	<parameter name="organizationLogo" class="java.lang.String"/>
+	<parameter name="productLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="fieldString01" class="java.lang.String"/>
+	<field name="fieldString02" class="java.lang.String"/>
+	<field name="fieldString03" class="java.lang.String"/>
+	<field name="fieldString04" class="java.lang.String"/>
+	<field name="fieldString05" class="java.lang.String"/>
+	<field name="fieldString06" class="java.lang.String"/>
+	<field name="fieldString07" class="java.lang.String"/>
+	<field name="fieldString08" class="java.lang.String"/>
+	<group name="fieldString01">
+		<groupExpression><![CDATA[$F{fieldString01}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<frame>
+					<reportElement uuid="b8ae0dbf-d866-4899-a24b-827bc42f476d" style="Group Header" mode="Opaque" x="0" y="0" width="802" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#CCCCCC">
+						<printWhenExpression><![CDATA[$F{fieldString01}==null]]></printWhenExpression>
+					</reportElement>
+					<textField>
+						<reportElement uuid="5c4ac931-3074-4cd1-9bac-369bad52da84" style="Group Header" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#B69898"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[$F{fieldString01}==null?" No records found " :" "]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+	</group>
+	<columnHeader>
+		<band height="118">
+			<rectangle>
+				<reportElement uuid="efc2baf5-9944-4166-8ef9-b6fac6d19d0d" x="0" y="0" width="802" height="55"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="4ccefce3-1058-4e06-aadc-812daa4d052b" x="0" y="10" width="802" height="35"/>
+				<image>
+					<reportElement uuid="f582c238-f465-4b64-b6e2-0aa63ec65db2" x="18" y="0" width="200" height="35"/>
+					<imageExpression><![CDATA[$P{organizationLogo}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement uuid="2fa57543-0591-48f9-affa-8cbf4dd75520" style="Title Header" x="168" y="0" width="402" height="35"/>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression><![CDATA[$P{reportHeading}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<rectangle>
+				<reportElement uuid="382ff91d-9dcb-4c63-b270-a961bca6ba03" x="0" y="55" width="802" height="20" backcolor="#E1B778"/>
+			</rectangle>
+			<frame>
+				<reportElement uuid="48d9cadb-024b-4aa0-9c98-6c03be213b61" x="2" y="55" width="802" height="15"/>
+				<staticText>
+					<reportElement uuid="3ec7e340-86c4-420a-9c1e-705b87d75a75" style="Title Description header" x="2" y="0" width="73" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Description :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Title Description" x="75" y="0" width="710" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA['This report will display the ' + $P{reportHeading} + ' details.']]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="a7a07fe6-c43d-4c0c-9c97-c34b9d1f61b0" mode="Opaque" x="0" y="78" width="802" height="16" isRemoveLineWhenBlank="true" backcolor="#F0F0F0">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<staticText>
+					<reportElement uuid="416105cc-f020-4394-bbaf-7ea237149953" style="Title Description header" x="2" y="0" width="82" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[Module Name :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Title Description" x="84" y="0" width="670" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{moduleType}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="974380c2-51c4-4df9-9946-35a245671aa9" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="98" width="802" height="17" isPrintWhenDetailOverflows="true" backcolor="#D2D4C7"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#666666"/>
+				</box>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="7" y="0" width="115" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{fieldLabel01}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="231" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{fieldLabel02}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="381" y="0" width="115" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{fieldLabel03}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="509" y="0" width="116" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{fieldLabel04}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="725" y="0" width="70" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{fieldLabel06}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="8804f3f9-05dc-48c9-8124-92b7fd446434" style="Detail Header" positionType="Float" stretchType="RelativeToTallestObject" x="645" y="0" width="70" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{fieldLabel05}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<frame>
+				<reportElement uuid="bb1ea6e7-e2fa-48ca-ad9b-0a112b12e00c" style="style1" x="0" y="0" width="804" height="15"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b2f1fc60-e404-475a-9f0f-8d782360200b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="7" y="0" width="115" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{fieldString01}==null?" ":$F{fieldString01}+" "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b2f1fc60-e404-475a-9f0f-8d782360200b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="135" y="0" width="231" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{fieldString02}==null?" ":$F{fieldString02}+" "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b2f1fc60-e404-475a-9f0f-8d782360200b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="381" y="0" width="115" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{fieldString03}==null?" ":
+$F{fieldString07}==null?$F{fieldString03}+" ":
+$F{fieldString03}+"-"+$F{fieldString07}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b2f1fc60-e404-475a-9f0f-8d782360200b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="509" y="0" width="115" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{fieldString04}==null?" ":$F{fieldString04}+" "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b2f1fc60-e404-475a-9f0f-8d782360200b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="725" y="0" width="70" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{fieldString06}==null?" ":
+$F{fieldString06}=="NEW"?"Add":
+$F{fieldString06}=="EDIT"?"Maintain":
+$F{fieldString08}==null?$F{fieldString06}+" ":
+$F{fieldString06}+"-"+$F{fieldString08}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="b2f1fc60-e404-475a-9f0f-8d782360200b" style="Detail Value" positionType="Float" stretchType="RelativeToTallestObject" x="643" y="0" width="70" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{fieldString05}==null?" ":$F{fieldString05}+" "]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<frame>
+				<reportElement uuid="841be188-4695-4c22-8cd6-469afae9486b" mode="Opaque" x="0" y="0" width="802" height="15" backcolor="#E1B778"/>
+				<staticText>
+					<reportElement uuid="4abaa0f8-31e6-43c2-9592-e744cc4f52e5" style="Footer Info" x="2" y="0" width="50" height="15"/>
+					<textElement/>
+					<text><![CDATA[Printed By :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="cb686b27-25b6-4adc-a19f-9348b61e8593" style="Footer Info" x="51" y="0" width="100" height="15"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$P{userId}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement uuid="108c7f5f-1040-4fe3-8354-f15a8bdbc5c8" style="Footer Info" x="151" y="0" width="500" height="15"/>
+					<staticText>
+						<reportElement uuid="7252e7cc-9ddd-4b76-9964-5ea705bb169a" style="Footer Info" x="3" y="0" width="250" height="15"/>
+						<textElement textAlignment="Right"/>
+						<text><![CDATA[Date :]]></text>
+					</staticText>
+					<textField pattern="dd/MM/yyyy h.mm a">
+						<reportElement uuid="b89edaf7-d527-4405-8cdb-64ce48f62c56" style="Footer Info" x="253" y="0" width="247" height="15"/>
+						<textElement verticalAlignment="Middle"/>
+						<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					</textField>
+				</frame>
+				<textField>
+					<reportElement uuid="11a06dc7-86d0-4983-98b7-c9492e827898" style="Footer Info" x="651" y="0" width="120" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement uuid="3f69924b-fd82-4d40-8e08-d7f578fb44ab" style="Footer Info" x="770" y="0" width="30" height="15"/>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement uuid="9164f558-2998-4fb3-8036-25484e18ceb4" style="Generated By" x="0" y="15" width="802" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[Report Generated by pennApps PFS]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	 <changeSet id="pre_run_for_pgp1" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1" author="Vinay">
+		<modifyDataType tableName="AdtFinTypeExpenses" columnName="AmortReq" newDataType="boolean"/>
+	</changeSet>
+
+	<changeSet id="2" author="Vinay">
+		<modifyDataType tableName="adtFinTypeExpenses" columnName="taxapplicable" newDataType="boolean"/>
+	</changeSet>
+	
+	<changeSet id="3" author="Vinay">
+		<modifyDataType tableName="adtFinTypeExpenses" columnName="active" newDataType="boolean"/>
+	</changeSet>
+	
+	 <changeSet id="4" author="swami">
+		<addColumn tableName="adtdocumentdetails">
+			<column name="DocOriginal" type="boolean" defaultValueBoolean="false"/>
+	</addColumn>
+</changeSet>
+
+<changeSet id="5" author="swami">
+<comment>New Columns added for Direct Selling Agent </comment>
+	<addColumn tableName="adtamtvehicledealer">
+			<column name="PANNumber" type="nvarchar(10)" />
+            <column name="UIDNumber" type="nvarchar(20)" />
+            <column name="TaxNumber" type="nvarchar(15)" />
+            <column name="FromProvince" type="nvarchar(8)" />
+            <column name="ToProvince" type="nvarchar(8)" />
+            <column name="AccountNo" type="nvarchar(50)" />
+            <column name="AccountType" type="nvarchar(8)" />
+            <column name="BankBranchID" type="bigint" />
+    </addColumn>
+</changeSet>
+
+
+
+<changeSet author="swami" id="6">
+	<modifyDataType tableName="adtamtvehicledealer" columnName="PANNumber" newDataType="varchar(10)"/>
+    <modifyDataType tableName="adtamtvehicledealer"	 columnName="UIDNumber" newDataType="varchar(20)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	columnName="TaxNumber"  newDataType="varchar(15)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	 columnName="FromProvince" newDataType="varchar(8)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	 columnName="ToProvince"  newDataType="varchar(8)"/>
+	<modifyDataType tableName="adtamtvehicledealer"	columnName="AccountNo"  newDataType="varchar(50)" />
+	<modifyDataType tableName="adtamtvehicledealer"	columnName="AccountType" newDataType="varchar(8)" /> 
+
+</changeSet>
+
+<changeSet id="7" author="swamy.v">
+	<sql>
+update adtamtvehicledealer set bankbranchid=0 ;
+
+	</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="Vinay">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ProcessAttributes" type="clob" />
+		</addColumn>
+	</changeSet>
+	</databaseChangeLog>

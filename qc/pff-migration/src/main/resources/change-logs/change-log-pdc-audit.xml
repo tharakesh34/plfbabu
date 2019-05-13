@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+	<changeSet id="pre-run-for-pgp" author="suresh.s" runAlways="true" dbms="postgresql">
+	<sql>
+	set search_path=plfaudit,public,pg_catalog;
+	</sql>
+	</changeSet>
+
+	<!--CHEQUEHEADER AUDIT TABLE -->
+
+	<changeSet author="suresh.s" id="1">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="ADTCHEQUEHEADER">
+			<!-- <column name="ChequeID" type="int"> <constraints nullable="false" 
+				/> </column> -->
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Type" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Frequency" type="varchar(5)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNoOfHirer" type="varchar(50)" />
+			<column name="FirstChequeDate" type="datetime" />
+			<column name="StartingChequeNo" type="varchar(50)" />
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+
+	<!--ADTCHEQUEDETAIL TABLE -->
+	<changeSet author="suresh.s" id="3">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="ADTCHEQUEDETAIL">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCurrency" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="4" author="suresh.s">
+		<dropTable tableName="ADTCHEQUEDETAIL" />
+	</changeSet>	
+	
+	<changeSet id="5" author="suresh.s">
+		<dropTable tableName="ADTCHEQUEHEADER" />
+	</changeSet>
+	
+	<changeSet author="suresh.s" id="6">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="ADTCHEQUEHEADER">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HeaderID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet author="suresh.s" id="7">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="ADTCHEQUEDETAIL">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNo" type="varchar(50)" />
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeDate" type="datetime" />
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+
+		</createTable>
+	</changeSet>
+
+	<!-- restructured audit tables for chequeheader and chequedetail -->
+	<changeSet id="8" author="suresh.s">
+		<dropTable tableName="ADTCHEQUEDETAIL" />
+	</changeSet>
+
+	<changeSet id="9" author="suresh.s">
+		<dropTable tableName="ADTCHEQUEHEADER" />
+	</changeSet>
+
+	<changeSet author="suresh.s" id="10">
+		<comment>This table hold summary of pdc.</comment>
+		<createTable tableName="ADTCHEQUEHEADER">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfCheques" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+
+		</createTable>
+	</changeSet>
+
+	<changeSet author="suresh.s" id="11">
+		<comment>This table hold details of Cheque transactions.</comment>
+		<createTable tableName="ADTCHEQUEDETAIL">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ChequeDetailsID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BankBranchID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AccountNo" type="varchar(50)" />
+			<column name="ChequeSerialNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeDate" type="datetime" />
+			<column name="EMIRefNo" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Amount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChequeCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+
+		</createTable>
+	</changeSet>
+	
+	<!--altered columns Active and status data types   -->
+	<changeSet id="12" author="suresh.s">
+		<modifyDataType tableName="ADTCHEQUEHEADER" columnName="Active"
+			newDataType="boolean" />
+	</changeSet>
+	<changeSet id="13" author="suresh.s">
+		<modifyDataType tableName="ADTCHEQUEDETAIL" columnName="Active"
+			newDataType="boolean" />
+	</changeSet>
+	<changeSet id="14" author="suresh.s">
+		<modifyDataType tableName="ADTCHEQUEDETAIL" columnName="status"
+			newDataType="varchar(50)" />
+	</changeSet>
+
+</databaseChangeLog>
