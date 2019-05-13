@@ -1817,7 +1817,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			installmentDueService.processbackDateInstallmentDues(financeDetail, pftDetail, DateUtility.getAppDate(),
 					true, auditHeader.getAuditBranchCode());
 			advancePaymentService.processBackDatedAdvansePayments(financeDetail, pftDetail, DateUtility.getAppDate(),
-					auditHeader.getAuditBranchCode());
+					auditHeader.getAuditBranchCode(), true);
 		}
 
 		doSave_PftDetails(pftDetail, isNew);

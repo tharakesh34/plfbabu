@@ -118,8 +118,9 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public List<ReturnDataSet> processBackDatedAdvansePayments(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, String postBranch) {
+			FinanceProfitDetail profiDetails, Date appDate, String postBranch, boolean isApprove) {
 		logger.debug(Literal.ENTERING);
+		AdvancePayment advancePayment = null;
 
 		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
 
@@ -170,7 +171,12 @@ public class AdvancePaymentService extends ServiceHelper {
 				}
 			}
 
-			processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
+			advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
+			if (isApprove) {
+				advancePayment.setProfitDetail(finEODEvent.getFinProfitDetail());
+				createReceipt(advancePayment, fm, appDate);
+			}
+			
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -51,6 +51,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -83,11 +84,6 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 */
 	@Override
 	public PFSParameter getPFSParameterById(final String id, String type) {
-		//logger.debug("Entering");
-
-		PFSParameter parameter = new PFSParameter();
-		parameter.setId(id);
-
 		StringBuilder sql = new StringBuilder("SELECT SysParmCode, SysParmDesc, ");
 		sql.append(" SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, ");
 		sql.append(" SysParmList, SysParmValdMod, SysParmDescription, ");
@@ -97,19 +93,17 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where SysParmCode =:SysParmCode ");
 
-		//logger.debug("selectSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(parameter);
-		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("SysParmCode", id);
 
+		RowMapper<PFSParameter> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PFSParameter.class);
 		try {
-			parameter = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			parameter = null;
+			logger.warn(String.format("%s system parameter not available.", id));
 		}
 
-		//logger.debug("Leaving");
-		return parameter;
+		return null;
 	}
 
 	/**

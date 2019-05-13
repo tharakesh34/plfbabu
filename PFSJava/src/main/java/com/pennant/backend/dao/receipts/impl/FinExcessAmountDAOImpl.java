@@ -112,8 +112,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		StringBuilder sql = new StringBuilder("Insert Into FinExcessAmount");
 		sql.append(" (ExcessID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt)");
-		sql.append(
-				" Values(:ExcessID, :FinReference, :AmountType, :Amount, :UtilisedAmt, :ReservedAmt, :BalanceAmt)");
+		sql.append(" Values(:ExcessID, :FinReference, :AmountType, :Amount, :UtilisedAmt, :ReservedAmt, :BalanceAmt)");
 
 		logger.debug("insertSql: " + sql.toString());
 
@@ -123,8 +122,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	@Override
 	public void updateExcess(FinExcessAmount excess) {
 		logger.debug(Literal.ENTERING);
@@ -147,7 +145,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		this.jdbcTemplate.update(sql.toString(), source);
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	@Override
 	public FinExcessAmount getFinExcessAmount(String finreference, String amountType) {
@@ -162,7 +159,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finreference);
 		source.addValue("AmountType", amountType);
-		
+
 		RowMapper<FinExcessAmount> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessAmount.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
@@ -280,7 +277,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public void saveExcessMovement(FinExcessMovement movement) {
 		logger.debug(Literal.ENTERING);
-
 
 		StringBuilder sql = new StringBuilder("Insert Into FinExcessMovement");
 		sql.append(" (ExcessID, ReceiptID, MovementType, TranType, Amount");
@@ -502,7 +498,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			sql = null;
 		}
 	}
-	
+
 	@Override
 	public void updateUtilizedAndBalance(FinExcessAmount excessAmount) {
 		logger.debug(Literal.ENTERING);
@@ -645,7 +641,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		logger.debug("Leaving");
 		return recordCount;
 	}
-	
+
 	@Override
 	public int updateExcessReserve(FinExcessAmount excessMovement) {
 
@@ -664,43 +660,42 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public int updateReserveUtilization(FinExcessAmount excessMovement) {
-		
+
 		int recordCount = 0;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excessMovement);
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
 		updateSql.append(" Set  BalanceAmt = BalanceAmt, ReservedAmt = ReservedAmt, UtilisedAmt=:UtilisedAmt ");
 		updateSql.append(" Where ExcessID =:ExcessID");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		return recordCount;
 	}
-	
-	
+
 	@Override
-	public FinExcessMovement getFinExcessMovement(long excessID, String movementFrom,Date schDate) {
+	public FinExcessMovement getFinExcessMovement(long excessID, String movementFrom, Date schDate) {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from FinExcessMovement");
 		sql.append(" where ExcessID = :ExcessID and MovementFrom = :MovementFrom and SchDate=:SchDate");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
-		FinExcessMovement excessMovement=new FinExcessMovement();
+
+		FinExcessMovement excessMovement = new FinExcessMovement();
 		excessMovement.setExcessID(excessID);
 		excessMovement.setMovementFrom(movementFrom);
 		excessMovement.setSchDate(schDate);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excessMovement);
 
-
-		RowMapper<FinExcessMovement> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessMovement.class);
+		RowMapper<FinExcessMovement> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinExcessMovement.class);
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info(e.getMessage());
-		} 
+		}
 
 		return null;
 	}
