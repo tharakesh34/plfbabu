@@ -161,5 +161,10 @@
 	<changeSet id="6.3" author="satyanarayana.g">
 		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
 	</changeSet>
+	
+	<changeSet id="7" author="satyanarayana.g">
+		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="actFinReceipt"
+			newDataType="boolean" />
+	</changeSet>
 
 </databaseChangeLog>

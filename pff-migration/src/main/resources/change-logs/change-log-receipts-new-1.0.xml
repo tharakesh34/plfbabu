@@ -19,7 +19,12 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-
+	
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
 
 	<changeSet id="1" author="bharat">
 		<addColumn tableName="FINREPAYHEADER">
@@ -5279,6 +5284,32 @@
 					LEFT JOIN RMTBRANCHES T11 ON T1.POSTBRANCH = T11.BRANCHCODE
 					LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
       	</createView>
+	</changeSet>
+	
+	<changeSet id="71_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_save_and_drop_dependencies ('plf', 'finreceiptheader');
+			   select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="71" author="satyanarayana.g">
+		<modifyDataType tableName="FINRECEIPTHEADER" columnName="actFinReceipt"
+			newDataType="boolean"/>
+			
+		<modifyDataType tableName="FINRECEIPTHEADER_TEMP" columnName="actFinReceipt"
+			newDataType="boolean"/>
+	</changeSet>
+	
+	<changeSet id="71_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'finreceiptheader');
+			   select deps_restore_dependencies ('plf', 'finreceiptheader_temp');
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>
