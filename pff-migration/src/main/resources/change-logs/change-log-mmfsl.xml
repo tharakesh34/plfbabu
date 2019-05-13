@@ -1072,7 +1072,7 @@
 		</sql>
 	</changeSet>
 	
-	 <changeSet id="8" author="Shahbaj.b" dbms="postgresql, oracle">
+	<!--  <changeSet id="8" author="Shahbaj.b" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_DEALERGROUP" />
 	</changeSet>
 
@@ -1081,7 +1081,7 @@
 			<column name="SeqNo" type="bigint" autoIncrement="true" />
 			<column name="Value" type="int"></column>
 		</createTable>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="8.2" author="Shahbaj.b">
 		<createTable tableName="CD_DealerGroup">
@@ -1287,5 +1287,216 @@
 		<createSequence sequenceName="SEQCD_DEALERMAPPING_Code" 
 		incrementBy="1" maxValue="999999999999999" startValue="1"/>
 	</changeSet>
+	<changeSet id="9" author="Shahbaj.b" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQPRODUCTGROUP" />
+	</changeSet>
+
+	<changeSet id="9.1" author="Shahbaj.b" dbms="mssql">
+		<createTable tableName="SEQPRODUCTGROUP">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
 	
+	<changeSet id="9.2" author="Shahbaj.b">
+		<createTable tableName="ProductGroup">
+			<column name="ProductGroupId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ModelId" type="varchar(8)">
+			</column>
+			<column name="ProductCategoryId" type="int">
+			</column>
+			<column name="Channel" type="int">
+			</column>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="9.3" author="Shahbaj.b">
+		<createTable tableName="ProductGroup_Temp">
+			<column name="ProductGroupId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="ModelId" type="varchar(8)">
+			</column>
+			<column name="ProductCategoryId" type="int">
+			</column>
+			<column name="Channel" type="int">
+			</column>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="9.4" author="Shahbaj.b">
+		<createView viewName="ProductGroup_VIEW" replaceIfExists="true">
+			 SELECT t1.productGroupId,
+    			t1.modelId,
+   				t1.productcategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM ProductGroup_Temp t1
+			UNION ALL
+ 			SELECT t1.productGroupId,
+    			t1.modelId,
+   				t1.productcategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM ProductGroup t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM ProductGroup_Temp
+            WHERE ProductGroup_Temp.productGroupId = t1.productGroupId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="9.5" author="Shahbaj.b">
+		<createView viewName="ProductGroup_AVIEW" replaceIfExists="true">
+			  SELECT t1.productGroupId,
+    			t1.modelId,
+   				t1.productcategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM ProductGroup t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="9.6" author="Shahbaj.b">
+		<createView viewName="ProductGroup_TVIEW" replaceIfExists="true">
+			 SELECT t1.productGroupId,
+    			t1.modelId,
+   				t1.productcategoryid,
+    			t1.channel,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM ProductGroup_Temp t1
+		</createView>
+	</changeSet>
+	<changeSet id="9.7" author="Shahbaj.b">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'PRODUCTGROUP_VIEW', 'Role for Product Group enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'PRODUCTGROUP_MAKER', 'Role for Product Group maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'PRODUCTGROUP_APPROVER', 'Role for Product Group approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+							
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PRODUCTGROUP_VIEW', 'Group for Product Group enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PRODUCTGROUP_MAKER', 'Group for Product Group maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PRODUCTGROUP_APPROVER', 'Group for Product Group approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_ProductGroup','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductGroupList_PrintList','ProductGroupList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductGroupList_NewProductGroup','ProductGroupList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductGroupDialog_btnNew','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductGroupDialog_btnEdit','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductGroupDialog_btnDelete','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_ProductGroupDialog_btnSave','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductGroupDialog_ModelCode','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductGroupDialog_ProductCategoryId','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductGroupDialog_Channel','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'ProductGroupDialog_Active','ProductGroupDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_VIEW'), (Select RightID from SecRights where RightName = 'button_ProductGroupList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_ProductGroup'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductGroupList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductGroupList_NewProductGroup'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductGroupDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductGroupDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductGroupDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'button_ProductGroupDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'ProductGroupDialog_ModelCode'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'ProductGroupDialog_ProductCategoryId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'ProductGroupDialog_Channel'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_MAKER'), (Select RightID from SecRights where RightName = 'ProductGroupDialog_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_ProductGroup'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_APPROVER'), (Select RightID from SecRights where RightName = 'button_ProductGroupList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'PRODUCTGROUP_APPROVER'), (Select RightID from SecRights where RightName = 'button_ProductGroupDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='PRODUCTGROUP_VIEW'),(select RoleID from secRoles where RoleCd='PRODUCTGROUP_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='PRODUCTGROUP_MAKER'),(select RoleID from secRoles where RoleCd='PRODUCTGROUP_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='PRODUCTGROUP_APPROVER'),(select RoleID from secRoles where RoleCd='PRODUCTGROUP_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+		
+	
+	</changeSet>
 </databaseChangeLog>	
