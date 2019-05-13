@@ -1187,6 +1187,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="29" author="Saikiran.v">
+	 <sql>
+		<![CDATA[
+			 delete from TEMPLATEFIELDS where FIELD='rc_newRate';
+			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
+			('FIN','rc_newRate','New Interest Rate','A','AddRateChange');
+			]]>
+	 </sql>
+	</changeSet>
 	
 	<changeSet id="29" author="satyanarayana.g">
 		<addColumn tableName="LIMITHEADER">

@@ -331,6 +331,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug(Literal.SQL + updateSql.toString());
 
 		source.addValue("NotificationFlag", notificationFlag);
+		source.addValue("FinReference", finReference);
 
 		try {
 			this.jdbcTemplate.update(updateSql.toString(), source);
