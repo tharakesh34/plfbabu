@@ -663,8 +663,8 @@ UNION ALL
 	<changeSet id="18" author="aditya.a">
 	<sql>
 		<![CDATA[
-		INSERT INTO SMTPARAMETERS VALUES ('EARLYPAY_FY_STARTMONTH', 'Partial Settlement Financial Year Start Month', 'int', 1, '3', 2, 0, NULL, NULL,'Partial Settlement Financial Year Start Month', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-        INSERT INTO SMTPARAMETERS VALUES ('ALWD_EARLYPAY_PERC_BYYEAR', 'Maximum Partial Settlement Percent Allowed', 'int', 1, '25', 3, 0, NULL, NULL,'Maximum Partial Settlement Percent Allowed', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			INSERT INTO SMTPARAMETERS VALUES ('EARLYPAY_FY_STARTMONTH', 'Partial Settlement Financial Year Start Month', 'int', 1, '3', 2, 0, NULL, NULL,'Partial Settlement Financial Year Start Month', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+       		INSERT INTO SMTPARAMETERS VALUES ('ALWD_EARLYPAY_PERC_BYYEAR', 'Maximum Partial Settlement Percent Allowed', 'int', 1, '25', 3, 0, NULL, NULL,'Maximum Partial Settlement Percent Allowed', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 		]]>
 	</sql>
     </changeSet>
@@ -672,8 +672,8 @@ UNION ALL
 	<changeSet id="19" author="aditya.a">
 	<sql>
 		<![CDATA[
-		Insert into ERRORDETAILS values ('RU0046','EN','E','Not allowed to do Partial Settlement, Because Customer already paid upto max allowed Part payment amount.',null,'Approved',null,null,null,null,null,0,null,1000,0);
-        Insert into ERRORDETAILS values ('RU0047','EN','E','Maximum allowed partial settlement amount should not exceed value : {0}',null,'Approved',null,null,null,null,null,0,null,1000,0);
+			Insert into ERRORDETAILS values ('RU0046','EN','E','Not allowed to do Partial Settlement, Because Customer already paid upto max allowed Part payment amount.',null,'Approved',null,null,null,null,null,0,null,1000,0);
+       	 	Insert into ERRORDETAILS values ('RU0047','EN','E','Maximum allowed partial settlement amount should not exceed value : {0}',null,'Approved',null,null,null,null,null,0,null,1000,0);
 		]]>
 	</sql>
     </changeSet>

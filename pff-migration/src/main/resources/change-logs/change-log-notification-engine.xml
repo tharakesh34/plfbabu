@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -19,7 +19,7 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
 	<changeSet id="1.0" author="poonam.t">
 		<createTable tableName="email_messages">
 			<column name="id" type="bigint" autoIncrement="true">
@@ -35,7 +35,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="keyReference" type="varchar(200)">
-			<constraints nullable="false" />
+				<constraints nullable="false" />
 			</column>
 			<column name="notificationId" type="bigint" />
 			<column name="stage" type="varchar(100)" />
@@ -116,43 +116,35 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="1.5" author="poonam.t">
-		<addForeignKeyConstraint constraintName="fk_email_message_addr_msgid"
-			baseColumnNames="messageId" baseTableName="email_message_addresses"
-			referencedTableName="email_messages" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_email_message_addr_msgid" baseColumnNames="messageId"
+			baseTableName="email_message_addresses" referencedTableName="email_messages" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="1.6" author="poonam.t">
-		<addForeignKeyConstraint constraintName="fk_email_msg_att_msgid_mid"
-			baseColumnNames="messageId" baseTableName="email_message_attachments"
-			referencedTableName="email_messages" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_email_msg_att_msgid_mid" baseColumnNames="messageId"
+			baseTableName="email_message_attachments" referencedTableName="email_messages" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="1.7" author="poonam.t">
-		<addForeignKeyConstraint constraintName="fk_email_msg_attr_msgid_mid"
-			baseColumnNames="messageId" baseTableName="email_message_attributes"
-			referencedTableName="email_messages" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_email_msg_attr_msgid_mid" baseColumnNames="messageId"
+			baseTableName="email_message_attributes" referencedTableName="email_messages" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="1.8" author="poonam.t">
-		<addForeignKeyConstraint constraintName="fk_email_msg_status_msgid"
-			baseColumnNames="messageId" baseTableName="email_message_status"
-			referencedTableName="email_messages" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_email_msg_status_msgid" baseColumnNames="messageId"
+			baseTableName="email_message_status" referencedTableName="email_messages" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="1.9" author="poonam.t" dbms="postgresql">
-		<addDefaultValue columnName="attemptNum" tableName="email_messages"
-			defaultValue="0" />
-		<addDefaultValue columnName="processingFlag"
-			tableName="email_messages" defaultValue="0" />
+		<addDefaultValue columnName="attemptNum" tableName="email_messages" defaultValue="0" />
+		<addDefaultValue columnName="processingFlag" tableName="email_messages" defaultValue="0" />
 	</changeSet>
 	<changeSet id="1.9" author="poonam.t" dbms="oracle">
-		<addDefaultValue columnName="attemptNum" tableName="email_messages"
-			defaultValue="0" />
-		<addDefaultValue columnName="processingFlag"
-			tableName="email_messages" defaultValue="0" />
+		<addDefaultValue columnName="attemptNum" tableName="email_messages" defaultValue="0" />
+		<addDefaultValue columnName="processingFlag" tableName="email_messages" defaultValue="0" />
 	</changeSet>
 	<changeSet id="1.9" author="poonam.t" dbms="mssql">
 		<sql>
 			alter table email_messages add constraint
 			df_email_messages_attemptnum
 			default 0 for attemptNum;
-			
+
 			alter table
 			email_messages add constraint
 			df_email_messages_processflag default 0
@@ -161,9 +153,9 @@
 	</changeSet>
 	<changeSet id="1.10" author="poonam.t">
 		<createIndex tableName="email_messages" indexName="idx_msid_procFlag_attemptNum">
-			<column name="mailServerId"/>
-			<column name="processingFlag"/>
-			<column name="attemptNum"/>
+			<column name="mailServerId" />
+			<column name="processingFlag" />
+			<column name="attemptNum" />
 		</createIndex>
 	</changeSet>
 	<changeSet id="1.11" author="poonam.t">
@@ -193,7 +185,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="keyReference" type="varchar(200)">
-			<constraints nullable="false" />
+				<constraints nullable="false" />
 			</column>
 			<column name="notificationId" type="bigint" />
 			<column name="stage" type="varchar(100)" />
@@ -236,35 +228,29 @@
 			<column name="errorDesc" type="varchar(200)" />
 			<column name="sentOn" type="datetime" />
 		</createTable>
-	</changeSet>	
+	</changeSet>
 	<changeSet id="2.3" author="poonam.t">
-		<addForeignKeyConstraint constraintName="fk_sms_message_attr_msgid"
-			baseColumnNames="messageId" baseTableName="sms_message_attributes"
-			referencedTableName="sms_messages" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_sms_message_attr_msgid" baseColumnNames="messageId"
+			baseTableName="sms_message_attributes" referencedTableName="sms_messages" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="2.4" author="poonam.t">
-		<addForeignKeyConstraint constraintName="fk_sms_message_status_msgid"
-			baseColumnNames="messageId" baseTableName="sms_message_status"
-			referencedTableName="sms_messages" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_sms_message_status_msgid" baseColumnNames="messageId"
+			baseTableName="sms_message_status" referencedTableName="sms_messages" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="2.5" author="poonam.t" dbms="postgresql">
-		<addDefaultValue columnName="attemptNum" tableName="sms_messages"
-			defaultValue="0" />
-		<addDefaultValue columnName="processingFlag"
-			tableName="sms_messages" defaultValue="0" />
+		<addDefaultValue columnName="attemptNum" tableName="sms_messages" defaultValue="0" />
+		<addDefaultValue columnName="processingFlag" tableName="sms_messages" defaultValue="0" />
 	</changeSet>
 	<changeSet id="2.6" author="poonam.t" dbms="oracle">
-		<addDefaultValue columnName="attemptNum" tableName="sms_messages"
-			defaultValue="0" />
-		<addDefaultValue columnName="processingFlag"
-			tableName="sms_messages" defaultValue="0" />
+		<addDefaultValue columnName="attemptNum" tableName="sms_messages" defaultValue="0" />
+		<addDefaultValue columnName="processingFlag" tableName="sms_messages" defaultValue="0" />
 	</changeSet>
 	<changeSet id="2.7" author="poonam.t" dbms="mssql">
 		<sql>
 			alter table sms_messages add constraint
 			df_sms_messages_attemptnum
 			default 0 for attemptNum;
-			
+
 			alter table
 			sms_messages add constraint
 			df_sms_messages_processflag default 0
@@ -273,8 +259,8 @@
 	</changeSet>
 	<changeSet id="2.8" author="poonam.t">
 		<createIndex tableName="sms_messages" indexName="idx_sms_messages_pf_an">
-			<column name="processingFlag"/>
-			<column name="attemptNum"/>
+			<column name="processingFlag" />
+			<column name="attemptNum" />
 		</createIndex>
 	</changeSet>
 	<changeSet id="2.9" author="poonam.t">
@@ -282,163 +268,162 @@
 			<column name="messageId" />
 		</createIndex>
 	</changeSet>
-	
-<changeSet id="3" author="Manoj">
-	 <createTable tableName="Sys_Notifications">
-			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="Code"                type="varchar(20)">	
-				<constraints nullable="false"/>
-			</column>
-			<column name="Description"         type="varchar(100)"/>
-			<column name="NotificationType"    type="varchar(10)">
-				<constraints nullable="false"/>
-			</column>
-			<column name="RecipientType"       type="varchar(50)"/>				
-			<column name="Subject"             type="varchar(500)">			
-				<constraints nullable="false"/>
-			</column>
-			<column name="ContentLocation"        type="varchar(100)"/>	
-			<column name="ContentFileName"        type="varchar(50)"/>	
-			<column name="AttachmentLocation"     type="varchar(100)"/>	
-						  
-			<column name="AttachmentFileNames"    type="varchar(250)"/>	
-			<column name="TriggerQuery"           type="varchar(4000)"/>
-			<column name="CriteriaQuery"          type="varchar(1000)"/>	
-			<column name="Active"                 type="smallint"/>	
-			<column name="Version"             	  type="int" defaultValue="0" />
-			<column name="LastMntBy"           	  type="bigint" />
-			<column name="LastMntOn"           	  type="datetime" />
-			<column name="RecordStatus"        	  type="varchar(50)" />
-			<column name="RoleCode"            	  type="varchar(100)" />
-			<column name="NextRoleCode"        	  type="varchar(200)" />
-			<column name="TaskId"              	  type="varchar(50)" />
-			<column name="NextTaskId"          	  type="varchar(200)" />
-			<column name="RecordType"          	  type="varchar(50)" />
-			<column name="WorkflowId"          	  type="bigint" />			
-</createTable>
-</changeSet>
 
-<changeSet id="4" author="Manoj" dbms="postgresql,oracle">
-	<createTable tableName="Sys_Notification_Attributes">
+	<changeSet id="3" author="Manoj">
+		<createTable tableName="Sys_Notifications">
 			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="NotificationId"  type="bigint">
+			<column name="Code" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name = "Name"           type = "varchar(30)"/>
-			<column name = "Type"           type = "varchar(10)"/>
-			<column name = "Format"         type = "varchar(50)"/>
-			<column name = "Attribute"      type = "smallint" defaultValue="0"/>
-</createTable>
-</changeSet>
-<changeSet id="4" author="Manoj" dbms="mssql">
-	<createTable tableName="Sys_Notification_Attributes">
-			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="NotificationId"  type="bigint">
+			<column name="Description" type="varchar(100)" />
+			<column name="NotificationType" type="varchar(10)">
 				<constraints nullable="false" />
 			</column>
-			<column name = "Name"           type = "varchar(30)"/>
-			<column name = "Type"           type = "varchar(10)"/>
-			<column name = "Format"         type = "varchar(50)"/>
-			<column name = "Attribute"      type = "smallint"/>
-</createTable>
-</changeSet>
-<changeSet id="4" author="Jayant" dbms="mssql">
-	<sql>
-		alter table Sys_Notification_Attributes add constraint df_S_N_A_attr DEFAULT 0 for Attribute;
-	</sql>
-</changeSet>
-<changeSet id="5" author="Manoj">
-		<addForeignKeyConstraint constraintName="fk_sys_ntf_det_Id"
-			baseColumnNames="NotificationId" baseTableName="Sys_Notification_Attributes"
-			referencedTableName="Sys_Notifications" referencedColumnNames="Id" />
-</changeSet>
+			<column name="RecipientType" type="varchar(50)" />
+			<column name="Subject" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ContentLocation" type="varchar(100)" />
+			<column name="ContentFileName" type="varchar(50)" />
+			<column name="AttachmentLocation" type="varchar(100)" />
 
+			<column name="AttachmentFileNames" type="varchar(250)" />
+			<column name="TriggerQuery" type="varchar(4000)" />
+			<column name="CriteriaQuery" type="varchar(1000)" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int" defaultValue="0" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
 
-
-<changeSet id="6" author="Manoj">
-	<createTable tableName="Sys_Notification_Execution">
-	
+	<changeSet id="4" author="Manoj" dbms="postgresql,oracle">
+		<createTable tableName="Sys_Notification_Attributes">
 			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			
+			<column name="NotificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(30)" />
+			<column name="Type" type="varchar(10)" />
+			<column name="Format" type="varchar(50)" />
+			<column name="Attribute" type="smallint" defaultValue="0" />
+		</createTable>
+	</changeSet>
+	<changeSet id="4" author="Manoj" dbms="mssql">
+		<createTable tableName="Sys_Notification_Attributes">
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="NotificationId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(30)" />
+			<column name="Type" type="varchar(10)" />
+			<column name="Format" type="varchar(50)" />
+			<column name="Attribute" type="smallint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="4" author="Jayant" dbms="mssql">
+		<sql>
+			alter table Sys_Notification_Attributes add constraint df_S_N_A_attr DEFAULT 0 for Attribute;
+		</sql>
+	</changeSet>
+	<changeSet id="5" author="Manoj">
+		<addForeignKeyConstraint constraintName="fk_sys_ntf_det_Id" baseColumnNames="NotificationId"
+			baseTableName="Sys_Notification_Attributes" referencedTableName="Sys_Notifications" referencedColumnNames="Id" />
+	</changeSet>
+
+
+
+	<changeSet id="6" author="Manoj">
+		<createTable tableName="Sys_Notification_Execution">
+
+			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
 			<column name="NotificationId" type="bigint">
 				<constraints nullable="false" />
 			</column>
 
-			<column name = "InstanceId"  type="bigint">
+			<column name="InstanceId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			
-			
-			<column name="CreateTime"           	 type="datetime" />
-			<column name="StartTime"           	     type="datetime" />
-			<column name="TotalCount"           	 type="bigint"/>
-			<column name="SuccessCount"           	 type="bigint"/>
-			<column name="FailedCount"           	 type="bigint"/>
-			<column name="Status"           	     type="Char(1)"/> 
-			<column name="EndTime"           	     type="datetime" />
-			
-</createTable>
-</changeSet>
 
-<changeSet id="7" author="Manoj" dbms="postgresql,oracle">
-	<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
-	
+
+			<column name="CreateTime" type="datetime" />
+			<column name="StartTime" type="datetime" />
+			<column name="TotalCount" type="bigint" />
+			<column name="SuccessCount" type="bigint" />
+			<column name="FailedCount" type="bigint" />
+			<column name="Status" type="Char(1)" />
+			<column name="EndTime" type="datetime" />
+
+		</createTable>
+	</changeSet>
+
+	<changeSet id="7" author="Manoj" dbms="postgresql,oracle">
+		<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
+
 			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			
+
 			<column name="ExecutionId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			
+
 			<column name="NotificationId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			
-			<column name="ProcessingFlag"     type="boolean" defaultValue="0"/>
-			<column name="KeyReference"       type="varchar(20)"/>
-			<column name="Email"              type="varchar(500)"/>
-			<column name="MobileNumber"       type="varchar(500)"/>
-			<column name="NotificationData"   type="blob"/>
-			<column name="Attributes"         type="varchar(500)"/>
-			
-</createTable>
-</changeSet>
-<changeSet id="7" author="Manoj" dbms="mssql">
-	<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
-	
+
+			<column name="ProcessingFlag" type="boolean" defaultValue="0" />
+			<column name="KeyReference" type="varchar(20)" />
+			<column name="Email" type="varchar(500)" />
+			<column name="MobileNumber" type="varchar(500)" />
+			<column name="NotificationData" type="blob" />
+			<column name="Attributes" type="varchar(500)" />
+
+		</createTable>
+	</changeSet>
+	<changeSet id="7" author="Manoj" dbms="mssql">
+		<createTable tableName="SYS_NOTIFICATION_EXEC_LOG">
+
 			<column name="Id" type="bigint" autoIncrement="true" incrementBy="1">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			
+
 			<column name="ExecutionId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			
+
 			<column name="NotificationId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			
-			<column name="ProcessingFlag"     type="boolean"/>
-			<column name="KeyReference"       type="varchar(20)"/>
-			<column name="Email"              type="varchar(500)"/>
-			<column name="MobileNumber"       type="varchar(500)"/>
-			<column name="NotificationData"   type="blob"/>
-			<column name="Attributes"         type="varchar(500)"/>
-			
-</createTable>
-</changeSet>	
-<changeSet id="7_Post" author="Jayant" dbms="mssql">
-	<sql>
-		alter table SYS_NOTIFICATION_EXEC_LOG add constraint df_S_N_E_L_ProFlag DEFAULT 0 for ProcessingFlag;
-	</sql>
-</changeSet>
+
+			<column name="ProcessingFlag" type="boolean" />
+			<column name="KeyReference" type="varchar(20)" />
+			<column name="Email" type="varchar(500)" />
+			<column name="MobileNumber" type="varchar(500)" />
+			<column name="NotificationData" type="blob" />
+			<column name="Attributes" type="varchar(500)" />
+
+		</createTable>
+	</changeSet>
+	<changeSet id="7_Post" author="Jayant" dbms="mssql">
+		<sql>
+			alter table SYS_NOTIFICATION_EXEC_LOG add constraint df_S_N_E_L_ProFlag DEFAULT 0 for ProcessingFlag;
+		</sql>
+	</changeSet>
 </databaseChangeLog>

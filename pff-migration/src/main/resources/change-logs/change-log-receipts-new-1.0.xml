@@ -19,7 +19,7 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
@@ -503,7 +503,8 @@
 
 	<changeSet id="5.3" author="satyanarayana.g">
 		<addNotNullConstraint tableName="FINRECEIPTHEADER" columnName="COLLECTIONAGENTID" columnDataType="bigint" />
-		<addNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="COLLECTIONAGENTID" columnDataType="bigint" />
+		<addNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="COLLECTIONAGENTID"
+			columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="5.4_pre" author="satyanarayana.g">
@@ -2860,7 +2861,8 @@
 
 	<changeSet id="34.2" author="shinde.b">
 		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="TOTALDUE" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="TOTALDUE" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="TOTALDUE"
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="34.3_pre" author="satyanarayana.g">
@@ -2887,8 +2889,10 @@
 	</changeSet>
 
 	<changeSet id="34.4" author="shinde.b">
-		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="WAIVEDREQAMOUNT" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="WAIVEDREQAMOUNT" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL" columnName="WAIVEDREQAMOUNT"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="RECEIPTALLOCATIONDETAIL_TEMP" columnName="WAIVEDREQAMOUNT"
+			columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="35" author="Bharat">
@@ -4554,7 +4558,7 @@
 					FROM INSTRUMENTWISELIMIT T1 
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="62" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -4565,18 +4569,18 @@
 	     	]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="63"  author="satyanarayana.g" >
-	  <comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
+
+	<changeSet id="63" author="satyanarayana.g">
+		<comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
 		<addColumn tableName="FINRECEIPTHEADER">
-			<column name="ActFinReceipt" type="NUMBER(1)"/>
+			<column name="ActFinReceipt" type="NUMBER(1)" />
 		</addColumn>
-		
+
 		<addColumn tableName="FINRECEIPTHEADER_TEMP">
-			<column name="ActFinReceipt" type="NUMBER(1)"/>
+			<column name="ActFinReceipt" type="NUMBER(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="63.1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -4585,12 +4589,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="63.2" author="satyanarayana.g">
 		<addNotNullConstraint tableName="FINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
-		<addNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
+		<addNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="ACTFINRECEIPT"
+			columnDataType="NUMBER(1)" />
 	</changeSet>
-	
+
 	<changeSet id="63.3" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4604,7 +4609,7 @@
 		<addDefaultValue columnName="ACTFINRECEIPT" tableName="FINRECEIPTHEADER" defaultValue="1" />
 		<addDefaultValue columnName="ACTFINRECEIPT" tableName="FINRECEIPTHEADER_TEMP" defaultValue="1" />
 	</changeSet>
-	
+
 	<changeSet id="64" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="RECEIPTDETAILS_VIEW" replaceIfExists="true">
@@ -4710,7 +4715,7 @@
 					)
      	 </createView>
 	</changeSet>
-	
+
 	<changeSet id="65" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="RECEIPTDETAILS_TVIEW" replaceIfExists="true">
@@ -4764,7 +4769,7 @@
 					LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
 		 </createView>
 	</changeSet>
-	
+
 	<changeSet id="66" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="RECEIPT_REALIZATION_VIEW" replaceIfExists="true">
@@ -4870,7 +4875,7 @@
 					)
 	 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="67" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="FORECLOSURE_TVIEW" replaceIfExists="true">
@@ -4903,7 +4908,7 @@
 					INNER JOIN SECROLES T4 ON T1.NEXTROLECODE = T4.ROLECD
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="68" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="FINRECEIPTHEADER_VIEW" replaceIfExists="true">
@@ -5093,7 +5098,7 @@
 					)
    		 </createView>
 	</changeSet>
-	
+
 	<changeSet id="69" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="FINRECEIPTHEADER_TVIEW" replaceIfExists="true">
@@ -5189,7 +5194,7 @@
 					LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="70" author="satyanarayana.g">
 		<comment>PSD # 135348 </comment>
 		<createView viewName="FINRECEIPTHEADER_AVIEW" replaceIfExists="true">
@@ -5285,7 +5290,7 @@
 					LEFT JOIN RMTBRANCHES T12 ON T1.CASHIERBRANCH = T12.BRANCHCODE
       	</createView>
 	</changeSet>
-	
+
 	<changeSet id="71_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5294,15 +5299,30 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="71" author="satyanarayana.g">
-		<modifyDataType tableName="FINRECEIPTHEADER" columnName="actFinReceipt"
-			newDataType="boolean"/>
-			
-		<modifyDataType tableName="FINRECEIPTHEADER_TEMP" columnName="actFinReceipt"
-			newDataType="boolean"/>
+
+	<changeSet id="71_pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINRECEIPTHEADER DROP CONSTRAINT DF_FINRECEIPTHEADER_ACTFINRECEIPT;
+				ALTER TABLE FINRECEIPTHEADER_TEMP DROP CONSTRAINT DF_FINREPAYHEADER_TEMP_ACTFINRECEIPT;
+			]]>
+		</sql>
 	</changeSet>
-	
+
+	<changeSet id="71" author="satyanarayana.g">
+		<modifyDataType tableName="FINRECEIPTHEADER" columnName="actFinReceipt" newDataType="boolean" />
+		<modifyDataType tableName="FINRECEIPTHEADER_TEMP" columnName="actFinReceipt" newDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="71_post" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINRECEIPTHEADER ADD CONSTRAINT DF_FINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
+				ALTER TABLE FINRECEIPTHEADER_TEMP ADD CONSTRAINT DF_FINREPAYHEADER_TEMP_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="71_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[

@@ -3598,8 +3598,8 @@
 	
 	<changeSet id="130" author="Viswanadh.S">
 		<sql>
-			alter table LegalDocuments drop column isDocumentMortgage cascade;
-			alter table LegalDocuments_Temp drop column isDocumentMortgage cascade;  
+			alter table LegalDocuments drop column isDocumentMortgage;
+			alter table LegalDocuments_Temp drop column isDocumentMortgage;  
 		</sql>
 	</changeSet>
 	
