@@ -132,6 +132,18 @@
 	
 	<changeSet id="3" author="vijaya.a">
 		<createTable tableName="ADTCD_Merchants">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
 			<column name="MerchantId" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -151,21 +163,29 @@
 			</column>
 			<column name="StoreState" type="varchar(8)">
 			</column>
+			<column name="StoreCountry" type="varchar(50)">
+			</column>
+			<column name="CountryName" type="varchar(50)">
+			</column>
+			<column name="StateName" type="varchar(50)">
+			</column>
+			<column name="cityName" type="varchar(50)">
+			</column>
 			<column name="POSID" type="int">
 			</column>
-			<column name="AvgTranPerMnth" type="int" >
+			<column name="AvgTranPerMnth" type="decimal(18,0)" >
 			</column>
-			<column name="AvgTranAmtPerMnth" type="int">
+			<column name="AvgTranAmtPerMnth" type="decimal(18,0)">
 			</column>
-			<column name="TranAmtPerTran" type="int">
+			<column name="TranAmtPerTran" type="decimal(18,0)">
 			</column>
-			<column name="TranAmtPerDay" type="int">
+			<column name="TranAmtPerDay" type="decimal(18,0)">
 			</column>
 			<column name="AllowRefund" type="boolean">
 			</column>
-			<column name="PeakTransPerDay" type="int">
+			<column name="PeakTransPerDay" type="decimal(18,0)">
 			</column>
-			<column name="Channel" type="int">
+			<column name="Channel" type="varchar(20)">
 			</column>
 			<column name="Active" type="bit">
 			</column>

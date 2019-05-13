@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<!-- <include file="change-logs/change-log-GSTCoreChanges-audit.xml" />
+	<include file="change-logs/change-log-GSTCoreChanges-audit.xml" />
 	<include file="change-logs/change-log-verification-fi-audit.xml" />
 	<include file="change-logs/change-log-verification-tv-audit.xml" />
 	<include file="change-logs/change-log-verification-lv-audit.xml" />
@@ -27,11 +27,14 @@
 	<include file="change-logs/change-log-auditlegal.xml" />
 	<include file="change-logs/change_log_story #1138_audit.xml" /> 
 	<include file="change-logs/change-log-4.13.0-audit.xml" />
-	<include file="change-logs/change-core-stabilize-audit.xml" /> -->
+	<include file="change-logs/change-core-stabilize-audit.xml" /> 
 	<include file="change-logs/change-log-covenants-1.1-audit.xml" />
 	<include file="change-logs/change-log-put-call-1.1-audit.xml" />
 	<include file="change-logs/change-log-advance-emai-audit.xml"/>
 	<include file="change-logs/change-log-4.14.0-audit.xml" />
 	<include file="change-logs/change-log-receipts-new-audit-1.0.xml" />
-	<include file="change-logs/change-log-5.0.0-audit.xml" /> 
+	<include file="change-logs/change-log-5.0.0-audit.xml" />
+	<include file="change-logs/change-log-verification-pd-audit.xml" />
+	<include file="change-logs/change-log-5.0.0-audit.xml" />
+	<include file="change-logs/change-log-mmfsl-audit.xml"/> 
 </databaseChangeLog>

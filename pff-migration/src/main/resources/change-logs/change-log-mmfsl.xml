@@ -400,21 +400,29 @@
 			</column>
 			<column name="StoreState" type="varchar(8)">
 			</column>
+			<column name="StoreCountry" type="varchar(50)">
+			</column>
+			<column name="CountryName" type="varchar(50)">
+			</column>
+			<column name="StateName" type="varchar(50)">
+			</column>
+			<column name="cityName" type="varchar(50)">
+			</column>
 			<column name="POSID" type="int">
 			</column>
-			<column name="AvgTranPerMnth" type="int" >
+			<column name="AvgTranPerMnth" type="decimal(18,0)" >
 			</column>
-			<column name="AvgTranAmtPerMnth" type="int">
+			<column name="AvgTranAmtPerMnth" type="decimal(18,0)">
 			</column>
-			<column name="TranAmtPerTran" type="int">
+			<column name="TranAmtPerTran" type="decimal(18,0)">
 			</column>
-			<column name="TranAmtPerDay" type="int">
+			<column name="TranAmtPerDay" type="decimal(18,0)">
 			</column>
 			<column name="AllowRefund" type="boolean">
 			</column>
-			<column name="PeakTransPerDay" type="int">
+			<column name="PeakTransPerDay" type="decimal(18,0)">
 			</column>
-			<column name="Channel" type="int">
+			<column name="Channel" type="varchar(20)">
 			</column>
 			<column name="Active" type="bit">
 			</column>
@@ -454,21 +462,29 @@
 			</column>
 			<column name="StoreState" type="varchar(8)">
 			</column>
+			<column name="StoreCountry" type="varchar(50)">
+			</column>
+			<column name="CountryName" type="varchar(50)">
+			</column>
+			<column name="StateName" type="varchar(50)">
+			</column>
+			<column name="cityName" type="varchar(50)">
+			</column>
 			<column name="POSID" type="int">
 			</column>
-			<column name="AvgTranPerMnth" type="int" >
+			<column name="AvgTranPerMnth" type="decimal(18,0)" >
 			</column>
-			<column name="AvgTranAmtPerMnth" type="int">
+			<column name="AvgTranAmtPerMnth" type="decimal(18,0)">
 			</column>
-			<column name="TranAmtPerTran" type="int">
+			<column name="TranAmtPerTran" type="decimal(18,0)">
 			</column>
-			<column name="TranAmtPerDay" type="int">
+			<column name="TranAmtPerDay" type="decimal(18,0)">
 			</column>
 			<column name="AllowRefund" type="bit">
 			</column>
-			<column name="PeakTransPerDay" type="int">
+			<column name="PeakTransPerDay" type="decimal(18,0)">
 			</column>
-			<column name="Channel" type="int">
+			<column name="Channel" type="varchar(20)">
 			</column>
 			<column name="Active" type="boolean">
 			</column>
@@ -504,6 +520,10 @@
     			t1.storeAddressLine3,
     			t1.storeCity,
     			t1.storeState,
+         		t1.storeCountry,
+         		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
     			t1.pOSID,
     			t1.avgTranPerMnth,
     			t1.avgTranAmtPerMnth,
@@ -534,6 +554,10 @@
     			t1.storeAddressLine3,
     			t1.storeCity,
     			t1.storeState,
+    			t1.storeCountry,
+         		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
     			t1.pOSID,
     			t1.avgTranPerMnth,
     			t1.avgTranAmtPerMnth,
@@ -571,6 +595,10 @@
     			t1.storeAddressLine3,
     			t1.storeCity,
     			t1.storeState,
+    			t1.storeCountry,
+         		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
     			t1.pOSID,
     			t1.avgTranPerMnth,
     			t1.avgTranAmtPerMnth,
@@ -605,6 +633,10 @@
     			t1.storeAddressLine3,
     			t1.storeCity,
     			t1.storeState,
+    			t1.storeCountry,
+          		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
     			t1.pOSID,
     			t1.avgTranPerMnth,
     			t1.avgTranAmtPerMnth,
