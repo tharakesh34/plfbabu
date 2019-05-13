@@ -2050,4 +2050,12 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="49" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			   INSERT INTO ErrorDetails VALUES('60317', 'EN', 'E', 'Limit expiry Date: {0} is Less than Loan Maturity Date: {1}.', '', 'Approved', '', '', '', '', '', 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
