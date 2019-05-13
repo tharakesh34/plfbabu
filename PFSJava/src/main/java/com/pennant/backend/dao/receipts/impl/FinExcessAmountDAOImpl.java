@@ -110,11 +110,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			logger.debug("get NextID:" + excess.getId());
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into FinExcessMovement");
-		sql.append(" (ExcessID, ReceiptID, MovementType, TranType, Amount");
-		sql.append(" ,MovementFrom, SchDate)");
-		sql.append(" Values(:ExcessID, :ReceiptID, :MovementType, :TranType, :Amount");
-		sql.append(" ,:MovementFrom, :SchDate)");
+		StringBuilder sql = new StringBuilder("Insert Into FinExcessAmount");
+		sql.append(" (ExcessID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt)");
+		sql.append(
+				" Values(:ExcessID, :FinReference, :AmountType, :Amount, :UtilisedAmt, :ReservedAmt, :BalanceAmt)");
+
+		logger.debug("insertSql: " + sql.toString());
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -280,9 +281,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	public void saveExcessMovement(FinExcessMovement movement) {
 		logger.debug(Literal.ENTERING);
 
+
 		StringBuilder sql = new StringBuilder("Insert Into FinExcessMovement");
-		sql.append(" (ExcessID, ReceiptID, MovementType, TranType, Amount)");
-		sql.append(" Values(:ExcessID, :ReceiptID, :MovementType, :TranType, :Amount)");
+		sql.append(" (ExcessID, ReceiptID, MovementType, TranType, Amount");
+		sql.append(" ,MovementFrom, SchDate)");
+		sql.append(" Values(:ExcessID, :ReceiptID, :MovementType, :TranType, :Amount");
+		sql.append(" ,:MovementFrom, :SchDate)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
