@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -22,21 +22,19 @@
 
 	<changeSet id="01" author="Varaprasad.K">
 		<createTable tableName="verification_pd">
-			
 			<column name="VerificationId" type="bigint">
-				<constraints nullable="false"  primaryKey="true" primaryKeyName="pk_verification_pd_verf_id"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_pd_verf_id" />
 			</column>
-			
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
-			<column name="Type" type="int" defaultValue="0"/>
+			<column name="Type" type="int" defaultValue="0" />
 			<column name="VerifiedDate" type="datetime" />
-			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0" />
 			<column name="Reason" type="bigint" />
-			<column name="SummaryRemarks" type="varchar(500)" />			
+			<column name="SummaryRemarks" type="varchar(500)" />
 
 			<column name="Version" type="int" defaultValue="0">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="df_verfctions_pd_ver"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="df_verfctions_pd_ver" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -47,7 +45,6 @@
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
-
 			<column name="AddressType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
@@ -69,94 +66,80 @@
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
-			
 			<!-- Observations -->
 			<column name="OwnershipStatus" type="int" defaultValue="0">
-			      <constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_Owner"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_Owner" />
 			</column>
-			
-			
-			<column name="YearsAtPresentAddress" type="int" >
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_YearsAt"/>
+			<column name="YearsAtPresentAddress" type="int">
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_YearsAt" />
 			</column>
 			<column name="PersonMet" type="varchar(50)" />
 			<column name="Relationship" type="varchar(8)" />
 			<column name="ContactNumber" type="varchar(20)" />
 			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_nhf"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_nhf" />
 			</column>
-			<column name="LivingStandard" type="int"  defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_lsd"/>
+			<column name="LivingStandard" type="int" defaultValue="0">
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_lsd" />
 			</column>
 			<column name="NegativeCheck" type="smallint" defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_ncheck"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_ncheck" />
 			</column>
 			<column name="NoofAttempts" type="int" defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_noofat"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_noofat" />
 			</column>
 			<column name="ObservationRemarks" type="varchar(500)" />
-			
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="02" author="Varaprasad.K" dbms="postgresql">
+
+	<changeSet id="01_postgresql" author="Varaprasad.K" dbms="postgresql">
 		<modifyDataType tableName="Verification_pd" columnName="Country" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd" columnName="Province" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd" columnName="City" newDataType="citext" />
 	</changeSet>
-	<changeSet id="03" author="Varaprasad">
-	
-		    <addForeignKeyConstraint constraintName="fk_verification_pd_country"
-			referencedTableName="bmtcountries" referencedColumnNames="countrycode"
-			baseTableName="Verification_pd" baseColumnNames="Country" />
-			
-			<addForeignKeyConstraint constraintName="fk_verification_pd_province"
-			referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, cpprovince"
-			baseTableName="Verification_pd" baseColumnNames="Country, Province" />
-			
-			
-			<addForeignKeyConstraint constraintName="fk_verification_pd_city"
-			referencedTableName="rmtprovincevscity" referencedColumnNames="pccity"
-			baseTableName="Verification_pd" baseColumnNames="City" />
-			
-			<addForeignKeyConstraint constraintName="fk_verification_pd_relship"
-			referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode"
-			baseTableName="Verification_pd" baseColumnNames="Relationship" />
-	
+
+	<changeSet id="02" author="Varaprasad">
+		<addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries"
+			referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" />
+
+		<addForeignKeyConstraint constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince"
+			referencedColumnNames="cpcountry, cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" />
+
+
+		<addForeignKeyConstraint constraintName="fk_verification_pd_city" referencedTableName="rmtprovincevscity"
+			referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" />
+
+		<addForeignKeyConstraint constraintName="fk_verification_pd_relship" referencedTableName="bmtprelationcodes"
+			referencedColumnNames="prelationcode" baseTableName="Verification_pd" baseColumnNames="Relationship" />
+
 	</changeSet>
-	<changeSet id="3.1" author="Varaprasad.K" dbms="postgresql">
-		<addDefaultValue columnName="OwnershipStatus" 		tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="LivingStandard" 		tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="NegativeCheck" 		tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_pd" defaultValue="0"/>
+	<changeSet id="03" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd" defaultValue="0" />
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd" defaultValue="0" />
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_pd" defaultValue="0" />
+		<addDefaultValue columnName="LivingStandard" tableName="verification_pd" defaultValue="0" />
+		<addDefaultValue columnName="NegativeCheck" tableName="verification_pd" defaultValue="0" />
+		<addDefaultValue columnName="NoofAttempts" tableName="verification_pd" defaultValue="0" />
 	</changeSet>
-	<changeSet id="3.2" author="Varaprasad.K" dbms="oracle">
-		<addDefaultValue columnName="OwnershipStatus" 		tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="LivingStandard" 		tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="NegativeCheck" 		tableName="verification_pd" defaultValue="0"/>
-		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_pd" defaultValue="0"/>
+
+	<changeSet id="03" author="Varaprasad.K" dbms="mssql">
+		ALTER TABLE VERIFICATION_PD ADD CONSTRAINT DF_VERIFICATION_PD_OWNERSHIPSTATUS DEFAULT 0 FOR OWNERSHIPSTATUS;
 	</changeSet>
+
 	<changeSet id="04" author="Varaprasad.K">
 		<createTable tableName="verification_pd_temp">
-			
 			<column name="VerificationId" type="bigint">
-				<constraints nullable="false"  primaryKey="true" primaryKeyName="pk_verification_pd_tmp_verf_id"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_pd_tmp_verf_id" />
 			</column>
-			
 			<column name="AgentCode" type="varchar(20)" />
 			<column name="AgentName" type="varchar(50)" />
-			<column name="Type" type="int" defaultValue="0"/>
+			<column name="Type" type="int" defaultValue="0" />
 			<column name="VerifiedDate" type="datetime" />
-			<column name="Status" type="int" defaultValue="0"/>
+			<column name="Status" type="int" defaultValue="0" />
 			<column name="Reason" type="bigint" />
-			<column name="SummaryRemarks" type="varchar(500)" />			
-
+			<column name="SummaryRemarks" type="varchar(500)" />
 			<column name="Version" type="int" defaultValue="0">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_ver"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_ver" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -167,7 +150,6 @@
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
-
 			<column name="AddressType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
@@ -189,84 +171,62 @@
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
-			
 			<!-- Observations -->
 			<column name="OwnershipStatus" type="int" defaultValue="0">
-			      <constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_Owner"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_Owner" />
 			</column>
-			
-			
-			<column name="YearsAtPresentAddress" type="int" >
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_YearsAt"/>
+			<column name="YearsAtPresentAddress" type="int">
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_YearsAt" />
 			</column>
 			<column name="PersonMet" type="varchar(50)" />
 			<column name="Relationship" type="varchar(8)" />
 			<column name="ContactNumber" type="varchar(20)" />
 			<column name="NeighbourhoodFeedBack" type="int" defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_nhf"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_nhf" />
 			</column>
-			<column name="LivingStandard" type="int"  defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_lsd"/>
+			<column name="LivingStandard" type="int" defaultValue="0">
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_lsd" />
 			</column>
 			<column name="NegativeCheck" type="smallint" defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_ncheck"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_ncheck" />
 			</column>
 			<column name="NoofAttempts" type="int" defaultValue="0">
-				<constraints  primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_noofat"/>
+				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_noofat" />
 			</column>
 			<column name="ObservationRemarks" type="varchar(500)" />
-			
-			
-			
-			
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="05" author="Varaprasad.K" dbms="postgresql">
 		<modifyDataType tableName="Verification_pd_temp" columnName="Country" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd_temp" columnName="Province" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd_temp" columnName="City" newDataType="citext" />
 	</changeSet>
 	<changeSet id="06" author="Varaprasad">
-	
-		    <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country"
-			referencedTableName="bmtcountries" referencedColumnNames="countrycode"
-			baseTableName="Verification_pd_temp" baseColumnNames="Country" />
-			
-			<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_prvince"
-			referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, cpprovince"
-			baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" />
-			
-			
-			<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city"
-			referencedTableName="rmtprovincevscity" referencedColumnNames="pccity"
-			baseTableName="Verification_pd_temp" baseColumnNames="City" />
-			
-			<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_relship"
-			referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode"
-			baseTableName="Verification_pd_temp" baseColumnNames="Relationship" />
-	
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries"
+			referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" />
+
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince"
+			referencedColumnNames="cpcountry, cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" />
+
+
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" referencedTableName="rmtprovincevscity"
+			referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" />
+
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_relship" referencedTableName="bmtprelationcodes"
+			referencedColumnNames="prelationcode" baseTableName="Verification_pd_temp" baseColumnNames="Relationship" />
+
 	</changeSet>
-	
-	
-	<changeSet id="6.1" author="Varaprasad.K" dbms="postgresql">
-		<addDefaultValue columnName="OwnershipStatus" 		tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="LivingStandard" 		tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="NegativeCheck" 		tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_pd_temp" defaultValue="0"/>
+	<changeSet id="07" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd_temp" defaultValue="0" />
+		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd_temp" defaultValue="0" />
+		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_pd_temp" defaultValue="0" />
+		<addDefaultValue columnName="LivingStandard" tableName="verification_pd_temp" defaultValue="0" />
+		<addDefaultValue columnName="NegativeCheck" tableName="verification_pd_temp" defaultValue="0" />
+		<addDefaultValue columnName="NoofAttempts" tableName="verification_pd_temp" defaultValue="0" />
 	</changeSet>
-	<changeSet id="6.2" author="Varaprasad.K" dbms="oracle">
-		<addDefaultValue columnName="OwnershipStatus" 		tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="NeighbourhoodFeedBack" tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="LivingStandard" 		tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="NegativeCheck" 		tableName="verification_pd_temp" defaultValue="0"/>
-		<addDefaultValue columnName="NoofAttempts" 			tableName="verification_pd_temp" defaultValue="0"/>
-	</changeSet>
-	
-	<changeSet id="07" author="Varaprasad.K">
+
+	<changeSet id="08" author="Varaprasad.K">
 		<createView viewName="verification_pd_aview" replaceIfExists="true">
 			SELECT pd.verificationid,
 				pd.agentcode,
@@ -340,7 +300,7 @@
 				 LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = pd.relationship
 		</createView>
 	</changeSet>
-	<changeSet id="08" author="Varaprasad.K">
+	<changeSet id="09" author="Varaprasad.K">
 		<createView viewName="verification_pd_view" replaceIfExists="true">
 			SELECT pd.verificationid,
 				pd.agentcode,
@@ -598,7 +558,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10" author="Varaprasad">
 		<sql>
 			<![CDATA[
@@ -610,9 +570,6 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	
 	<changeSet id="11" author="Varaprasad.K">
 		<sql>
 			<![CDATA[	
@@ -621,7 +578,7 @@
 				Insert into Secrights Values((Select MAX(RightID)+1 From SecRights), 3, 'PersonalDiscussionDialog_PersonalDiscussionExtFields', 'PersonalDiscussionDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
 				Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='PersonalDiscussion_MAKER'),(select RightId from secRights where RightName='PersonalDiscussionDialog_PersonalDiscussionExtFields'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
 	        ]]>
-	    </sql>
+		</sql>
 	</changeSet>
 	<changeSet id="12" author="Varaprasad.K">
 		<sql>
@@ -631,13 +588,13 @@
 					Insert into SecRights Values((Select MAX(RightID)+1 From SecRights), 3, 'PersonalDiscussionDialog_Documents', 'PersonalDiscussionDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
 					Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='PersonalDiscussion_MAKER'),(select RightId from secRights where RightName='PersonalDiscussionDialog_Documents'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
 			]]>
-	    </sql>
+		</sql>
 	</changeSet>
 	<changeSet id="13" author="Varaprasad.K">
-	<sql>
+		<sql>
 		<![CDATA[
 			Insert Into DocumentCategory values ((Select MAX(id)+1 From DocumentCategory),'VERIFICATION_PD','Personal Discussion Verification Documents');
 		]]>
-	</sql>
+		</sql>
 	</changeSet>
 </databaseChangeLog>
