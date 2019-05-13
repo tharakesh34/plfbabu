@@ -137,4 +137,31 @@
 		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)"/>    
     </changeSet>
     
+    <changeSet id="6" author="satyanarayana.g">
+		<addColumn tableName="ADTLIMITHEADER">
+			<column name="ValidateMaturityDate" type="boolean"/>
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="6.1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTLIMITHEADER set VALIDATEMATURITYDATE =0 where VALIDATEMATURITYDATE is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.2" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTLIMITHEADER ADD CONSTRAINT DF_ADTLIMITHEADER_VALIDATEMATURITYDATE DEFAULT 0 FOR VALIDATEMATURITYDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6.3" author="satyanarayana.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="VALIDATEMATURITYDATE" tableName="ADTLIMITHEADER" defaultValue="0" />
+	</changeSet>
+    
 </databaseChangeLog>
