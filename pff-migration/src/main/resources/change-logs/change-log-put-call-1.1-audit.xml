@@ -5,6 +5,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value="plfaudit." dbms="postgresql" />
 	<property name="call.substr" value="substring" dbms="mssql" />
 	<property name="call.substr" value="substr" dbms="oracle" />
 	<property name="call.substr" value="substring" dbms="postgresql" />
@@ -32,6 +33,7 @@
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
 
 	
 
