@@ -146,9 +146,17 @@ public class GSTCalculator {
 		String custCountry = null;
 		if (custId > 0) {
 			dataMap = financeMainDAO.getGSTDataMap(custId);
-			custBranch = (String) dataMap.get("CustBranch");
-			custProvince = (String) dataMap.get("CustProvince");
-			custCountry = (String) dataMap.get("CustCountry");
+			if (dataMap.get("CustBranch") != null) {
+				custBranch = dataMap.get("CustBranch").toString();
+			}
+			
+			if(dataMap.get("CustProvince") != null) {
+				custProvince = dataMap.get("CustProvince").toString();
+			}
+
+			if (dataMap.get("CustCountry") != null) {
+				custCountry = dataMap.get("CustCountry").toString();
+			}
 		} else {
 			custBranch = userBranch;
 		}
