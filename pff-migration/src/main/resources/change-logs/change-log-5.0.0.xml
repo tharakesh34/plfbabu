@@ -57,7 +57,6 @@
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="2" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities" columnNames="HSNCode" />
 	</changeSet>
@@ -1191,26 +1190,28 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="29" author="Saikiran.v">
-	 <sql>
+		<sql>
 		<![CDATA[
-			 delete from TEMPLATEFIELDS where FIELD='rc_newRate';
-			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-			('FIN','rc_newRate','New Interest Rate','A','AddRateChange');
+			delete from TEMPLATEFIELDS where FIELD='rc_newRate';
+			Insert into TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) values ('FIN', 'rc_newRate', 'New Interest Rate', 'A', 'AddRateChange');
 			]]>
-	 </sql>
+		</sql>
 	</changeSet>
-	<changeSet id="29" author="Saikiran.v">
+
+	<changeSet id="29.1" author="Saikiran.v">
 		<addColumn tableName="LMSServiceLog">
 			<column name="id" type="bigint">
-				<constraints primaryKeyName="LMSServiceLog_id"
-					primaryKey="true" nullable="false" />
+				<constraints primaryKeyName="LMSServiceLog_id" primaryKey="true" nullable="false" />
 			</column>
 		</addColumn>
- 	</changeSet>
+	</changeSet>
+
 	<changeSet id="30" author="Saikiran.v">
 		<createSequence sequenceName="seqLMSServiceLog" />
 	</changeSet>
+
 	<changeSet id="29" author="satyanarayana.g">
 		<addColumn tableName="LIMITHEADER">
 			<column name="ValidateMaturityDate" type="boolean" />
@@ -1223,19 +1224,19 @@ UNION ALL
 
 	<changeSet id="29.1" author="satyanarayana.g">
 		<sql>
-				<![CDATA[
-					UPDATE LIMITHEADER set VALIDATEMATURITYDATE =0 where VALIDATEMATURITYDATE is null;
-					UPDATE LIMITHEADER_TEMP set VALIDATEMATURITYDATE =0 where VALIDATEMATURITYDATE is null;
-				]]>
+			<![CDATA[
+				UPDATE LIMITHEADER set VALIDATEMATURITYDATE =0 where VALIDATEMATURITYDATE is null;
+				UPDATE LIMITHEADER_TEMP set VALIDATEMATURITYDATE =0 where VALIDATEMATURITYDATE is null;
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="29.2" author="satyanarayana.g" dbms="mssql">
 		<sql>
-				<![CDATA[
-					ALTER TABLE LIMITHEADER ADD CONSTRAINT DF_LIMITHEADER_VALIDATEMATURITYDATE DEFAULT 0 FOR VALIDATEMATURITYDATE;
-					ALTER TABLE LIMITHEADER_TEMP ADD CONSTRAINT DF_LIMITHEADER_TEMP_VALIDATEMATURITYDATE DEFAULT 0 FOR VALIDATEMATURITYDATE;
-				]]>
+			<![CDATA[
+				ALTER TABLE LIMITHEADER ADD CONSTRAINT DF_LIMITHEADER_VALIDATEMATURITYDATE DEFAULT 0 FOR VALIDATEMATURITYDATE;
+				ALTER TABLE LIMITHEADER_TEMP ADD CONSTRAINT DF_LIMITHEADER_TEMP_VALIDATEMATURITYDATE DEFAULT 0 FOR VALIDATEMATURITYDATE;
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1555,19 +1556,16 @@ UNION ALL
 		<modifyDataType tableName="Verification_pd" columnName="Province" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd" columnName="City" newDataType="citext" />
 	</changeSet>
-	
+
 	<!-- FIME MURTHY -->
-	<!-- <changeSet id="34" author="Varaprasad">
-		<addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries"
-			referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" />
-		<addForeignKeyConstraint constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince"
-			referencedColumnNames="cpcountry, cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" />
-		<addForeignKeyConstraint constraintName="fk_verification_pd_city" referencedTableName="rmtprovincevscity"
-			referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" />
-		<addForeignKeyConstraint constraintName="fk_verification_pd_relship" referencedTableName="bmtprelationcodes"
-			referencedColumnNames="prelationcode" baseTableName="Verification_pd" baseColumnNames="Relationship" />
-	</changeSet> -->
-	
+	<!-- <changeSet id="34" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries" 
+		referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" /> <addForeignKeyConstraint 
+		constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, 
+		cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" /> <addForeignKeyConstraint constraintName="fk_verification_pd_city" 
+		referencedTableName="rmtprovincevscity" referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" 
+		/> <addForeignKeyConstraint constraintName="fk_verification_pd_relship" referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode" 
+		baseTableName="Verification_pd" baseColumnNames="Relationship" /> </changeSet> -->
+
 	<changeSet id="35" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd" defaultValue="0" />
 		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd" defaultValue="0" />
@@ -1664,18 +1662,15 @@ UNION ALL
 		<modifyDataType tableName="Verification_pd_temp" columnName="Province" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd_temp" columnName="City" newDataType="citext" />
 	</changeSet>
-	
-	<!-- <changeSet id="39" author="Varaprasad">
-		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries"
-			referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" />
-		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince"
-			referencedColumnNames="cpcountry, cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" />
-		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" referencedTableName="rmtprovincevscity"
-			referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" />
-		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_relship" referencedTableName="bmtprelationcodes"
-			referencedColumnNames="prelationcode" baseTableName="Verification_pd_temp" baseColumnNames="Relationship" />
-	</changeSet> -->
-	
+
+	<!-- <changeSet id="39" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries" 
+		referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" /> <addForeignKeyConstraint 
+		constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, 
+		cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" /> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" 
+		referencedTableName="rmtprovincevscity" referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" 
+		/> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_relship" referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode" 
+		baseTableName="Verification_pd_temp" baseColumnNames="Relationship" /> </changeSet> -->
+
 	<changeSet id="40" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd_temp" defaultValue="0" />
 		<addDefaultValue columnName="YearsAtPresentAddress" tableName="verification_pd_temp" defaultValue="0" />
@@ -1684,7 +1679,7 @@ UNION ALL
 		<addDefaultValue columnName="NegativeCheck" tableName="verification_pd_temp" defaultValue="0" />
 		<addDefaultValue columnName="NoofAttempts" tableName="verification_pd_temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="41" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -2076,4 +2071,24 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="50" author="murthy.y">
+		<dropTable tableName="LMSServiceLog" />
+		<dropSequence sequenceName="SeqLMSServiceLog" />
+	</changeSet>
+
+	<changeSet id="51" author="murthy.y">
+		<createTable tableName="LMSServiceLog">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="Event" type="varchar(50)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="OldRate" type="decimal(13,9)" />
+			<column name="NewRate" type="decimal(13,9)" />
+			<column name="EffectiveDate" type="datetime" />
+			<column name="NotificationFlag" type="varchar(1)" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
