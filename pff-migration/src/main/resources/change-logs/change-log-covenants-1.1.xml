@@ -861,7 +861,7 @@
 	</changeSet>
 
 	<changeSet id="11" author="vijaya.a">
-		<createView viewName="COVENANTS_AVIEW">
+		<createView viewName="COVENANTS_AVIEW" replaceIfExists="true">
 			SELECT T1.ID
 			,KeyReference
 			,Module
@@ -911,7 +911,7 @@
 		</createView>
 	</changeSet>
 	<changeSet id="12" author="vijaya.a">
-		<createView viewName="COVENANTS_VIEW">
+		<createView viewName="COVENANTS_VIEW" replaceIfExists="true">
 			SELECT T1.ID
 			,KeyReference
 			,Module
@@ -1210,7 +1210,7 @@
 	</changeSet>
 
 	<changeSet id="15.3" author="vijaya.a">
-		<createView viewName="COVENANT_DOCUMENTS_VIEW">
+		<createView viewName="COVENANT_DOCUMENTS_VIEW"  replaceIfExists="true">
 			select 
 			cd.Id
 			,cd.Covenantid
@@ -1264,7 +1264,7 @@
 		</createView>
 	</changeSet>
 	<changeSet id="15.4" author="vijaya.a">
-		<createView viewName="COVENANT_DOCUMENTS_AVIEW">
+		<createView viewName="COVENANT_DOCUMENTS_AVIEW"  replaceIfExists="true">
 			select 
 			cd.Id
 			,cd.Covenantid
@@ -1511,7 +1511,7 @@
 	</changeSet>
 
 	<changeSet id="19" author="vijaya.a">
-		<createView viewName="COVENANT_ALERTS_VIEW">
+		<createView viewName="COVENANT_ALERTS_VIEW" replaceIfExists="true">
 			select 
 			 c.Id
 			,c.CovenantTypeId
@@ -1535,7 +1535,7 @@
 
 
 	<changeSet id="20" author="vijaya.a">
-		<createView viewName="operation_roles_view">
+		<createView viewName="operation_roles_view" replaceIfExists="true">
 			select distinct roleCd, RoleDesc from SecRoles r
 			inner join SecOPerationRoles opr on opr.roleid = r.roleid
 		</createView>
