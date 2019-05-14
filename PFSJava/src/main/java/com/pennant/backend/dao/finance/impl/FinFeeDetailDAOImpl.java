@@ -402,7 +402,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", Percentage = :Percentage");
 		sql.append(", CalculateOn = :CalculateOn");
 		sql.append(", AlwDeviation = :AlwDeviation");
-		sql.append("  MaxWaiverPerc = :MaxWaiverPerc");
+		sql.append(", MaxWaiverPerc = :MaxWaiverPerc");
 		sql.append(", AlwModifyFee = :AlwModifyFee");
 		sql.append(", AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd");
 		sql.append(", Refundable = :Refundable");
