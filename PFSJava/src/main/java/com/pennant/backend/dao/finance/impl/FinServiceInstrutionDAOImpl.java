@@ -370,24 +370,17 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	public void saveLMSServiceLOGList(List<LMSServiceLog> lmsServiceLog) {
 		logger.debug(Literal.ENTERING);
 
-		
-		for (LMSServiceLog lmsServiceList : lmsServiceLog) {
-			if (lmsServiceList.getId() == Long.MIN_VALUE) {
-				lmsServiceList.setId(getNextValue("seqLMSServiceLog"));
-				logger.debug("get NextID:" + lmsServiceList.getId());
-			}
-		}
 		StringBuilder sql = new StringBuilder("Insert into LMSServiceLog");
-		sql.append(" (id,Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag)");
-		sql.append(" Values( :Id , :Event, :FinReference, :OldRate, :NewRate, :EffectiveDate, :NotificationFlag)");
-		
-		logger.trace("selectSql: " + sql.toString());
+		sql.append(" (Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag)");
+		sql.append(" Values(:Event, :FinReference, :OldRate, :NewRate, :EffectiveDate, :NotificationFlag)");
+
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(lmsServiceLog.toArray());
 		logger.debug("Leaving");
 		try {
 			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 

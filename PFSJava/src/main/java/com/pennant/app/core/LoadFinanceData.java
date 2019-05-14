@@ -502,7 +502,7 @@ public class LoadFinanceData extends ServiceHelper {
 			Date appDate = DateUtility.getAppDate();
 			FinanceScheduleDetail financeScheduleDetail = null;
 
-			BigDecimal oldRate = getFinServiceInstructionDAO().getOldRate(finReference, appDate);
+			BigDecimal oldRate = finServiceInstructionDAO.getOldRate(finReference, appDate);
 
 			List<FinanceScheduleDetail> scheduleDetail = finEODEvent.getFinanceScheduleDetails();
 
@@ -531,7 +531,7 @@ public class LoadFinanceData extends ServiceHelper {
 			lmsServiceLogs.add(lmsServiceLog);
 
 			if (CollectionUtils.isNotEmpty(lmsServiceLogs)) {
-				getFinServiceInstructionDAO().saveLMSServiceLOGList(lmsServiceLogs);
+				finServiceInstructionDAO.saveLMSServiceLOGList(lmsServiceLogs);
 			}
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
