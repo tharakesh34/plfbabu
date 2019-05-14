@@ -308,7 +308,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		
-		StringBuilder sql = new StringBuilder("Select Event, FinReference, OldRate, NewRate, EffectiveDate,");
+		StringBuilder sql = new StringBuilder("Select Id,Event, FinReference, OldRate, NewRate, EffectiveDate,");
 		sql.append(" NotificationFlag From LMSServiceLog Where  NotificationFlag = :NotificationFlag ");
 		logger.debug(Literal.SQL + sql.toString());
 		
@@ -321,17 +321,17 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	}
 
 	@Override
-	public void updateNotificationFlag(String finReference, String notificationFlag) {
+	public void updateNotificationFlag(String notificationFlag, long id) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		StringBuilder updateSql = new StringBuilder("update LMSServiceLog set NotificationFlag = :NotificationFlag");
-		updateSql.append(" Where FinReference =:FinReference");
+		updateSql.append(" Where id =:id");
 		logger.debug(Literal.SQL + updateSql.toString());
 
 		source.addValue("NotificationFlag", notificationFlag);
-		source.addValue("FinReference", finReference);
+		source.addValue("id", id);
 
 		try {
 			this.jdbcTemplate.update(updateSql.toString(), source);
@@ -370,9 +370,16 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	public void saveLMSServiceLOGList(List<LMSServiceLog> lmsServiceLog) {
 		logger.debug(Literal.ENTERING);
 
+		
+		for (LMSServiceLog lmsServiceList : lmsServiceLog) {
+			if (lmsServiceList.getId() == Long.MIN_VALUE) {
+				lmsServiceList.setId(getNextValue("seqLMSServiceLog"));
+				logger.debug("get NextID:" + lmsServiceList.getId());
+			}
+		}
 		StringBuilder sql = new StringBuilder("Insert into LMSServiceLog");
-		sql.append(" (Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag)");
-		sql.append(" Values(:Event, :FinReference, :OldRate, :NewRate, :EffectiveDate, :NotificationFlag)");
+		sql.append(" (id,Event, FinReference, OldRate, NewRate, EffectiveDate, NotificationFlag)");
+		sql.append(" Values( :Id , :Event, :FinReference, :OldRate, :NewRate, :EffectiveDate, :NotificationFlag)");
 		
 		logger.trace("selectSql: " + sql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(lmsServiceLog.toArray());

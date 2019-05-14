@@ -1,5 +1,6 @@
 package com.pennanttech.pff.jobs;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
@@ -7,6 +8,8 @@ import org.quartz.JobBuilder;
 import org.quartz.TriggerBuilder;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.scheduler.AbstractJobScheduler;
@@ -173,6 +176,10 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String trigger = LMSServiceLogAlertsJob.JOB_TRIGGER;
 		String cronExpression = LMSServiceLogAlertsJob.CRON_EXPRESSION;
 
+		String lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
+		if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
+			return;
+		}
 		Job job = new Job();
 
 		job.setJobDetail(JobBuilder.newJob(LMSServiceLogAlertsJob.class).withIdentity(jobKey, jobKey)

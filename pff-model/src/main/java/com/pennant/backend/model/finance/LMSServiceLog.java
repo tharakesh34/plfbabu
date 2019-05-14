@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class LMSServiceLog {
 
+	private long id=Long.MIN_VALUE;
 	private String event;
 	private String finReference;
 	private BigDecimal oldRate;
@@ -79,6 +80,14 @@ public class LMSServiceLog {
 			}
 		}
 		return customerMap;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }

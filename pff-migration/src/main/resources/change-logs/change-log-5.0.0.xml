@@ -1200,7 +1200,17 @@ UNION ALL
 			]]>
 	 </sql>
 	</changeSet>
-	
+	<changeSet id="29" author="Saikiran.v">
+		<addColumn tableName="LMSServiceLog">
+			<column name="id" type="bigint">
+				<constraints primaryKeyName="LMSServiceLog_id"
+					primaryKey="true" nullable="false" />
+			</column>
+		</addColumn>
+ 	</changeSet>
+	<changeSet id="30" author="Saikiran.v">
+		<createSequence sequenceName="seqLMSServiceLog" />
+	</changeSet>
 	<changeSet id="29" author="satyanarayana.g">
 		<addColumn tableName="LIMITHEADER">
 			<column name="ValidateMaturityDate" type="boolean" />

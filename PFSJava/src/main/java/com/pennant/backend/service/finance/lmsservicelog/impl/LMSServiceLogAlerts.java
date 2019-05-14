@@ -81,8 +81,7 @@ public class LMSServiceLogAlerts {
 		long lmsServiceNotifyId = sendNotification(financeDetail, lmsServiceNotifyCust);
 
 		if (lmsServiceNotifyId > 0) {
-			finServiceInstrutionDAO.updateNotificationFlag(lmsServiceLog.getFinReference(),
-					PennantConstants.YES);
+			finServiceInstrutionDAO.updateNotificationFlag(PennantConstants.YES,lmsServiceLog.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
