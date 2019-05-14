@@ -254,19 +254,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.searchObject.clearFilters();
 		addRegisteredFilters();
 
-		if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)
-				|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
-			List<String> filterList = new ArrayList<>();
-			filterList.add(FinanceConstants.RECEIPTREALIZE_APPROVER);
-			filterList.add(FinanceConstants.RECEIPT_APPROVER);
-			searchObject.addFilterIn("NEXTROLECODE", filterList);
-		} else if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)) {
-			List<String> filterList = new ArrayList<>();
-			filterList.add("R");
-			filterList.add("D");
-			searchObject.addFilterOr(Filter.equalTo("NEXTROLECODE", module),
-					Filter.in("RECEIPTMODESTATUS", filterList));
-		}
 		if (enqiryModule) {
 			List<String> filterList = new ArrayList<>();
 			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
@@ -283,13 +270,13 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			} else if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)) {
 				searchObject.addWhereClause(
-						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment') OR NEXTROLECODE ='"
+						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
 								+ module + "')");
 
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {
 				searchObject.addWhereClause(
-						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null and ReceiptModeStatus != 'C')"
-								+ "OR NEXTROLECODE='" + module + "')");
+						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE is null or NEXTROLECODE='"
+								+ module + "')");
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");
