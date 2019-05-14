@@ -5198,4 +5198,15 @@
 		parent="basisCtrl" scope="prototype">
 	<property name="dealerMappingService" ref="dealerMappingService" />
 </bean>		
+	<!-- SchemeDealerGroup -->	
+	<bean id="schemeDealerGroupListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupListCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
+	</bean>
+	
+	<bean id="schemeDealerGroupDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupDialogueCtrl" parent="basisListCtrl"
+		scope="prototype">
+			<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
+	</bean>
+	
 </beans>

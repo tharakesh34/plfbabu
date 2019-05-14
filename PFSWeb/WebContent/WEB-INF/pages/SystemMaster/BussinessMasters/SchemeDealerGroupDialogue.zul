@@ -6,10 +6,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_merchantDetailsDialogue" border="normal" apply="${merchantDetailsDialogueCtrl}" width="100%"
+	<window id="window_schemeDealerGroupDialogue" border="normal" apply="${schemeDealerGroupDialogueCtrl}" width="100%"
 		height="100%" sizable="false">
 
-		<borderlayout id="borderlayoutMerchantDetails">
+		<borderlayout id="borderlayoutSchemeDealerGroup">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
 					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
@@ -30,7 +30,7 @@
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
-							<label value="${c:l('window_merchantDetailsDialogue.title')}" sclass="label-heading" />
+							<label value="${c:l('window_schemeDealerGroupDialogue.title')}" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
@@ -55,101 +55,18 @@
 							</columns>
 							<rows>
 								<row>
-									<label value="${c:l('label_MerchantDetails_MerchantName.value')}" />
+									<label value="${c:l('label_SchemeDealerGroup_SchemeId.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="merchantName" width="100px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_AvgNumOfTraPerMnth.value')}" />
-									<hbox>
-										<currencyBox id="avgNumOfTransperMnth" width="100px" />
+										<textbox id="schemeId" width="170px" readonly="true" />
+										<button id="btnSchemeId" image="/images/icons/LOVSearch.png" />
 									</hbox>
 								</row>
 								<row>
-									<label value="${c:l('label_MerchantDetails_StoreId.value')}" />
+									<label value="${c:l('label_SchemeDealerGroupList_DealerGroupCode.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<intbox id="storeId" width="300px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_AvgTraAmtPerMnth.value')}" />
-									<hbox>
-										<currencyBox id="avgTranAmtperMnth" width="300px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_StoreName.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<textbox id="storeName" width="300px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_TransAmtLmtPerMnth.value')}" />
-									<hbox>
-										<currencyBox id="transAmtLmtPerTran" width="300px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_AddressLine1.value')}" />
-									<hbox>
-										<space spacing="2px" sclass="mandatory" />
-										<textbox id="addressLine1" width="300px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_TransAmtLmtPerDay.value')}" />
-									<hbox>
-										<currencyBox id="transAmtLmtPerDay" width="300px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_AddressLine2.value')}" />
-									<hbox>
-										<space spacing="2px"/>
-										<textbox id="addressLine2" width="300px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_PeakTransPerDay.value')}" />
-									<hbox>
-										<space spacing="2px"/>
-										<intbox id="peakTransPerDay" width="150px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_AddressLine3.value')}" />
-									<hbox>
-										<space spacing="2px"/>
-										<textbox id="addressLine3" width="300px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_RefundAllowed.value')}" />
-									<hbox>
-										<space spacing="2px"/>
-										<checkbox id="refundAllowed" width="300px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_Country.value')}" />
-									<hbox>
-										<extendedcombobox id="country" width="300px" />
-									</hbox>
-									<label value="${c:l('label_MerchantDetails_Channel.value')}" />
-									<hbox id="hbox_channels">
-										<space spacing="2px"/>
-										<textbox id="txtchannel" width="170px" readonly="true" />
-										<button id="btnChannel" image="/images/icons/LOVSearch.png" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_City.value')}" />
-									<hbox>
-										<extendedcombobox id="city" width="300px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_State.value')}" />
-									<hbox>
-										<extendedcombobox id="state" width="300px" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_MerchantDetails_Pincode.value')}" />
-									<hbox>
-										<extendedcombobox id="pincode" width="300px" />
+										<intbox id="dealerGroupCode" width="100px" />
 									</hbox>
 								</row>
 								<row>

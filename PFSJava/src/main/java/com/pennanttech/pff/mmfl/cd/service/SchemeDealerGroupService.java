@@ -1,15 +1,15 @@
 package com.pennanttech.pff.mmfl.cd.service;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
+import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
 
-public interface ManufacturerService {
+public interface SchemeDealerGroupService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	Manufacturer getManufacturer(long id);
+	SchemeDealerGroup getSchemeDealerGroup(long id);
 
-	Manufacturer getApprovedManufacturer(long id);
+	SchemeDealerGroup getApprovedSchemeDealerGroup(long id);
 
 	AuditHeader delete(AuditHeader auditHeader);
 

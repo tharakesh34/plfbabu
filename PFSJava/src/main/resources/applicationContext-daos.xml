@@ -10552,6 +10552,32 @@
 		<property name="merchantDetailsDAO" ref="merchantDetailsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<!-- SchemeDealerGroup -->
+	<bean id="schemeDealerGroupDAO" class="com.pennattech.pff.mmfl.cd.dao.SchemeDealerGroupDAOImpl" parent="sequenceDao" />
+
+	<bean id="schemeDealerGroupService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="schemeDealerGroupServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="schemeDealerGroupServiceTarget" class="com.pennanttech.pff.mmfl.cd.service.SchemeDealerGroupServiceImpl">
+		<property name="schemeDealerGroupDAO" ref="schemeDealerGroupDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
 
 
 <!-- Product Group -->
