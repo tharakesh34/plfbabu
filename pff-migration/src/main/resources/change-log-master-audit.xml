@@ -34,5 +34,6 @@
 	<include file="change-logs/change-log-4.14.0-audit.xml" />
 	<include file="change-logs/change-log-receipts-new-audit-1.0.xml" />
 	<include file="change-logs/change-log-5.0.0-audit.xml" />
-	<include file="change-logs/change-log-5.0.0-audit.xml" /> 
+	<include file="change-logs/change-log-5.0.0-audit.xml" />
+	<include file="change-logs/change-log-mmfsl-audit.xml"/> 
 </databaseChangeLog>

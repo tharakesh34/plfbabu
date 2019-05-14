@@ -202,6 +202,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
+import com.pennant.backend.model.dealermapping.DealerMapping;
 import com.pennant.backend.model.dedup.DedupFields;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -3194,11 +3195,21 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ConsumerProduct",
 				new ModuleMapping("ConsumerProduct", ConsumerProduct.class, new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" },
 						masterWF, new String[] { "ProductId", "modelId" }, null, 600));
-		
+
 		ModuleUtil.register("MerchantDetails",
 				new ModuleMapping("MerchantDetails", MerchantDetails.class, new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" },
 						masterWF, new String[] { "MerchantId", "MerchantName" }, null, 600));
-		
+
+		ModuleUtil.register("DealerMapping",
+				new ModuleMapping("DealerMapping", DealerMapping.class,
+						new String[] { "CD_DealerMapping", "CD_DealerMapping_AVIEW" }, masterWF,
+						new String[] { "DealerMapId", "MerchantId", "StoreId" }, null, 600));
+
+		ModuleUtil.register("Stores",
+				new ModuleMapping("MerchantDetails", MerchantDetails.class,
+						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,
+						new String[] { "StoreId", "StoreName" }, null, 600));
+
 		registerCustomModules();
 	}
 

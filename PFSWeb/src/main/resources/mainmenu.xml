@@ -123,7 +123,11 @@
 			<menuItem id="manu_Item_Product" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/ConsumerProductList.zul"
 				rightName="menuItem_Product" />
 			<menuItem id="menu_Item_Merchant" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/MerchantDetailsList.zul"
-				rightName="menuItem_Merchant" />	
+				rightName="menuItem_Merchant" />
+			
+			<menuItem id="menu_Item_DealerMapping" zulNavigation="/WEB-INF/pages/SystemMaster/DealerMapping/DealerMappingList.zul" 
+				rightName="menuItem_DealerMapping" />
+						
 		</menu>
 		<menu id="menu_Category_BankMasters">
 			<menuItem id="menu_Item_BankDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul" rightName="menuItem_ApplicationMaster_BankDetail" />

@@ -5157,7 +5157,12 @@
 		scope="prototype">
 			<property name="consumerProductService" ref="consumerProductService" />
 	</bean>
-	
+
+	<bean id="dealerMappingListCtrl" class="com.pennant.webui.amtmasters.dealermapping.DealerMappingListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="dealerMappingService" ref="dealerMappingService" />
+	</bean>
+		
 	<!-- MerchantDetails -->	
 	<bean id="merchantDetailsListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.MerchantDetailsListCtrl" parent="basisListCtrl"
 		scope="prototype">
@@ -5168,5 +5173,9 @@
 		scope="prototype">
 			<property name="merchantDetailsService" ref="merchantDetailsService" />
 	</bean>
-	
+
+	<bean id="dealerMappingDialogCtrl" class="com.pennant.webui.amtmasters.dealermapping.DealerMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	<property name="dealerMappingService" ref="dealerMappingService" />
+</bean>		
 </beans>

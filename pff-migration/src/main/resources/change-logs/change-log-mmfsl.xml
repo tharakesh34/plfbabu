@@ -1536,4 +1536,57 @@
 	<modifyDataType tableName="ProductGroup" columnName="channel" newDataType="varchar(8)"/>
 	</changeSet>
 	
+	<changeSet id="10.1" author="Nageswar.p">
+		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
+
+ 		SELECT t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,
+          t2.merchantName,
+          t2.storeName As storeName,
+          t2.storeCity As storeCity,
+          t2.STOREADDRESSLINE1 As storeAddress,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			   FROM CD_DealerMapping_Temp t1 
+         left outer  Join Cd_Merchants t2 on t1.storeId = t2.storeId
+			UNION ALL
+ 			SELECT 
+          t1.dealerMapId,
+    			t1.MerchantId,
+   				t1.storeId,
+    			t1.dealerCode,
+    			t1.active,  
+          t2.merchantName,
+          t2.storeName As storeName,
+          t2.storeCity As storeCity,
+          t2.STOREADDRESSLINE1 As storeAddress,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_DealerMapping t1 
+        left outer Join Cd_Merchants t2 on  t1.storeId = t2.storeId
+  			WHERE NOT (EXISTS (SELECT 1
+            FROM CD_DealerMapping_Temp  
+            WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>	

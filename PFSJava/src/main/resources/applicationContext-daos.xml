@@ -10526,4 +10526,29 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
+	<!-- Dealer Mapping Service -->
+	<bean id="dealerMappingDAO" class="com.pennant.backend.dao.dealermapping.impl.DealerMappingDAOImpl" parent="sequenceDao" />
+
+	<bean id="dealerMappingService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="dealerMappingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="dealerMappingServiceTarget" class="com.pennant.backend.service.dealermapping.impl.DealerMappingServiceImpl">
+		<property name="dealerMappingDAO" ref="dealerMappingDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
 </beans>
