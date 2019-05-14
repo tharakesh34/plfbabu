@@ -33,9 +33,9 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp1" author="vijaya.a" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp2" author="vijaya.a" runAlways="true" dbms="postgresql">
 		<sql>
-			Set search_path = plfaudit, plf, public, pg_catalog;
+			Set search_path = plfaudit, public, pg_catalog;
 		</sql>
 	</changeSet>
 
