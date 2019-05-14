@@ -151,7 +151,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 		}
 	}
 
-	protected final void doRenderPage() {
+	protected void doRenderPage() {
 		logger.debug("Entering");
 
 		if (recordType != null) {

@@ -385,6 +385,7 @@ import com.pennant.backend.model.systemmasters.BuilderProjcet;
 import com.pennant.backend.model.systemmasters.Caste;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
+import com.pennant.backend.model.systemmasters.DealerGroup;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.DispatchMode;
@@ -407,6 +408,7 @@ import com.pennant.backend.model.systemmasters.MaritalStatusCode;
 import com.pennant.backend.model.systemmasters.NationalityCode;
 import com.pennant.backend.model.systemmasters.PRelationCode;
 import com.pennant.backend.model.systemmasters.PhoneType;
+import com.pennant.backend.model.systemmasters.ProductGroup;
 import com.pennant.backend.model.systemmasters.Profession;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Religion;
@@ -3176,6 +3178,21 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Commodity",
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
 						masterWF, new String[] { "Id", "CommodityTypeCode", "Code" }, null, 600));
+		
+		ModuleUtil.register("DealerGroup",
+				new ModuleMapping("DealerGroup", DealerGroup.class, new String[] { "CD_DealerGroup", "CD_DealerGroup_AVIEW" },
+						masterWF, new String[] { "DealerGroupId", "DealerGroupCode", "" }, null, 600));
+		ModuleUtil.register("ProductGroup",
+				new ModuleMapping("ProductGroup", ProductGroup.class, new String[] { "CD_DealerGroup", "CD_DealerGroup_AVIEW" },
+						masterWF, new String[] { "DealerGroupId", "DealerGroupCode", "" }, null, 600));
+		ModuleUtil.register("ChannelTypes",
+				new ModuleMapping("ChannelTypes", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CHANNEL" } }, 400));
+		 ModuleUtil.register("DealerMapping",
+					new ModuleMapping("DealerMapping", DealerMapping.class,
+							new String[] { "CD_DealerMapping", "CD_DealerMapping_AVIEW" }, masterWF,
+							new String[] { "DealerMapId", "MerchantId", "StoreId" }, null, 600));
 
 		
 		ModuleUtil.register("PersonalDiscussion", new ModuleMapping("PersonalDiscussion", PersonalDiscussion.class,
@@ -3210,6 +3227,19 @@ public class PennantJavaUtil {
 						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,
 						new String[] { "StoreId", "StoreName" }, null, 600));
 
+		ModuleUtil.register("ProductGroup",
+				new ModuleMapping("ProductGroup", ProductGroup.class, new String[] { "ProductGroup", "ProductGroup_AVIEW" },
+						masterWF, new String[] { "modelId", "productId" }, null, 600));
+		
+		ModuleUtil.register("Category",
+				new ModuleMapping("Category", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "Dealer_Category" } }, 400));
+		ModuleUtil.register("ProductCategory",
+				new ModuleMapping("ProductCategory", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "Product_Category" } }, 400));
+		
 		registerCustomModules();
 	}
 

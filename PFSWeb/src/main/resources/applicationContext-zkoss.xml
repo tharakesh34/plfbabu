@@ -4203,6 +4203,26 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="builderCompanyService" ref="builderCompanyService" />
 	</bean>
+	
+	<!-- DealerGroup -->
+	<bean id="dealerGroupListCtrl" class="com.pennant.webui.systemmasters.dealergroup.DealerGroupListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="dealerGroupService" ref="dealerGroupService" />
+	</bean>
+	<bean id="dealerGroupDialogCtrl" class="com.pennant.webui.systemmasters.dealergroup.DealerGroupDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="dealerGroupService" ref="dealerGroupService" />
+	</bean>
+	
+	<!-- Product Group -->
+	<bean id="productGroupListCtrl" class="com.pennant.webui.systemmasters.productgroup.ProductGroupListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="productGroupService" ref="productGroupService" />
+	</bean>
+	<bean id="productGroupDialogCtrl" class="com.pennant.webui.systemmasters.productgroup.ProductGroupDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="productGroupService" ref="productGroupService" />
+	</bean>
 
 
 	<!-- BuilderProjcet -->

@@ -259,8 +259,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_eidNumber.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		/*
-		 * this.sortOperator_passPort.setModel(new ListModelList<SearchOperators>(new SearchOperators()
-		 * .getStringOperators())); this.sortOperator_passPort.setItemRenderer(new
+		 * this.sortOperator_passPort.setModel(new
+		 * ListModelList<SearchOperators>(new SearchOperators()
+		 * .getStringOperators()));
+		 * this.sortOperator_passPort.setItemRenderer(new
 		 * SearchOperatorListModelItemRenderer());
 		 */
 
@@ -397,15 +399,20 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// FIXME: DELETE BELOW CODE AFTER TESTING
 		/*
-		 * String screenEvent = ""; if (FinanceConstants.FINSER_EVENT_PREAPPROVAL .equals(this.requestSource)) {
-		 * screenEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL; } else { screenEvent =
+		 * String screenEvent = ""; if
+		 * (FinanceConstants.FINSER_EVENT_PREAPPROVAL
+		 * .equals(this.requestSource)) { screenEvent =
+		 * FinanceConstants.FINSER_EVENT_PREAPPROVAL; } else { screenEvent =
 		 * FinanceConstants.FINSER_EVENT_ORG; }
 		 * 
-		 * boolean accessToCreateNewFin = getFinanceDetailService().checkFirstTaskOwnerAccess(
-		 * getUserWorkspace().getUserRoleSet(), screenEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
+		 * boolean accessToCreateNewFin =
+		 * getFinanceDetailService().checkFirstTaskOwnerAccess(
+		 * getUserWorkspace().getUserRoleSet(), screenEvent,
+		 * PennantConstants.WORFLOW_MODULE_FINANCE);
 		 * 
 		 * 
-		 * if (accessToCreateNewFin) { button_FinanceMainList_NewFinanceMain.setVisible(true); } else {
+		 * if (accessToCreateNewFin) {
+		 * button_FinanceMainList_NewFinanceMain.setVisible(true); } else {
 		 * button_FinanceMainList_NewFinanceMain.setVisible(false); }
 		 */
 		this.searchObj.addTabelName("FinanceMain_LView");
@@ -445,7 +452,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	/**
 	 * This method is forwarded from the list boxes item renderer. <br>
-	 * see: com.pennant.webui.finance.financemain.model. FinanceMainListModelItemRenderer.java <br>
+	 * see: com.pennant.webui.finance.financemain.model.
+	 * FinanceMainListModelItemRenderer.java <br>
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -503,7 +511,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		//Check QDP Case
+		// Check QDP Case
 		boolean allowProcess = DisbursementInstCtrl.checkQDPProceeed(financeDetail);
 		if (!allowProcess) {
 			MessageUtil.showMessage(Labels.getLabel("label_Finance_QuickDisb_Queue"));
@@ -552,8 +560,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for Validating Customer is Exists in Core Banking Account created against Customer in Core banking System
-	 * if required
+	 * Method for Validating Customer is Exists in Core Banking Account created
+	 * against Customer in Core banking System if required
 	 * 
 	 * @param financeDetail
 	 * @throws Exception
@@ -653,8 +661,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for Checking User action maintained based On TAT defined at Process Editor If User agreed , Action will be
-	 * logged for future purpose.
+	 * Method for Checking User action maintained based On TAT defined at
+	 * Process Editor If User agreed , Action will be logged for future purpose.
 	 * 
 	 * @param aFinanceMain
 	 * @param financeDetail
@@ -707,9 +715,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering " + event.toString());
 
 		/*
-		 * we can call our SelectFinanceType ZUL-file with parameters. So we can call them with a object of the selected
-		 * FinanceMain. For handed over these parameter only a Map is accepted. So we put the FinanceMain object in a
-		 * HashMap.
+		 * we can call our SelectFinanceType ZUL-file with parameters. So we can
+		 * call them with a object of the selected FinanceMain. For handed over
+		 * these parameter only a Map is accepted. So we put the FinanceMain
+		 * object in a HashMap.
 		 */
 		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
 			MessageUtil.showError(Labels.getLabel("USER_FINROLES_NOTASSIGNED"));
@@ -750,16 +759,18 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		/*
-		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
-		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
+		 * We can call our Dialog ZUL-file with parameters. So we can call them
+		 * with a object of the selected item. For handed over these parameter
+		 * only a Map is accepted. So we put the object in a HashMap.
 		 */
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Map<String, Object> map = getDefaultArguments();
 		map.put("financeDetail", aFinanceDetail);
 		/*
-		 * we can additionally handed over the listBox or the controller self, so we have in the dialog access to the
-		 * list box List model. This is fine for synchronizing the data in the FinanceMainListbox from the dialog when
-		 * we do a delete, edit or insert a FinanceMain.
+		 * we can additionally handed over the listBox or the controller self,
+		 * so we have in the dialog access to the list box List model. This is
+		 * fine for synchronizing the data in the FinanceMainListbox from the
+		 * dialog when we do a delete, edit or insert a FinanceMain.
 		 */
 		map.put("financeMainListCtrl", this);
 		map.put("menuItemRightName", menuItemRightName);
@@ -946,10 +957,13 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// FIXME: Below fields are not part of ZUL or visible FALSE
 		/*
-		 * this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL)); this.searchObj.addFilter(new
-		 * Filter("DeviationApproval", 0, Filter.OP_EQUAL)); this.searchObj.addFilter(new Filter("RecordType",
-		 * PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL)); this.searchObj.addFilter(new Filter("RcdMaintainSts",
-		 * "", Filter.OP_EQUAL));
+		 * this.searchObj.addFilter(new Filter("InvestmentRef", "",
+		 * Filter.OP_EQUAL)); this.searchObj.addFilter(new
+		 * Filter("DeviationApproval", 0, Filter.OP_EQUAL));
+		 * this.searchObj.addFilter(new Filter("RecordType",
+		 * PennantConstants.RECORD_TYPE_NEW, Filter.OP_EQUAL));
+		 * this.searchObj.addFilter(new Filter("RcdMaintainSts", "",
+		 * Filter.OP_EQUAL));
 		 */
 
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
@@ -1272,7 +1286,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for Searching Finance Reference as user entered Reference exists in the Queue or not
+	 * Method for Searching Finance Reference as user entered Reference exists
+	 * in the Queue or not
 	 */
 	public JdbcSearchObject<FinanceMain> setFinReferences(JdbcSearchObject<FinanceMain> searchObject,
 			String whereClause) {
@@ -1293,7 +1308,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			int operatorId = 0;
 			String operatorSign = "=";
 
-			// TODO: Only allow equals to search on Finance Reference and remove the below two IF blocks.
+			// TODO: Only allow equals to search on Finance Reference and remove
+			// the below two IF blocks.
 			if (sortOperator_finReference.getSelectedItem() != null) {
 				operatorId = ((SearchOperators) sortOperator_finReference.getSelectedItem().getAttribute("data"))
 						.getSearchOperatorId();
