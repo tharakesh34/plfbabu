@@ -806,6 +806,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 		Date date = null;
 		if (list != null && !list.isEmpty()) {
+			
 			for (FinanceDisbursement disbursement : list) {
 				if (group && seq != disbursement.getDisbSeq()) {
 					continue;
@@ -824,10 +825,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 						&& disbursement.getDisbSeq() == 1) {
 					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
 
-					// Add Disbursement amount for first disbursement only.
-					if (list.size() == 1) {
-						totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
-					}
+					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());

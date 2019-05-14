@@ -134,4 +134,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	List<ManualAdviseMovements> getAdvMovementsByReceiptSeq(long receiptID, long receiptSeqID, String string);
 
+	List<ManualAdvise> getPreviousAdvPayments(String finReference);
+
 }

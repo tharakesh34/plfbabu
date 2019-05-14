@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -176,7 +177,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				advancePayment.setProfitDetail(finEODEvent.getFinProfitDetail());
 				createReceipt(advancePayment, fm, appDate);
 			}
-			
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -279,39 +280,104 @@ public class AdvancePaymentService extends ServiceHelper {
 	public void excessAmountMovement(FinScheduleData finScheduleData) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
+		Date valueDate = DateUtility.getAppValueDate();
+		long lastMntBy = financeMain.getLastMntBy();
 
 		AdvanceType grcAdvanceType = AdvanceType.getType(financeMain.getGrcAdvType());
 		AdvanceType repayAdvanceType = AdvanceType.getType(financeMain.getAdvType());
 
 		List<FinFeeDetail> fees = finFeeDetailDAO.getPreviousAdvPayments(finReference);
-		BigDecimal pftChg = BigDecimal.ZERO;
+		List<ManualAdvise> manualAdvises = manualAdviseDAO.getPreviousAdvPayments(finReference);
 
-		for (FinFeeDetail fee : fees) {
-			// Identify whether the collected advance is either ADVINT/ADVEMI
-			AdvanceRuleCode advanceRuleCode = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+		BigDecimal previousAdvInt = BigDecimal.ZERO;
+		BigDecimal previousAdvEmi = BigDecimal.ZERO;
 
-			if (grcAdvanceType != null && advanceRuleCode == AdvanceRuleCode.ADVINT) {
-				pftChg = AdvancePaymentUtil.calculateGrcAdvPayment(finScheduleData);
-			} else if (repayAdvanceType != null) {
-				pftChg = AdvancePaymentUtil.calculateRepayAdvPayment(finScheduleData);
+		Map<String, Long> map = new HashMap<>();
+
+		for (ManualAdvise manualAdvise : manualAdvises) {
+			if (!AdvanceRuleCode.ADVINT.name().equals(manualAdvise.getFeeTypeCode())) {
+				continue;
 			}
 
-			AdvancePayment advancePayment = new AdvancePayment();
-			advancePayment.setFinReference(finReference);
-			advancePayment.setAdvancePaymentType(fee.getFeeTypeCode());
+			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == manualAdvise.getAdviseType()) {
+				previousAdvInt = previousAdvInt.add(manualAdvise.getAdviseAmount());
+			} else {
+				previousAdvInt = previousAdvInt.subtract(manualAdvise.getAdviseAmount());
+			}
+		}
 
-			if (pftChg.compareTo(fee.getCalculatedAmount()) < 0) {
-				BigDecimal adviseAmount = fee.getCalculatedAmount().subtract(pftChg);
+		for (FinFeeDetail fee : fees) {
+			if (!AdvanceRuleCode.ADVINT.name().equals(fee.getFeeTypeCode())) {
+				continue;
+			}
+
+			previousAdvInt = previousAdvInt.add(fee.getCalculatedAmount());
+			map.put(fee.getFeeTypeCode(), fee.getFeeTypeID());
+		}
+
+		for (ManualAdvise manualAdvise : manualAdvises) {
+			if (!AdvanceRuleCode.ADVEMI.name().equals(manualAdvise.getFeeTypeCode())) {
+				continue;
+			}
+
+			if (FinanceConstants.MANUAL_ADVISE_RECEIVABLE == manualAdvise.getAdviseType()) {
+				previousAdvEmi = previousAdvEmi.add(manualAdvise.getAdviseAmount());
+			} else {
+				previousAdvEmi = previousAdvEmi.subtract(manualAdvise.getAdviseAmount());
+			}
+		}
+
+		for (FinFeeDetail fee : fees) {
+			if (!AdvanceRuleCode.ADVEMI.name().equals(fee.getFeeTypeCode())) {
+				continue;
+			}
+
+			previousAdvEmi = previousAdvEmi.add(fee.getCalculatedAmount());
+			map.put(fee.getFeeTypeCode(), fee.getFeeTypeID());
+		}
+
+		BigDecimal advPayment = BigDecimal.ZERO;
+
+		if (grcAdvanceType != null) {
+			advPayment = AdvancePaymentUtil.calculateGrcAdvPayment(finScheduleData);
+		} else if (repayAdvanceType != null) {
+			advPayment = AdvancePaymentUtil.calculateRepayAdvPayment(finScheduleData);
+		}
+
+		AdvancePayment advancePayment = new AdvancePayment();
+		advancePayment.setFinReference(finReference);
+
+		Long feeTypeId;
+		BigDecimal adviseAmount = BigDecimal.ZERO;
+		if (previousAdvInt.compareTo(BigDecimal.ZERO) > 0) {
+			feeTypeId = map.get(AdvanceRuleCode.ADVINT.name());
+			advancePayment.setAdvancePaymentType(AdvanceRuleCode.ADVINT.name());
+
+			if (advPayment.compareTo(previousAdvInt) < 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
-				createPayableAdvise(finReference, DateUtility.getAppValueDate(), fee.getFeeTypeID(), adviseAmount,
-						financeMain.getLastMntBy());
-			} else if (pftChg.compareTo(fee.getCalculatedAmount()) > 0) {
-				BigDecimal adviseAmount = pftChg.subtract(fee.getCalculatedAmount());
+				createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			} else if (advPayment.compareTo(previousAdvInt) > 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
-				createReceivableAdvise(finReference, DateUtility.getAppValueDate(), fee.getFeeTypeID(), adviseAmount,
-						financeMain.getLastMntBy());
+				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			}
+		} else if (previousAdvEmi.compareTo(BigDecimal.ZERO) > 0) {
+			feeTypeId = map.get(AdvanceRuleCode.ADVEMI.name());
+			advancePayment.setAdvancePaymentType(AdvanceRuleCode.ADVEMI.name());
+
+			if (advPayment.compareTo(previousAdvInt) < 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
+				advancePayment.setRequestedAmt(adviseAmount);
+				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
+				createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+			} else if (advPayment.compareTo(previousAdvInt) > 0) {
+				adviseAmount = previousAdvInt.subtract(advPayment);
+				advancePayment.setRequestedAmt(adviseAmount);
+				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
+				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
 			}
 		}
 	}
@@ -379,7 +445,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		return excessID;
 	}
-	
+
 	public long advanceExcessMovement(AdvancePayment advPayment, Long receiptID, String txnType) {
 		String finRef = advPayment.getFinReference();
 		String adviceType = advPayment.getAdvancePaymentType();

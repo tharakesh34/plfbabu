@@ -44,6 +44,7 @@ package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -68,6 +69,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -1234,5 +1236,22 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug("Leaving");
 		return list;
 	}
+	
+	@Override
+	public List<ManualAdvise> getPreviousAdvPayments(String finReference) {
+		StringBuilder sql = new StringBuilder();
 
+		sql.append("select ma.FeeTypeID, ft.FeeTypeCode, ma.AdviseType, ma.AdviseAmount");
+		sql.append(" from ManualAdvise ma");
+		sql.append(" inner join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
+		sql.append(" where FinReference = :FinReference and FeeTypeCode in (:FeeTypeCode)");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FeeTypeCode", Arrays.asList(AdvanceRuleCode.ADVINT.name(), AdvanceRuleCode.ADVEMI.name()));
+
+		RowMapper<ManualAdvise> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
 }

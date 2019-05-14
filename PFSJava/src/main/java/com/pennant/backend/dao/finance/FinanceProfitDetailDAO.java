@@ -49,7 +49,6 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 /**
  * DAO methods declaration for the <b>FinanceProfitDetail model</b> class.<br>
