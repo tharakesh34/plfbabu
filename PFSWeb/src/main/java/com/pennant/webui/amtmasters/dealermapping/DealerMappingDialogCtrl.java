@@ -288,7 +288,6 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 				storeId.setText(String.valueOf(merchantDetails.getStoreId()));
 			}
 		}
-		dealerCode.setText(String.valueOf(dealerMappingService.getDealerCode()));
 
 		logger.debug("Leaving");
 	}

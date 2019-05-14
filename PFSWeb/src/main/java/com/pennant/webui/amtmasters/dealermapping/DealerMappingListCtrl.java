@@ -186,6 +186,7 @@ public class DealerMappingListCtrl extends GFCBaseListCtrl<DealerMapping> {
 		DealerMapping dealerMapping = new DealerMapping();
 		dealerMapping.setNewRecord(true);
 		dealerMapping.setWorkflowId(getWorkFlowId());
+		dealerMapping.setDealerCode(dealerMappingService.getDealerCode());
 
 		// Display the dialog page.
 		doShowDialogPage(dealerMapping);
