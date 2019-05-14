@@ -14,8 +14,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.systemmasters.DealerGroup;
 import com.pennant.backend.model.systemmasters.ProductGroup;
 import com.pennant.backend.service.systemmasters.ProductGroupService;
 import com.pennant.webui.systemmasters.productgroup.model.ProductGroupListModelItemRenderer;
@@ -47,7 +45,7 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup>{
 	// Search Fields
 	protected Textbox modelId;
 	protected Textbox productCategoryId;
-	protected ExtendedCombobox channel;
+	protected Textbox channel;
 	protected Textbox active;
 
 	protected Listbox sortOperator_ModelCode;

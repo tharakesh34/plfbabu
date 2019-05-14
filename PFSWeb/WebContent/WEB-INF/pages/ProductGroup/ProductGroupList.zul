@@ -65,7 +65,7 @@
 									<label id="label_ProductGroupList_Channel"
 										value="${c:l('label_ProductGroupList_Channel.value')}" />
 									<listbox id="sortOperator_Channel" width="43px" mold="select" rows="1" />
-									<extendedcombobox id="channel" />
+									<textbox id="channel" width="100px" maxlength="50" />
 									<label id="label_ProductGroupList_Active"
 										value="${c:l('label_ProductGroupList_Active.value')}" />
 									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" />

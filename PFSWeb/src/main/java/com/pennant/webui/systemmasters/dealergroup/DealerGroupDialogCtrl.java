@@ -23,12 +23,13 @@ import com.pennant.backend.model.systemmasters.DealerGroup;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.DealerGroupService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
@@ -344,14 +345,14 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		/*if (!this.dealerCode.isReadonly()) {
+		if (!this.dealerCode.isReadonly()) {
 			this.dealerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
-					PennantRegularExpressions.REGEX_NUMERIC_FL9, true));
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.dealerCategory.isReadonly()) {
 			this.dealerCategory.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"), PennantRegularExpressions.REGEX_NUMERIC_FL9, true));
-		}*/
+					Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		
 
 		logger.debug(Literal.LEAVING);

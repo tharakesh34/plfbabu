@@ -345,14 +345,14 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 	 */
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
-/*
+
 		if (!this.modelId.isReadonly()) {
-			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_modelCode.value"), PennantRegularExpressions.REGEX_NUMERIC_FL9, true));
-		}*/
-		/*if (!this.dealerCategory.isReadonly()) {
-			this.dealerCategory.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ProductGroupDialog_dealerCategory.value"), PennantRegularExpressions.REGEX_NUMERIC_FL9, true));
-		}*/
+			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_modelCode.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+		if (!this.productCategoryId.isReadonly()) {
+			this.productCategoryId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ProductGroupDialog_productCategory.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
 		
 
 		logger.debug(Literal.LEAVING);

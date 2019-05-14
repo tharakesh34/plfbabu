@@ -74,16 +74,17 @@
 						</columns>
 						<rows>
 							<row id="row0">
-									<label id="label_modelCode"
+								<label id="label_modelCode"
 									value="${c:l('label_ProductGroupDialog_modelCode.value')}" />
-							<hbox id="hbox_modelCode">
-							
-                           <hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<textbox id="modelId"
-										width="170px" readonly="true" />
-								</hbox>
-									
+								<hbox id="hbox_modelCode">
+
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="modelId"
+											width="170px" readonly="true" />
+									</hbox>
+
 									<button id="btnModelId"
 										image="/images/icons/LOVSearch.png" />
 								</hbox>
@@ -94,7 +95,12 @@
 
 								<label id="label_productCategory"
 									value="${c:l('label_ProductGroupDialog_productCategory.value')}" />
-								<extendedcombobox id="productCategoryId" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<extendedcombobox
+										id="productCategoryId" />
+								</hbox>
 							</row>
 							<row id="row2">
 								<label id="label_channel"
@@ -113,9 +119,9 @@
 
 								<label id="label_active"
 									value="${c:l('label_ProductGroupDialog_active.value')}" />
-								
-									<checkbox id="active" />
-								
+
+								<checkbox id="active" />
+
 							</row>
 						</rows>
 					</grid>

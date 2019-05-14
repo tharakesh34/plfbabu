@@ -74,12 +74,15 @@
 						</columns>
 						<rows>
 							<row id="row0">
-									<label id="label_dealerCode"
+								<label id="label_dealerCode"
 									value="${c:l('label_DealerGroupDialog_dealerCode.value')}" />
-							<hbox id="hbox_dealerCode">
-
-									<textbox id="dealerCode"
-										width="170px" readonly="true" />
+								<hbox id="hbox_dealerCode">
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<textbox id="dealerCode"
+											width="170px" readonly="true" />
+									</hbox>
 									<button id="btndealerCode"
 										image="/images/icons/LOVSearch.png" />
 								</hbox>
@@ -90,7 +93,12 @@
 
 								<label id="label_dealerCategory"
 									value="${c:l('label_DealerGroupDialog_dealerCategory.value')}" />
-								<extendedcombobox id="dealerCategory" />
+								<hbox>
+									<space spacing="2px"
+										sclass="mandatory" />
+									<extendedcombobox
+										id="dealerCategory" />
+								</hbox>
 							</row>
 							<row id="row2">
 								<label id="label_channel"
@@ -109,9 +117,9 @@
 
 								<label id="label_active"
 									value="${c:l('label_DealerGroupDialog_active.value')}" />
-								
-									<checkbox id="active" />
-								
+
+								<checkbox id="active" />
+
 							</row>
 						</rows>
 					</grid>
