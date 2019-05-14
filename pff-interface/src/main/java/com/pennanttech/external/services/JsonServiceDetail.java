@@ -1,6 +1,7 @@
 package com.pennanttech.external.services;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,8 @@ public class JsonServiceDetail implements Serializable {
 	private transient Object requestData;
 	private String requestString;
 	private String responseString;
+	private Map<String, String> queryParams;
+	private Map<String, String> pathParams;
 
 	public String getReference() {
 		return reference;
@@ -98,6 +101,22 @@ public class JsonServiceDetail implements Serializable {
 
 	public void setResponseString(String responseString) {
 		this.responseString = responseString;
+	}
+
+	public Map<String, String> getQueryParams() {
+		return queryParams;
+	}
+
+	public void setQueryParams(Map<String, String> queryParams) {
+		this.queryParams = queryParams;
+	}
+
+	public Map<String, String> getPathParams() {
+		return pathParams;
+	}
+
+	public void setPathParams(Map<String, String> pathParams) {
+		this.pathParams = pathParams;
 	}
 
 }

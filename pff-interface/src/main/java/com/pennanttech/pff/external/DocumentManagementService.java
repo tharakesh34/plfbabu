@@ -5,4 +5,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 public interface DocumentManagementService {
 
 	DocumentDetails getExternalDocument(String docExternalRefId, String sourceReference);
+
+	String insertExternalDocument(DocumentDetails details);
 }

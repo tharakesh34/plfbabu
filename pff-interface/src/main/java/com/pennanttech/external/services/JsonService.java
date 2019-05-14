@@ -1,17 +1,21 @@
 package com.pennanttech.external.services;
 
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.App;
@@ -67,11 +72,36 @@ public abstract class JsonService<T> {
 		serviceDetail.setRequestString(getObjectToJson(serviceDetail));
 		Timestamp reqSentOn = null;
 
-		String url = App.getProperty(serviceDetail.getServiceUrl());
+		String url = App.getProperty(serviceDetail.getServiceName());
+
+		if (StringUtils.isNotEmpty(url)) {
+			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
+			if (MapUtils.isNotEmpty(serviceDetail.getPathParams())) {
+				url = componentsBuilder.buildAndExpand(serviceDetail.getPathParams()).toUriString();
+			}
+			if (MapUtils.isNotEmpty(serviceDetail.getQueryParams())) {
+				URIBuilder uriBuilder = null;
+				try {
+					uriBuilder = new URIBuilder(url);
+				} catch (URISyntaxException e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+				for (String queryKey : serviceDetail.getQueryParams().keySet()) {
+					uriBuilder.addParameter(queryKey, serviceDetail.getQueryParams().get(queryKey));
+				}
+				try {
+					url = URLDecoder.decode(uriBuilder.toString(), "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			}
+		}
+
 		HttpMethod method = serviceDetail.getMethod();
 		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(),
 				serviceDetail.getRequestString()));
-		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(), getHttpHeader(serviceDetail.getHeaders()));
+		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(),
+				getHttpHeader(serviceDetail.getHeaders()));
 		ResponseEntity<String> response = null;
 		InterfaceLogDetail logDetail = null;
 
@@ -190,7 +220,7 @@ public abstract class JsonService<T> {
 			mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
 		}
 
-		//mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
+		// mapper.setAnnotationIntrospector(new JaxbAnnotationIntrospector());
 
 		return mapper;
 
