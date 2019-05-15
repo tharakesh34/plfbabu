@@ -441,7 +441,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 					aProductGroup.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aProductGroup.getNextTaskId(),
-							aProductGroup);
+							aProductGroup); 
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
