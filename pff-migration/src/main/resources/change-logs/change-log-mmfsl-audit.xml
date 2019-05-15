@@ -359,7 +359,51 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
-	</changeSet> 
+	</changeSet>
+	
+	<changeSet id="8" author="Nageswar.p">
+		<createTable tableName="ADTTransactionMapping">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="int">
+			</column>
+			<column name="POSId" type="int">
+			</column>
+			<column name="DealerCode" type="int">
+			</column>
+			<column name="DealerName" type="varchar2(100)">
+			</column>
+			<column name="MID" type="int">
+			</column>
+			<column name="TID" type="number(6)">
+			</column>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	 
 	
 	<changeSet id="8" author="vijaya.a">
 		<createTable tableName="ADTCD_Scheme_ProductGroup">

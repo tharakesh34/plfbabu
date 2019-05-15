@@ -2011,5 +2011,253 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="11" author="Nageswar.p" dbms="postgresql, oracle">
+		<createSequence sequenceName="SEQTRANSACTIONMAPPING" />
+	</changeSet>
+
+	<changeSet id="11.1" author="Nageswar.p" dbms="mssql">
+		<createTable tableName="SEQTRANSACTIONMAPPING">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="11.2.1" author="Nageswar.p">
+		<createTable tableName="TransactionMapping">
+			<column name="Id" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_PK_ID"/>
+			</column>
+			<column name="POSId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerCode" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerName" type="varchar2(100)">
+			</column>
+			<column name="MID" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TID" type="number(6)"/>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="11.3.1" author="Nageswar.p">
+		<createTable tableName="TransactionMapping_Temp">
+			<column name="Id" type="int">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_Temp_PK_ID"/>
+			</column>
+			<column name="POSId" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerCode" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="DealerName" type="varchar2(100)">
+			</column>
+			<column name="MID" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="TID" type="number(6)"/>
+			<column name="Active" type = "boolean">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="11.4" author="Nageswar.p">
+		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
+			 SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping_Temp t1
+			UNION ALL
+ 			SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM TransactionMapping_Temp
+            WHERE TransactionMapping_Temp.Id = t1.Id))
+		</createView>
+	</changeSet>
+
+	<changeSet id="11.5" author="Nageswar.b">
+		<createView viewName="TransactionMapping_AVIEW" replaceIfExists="true">
+			  SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="11.6" author="Nageswar.p">
+		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
+			 SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping_Temp t1
+		</createView>
+	</changeSet>
+	<changeSet id="11.7" author="Nageswar.p">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'TRANSACTIONMAPPING_VIEW', 'Role for Transaction Mapping enquiry',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'TRANSACTIONMAPPING_MAKER', 'Role for Transaction Mapping maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'TRANSACTIONMAPPING_APPROVER', 'Role for Transaction Mapping approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,NULL,NULL,NULL,NULL,0) ;
+							
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'TRANSACTIONMAPPING_VIEW', 'Group for Transaction Mapping enquiry', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'TRANSACTIONMAPPING_MAKER', 'Group for Transaction Mapping maker', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'TRANSACTIONMAPPING_APPROVER', 'Group for Transaction Mapping approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menu_Item_TransactionMapping','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_TransactionMappingList_PrintList','TransactionMappingList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_TransactionMappingList_NewTransactionMapping','TransactionMappingList',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_TransactionMappingDialog_btnNew','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_TransactionMappingDialog_btnEdit','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_TransactionMappingDialog_btnDelete','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_TransactionMappingDialog_btnSave','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMapping_DealerCode','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_POSId','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_DealerName','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_MID','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_TID','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_Active','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_VIEW'), (Select RightID from SecRights where RightName = 'button_TransactionMappingList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_TransactionMapping'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingList_NewTransactionMapping'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingDialog_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingDialog_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingDialog_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMapping_DealerCode'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_POSId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_DealerName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_MID'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_TID'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_Active'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_TransactionMapping'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingList_PrintList'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_APPROVER'), (Select RightID from SecRights where RightName = 'button_TransactionMappingDialog_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='TRANSACTIONMAPPING_VIEW'),(select RoleID from secRoles where RoleCd='TRANSACTIONMAPPING_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='TRANSACTIONMAPPING_MAKER'),(select RoleID from secRoles where RoleCd='TRANSACTIONMAPPING_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='TRANSACTIONMAPPING_APPROVER'),(select RoleID from secRoles where RoleCd='TRANSACTIONMAPPING_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+			]]>
+		</sql>
+		</changeSet>
+		
+		<changeSet id="11.8" author="Nageswar.p">
+			<sql>
+			<![CDATA[ 
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_DealerCode',
+				'TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where
+				 GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_DealerCode'), 
+				 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+			</sql>
+		</changeSet>
 	
 </databaseChangeLog>	
