@@ -333,6 +333,8 @@ public class FeeCalculator implements Serializable {
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
 			if (StringUtils.equals(finFeeDetail.getCalculationType(),
 					PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE)) {
+				receiptData.setEventFeePercent(true);
+				receiptData.setCurEventFeePercent(finFeeDetail.getPercentage());
 
 				BigDecimal calPercentageFee = getCalculatedPercentageFee(finFeeDetail, receiptData);
 				finFeeDetail.setCalculatedAmount(calPercentageFee);
@@ -391,6 +393,8 @@ public class FeeCalculator implements Serializable {
 		default:
 			break;
 		}
+		finFeeDetail.setCalculatedOn(calculatedAmt);
+		finFeeDetail.setActPercentage(finFeeDetail.getPercentage());
 
 		calculatedAmt = calculatedAmt.multiply(finFeeDetail.getPercentage()).divide(BigDecimal.valueOf(100), 2,
 				RoundingMode.HALF_DOWN);

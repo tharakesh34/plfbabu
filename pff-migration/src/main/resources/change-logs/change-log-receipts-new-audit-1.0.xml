@@ -182,5 +182,23 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="8" author="satyanarayana.g">
+		<addColumn tableName="AdtFinFeeDetail">
+			<column name="ActPercentage" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="8.1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINFEEDETAIL set ACTPERCENTAGE = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8.2" author="satyanarayana.g" dbms="postgresql,oracle">
+		<addDefaultValue columnName="ACTPERCENTAGE" tableName="ADTFINFEEDETAIL" defaultValue="0" />
+	</changeSet>
 
 </databaseChangeLog>

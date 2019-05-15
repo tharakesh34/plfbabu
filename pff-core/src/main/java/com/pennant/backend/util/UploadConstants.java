@@ -48,6 +48,8 @@ public class UploadConstants {
 	//Satus
 	public static final String REFUND_UPLOAD_STATUS_SUCCESS = "S";
 	public static final String REFUND_UPLOAD_STATUS_FAIL = "F";
+	public static final String UPLOAD_STATUS_SUCCESS = "S";
+	public static final String UPLOAD_STATUS_FAIL = "F";
 
 	public static final String REFUNDUPLOAD_EXCESS_AMOUNT = "E";
 	public static final String REFUNDUPLOAD_ADVANCE_AMOUNT = "A";

@@ -97,6 +97,7 @@ public class FinReceiptData {
 
 	private List<FinReceiptHeader> inProcRchList = null;
 	private List<ReceiptAllocationDetail> inProcRadList = null;
+	private List<FinFeeDetail> finFeeDetails = new ArrayList<>();
 
 	private Date valueDate;
 
@@ -107,6 +108,10 @@ public class FinReceiptData {
 
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
 	private boolean isCalReq = true;
+	private boolean isEventFeePercent = false;
+
+	private BigDecimal curEventFeePercent = BigDecimal.ZERO;
+	private BigDecimal newEventFeePercent = BigDecimal.ZERO;
 
 	public FinReceiptData() {
 
@@ -450,6 +455,38 @@ public class FinReceiptData {
 
 	public void setExcessPayables(List<XcessPayables> excessPayables) {
 		this.excessPayables = excessPayables;
+	}
+
+	public boolean isEventFeePercent() {
+		return isEventFeePercent;
+	}
+
+	public void setEventFeePercent(boolean isEventFeePercent) {
+		this.isEventFeePercent = isEventFeePercent;
+	}
+
+	public BigDecimal getCurEventFeePercent() {
+		return curEventFeePercent;
+	}
+
+	public void setCurEventFeePercent(BigDecimal curEventFeePercent) {
+		this.curEventFeePercent = curEventFeePercent;
+	}
+
+	public BigDecimal getNewEventFeePercent() {
+		return newEventFeePercent;
+	}
+
+	public void setNewEventFeePercent(BigDecimal newEventFeePercent) {
+		this.newEventFeePercent = newEventFeePercent;
+	}
+
+	public List<FinFeeDetail> getFinFeeDetails() {
+		return finFeeDetails;
+	}
+
+	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
+		this.finFeeDetails = finFeeDetails;
 	}
 
 }

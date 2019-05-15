@@ -10632,5 +10632,9 @@
 		<property name="dealerMappingDAO" ref="dealerMappingDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<bean name="multiReceiptThreadProcess" class="com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess">
+		<property name="receiptService" ref="receiptService" />
+	</bean>
 
 </beans>

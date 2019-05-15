@@ -109,6 +109,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private String ruleCode;
 	private BigDecimal fixedAmount = BigDecimal.ZERO;
 	private BigDecimal percentage = BigDecimal.ZERO;
+	private BigDecimal actPercentage = BigDecimal.ZERO;
 	private String calculateOn;
 	private boolean alwDeviation;
 	private BigDecimal maxWaiverPerc = BigDecimal.ZERO;
@@ -126,6 +127,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private Date postDate;
 	private String transactionId;
+	private BigDecimal calculatedOn = BigDecimal.ZERO;
 	private boolean refundable;
 	private boolean alwPreIncomization;
 	@SuppressWarnings("unused")
@@ -178,6 +180,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("feeModified");
 		excludeFields.add("alwPreIncomization");
 		excludeFields.add("finFeeReceipts");
+		excludeFields.add("calculatedOn");
 
 		return excludeFields;
 	}
@@ -696,5 +699,21 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 
 	public void setInstructionUID(Long instructionUID) {
 		this.instructionUID = instructionUID;
+	}
+
+	public BigDecimal getCalculatedOn() {
+		return calculatedOn;
+	}
+
+	public void setCalculatedOn(BigDecimal calculatedOn) {
+		this.calculatedOn = calculatedOn;
+	}
+
+	public BigDecimal getActPercentage() {
+		return actPercentage;
+	}
+
+	public void setActPercentage(BigDecimal actPercentage) {
+		this.actPercentage = actPercentage;
 	}
 }

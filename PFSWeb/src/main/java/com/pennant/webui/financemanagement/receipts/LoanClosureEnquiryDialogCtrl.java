@@ -1087,7 +1087,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 		try {
 			// FinanceDetail
-			receiptData = receiptService.getFinReceiptDataById(finReference, eventCode,
+			receiptData = receiptService.getFinReceiptDataById(finReference, AccountEventConstants.ACCEVENT_EARLYSTL,
 					FinanceConstants.FINSER_EVENT_RECEIPT, "");
 			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 			receiptHeader.setReference(finReference);
@@ -1131,7 +1131,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * @param allocatePaidMap
 	 */
 
-	private void doFillAllocationDetail() {
+	public void doFillAllocationDetail() {
 		logger.debug("Entering");
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocationsSummary();
 		this.listBoxPastdues.getItems().clear();
@@ -1188,6 +1188,20 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		Listitem item = new Listitem();
 		Listcell lc = null;
 		addBoldTextCell(item, allocate.getTypeDesc(), allocate.isSubListAvailable(), idx);
+		if (allocate.getAllocationTo() < 0) {
+			for (FinFeeDetail fee : receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
+				if (allocate.getAllocationTo() == -(fee.getFeeTypeID())
+						&& "PERCENTG".equals(fee.getCalculationType())) {
+					lc = (Listcell) item.getChildren().get(0);
+					Button button = new Button("Fee Details");
+					button.setId(String.valueOf(idx));
+					button.addForward("onClick", window_LoanClosureEnquiryDialog, "onFeeDetailsClick", button.getId());
+					lc.appendChild(button);
+
+					break;
+				}
+			}
+		}
 		addAmountCell(item, allocate.getTotRecv(), ("AllocateActualDue_" + idx), false);
 		// FIXME: PV. Pending code to get in process allocations
 		addAmountCell(item, allocate.getInProcess(), ("AllocateInProess_" + idx), true);
@@ -1230,6 +1244,26 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		//	}
 
 		logger.debug("Leaving");
+	}
+
+	public void onFeeDetailsClick(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+
+		String buttonId = (String) event.getData();
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("data", receiptData);
+		map.put("buttonId", buttonId);
+		map.put("loanClosureEnquiryDialogCtrl", this);
+		map.put("isLoanClosure", true);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/EventFeeDetailsDialog.zul", null,
+					map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onDetailsClick(ForwardEvent event) {

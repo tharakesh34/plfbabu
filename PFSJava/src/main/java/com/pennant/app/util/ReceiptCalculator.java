@@ -443,6 +443,8 @@ public class ReceiptCalculator implements Serializable {
 		if (receiptPurposeCtg < 0) {
 			return receiptData;
 		}
+		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		List<FinFeeDetail> oldFinFeeDtls = receiptData.getFinFeeDetails();
 		List<FinFeeDetail> finFeedetails = null;
 
 		receiptData = feeCalculator.calculateFees(receiptData);
@@ -450,6 +452,24 @@ public class ReceiptCalculator implements Serializable {
 
 		if (finFeedetails == null || finFeedetails.isEmpty()) {
 			return receiptData;
+		}
+
+		if (oldFinFeeDtls != null && !oldFinFeeDtls.isEmpty()) {
+			for (FinFeeDetail oldFinFeeDtl : oldFinFeeDtls) {
+				for (FinFeeDetail actualFeeDtl : finFeedetails) {
+					if (oldFinFeeDtl.getFeeTypeID() == actualFeeDtl.getFeeTypeID()
+							&& "PERCENTG".equals(actualFeeDtl.getCalculationType())) {
+						BigDecimal calculatedAmt = actualFeeDtl.getCalculatedOn();
+						calculatedAmt = calculatedAmt.multiply(oldFinFeeDtl.getActPercentage())
+								.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
+						calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
+								financeMain.getRoundingTarget());
+						actualFeeDtl.setActualAmount(calculatedAmt);
+						actualFeeDtl.setActualAmountOriginal(calculatedAmt);
+						actualFeeDtl.setActPercentage(oldFinFeeDtl.getActPercentage());
+					}
+				}
+			}
 		}
 
 		List<ReceiptAllocationDetail> allocationsList = receiptData.getReceiptHeader().getAllocations();

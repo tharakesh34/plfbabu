@@ -163,6 +163,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	private long payAgainstId = 0;
 	private long batchId;
+	private long bounceId;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -267,6 +268,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("thirdPartyName");
 		excludeFields.add("thirdPartyMobileNum");
 		excludeFields.add("batchId");
+		excludeFields.add("bounceId");
 
 		return excludeFields;
 	}
@@ -1376,6 +1378,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setActFinReceipt(boolean actFinReceipt) {
 		this.actFinReceipt = actFinReceipt;
+	}
+
+	public long getBounceId() {
+		return bounceId;
+	}
+
+	public void setBounceId(long bounceId) {
+		this.bounceId = bounceId;
 	}
 
 }

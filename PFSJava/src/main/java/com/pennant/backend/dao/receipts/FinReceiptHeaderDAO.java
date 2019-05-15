@@ -3,9 +3,11 @@ package com.pennant.backend.dao.receipts;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -70,6 +72,14 @@ public interface FinReceiptHeaderDAO {
 
 	void updateLoanInActive(long receiptId);
 
-	//### For MultiReceipt
-	void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail);
+	// ### For MultiReceipt
+	void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail, Map<String, String> valueMap);
+
+	void updateMultiReceiptLog(FinReceiptQueueLog finReceiptQueue);
+
+	void batchUpdateMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList);
+
+	void saveMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList);
+
+	List<Long> getInProcessMultiReceiptRecord();
 }

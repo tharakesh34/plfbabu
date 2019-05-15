@@ -147,7 +147,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType");
 		sql.append(", T1.VasReference, T1.Status, T1.RuleCode, T1.FixedAmount, T1.Percentage");
 		sql.append(", T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee");
-		sql.append(", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID");
+		sql.append(", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage,");
 		sql.append(" From FinFeeDetail T1 ");
 		sql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -223,7 +223,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee");
-		sql.append(", VasReference, Status, Refundable");
+		sql.append(", VasReference, Status, Refundable, ActPercentage");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
@@ -334,7 +334,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd, PostDate, Refundable, PaidAmountOriginal");
 		sql.append(", PaidAmountGST, NetAmountOriginal, NetAmountGST, NetAmount, RemainingFeeOriginal");
 		sql.append(", RemainingFeeGST, TaxApplicable, TaxComponent, ActualAmountOriginal");
-		sql.append(", ActualAmountGST, TransactionId, InstructionUID");
+		sql.append(", ActualAmountGST, TransactionId, InstructionUID, ActPercentage");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values (:FeeID, :FinReference, :OriginationFee , :FinEvent, :FeeTypeID, :FeeSeq, :FeeOrder");
@@ -344,7 +344,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", :AlwModifyFee, :AlwModifyFeeSchdMthd, :PostDate, :Refundable, :PaidAmountOriginal");
 		sql.append(", :PaidAmountGST, :NetAmountOriginal, :NetAmountGST, :NetAmount, :RemainingFeeOriginal");
 		sql.append(", :RemainingFeeGST, :TaxApplicable, :TaxComponent, :ActualAmountOriginal");
-		sql.append(", :ActualAmountGST, :TransactionId, :InstructionUID");
+		sql.append(", :ActualAmountGST, :TransactionId, :InstructionUID, :ActPercentage");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -418,6 +418,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", ActualAmountOriginal = :ActualAmountOriginal");
 		sql.append(", ActualAmountGST = :ActualAmountGST");
 		//sql.append(", InstructionUID = :InstructionUID");
+		sql.append(", ActPercentage = :ActPercentage");
 		sql.append(", Version = :Version");
 		sql.append(", LastMntBy = :LastMntBy");
 		sql.append(", LastMntOn = :LastMntOn");
@@ -741,7 +742,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd,Refundable");
 		sql.append(", PaidAmountOriginal, PaidAmountGST, NetAmountOriginal, NetAmountGST");
 		sql.append(", NetAmount, RemainingFeeOriginal, RemainingFeeGST");
-		sql.append(", TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST, InstructionUID");
+		sql.append(
+				", TaxApplicable, TaxComponent, ActualAmountOriginal, ActualAmountGST, InstructionUID,ActPercentage");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc");

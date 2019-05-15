@@ -45,6 +45,7 @@ package com.pennant.backend.dao.receipts.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,11 +55,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -907,7 +910,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail) {
+	public void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail,
+			Map<String, String> valueMap) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -930,8 +934,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		source.addValue("DepositNo", finReceiptDetail.getDepositNo());
 		source.addValue("FundingAc", finReceiptDetail.getFundingAc());
 		source.addValue("BounceId", finReceiptHeader.getBounceReason());
-		source.addValue("UploadStatus", "S");
-		source.addValue("Reason", "");
+		source.addValue("UploadStatus", valueMap.get("uploadStatus"));
+		source.addValue("Reason", valueMap.get("reason"));
 
 		StringBuilder updateSql = new StringBuilder("Insert into MultiReceiptApproval");
 		updateSql.append(
@@ -948,5 +952,68 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		//SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptHeader);
 		this.jdbcTemplate.update(updateSql.toString(), source);
 		logger.debug("Leaving");
+	}
+
+	@Override
+	public void saveMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO FinReceiptQueueLog (UploadId, ReceiptId, FinReference");
+		sql.append(", TransactionDate, ThreadId, Progress, StartTime)");
+		sql.append("  Values( :UploadId, :ReceiptId, :FinReference, :TransactionDate");
+		sql.append(", :ThreadId, :Progress, :StartTime)");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(finReceiptQueueList.toArray()));
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updateMultiReceiptLog(FinReceiptQueueLog finReceiptQueue) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update FinReceiptQueueLog");
+		updateSql.append("  Set EndTime =:EndTime, ThreadId =:ThreadId, StartTime =:StartTime, ");
+		updateSql.append(
+				"  ErrorLog =:ErrorLog, Progress =:Progress Where UploadId =:UploadId And ReceiptId =:ReceiptId");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finReceiptQueue);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+
+	@Override
+	public void batchUpdateMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Update FinReceiptQueueLog");
+		sql.append("  Set EndTime =:StartTime, ThreadId =:ThreadId, StartTime =:StartTime, ");
+		sql.append("  ErrorLog =:ErrorLog, Progress =:Progress Where UploadId =:UploadId And ReceiptId =:ReceiptId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(finReceiptQueueList.toArray()));
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public List<Long> getInProcessMultiReceiptRecord() {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Progress", 0);
+
+		StringBuilder updateSql = new StringBuilder("Select ReceiptId From FinReceiptQueueLog");
+		updateSql.append("  Where  Progress =:Progress");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		List<Long> receiptList = this.jdbcTemplate.queryForList(updateSql.toString(), source, Long.class);
+		logger.debug("Leaving");
+		return receiptList;
 	}
 }

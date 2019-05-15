@@ -14,6 +14,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -134,6 +135,19 @@ public interface ReceiptService {
 	boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations);
 
 	FinReceiptData adjustToExcess(FinReceiptData receiptData);
+
+	// ## For MultiReceipt 
+	void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception;
+
+	void saveMultiReceipt(AuditHeader auditHeader) throws Exception;
+
+	void saveMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList);
+
+	void batchUpdateMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList);
+
+	List<Long> getInProcessMultiReceiptRecord();
+
+	long getUploadSeqId();
 
 	FinReceiptData createXcessRCD(FinReceiptData receiptData);
 
