@@ -172,6 +172,8 @@
 				rightName="menuItem_DealerGroup" />
 			<menuItem id="menu_Item_Product_Group" zulNavigation="/WEB-INF/pages/ProductGroup/ProductGroupList.zul"
 				rightName="menu_Item_ProductGroup" />
+			<menuItem id="menu_Item_TransactionMapping" zulNavigation="/WEB-INF/pages/SystemMaster/TransactionMapping/TransactionMappingList.zul"
+				rightName="menu_Item_TransactionMapping" />
 		</menu>
 		<menu id="menu_Category_BankMasters">
 			<menuItem id="menu_Item_BankDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/BankDetail/BankDetailList.zul"
