@@ -65,6 +65,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ExtendedFieldHeader model</b> class.<br>
@@ -123,37 +124,38 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 */
 	public ExtendedFieldHeader getExtendedFieldHeaderByModuleName(String moduleName, String subModuleName, String event,
 			String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		MapSqlParameterSource source = null;
-		source = new MapSqlParameterSource();
 
+		StringBuilder sql = new StringBuilder("Select ModuleId, ModuleName,");
+		sql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
+		sql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
+		sql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
+		sql.append(" From ExtendedFieldHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
+		
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ModuleName", moduleName.toUpperCase());
 		source.addValue("SubModuleName", subModuleName.toUpperCase());
-
-		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
-		selectSql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ");
-		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation ");
-		selectSql.append(" From ExtendedFieldHeader");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
-
+		
 		if (StringUtils.trimToNull(event) != null) {
 			source.addValue("Event", event);
-			selectSql.append("AND Event = :Event ");
+			sql.append("AND Event = :Event ");
 		}
-		logger.debug("selectSql: " + selectSql.toString());
+		
+		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ExtendedFieldHeader.class);
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (Exception e) {
-			logger.warn("Exception :", e);
+			logger.warn(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
