@@ -5,24 +5,49 @@ import java.sql.Timestamp;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class SchemeDealerGroup extends AbstractWorkflowEntity {
+public class SchemeProductGroup extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long schemeDealerGroupId = Long.MIN_VALUE;
+	private long schemeProductGroupId = Long.MIN_VALUE;
 	private String promotionId;
-	private int dealerGroupCode;
+	private int productGroupCode;
+	private String POSVendor;
 	private boolean active;
-	private SchemeDealerGroup befImage;
+	private SchemeProductGroup befImage;
 	private LoggedInUser userDetails;
 	private String lovValue;
 	private boolean newRecord = false;
 
-	public int getDealerGroupCode() {
-		return dealerGroupCode;
+	public long getSchemeProductGroupId() {
+		return schemeProductGroupId;
 	}
 
-	public void setDealerGroupCode(int dealerGroupCode) {
-		this.dealerGroupCode = dealerGroupCode;
+	public void setSchemeProductGroupId(long schemeProductGroupId) {
+		this.schemeProductGroupId = schemeProductGroupId;
+	}
+
+	public String getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
+	}
+
+	public int getProductGroupCode() {
+		return productGroupCode;
+	}
+
+	public void setProductGroupCode(int productGroupCode) {
+		this.productGroupCode = productGroupCode;
+	}
+
+	public String getPOSVendor() {
+		return POSVendor;
+	}
+
+	public void setPOSVendor(String pOSVendor) {
+		POSVendor = pOSVendor;
 	}
 
 	public boolean isActive() {
@@ -33,11 +58,11 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 		this.active = active;
 	}
 
-	public SchemeDealerGroup getBefImage() {
+	public SchemeProductGroup getBefImage() {
 		return befImage;
 	}
 
-	public void setBefImage(SchemeDealerGroup befImage) {
+	public void setBefImage(SchemeProductGroup befImage) {
 		this.befImage = befImage;
 	}
 
@@ -71,21 +96,5 @@ public class SchemeDealerGroup extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
-	}
-
-	public long getSchemeDealerGroupId() {
-		return schemeDealerGroupId;
-	}
-
-	public void setSchemeDealerGroupId(long schemeDealerGroupId) {
-		this.schemeDealerGroupId = schemeDealerGroupId;
-	}
-
-	public String getPromotionId() {
-		return promotionId;
-	}
-
-	public void setPromotionId(String promotionId) {
-		this.promotionId = promotionId;
 	}
 }
