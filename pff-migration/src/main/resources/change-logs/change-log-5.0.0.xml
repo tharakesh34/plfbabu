@@ -2184,5 +2184,5 @@ UNION ALL
 			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)			
 			</createView>
 	</changeSet>
-
+	<!-- 5.0.0 is Under QC please use 5.0.5 -->
 </databaseChangeLog>
