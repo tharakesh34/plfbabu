@@ -48,7 +48,12 @@ public class FeeCalculator implements Serializable {
 		receiptData = convertToFinanceFees(receiptData);
 		List<FinFeeDetail> finFeeDetailList = receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
 		if (finFeeDetailList != null && finFeeDetailList.size() > 0) {
-			receiptData = calculateFeeDetail(receiptData);
+			FinanceDetail financeDetail = receiptData.getFinanceDetail();
+			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+			FinanceMain financeMain = finScheduleData.getFinanceMain();
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+
+			receiptData = calculateFeeDetail(receiptData, taxPercentages);
 		}
 		return receiptData;
 	}
@@ -68,17 +73,9 @@ public class FeeCalculator implements Serializable {
 			return receiptData;
 		}
 
-		Map<String, Object> gstExecutionMap = new HashMap<>();
-
-		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
-			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
-		} else {
-			gstExecutionMap = getGstMappingDetails(financeDetail);
-			financeDetail.getFinScheduleData().setGstExecutionMap(gstExecutionMap);
-		}
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
 
 		for (FinTypeFees finTypeFee : finTypeFeesList) {
-
 			finFeeDetail = new FinFeeDetail();
 			finFeeDetail.setNewRecord(true);
 			finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
@@ -108,8 +105,7 @@ public class FeeCalculator implements Serializable {
 			finFeeDetail.setTaxApplicable(finTypeFee.isTaxApplicable());
 
 			if (finTypeFee.isTaxApplicable()) {
-				this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail,
-						gstExecutionMap);
+				this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, taxPercentages);
 			} else {
 				finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
 				finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
@@ -149,24 +145,16 @@ public class FeeCalculator implements Serializable {
 		return receiptData;
 	}
 
-	private FinReceiptData calculateFeeDetail(FinReceiptData receiptData) {
+	private FinReceiptData calculateFeeDetail(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		logger.debug("Entering");
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		Map<String, Object> gstExecutionMap = new HashMap<>();
-
-		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
-			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
-		} else {
-			gstExecutionMap = getGstMappingDetails(financeDetail);
-			financeDetail.getFinScheduleData().setGstExecutionMap(gstExecutionMap);
-		}
 
 		// Calculate Fee Rules
-		calculateFeeRules(receiptData);
+		calculateFeeRules(receiptData, taxPercentages);
 
 		// Calculate the fee Percentage
-		calculateFeePercentageAmount(receiptData);
+		calculateFeePercentageAmount(receiptData, taxPercentages);
 
 		List<FinFeeDetail> fees = finScheduleData.getFinFeeDetailList();
 
@@ -188,9 +176,9 @@ public class FeeCalculator implements Serializable {
 				}
 			}
 
-			/*if (fee.isNewRecord() && !fee.isOriginationFee()) {
-				fee.setPaidAmount(fee.getActualAmount());
-			}*/
+			/*
+			 * if (fee.isNewRecord() && !fee.isOriginationFee()) { fee.setPaidAmount(fee.getActualAmount()); }
+			 */
 
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
@@ -201,25 +189,24 @@ public class FeeCalculator implements Serializable {
 			fm.setDeductFeeDisb(deductFeeFromDisbTot);
 			fm.setFeeChargeAmt(feeAddToDisbTot);
 		}
-		
+
 		for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
-			if(disbursement.getInstructionUID() == Long.MIN_VALUE) {
+			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
 				disbursement.setDeductFromDisb(deductFeeFromDisbTot);
 			}
 		}
 
 		for (FinFeeDetail fee : fees) {
-			this.finFeeDetailService.calculateFees(fee, fm, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(fee, fm, taxPercentages);
 		}
 
 		logger.debug("Leaving");
 		return receiptData;
 	}
 
-	private void calculateFeeRules(FinReceiptData receiptData) {
+	private void calculateFeeRules(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		HashMap<String, Object> gstExecutionMap = (HashMap<String, Object>) finScheduleData.getGstExecutionMap();
 		List<FinFeeDetail> finFeeDetailsList = finScheduleData.getFinFeeDetailList();
 		List<String> feeRuleCodes = new ArrayList<String>();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -316,7 +303,7 @@ public class FeeCalculator implements Serializable {
 
 					if (finFeeDetail.isTaxApplicable()) {
 						this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
-								gstExecutionMap, false);
+								taxPercentages, false);
 					} else {
 						if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 							finFeeDetail.setActualAmountOriginal(feeResult);
@@ -332,7 +319,7 @@ public class FeeCalculator implements Serializable {
 		}
 	}
 
-	private void calculateFeePercentageAmount(FinReceiptData receiptData) {
+	private void calculateFeePercentageAmount(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
 		logger.debug("Entering");
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
@@ -341,14 +328,6 @@ public class FeeCalculator implements Serializable {
 		if (finFeeDetailList == null || finFeeDetailList.isEmpty()) {
 			logger.debug("Leaving");
 			return;
-		}
-
-		Map<String, Object> gstExecutionMap = new HashMap<>();
-		if (!financeDetail.getFinScheduleData().getGstExecutionMap().isEmpty()) {
-			gstExecutionMap = (HashMap<String, Object>) financeDetail.getFinScheduleData().getGstExecutionMap();
-		} else {
-			gstExecutionMap = getGstMappingDetails(financeDetail);
-			financeDetail.getFinScheduleData().setGstExecutionMap(gstExecutionMap);
 		}
 
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
@@ -365,7 +344,7 @@ public class FeeCalculator implements Serializable {
 
 				if (finFeeDetail.isTaxApplicable()) { // if GST applicable
 					this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail,
-							gstExecutionMap, false);
+							taxPercentages, false);
 				} else {
 					if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 						finFeeDetail.setActualAmountOriginal(calPercentageFee);
@@ -453,7 +432,7 @@ public class FeeCalculator implements Serializable {
 
 		return gstExecutionMap;
 	}
-	
+
 	//  ### 11-07-2018 - Start - PSD Ticket ID : 127846
 	/**
 	 * Method to get DroplinePOS.
@@ -462,14 +441,14 @@ public class FeeCalculator implements Serializable {
 	 * @param finScheduleData
 	 * 
 	 */
-	public  BigDecimal getDropLinePOS(Date valueDate, FinScheduleData finScheduleData) {
+	public BigDecimal getDropLinePOS(Date valueDate, FinScheduleData finScheduleData) {
 
 		BigDecimal dropLinePOS = BigDecimal.ZERO;
 		String finReference = finScheduleData.getFinanceMain().getFinReference();
 		List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
 
 		if (scheduleList == null || scheduleList.isEmpty()) {
-			scheduleList =financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
+			scheduleList = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
 		}
 
 		for (FinanceScheduleDetail schedule : scheduleList) {
@@ -481,7 +460,6 @@ public class FeeCalculator implements Serializable {
 
 		return dropLinePOS;
 	}
-
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;

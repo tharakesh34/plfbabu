@@ -120,7 +120,7 @@ public class GSTCalculator {
 		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
 		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
-		taxSplit.setNetAmount(netAmount.subtract(taxSplit.gettGST()));
+		taxSplit.setNetAmount(taxableAmount.subtract(taxSplit.gettGST()));
 		return taxSplit;
 	}
 

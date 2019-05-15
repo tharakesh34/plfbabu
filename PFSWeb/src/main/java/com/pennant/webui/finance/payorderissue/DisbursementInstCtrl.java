@@ -572,7 +572,7 @@ public class DisbursementInstCtrl {
 				&& disbursement.getDisbSeq() == 1) {
 
 			totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
-			totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+			totdisbAmt = totdisbAmt.subtract(disbursement.getDeductFromDisb());
 			totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 			if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());

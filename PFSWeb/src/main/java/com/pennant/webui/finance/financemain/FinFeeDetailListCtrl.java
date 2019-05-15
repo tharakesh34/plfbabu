@@ -216,6 +216,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<Long, List<FinFeeReceipt>>();
 
+	private Map<String, BigDecimal> taxPercentages;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -720,36 +722,20 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
 
 		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
-
 			FinFeeDetail finFeeDetail = null;
-			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+			String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+			String finBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+			String finCCY = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
 
-			String custDftBranch = null;
-			String highPriorityState = null;
-			String highPriorityCountry = null;
+			long custId = 0;
 			if (financeDetail.getCustomerDetails() != null) {
-				custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
-					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							highPriorityState = customerAddres.getCustAddrProvince();
-							highPriorityCountry = customerAddres.getCustAddrCountry();
-							break;
-						}
-					}
-				}
+				custId = financeDetail.getCustomerDetails().getCustomer().getCustID();
 			}
 
-			Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
-					custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
-					branch);
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch,
+					finBranch);
 
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
-
 				finFeeDetail = new FinFeeDetail();
 				finFeeDetail.setNewRecord(true);
 				finFeeDetail.setOriginationFee(finTypeFee.isOriginationFee());
@@ -780,7 +766,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				if (finTypeFee.isTaxApplicable()) {
 					this.finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, getFinanceDetail(),
-							gstExecutionMap);
+							taxPercentages);
 				} else {
 					finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
 					finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
@@ -1330,7 +1316,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				continue;
 			}
-			
+
 			calbox = getDecimalbox(FEE_UNIQUEID_CALCULATEDAMOUNT, fee);
 			actualBox = getDecimalbox(FEE_UNIQUEID_ACTUALAMOUNT, fee);
 			paidBox = getDecimalbox(FEE_UNIQUEID_PAID_AMOUNT, fee);
@@ -1339,7 +1325,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			paymentMthdbox = getCombobox(FEE_UNIQUEID_PAYMENTMETHOD, fee);
 			feeSchdMthdbox = getCombobox(FEE_UNIQUEID_FEESCHEDULEMETHOD, fee);
 			termsbox = getIntBox(FEE_UNIQUEID_TERMS, fee);
-
 
 			if (calbox != null) {
 				if (validate && calbox.getValue().compareTo(BigDecimal.ZERO) < 0) {
@@ -2127,31 +2112,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		String finCcy = financeMain.getFinCcy();
 		int formatter = CurrencyUtil.getFormat(finCcy);
-		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
-
-		String custDftBranch = null;
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-		if (financeDetail.getCustomerDetails() != null) {
-			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-
-			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						highPriorityState = customerAddres.getCustAddrProvince();
-						highPriorityCountry = customerAddres.getCustAddrCountry();
-						break;
-					}
-				}
-			}
-		}
-
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
-				custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
-				branch);
 
 		finFeeDetail.setWaivedAmount(PennantAppUtil.unFormateAmount(waiverBox.getValue(), formatter));
 		finFeeDetail.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
@@ -2159,7 +2119,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		finFeeDetail.setNetAmount(PennantAppUtil.unFormateAmount(netFeeBox.getValue(), formatter));
 		finFeeDetail.setPaidAmount(PennantAppUtil.unFormateAmount(paidBox.getValue(), formatter));
 
-		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
+		this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages());
 
 		//Paid Fee
 		paidBoxOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getPaidAmountOriginal(), formatter));
@@ -2269,31 +2229,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			String finCcy = financeMain.getFinCcy();
 			int formatter = CurrencyUtil.getFormat(finCcy);
-			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			String fromBranchCode = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
-
-			String custDftBranch = null;
-			String highPriorityState = null;
-			String highPriorityCountry = null;
-			if (financeDetail.getCustomerDetails() != null) {
-				custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
-					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							highPriorityState = customerAddres.getCustAddrProvince();
-							highPriorityCountry = customerAddres.getCustAddrCountry();
-							break;
-						}
-					}
-				}
-			}
-
-			Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
-					custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
-					branch);
 
 			finFeeDetail.setActualAmountOriginal(PennantAppUtil.unFormateAmount(actualBox.getValue(), formatter));
 
@@ -2309,7 +2244,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						.setPaidAmountOriginal(PennantAppUtil.unFormateAmount(paidBoxOriginal.getValue(), formatter));
 			}
 
-			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages());
 
 			remainingOriginal.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeOriginal(), formatter));
 			remainingGSTBox.setValue(PennantAppUtil.formateAmount(finFeeDetail.getRemainingFeeGST(), formatter));
@@ -2861,7 +2796,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
 		String finBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
 		String finCCY = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
-		
+
 		long custId = 0;
 		String custDftBranch = null;
 		String highPriorityState = null;
@@ -2883,31 +2818,24 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				}
 			}
 		}
-		
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch);
-
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(finBranch,
-				custDftBranch, highPriorityState, highPriorityCountry, getFinanceDetail().getFinanceTaxDetail(),
-				userBranch);
 
 		//Calculate Fee Rules
-		calculateFeeRules(finFeeDetailsList, finScheduleData, gstExecutionMap);
+		calculateFeeRules(finFeeDetailsList, finScheduleData);
 
 		//Calculate the fee Percentage
-		calculateFeePercentageAmount(finScheduleData, valueDate, gstExecutionMap);
+		calculateFeePercentageAmount(finScheduleData, valueDate);
 
 		//Calculating GST
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
+			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getGSTPercentages());
 		}
-		
-		/*for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
-			this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap);
-		}
+
+		/*
+		 * for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
+		 * this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap); }
 		 */
 		FeeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData.getFinanceMain(),
 				finScheduleData);
-
 
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 
@@ -2918,9 +2846,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		return finFeeDetailsList;
 	}
 
-	private void calculateFeeRules(List<FinFeeDetail> fees, FinScheduleData scheduleData,
-			Map<String, Object> gstExecutionMap) {
-
+	private void calculateFeeRules(List<FinFeeDetail> fees, FinScheduleData scheduleData) {
 		List<String> ruleCodes = new ArrayList<String>();
 		for (FinFeeDetail fee : fees) {
 			if (StringUtils.isNotEmpty(fee.getRuleCode())) {
@@ -3012,7 +2938,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				if (finFeeDetail.isTaxApplicable()) {
 					this.finFeeDetailService.processGSTCalForRule(finFeeDetail, feeResult, financeDetail,
-							gstExecutionMap, false);
+							getGSTPercentages(), false);
 				} else {
 					if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 						finFeeDetail.setActualAmountOriginal(feeResult);
@@ -3032,8 +2958,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		return StringUtils.trimToEmpty(finFeeDetail.getFinEvent()) + "_" + String.valueOf(finFeeDetail.getFeeTypeID());
 	}
 
-	private void calculateFeePercentageAmount(FinScheduleData finScheduleData, Date valueDate,
-			Map<String, Object> gstExecutionMap) {
+	private void calculateFeePercentageAmount(FinScheduleData finScheduleData, Date valueDate) {
 		logger.debug("Entering");
 
 		if (CollectionUtils.isNotEmpty(getFinFeeDetailList())) {
@@ -3052,8 +2977,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					}
 
 					if (finFeeDetail.isTaxApplicable()) { //if GST applicable
-						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee,
-								financeDetail, gstExecutionMap, false);
+						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee, financeDetail, getGSTPercentages(), false);
 					} else {
 						if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {
 							finFeeDetail.setActualAmountOriginal(calPercentageFee);
@@ -3162,13 +3086,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		return amountCodes;
 	}
-	
-	
+
 	private Component getComponent(String id, FinFeeDetail fee) {
 		id = getComponentId(id, fee);
 		return this.listBoxFeeDetail.getFellow(id);
 	}
-	
+
 	private Decimalbox getDecimalbox(String id, FinFeeDetail fee) {
 		Component component = getComponent(id, fee);
 
@@ -3178,7 +3101,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		return null;
 	}
-	
+
 	private Combobox getCombobox(String id, FinFeeDetail fee) {
 		Component component = getComponent(id, fee);
 
@@ -3188,7 +3111,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		return null;
 	}
-	
+
 	private Intbox getIntBox(String id, FinFeeDetail fee) {
 		Component component = getComponent(id, fee);
 
@@ -3219,7 +3142,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (paidbox != null) {
 				paidbox.setErrorMessage("");
 			}
-			
+
 			Decimalbox remFeeBox = getDecimalbox(FEE_UNIQUEID_REMAINING_FEE, fee);
 			if (remFeeBox != null) {
 				remFeeBox.setErrorMessage("");
@@ -3273,6 +3196,25 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
+	}
+
+	private Map<String, BigDecimal> getGSTPercentages() {
+		if (taxPercentages != null) {
+			return taxPercentages;
+		}
+
+		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		String finBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
+		String finCCY = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
+
+		long custId = 0;
+		if (financeDetail.getCustomerDetails() != null) {
+			custId = financeDetail.getCustomerDetails().getCustomer().getCustID();
+
+		}
+
+		taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch);
+		return taxPercentages;
 	}
 
 	// ******************************************************//

@@ -44,7 +44,6 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,25 +97,25 @@ public interface FinFeeDetailService {
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
 	//GST
-	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal feeResult, FinanceDetail financeDetail,
-			Map<String, Object> gstExecutionMap, boolean apiRequest);
-
+	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal taxableAmount, FinanceDetail financeDetail,
+			Map<String, BigDecimal> taxPercentages, boolean apiRequest);
+	
 	BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy, Map<String, Object> gstExecutionMap);
 
 	BigDecimal getFeeResult(String sqlRule, Map<String, Object> executionMap, String finCcy);
 
-	void calculateFees(FinFeeDetail finFeeDetail, FinanceMain financeMain, Map<String, Object> gstExecutionMap);
+	void calculateFees(FinFeeDetail fee, FinanceMain financeMain, Map<String, BigDecimal> taxPercentages);
 
-	void calculateFees(FinFeeDetail finFeeDetail, FinScheduleData finScheduleData, Map<String, Object> gstExecutionMap);
+	void calculateFees(FinFeeDetail fee, FinScheduleData scheduleData, Map<String, BigDecimal> taxPercentages);
 
 	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode,
 			int taxRoundingTarget);
 
 	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail,
-			Map<String, Object> gstExecutionMap, boolean apiRequest);
-
+			Map<String, BigDecimal> gstExecutionMap, boolean apiRequest);
+	
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
-			Map<String, Object> gstExecutionMap);
+			Map<String, BigDecimal> taxPercentages);
 
 	Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
 			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
@@ -128,5 +127,6 @@ public interface FinFeeDetailService {
 	BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId);
 
 	Branch getBranchById(String branchCode, String type);
+
 
 }

@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -75,10 +74,10 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinTaxDetails;
@@ -477,40 +476,14 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "",
 					false);
 
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+
 			// For Calculating the GST amount, converting fees as FinFeeDetail and FinTypeFees and this is for inquiry purpose only, these values are not saving.
 			// GST Calculation is having FinFeeDetailService, so we just use the existing functionality and display the GST amounts.
 			if (financeDetail != null) {
 				BigDecimal adviseAmount = BigDecimal.ZERO;
 				FinFeeDetail finFeeDetail = new FinFeeDetail();
 				FinTypeFees finTypeFee = new FinTypeFees();
-
-				financeDetail.setFinanceTaxDetail(
-						financeTaxDetailService.getApprovedFinanceTaxDetail(financeMain.getFinReference()));
-				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-				String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-
-				String custDftBranch = null;
-				String highPriorityState = null;
-				String highPriorityCountry = null;
-				if (financeDetail.getCustomerDetails() != null) {
-					custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-
-					List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-					if (CollectionUtils.isNotEmpty(addressList)) {
-						for (CustomerAddres customerAddres : addressList) {
-							if (customerAddres.getCustAddrPriority() == Integer
-									.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-								highPriorityState = customerAddres.getCustAddrProvince();
-								highPriorityCountry = customerAddres.getCustAddrCountry();
-								break;
-							}
-						}
-					}
-				}
-
-				Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(
-						fromBranchCode, custDftBranch, highPriorityState, highPriorityCountry,
-						financeDetail.getFinanceTaxDetail(), financeMain.getFinBranch());
 
 				if (this.adviseAmount.getActualValue() != null) {
 					adviseAmount = (PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(),
@@ -527,8 +500,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				finTypeFee.setTaxApplicable(taxApplicable);
 				finTypeFee.setAmount(adviseAmount);
 
-				finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
-				finFeeDetailService.calculateFees(finFeeDetail, financeMain, gstExecutionMap);
+				finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, taxPercentages);
+				finFeeDetailService.calculateFees(finFeeDetail, financeMain, taxPercentages);
 
 				String taxComponent = "";
 
@@ -698,8 +671,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				lc = new Listcell(
-						DateUtility.format(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtility.format(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(),
