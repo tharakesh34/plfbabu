@@ -4737,6 +4737,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				} else if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
 						|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
+						|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
