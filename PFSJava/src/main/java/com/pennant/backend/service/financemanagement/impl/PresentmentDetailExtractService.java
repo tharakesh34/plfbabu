@@ -53,7 +53,7 @@ public class PresentmentDetailExtractService {
 	 */
 	public String savePDCPresentments(PresentmentHeader presentmentHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
-		generateID(presentmentHeader);
+		
 		boolean isEmptyRecords = false;
 		Map<Object, Long> map = new HashMap<Object, Long>();
 		long presentmentId = 0;
@@ -63,6 +63,8 @@ public class PresentmentDetailExtractService {
 			resultList = presentmentDetailDAO.getPDCPresentmentDetails(presentmentHeader);
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
+				//generate header id if the not available
+				generateID(presentmentHeader);
 				PresentmentDetail pDetail = new PresentmentDetail();
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
 				pDetail.setStatus(RepayConstants.PEXC_IMPORT);
@@ -125,6 +127,8 @@ public class PresentmentDetailExtractService {
 						presentmentHeader.setBankCode(bankCode);
 						presentmentHeader.setEntityCode(entity);
 						presentmentId = savePresentmentHeaderDetails(presentmentHeader);
+						//reset on the header is save
+						presentmentHeader.setId(Long.MIN_VALUE);
 						map.put(defSchDate, presentmentId);
 						map.put(bankCode, presentmentId);
 						map.put(entity, presentmentId);
@@ -169,7 +173,6 @@ public class PresentmentDetailExtractService {
 	 */
 	public String savePresentments(PresentmentHeader ph) throws Exception {
 		logger.debug(Literal.ENTERING);
-		generateID(ph);
 		boolean isEmptyRecords = false;
 		Map<Object, Long> map = new HashMap<Object, Long>();
 		long presentmentId = 0;
@@ -179,6 +182,8 @@ public class PresentmentDetailExtractService {
 			resultList = presentmentDetailDAO.getPresentmentDetails(ph);
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
+				//generate for the header in header is not set
+				generateID(ph);
 
 				PresentmentDetail pDetail = new PresentmentDetail();
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
@@ -246,6 +251,8 @@ public class PresentmentDetailExtractService {
 						ph.setBankCode(bankCode);
 						ph.setEntityCode(entity);
 						presentmentId = savePresentmentHeaderDetails(ph);
+						//new header should be created resetting the id
+						ph.setId(Long.MIN_VALUE);
 						map.put(defSchDate, presentmentId);
 						map.put(bankCode, presentmentId);
 						map.put(entity, presentmentId);
