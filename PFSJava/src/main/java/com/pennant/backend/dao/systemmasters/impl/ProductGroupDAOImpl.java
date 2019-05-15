@@ -167,7 +167,7 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 
 		// Prepare the SQL.
 		String sql;
-		String whereClause = " ProductGroupId = :ProductGroupId";
+		String whereClause = " ProductGroupId = :ProductGroupId and PRODUCTCATEGORYID != PRODUCTCATEGORYID ";
 
 		switch (tableType) {
 		case MAIN_TAB:

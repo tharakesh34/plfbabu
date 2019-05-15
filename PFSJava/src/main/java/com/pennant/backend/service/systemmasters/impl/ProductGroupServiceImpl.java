@@ -207,13 +207,13 @@ public class ProductGroupServiceImpl  extends GenericService<ProductGroup> imple
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		// If Builder Group is already utilized in Builder Company 
+		/*// If Builder Group is already utilized in Builder Company 
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, productGroup.getRecordType())) {
 			boolean workflowExists = getProductGroupDAO().isIdExists(productGroup.getId());
 			if (workflowExists) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
 			}
-		}
+		}*/
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

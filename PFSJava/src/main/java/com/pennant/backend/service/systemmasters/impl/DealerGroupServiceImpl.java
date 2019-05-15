@@ -212,14 +212,7 @@ public class DealerGroupServiceImpl extends GenericService<DealerGroup> implemen
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		// If Builder Group is already utilized in Builder Company 
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, dealerGroup.getRecordType())) {
-			boolean workflowExists = getDealerGroupDAO().isIdExists(dealerGroup.getId());
-			if (workflowExists) {
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
-			}
-		}
-
+		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

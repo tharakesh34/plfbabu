@@ -430,7 +430,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ aProductGroup.getId();
+				+ aProductGroup.getModelId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 			if (StringUtils.trimToEmpty(aProductGroup.getRecordType()).equals("")) {
 				aProductGroup.setVersion(aProductGroup.getVersion() + 1);
