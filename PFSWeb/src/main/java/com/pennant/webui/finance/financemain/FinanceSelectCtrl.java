@@ -1247,7 +1247,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					String finReferences = getFinanceDetailService().getCustomerDueFinReferces(aFinanceMain.getCustID());
 					
 					if (finReferences.length() > 0) {
-						MessageUtil.showMessage(Labels.getLabel("info.param_add_dis_warning", new Object[]{finReferences}));
+						MessageUtil.showMessage(Labels.getLabel("info.param_add_disb_warning", new Object[]{finReferences}));
 					}
 				}
 			}
