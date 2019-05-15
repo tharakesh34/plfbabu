@@ -39,6 +39,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LimitManagement {
 
@@ -1314,8 +1315,10 @@ public class LimitManagement {
 			DateUtility.compare(limitDetail.getExpiryDate(), limitDetail.getExpiryDate());
 
 			if (limitDetail.getExpiryDate().compareTo(loanMaturityDate) < 0) {
-				return new ErrorDetail(KEY_LINEEXPIRY, "60317", null,
-						new String[] { limitDetail.getExpiryDate().toString(), loanMaturityDate.toString() });
+				String[] valueParm = new String[2];
+				valueParm[0] = DateUtil.formatToLongDate(limitDetail.getExpiryDate());
+				valueParm[1] = DateUtil.formatToLongDate(loanMaturityDate);
+				return  ErrorUtil.getErrorDetail(new ErrorDetail("60317", valueParm));
 			}
 		}
 
