@@ -82,8 +82,8 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 		registerButton(button_SchemeDealerGroupList_SchemeDealerGroupListSearch);
 		registerButton(button_SchemeDealerGroupList_NewSchemeDealerGroup,
 				"button_SchemeDealerGroupList_NewSchemeDealerGroup", true);
-		registerField("PromotionId");
-		registerField("SchemeId", listheader_SchemeId, SortOrder.NONE, schemeId, sortOperator_SchemeId,
+		registerField("SchemeDealerGroupId");
+		registerField("PromotionId", listheader_SchemeId, SortOrder.NONE, schemeId, sortOperator_SchemeId,
 				Operators.STRING);
 		registerField("DealerGroupCode", listheader_DealerGroupCode, SortOrder.ASC, dealerGroupCode,
 				sortOperator_DealerGroupCode, Operators.STRING);
@@ -134,7 +134,7 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 	public void onSchemeDealerGroupListItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		final long id = (long) this.listBoxSchemeDealerGroup.getSelectedItem().getAttribute("PromotionId");
+		final long id = (long) this.listBoxSchemeDealerGroup.getSelectedItem().getAttribute("SchemeDealerGroupId");
 		SchemeDealerGroup schemeDealerGroup = schemeDealerGroupService.getSchemeDealerGroup(id);
 
 		if (schemeDealerGroup == null) {
@@ -144,7 +144,7 @@ public class SchemeDealerGroupListCtrl extends GFCBaseListCtrl<SchemeDealerGroup
 
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append(schemeDealerGroup.getPromotionId());
+		whereCond.append(schemeDealerGroup.getSchemeDealerGroupId());
 		whereCond.append(" AND  version=");
 		whereCond.append(schemeDealerGroup.getVersion());
 

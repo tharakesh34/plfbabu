@@ -22,6 +22,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -31,40 +32,42 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
+import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
 import com.pennanttech.pff.mmfl.cd.service.SchemeDealerGroupService;
+import com.pennanttech.pff.mmfl.cd.service.SchemeProductGroupService;
 
-public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup> {
+public class SchemeProductGroupDialogueCtrl  extends GFCBaseCtrl<SchemeProductGroup> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger(SchemeDealerGroupDialogueCtrl.class);
+	private static final Logger logger = Logger.getLogger(SchemeProductGroupDialogueCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_schemeDealerGroupDialogue;
+	protected Window window_schemeProductGroupDialogue;
 
 	protected Textbox schemeId;
 	protected Button btnSchemeId;
-	protected Intbox dealerGroupCode;
+	protected Intbox productGroupCode;
+	protected Uppercasebox posVendor;
 	protected Checkbox active;
-	protected SchemeDealerGroup schemeDealerGroup;
+	protected SchemeProductGroup schemeProductGroup;
 
-	private transient SchemeDealerGroupListCtrl schemeDealerGroupListCtrl;
-	private transient SchemeDealerGroupService schemeDealerGroupService;
+	private transient SchemeProductGroupListCtrl schemeProductGroupListCtrl;
+	private transient SchemeProductGroupService schemeProductGroupService;
 
-	public SchemeDealerGroupDialogueCtrl() {
+	public SchemeProductGroupDialogueCtrl() {
 		super();
 	}
 
 	@Override
 	protected void doSetProperties() {
-		super.pageRightName = "CDSchemeDealerGroupDialogue";
+		super.pageRightName = "CDSchemeProductGroupDialogue";
 	}
 
 	@Override
 	protected String getReference() {
-		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.schemeDealerGroup.getSchemeDealerGroupId()));
+		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.schemeProductGroup.getSchemeProductGroupId()));
 		return referenceBuffer.toString();
 	}
 
@@ -76,36 +79,36 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 *            An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
-	public void onCreate$window_schemeDealerGroupDialogue(Event event) throws AppException {
+	public void onCreate$window_schemeProductGroupDialogue(Event event) throws AppException {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_schemeDealerGroupDialogue);
+		setPageComponents(window_schemeProductGroupDialogue);
 
 		try {
-			this.schemeDealerGroup = (SchemeDealerGroup) arguments.get("SchemeDealerGroup");
-			this.schemeDealerGroupListCtrl = (SchemeDealerGroupListCtrl) arguments.get("schemeDealerGroupListCtrl");
+			this.schemeProductGroup = (SchemeProductGroup) arguments.get("SchemeProductGroup");
+			this.schemeProductGroupListCtrl = (SchemeProductGroupListCtrl) arguments.get("schemeProductGroupListCtrl");
 
-			if (this.schemeDealerGroup == null) {
+			if (this.schemeProductGroup == null) {
 				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
 
-			SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
-			BeanUtils.copyProperties(this.schemeDealerGroup, schemeDealerGroup);
-			this.schemeDealerGroup.setBefImage(schemeDealerGroup);
+			SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
+			BeanUtils.copyProperties(this.schemeProductGroup, schemeProductGroup);
+			this.schemeProductGroup.setBefImage(schemeProductGroup);
 
-			doLoadWorkFlow(this.schemeDealerGroup.isWorkflow(), this.schemeDealerGroup.getWorkflowId(),
-					this.schemeDealerGroup.getNextTaskId());
+			doLoadWorkFlow(this.schemeProductGroup.isWorkflow(), this.schemeProductGroup.getWorkflowId(),
+					this.schemeProductGroup.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateRoleAuthorities(getRole(), "CDSchemeDealerGroupDialogue");
+				getUserWorkspace().allocateRoleAuthorities(getRole(), "CDSchemeProductGroupDialogue");
 			}
 
 			doSetFieldProperties();
 			doCheckRights();
-			doShowDialog(this.schemeDealerGroup);
+			doShowDialog(this.schemeProductGroup);
 
 		} catch (Exception e) {
 			closeDialog();
@@ -130,10 +133,10 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CDSchemeDealerGroupDialogue_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CDSchemeDealerGroupDialogue_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CDSchemeDealerGroupDialogue_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CDSchemeDealerGroupDialogue_btnSave"));
+		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CDSchemeProductGroupDialogue_btnNew"));
+		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CDSchemeProductGroupDialogue_btnEdit"));
+		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CDSchemeProductGroupDialogue_btnDelete"));
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CDSchemeProductGroupDialogue_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug(Literal.LEAVING);
@@ -220,7 +223,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
-		doShowNotes(this.schemeDealerGroup);
+		doShowNotes(this.schemeProductGroup);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -229,7 +232,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		schemeDealerGroupListCtrl.search();
+		schemeProductGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -239,7 +242,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	private void doCancel() {
 		logger.debug(Literal.ENTERING);
 
-		doWriteBeanToComponents(this.schemeDealerGroup.getBefImage());
+		doWriteBeanToComponents(this.schemeProductGroup.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
@@ -253,19 +256,20 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * @param covenantType
 	 * 
 	 */
-	public void doWriteBeanToComponents(SchemeDealerGroup schemeDealerGroup) {
+	public void doWriteBeanToComponents(SchemeProductGroup schemeProductGroup) {
 		logger.debug(Literal.ENTERING);
 
-		this.schemeId.setText(schemeDealerGroup.getPromotionId());
-		this.dealerGroupCode.setValue(schemeDealerGroup.getDealerGroupCode());
-		this.active.setChecked(schemeDealerGroup.isActive());
-		if (schemeDealerGroup.isNew()
-				|| (schemeDealerGroup.getRecordType() != null ? schemeDealerGroup.getRecordType() : "")
+		this.schemeId.setText(schemeProductGroup.getPromotionId());
+		this.productGroupCode.setValue(schemeProductGroup.getProductGroupCode());
+		this.posVendor.setValue(schemeProductGroup.getPOSVendor());
+		this.active.setChecked(schemeProductGroup.isActive());
+		if (schemeProductGroup.isNew()
+				|| (schemeProductGroup.getRecordType() != null ? schemeProductGroup.getRecordType() : "")
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		this.recordStatus.setValue(schemeDealerGroup.getRecordStatus());
+		this.recordStatus.setValue(schemeProductGroup.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -275,25 +279,31 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * 
 	 * @param aCovenantType
 	 */
-	public void doWriteComponentsToBean(SchemeDealerGroup schemeDealerGroup) {
+	public void doWriteComponentsToBean(SchemeProductGroup schemeProductGroup) {
 		logger.debug(Literal.ENTERING);
 
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			schemeDealerGroup.setPromotionId(this.schemeId.getText());
+			schemeProductGroup.setPromotionId(this.schemeId.getText());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			schemeDealerGroup.setDealerGroupCode(this.dealerGroupCode.getValue());
+			schemeProductGroup.setProductGroupCode(this.productGroupCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			schemeDealerGroup.setActive(this.active.isChecked());
+			schemeProductGroup.setPOSVendor(this.posVendor.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		try {
+			schemeProductGroup.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -318,17 +328,17 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * @param covenantType
 	 *            The entity that need to be render.
 	 */
-	public void doShowDialog(SchemeDealerGroup schemeDealerGroup) {
+	public void doShowDialog(SchemeProductGroup schemeProductGroup) {
 		logger.debug(Literal.ENTERING);
 
-		if (schemeDealerGroup.isNew()) {
+		if (schemeProductGroup.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			this.schemeId.setFocus(true);
 		} else {
-			this.dealerGroupCode.setFocus(true);
+			this.productGroupCode.setFocus(true);
 			if (isWorkFlowEnabled()) {
-				if (StringUtils.isNotBlank(schemeDealerGroup.getRecordType())) {
+				if (StringUtils.isNotBlank(schemeProductGroup.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 				doEdit();
@@ -339,7 +349,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 			}
 		}
 
-		doWriteBeanToComponents(schemeDealerGroup);
+		doWriteBeanToComponents(schemeProductGroup);
 
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
@@ -362,11 +372,15 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
-		if (!this.dealerGroupCode.isReadonly()) {
-			this.dealerGroupCode.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_SchemeDealerGroupList_DealerGroupCode.value"), true, false));
+		if (!this.productGroupCode.isReadonly()) {
+			this.productGroupCode.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_SchemeProductGroupList_ProductGroupCode.value"), true, false));
 		}
-
+		
+		if (this.posVendor.getText().equals("")) {
+			this.posVendor.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeProductGroupList_POSVendor.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -377,7 +391,8 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		logger.debug(Literal.ENTERING);
 
 		this.schemeId.setConstraint("");
-		this.dealerGroupCode.setConstraint("");
+		this.productGroupCode.setConstraint("");
+		this.posVendor.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -406,34 +421,34 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		final SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
-		BeanUtils.copyProperties(this.schemeDealerGroup, schemeDealerGroup);
+		final SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
+		BeanUtils.copyProperties(this.schemeProductGroup, schemeProductGroup);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ schemeDealerGroup.getDealerGroupCode();
+				+ schemeProductGroup.getProductGroupCode();
 		if (MessageUtil.confirm(msg) != MessageUtil.YES) {
 			return;
 		}
 
-		if (StringUtils.trimToEmpty(schemeDealerGroup.getRecordType()).equals("")) {
-			schemeDealerGroup.setVersion(schemeDealerGroup.getVersion() + 1);
-			schemeDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		if (StringUtils.trimToEmpty(schemeProductGroup.getRecordType()).equals("")) {
+			schemeProductGroup.setVersion(schemeProductGroup.getVersion() + 1);
+			schemeProductGroup.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
 			if (isWorkFlowEnabled()) {
-				schemeDealerGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-				schemeDealerGroup.setNewRecord(true);
+				schemeProductGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+				schemeProductGroup.setNewRecord(true);
 				tranType = PennantConstants.TRAN_WF;
-				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), schemeDealerGroup.getNextTaskId(),
-						schemeDealerGroup);
+				getWorkFlowDetails(userAction.getSelectedItem().getLabel(), schemeProductGroup.getNextTaskId(),
+						schemeProductGroup);
 			} else {
 				tranType = PennantConstants.TRAN_DEL;
 			}
 		}
 
 		try {
-			if (doProcess(schemeDealerGroup, tranType)) {
+			if (doProcess(schemeProductGroup, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -451,20 +466,21 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.schemeDealerGroup.isNewRecord()) {
+		if (this.schemeProductGroup.isNewRecord()) {
 			this.schemeId.setDisabled(false);
 		} else {
 			this.schemeId.setDisabled(true);
 		}
 
-		readOnlyComponent(isReadOnly("CDSchemeDealerGroupDialogue_DealerGroupCode"), this.dealerGroupCode);
+		readOnlyComponent(isReadOnly("CDSchemeProductGroupDialogue_ProductGroupCode"), this.productGroupCode);
+		readOnlyComponent(isReadOnly("CDSchemeProductGroupDialogue_POSVendor"), this.posVendor);
 		readOnlyComponent(isReadOnly("CDSchemeDealerGroupDialogue_Active"), this.active);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
-			if (this.schemeDealerGroup.isNewRecord()) {
+			if (this.schemeProductGroup.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {
@@ -484,8 +500,9 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.schemeId);
-		readOnlyComponent(true, this.dealerGroupCode);
+		readOnlyComponent(true, this.productGroupCode);
 		readOnlyComponent(true, this.active);
+		readOnlyComponent(true, this.posVendor);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -506,8 +523,9 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		logger.debug(Literal.ENTERING);
 
 		this.schemeId.setValue("");
-		this.dealerGroupCode.setValue(0);
+		this.productGroupCode.setValue(0);
 		this.active.setChecked(false);
+		this.posVendor.setValue("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -517,28 +535,28 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		final SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
-		BeanUtils.copyProperties(this.schemeDealerGroup, schemeDealerGroup);
+		final SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
+		BeanUtils.copyProperties(this.schemeProductGroup, schemeProductGroup);
 
 		doSetValidation();
-		doWriteComponentsToBean(schemeDealerGroup);
+		doWriteComponentsToBean(schemeProductGroup);
 
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(schemeDealerGroup.getRecordType())) {
-				schemeDealerGroup.setVersion(schemeDealerGroup.getVersion() + 1);
-				if (schemeDealerGroup.isNew()) {
-					schemeDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (StringUtils.isBlank(schemeProductGroup.getRecordType())) {
+				schemeProductGroup.setVersion(schemeProductGroup.getVersion() + 1);
+				if (schemeProductGroup.isNew()) {
+					schemeProductGroup.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					schemeDealerGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					schemeDealerGroup.setNewRecord(true);
+					schemeProductGroup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					schemeProductGroup.setNewRecord(true);
 				}
 			}
 		} else {
-			schemeDealerGroup.setVersion(schemeDealerGroup.getVersion() + 1);
-			if (schemeDealerGroup.isNew()) {
+			schemeProductGroup.setVersion(schemeProductGroup.getVersion() + 1);
+			if (schemeProductGroup.isNew()) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -546,7 +564,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		}
 
 		try {
-			if (doProcess(schemeDealerGroup, tranType)) {
+			if (doProcess(schemeProductGroup, tranType)) {
 				refreshList();
 				closeDialog();
 			}
@@ -570,29 +588,29 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * @return boolean
 	 * 
 	 */
-	private boolean doProcess(SchemeDealerGroup schemeDealerGroup, String tranType) {
+	private boolean doProcess(SchemeProductGroup schemeProductGroup, String tranType) {
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		schemeDealerGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		schemeDealerGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		schemeDealerGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
+		schemeProductGroup.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		schemeProductGroup.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		schemeProductGroup.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			schemeDealerGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			schemeProductGroup.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(schemeDealerGroup.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(schemeProductGroup.getNextTaskId());
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, schemeDealerGroup);
+					nextTaskId = getNextTaskIds(taskId, schemeProductGroup);
 				}
-				if (isNotesMandatory(taskId, schemeDealerGroup)) {
+				if (isNotesMandatory(taskId, schemeProductGroup)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
@@ -612,13 +630,13 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 					nextRoleCode = getTaskOwner(nextTaskId);
 				}
 			}
-			schemeDealerGroup.setTaskId(taskId);
-			schemeDealerGroup.setNextTaskId(nextTaskId);
-			schemeDealerGroup.setRoleCode(getRole());
-			schemeDealerGroup.setNextRoleCode(nextRoleCode);
+			schemeProductGroup.setTaskId(taskId);
+			schemeProductGroup.setNextTaskId(nextTaskId);
+			schemeProductGroup.setRoleCode(getRole());
+			schemeProductGroup.setNextRoleCode(nextRoleCode);
 
-			auditHeader = getAuditHeader(schemeDealerGroup, tranType);
-			String operationRefs = getServiceOperations(taskId, schemeDealerGroup);
+			auditHeader = getAuditHeader(schemeProductGroup, tranType);
+			String operationRefs = getServiceOperations(taskId, schemeProductGroup);
 
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
@@ -626,7 +644,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(schemeDealerGroup, PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(schemeProductGroup, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -634,7 +652,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 				}
 			}
 		} else {
-			auditHeader = getAuditHeader(schemeDealerGroup, tranType);
+			auditHeader = getAuditHeader(schemeProductGroup, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
@@ -657,7 +675,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		SchemeDealerGroup manufacturer = (SchemeDealerGroup) auditHeader.getAuditDetail().getModelData();
+		SchemeProductGroup manufacturer = (SchemeProductGroup) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
 		try {
@@ -666,36 +684,36 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = schemeDealerGroupService.delete(auditHeader);
+						auditHeader = schemeProductGroupService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = schemeDealerGroupService.saveOrUpdate(auditHeader);
+						auditHeader = schemeProductGroupService.saveOrUpdate(auditHeader);
 					}
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = schemeDealerGroupService.doApprove(auditHeader);
+						auditHeader = schemeProductGroupService.doApprove(auditHeader);
 
 						if (manufacturer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = schemeDealerGroupService.doReject(auditHeader);
+						auditHeader = schemeProductGroupService.doReject(auditHeader);
 						if (manufacturer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_schemeDealerGroupDialogue, auditHeader);
+						retValue = ErrorControl.showErrorControl(this.window_schemeProductGroupDialogue, auditHeader);
 						return processCompleted;
 					}
 				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_schemeDealerGroupDialogue, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_schemeProductGroupDialogue, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE) {
 					processCompleted = true;
 					if (deleteNotes) {
-						deleteNotes(getNotes(this.schemeDealerGroup), true);
+						deleteNotes(getNotes(this.schemeProductGroup), true);
 					}
 				}
 				if (retValue == PennantConstants.porcessOVERIDE) {
@@ -720,7 +738,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 	 * @return
 	 */
 
-	private AuditHeader getAuditHeader(SchemeDealerGroup manufacturer, String tranType) {
+	private AuditHeader getAuditHeader(SchemeProductGroup manufacturer, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, manufacturer.getBefImage(), manufacturer);
 		return new AuditHeader(getReference(), null, null, null, auditDetail, manufacturer.getUserDetails(),
 				getOverideMap());
@@ -728,7 +746,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 
 	public void onClick$btnSchemeId(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_schemeDealerGroupDialogue, "Promotion",
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_schemeProductGroupDialogue, "Promotion",
 				String.valueOf(this.schemeId.getValue()), null);
 		if (dataObject != null) {
 			String details = (String) dataObject;
@@ -738,12 +756,13 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 
 	}
 
-	public void setSchemeDealerGroupListCtrl(SchemeDealerGroupListCtrl schemeDealerGroupListCtrl) {
-		this.schemeDealerGroupListCtrl = schemeDealerGroupListCtrl;
+	public void setSchemeProductGroupService(SchemeProductGroupService schemeProductGroupService) {
+		this.schemeProductGroupService = schemeProductGroupService;
 	}
 
-	public void setSchemeDealerGroupService(SchemeDealerGroupService schemeDealerGroupService) {
-		this.schemeDealerGroupService = schemeDealerGroupService;
+	public void setSchemeProductGroupListCtrl(SchemeProductGroupListCtrl schemeProductGroupListCtrl) {
+		this.schemeProductGroupListCtrl = schemeProductGroupListCtrl;
 	}
+
 
 }
