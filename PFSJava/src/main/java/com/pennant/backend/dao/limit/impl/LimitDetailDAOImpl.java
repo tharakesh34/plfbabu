@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.limit.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -387,15 +388,15 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select DetailId, lh.LimitHeaderId, LimitLine, GroupCode, LimitStructureDetailsID, LimitChkMethod");
+		sql.append("select DetailId, LimitHeaderId, LimitLine, GroupCode, LimitStructureDetailsID, LimitChkMethod");
 		sql.append(", ExpiryDate, LimitSanctioned,  ReservedLimit, UtilisedLimit");
 		sql.append(", LimitCheck, Revolving, Currency, ValidateMaturityDate");
-		sql.append(", Version, CreatedBy, CreatedOn, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From LimitLines_View ");
-		sql.append(" Inner Join LimitHeader lh on lh.LimitHeaderId = LimitHeaderId");
-		sql.append(" Where (LimitLine=:LimitLine OR GroupCode in (:GroupCodes)");
-		sql.append(" and LimitHeaderId = :LimitHeaderId ");
+		sql.append(", lv.Version, lv.CreatedBy, lv.CreatedOn, lv.LastMntBy, lv.LastMntOn, lv.RecordStatus");
+		sql.append(", lv.RoleCode, lv.NextRoleCode, lv.TaskId, lv.NextTaskId, lv.RecordType, lv.WorkflowId");
+		sql.append(" From LimitLines_View lv");
+		sql.append(" Inner Join LimitHeader lh on lh.HeaderId = lv.LimitHeaderId");
+		sql.append(" Where (LimitLine=:LimitLine OR GroupCode in (:GroupCodes))");
+		sql.append(" and lv.LimitHeaderId = :LimitHeaderId ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
