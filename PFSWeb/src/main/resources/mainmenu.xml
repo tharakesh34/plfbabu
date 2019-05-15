@@ -164,6 +164,8 @@
 				rightName="menuItem_Merchant" />
 			<menuItem id="menu_Item_SchemeDealerGroup" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/SchemeDealerGroupList.zul"
 				rightName="menuItem_CDSchemeDealerGroup" />
+			<menuItem id="menu_Item_SchemeProductGroup" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/SchemeProductGroupList.zul"
+				rightName="menuItem_CDSchemeProductGroup" />	
 			<menuItem id="menu_Item_DealerMapping" zulNavigation="/WEB-INF/pages/SystemMaster/DealerMapping/DealerMappingList.zul"
 				rightName="menuItem_DealerMapping" />
 			<menuItem id="menu_Item_Dealer_Group" zulNavigation="/WEB-INF/pages/DealerGroup/DealerGroupList.zul"
