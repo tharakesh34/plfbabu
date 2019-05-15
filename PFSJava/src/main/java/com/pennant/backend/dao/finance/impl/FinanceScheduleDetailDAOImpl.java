@@ -65,6 +65,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
@@ -1700,4 +1701,78 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		
 		logger.debug(Literal.LEAVING);
 	}
+	
+	/**
+	 * Getting fin schedule details for rate report
+	 */
+	@Override
+	public List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder sql = new StringBuilder(" Select FinReference, SchDate, SchSeq, PftOnSchDate,");
+		sql.append(" CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, DisbOnSchDate,");
+		sql.append(" DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate, ActRate, NoOfDays,");
+		sql.append(" CalOnIndRate, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount, ProfitBalance,");
+		sql.append(" DisbAmount, DownPaymentAmount, CpzAmount, OrgPft , OrgPri, OrgEndBal,OrgPlanPft, ");
+		sql.append(" ClosingBalance, ProfitFraction, PrvRepayAmount, CalculatedRate,FeeChargeAmt,InsuranceAmt, ");
+		sql.append(" FeeSchd , SchdFeePaid , SchdFeeOS, InsSchd, SchdInsPaid, ");
+		sql.append(" AdvBaseRate , AdvMargin , AdvPftRate , AdvCalRate , AdvProfit , AdvRepayAmount, ");
+		sql.append(" SuplRent , IncrCost , SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis, ");
+		sql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
+		sql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee, PartialPaidAmt,PresentmentId, ");
+		sql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
+		sql.append(" DefSchdDate, SchdMethod, ");
+		sql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
+		sql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
+
+		sql.append(" From FinScheduleDetails Where");
+		sql.append(" FinReference = :FinReference ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceScheduleDetail.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
+
+	
+	/**
+	 * Fetch the Record Finance Main Detail details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return FinanceMain
+	 */
+	@Override  
+	public FinanceMain getFinanceMainForRateReport(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder(
+				"SELECT FM.FinReference, FM.FinCcy, CU.CustCIF LovDescCustCIF,  CU.CustShrtName LovDescCustShrtName, ");
+		sql.append(" FM.FinCurrAssetValue, FM.ProfitDaysBasis, FM.CalRoundingMode ,FM.RoundingTarget ");
+		sql.append("From FinanceMain FM INNER JOIN CUSTOMERS CU ON FM.CUSTID = CU.CUSTID");
+		sql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + sql.toString());
+
+		source.addValue("FinReference", finReference);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

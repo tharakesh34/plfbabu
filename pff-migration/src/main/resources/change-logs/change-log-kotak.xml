@@ -66,4 +66,12 @@
 			 ]]>
 		</sql>
     </changeSet>
+    
+     <changeSet id="4" author="DurgaPrasad.G">
+		<sql>
+			<![CDATA[
+			UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
+			]]>
+		</sql>
+    </changeSet>
 </databaseChangeLog>

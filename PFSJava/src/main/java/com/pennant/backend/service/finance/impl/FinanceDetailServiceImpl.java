@@ -10957,6 +10957,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.LEAVING);
 	}
 	
+	/**
+	 * Getting Fin schedule details for rate report
+	 */
+	@Override
+	public List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference) {
+		return getFinanceScheduleDetailDAO().getFinSchdDetailsForRateReport(finReference);
+	}
+	
+	/**
+	 * Getting Fin details for rate report
+	 */
+	@Override
+	public FinanceMain getFinanceMainForRateReport(String finReference, String type) {
+		return getFinanceScheduleDetailDAO().getFinanceMainForRateReport(finReference, type);
+	}
+	
 	public ReasonDetailDAO getReasonDetailDAO() {
 		return reasonDetailDAO;
 	}

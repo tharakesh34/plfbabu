@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.AccountHoldStatus;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
@@ -149,5 +150,9 @@ public interface FinanceScheduleDetailDAO {
 	void updateSchPftPaid(FinanceScheduleDetail curSchd);
 
 	void updateSchPriPaid(FinanceScheduleDetail curSchd);
+
+	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
+
+	FinanceMain getFinanceMainForRateReport(String finReference, String type);
 
 }

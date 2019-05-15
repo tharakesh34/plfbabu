@@ -71,6 +71,7 @@ import com.pennant.app.util.ReportCreationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JRException;
@@ -203,6 +204,52 @@ public class ReportGenerationUtil implements Serializable {
 		}
 
 		logger.debug("Leaving");
+	}
+	
+	 
+	/**
+	 * Generate report
+	 * @param reportName
+	 * @param object
+	 * @param listData
+	 * @param userName
+	 * @param isExcel
+	 */
+	public static void generateReport(String reportName, Object object, List<Object> listData, String userName,
+			boolean isExcel) {
+		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
+		createReport(reportName, object, listData, reportSrc, userName, isExcel);
+	}
+	
+	/**
+	 * Creating the report
+	 * @param reportName
+	 * @param object
+	 * @param listData
+	 * @param reportSrc
+	 * @param userName
+	 * @param isExcel
+	 */
+	private static void createReport(String reportName, Object object, List<Object> listData, String reportSrc,
+			String userName, boolean isExcel) {
+		logger.debug(Literal.ENTERING);
+		try {
+			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
+					isExcel);
+			if(isExcel){
+				return;
+			}
+			HashMap<String, Object> auditMap = new HashMap<String, Object>();
+			auditMap.put("reportBuffer", buf);
+			String genReportName = Labels.getLabel(reportName);
+			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
+			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
+		} catch (JRException e) {
+			logger.trace(Literal.EXCEPTION, e);
+			MessageUtil.showError("Template does not exist.");
+			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

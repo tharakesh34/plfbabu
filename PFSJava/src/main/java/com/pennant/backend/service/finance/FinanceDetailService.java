@@ -316,4 +316,7 @@ public interface FinanceDetailService {
 
 	String getCustomerDueFinReferces(long custID);
 
+	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
+
+	FinanceMain getFinanceMainForRateReport(String finReference, String type);
 }

@@ -4395,6 +4395,12 @@
 		<property name="soaReportGenerationService" ref="soaReportGenerationService" />
 	</bean>
 
+	<!-- SRR -->
+	<bean id="scheduleRateReportDialogCtrl" class="com.pennant.webui.reports.ScheduleRateReportHeaderCtrl" scope="prototype"
+		parent="basisListCtrl">
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
+	
 	<!-- GST -->
 	<bean id="dataExtractionListCtrl" class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl"
 		scope="prototype">
