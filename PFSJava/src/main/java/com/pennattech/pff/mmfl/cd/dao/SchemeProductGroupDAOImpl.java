@@ -16,65 +16,65 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
-import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
+import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
 
-public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> implements SchemeDealerGroupDAO {
-	private static Logger logger = Logger.getLogger(SchemeDealerGroupDAOImpl.class);
+public class SchemeProductGroupDAOImpl  extends SequenceDao<SchemeProductGroup> implements SchemeProductGroupDAO {
+	private static Logger logger = Logger.getLogger(SchemeProductGroupDAOImpl.class);
 
-	public SchemeDealerGroupDAOImpl() {
+	public SchemeProductGroupDAOImpl() {
 		super();
 	}
 
 	@Override
-	public SchemeDealerGroup getSchemeDealerGroup(long id, String type) {
+	public SchemeProductGroup getSchemeProductGroup(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select SchemeDealerGroupId, PromotionId, DealerGroupCode, Active");
+		sql.append("Select SchemeProductGroupId, PromotionId, ProductGroupCode, POSVendor, Active");
 		if (type.contains("View")) {
 			sql.append(" ");
 		}
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
-		sql.append(" From CD_SCHEME_DEALERGROUP");
+		sql.append(" From CD_SCHEME_PRODUCTGROUP");
 		sql.append(type);
-		sql.append(" Where SchemeDealerGroupId = :schemeDealerGroupId");
+		sql.append(" Where SchemeProductGroupId = :schemeProductGroupId");
 
-		SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
-		schemeDealerGroup.setSchemeDealerGroupId(id);
+		SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
+		schemeProductGroup.setSchemeProductGroupId(id);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeDealerGroup);
-		RowMapper<SchemeDealerGroup> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(SchemeDealerGroup.class);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeProductGroup);
+		RowMapper<SchemeProductGroup> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(SchemeProductGroup.class);
 
 		try {
-			schemeDealerGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			schemeProductGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return schemeDealerGroup;
+		return schemeProductGroup;
 	}
 
 	@Override
-	public String save(SchemeDealerGroup schemeDealerGroup, TableType tableType) {
+	public String save(SchemeProductGroup schemeProductGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_DEALERGROUP");
+		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_PRODUCTGROUP");
 		sql.append(tableType.getSuffix());
-		sql.append("(SchemeDealerGroupId, PromotionId, DealerGroupCode, Active, Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(SchemeProductGroupId, PromotionId, ProductGroupCode, POSVendor, Active, Version, LastMntBy");
+		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
-		sql.append("(:schemeDealerGroupId, :promotionId, :dealerGroupCode, :active, :Version , :LastMntBy, :LastMntOn");
+		sql.append("(:schemeProductGroupId, :promotionId, :productGroupCode, :POSVendor , :active, :Version , :LastMntBy, :LastMntOn");
 		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		if (schemeDealerGroup.getSchemeDealerGroupId() == Long.MIN_VALUE) {
-			schemeDealerGroup.setSchemeDealerGroupId(getNextValue("SEQCD_Scheme_DealerGroup"));
+		if (schemeProductGroup.getSchemeProductGroupId() == Long.MIN_VALUE) {
+			schemeProductGroup.setSchemeProductGroupId(getNextValue("SEQCD_Scheme_ProductGroup"));
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeDealerGroup);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeProductGroup);
 
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
@@ -83,25 +83,25 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		}
 
 		logger.debug(Literal.LEAVING);
-		return String.valueOf(schemeDealerGroup.getSchemeDealerGroupId());
+		return String.valueOf(schemeProductGroup.getSchemeProductGroupId());
 	}
 
 	@Override
-	public void update(SchemeDealerGroup schemeDealerGroup, TableType tableType) {
+	public void update(SchemeProductGroup schemeProductGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("Update CD_SCHEME_DEALERGROUP");
+		StringBuilder sql = new StringBuilder("Update CD_SCHEME_PRODUCTGROUP");
 		sql.append(tableType.getSuffix());
-		sql.append(" set PromotionId = :promotionId, DealerGroupCode = :dealerGroupCode, Active = :active");
+		sql.append(" set PromotionId = :promotionId, ProductGroupCode = :productGroupCode, Active = :active");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where SchemeDealerGroupId = :schemeDealerGroupId ");
+		sql.append(" where SchemeProductGroupId = :schemeProductGroupId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeDealerGroup);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeProductGroup);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
 		if (recordCount == 0) {
@@ -112,16 +112,16 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 	}
 
 	@Override
-	public void delete(SchemeDealerGroup schemeDealerGroup, TableType tableType) {
+	public void delete(SchemeProductGroup schemeProductGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("delete from CD_SCHEME_DEALERGROUP");
+		StringBuilder sql = new StringBuilder("delete from CD_SCHEME_PRODUCTGROUP");
 		sql.append(tableType.getSuffix());
-		sql.append(" where SchemeDealerGroupId = :schemeDealerGroupId ");
+		sql.append(" where SchemeProductGroupId = :schemeProductGroupId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeDealerGroup);
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(schemeProductGroup);
 		int recordCount = 0;
 
 		try {
@@ -138,28 +138,28 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 	}
 
 	@Override
-	public boolean isDuplicateKey(SchemeDealerGroup schemeDealerGroup, TableType tableType) {
+	public boolean isDuplicateKey(SchemeProductGroup schemeProductGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		String sql;
-		String whereClause = "DealerGroupCode = :dealerGroupCode ";
+		String whereClause = "ProductGroupCode = :productGroupCode ";
 
 		switch (tableType) {
 		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("CD_SCHEME_DEALERGROUP", whereClause);
+			sql = QueryUtil.getCountQuery("CD_SCHEME_PRODUCTGROUP", whereClause);
 			break;
 		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("CD_SCHEME_DEALERGROUP_Temp", whereClause);
+			sql = QueryUtil.getCountQuery("CD_SCHEME_PRODUCTGROUP_Temp", whereClause);
 			break;
 		default:
-			sql = QueryUtil.getCountQuery(new String[] { "CD_SCHEME_DEALERGROUP_Temp", "CD_SCHEME_DEALERGROUP" },
+			sql = QueryUtil.getCountQuery(new String[] { "CD_SCHEME_PRODUCTGROUP_Temp", "CD_SCHEME_PRODUCTGROUP" },
 					whereClause);
 			break;
 		}
 
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("dealerGroupCode", schemeDealerGroup.getDealerGroupCode());
+		paramSource.addValue("productGroupCode", schemeProductGroup.getProductGroupCode());
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -171,5 +171,6 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
 
 }
