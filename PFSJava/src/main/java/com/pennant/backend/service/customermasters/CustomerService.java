@@ -44,6 +44,7 @@
 package com.pennant.backend.service.customermasters;
 
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -88,4 +89,7 @@ public interface CustomerService {
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
 
 	public void prepareGCDCustomerData(CustomerDetails customerDetails);
+	
+	List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type);
+
 }

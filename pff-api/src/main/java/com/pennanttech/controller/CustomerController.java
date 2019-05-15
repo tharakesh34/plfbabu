@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
@@ -33,6 +34,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerChequeInfo;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -40,6 +42,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
@@ -74,7 +77,7 @@ public class CustomerController {
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AgreementGeneration agreementGeneration;
-
+	
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -1240,6 +1243,40 @@ public class CustomerController {
 		return agrdata;
 	}
 
+	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails prospectCustomerDetails) {
+		ProspectCustomerDetails response = new ProspectCustomerDetails();
+		List<CustomerDedup> customerDedups = new ArrayList<>();
+		List<Customer> customerlist = null;
+
+		customerlist = customerService.getCustomerDetailsByCRCPR(prospectCustomerDetails.getReference(),
+				prospectCustomerDetails.getCustCtgCode(), "");
+
+		for (Customer detail : customerlist) {
+			CustomerDedup customerDedup = new CustomerDedup();
+			customerDedup.setCustCIF(detail.getCustCIF());
+			customerDedup.setCustCtgCode(detail.getCustCtgCode());
+			customerDedup.setCustDftBranch(detail.getCustDftBranch());
+			customerDedup.setCustLName(detail.getCustLName());
+			customerDedup.setCustFName(detail.getCustLName());
+			customerDedup.setCustShrtName(detail.getCustShrtName());
+			customerDedup.setCustDOB(detail.getCustDOB());
+			customerDedup.setCustCRCPR(detail.getCustCRCPR());
+			customerDedup.setCustSector(detail.getCustSector());
+	
+			customerDedups.add(customerDedup);
+		}
+
+		if (CollectionUtils.isNotEmpty(customerDedups)) {
+			response.setCustomerDedupList(customerDedups);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			return response;
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+		return response;
+
+	}
+	
 	private void setCustomerAddress(CustomerAgreementDetail agreement, List<CustomerAddres> addressList) {
 		if (addressList != null && !addressList.isEmpty()) {
 			if (addressList.size() == 1) {

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
+import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
@@ -20,7 +21,6 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
-import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -33,6 +33,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
@@ -50,6 +51,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.DeleteValidationGroup;
 import com.pennant.validation.PersionalInfoGroup;
+import com.pennant.validation.ProspectCustDetailsGroup;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
@@ -96,8 +98,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private DedupParmDAO dedupParmDAO;
 	private CustomerDedupDAO customerDedupDAO;
 	private BlackListCustomerDAO blacklistCustomerDAO;
+	private CustomerCategoryDAO customerCategoryDAO;
 
-	
 	/**
 	 * Method for create customer in PLF system.
 	 * 
@@ -237,7 +239,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	/**
 	 * Method for verifying empty objects and set "null" value.
 	 * 
-	 * This method mainly written to handle API requests to resolve foreign key issues.
+	 * This method mainly written to handle API requests to resolve foreign key
+	 * issues.
 	 * 
 	 * @param customerDetails
 	 */
@@ -2270,7 +2273,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		if (mailIdList != null && !mailIdList.isEmpty()) {
 			if (mailIdList.size() > 1) {
-				// mailIdList.sort((m1, m2) -> m2.getCustEMailPriority() - m1.getCustEMailPriority());
+				// mailIdList.sort((m1, m2) -> m2.getCustEMailPriority() -
+				// m1.getCustEMailPriority());
 				Collections.sort(mailIdList, new Comparator<CustomerEMail>() {
 					@Override
 					public int compare(CustomerEMail detail1, CustomerEMail detail2) {
@@ -2325,7 +2329,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return agrData;
 			}
-			
+
 			if (StringUtils.isBlank(agrRequest.getAgreementType())) {
 				agrData = new AgreementData();
 				String[] valueParm = new String[1];
@@ -2362,7 +2366,33 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		return agrData;
 	}
-	
+
+	@Override
+	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails customer) {
+		logger.debug("Entering");
+
+		String reference = null;
+		ProspectCustomerDetails response = null;
+		// bean validations
+		validationUtility.validate(customer, ProspectCustDetailsGroup.class);
+
+		// validate Customer category code
+		boolean isExist = customerCategoryDAO.isCustCtgExist(customer.getCustCtgCode(), "");
+		if (!isExist) {
+			response = new ProspectCustomerDetails();
+			String[] valueParm = new String[2];
+			valueParm[0] = "CustCtg";
+			valueParm[1] = customer.getCustCtgCode();
+			response.setReturnStatus(getErrorDetails("90224", valueParm));
+			return response;
+		}
+
+		response = customerController.getDedupCustomer(customer);
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -2504,7 +2534,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		WSReturnStatus response = new WSReturnStatus();
 		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
 
-		// set default error code and description in case of Error code does not exists.
+		// set default error code and description in case of Error code does not
+		// exists.
 		if (StringUtils.isBlank(response.getReturnCode())) {
 			response = APIErrorHandlerService.getFailedStatus(APIConstants.RES_FAILED_CODE,
 					APIConstants.RES_FAILED_DESC);
@@ -2515,7 +2546,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	/**
-	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
+	 * Nullify the un-necessary objects to prepare response in a structured
+	 * format specified in API.
 	 * 
 	 * @param response
 	 */
@@ -2683,9 +2715,15 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
 		this.customerDedupDAO = customerDedupDAO;
 	}
+
 	@Autowired
 	public void setBlackListCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
 		this.blacklistCustomerDAO = blacklistCustomerDAO;
+	}
+
+	@Autowired
+	public void setCustomerCategoryDAO(CustomerCategoryDAO customerCategoryDAO) {
+		this.customerCategoryDAO = customerCategoryDAO;
 	}
 
 }

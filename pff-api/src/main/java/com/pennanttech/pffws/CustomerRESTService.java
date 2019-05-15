@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
@@ -221,10 +222,13 @@ public interface CustomerRESTService {
 	@Path("/customerService/deleteCustomerDocument")
 	public WSReturnStatus deleteCustomerDocument(
 			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
-	
-	
+
 	@POST
 	@Path("/customerService/getCustomerAgreement")
 	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException;
+
+	@POST
+	@Path("/customerService/dedupCustomer")
+	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails prospectCustomerDetails);
 
 }

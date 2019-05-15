@@ -56,4 +56,7 @@ public interface CustomerCategoryDAO {
 	void delete(CustomerCategory customerCategory, String type);
 
 	String save(CustomerCategory customerCategory, String type);
+	
+	boolean isCustCtgExist(String custCtgCode, String type);
+
 }

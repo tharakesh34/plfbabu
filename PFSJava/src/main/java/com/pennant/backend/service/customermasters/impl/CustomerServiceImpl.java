@@ -843,5 +843,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 		}
 		logger.debug("Leaving");
 	}
-
+	
+	@Override
+	public List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type) {
+		return customerDAO.getCustomerDetailsByCRCPR(custCRCPR, custCtgCode, type);
+	}
 }

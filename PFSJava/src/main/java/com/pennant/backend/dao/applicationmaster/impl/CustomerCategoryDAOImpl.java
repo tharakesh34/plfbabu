@@ -218,4 +218,34 @@ public class CustomerCategoryDAOImpl extends BasicDao<CustomerCategory> implemen
 		}
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public boolean isCustCtgExist(String custCtgCode, String type) {
+		logger.debug("Entering");
+		
+		boolean isCustCtgCode=false;
+		CustomerCategory customerCategory = new CustomerCategory();
+		customerCategory.setId(custCtgCode);
+		
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT COUNT(*)");
+		selectSql.append(" FROM  BMTCustCategories");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustCtgCode =:CustCtgCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCategory);
+
+		try {
+			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,Integer.class);
+			if(count>0){
+				isCustCtgCode=true;
+			}
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			return isCustCtgCode;
+		}
+		logger.debug("Leaving");
+		return isCustCtgCode;
+	}
 }

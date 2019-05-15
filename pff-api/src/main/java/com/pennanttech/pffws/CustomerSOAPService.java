@@ -7,6 +7,7 @@ import javax.ws.rs.PathParam;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
@@ -165,4 +166,9 @@ public interface CustomerSOAPService {
 	
 	@WebResult(name = "customer")
 	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException;
+	
+	@WebResult(name = "customer")
+	public ProspectCustomerDetails getDedupCustomer(
+			@WebParam(name = "customerDetails") ProspectCustomerDetails prospectCustomerDetails);
+
 }

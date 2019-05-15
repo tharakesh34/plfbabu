@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<constraint-mappings xmlns="http://jboss.org/xml/ns/javax/validation/mapping"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping
+					http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- ProspectCustomerDetails validations -->
+	<bean class="com.pennant.backend.model.customermasters.ProspectCustomerDetails">
+
+		<field name="reference">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>reference is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.ProspectCustDetailsGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>reference should have maximum 20 characters</message>
+				<groups>
+					<value>com.pennant.validation.ProspectCustDetailsGroup</value>
+				</groups>
+				<element name="max">20</element>
+			</constraint>
+		</field>
+	
+		<field name="custCtgCode">
+			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+				<message>custCtgCode is Mandatory</message>
+				<groups>
+					<value>com.pennant.validation.ProspectCustDetailsGroup</value>
+				</groups>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.Length">
+				<message>custCtgCode should have maximum 8 characters</message>
+				<groups>
+					<value>com.pennant.validation.ProspectCustDetailsGroup</value>
+				</groups>
+				<element name="max">8</element>
+			</constraint>
+		</field>
+		
+	</bean>
+</constraint-mappings>
+		

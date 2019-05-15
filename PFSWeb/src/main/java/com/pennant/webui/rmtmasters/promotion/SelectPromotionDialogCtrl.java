@@ -53,6 +53,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
@@ -176,7 +177,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		// Finance Type
 		this.finType.setModuleName("FinanceType");
-		this.finType.setValueColumn("FinCategory");
+		this.finType.setValueColumn("FinType");
 		this.finType.setDescColumn("FinTypeDesc");
 		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.finType.setMandatoryStyle(true);
@@ -249,22 +250,26 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	}
 
 	public void onFulfill$finType(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering " + event.toString());
 
-		Object dataObject = finType.getObject();
+		this.finType.setConstraint("");
+		this.finType.clearErrorMessage();
+		Clients.clearWrongValue(finType);
+		Object dataObject = this.finType.getObject();
 
 		if (dataObject instanceof String) {
 			this.finType.setValue(dataObject.toString());
 			this.finType.setDescription("");
 		} else {
-			FinanceType financeType = (FinanceType) dataObject;
-			if (financeType != null) {
-				this.finType.setValue(financeType.getFinType());
-				this.finType.setObject(new FinanceType(financeType.getFinType()));
-				this.finType.setDescription(financeType.getFinTypeDesc());
-				this.finCcy = financeType.getFinCcy();
+			FinanceType details = (FinanceType) dataObject;
+			/* Set FinanceType object */
+			if (details != null) {
+				this.finType.setValue(details.getFinType());
+				this.finType.setDescription(details.getFinTypeDesc());
 			}
 		}
+
+		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
