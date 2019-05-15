@@ -1221,7 +1221,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setActualAmountOriginal(taxableAmount.subtract(totalGST));
 
 			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(taxableAmount.add(totalGST));
+			finFeeDetail.setActualAmount(taxableAmount);
 
 			if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
 				finFeeDetail.setPaidAmount(finTypeFee.getAmount());
@@ -1495,7 +1495,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			tax.setActualTGST(taxSplit.gettGST());
 			fee.setActualAmountOriginal(totalFee.subtract(taxSplit.gettGST()));
 			fee.setActualAmountGST(taxSplit.gettGST());
-			fee.setActualAmount(totalFee.add(taxSplit.gettGST()));
+			fee.setActualAmount(totalFee);
 
 
 			//Paid Amounts
@@ -1511,7 +1511,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			//Remaining Fee
 			BigDecimal remainingFee = netAmount.subtract(paidAmount);
-			netAmount = fee.getNetAmount();
 			taxSplit = GSTCalculator.getGSTTaxSplit(remainingFee, taxPercentages, taxComponent);
 			tax.setRemFeeCGST(taxSplit.getcGST());
 			tax.setRemFeeIGST(taxSplit.getiGST());

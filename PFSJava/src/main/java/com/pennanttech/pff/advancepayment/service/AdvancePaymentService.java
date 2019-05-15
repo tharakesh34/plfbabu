@@ -359,7 +359,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_DEBIT);
 				createPayableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
 			} else if (advPayment.compareTo(previousAdvInt) > 0) {
-				adviseAmount = previousAdvInt.subtract(advPayment);
+				adviseAmount = advPayment.subtract(previousAdvInt);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
 				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
