@@ -869,5 +869,8 @@ public class PennantConstants {
 	public static final String FLEXI_HYBRID = "H";
 	public static final String TERM_LOAN = "TL";
 	public static final String COLLATERAL_VALUE_UPDATE = "COLLETARAL_VALUE_UPDATE";
+	
+	public static final String PROCESS_PRESENTMENT = "P";
+	public static final String PROCESS_REPRESENTMENT = "R";
 
 }

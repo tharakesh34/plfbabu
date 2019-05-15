@@ -60,7 +60,14 @@ public class PresentmentDetailExtractService {
 		ResultSet rs = null;
 		List<Object> resultList = null;
 		try {
-			resultList = presentmentDetailDAO.getPDCPresentmentDetails(presentmentHeader);
+			
+			if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT,
+					presentmentHeader.getPresentmentType())) {
+				resultList = presentmentDetailDAO.getPDCPresentmentDetails(presentmentHeader);
+			} else if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_REPRESENTMENT,
+					presentmentHeader.getPresentmentType())) {
+				resultList = presentmentDetailDAO.getPDCRePresentmentDetails(presentmentHeader);
+			}
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
 				//generate header id if the not available

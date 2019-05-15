@@ -101,5 +101,9 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 	List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type);
 
 	List<PresentmentDetail> getExcludeDetails(long presentmentId);
+	
+	List<Object> getPDCRePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception;
+
+	List<Object> getRePresentmentDetails(PresentmentHeader detailHeader) throws Exception;
 
 }

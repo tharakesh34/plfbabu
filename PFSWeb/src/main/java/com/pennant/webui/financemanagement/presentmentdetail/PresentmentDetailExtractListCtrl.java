@@ -105,6 +105,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Uppercasebox branches;
 	protected Button btnBranches;
 	protected ExtendedCombobox entity;
+	protected Combobox presentmentType;
 
 	private transient PresentmentDetailService presentmentDetailService;
 
@@ -149,6 +150,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
+
 		this.fromdate.setFormat(PennantConstants.dateFormat);
 		this.toDate.setFormat(PennantConstants.dateFormat);
 
@@ -193,6 +196,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.mandateType
 				.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
 						PennantStaticListUtil.getMandateTypeList(), true));
+		this.presentmentType
+		.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
+				PennantStaticListUtil.getPresetmentTypeList(), true));
 		this.fromdate.setConstraint(
 				new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
 		this.toDate
@@ -267,6 +273,13 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		try {
+			detailHeader.setPresentmentType(this.presentmentType.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 
 		doRemoveValidation();
 
@@ -294,6 +307,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.fromdate.setErrorMessage("");
 		this.toDate.setErrorMessage("");
 		this.mandateType.setConstraint("");
+		this.presentmentType.setConstraint("");
+
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -325,6 +340,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.ENTERING);
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
 		this.loanType.setValue("");
 		this.fromdate.setValue(null);
 		this.toDate.setValue(null);

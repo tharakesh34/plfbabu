@@ -51,6 +51,16 @@
 							</columns>
 							<rows>
 								<row>
+									<label
+										value="${c:l('label_PresentmentDetailList_PresentmentType.value')}" />
+									<hbox>
+										<space spacing="2px"
+											sclass="mandatory" />
+										<combobox id="presentmentType"
+											width="200px" />
+									</hbox>
+								</row>
+								<row>
 									<label value="${c:l('label_PresentmentDetailList_MandateType.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />

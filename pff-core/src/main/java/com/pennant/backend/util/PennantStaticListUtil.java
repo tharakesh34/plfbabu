@@ -302,6 +302,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<String> dueList;
 	private static List<ValueLabel> receiptAgainstList;
 	private static List<String> noWaiverList;
+	private static ArrayList<ValueLabel> presetmentTypeList;
+
 
 	/**
 	 * Gets the list of applications.
@@ -4873,6 +4875,17 @@ public class PennantStaticListUtil {
 
 		}
 		return noWaiverList;
+	}
+	
+	public static ArrayList<ValueLabel> getPresetmentTypeList() {
+		if (presetmentTypeList == null) {
+			presetmentTypeList = new ArrayList<ValueLabel>(2);
+			presetmentTypeList.add(new ValueLabel(PennantConstants.PROCESS_PRESENTMENT,
+					Labels.getLabel("label_PresentmentExtractionType_Presentment")));
+			presetmentTypeList.add(new ValueLabel(PennantConstants.PROCESS_REPRESENTMENT,
+					Labels.getLabel("label_PresentmentExtractionType_RePresentment")));
+		}
+		return presetmentTypeList;
 	}
 
 }

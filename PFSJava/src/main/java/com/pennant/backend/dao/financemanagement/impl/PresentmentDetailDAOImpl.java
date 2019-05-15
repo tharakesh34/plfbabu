@@ -68,7 +68,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -79,7 +78,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>PresentmentHeader</code> with set of CRUD operations.
+ * Data access layer implementation for <code>PresentmentHeader</code> with set
+ * of CRUD operations.
  */
 public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> implements PresentmentDetailDAO {
 	private static Logger logger = Logger.getLogger(PresentmentDetailDAOImpl.class);
@@ -101,7 +101,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT  id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
+		sql.append(" SELECT  id, reference, presentmentDate, partnerBankId, fromDate, toDate, presentmentType, ");
 		sql.append(" status, mandateType, loanType, finBranch, schdate, dBStatusId,EntityCode, ");
 		sql.append(" importStatusId, totalRecords, processedRecords, successRecords, failedRecords, ");
 		sql.append(
@@ -141,12 +141,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		StringBuilder sql = new StringBuilder(" Insert into PresentmentHeader");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
-		sql.append(" status, mandateType, loanType, finBranch, schdate, ");
+		sql.append(" status, mandateType, loanType, finBranch, schdate, presentmentType,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :reference, :presentmentDate, :partnerBankId, :fromDate, :toDate, ");
-		sql.append(" :status, :mandateType, :loanType, :finBranch, :schdate, ");
+		sql.append(" :status, :mandateType, :loanType, :finBranch, :schdate, :presentmentType,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -175,7 +175,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				"  set reference = :reference, presentmentDate = :presentmentDate, partnerBankId = :partnerBankId, ");
 		sql.append(" fromDate = :fromDate, toDate = :toDate, status = :status, ");
 		sql.append(" mandateType = :mandateType, loanType = :loanType, finBranch = :finBranch, ");
-		sql.append(" schdate = :schdate, ");
+		sql.append(" schdate = :schdate, presentmentType = :presentmentType, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -336,7 +336,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE ");
 			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
-			//sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6'  AND T6.STATUS <> 'A')  ORDER BY T1.DEFSCHDDATE ");
+			// sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <>
+			// '6' AND T6.STATUS <> 'A') ORDER BY T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -511,20 +512,18 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return list;
 	}
 
-	
-
 	@Override
 	public long savePresentmentHeader(PresentmentHeader presentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder(" Insert into PresentmentHeader");
-		sql.append(" (Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate,");
+		sql.append(" (Id, Reference, PresentmentDate, PartnerBankId, FromDate, ToDate, PresentmentType,");
 		sql.append(
 				"  Status, MandateType, FinBranch, Schdate, LoanType, ImportStatusId, TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, dBStatusId, bankCode,EntityCode)");
 		sql.append(" values(");
-		sql.append(" :Id, :Reference, :PresentmentDate, :PartnerBankId, :FromDate, :ToDate, ");
+		sql.append(" :Id, :Reference, :PresentmentDate, :PartnerBankId, :FromDate, :ToDate, :PresentmentType,");
 		sql.append(
 				" :Status, :MandateType, :FinBranch, :Schdate, :LoanType, :ImportStatusId, :TotalRecords, :ProcessedRecords, :SuccessRecords, :FailedRecords,");
 		sql.append(
@@ -803,14 +802,17 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select T.id, T.presentmentId, T.finReference, T.schDate, T.mandateId, T.schAmtDue, T.schPriDue, T.schPftDue, T.schFeeDue, T.schInsDue, ");
-		sql.append(" T.schPenaltyDue, T.advanceAmt, T.excessID, T.adviseAmt, T.presentmentAmt, T.Emino, T.status, T.presentmentRef, T.ecsReturn, T.receiptID, T.excludeReason,");
-		sql.append(" T.Version, T.LastMntOn, T.LastMntBy,T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId ");
+		sql.append(
+				" Select T.id, T.presentmentId, T.finReference, T.schDate, T.mandateId, T.schAmtDue, T.schPriDue, T.schPftDue, T.schFeeDue, T.schInsDue, ");
+		sql.append(
+				" T.schPenaltyDue, T.advanceAmt, T.excessID, T.adviseAmt, T.presentmentAmt, T.Emino, T.status, T.presentmentRef, T.ecsReturn, T.receiptID, T.excludeReason,");
+		sql.append(
+				" T.Version, T.LastMntOn, T.LastMntBy,T.RecordStatus, T.RoleCode, T.NextRoleCode, T.TaskId, T.NextTaskId, T.RecordType, T.WorkflowId ");
 		if (includeData) {
 			sql.append(",PB.Accountno,PB.actype ");
 		}
 		sql.append(" From PRESENTMENTDETAILS T INNER JOIN PRESENTMENTHEADER PH ON PH.ID=T.PRESENTMENTID ");
-		
+
 		if (includeData) {
 			sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
 		}
@@ -831,8 +833,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			source.addValue("Status", RepayConstants.PEXC_APPROV);
 		}
 
-
-		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(PresentmentDetail.class);
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -842,8 +844,6 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-
-
 
 	@Override
 	public List<PresentmentDetail> getPresentmenToPost(long custId, Date schData) {
@@ -970,7 +970,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
+	 * Method for Fetching Count for Assigned partnerBankId to Different
+	 * Finances/Commitments
 	 */
 	@Override
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
@@ -1019,7 +1020,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return null;
 	}
 
-	//MIGRATION PURPOSE
+	// MIGRATION PURPOSE
 	@Override
 	public List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type) {
 		logger.debug(Literal.ENTERING);
@@ -1091,7 +1092,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	/**
-	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI Advance
+	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI
+	 * Advance
 	 * 
 	 * @param presentmentId
 	 */
@@ -1119,5 +1121,285 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	/**
+	 * Method for get the Re-Presentment Details.
+	 * 
+	 * @param presentmentHeader
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public List<Object> getPDCRePresentmentDetails(PresentmentHeader presentmentHeader) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		int index = 0;
+		List<Object> list = new ArrayList<Object>();
+		try {
+			sql = new StringBuilder();
+			sql.append(
+					" SELECT T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID,");
+			sql.append(
+					" DEFSCHDDATE, FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T2.FINREPAYMETHOD MANDATETYPE, T8.CHEQUESTATUS STATUS,");
+			sql.append(
+					" T8.CHEQUEDATE, T8.CHEQUEDETAILSID, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
+			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH  FROM FINSCHEDULEDETAILS T1");
+			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE");
+			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
+			sql.append(" INNER JOIN CHEQUEHEADER T4 ON T4.FINREFERENCE = T1.FINREFERENCE");
+			sql.append(" INNER JOIN CHEQUEDETAIL T8 ON T8.HEADERID = T4.HEADERID AND T8.EMIREFNO = T1.INSTNUMBER");
+			sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH");
+			sql.append(" INNER JOIN BANKBRANCHES T6 ON T8.BANKBRANCHID = T6.BANKBRANCHID");
+			sql.append(" INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION");
+			sql.append(
+					" WHERE (T2.FINISACTIVE = ?) AND ((T1.PROFITSCHD + T1.PRINCIPALSCHD + T1.FEESCHD - T1.SCHDPFTPAID - T1.SCHDPRIPAID - T1.SCHDFEEPAID) > ?)");
+			sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ?)");
+			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
+
+			if (StringUtils.trimToNull(presentmentHeader.getMandateType()) != null) {
+				sql.append(" AND (T2.FINREPAYMETHOD = ?) ");
+			}
+
+			if (StringUtils.trimToNull(presentmentHeader.getLoanType()) != null) {
+				sql.append(" AND (T2.FINTYPE IN ( ");
+				String[] loanTypes = presentmentHeader.getLoanType().split(",");
+				for (int i = 0; i < loanTypes.length; i++) {
+					if (i > 0) {
+						sql.append(",");
+					}
+					sql.append("?");
+				}
+				sql.append("))");
+			}
+
+			if (StringUtils.trimToNull(presentmentHeader.getFinBranch()) != null) {
+				sql.append(" AND (T2.FINBRANCH IN ( ");
+				String[] finBranches = presentmentHeader.getFinBranch().split(",");
+				for (int i = 0; i < finBranches.length; i++) {
+					if (i > 0) {
+						sql.append(",");
+					}
+					sql.append("?");
+				}
+				sql.append("))");
+			}
+
+			if (StringUtils.trimToNull(presentmentHeader.getEntityCode()) != null) {
+				sql.append(" AND (T7.ENTITYCODE = ?) ");
+			}
+
+			// For Representment record must be exists in PresentmentDetails
+			// with Bounce or Fail
+			sql.append(
+					" AND Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE  AND ( T6.Status='B' OR T6.Status='F' )) ");
+			sql.append(
+					" AND Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE ");
+
+			// And Status not exists with I,A,S (extract,approved,success) And
+			// ExcludeReason (EMIINCLUDE 0, EMIINADVANCE 1)
+			sql.append(
+					" AND ( T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' ) AND ( T6.Status='I' OR T6.Status='S' OR T6.Status='A') ) ");
+
+			// if record is manual exclude and batch not complete approve in
+			// that case record not extracted again until batch is complete
+			// approve.
+			// #Bug Fix related to 135196
+			sql.append(
+					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
+			sql.append(
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !> 3 )) ");
+
+			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
+
+			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
+			stmt = conn.prepareStatement(sql.toString());
+			stmt.setInt(1, 1);
+			stmt.setBigDecimal(2, BigDecimal.ZERO);
+			stmt.setDate(3, DateUtil.getSqlDate(presentmentHeader.getFromDate()));
+			stmt.setDate(4, DateUtil.getSqlDate(presentmentHeader.getToDate()));
+			stmt.setDate(5, DateUtil.getSqlDate(presentmentHeader.getFromDate()));
+			stmt.setDate(6, DateUtil.getSqlDate(presentmentHeader.getToDate()));
+			index = 6;
+			if (StringUtils.trimToNull(presentmentHeader.getMandateType()) != null) {
+				index = index + 1;
+				stmt.setString(index, presentmentHeader.getMandateType());
+			}
+
+			if (StringUtils.trimToNull(presentmentHeader.getLoanType()) != null) {
+				String[] loanTypes = presentmentHeader.getLoanType().split(",");
+				int i = 0;
+				for (i = 1; i <= loanTypes.length; i++) {
+					stmt.setString(i + index, loanTypes[i - 1]);
+				}
+				index = index + i - 1;
+			}
+
+			if (StringUtils.trimToNull(presentmentHeader.getFinBranch()) != null) {
+				String[] finBranches = presentmentHeader.getFinBranch().split(",");
+				int i = 0;
+				for (i = 1; i <= finBranches.length; i++) {
+					stmt.setString(i + index, finBranches[i - 1]);
+				}
+				index = index + i - 1;
+			}
+
+			if (StringUtils.trimToNull(presentmentHeader.getEntityCode()) != null) {
+				index = index + 1;
+				stmt.setString(index, presentmentHeader.getEntityCode());
+			}
+
+			logger.trace(Literal.SQL + sql.toString());
+
+			rs = stmt.executeQuery();
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		} finally {
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		list.add(rs);
+		list.add(stmt);
+
+		return list;
+	}
+
+	@Override
+	public List<Object> getRePresentmentDetails(PresentmentHeader detailHeader) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		int index = 0;
+		List<Object> list = new ArrayList<Object>();
+		try {
+			sql = new StringBuilder();
+			sql.append(
+					" SELECT T1.FINREFERENCE, T1.SCHDATE, T1.SCHSEQ, PROFITSCHD, PRINCIPALSCHD, SCHDPRIPAID, SCHDPFTPAID, DEFSCHDDATE,");
+			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.STATUS,");
+			sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
+			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH  FROM FINSCHEDULEDETAILS T1");
+			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE");
+			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
+			sql.append(" INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID");
+			sql.append(" INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH");
+			sql.append(" INNER JOIN BANKBRANCHES T6 ON T4.BANKBRANCHID = T6.BANKBRANCHID");
+			sql.append(" INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION");
+			sql.append(
+					" WHERE (T2.FINISACTIVE = ?) AND ((T1.PROFITSCHD + T1.PRINCIPALSCHD + T1.FEESCHD - T1.SCHDPFTPAID - T1.SCHDPRIPAID - T1.SCHDFEEPAID) > ?)");
+			sql.append(" AND ((SCHDATE >= ? AND SCHDATE <= ?)");
+			sql.append(" OR (DEFSCHDDATE >= ? AND DEFSCHDDATE <= ?)) ");
+
+			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
+				sql.append(" AND (T4.MANDATETYPE = ?) ");
+			}
+
+			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
+				sql.append(" AND (T2.FINTYPE IN ( ");
+				String[] loanTypes = detailHeader.getLoanType().split(",");
+				for (int i = 0; i < loanTypes.length; i++) {
+					if (i > 0) {
+						sql.append(",");
+					}
+					sql.append("?");
+				}
+				sql.append("))");
+			}
+
+			if (StringUtils.trimToNull(detailHeader.getFinBranch()) != null) {
+				sql.append(" AND (T2.FINBRANCH IN ( ");
+				String[] finBranches = detailHeader.getFinBranch().split(",");
+				for (int i = 0; i < finBranches.length; i++) {
+					if (i > 0) {
+						sql.append(",");
+					}
+					sql.append("?");
+				}
+				sql.append("))");
+			}
+
+			if (StringUtils.trimToNull(detailHeader.getEntityCode()) != null) {
+				sql.append(" AND (T7.ENTITYCODE = ?) ");
+			}
+
+			// For Representment record must be exists in PresentmentDetails
+			// with Bounce or Fail
+			sql.append(
+					" AND Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE  AND ( T6.Status='B' OR T6.Status='F' )) ");
+			sql.append(
+					" AND Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE ");
+
+			// And Status not exists with I,A,S (extract,approved,success) And
+			// ExcludeReason (EMIINCLUDE 0, EMIINADVANCE 1)
+			sql.append(
+					" AND ( T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' ) AND ( T6.Status='I' OR T6.Status='S' OR T6.Status='A') ) ");
+
+			// if record is manual exclude and batch not complete approve in
+			// that case record not extracted again until batch is complete
+			// approve.
+			// #Bug Fix related to 135196
+			sql.append(
+					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
+			sql.append(
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !> 3 )) ");
+
+			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
+
+			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
+			stmt = conn.prepareStatement(sql.toString());
+			stmt.setInt(1, 1);
+			stmt.setBigDecimal(2, BigDecimal.ZERO);
+			stmt.setDate(3, DateUtil.getSqlDate(detailHeader.getFromDate()));
+			stmt.setDate(4, DateUtil.getSqlDate(detailHeader.getToDate()));
+			stmt.setDate(5, DateUtil.getSqlDate(detailHeader.getFromDate()));
+			stmt.setDate(6, DateUtil.getSqlDate(detailHeader.getToDate()));
+			index = 6;
+			if (StringUtils.trimToNull(detailHeader.getMandateType()) != null) {
+				index = index + 1;
+				stmt.setString(index, detailHeader.getMandateType());
+			}
+
+			if (StringUtils.trimToNull(detailHeader.getLoanType()) != null) {
+				String[] loanTypes = detailHeader.getLoanType().split(",");
+				int i = 0;
+				for (i = 1; i <= loanTypes.length; i++) {
+					stmt.setString(i + index, loanTypes[i - 1]);
+				}
+				index = index + i - 1;
+			}
+
+			if (StringUtils.trimToNull(detailHeader.getFinBranch()) != null) {
+				String[] finBranches = detailHeader.getFinBranch().split(",");
+				int i = 0;
+				for (i = 1; i <= finBranches.length; i++) {
+					stmt.setString(i + index, finBranches[i - 1]);
+				}
+				index = index + i - 1;
+			}
+
+			if (StringUtils.trimToNull(detailHeader.getEntityCode()) != null) {
+				index = index + 1;
+				stmt.setString(index, detailHeader.getEntityCode());
+			}
+
+			logger.trace(Literal.SQL + sql.toString());
+
+			rs = stmt.executeQuery();
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		} finally {
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		list.add(rs);
+		list.add(stmt);
+
+		return list;
 	}
 }
