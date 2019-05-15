@@ -13,15 +13,15 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
-import com.pennattech.pff.mmfl.cd.dao.SchemeDealerGroupDAO;
+import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
+import com.pennattech.pff.mmfl.cd.dao.SchemeProductGroupDAO;
 
-public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGroup>
-		implements SchemeDealerGroupService {
-	private static final Logger logger = Logger.getLogger(SchemeDealerGroupServiceImpl.class);
+public class SchemeProductGroupServiceImpl extends GenericService<SchemeProductGroup>
+		implements SchemeProductGroupService {
+	private static final Logger logger = Logger.getLogger(SchemeProductGroupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-	private SchemeDealerGroupDAO schemeDealerGroupDAO;
+	private SchemeProductGroupDAO schemeProductGroupDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -31,18 +31,18 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		SchemeDealerGroup schemeDealerGroup = (SchemeDealerGroup) auditHeader.getAuditDetail().getModelData();
+		SchemeProductGroup schemeProductGroup = (SchemeProductGroup) auditHeader.getAuditDetail().getModelData();
 		TableType tableType = TableType.MAIN_TAB;
-		if (schemeDealerGroup.isWorkflow()) {
+		if (schemeProductGroup.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (schemeDealerGroup.isNew()) {
-			schemeDealerGroup
-					.setSchemeDealerGroupId(Long.parseLong(schemeDealerGroupDAO.save(schemeDealerGroup, tableType)));
-			auditHeader.getAuditDetail().setModelData(schemeDealerGroup);
-			auditHeader.setAuditReference(String.valueOf(schemeDealerGroup.getSchemeDealerGroupId()));
+		if (schemeProductGroup.isNew()) {
+			schemeProductGroup
+					.setSchemeProductGroupId(Long.parseLong(schemeProductGroupDAO.save(schemeProductGroup, tableType)));
+			auditHeader.getAuditDetail().setModelData(schemeProductGroup);
+			auditHeader.setAuditReference(String.valueOf(schemeProductGroup.getSchemeProductGroupId()));
 		} else {
-			schemeDealerGroupDAO.update(schemeDealerGroup, tableType);
+			schemeProductGroupDAO.update(schemeProductGroup, tableType);
 		}
 		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
@@ -60,8 +60,8 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 			return auditHeader;
 		}
 
-		SchemeDealerGroup schemeDealerGroup = (SchemeDealerGroup) auditHeader.getAuditDetail().getModelData();
-		schemeDealerGroupDAO.delete(schemeDealerGroup, TableType.MAIN_TAB);
+		SchemeProductGroup schemeProductGroup = (SchemeProductGroup) auditHeader.getAuditDetail().getModelData();
+		schemeProductGroupDAO.delete(schemeProductGroup, TableType.MAIN_TAB);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -69,12 +69,12 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 	}
 
 	@Override
-	public SchemeDealerGroup getSchemeDealerGroup(long id) {
-		return schemeDealerGroupDAO.getSchemeDealerGroup(id, "_View");
+	public SchemeProductGroup getSchemeProductGroup(long id) {
+		return schemeProductGroupDAO.getSchemeProductGroup(id, "_View");
 	}
 
-	public SchemeDealerGroup getApprovedSchemeDealerGroup(long id) {
-		return schemeDealerGroupDAO.getSchemeDealerGroup(id, "_AView");
+	public SchemeProductGroup getApprovedSchemeProductGroup(long id) {
+		return schemeProductGroupDAO.getSchemeProductGroup(id, "_AView");
 	}
 
 	@Override
@@ -89,34 +89,34 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 			return auditHeader;
 		}
 
-		SchemeDealerGroup schemeDealerGroup = new SchemeDealerGroup();
-		BeanUtils.copyProperties((SchemeDealerGroup) auditHeader.getAuditDetail().getModelData(), schemeDealerGroup);
+		SchemeProductGroup schemeProductGroup = new SchemeProductGroup();
+		BeanUtils.copyProperties((SchemeProductGroup) auditHeader.getAuditDetail().getModelData(), schemeProductGroup);
 
-		schemeDealerGroupDAO.delete(schemeDealerGroup, TableType.TEMP_TAB);
+		schemeProductGroupDAO.delete(schemeProductGroup, TableType.TEMP_TAB);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(schemeDealerGroup.getRecordType())) {
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(
-					schemeDealerGroupDAO.getSchemeDealerGroup(schemeDealerGroup.getSchemeDealerGroupId(), ""));
+					schemeProductGroupDAO.getSchemeProductGroup(schemeProductGroup.getSchemeProductGroupId(), ""));
 		}
 
-		if (schemeDealerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (schemeProductGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			schemeDealerGroupDAO.delete(schemeDealerGroup, TableType.MAIN_TAB);
+			schemeProductGroupDAO.delete(schemeProductGroup, TableType.MAIN_TAB);
 		} else {
-			schemeDealerGroup.setRoleCode("");
-			schemeDealerGroup.setNextRoleCode("");
-			schemeDealerGroup.setTaskId("");
-			schemeDealerGroup.setNextTaskId("");
-			schemeDealerGroup.setWorkflowId(0);
+			schemeProductGroup.setRoleCode("");
+			schemeProductGroup.setNextRoleCode("");
+			schemeProductGroup.setTaskId("");
+			schemeProductGroup.setNextTaskId("");
+			schemeProductGroup.setWorkflowId(0);
 
-			if (schemeDealerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (schemeProductGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				schemeDealerGroup.setRecordType("");
-				schemeDealerGroupDAO.save(schemeDealerGroup, TableType.MAIN_TAB);
+				schemeProductGroup.setRecordType("");
+				schemeProductGroupDAO.save(schemeProductGroup, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				schemeDealerGroup.setRecordType("");
-				schemeDealerGroupDAO.update(schemeDealerGroup, TableType.MAIN_TAB);
+				schemeProductGroup.setRecordType("");
+				schemeProductGroupDAO.update(schemeProductGroup, TableType.MAIN_TAB);
 			}
 		}
 
@@ -125,7 +125,7 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(schemeDealerGroup);
+		auditHeader.getAuditDetail().setModelData(schemeProductGroup);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -142,9 +142,9 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 			return auditHeader;
 		}
 
-		SchemeDealerGroup schemeDealerGroup = (SchemeDealerGroup) auditHeader.getAuditDetail().getModelData();
+		SchemeProductGroup schemeProductGroup = (SchemeProductGroup) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		schemeDealerGroupDAO.delete(schemeDealerGroup, TableType.TEMP_TAB);
+		schemeProductGroupDAO.delete(schemeProductGroup, TableType.TEMP_TAB);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
@@ -167,15 +167,15 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		SchemeDealerGroup schemeDealerGroup = (SchemeDealerGroup) auditDetail.getModelData();
-		long code = schemeDealerGroup.getDealerGroupCode();
+		SchemeProductGroup schemeProductGroup = (SchemeProductGroup) auditDetail.getModelData();
+		long code = schemeProductGroup.getProductGroupCode();
 
 		// Check the unique keys.
-		if (schemeDealerGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(schemeDealerGroup.getRecordType())
-				&& schemeDealerGroupDAO.isDuplicateKey(schemeDealerGroup,
-						schemeDealerGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (schemeProductGroup.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(schemeProductGroup.getRecordType())
+				&& schemeProductGroupDAO.isDuplicateKey(schemeProductGroup,
+						schemeProductGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("listheader_DealerGroupCode.label") + ": " + code;
+			parameters[0] = PennantJavaUtil.getLabel("listheader_ProductGroupCode.label") + ": " + code;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -188,8 +188,8 @@ public class SchemeDealerGroupServiceImpl extends GenericService<SchemeDealerGro
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	public void setSchemeDealerGroupDAO(SchemeDealerGroupDAO schemeDealerGroupDAO) {
-		this.schemeDealerGroupDAO = schemeDealerGroupDAO;
+	public void setSchemeProductGroupDAO(SchemeProductGroupDAO schemeProductGroupDAO) {
+		this.schemeProductGroupDAO = schemeProductGroupDAO;
 	}
 
 }
