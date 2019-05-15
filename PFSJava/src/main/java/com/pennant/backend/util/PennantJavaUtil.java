@@ -448,6 +448,7 @@ import com.pennanttech.pff.mmfl.cd.model.ConsumerProduct;
 import com.pennanttech.pff.mmfl.cd.model.Manufacturer;
 import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 import com.pennanttech.pff.mmfl.cd.model.SchemeDealerGroup;
+import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
@@ -3200,22 +3201,24 @@ public class PennantJavaUtil {
 
 		
 		ModuleUtil.register("Manufacturer",
-				new ModuleMapping("Manufacturer", Manufacturer.class, new String[] { "CD_MANUFACTURERS", "CD_MANUFACTURERS_AView" },
-						masterWF, new String[] { "ManufacturerId", "Name" }, null, 600));
-		
+				new ModuleMapping("Manufacturer", Manufacturer.class,
+						new String[] { "CD_MANUFACTURERS", "CD_MANUFACTURERS_AView" }, masterWF,
+						new String[] { "ManufacturerId", "Name" }, null, 600));
+
 		ModuleUtil.register("ChannelTypes",
 				new ModuleMapping("ChannelTypes", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CHANNEL" } }, 400));
 
-
 		ModuleUtil.register("ConsumerProduct",
-				new ModuleMapping("ConsumerProduct", ConsumerProduct.class, new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" },
-						masterWF, new String[] { "ProductId", "modelId" }, null, 600));
+				new ModuleMapping("ConsumerProduct", ConsumerProduct.class,
+						new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" }, masterWF,
+						new String[] { "ProductId", "modelId" }, null, 600));
 
 		ModuleUtil.register("MerchantDetails",
-				new ModuleMapping("MerchantDetails", MerchantDetails.class, new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" },
-						masterWF, new String[] { "MerchantId", "MerchantName" }, null, 600));
+				new ModuleMapping("MerchantDetails", MerchantDetails.class,
+						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,
+						new String[] { "MerchantId", "MerchantName" }, null, 600));
 
 		ModuleUtil.register("DealerMapping",
 				new ModuleMapping("DealerMapping", DealerMapping.class,
@@ -3228,9 +3231,10 @@ public class PennantJavaUtil {
 						new String[] { "StoreId", "StoreName" }, null, 600));
 
 		ModuleUtil.register("ProductGroup",
-				new ModuleMapping("ProductGroup", ProductGroup.class, new String[] { "ProductGroup", "ProductGroup_AVIEW" },
-						masterWF, new String[] { "modelId", "productId" }, null, 600));
-		
+				new ModuleMapping("ProductGroup", ProductGroup.class,
+						new String[] { "ProductGroup", "ProductGroup_AVIEW" }, masterWF,
+						new String[] { "modelId", "productId" }, null, 600));
+
 		ModuleUtil.register("Category",
 				new ModuleMapping("Category", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
@@ -3239,14 +3243,19 @@ public class PennantJavaUtil {
 				new ModuleMapping("ProductCategory", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "Product_Category" } }, 400));
-		
-		ModuleUtil.register("SchemeDealerGroup",
-				new ModuleMapping("SchemeDealerGroup", SchemeDealerGroup.class, new String[] { "CD_SCHEME_DEALERGROUP", "CD_SCHEME_DEALERGROUP_AView" },
-						masterWF, new String[] { "PromotionId", "SchemeId", "DealerGroupCode" }, null, 600));
-		
+
+		ModuleUtil.register("SchemeDealerGroup", new ModuleMapping("SchemeDealerGroup", SchemeDealerGroup.class,
+				new String[] { "CD_SCHEME_DEALERGROUP", "CD_SCHEME_DEALERGROUP_AView" }, masterWF,
+				new String[] { "SchemeDealerGroupId", "PromotionId", "SchemeId", "DealerGroupCode" }, null, 600));
+
 		ModuleUtil.register("Promotion",
 				new ModuleMapping("Promotions", Promotion.class, new String[] { "Promotions", "Promotions_AView" },
 						masterWF, new String[] { "PromotionCode", "PromotionDesc" }, null, 300));
+
+		ModuleUtil.register("SchemeProductGroup",
+				new ModuleMapping("SchemeProductGroup", SchemeProductGroup.class,
+						new String[] { "CD_SCHEME_PRODUCTGROUP", "CD_SCHEME_PRODUCTGROUP_AView" }, masterWF,
+						new String[] { "PromotionId", "SchemeId", "DealerGroupCode" }, null, 600));
 		
 		registerCustomModules();
 	}
