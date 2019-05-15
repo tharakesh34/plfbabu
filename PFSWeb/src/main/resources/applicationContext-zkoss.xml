@@ -5208,7 +5208,8 @@
 	<bean id="dealerMappingDialogCtrl" class="com.pennant.webui.amtmasters.dealermapping.DealerMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	<property name="dealerMappingService" ref="dealerMappingService" />
-	</bean>		
+	</bean>
+	
 	<!-- SchemeDealerGroup -->	
 	<bean id="schemeDealerGroupListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupListCtrl" parent="basisListCtrl"
 		scope="prototype">
@@ -5219,6 +5220,7 @@
 		scope="prototype">
 			<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
 	</bean>
+
 	<!-- SchemeProductGroup -->	
 	<bean id="schemeProductGroupListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeProductGroupListCtrl" parent="basisListCtrl"
 		scope="prototype">
@@ -5229,5 +5231,14 @@
 		scope="prototype">
 			<property name="schemeProductGroupService" ref="schemeProductGroupService" />
 	</bean>
+
+	<bean id="transactionMappingListCtrl" class="com.pennant.webui.systemmasters.transactionmapping.TransactionMappingListCtrl"
+		parent="basisListCtrl" scope="prototype">
+			<property name="transactionMappingService" ref="transactionMappingService"/>
+	</bean>
 	
+	<bean id="transactionMappingDialogCtrl" class="com.pennant.webui.systemmasters.transactionmapping.TransactionMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+			<property name="transactionMappingService" ref="transactionMappingService"/>
+	</bean>	
 </beans>

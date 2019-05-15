@@ -10631,11 +10631,7 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	
-	<bean name="multiReceiptThreadProcess" class="com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess">
-		<property name="receiptService" ref="receiptService" />
-	</bean>
-
-	<!-- SchemeProductGroup -->
+		<!-- SchemeProductGroup -->
 	<bean id="schemeProductGroupDAO" class="com.pennattech.pff.mmfl.cd.dao.SchemeProductGroupDAOImpl" parent="sequenceDao" />
 
 	<bean id="schemeProductGroupService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -10661,5 +10657,36 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>	
 	
+	<!-- Dealer Mapping Service -->
+	<bean id="transactionMappingDAO" class="com.pennant.backend.dao.transactionmapping.impl.TransactionMappingDAOImpl" parent="sequenceDao" />
+
+	<bean id="transactionMappingService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="transactionMappingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="transactionMappingServiceTarget" class="com.pennant.backend.service.transactionmapping.impl.TransactionMappingServiceImpl">
+		<property name="transactionMappingDAO" ref="transactionMappingDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<bean name="multiReceiptThreadProcess" class="com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess">
+		<property name="receiptService" ref="receiptService" />
+	</bean>
+
+
 
 </beans>

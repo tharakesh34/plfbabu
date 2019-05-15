@@ -418,6 +418,7 @@ import com.pennant.backend.model.systemmasters.Segment;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
+import com.pennant.backend.model.transactionmapping.TransactionMapping;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennanttech.document.DocumentDataMapping;
@@ -3257,6 +3258,21 @@ public class PennantJavaUtil {
 						new String[] { "CD_SCHEME_PRODUCTGROUP", "CD_SCHEME_PRODUCTGROUP_AView" }, masterWF,
 						new String[] { "PromotionId", "SchemeId", "DealerGroupCode" }, null, 600));
 		
+		ModuleUtil.register("POSId",
+				new ModuleMapping("MerchantDetails", MerchantDetails.class,
+						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,
+						new String[] { "POSId", "StoreName" }, null, 600));
+
+		ModuleUtil.register("DealerCode",
+				new ModuleMapping("DealerMapping", DealerMapping.class,
+						new String[] { "CD_DealerMapping", "CD_DealerMapping_AVIEW" }, masterWF,
+						new String[] { "DealerCode", "MerchantId" }, null, 600));
+
+		ModuleUtil.register("TransactionMapping",
+				new ModuleMapping("TransactionMapping", TransactionMapping.class,
+						new String[] { "TransactionMapping", "TransactionMapping_AVIEW" }, masterWF,
+						new String[] { "DealerCode", "DealerName" }, null, 600));
+
 		registerCustomModules();
 	}
 

@@ -29,9 +29,8 @@ public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements 
 		String dealerMapId = null;
 		StringBuilder sql = new StringBuilder("insert into CD_DealerMapping");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"(DealerMapId, MerchantId, StoreId, DealerCode, Active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(DealerMapId, MerchantId, StoreId, DealerCode, Active, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
 		sql.append(
 				"(:DealerMapId, :MerchantId, :StoreId, :DealerCode, :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
