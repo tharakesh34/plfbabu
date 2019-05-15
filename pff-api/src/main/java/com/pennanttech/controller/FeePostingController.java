@@ -15,6 +15,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -283,33 +284,11 @@ public class FeePostingController {
 
 		if (financeDetail != null) {
 			FinTypeFees finTypeFee = new FinTypeFees();
-			financeDetail.setFinanceTaxDetail(
-					financeTaxDetailService.getApprovedFinanceTaxDetail(manualAdvise.getFinReference()));
+			financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(manualAdvise.getFinReference()));
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-			String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
 
-			String custDftBranch = null;
-			String highPriorityState = null;
-			String highPriorityCountry = null;
-			if (financeDetail.getCustomerDetails() != null) {
-				custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
 
-				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-				if (CollectionUtils.isNotEmpty(addressList)) {
-					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							highPriorityState = customerAddres.getCustAddrProvince();
-							highPriorityCountry = customerAddres.getCustAddrCountry();
-							break;
-						}
-					}
-				}
-			}
-
-			Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
-					custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(),
-					financeMain.getFinBranch());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
 
 			finFeeDetail.setCalculatedAmount(manualAdvise.getAdviseAmount());
 
@@ -319,8 +298,8 @@ public class FeePostingController {
 			finTypeFee.setTaxApplicable(taxApplicable);
 			finTypeFee.setAmount(manualAdvise.getAdviseAmount());
 
-			finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, gstExecutionMap);
-			finFeeDetailService.calculateFees(finFeeDetail, financeDetail.getFinScheduleData(), gstExecutionMap);
+			finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, taxPercentages);
+			finFeeDetailService.calculateFees(finFeeDetail, financeDetail.getFinScheduleData(), taxPercentages);
 
 			String taxComponent = "";
 

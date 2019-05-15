@@ -34,6 +34,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleCalculator;
@@ -180,8 +181,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method for process AddRateChange request and re-calculate schedule
-	 * details
+	 * Method for process AddRateChange request and re-calculate schedule details
 	 * 
 	 * @param finServiceInstruction
 	 * @param eventCode
@@ -792,10 +792,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			// set finAssetValue = FinCurrAssetValue when there is no
 			// maxDisbCheck
 			/*
-			 * FinanceType finType =
-			 * financeDetail.getFinScheduleData().getFinanceType();
-			 * if(!finType.isAlwMaxDisbCheckReq()) {
-			 * financeMain.setFinAssetValue(financeMain.getFinAmount()); }
+			 * FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+			 * if(!finType.isAlwMaxDisbCheckReq()) { financeMain.setFinAssetValue(financeMain.getFinAmount()); }
 			 */
 
 			finServiceInst.setModuleDefiner(FinanceConstants.FINSER_EVENT_ADDDISB);
@@ -1375,7 +1373,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinServiceInstruction finServiceInst = finScheduleData.getFinServiceInstruction();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		
+
 		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(receiptPurpose);
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		if (receiptPurposeCtg == 2) {
@@ -1409,9 +1407,9 @@ public class FinServiceInstController extends SummaryDetailService {
 				return financeDetail;
 			}
 		}
-		
-		if(StringUtils.equalsIgnoreCase(receiptData.getSourceId(), APIConstants.FINSOURCE_ID_API))	{
-			if(CollectionUtils.isNotEmpty(rch.getAllocations()))	{
+
+		if (StringUtils.equalsIgnoreCase(receiptData.getSourceId(), APIConstants.FINSOURCE_ID_API)) {
+			if (CollectionUtils.isNotEmpty(rch.getAllocations())) {
 				receiptData.getFinanceDetail().getFinScheduleData().setReceiptAllocationList(rch.getAllocations());
 			}
 		}
@@ -1926,16 +1924,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
 			/*
-			 * // tempStartDate List<FinanceScheduleDetail>
-			 * financeScheduleDetails = null; financeScheduleDetails =
-			 * financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-			 * if (financeScheduleDetails != null) { for (int i = 0; i <
-			 * financeScheduleDetails.size(); i++) { FinanceScheduleDetail
-			 * curSchd = financeScheduleDetails.get(i); if
-			 * (curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
+			 * // tempStartDate List<FinanceScheduleDetail> financeScheduleDetails = null; financeScheduleDetails =
+			 * financeDetail.getFinScheduleData().getFinanceScheduleDetails(); if (financeScheduleDetails != null) { for
+			 * (int i = 0; i < financeScheduleDetails.size(); i++) { FinanceScheduleDetail curSchd =
+			 * financeScheduleDetails.get(i); if (curSchd.isRepayOnSchDate() || (curSchd.isPftOnSchDate() &&
 			 * curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) { if
-			 * (finServiceInst.getFromDate().compareTo(curSchd.getSchDate()) ==
-			 * 0) { break; } } } }
+			 * (finServiceInst.getFromDate().compareTo(curSchd.getSchDate()) == 0) { break; } } } }
 			 */
 
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -2049,8 +2043,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			Date geDate = null;
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				geDate = DateUtility
-						.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+				geDate = DateUtility.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 			}
 			Date curBussDate = DateUtility.getAppDate();
 			if (geDate.before(DateUtility.addDays(curBussDate, 1))) {
@@ -2428,11 +2421,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 
 		/*
-		 * List<FinFeeDetail> finServicingFeeList =
-		 * finFeeDetailService.getFinFeeDetailById(finReference, false,
-		 * "_TView", eventCode);
-		 * financeDetail.getFinScheduleData().setFinFeeDetailList(
-		 * finServicingFeeList);
+		 * List<FinFeeDetail> finServicingFeeList = finFeeDetailService.getFinFeeDetailById(finReference, false,
+		 * "_TView", eventCode); financeDetail.getFinScheduleData().setFinFeeDetailList( finServicingFeeList);
 		 */
 
 		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
@@ -2720,6 +2710,11 @@ public class FinServiceInstController extends SummaryDetailService {
 						FinanceConstants.MODULEID_FINTYPE);
 				if (finTypeFeeDetail != null) {
 					finServInst.setFinTypeFeeList(finTypeFeeDetail);
+
+					//FIXME MURTHY NEED to VALIDATE
+					Map<String, BigDecimal> taxPercentages = GSTCalculator
+							.getTaxPercentages(finServInst.getFinReference());
+
 					for (FinFeeDetail feeDetail : finServInst.getFinFeeDetails()) {
 						BigDecimal finWaiverAmount = BigDecimal.ZERO;
 						BigDecimal finPaidAMount = BigDecimal.ZERO;
@@ -2736,7 +2731,7 @@ public class FinServiceInstController extends SummaryDetailService {
 									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 									return errorDetails;
 								}
-								feeDetailService.setFinFeeDetails(finTypeFee, feeDetail, gstExecutionMap,
+								feeDetailService.setFinFeeDetails(finTypeFee, feeDetail, taxPercentages,
 										finServInst.getCurrency());
 								feePaidAmount = feePaidAmount
 										.add(feeDetail.getPaidAmountOriginal().add(feeDetail.getPaidAmountGST()));
@@ -2834,8 +2829,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method <b>getFinanceTaxDetails(finReference)</b> - Retrieves Finance Tax
-	 * Details for finReference
+	 * Method <b>getFinanceTaxDetails(finReference)</b> - Retrieves Finance Tax Details for finReference
 	 * 
 	 * @param finReference
 	 *            - {@link String}
@@ -2871,8 +2865,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method <b>saveGSTDetails(FinanceTaxDetail)</b> - Saves GST Details for a
-	 * finReference
+	 * Method <b>saveGSTDetails(FinanceTaxDetail)</b> - Saves GST Details for a finReference
 	 * 
 	 * @param financeTaxDetail
 	 *            - {@link FinanceTaxDetail}
@@ -2910,8 +2903,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	/**
-	 * Method <b>rejuvenateGSTDetails(FinanceTaxDetail)</b> - updates GST
-	 * Details for a finReference
+	 * Method <b>rejuvenateGSTDetails(FinanceTaxDetail)</b> - updates GST Details for a finReference
 	 * 
 	 * @param financeTaxDetail
 	 *            - {@link FinanceTaxDetail}
