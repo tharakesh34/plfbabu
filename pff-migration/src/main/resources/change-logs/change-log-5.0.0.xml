@@ -1129,8 +1129,8 @@ UNION ALL
 	<changeSet id="25.0" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
-			   DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ADD_DISB_DUES_WARNG';
-			   INSERT INTO SMTPARAMETERS VALUES ('ADD_DISB_DUES_WARNG', 'Add Disbursement Dues Warning', 'String', 1, 'N', 1, 0, NULL, NULL,'Add Disbursement Dues Warning', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ADD_DISB_DUES_WARNG';
+			   	INSERT INTO SMTPARAMETERS VALUES ('ADD_DISB_DUES_WARNG', 'Add Disbursement Dues Warning', 'String', 1, 'N', 1, 0, NULL, NULL,'Add Disbursement Dues Warning', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
 	</changeSet>
@@ -1160,8 +1160,8 @@ UNION ALL
 	<changeSet id="27" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
-			DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
-			INSERT INTO SMTPARAMETERS VALUES ('ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO', 'Amount field integral part default value requires zero or not', 'String', 1, 'N', 1, 0, NULL, NULL,'Amount field integral part default value requires zero or not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO', 'Amount field integral part default value requires zero or not', 'String', 1, 'N', 1, 0, NULL, NULL,'Amount field integral part default value requires zero or not', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
 	</changeSet>
