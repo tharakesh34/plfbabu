@@ -111,6 +111,8 @@ public class AccountEventConstants {
 	public static final String ACCEVENT_MANFEE = "MANFEE";
 	public static final String ACCEVENT_PAYMTINS = "PAYMTINS";
 	public static final String ACCEVENT_CASHTOPENNANT = "C2P";
+	public static final String ACCEVENT_LPPAMZ = "LPPAMZ";
+	public static final String ACCEVENT_LPIAMZ = "LPIAMZ";
 	public static final String ACCEVENT_CASHTOBANK = "C2B";
 	public static final String ACCEVENT_CASHINTRANSIT = "CIT";
 	public static final String ACCEVENT_BANKTOCASH = "B2C";

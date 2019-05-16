@@ -76,6 +76,7 @@ import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
 import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -84,20 +85,22 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
-import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -129,11 +132,11 @@ public class RepaymentPostingsUtil implements Serializable {
 	private LatePayBucketService latePayBucketService;
 	private AccrualService accrualService;
 	private ManualAdviseDAO manualAdviseDAO;
-	private PromotionDAO promotionDAO;
 
 	// Assignments
 	private AssignmentDAO assignmentDAO;
 	private AssignmentDealDAO assignmentDealDAO;
+	private FeeTypeDAO feeTypeDAO;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -185,6 +188,24 @@ public class RepaymentPostingsUtil implements Serializable {
 		// Repayments Queue list
 		List<FinRepayQueue> finRepayQueueList = rpyQueueHeader.getQueueList();
 
+		// Penalty Payments, if any Payment calculations done
+		FinTaxIncomeDetail taxIncome = null;
+		if (rpyQueueHeader.getPenalty().compareTo(BigDecimal.ZERO) > 0
+				|| rpyQueueHeader.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
+			List<Object> returnList = doOverduePostings(aeEvent, finRepayQueueList, postDate, valuedate, financeMain, rpyQueueHeader);
+
+			aeEvent = (AEEvent) returnList.get(0);
+			if (aeEvent != null) {
+				if (!aeEvent.isPostingSucess()) {
+					actReturnList = new ArrayList<Object>(2);
+					actReturnList.add(false);
+					actReturnList.add(aeEvent.getErrorMessage());
+					return actReturnList;
+				}
+			}
+			taxIncome = (FinTaxIncomeDetail) returnList.get(1);
+		}
+
 		// Total Schedule Payments
 		BigDecimal totalPayAmount = rpyQueueHeader.getPrincipal().add(rpyQueueHeader.getProfit())
 				.add(rpyQueueHeader.getLateProfit()).add(rpyQueueHeader.getFee()).add(rpyQueueHeader.getInsurance())
@@ -225,16 +246,10 @@ public class RepaymentPostingsUtil implements Serializable {
 			actReturnList.add(aeEvent.getLinkedTranId());// Linked Transaction ID
 			actReturnList.add(scheduleDetails); // Schedule Details
 			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized Amount
-			transOrder = aeEvent.getTransOrder();
-			if (aeEvent.isuLpiExists()) {
-				actReturnList.add(aeEvent.getAeAmountCodes().getdLPIAmz());
-				actReturnList.add(aeEvent.getAeAmountCodes().getdGSTLPIAmz());
-			} else {
-				actReturnList.add(BigDecimal.ZERO);
-				actReturnList.add(BigDecimal.ZERO);
-			}
-			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount
-			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount GST
+			
+			// LPI Income details
+			actReturnList.add(BigDecimal.ZERO); // UnRealized LPI Amount
+			actReturnList.add(BigDecimal.ZERO); // UnRealized LPI GST Amount
 			actReturnList.add(BigDecimal.ZERO); // capitalize Difference
 			actReturnList.add(aeEvent.getTransOrder());
 		} else {
@@ -250,10 +265,11 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 			actReturnList.add(scheduleDetails); // Schedule Details
 			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized Amount
-			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPI Amount
-			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPI Amount GST
-			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount
-			actReturnList.add(BigDecimal.ZERO); // UnRealized Amortized LPP Amount GST
+			
+			// LPI Income details
+			actReturnList.add(BigDecimal.ZERO); // UnRealized LPI Amount
+			actReturnList.add(BigDecimal.ZERO); // UnRealized LPI GST Amount
+
 			actReturnList.add(BigDecimal.ZERO); // capitalize Difference
 			if (aeEvent != null) {
 				actReturnList.add(aeEvent.getTransOrder()); //trans order
@@ -261,6 +277,10 @@ public class RepaymentPostingsUtil implements Serializable {
 				actReturnList.add(transOrder); // trans order
 			}
 		}
+		
+		// LPP Income details
+		actReturnList.add(taxIncome); // UnRealized LPP Amount & LPP GST
+
 		logger.debug("Leaving");
 		return actReturnList;
 	}
@@ -278,27 +298,88 @@ public class RepaymentPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private AEEvent doOverduePostings(AEEvent aeEvent, List<FinRepayQueue> finRepayQueueList, Date postDate,
+	private List<Object> doOverduePostings(AEEvent aeEvent, List<FinRepayQueue> finRepayQueueList, Date postDate,
 			Date dateValueDate, FinanceMain financeMain, FinRepayQueueHeader repayQueueHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		int count = 0;
+		ManualAdviseMovements movement = null;
+		FeeType feeType = null;
+		
 		for (int i = 0; i < finRepayQueueList.size(); i++) {
 
 			FinRepayQueue repayQueue = finRepayQueueList.get(i);
-			if (repayQueue.getRpyDate().compareTo(dateValueDate) < 0) {
+			if (repayQueue.getRpyDate().compareTo(dateValueDate) >= 0) {
+				continue;
+			}
 
-				aeEvent = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, repayQueue,
-						dateValueDate, aeEvent, repayQueueHeader, count == 0);
+			if(feeType == null){
+				feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+			}
 
-				count = count + 1;
-				if (!aeEvent.isPostingSucess()) {
-					return aeEvent;
+			if(movement == null){
+				movement = new ManualAdviseMovements();
+				movement.setFeeTypeCode(feeType.getFeeTypeCode());
+				movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
+				movement.setTaxApplicable(feeType.isTaxApplicable());
+				movement.setTaxComponent(feeType.getTaxComponent());
+			}
+
+			// GST Values
+			movement.setPaidCGST(movement.getPaidCGST().add(repayQueue.getPaidPenaltyCGST()));
+			movement.setPaidSGST(movement.getPaidSGST().add(repayQueue.getPaidPenaltySGST()));
+			movement.setPaidUGST(movement.getPaidUGST().add(repayQueue.getPaidPenaltyUGST()));
+			movement.setPaidIGST(movement.getPaidIGST().add(repayQueue.getPaidPenaltyIGST()));
+
+			// Paid and Waived Amounts 
+			movement.setMovementAmount(movement.getMovementAmount().add(repayQueue.getPenaltyPayNow()));
+			movement.setPaidAmount(movement.getPaidAmount().add(repayQueue.getPenaltyPayNow()));
+			movement.setWaivedAmount(movement.getWaivedAmount().add(repayQueue.getWaivedAmount()));
+
+		}
+
+		// GST Invoice Preparation for Penalty (Debt Note)
+		FinTaxIncomeDetail taxIncome = null;
+		
+		if (movement != null) {	
+			List<Object> returnList = getRecoveryPostingsUtil().recoveryPayment(financeMain, dateValueDate, postDate, movement,
+					dateValueDate, aeEvent, repayQueueHeader);
+			
+			aeEvent = (AEEvent) returnList.get(0);
+			if (!aeEvent.isPostingSucess()) {
+				logger.debug("Leaving");
+				return returnList;
+			}
+			
+			taxIncome = (FinTaxIncomeDetail) returnList.get(1);
+			
+			//Overdue Details Updation for Paid Penalty
+			for (int i = 0; i < finRepayQueueList.size(); i++) {
+
+				FinRepayQueue repayQueue = finRepayQueueList.get(i);
+				if (repayQueue.getRpyDate().compareTo(dateValueDate) >= 0) {
+					continue;
 				}
+
+				FinODDetails detail = new FinODDetails();
+				detail.setFinReference(financeMain.getFinReference());
+				detail.setFinODSchdDate(repayQueue.getRpyDate());
+				detail.setFinODFor(repayQueue.getFinRpyFor());
+				detail.setTotPenaltyAmt(BigDecimal.ZERO);
+				detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
+				detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
+				detail.setTotWaived(repayQueue.getWaivedAmount());
+				getFinODDetailsDAO().updateTotals(detail);
+				
 			}
 		}
+		
+		List<Object> returnList = new ArrayList<>();
+		returnList.add(aeEvent);
+		returnList.add(taxIncome);
+		
 		logger.debug("Leaving");
-		return aeEvent;
+		return returnList;
 	}
 
 	/**
@@ -350,22 +431,10 @@ public class RepaymentPostingsUtil implements Serializable {
 		} else {
 			actReturnList.add(BigDecimal.ZERO);
 		}
-
-		if (aeEvent.isuLpiExists()) {
-			actReturnList.add(aeEvent.getAeAmountCodes().getdLPIAmz());
-			actReturnList.add(aeEvent.getAeAmountCodes().getdGSTLPIAmz());
-		} else {
-			actReturnList.add(BigDecimal.ZERO);
-			actReturnList.add(BigDecimal.ZERO);
-		}
-
-		if (aeEvent.isuLppExists()) {
-			actReturnList.add(aeEvent.getAeAmountCodes().getdLPPAmz());
-			actReturnList.add(aeEvent.getAeAmountCodes().getdGSTLPPAmz());
-		} else {
-			actReturnList.add(BigDecimal.ZERO);
-			actReturnList.add(BigDecimal.ZERO);
-		}
+		
+		// LPI Income Details
+		actReturnList.add(BigDecimal.ZERO);
+		actReturnList.add(BigDecimal.ZERO);
 
 		// Capitalization Difference
 		if (aeEvent.isCpzChgExists()) {
@@ -1425,8 +1494,9 @@ public class RepaymentPostingsUtil implements Serializable {
 		// C - PENALTY / CHRAGES, P - PRINCIPAL , I - PROFIT / INTEREST
 		if ((ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCPI))
 				|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FCIP))) {
-			AEEvent aeEvent = doOverduePostings(null, finRepayQueueList, dateValueDate, dateValueDate, financeMain,
+			List<Object> returnList = doOverduePostings(null, finRepayQueueList, dateValueDate, dateValueDate, financeMain,
 					null);
+			AEEvent aeEvent = (AEEvent) returnList.get(0);
 			if (aeEvent != null) {
 				return null;
 			}
@@ -1454,8 +1524,9 @@ public class RepaymentPostingsUtil implements Serializable {
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FPIC))
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FIPCS))
 					|| (ImplementationConstants.REPAY_HIERARCHY_METHOD.equals(RepayConstants.REPAY_HIERARCHY_FPICS))) {
-				AEEvent aeEvent = doOverduePostings(null, finRepayQueueList, dateValueDate, dateValueDate, financeMain,
+				List<Object> returnList = doOverduePostings(null, finRepayQueueList, dateValueDate, dateValueDate, financeMain,
 						null);
+				AEEvent aeEvent = (AEEvent) returnList.get(0);
 				if (aeEvent != null) {
 					return null;
 				}
@@ -1873,8 +1944,12 @@ public class RepaymentPostingsUtil implements Serializable {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
-	public void setPromotionDAO(PromotionDAO promotionDAO) {
-		this.promotionDAO = promotionDAO;
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
 	public AssignmentDAO getAssignmentDAO() {

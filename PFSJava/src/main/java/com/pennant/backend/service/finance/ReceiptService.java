@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -17,6 +17,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -135,6 +136,8 @@ public interface ReceiptService {
 	boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations);
 
 	FinReceiptData adjustToExcess(FinReceiptData receiptData);
+
+	FinTaxReceivable getTaxReceivable(String finReference, String taxFor);
 
 	// ## For MultiReceipt 
 	void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception;

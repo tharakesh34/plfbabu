@@ -42,7 +42,10 @@
 */
 package com.pennant.backend.dao.finance;
 
+import java.util.Date;
+
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
+import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 
 public interface FinODAmzTaxDetailDAO {
@@ -54,4 +57,11 @@ public interface FinODAmzTaxDetailDAO {
 	void updateTaxReceivable(FinTaxReceivable taxReceivable);
 
 	FinTaxReceivable getFinTaxReceivable(String finReference, String type);
+
+	void saveTaxIncome(FinTaxIncomeDetail finTaxIncomeDetail);
+
+	FinTaxIncomeDetail getFinTaxIncomeDetail(long repayID, String type);
+
+	boolean isDueCreatedForDate(String finRef, Date valueDate, String taxFor);
+
 }

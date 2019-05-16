@@ -43,16 +43,20 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
+import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -93,9 +97,9 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append(" Insert Into FinODAmzTaxDetail");
 		insertSql.append(
-				" (TaxSeqId , FinReference, ValueDate , TaxFor, Amount, TaxType , CGST , SGST , UGST , IGST , TotalGST)");
+				" (TaxSeqId , FinReference, ValueDate , PostDate, TaxFor, Amount, TaxType , CGST , SGST , UGST , IGST , TotalGST)");
 		insertSql.append(
-				" Values( :TaxSeqId , :FinReference, :ValueDate , :TaxFor, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :TotalGST)");
+				" Values( :TaxSeqId , :FinReference, :ValueDate , :PostDate, :TaxFor, :Amount, :TaxType , :CGST , :SGST , :UGST , :IGST , :TotalGST)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
@@ -164,6 +168,79 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void saveTaxIncome(FinTaxIncomeDetail finTaxIncomeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder insertSql = new StringBuilder();
+
+		insertSql.append(" INSERT INTO FinTaxIncomeDetail ");
+		insertSql.append(" (RepayID, TaxFor, ReceivedAmount, CGST, IGST, UGST, SGST ) ");
+		insertSql.append(" VALUES (:RepayID, :TaxFor, :ReceivedAmount, :CGST, :IGST, :UGST, :SGST) ");
+		logger.debug("insertSql: " + insertSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finTaxIncomeDetail);
+		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		logger.debug(Literal.LEAVING);
+	}
+	
+	@Override
+	public FinTaxIncomeDetail getFinTaxIncomeDetail(long repayID, String type) {
+		logger.debug(Literal.ENTERING);
+
+		FinTaxIncomeDetail taxIncomeDetail = new FinTaxIncomeDetail();
+		taxIncomeDetail.setRepayID(repayID);
+		taxIncomeDetail.setTaxFor(type);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select RepayID, TaxFor, ReceivedAmount, CGST, IGST, UGST, SGST ");
+		selectSql.append(" FROM FinTaxIncomeDetail ");
+		selectSql.append(" WHERE  RepayID = :RepayID AND TaxFor=:TaxFor ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTaxIncomeDetail.class);
+
+		try {
+			taxIncomeDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			taxIncomeDetail = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return taxIncomeDetail;
+	}
+	
+	@Override
+	public boolean isDueCreatedForDate(String finReference, Date valueDate, String taxFor) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("ValueDate", valueDate);
+		source.addValue("TaxFor", taxFor);
+
+		StringBuilder selectSql = new StringBuilder(" Select COUNT(*)  From FinODAmzTaxDetail");
+		selectSql.append(" Where FinReference = :FinReference AND ValueDate= :ValueDate AND TaxFor = :TaxFor ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			recordCount = 0;
+		}
+
+		logger.debug("Leaving");
+
+		if (recordCount > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

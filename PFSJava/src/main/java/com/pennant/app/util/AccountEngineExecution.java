@@ -682,16 +682,6 @@ public class AccountEngineExecution implements Serializable {
 				aeEvent.setuAmzExists(true);
 			}
 
-			// Un Realized Amortization LPI Field Exists
-			if (StringUtils.contains(transactionEntry.getAmountRule(), "dLPIAmz")) {
-				aeEvent.setuLpiExists(true);
-			}
-
-			// Un Realized Amortization LPP Field Exists
-			if (StringUtils.contains(transactionEntry.getAmountRule(), "dLPPAmz")) {
-				aeEvent.setuLppExists(true);
-			}
-
 			// Un Realized Amortization LPP Field Exists
 			if (StringUtils.contains(transactionEntry.getAmountRule(), "bpi")) {
 				aeEvent.setBpiIncomized(true);

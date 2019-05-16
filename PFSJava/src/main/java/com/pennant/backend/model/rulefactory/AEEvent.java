@@ -58,9 +58,7 @@ public class AEEvent implements Serializable {
 	private int transOrder = 0;
 
 	private boolean uAmzExists = false;
-	private boolean uLpiExists = false;
 	private boolean cpzChgExists = false;
-	private boolean uLppExists = false;
 	private boolean bpiIncomized = false;
 
 	//Cash Management
@@ -386,28 +384,12 @@ public class AEEvent implements Serializable {
 		this.postingType = postingType;
 	}
 
-	public boolean isuLpiExists() {
-		return uLpiExists;
-	}
-
-	public void setuLpiExists(boolean uLpiExists) {
-		this.uLpiExists = uLpiExists;
-	}
-
 	public boolean isCpzChgExists() {
 		return cpzChgExists;
 	}
 
 	public void setCpzChgExists(boolean cpzChgExists) {
 		this.cpzChgExists = cpzChgExists;
-	}
-
-	public boolean isuLppExists() {
-		return uLppExists;
-	}
-
-	public void setuLppExists(boolean uLppExists) {
-		this.uLppExists = uLppExists;
 	}
 
 	public boolean isBpiIncomized() {

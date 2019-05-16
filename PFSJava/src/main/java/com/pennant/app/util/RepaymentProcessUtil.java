@@ -51,6 +51,7 @@ import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
@@ -64,6 +65,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -516,7 +518,7 @@ public class RepaymentProcessUtil {
 				}
 			}
 			rph.setLinkedTranId(linkedTranId);
-			transOrder = (int) returnList.get(9);
+			transOrder = (int) returnList.get(7);
 			rph.setValueDate(postDate);
 			scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 
@@ -545,19 +547,18 @@ public class RepaymentProcessUtil {
 
 			// Unrealized LPI Amount
 			uLpi = uLpi.add((BigDecimal) returnList.get(4));
-			rph.setRealizeUnLPI(uLpi);
 			uGstLpi = uGstLpi.add((BigDecimal) returnList.get(5));
-			rph.setRealizeUnLPIGst(uGstLpi);
-
-			// Unrealized LPP Amount
-			uLpp = uLpp.add((BigDecimal) returnList.get(6));
-			rph.setRealizeUnLPP(uLpp);
-			uGstLpp = uGstLpp.add((BigDecimal) returnList.get(7));
-			rph.setRealizeUnLPPGst(uGstLpp);
 
 			// Capitalization Change Amount
-			cpzChg = cpzChg.add((BigDecimal) returnList.get(4));// FIXME
+			cpzChg = cpzChg.add((BigDecimal) returnList.get(6));
 			rph.setCpzChg(cpzChg);
+			
+			// LPP Income Amount
+			FinTaxIncomeDetail taxIncome = (FinTaxIncomeDetail) returnList.get(8);
+			if(taxIncome != null){
+				uLpp = uLpp.add(taxIncome.getReceivedAmount());
+				uGstLpp = uGstLpp.add(taxIncome.getCGST().add(taxIncome.getSGST()).add(taxIncome.getUGST()).add(taxIncome.getIGST()));
+			}
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			rcdList.get(rcdList.size() - 1).setLogKey(logKey);
@@ -676,18 +677,47 @@ public class RepaymentProcessUtil {
 
 		// preparing GST Invoice Report
 		if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
-			List<ManualAdviseMovements> manualAdviseMovementsList = new ArrayList<ManualAdviseMovements>();
+			List<ManualAdviseMovements> movementList = new ArrayList<ManualAdviseMovements>();
+			FeeType bounceFee = null;
+			
+			// GST Invoice data resetting based on Accounting Process
+			String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
+
 			for (ManualAdviseMovements movement : movements) {
-				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST())
-						.add(movement.getPaidUGST());
+				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
+				
 				if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
-					manualAdviseMovementsList.add(movement);
+					
+					ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+					boolean prepareInvoice = false;
+					if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
+						if (bounceFee == null) {
+							bounceFee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+						}
+						movement.setFeeTypeCode(bounceFee.getFeeTypeCode());
+						movement.setFeeTypeDesc(bounceFee.getFeeTypeDesc());
+						movement.setTaxApplicable(bounceFee.isTaxApplicable());
+						movement.setTaxComponent(bounceFee.getTaxComponent());
+						if (StringUtils.equals(isGSTInvOnDue, PennantConstants.NO)) {
+							prepareInvoice = true;
+						}
+					} else {
+						movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+						movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+						movement.setTaxApplicable(manualAdvise.isTaxApplicable());
+						movement.setTaxComponent(manualAdvise.getTaxComponent());
+						prepareInvoice = true;
+					}
+					
+					if (prepareInvoice) {
+						movementList.add(movement);
+					}
 				}
 			}
 
-			if (CollectionUtils.isNotEmpty(manualAdviseMovementsList)) {
+			if (CollectionUtils.isNotEmpty(movementList)) {
 				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
-						manualAdviseMovementsList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
+						movementList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,
 						financeMain.getFinReference(), false);
 			}
 		}
@@ -704,7 +734,8 @@ public class RepaymentProcessUtil {
 
 			BigDecimal amount = BigDecimal.ZERO;
 			String keyCode = null;
-			if (StringUtils.isEmpty(movement.getFeeTypeCode())) {
+			if (StringUtils.isEmpty(movement.getFeeTypeCode()) || 
+					StringUtils.equals(movement.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 
 				if (movementMap.containsKey("bounceChargePaid")) {
 					amount = movementMap.get("bounceChargePaid");
@@ -1427,7 +1458,6 @@ public class RepaymentProcessUtil {
 					if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_PRI)) {
 						rpyQueueHeader.setFutPrincipal(paidNow);
 						rpyQueueHeader.setFutPriWaived(waivedNow);
-						;
 					}
 
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_PFT)
@@ -1437,7 +1467,6 @@ public class RepaymentProcessUtil {
 					if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_PFT)) {
 						rpyQueueHeader.setFutProfit(paidNow);
 						rpyQueueHeader.setFutPftWaived(waivedNow);
-						;
 					}
 				} else if (StringUtils.equals(allocType, RepayConstants.ALLOCATION_TDS)
 						|| StringUtils.equals(allocType, RepayConstants.ALLOCATION_FUT_TDS)) {
@@ -1981,6 +2010,14 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
 }

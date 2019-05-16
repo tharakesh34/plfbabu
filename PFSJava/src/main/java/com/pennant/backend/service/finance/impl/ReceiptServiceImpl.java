@@ -79,6 +79,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.dao.applicationmaster.InstrumentwiseLimitDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
+import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
@@ -128,6 +129,7 @@ import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -170,6 +172,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.eod.constants.EodConstants;
@@ -202,6 +205,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private BankDetailService bankDetailService;
 	private DepositDetailsDAO depositDetailsDAO;
 	private DepositChequesDAO depositChequesDAO;
+	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private PromotionDAO promotionDAO;
 	private InstrumentwiseLimitDAO instrumentwiseLimitDAO;
@@ -1441,8 +1445,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		profitDetail.setAmzTillLBD(profitDetail.getAmzTillLBD().add((BigDecimal) returnList.get(1)));
 		profitDetail.setLpiTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal) returnList.get(2)));
 		profitDetail.setGstLpiTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal) returnList.get(3)));
-		profitDetail.setLppTillLBD(profitDetail.getLpiTillLBD().add((BigDecimal) returnList.get(4)));
-		profitDetail.setGstLppTillLBD(profitDetail.getGstLpiTillLBD().add((BigDecimal) returnList.get(5)));
+		profitDetail.setLppTillLBD(profitDetail.getLppTillLBD().add((BigDecimal) returnList.get(4)));
+		profitDetail.setGstLppTillLBD(profitDetail.getGstLppTillLBD().add((BigDecimal) returnList.get(5)));
 
 		if (schdList == null) {
 			schdList = scheduleData.getFinanceScheduleDetails();
@@ -5450,6 +5454,122 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		return financeDetail;
 	}
+	
+	/**
+	 * Method for Validating Partial Settlement amount collected form Customer with in Year(Find Based on System Parameters)
+	 * 
+	 * Year(Find Based on System Parameters)
+	 */
+	private ErrorDetail validatePPPercAmount(FinReceiptData receiptData) {
+		
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+		if (!StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			return null;
+		}
+		
+		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
+				|| StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+			return null;
+		}
+		
+		//validation for partial payment based on percentage
+		List<FinanceScheduleDetail> scheduleList = receiptData.getFinanceDetail().getFinScheduleData()
+				.getFinanceScheduleDetails();
+		int finFormatter = CurrencyUtil
+				.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		
+		// Value Date Finding
+		Date valueDate = DateUtility.getAppDate();
+		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
+			if(StringUtils.equals(receiptHeader.getReceiptMode(), receiptDetail.getPaymentType())){
+				valueDate = receiptDetail.getReceivedDate();
+				break;
+			}
+		}
+
+		Date startDate = null;
+		Date endDate = null;
+
+		int startPeriodMonth = SysParamUtil.getValueAsInt((SMTParameterConstants.EARLYPAY_FY_STARTMONTH));
+		int startYear = DateUtility.getYear(valueDate);
+		int startDay = 1;
+		Date date = DateUtility.getDate(startYear, startPeriodMonth, startDay);
+		startDate = date;
+		if (DateUtility.compare(date, valueDate) == 1) {
+			date = DateUtility.addYears(date, -1);
+			startDate = date;
+		}
+		date = DateUtility.addMonths(date, 11);
+		date = DateUtility.getMonthEnd(date);
+		endDate = date;
+		
+		// Finding Closing Balance at FY Start Date
+		BigDecimal closingBal = BigDecimal.ZERO;
+		if (CollectionUtils.isNotEmpty(scheduleList)) {
+			for (int i = 0; i < scheduleList.size(); i++) {
+				FinanceScheduleDetail curSchd = scheduleList.get(i);
+				if (i == 0 || DateUtility.compare(curSchd.getSchDate(), startDate) <= 0) {
+					closingBal = PennantApplicationUtil.formateAmount(curSchd.getClosingBalance(), finFormatter);
+				}
+			}
+		}
+
+		BigDecimal utilizedPartPayAmt = PennantApplicationUtil
+				.formateAmount(finReceiptDetailDAO.getUtilizedPartPayAmtByDate(receiptHeader, startDate, endDate),
+						finFormatter);
+		BigDecimal alwdPPPerc = new BigDecimal(
+				SysParamUtil.getValueAsInt(SMTParameterConstants.ALWD_EARLYPAY_PERC_BYYEAR));
+
+		BigDecimal maxAlwdPPByFY = (closingBal.multiply(alwdPPPerc)).divide(new BigDecimal(100), 0,
+				RoundingMode.HALF_DOWN);
+
+		// Current Part Payment Amount
+		BigDecimal curPPAmount = BigDecimal.ZERO;
+		for (FinReceiptDetail rcd : receiptHeader.getReceiptDetails()) {
+			for (FinRepayHeader rph : rcd.getRepayHeaders()) {
+				if (!StringUtils.equals(rph.getFinEvent(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+					continue;
+				}
+				curPPAmount = curPPAmount.add(PennantApplicationUtil.formateAmount(rph.getPriAmount(), finFormatter));
+			}
+		}
+
+		if ((utilizedPartPayAmt.add(curPPAmount)).compareTo(maxAlwdPPByFY) > 0) {
+			if (utilizedPartPayAmt.compareTo(maxAlwdPPByFY) >= 0) {
+				return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0046", null, null));
+			} else {
+				BigDecimal maxAlwdCurPP = maxAlwdPPByFY.subtract(utilizedPartPayAmt);
+				String[] valueParm = new String[1];
+				valueParm[0] = maxAlwdCurPP.toString();
+				return ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0047", valueParm, null));
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Method for Fetching Tax Receivable for Accounting Purpose
+	 */
+	@Override
+	public FinTaxReceivable getTaxReceivable(String finReference, String taxFor){
+		return finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, taxFor);
+	}
+	
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
+	public AccountingSetDAO getAccountingSetDAO() {
+		return accountingSetDAO;
+	}
+
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	public LimitCheckDetails getLimitCheckDetails() {
+		return limitCheckDetails;
+	}
 
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
@@ -5539,11 +5659,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
 		this.subventionDetailDAO = subventionDetailDAO;
-	}
-
-	@Autowired
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
 	}
 
 	@Autowired
@@ -5661,6 +5776,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		return canProcessReceipt;
+	}
+	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
+		return finODAmzTaxDetailDAO;
+	}
+
+	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
+		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
 
 	@Override

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="CURRENT_TIMESTAMP" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	 <changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="01" author="Irfan">
+		<createTable tableName="FinTaxReceivable">
+			<column name="FinReference" type="NVARCHAR(20)"/>
+			<column name="TaxFor" type="VARCHAR(8)"/>
+			<column name="ReceivableAmount" type="NUMBER(18,0)"/>
+			<column name="CGST" type="NUMBER(18,0)"/>
+			<column name="SGST" type="NUMBER(18,0)"/>
+			<column name="UGST" type="NUMBER(18,0)"/>
+			<column name="IGST" type="NUMBER(18,0)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="02" author="Irfan">
+	<addPrimaryKey tableName="FinTaxReceivable" columnNames="FinReference, TaxFor" />
+	</changeSet>
+	<changeSet id="03" author="Irfan">
+		<sql>
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'ae_penaltyRcv','Penalty Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'LPP_CGST_R','Penalty charge CGST Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'LPP_SGST_R','Penalty charge SGST Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'LPP_IGST_R','Penalty charge IGST Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'LPP_UGST_R','Penalty charge UGST Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		
+		</sql>
+	</changeSet>
+	<changeSet id="04" author="Irfan">
+		<sql>
+			Insert into SMTPARAMETERS  values ('GST_INV_ON_DUE','GST Invoice on Due.','String',1,'Y',8,0,null,null,'GST Invoice on Due.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	<changeSet id="05" author="Irfan">
+		<sql>
+		
+			UPDATE BMTAMOUNTCODES SET AMOUNTCODE='LPP_CGST_R' WHERE AMOUNTCODE='LPP_CGST_P' AND ALLOWEDEVENT = 'AMZ';
+			UPDATE BMTAMOUNTCODES SET AMOUNTCODE='LPP_SGST_R' WHERE AMOUNTCODE='LPP_SGST_P' AND ALLOWEDEVENT = 'AMZ';
+			UPDATE BMTAMOUNTCODES SET AMOUNTCODE='LPP_UGST_R' WHERE AMOUNTCODE='LPP_UGST_P' AND ALLOWEDEVENT = 'AMZ';
+			UPDATE BMTAMOUNTCODES SET AMOUNTCODE='LPP_IGST_R' WHERE AMOUNTCODE='LPP_IGST_P' AND ALLOWEDEVENT = 'AMZ';
+			
+			UPDATE RMTTRANSACTIONENTRY SET AMOUNTRULE = REPLACE(AMOUNTRULE, 'LPP_CGST_P', 'LPP_CGST_R') where AccountSETID IN(SELECT ACCOUNTSETID FROM RMTACCOUNTINGSET WHERE EVENTCODE = 'AMZ');
+			UPDATE RMTTRANSACTIONENTRY SET AMOUNTRULE = REPLACE(AMOUNTRULE, 'LPP_SGST_P', 'LPP_SGST_R') where AccountSETID IN(SELECT ACCOUNTSETID FROM RMTACCOUNTINGSET WHERE EVENTCODE = 'AMZ');
+			UPDATE RMTTRANSACTIONENTRY SET AMOUNTRULE = REPLACE(AMOUNTRULE, 'LPP_UGST_P', 'LPP_UGST_R') where AccountSETID IN(SELECT ACCOUNTSETID FROM RMTACCOUNTINGSET WHERE EVENTCODE = 'AMZ');
+			UPDATE RMTTRANSACTIONENTRY SET AMOUNTRULE = REPLACE(AMOUNTRULE, 'LPP_IGST_P', 'LPP_IGST_R') where AccountSETID IN(SELECT ACCOUNTSETID FROM RMTACCOUNTINGSET WHERE EVENTCODE = 'AMZ');
+
+		</sql>
+	</changeSet>
+	<changeSet id="06" author="Siva"><createTable tableName="FinTaxIncomeDetail">
+			<column name="RepayID" type="bigint"/>
+			<column name="TaxFor" type="VARCHAR(8)"/>
+			<column name="ReceivedAmount" type="NUMBER(18,0)"/>
+			<column name="CGST" type="NUMBER(18,0)"/>
+			<column name="SGST" type="NUMBER(18,0)"/>
+			<column name="UGST" type="NUMBER(18,0)"/>
+			<column name="IGST" type="NUMBER(18,0)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="07" author="Irfan">
+	<addPrimaryKey tableName="FinTaxIncomeDetail" columnNames="RepayID, TaxFor" />
+	</changeSet>
+	
+	<changeSet id="08" author="Irfan">
+		<sql>
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'PB_ReceiptAmount','Receipt Amount',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'EX_ReceiptAmount','Excess Receipt Amount',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'EA_ReceiptAmount','Emi Advance Receipt Amount ',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
+	<changeSet id="09" author="Irfan">
+		<sql>
+			INSERT INTO BMTAMOUNTCODES VALUES('AMZ',0,'ae_penaltyRcv','Penalty Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		</sql>
+	</changeSet>
+	
+</databaseChangeLog>
+	

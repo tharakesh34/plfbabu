@@ -38,5 +38,7 @@
 	<include file="change-logs/change-log-4.14.0.xml" />
 	<include file="change-logs/change-log-receipts-new-1.0.xml" />
 	<include file="change-logs/change-log-5.0.0.xml" />
+	<include file="change-logs/change-log-LPPReceivable.xml" />
+	<include file="change-logs/change-log-FinODAMZ.xml" />
 	<include file="change-logs/change-log-5.0.5.xml" />
 </databaseChangeLog>

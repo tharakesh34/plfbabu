@@ -14,6 +14,7 @@ import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayBucketService;
+import com.pennant.app.core.LatePayDueCreationService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
@@ -38,6 +39,7 @@ public class EodService {
 	private LoadFinanceData loadFinanceData;
 	private RateReviewService rateReviewService;
 	private AccrualService accrualService;
+	private LatePayDueCreationService latePayDueCreationService;
 	private AutoDisbursementService autoDisbursementService;
 	private ReceiptPaymentService receiptPaymentService;
 	private InstallmentDueService installmentDueService;
@@ -120,6 +122,9 @@ public class EodService {
 		custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
 
 		//NPA Service
+		custEODEvent = npaService.processNPABuckets(custEODEvent);
+		
+		//LatePay Due creation Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
 
 		/**************** SOD ***********/
@@ -221,5 +226,13 @@ public class EodService {
 
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
 		this.projectedAmortizationService = projectedAmortizationService;
+	}
+
+	public LatePayDueCreationService getLatePayDueCreationService() {
+		return latePayDueCreationService;
+	}
+
+	public void setLatePayDueCreationService(LatePayDueCreationService latePayDueCreationService) {
+		this.latePayDueCreationService = latePayDueCreationService;
 	}
 }

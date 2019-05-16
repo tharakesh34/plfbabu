@@ -54,6 +54,15 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		
 	</bean>
 
 	<!-- Late Pay Buckets -->
@@ -85,14 +94,17 @@
 		<property name="finSuspHoldDAO" ref="finSuspHoldDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 	</bean>
+	
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+	
+	<!-- LPP/LPI Accrual -->
+	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService"
+		parent="serviceHelper">
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
@@ -166,6 +178,7 @@
 		<property name="loadFinanceData" ref="loadFinanceData" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+		<property name="latePayDueCreationService" ref="latePayDueCreationService" />
 	</bean>
 	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
 	</bean>

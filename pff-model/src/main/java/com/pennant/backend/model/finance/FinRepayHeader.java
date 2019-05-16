@@ -33,10 +33,6 @@ public class FinRepayHeader implements Serializable {
 	private BigDecimal totalSchdFee = BigDecimal.ZERO;
 	private String payApportionment;
 	private BigDecimal realizeUnAmz = BigDecimal.ZERO;
-	private BigDecimal realizeUnLPI = BigDecimal.ZERO;
-	private BigDecimal realizeUnLPIGst = BigDecimal.ZERO;
-	private BigDecimal realizeUnLPP = BigDecimal.ZERO;
-	private BigDecimal realizeUnLPPGst = BigDecimal.ZERO;
 	private BigDecimal cpzChg = BigDecimal.ZERO;
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal feeAmount = BigDecimal.ZERO;
@@ -259,38 +255,6 @@ public class FinRepayHeader implements Serializable {
 
 	public void setRealizeUnAmz(BigDecimal realizeUnAmz) {
 		this.realizeUnAmz = realizeUnAmz;
-	}
-
-	public BigDecimal getRealizeUnLPI() {
-		return realizeUnLPI;
-	}
-
-	public void setRealizeUnLPI(BigDecimal realizeUnLPI) {
-		this.realizeUnLPI = realizeUnLPI;
-	}
-
-	public BigDecimal getRealizeUnLPP() {
-		return realizeUnLPP;
-	}
-
-	public void setRealizeUnLPP(BigDecimal realizeUnLPP) {
-		this.realizeUnLPP = realizeUnLPP;
-	}
-
-	public BigDecimal getRealizeUnLPIGst() {
-		return realizeUnLPIGst;
-	}
-
-	public void setRealizeUnLPIGst(BigDecimal realizeUnLPIGst) {
-		this.realizeUnLPIGst = realizeUnLPIGst;
-	}
-
-	public BigDecimal getRealizeUnLPPGst() {
-		return realizeUnLPPGst;
-	}
-
-	public void setRealizeUnLPPGst(BigDecimal realizeUnLPPGst) {
-		this.realizeUnLPPGst = realizeUnLPPGst;
 	}
 
 	public BigDecimal getAdviseAmount() {

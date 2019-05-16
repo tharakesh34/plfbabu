@@ -1583,7 +1583,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch,
+	public HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch,
 			String highPriorityState, String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode) {
 
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();

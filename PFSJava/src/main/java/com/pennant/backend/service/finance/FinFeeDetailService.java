@@ -44,6 +44,7 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,7 +118,7 @@ public interface FinFeeDetailService {
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages);
 
-	Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
+	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
 			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
 
 	Map<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);

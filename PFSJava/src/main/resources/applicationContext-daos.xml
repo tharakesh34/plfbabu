@@ -4541,6 +4541,7 @@
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="entityDAO" ref="entityDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
@@ -4660,6 +4661,8 @@
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
 
@@ -5318,6 +5321,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -5362,6 +5366,9 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<bean id="finODDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinODDetailsDAOImpl" parent="basicDao" />
@@ -7760,10 +7767,12 @@
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
 		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+	
+	<!-- LPP/LPI Accrual -->
+	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService"
+		parent="serviceHelper">
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
@@ -7771,6 +7780,7 @@
 		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
+	
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
 	</bean>
@@ -7782,6 +7792,14 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
 	<bean id="installmentDueService" class="com.pennant.app.core.InstallmentDueService" parent="serviceHelper">

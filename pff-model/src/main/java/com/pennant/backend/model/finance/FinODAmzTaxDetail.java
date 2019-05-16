@@ -11,6 +11,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	private long taxSeqId = 0;
 	private String finReference;
 	private Date valueDate;
+	private Date postDate;
 	private String taxFor;
 	private BigDecimal amount = BigDecimal.ZERO;
 	private String taxType;
@@ -114,6 +115,14 @@ public class FinODAmzTaxDetail implements Serializable {
 
 	public void setTaxType(String taxType) {
 		this.taxType = taxType;
+	}
+	
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
 	}
 
 }

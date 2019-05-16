@@ -154,6 +154,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEnquiry;
@@ -4449,6 +4450,61 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			if (amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
 					|| amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
+				
+				// Get LPP Receivable for Accounting
+				FinTaxReceivable taxRcv = getReceiptService().getTaxReceivable(this.finReference.getValue(), "LPP");
+				if(taxRcv != null){
+					
+					if(taxRcv.getReceivableAmount().compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0){
+						amountCodes.setPenaltyRcv(taxRcv.getReceivableAmount());
+					}else{
+						amountCodes.setPenaltyRcv(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived()));
+					}
+				}
+				
+				if (amountCodes.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
+						|| amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
+						aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
+						
+						// LPP GST Amount setting
+						aeEvent.getDataMap().put("LPP_CGST_P", penaltyCGSTPaid);
+						aeEvent.getDataMap().put("LPP_SGST_P", penaltySGSTPaid);
+						aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
+						aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
+						
+						if(taxRcv != null){
+							if(taxRcv.getCGST().compareTo(penaltyCGSTPaid) < 0){
+								aeEvent.getDataMap().put("LPP_CGST_R", taxRcv.getCGST());
+							}else{
+								aeEvent.getDataMap().put("LPP_CGST_R", penaltyCGSTPaid);
+							}
+							
+							if(taxRcv.getSGST().compareTo(penaltySGSTPaid) < 0){
+								aeEvent.getDataMap().put("LPP_SGST_R", taxRcv.getSGST());
+							}else{
+								aeEvent.getDataMap().put("LPP_SGST_R", penaltySGSTPaid);
+							}
+							
+							if(taxRcv.getUGST().compareTo(penaltyUGSTPaid) < 0){
+								aeEvent.getDataMap().put("LPP_UGST_R", taxRcv.getUGST());
+							}else{
+								aeEvent.getDataMap().put("LPP_UGST_R", penaltyUGSTPaid);
+							}
+							
+							if(taxRcv.getIGST().compareTo(penaltyIGSTPaid) < 0){
+								aeEvent.getDataMap().put("LPP_IGST_R", taxRcv.getIGST());
+							}else{
+								aeEvent.getDataMap().put("LPP_IGST_R", penaltyIGSTPaid);
+							}
+						}
+						
+					// LPP GST Amount setting
+					aeEvent.getDataMap().put("LPP_CGST_P", penaltyCGSTPaid);
+					aeEvent.getDataMap().put("LPP_SGST_P", penaltySGSTPaid);
+					aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
+					aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
+
+				}
 
 				aeEvent.getAcSetIDList().clear();
 				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
@@ -4502,7 +4558,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					// Bounce Charges
 					BigDecimal amount = BigDecimal.ZERO;
 					String keyCode = null;
-					if (StringUtils.isEmpty(movement.getFeeTypeCode())) {
+					if (StringUtils.isEmpty(movement.getFeeTypeCode()) || 
+							StringUtils.equals(movement.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 
 						if (movementMap.containsKey("bounceChargePaid")) {
 							amount = movementMap.get("bounceChargePaid");
