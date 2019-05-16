@@ -3752,6 +3752,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinReceiptDetail rcd = fsi.getReceiptDetail();
 
+		//PSD Ticket: 135820(1759046 Issue in Part payment Inquiry API in BHFL PROD instance)
+		if (rcd == null) {
+			rcd = new FinReceiptDetail();
+			fsi.setReceiptDetail(rcd);
+		}
+
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 		if (StringUtils.equals(fsi.getPaymentMode(), RepayConstants.RECEIPTMODE_ONLINE)) {
