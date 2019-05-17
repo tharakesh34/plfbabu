@@ -224,12 +224,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(
 				" , PromotionCode,RvwRateApplFor , SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin, ReAgeBucket, FinCategory, ProductCategory,EligibilityMethod,connector ");
 		selectSql.append(", AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes");
-		selectSql.append(", BusinessVertical");
-		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage ");
+		selectSql.append(", BusinessVertical, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
+		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinDivision, LovDescFinBranchName, finBranchProvinceCode, ");
+					", LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinDivision, LovDescFinBranchName, finBranchProvinceCode, ");
 			selectSql.append(
 					" LovDescStepPolicyName, LovDescAccountsOfficer, DSACodeDesc, ReferralIdDesc,EmployeeNameDesc, DmaCodeDesc, SalesDepartmentDesc,lovdescEntityCode,lovEligibilityMethod,lovDescEligibilityMethod,lovdescfinpurposename,connectorcode,connectordesc ");
 			selectSql.append(", BusinessVerticalCode, BusinessVerticalDesc");
@@ -300,7 +300,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory , ");
 		selectSql.append(" AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor ");
 		selectSql.append(", BusinessVertical");
-		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage ");
+		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", lovDescFinTypeName, lovDescFinBranchName, ");
@@ -659,7 +659,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes ");
 		}
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode)");
+		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt)");
 		sql.append(" values (:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		sql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -708,7 +708,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes ");
 		}
 		sql.append(", :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode)");
+		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -815,12 +815,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" AvailedUnPlanEmi=:AvailedUnPlanEmi, AvailedReAgeH=:AvailedReAgeH,ReAgeBucket=:ReAgeBucket,EligibilityMethod=:EligibilityMethod,samplingRequired=:samplingRequired,legalRequired=:legalRequired,connector=:connector, ProcessAttributes=:ProcessAttributes,");
 		}
-		sql.append(" AdvanceEMI = :AdvanceEMI, BpiPftDaysBasis = :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor,");
-		sql.append(" GrcAdvType = :GrcAdvType, GrcAdvTerms = :GrcAdvTerms, AdvType = :AdvType, AdvTerms = :AdvTerms, AdvStage = :AdvStage,");
-		sql.append(" Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, PromotionCode = :PromotionCode");
+				" AdvanceEMI = :AdvanceEMI, BpiPftDaysBasis = :BpiPftDaysBasis, FixedTenorRate=:FixedTenorRate, FixedRateTenor=:FixedRateTenor");
+		sql.append(
+				", GrcAdvType = :GrcAdvType, GrcAdvTerms = :GrcAdvTerms, AdvType = :AdvType, AdvTerms = :AdvTerms, AdvStage = :AdvStage");
+		sql.append(", PromotionCode = :PromotionCode");
+		sql.append(
+				", TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
+		sql.append(", Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
+		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
+		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where FinReference = :FinReference");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -929,7 +933,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, NextUserId=:NextUserId, Priority=:Priority, MinDownPayPerc=:MinDownPayPerc");
-		updateSql.append(" ,PromotionCode = :PromotionCode");
+		updateSql.append(" ,PromotionCode = :PromotionCode ");
 		updateSql.append(" Where FinReference =:FinReference");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");

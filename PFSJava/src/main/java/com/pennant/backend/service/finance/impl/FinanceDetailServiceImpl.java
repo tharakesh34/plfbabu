@@ -10557,7 +10557,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setScheduleMethod(financeType.getFinSchdMthd());
 		financeMain.setFinStartDate(DateUtility.getAppDate());
 		financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
-		financeMain.setTDSApplicable(financeType.isTDSApplicable());
+		financeMain.setTDSApplicable(financeType.isTdsApplicable());
 		financeMain.setProductCategory(financeType.getProductCategory());
 		financeMain.setFinCategory(financeType.getFinCategory());
 		// Step Policy Details

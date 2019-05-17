@@ -732,6 +732,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxStrtPrdHdays;
 	private int strtPrdHdays;
 	private String strtprdCpzMethod;
+	private BigDecimal tdsPercentage;
+	private Date tdsStartDate;
+	private Date tdsEndDate;
+	private BigDecimal tdsLimitAmt;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -4281,5 +4285,37 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setStrtprdCpzMethod(String strtprdCpzMethod) {
 		this.strtprdCpzMethod = strtprdCpzMethod;
+	}
+
+	public BigDecimal getTdsPercentage() {
+		return tdsPercentage;
+	}
+
+	public void setTdsPercentage(BigDecimal tdsPercentage) {
+		this.tdsPercentage = tdsPercentage;
+	}
+
+	public Date getTdsStartDate() {
+		return tdsStartDate;
+	}
+
+	public void setTdsStartDate(Date tdsStartDate) {
+		this.tdsStartDate = tdsStartDate;
+	}
+
+	public Date getTdsEndDate() {
+		return tdsEndDate;
+	}
+
+	public void setTdsEndDate(Date tdsEndDate) {
+		this.tdsEndDate = tdsEndDate;
+	}
+
+	public BigDecimal getTdsLimitAmt() {
+		return tdsLimitAmt;
+	}
+
+	public void setTdsLimitAmt(BigDecimal tdsLimitAmt) {
+		this.tdsLimitAmt = tdsLimitAmt;
 	}
 }

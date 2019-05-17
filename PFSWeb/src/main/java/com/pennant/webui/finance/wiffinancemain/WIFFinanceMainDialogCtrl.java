@@ -153,9 +153,9 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1039,7 +1039,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
-		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTDSApplicable()) {
+		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable()) {
 			this.tDSApplicable.setDisabled(true);
 		}
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());

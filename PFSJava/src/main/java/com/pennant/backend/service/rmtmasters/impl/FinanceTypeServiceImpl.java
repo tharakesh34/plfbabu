@@ -170,15 +170,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * RMTFinanceTypes/RMTFinanceTypes_Temp by using FinanceTypeDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinanceTypeDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtRMTFinanceTypes by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * RMTFinanceTypes/RMTFinanceTypes_Temp by using FinanceTypeDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using FinanceTypeDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -291,12 +288,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table RMTFinanceTypes by using FinanceTypeDAO's delete method with type
-	 * as Blank 3) Audit the record in to AuditHeader and AdtRMTFinanceTypes by
-	 * using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * RMTFinanceTypes by using FinanceTypeDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
+	 * and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -413,9 +408,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's
-	 * getFinanceTypeById method . with parameter id and type as blank. it
-	 * fetches the approved records from the RMTFinanceTypes.
+	 * getApprovedFinanceTypeById fetch the details by using FinanceTypeDAO's getFinanceTypeById method . with parameter
+	 * id and type as blank. it fetches the approved records from the RMTFinanceTypes.
 	 * 
 	 * @param finType
 	 *            (String)
@@ -439,19 +433,15 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinanceTypeDAO().delete with parameters financeType,"" b) NEW
-	 * Add new record in to main table by using getFinanceTypeDAO().save with
-	 * parameters financeType,"" c) EDIT Update record in the main table by
-	 * using getFinanceTypeDAO().update with parameters financeType,"" 3) Delete
-	 * the record from the workFlow table by using getFinanceTypeDAO().delete
-	 * with parameters financeType,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtRMTFinanceTypes by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinanceTypeDAO().delete with
+	 * parameters financeType,"" b) NEW Add new record in to main table by using getFinanceTypeDAO().save with
+	 * parameters financeType,"" c) EDIT Update record in the main table by using getFinanceTypeDAO().update with
+	 * parameters financeType,"" 3) Delete the record from the workFlow table by using getFinanceTypeDAO().delete with
+	 * parameters financeType,"_Temp" 4) Audit the record in to AuditHeader and AdtRMTFinanceTypes by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRMTFinanceTypes
+	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -654,9 +644,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVINT.name());
-			
-		
-		if (financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq() && !financeType.getAdvType().equals(AdvanceType.AE)) {
+
+		if ((financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq())
+				&& AdvanceType.getType(financeType.getAdvType()) != AdvanceType.AE) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
 				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), orgFinEvent, true);
@@ -691,9 +681,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVEMI.name());
-		
+
 		//FOR SP FINANCE ADVANCE EMI FEES NOT REQUIRED.
-		if (financeType.isAdvIntersetReq() && financeType.getAdvType().equals(AdvanceType.AE)) {
+		if (financeType.isAdvIntersetReq() && AdvanceType.getType(financeType.getAdvType()) == AdvanceType.AE) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
 				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), orgFinEvent, true);
@@ -798,13 +788,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinanceTypeDAO().delete with parameters
-	 * financeType,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinanceTypeDAO().delete with parameters financeType,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtRMTFinanceTypes by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -834,10 +821,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -884,10 +869,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -917,21 +901,21 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
 		if (financeType.isNew()) { // for New record or new record into work
-									// flow
+										// flow
 			if (!financeType.isWorkflow()) {// With out Work flow only new
-											// records
+												// records
 				if (befFinanceType != null) { // Record Already Exists in the
-												// table then error
+													// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 				if (financeType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
 																							// is
 																							// new
 					if (befFinanceType != null || tempFinanceType != null) { // if
-																				// records
+																					// records
 																				// already
 																				// exists
 																				// in
@@ -950,9 +934,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!financeType.isWorkflow()) { // With out Work flow for update
-												// and delete
+													// and delete
 				if (befFinanceType == null) { // if records not exists in the
-												// main table
+													// main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 					if (oldFinanceType != null
@@ -969,7 +953,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			} else {
 				if (tempFinanceType == null) { // if records not exists in the
-												// Work flow table
+													// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 				if (tempFinanceType != null && oldFinanceType != null
@@ -984,14 +968,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		}
 
 		/*
-		 * if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) {
-		 * auditDetail.setErrorDetail(new
+		 * if (financeType.isPlanEMIHAlw() && financeType.isStepFinance()) { auditDetail.setErrorDetail(new
 		 * ErrorDetails(PennantConstants.KEY_FIELD, "30573", errParm, null)); }
 		 */
 
 		/*
-		 * if(financeType.isPlanEMIHAlw() && financeType.isFinIsAlwMD()){
-		 * auditDetail.setErrorDetail(new
+		 * if(financeType.isPlanEMIHAlw() && financeType.isFinIsAlwMD()){ auditDetail.setErrorDetail(new
 		 * ErrorDetails(PennantConstants.KEY_FIELD, "30574", errParm, null)); }
 		 */
 
@@ -1553,12 +1535,10 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Validation method do the following steps. 1) get the details from the
-	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
-	 * based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from
-	 * getIncomeExpenseDetailDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getIncomeExpenseDetailDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1588,22 +1568,22 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				+ PennantJavaUtil.getLabel("label_FinTypeAccountDialog_Event.value") + ":" + valueParm[1];
 
 		if (finTypeAccount.isNew()) { // for New record or new record into work
-										// flow
+											// flow
 			if (!finTypeAccount.isWorkflow()) {// With out Work flow only new
-												// records
+													// records
 				if (befFinTypeAccount != null) { // Record Already Exists in the
-													// table then error
+														// table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
 				if (finTypeAccount.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																									// records
 																								// type
 																								// is
 																								// new
 					if (befFinTypeAccount != null || tempFinTypeAccount != null) { // if
-																					// records
+																						// records
 																					// already
 																					// exists
 																					// in
@@ -1624,9 +1604,9 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!finTypeAccount.isWorkflow()) { // With out Work flow for update
-												// and delete
+													// and delete
 				if (befFinTypeAccount == null) { // if records not exists in the
-													// main table
+														// main table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm));
 				} else {
@@ -1644,7 +1624,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				}
 			} else {
 				if (tempFinTypeAccount == null) { // if records not exists in
-													// the Work flow table
+														// the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -1669,8 +1649,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Finance Type
-	 * VAS Details
+	 * Method For Preparing List of AuditDetails for Check List for Finance Type VAS Details
 	 * 
 	 * @param auditDetails
 	 * @param financeType
@@ -1767,8 +1746,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Finance Type
-	 * ReceiptModes Details
+	 * Method For Preparing List of AuditDetails for Check List for Finance Type ReceiptModes Details
 	 * 
 	 * @param auditDetails
 	 * @param financeType
@@ -1865,8 +1843,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Methods for Creating List Finance Type VAS Details of Audit Details with
-	 * detailed fields
+	 * Methods for Creating List Finance Type VAS Details of Audit Details with detailed fields
 	 * 
 	 * @param financeType
 	 * @param auditTranType
@@ -1935,8 +1912,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Methods for Creating List Finance Type ReceiptModes Details of Audit
-	 * Details with detailed fields
+	 * Methods for Creating List Finance Type ReceiptModes Details of Audit Details with detailed fields
 	 * 
 	 * @param financeType
 	 * @param auditTranType
@@ -2156,8 +2132,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Methods for Creating List IRRCode Details of Audit Details with detailed
-	 * fields
+	 * Methods for Creating List IRRCode Details of Audit Details with detailed fields
 	 * 
 	 * @param financeType
 	 * @param auditTranType
@@ -2225,8 +2200,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for IRR CODE
-	 * Details
+	 * Method For Preparing List of AuditDetails for Check List for IRR CODE Details
 	 * 
 	 * @param auditDetails
 	 * @param financeType

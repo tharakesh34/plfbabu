@@ -168,9 +168,9 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -2083,7 +2083,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
 		//TDSApplicable Visiblitly based on Financetype Selection
-		if (financeType.isTDSApplicable()) {
+		if (financeType.isTdsApplicable()) {
 			this.hbox_tdsApplicable.setVisible(true);
 			this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
@@ -6476,7 +6476,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.tDSApplicable.setDisabled(isReadOnly("FinanceMainDialog_tDSApplicable"));
 		this.accountsOfficer.setReadonly(isReadOnly("FinanceMainDialog_accountsOfficer"));
 		this.dsaCode.setReadonly(isReadOnly("FinanceMainDialog_dsaCode"));
-		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTDSApplicable()) {
+		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isTdsApplicable()) {
 			this.tDSApplicable.setDisabled(true);
 		}
 

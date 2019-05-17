@@ -90,4 +90,5 @@ public class SMTParameterConstants {
 	// Amount field integral part default value requires zero or not. EX: If requires, value will be like 0.00, if not, value will be like .00 
 	public static final String ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO = "ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO";
 	public static final String LMS_SERVICE_LOG_REQ = "LMS_SERVICE_LOG_REQ";//LMS service log required or not
+	public static final String ALLOW_LOWER_TAX_DED_REQ = "ALLOW_LOWER_TAX_DED_REQ";//LMS service log required or not
 }

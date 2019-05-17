@@ -119,7 +119,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
 		sql.append(
 				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate, RollOverFinance,RollOverFrq,");
-		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
+		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TdsApplicable, CollateralType, ");
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod ,RateChgAnyDay, ");
 		sql.append(
@@ -134,7 +134,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
 		sql.append(", AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
-		sql.append(", AdvStage, DsfReq, CashCollateralReq");
+		sql.append(", AdvStage, DsfReq, CashCollateralReq  , TdsAllowToModify , TdsApplicableTo ");
 
 		if (type.contains("View")) {
 			sql.append(
@@ -203,7 +203,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" PastduePftCalMthd,PastduePftMargin,  AlwAdvanceRent, GrcAdvBaseRate, GrcAdvMargin, GrcAdvPftRate, RpyAdvBaseRate, ");
 		sql.append(" RpyAdvMargin, RpyAdvPftRate, RollOverFinance, RollOverFrq, DownPayRule, AlwMultiPartyDisb, ");
-		sql.append(" CollateralType, TDSApplicable,ApplyGrcPricing, ApplyRpyPricing, DroplineOD, DroppingMethod, ");
+		sql.append(" CollateralType, TdsApplicable,ApplyGrcPricing, ApplyRpyPricing, DroplineOD, DroppingMethod, ");
 		sql.append(" RateChgAnyDay, ManualSchedule, AlwBPI , BpiTreatment , PftDueSchOn , ");
 		sql.append(
 				" PlanEMIHAlw , PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax ,PlanEMIHLockPeriod , PlanEMICpz , ");
@@ -216,7 +216,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms");
 		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms, AdvStage");
-		sql.append(", DsfReq, CashCollateralReq");
+		sql.append(", DsfReq, CashCollateralReq  , TdsAllowToModify , TdsApplicableTo ");
 
 		if (type.contains("ORGView")) {
 			sql.append(
@@ -396,7 +396,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" PastduePftCalMthd,PastduePftMargin,AlwAdvanceRent,");
 		sql.append(
 				" GrcAdvBaseRate , GrcAdvMargin , GrcAdvPftRate, RpyAdvBaseRate , RpyAdvMargin , RpyAdvPftRate , RollOverFinance, RollOverFrq,");
-		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TDSApplicable, CollateralType, ");
+		sql.append(" DownPayRule, FinSuspTrigger, FinSuspRemarks, AlwMultiPartyDisb, TdsApplicable, CollateralType, ");
 		sql.append(
 				" ApplyGrcPricing, GrcPricingMethod, ApplyRpyPricing, RpyPricingMethod, RpyHierarchy, DroplineOD, DroppingMethod,RateChgAnyDay, ");
 		sql.append(
@@ -409,7 +409,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired  ");
 		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms, AdvStage");
-		sql.append(", DsfReq, CashCollateralReq ) ");
+		sql.append(", DsfReq, CashCollateralReq , TdsAllowToModify, TdsApplicableTo ) ");
 
 		sql.append(
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
@@ -445,7 +445,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" :GrcAdvBaseRate , :GrcAdvMargin , :GrcAdvPftRate, :RpyAdvBaseRate , :RpyAdvMargin , :RpyAdvPftRate , :RollOverFinance, :RollOverFrq,");
 		sql.append(
-				" :DownPayRule, :FinSuspTrigger, :FinSuspRemarks, :AlwMultiPartyDisb, :TDSApplicable, :CollateralType, ");
+				" :DownPayRule, :FinSuspTrigger, :FinSuspRemarks, :AlwMultiPartyDisb, :TdsApplicable, :CollateralType, ");
 		sql.append(
 				" :ApplyGrcPricing, :GrcPricingMethod, :ApplyRpyPricing, :RpyPricingMethod, :RpyHierarchy, :DroplineOD, :DroppingMethod, :RateChgAnyDay,");
 		sql.append(
@@ -460,7 +460,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", :AdvIntersetReq, :AdvType, :AdvMinTerms, :AdvMaxTerms, :AdvDefaultTerms");
 		sql.append(
 				", :GrcAdvIntersetReq, :GrcAdvType, :GrcAdvMinTerms, :GrcAdvMaxTerms, :GrcAdvDefaultTerms, :AdvStage");
-		sql.append(", :DsfReq, :CashCollateralReq) ");
+		sql.append(", :DsfReq, :CashCollateralReq , :TdsAllowToModify , :TdsApplicableTo ) ");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
 		financeType.getFinMaxAmount();
@@ -557,7 +557,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" AlwAdvanceRent=:AlwAdvanceRent, RollOverFinance=:RollOverFinance, RollOverFrq = :RollOverFrq, ");
 		sql.append(" DownPayRule=:DownPayRule, ProductCategory=:ProductCategory,");
 		sql.append(
-				" FinSuspTrigger=:FinSuspTrigger, FinSuspRemarks=:FinSuspRemarks , AlwMultiPartyDisb = :AlwMultiPartyDisb , TDSApplicable=:TDSApplicable, CollateralType = :CollateralType, ");
+				" FinSuspTrigger=:FinSuspTrigger, FinSuspRemarks=:FinSuspRemarks , AlwMultiPartyDisb = :AlwMultiPartyDisb , TdsApplicable=:TdsApplicable, CollateralType = :CollateralType, ");
 		sql.append(
 				" ApplyGrcPricing = :ApplyGrcPricing, GrcPricingMethod = :GrcPricingMethod, ApplyRpyPricing = :ApplyRpyPricing, RpyPricingMethod = :RpyPricingMethod, RpyHierarchy = :RpyHierarchy, ");
 		sql.append(" DroplineOD = :DroplineOD, DroppingMethod = :DroppingMethod, RateChgAnyDay=:RateChgAnyDay,");
@@ -579,7 +579,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				", GrcAdvIntersetReq= :GrcAdvIntersetReq, GrcAdvType= :GrcAdvType, GrcAdvMinTerms= :GrcAdvMinTerms, GrcAdvMaxTerms= :GrcAdvMaxTerms, GrcAdvDefaultTerms= :GrcAdvDefaultTerms");
 		sql.append(
 				", AdvIntersetReq= :AdvIntersetReq, AdvType= :AdvType, AdvMinTerms= :AdvMinTerms, AdvMaxTerms= :AdvMaxTerms, AdvDefaultTerms= :AdvDefaultTerms");
-		sql.append(", AdvStage= :AdvStage, DsfReq= :DsfReq, CashCollateralReq= :CashCollateralReq");
+		sql.append(
+				", AdvStage= :AdvStage, DsfReq= :DsfReq, CashCollateralReq= :CashCollateralReq  , TdsAllowToModify =:TdsAllowToModify, TdsApplicableTo =:TdsApplicableTo");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {

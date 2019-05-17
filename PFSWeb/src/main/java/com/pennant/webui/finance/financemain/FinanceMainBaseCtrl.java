@@ -417,6 +417,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected ExtendedCombobox dsaCode;
 	protected Hbox hbox_tdsApplicable;
 	protected Checkbox tDSApplicable;
+	protected Row row_tDSPercentage;
+	protected Row row_tDSEndDate;
+	protected Decimalbox tDSPercentage;
+	protected Datebox tDSStartDate;
+	protected Datebox tDSEndDate;
+	protected CurrencyBox tDSLimitAmt;
+
 	protected Label label_FinanceMainDialog_TDSApplicable;
 	//Facility Details
 	protected Row rowFacilityAmounts;
@@ -1202,6 +1209,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.facilityMarginRate.setFormat(PennantConstants.rateFormate9);
 		this.facilityMarginRate.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.facilityMarginRate.setScale(LengthConstants.LEN_RATE_SCALE);
+		
+		this.tDSEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.tDSStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.tDSLimitAmt.setProperties(false, finFormatter);
 
 		this.mMAReference.setProperties("MMAgreement", "MMAId", "MMAReference", false, 3, 161);
 
@@ -1644,19 +1655,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
 
 		for (Integer verificationType : verificationTypes) {
-			if (verificationType == VerificationType.FI.getKey()
+			if (VerificationType.FI.getKey().equals(verificationType)
 					&& (!(financeDetail.isFiInitTab() || financeDetail.isFiApprovalTab()))) {
 				isEnquiryVisible = true;
-			} else if (verificationType == VerificationType.TV.getKey()
+			} else if (VerificationType.TV.getKey().equals(verificationType)
 					&& (!(financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()))) {
 				isEnquiryVisible = true;
-			} else if (verificationType == VerificationType.LV.getKey()
+			} else if (VerificationType.LV.getKey().equals(verificationType)
 					&& (!(financeDetail.isLvInitTab() || financeDetail.isLvApprovalTab()))) {
 				isEnquiryVisible = true;
-			} else if (verificationType == VerificationType.RCU.getKey()
+			} else if (VerificationType.RCU.getKey().equals(verificationType)
 					&& !(financeDetail.isRcuInitTab() || financeDetail.isRcuApprovalTab())) {
 				isEnquiryVisible = true;
-			} else if (verificationType == VerificationType.PD.getKey()
+			} else if (VerificationType.PD.getKey().equals(verificationType)
 					&& !(financeDetail.isPdInitTab() || financeDetail.isPdApprovalTab())) {
 				isEnquiryVisible = true;
 			}
@@ -3347,13 +3358,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
 		//TDSApplicable Visiblitly based on Financetype Selection
-		if (financeType.isTDSApplicable()) {
+		if (financeType.isTdsApplicable()) {
 			this.hbox_tdsApplicable.setVisible(true);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
 		} else {
 			this.hbox_tdsApplicable.setVisible(false);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(false);
 		}
+		if (!financeType.isTdsAllowToModify()) {
+			this.tDSPercentage.setReadonly(true);
+		}
+		onchecktDSApplicable();
+		this.tDSPercentage.setValue(aFinanceMain.getTdsPercentage());
+		this.tDSStartDate.setValue(aFinanceMain.getTdsStartDate());
+		this.tDSEndDate.setValue(aFinanceMain.getTdsEndDate());
+		this.tDSLimitAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getTdsLimitAmt(), format));
 
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
@@ -8731,6 +8750,26 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onCheck$tDSApplicable(Event event) {
+		onchecktDSApplicable();
+	}
+
+	private void onchecktDSApplicable() {
+		logger.debug(Literal.ENTERING);
+		String allowTaxDeduction = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
+
+		if (PennantConstants.YES.equals(allowTaxDeduction)) {
+			if (this.tDSApplicable.isChecked()) {
+				this.row_tDSPercentage.setVisible(true);
+				this.row_tDSEndDate.setVisible(true);
+			} else {
+				this.row_tDSPercentage.setVisible(false);
+				this.row_tDSEndDate.setVisible(false);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	public void onCheck$alwBpiTreatment(Event event) {
 		logger.debug(Literal.ENTERING);
 		oncheckalwBpiTreatment(true);
@@ -11112,6 +11151,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceMain.setQuickDisb(this.quickDisb.isChecked());
 		//Commercial Workflow Fields Data Setting
 		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
+		
+		try {
+			aFinanceMain.setTdsPercentage(this.tDSPercentage.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setTdsStartDate(this.tDSStartDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setTdsEndDate(this.tDSEndDate.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setTdsLimitAmt(
+					PennantApplicationUtil.unFormateAmount(this.tDSLimitAmt.getActualValue(), formatter));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		//FinanceMain Details tab ---> 2. Grace Period Details
 		try {
@@ -13492,7 +13553,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<FinanceCheckListReference> chkList = getFinanceDetail().getFinanceCheckList();
 		selAnsCountMap = getFinanceDetail().getLovDescSelAnsCountMap();
 
-		if (chkList != null && chkList.size() >= 0) {
+		if (CollectionUtils.isNotEmpty(chkList)) {
 			getFinanceDetail().setFinanceCheckList(chkList);
 			getFinanceDetail().setLovDescSelAnsCountMap(selAnsCountMap);
 		}
@@ -14350,12 +14411,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_dsaCode"), this.dsaCode);
 
 		//TDS Applicable
-		if (!financeType.isTDSApplicable()) {
+		if (!financeType.isTdsApplicable()) {
 			this.tDSApplicable.setDisabled(true);
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.tDSApplicable);
 		}
-
+		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSPercentage"), this.tDSPercentage);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSStartDate"), this.tDSStartDate);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSEndDate"), this.tDSEndDate);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSLimitAmt"), this.tDSLimitAmt);
+		
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));
 
@@ -15166,6 +15231,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.unPlannedEmiHLockPeriod.setReadonly(true);
 		this.cpzAtReAge.setDisabled(true);
 		readOnlyComponent(true, this.roundingMode);
+		
+		readOnlyComponent(true, this.tDSPercentage);
+		readOnlyComponent(true, this.tDSStartDate);
+		readOnlyComponent(true, this.tDSEndDate);
+		readOnlyComponent(true, this.tDSLimitAmt);
 
 		//FinanceMain Details Tab ---> 4. Overdue Penalty Details
 		readOnlyComponent(true, this.applyODPenalty);
@@ -16556,7 +16626,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		BigDecimal iIRVAlue = BigDecimal.ZERO;
-		iIRVAlue.setScale(6);
 		if (detail.getCustomerEligibilityCheck().getInstallmentAmount().compareTo(BigDecimal.ZERO) != 0
 				&& customer.getCustTotalIncome().compareTo(BigDecimal.ZERO) != 0) {
 			iIRVAlue = detail.getCustomerEligibilityCheck().getInstallmentAmount();
@@ -17715,35 +17784,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_ISTISNA)) {
-
-			if (disbursementDetailDialogCtrl != null
-					&& disbursementDetailDialogCtrl.getDisbursementDetails().size() == 0) {
-				Tab tab = getTab(AssetConstants.UNIQUE_ID_DISBURSMENT);
-				if (tab != null) {
-					tab.setSelected(true);
-				}
-				MessageUtil.showError("Billing & Advance Details must be Added.");
-				return null;
-			} else {
-
-				boolean disbVaidated = false;
-				for (FinanceDisbursement finDisb : disbursementDetailDialogCtrl.getDisbursementDetails()) {
-					if (finDisb.getDisbDate().compareTo(this.finStartDate.getValue()) >= 0) {
-						if ("A".equals(StringUtils.trimToEmpty(finDisb.getDisbType()))
-								|| "B".equals(StringUtils.trimToEmpty(finDisb.getDisbType()))) {
-							if (finDisb.getDisbAmount().compareTo(BigDecimal.ZERO) > 0) {
-								disbVaidated = true;
-							}
-						}
-					} else {
-						disbVaidated = false;
-						break;
+			if (disbursementDetailDialogCtrl != null) {
+				if (disbursementDetailDialogCtrl.getDisbursementDetails().size() == 0) {
+					Tab tab = getTab(AssetConstants.UNIQUE_ID_DISBURSMENT);
+					if (tab != null) {
+						tab.setSelected(true);
 					}
-				}
-
-				if (!disbVaidated) {
-					MessageUtil.showError(Labels.getLabel("label_IstisnaFinanceMainDialog_ValidateAsset.value"));
+					MessageUtil.showError("Billing & Advance Details must be Added.");
 					return null;
+				} else {
+					boolean disbVaidated = false;
+					for (FinanceDisbursement finDisb : disbursementDetailDialogCtrl.getDisbursementDetails()) {
+						if (finDisb.getDisbDate().compareTo(this.finStartDate.getValue()) >= 0) {
+							if ("A".equals(StringUtils.trimToEmpty(finDisb.getDisbType()))
+									|| "B".equals(StringUtils.trimToEmpty(finDisb.getDisbType()))) {
+								if (finDisb.getDisbAmount().compareTo(BigDecimal.ZERO) > 0) {
+									disbVaidated = true;
+								}
+							}
+						} else {
+							disbVaidated = false;
+							break;
+						}
+					}
+
+					if (!disbVaidated) {
+						MessageUtil.showError(Labels.getLabel("label_IstisnaFinanceMainDialog_ValidateAsset.value"));
+						return null;
+					}
 				}
 			}
 

@@ -223,6 +223,31 @@
 														sclass="z-toolbarbutton" />
 												</hbox>
 											</row>
+											<row id="row_tDSPercentage" visible="false">
+												<label id="label_tDSPercentage"
+													value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
+												<hbox id="hbox_tDSPercentage">
+													<space spacing="2px" />
+													<decimalbox id="tDSPercentage" width="250px"  />
+												</hbox>
+												<label id="label_FinanceMainDialog_tDSStartDate"
+													value="${c:l('label_FinanceMainDialog_tDSStartDate.value')}" />
+												<hbox>
+													<space spacing="2px"/>
+													<datebox id="tDSStartDate" width="120px" />
+												</hbox>
+											</row>
+											<row id="row_tDSEndDate" visible="false">
+												<label id="label_FinanceMainDialog_tDSEndDate"
+														value="${c:l('label_FinanceMainDialog_tDSEndDate.value')}" />
+												<hbox>
+												 	<space spacing="2px"  />
+													<datebox id="tDSEndDate" width="120px" />
+												 </hbox>
+												 <label id="label_FinanceMainDialog_TDSLimitAmt"
+													value="${c:l('label_FinanceMainDialog_TDSLimitAmt.value')}" />
+												<currencyBox id="tDSLimitAmt" />
+											</row>
 											<row id="row_downPayBank" visible="false">
 												<label id="label_FinanceMainDialog_DownPayBank"
 													value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />

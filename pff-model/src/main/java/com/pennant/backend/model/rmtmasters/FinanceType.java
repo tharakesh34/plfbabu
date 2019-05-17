@@ -201,7 +201,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal rpyAdvMargin = BigDecimal.ZERO;
 	private BigDecimal rpyAdvPftRate = BigDecimal.ZERO;
 	private boolean alwMultiPartyDisb;
-	private boolean tDSApplicable;
+	private boolean tdsApplicable;
+	private boolean tdsAllowToModify;
+	private String tdsApplicableTo;
 	private String addrLine1;
 
 	//Profit on past Due
@@ -1652,12 +1654,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.finSuspRemarks = finSuspRemarks;
 	}
 
-	public boolean isTDSApplicable() {
-		return tDSApplicable;
+	public boolean isTdsApplicable() {
+		return tdsApplicable;
 	}
 
-	public void setTDSApplicable(boolean tDSApplicable) {
-		this.tDSApplicable = tDSApplicable;
+	public void setTdsApplicable(boolean tdsApplicable) {
+		this.tdsApplicable = tdsApplicable;
 	}
 
 	public boolean isApplyGrcPricing() {
@@ -2424,4 +2426,21 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setDownPayRuleCode(String downPayRuleCode) {
 		this.downPayRuleCode = downPayRuleCode;
 	}
+
+	public String getTdsApplicableTo() {
+		return tdsApplicableTo;
+	}
+
+	public void setTdsApplicableTo(String tdsApplicableTo) {
+		this.tdsApplicableTo = tdsApplicableTo;
+	}
+
+	public boolean isTdsAllowToModify() {
+		return tdsAllowToModify;
+	}
+
+	public void setTdsAllowToModify(boolean tdsAllowToModify) {
+		this.tdsAllowToModify = tdsAllowToModify;
+	}
+
 }

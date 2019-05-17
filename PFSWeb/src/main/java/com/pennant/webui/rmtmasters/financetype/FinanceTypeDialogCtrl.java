@@ -139,6 +139,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.PTCKeditor;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
@@ -152,11 +153,12 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SolutionFactory/FinanceType/financeTypeDialog.zul file.
@@ -235,6 +237,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Textbox eligibilityMethod;
 	protected Button btnAlwElgMthdDetails;
 	protected Checkbox taxNoMand;
+	
+	protected Checkbox tDSAllowToModify;// autoWired
+	protected Label label_FinanceTypeDialog_tDSAllowToModify;// autoWired
+	protected Textbox tdsApplicableTo;// autoWired
+	protected Button btnSearchtdsApplicableTo;// autoWired
+	protected Label label_FinanceTypeDialog_tdsApplicableTo;// autoWired
+	protected Space space_ApplicableTo;// autoWired
+
 
 	protected Row row_AutoRejectionDays;
 	protected Intbox autoRejectionDays;
@@ -1191,7 +1201,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.manualSchedule.setChecked(aFinanceType.isManualSchedule());
 
 		this.rollOverFrq.setValue(aFinanceType.getRollOverFrq());
-		this.tDSApplicable.setChecked(aFinanceType.isTDSApplicable());
+		this.tDSApplicable.setChecked(aFinanceType.isTdsApplicable());
+		checkTDSApplicableChecked();
+		this.tdsApplicableTo.setValue(aFinanceType.getTdsApplicableTo());
+		this.tDSAllowToModify.setChecked(aFinanceType.isTdsAllowToModify());
+
 		this.alwMaxDisbCheckReq.setChecked(aFinanceType.isAlwMaxDisbCheckReq());
 		this.quickDisb.setChecked(aFinanceType.isQuickDisb());
 		this.taxNoMand.setChecked(aFinanceType.isTaxNoMand());
@@ -2087,7 +2101,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		aFinanceType.setAlwMultiPartyDisb(this.alwMultiPartyDisb.isChecked());
 		aFinanceType.setRollOverFinance(this.rolloverFinance.isChecked());
-		aFinanceType.setTDSApplicable(this.tDSApplicable.isChecked());
+		aFinanceType.setTdsApplicable(this.tDSApplicable.isChecked());
+		aFinanceType.setTdsAllowToModify(this.tDSAllowToModify.isChecked());
+		try {
+			aFinanceType.setTdsApplicableTo(this.tdsApplicableTo.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		aFinanceType.setDroplineOD(this.droplineOD.isChecked());
 		aFinanceType.setFrequencyDays(this.frequencyDays.getValue());
 		aFinanceType.setTaxNoMand(this.taxNoMand.isChecked());
@@ -3825,6 +3845,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_OverDraftFinanceTypeDialog_LPPRULE.value"), null, true, true));
 		}
+		
+		if (this.tDSApplicable.isChecked() && !this.tdsApplicableTo.isDisabled()) {
+			this.tdsApplicableTo.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_tdsApplicableTo.value"), null, true));
+		}
 		/*
 		 * To Check Whether it is save or submit if save no validation else it should validate
 		 */
@@ -4379,6 +4404,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowDownpayPgm.setDisabled(isTrue);
 		this.rolloverFinance.setDisabled(isTrue);
 		this.tDSApplicable.setDisabled(isTrue);
+		this.btnSearchtdsApplicableTo.setDisabled(isTrue);
+		this.tdsApplicableTo.setDisabled(isTrue);
+		this.tDSAllowToModify.setDisabled(isTrue);
 		this.rollOverFrq.setDisabled(isTrue);
 		this.finCollateralOvrride.setDisabled(isTrue);
 		this.finCommitmentOvrride.setDisabled(isTrue);
@@ -5481,6 +5509,30 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
+	public void onCheck$tDSApplicable(Event event) {
+		checkTDSApplicableChecked();
+	}
+	
+	private void checkTDSApplicableChecked() {
+		String valueAsString = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
+		if (StringUtils.isNotEmpty(valueAsString) && StringUtils.equals(valueAsString, PennantConstants.YES)) {
+			if (this.tDSApplicable.isChecked()) {
+				this.label_FinanceTypeDialog_tDSAllowToModify.setVisible(true);
+				this.tDSAllowToModify.setVisible(true);
+				this.label_FinanceTypeDialog_tdsApplicableTo.setVisible(true);
+				this.tdsApplicableTo.setVisible(true);
+				this.space_ApplicableTo.setSclass(PennantConstants.mandateSclass);
+				this.btnSearchtdsApplicableTo.setVisible(true);
+			} else {
+				this.label_FinanceTypeDialog_tDSAllowToModify.setVisible(false);
+				this.tDSAllowToModify.setVisible(false);
+				this.label_FinanceTypeDialog_tdsApplicableTo.setVisible(false);
+				this.tdsApplicableTo.setVisible(false);
+				this.space_ApplicableTo.setSclass("");
+				this.btnSearchtdsApplicableTo.setVisible(false);
+			}
+		}
+	}
 	public void onCheck$allowRIAInvestment(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -7173,6 +7225,37 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	}
 
+	public void onClick$btnSearchtdsApplicableTo(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		this.tdsApplicableTo.setErrorMessage("");
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_FinanceTypeDialog, "CustomerCategory",
+				this.tdsApplicableTo.getValue(), null);
+
+		if (dataObject instanceof String) {
+			this.tdsApplicableTo.setValue(dataObject.toString());
+			tdsApplicableTo.setTooltiptext(dataObject.toString());
+		} else {
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			if (details != null) {
+				String tempflagcode = "";
+				List<String> flagKeys = new ArrayList<>(details.keySet());
+				for (int i = 0; i < flagKeys.size(); i++) {
+					if (StringUtils.isEmpty(flagKeys.get(i))) {
+						continue;
+					}
+					if (i == 0) {
+						tempflagcode = flagKeys.get(i);
+					} else {
+						tempflagcode = tempflagcode + "," + flagKeys.get(i);
+					}
+				}
+				this.tdsApplicableTo.setValue(tempflagcode);
+				tdsApplicableTo.setTooltiptext(tempflagcode);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
 	public void onClick$btnSearchCollateralType(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		this.collateralType.setErrorMessage("");

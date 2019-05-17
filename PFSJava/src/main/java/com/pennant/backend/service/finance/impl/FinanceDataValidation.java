@@ -3001,7 +3001,7 @@ public class FinanceDataValidation {
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90203", valueParm)));
 		}
 		if (finMain.isTDSApplicable()) {
-			if (!financeType.isTDSApplicable()) {
+			if (!financeType.isTdsApplicable()) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "tds";
 				valueParm[1] = financeType.getFinType();

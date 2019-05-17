@@ -59,7 +59,6 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -1251,7 +1250,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 			}
 
-		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxableAmount)) {
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
 			finFeeDetail.setNetAmount(taxableAmount);
@@ -1298,7 +1297,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 			}
 
-		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxableAmount)) {
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
 			finFeeDetail.setNetAmount(taxableAmount);
