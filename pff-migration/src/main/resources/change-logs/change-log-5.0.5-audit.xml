@@ -38,6 +38,18 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-
-
+	<changeSet id="1" author="Saikiran.v">
+		<addColumn tableName="adtRMTFinanceTypes">
+			<column name="TDSAllowToModify" type="boolean"/>
+			<column name="tdsApplicableTo" type="varchar(6)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet id="2" author="Saikiran.v">
+		<addColumn tableName="adtFinancemain">
+			<column name="tDSPercentage" type="decimal(18,2)"></column>
+			<column name="tDSStartDate" type="datetime"></column>
+			<column name="tDSEndDate" type="datetime"></column>
+			<column name="tDSLimitAmt" type="decimal(18,2)"></column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
