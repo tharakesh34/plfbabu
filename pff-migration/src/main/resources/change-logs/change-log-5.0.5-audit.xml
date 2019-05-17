@@ -38,18 +38,45 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
+	
 	<changeSet id="1" author="Saikiran.v">
 		<addColumn tableName="adtRMTFinanceTypes">
 			<column name="TDSAllowToModify" type="boolean"/>
-			<column name="tdsApplicableTo" type="varchar(6)"/>
+			<column name="tdsApplicableTo" type="varchar(50)"/>
 		</addColumn>
 	</changeSet>
+	
+	
 	<changeSet id="2" author="Saikiran.v">
 		<addColumn tableName="adtFinancemain">
-			<column name="tDSPercentage" type="decimal(18,2)"></column>
-			<column name="tDSStartDate" type="datetime"></column>
-			<column name="tDSEndDate" type="datetime"></column>
-			<column name="tDSLimitAmt" type="decimal(18,2)"></column>
+			<column name="tDSPercentage" type="decimal(18,2)"/>
+			<column name="tDSStartDate" type="datetime"/>
+			<column name="tDSEndDate" type="datetime"/>
+			<column name="tDSLimitAmt" type="decimal(18,2)"/>
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="12" author="Irfan">
+		<sql>
+			<![CDATA[
+				UPDATE adtRMTFinanceTypes Set TDSAllowToModify = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="13" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtRMTFinanceTypes ADD CONSTRAINT DF_adtRMTFinanceTypes_TDSALLOWTOMODIFY DEFAULT 0 FOR TDSALLOWTOMODIFY;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="14" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSAllowToModify" tableName="adtRMTFinanceTypes" defaultValue="0" />
+    </changeSet>
+	
+	<changeSet id="15" author="Saikiran.v">
+		<addNotNullConstraint tableName="adtRMTFinanceTypes" columnName="TDSAllowToModify"/>
 	</changeSet>
 </databaseChangeLog>

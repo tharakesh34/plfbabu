@@ -1137,23 +1137,16 @@ UNION ALL
 
 	<changeSet id="26" author="Saikiran.V">
 		<sql>
-			delete from TEMPLATEFIELDS where FIELD='rc_effectiveDate';
-			Insert into TEMPLATEFIELDS
-			(MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-			('FIN','rc_effectiveDate','Effective Date','A','AddRateChange');
-			delete from TEMPLATEFIELDS where FIELD='rc_finReference';
-			Insert into TEMPLATEFIELDS
-			(MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-			('FIN','rc_finReference','Loan Account Number','A','AddRateChange');
-			delete from TEMPLATEFIELDS where FIELD='rc_oldRate';
-			Insert into TEMPLATEFIELDS
-			(MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values
-			('FIN','rc_oldRate','Old Interest Rate','A','AddRateChange');
-			delete
-			from TEMPLATEFIELDS where FIELD='rc_newRate';
-			Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT)
-			values
-			('FIN','rc_newRate','Old Interest Rate','A','AddRateChange');
+			<![CDATA[
+				delete from TEMPLATEFIELDS where FIELD='rc_effectiveDate';
+				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','rc_effectiveDate','Effective Date','A','AddRateChange');
+				delete from TEMPLATEFIELDS where FIELD='rc_finReference';
+				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','rc_finReference','Loan Account Number','A','AddRateChange');
+				delete from TEMPLATEFIELDS where FIELD='rc_oldRate';
+				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','rc_oldRate','Old Interest Rate','A','AddRateChange');
+				delete from TEMPLATEFIELDS where FIELD='rc_newRate';
+				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','rc_newRate','Old Interest Rate','A','AddRateChange');
+			]]>
 		</sql>
 	</changeSet>
 
@@ -1166,9 +1159,27 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="28_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'extendedfielddetail');
+				select deps_save_and_drop_dependencies ('plf', 'extendedfielddetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="28" author="DurgaPrasad.G">
 		<modifyDataType tableName="EXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)" />
 		<modifyDataType tableName="EXTENDEDFIELDDETAIL_TEMP" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)" />
+	</changeSet>
+	
+	<changeSet id="28_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'extendedfielddetail');
+				select deps_restore_dependencies ('plf', 'extendedfielddetail_temp');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="27" author="Saikiran.v">
@@ -1196,7 +1207,7 @@ UNION ALL
 		<![CDATA[
 			delete from TEMPLATEFIELDS where FIELD='rc_newRate';
 			Insert into TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) values ('FIN', 'rc_newRate', 'New Interest Rate', 'A', 'AddRateChange');
-			]]>
+		]]>
 		</sql>
 	</changeSet>
 
@@ -1480,6 +1491,7 @@ UNION ALL
 				  LEFT JOIN LIMITPARAMS T8 ON T1.RULECODE = T8.QUERYCODE
       	</createView>
 	</changeSet>
+	
 	<changeSet id="33" author="Varaprasad.K">
 		<createTable tableName="verification_pd">
 			<column name="VerificationId" type="bigint">
@@ -1914,7 +1926,6 @@ UNION ALL
 	<changeSet id="44" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
-			
 			    delete from secrolegroups where grpid = (select grpid from secgroups where grpcode='PersonalDiscussion_MAKER') and roleid = (select roleid from secroles where rolecd='MSTGRP1_MAKER');
 				delete from secrolegroups where grpid = (select grpid from secgroups where grpcode='PersonalDiscussion_APPROVER') and roleid = (select roleid from secroles where rolecd='MSTGRP1_APPROVER');
 				

@@ -1644,10 +1644,10 @@
 
 	<changeSet id="2.7" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_TEMP_CT_ID" referencedTableName="COMMODITY_TYPES" baseColumnNames="CommodityType"
-			baseTableName="COMMODITIES_TEMP" referencedColumnNames="Id" />
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CT_ID" referencedTableName="COMMODITY_TYPES" baseColumnNames="CommodityType"
-			baseTableName="COMMODITIES" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_TEMP_CT_ID" referencedTableName="COMMODITY_TYPES"
+			baseColumnNames="CommodityType" baseTableName="COMMODITIES_TEMP" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_CT_ID" referencedTableName="COMMODITY_TYPES"
+			baseColumnNames="CommodityType" baseTableName="COMMODITIES" referencedColumnNames="Id" />
 	</changeSet>
 
 	<changeSet id="3" author="vijaya.a">
@@ -1658,7 +1658,8 @@
 
 	<changeSet id="3.1" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
-		<addUniqueConstraint tableName="COMMODITIES_TEMP" columnNames="CommodityType, Code" constraintName="UK_COMMODITIES_TEMP_CODE_TYPE" />
+		<addUniqueConstraint tableName="COMMODITIES_TEMP" columnNames="CommodityType, Code"
+			constraintName="UK_COMMODITIES_TEMP_CODE_TYPE" />
 		<addUniqueConstraint tableName="COMMODITIES" columnNames="CommodityType, Code" constraintName="UK_COMMODITIES_CODE_TYPE" />
 	</changeSet>
 
@@ -1875,7 +1876,8 @@
 	</changeSet>
 
 	<changeSet id="7.2" author="vijaya.a" dbms="postgresql, oracle">
-		<addDefaultValue columnName="thresholdLtvPercentage" tableName="CollateralStructure_Temp" defaultValue="0.00" />
+		<addDefaultValue columnName="thresholdLtvPercentage" tableName="CollateralStructure_Temp"
+			defaultValue="0.00" />
 	</changeSet>
 
 	<changeSet id="7.3" author="vijaya.a">
@@ -2077,8 +2079,8 @@
 
 	<changeSet id="13.1" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
-		<addForeignKeyConstraint constraintName="FK_COMMODITIES_LOG_CT_ID" referencedTableName="COMMODITIES" baseColumnNames="CommodityId"
-			baseTableName="COMMODITIES_LOG" referencedColumnNames="Id" />
+		<addForeignKeyConstraint constraintName="FK_COMMODITIES_LOG_CT_ID" referencedTableName="COMMODITIES"
+			baseColumnNames="CommodityId" baseTableName="COMMODITIES_LOG" referencedColumnNames="Id" />
 	</changeSet>
 
 	<changeSet id="14" author="vijaya.a">
@@ -2120,101 +2122,101 @@
 
 	<changeSet id="16" author="aditya.a">
 		<createView viewName="Postings_View" replaceIfExists="true">
-     SELECT t1.linkedtranid,
-    t1.postref,
-    t1.postingid,
-    t1.finreference,
-    t1.finevent,
-    t1.postdate,
-    t1.valuedate,
-    t1.appvaluedate,
-    t1.appdate,
-    t1.trancode,
-    t1.revtrancode,
-    t1.drorcr,
-    t1.account,
-    t1.postamount,
-    t1.poststatus,
-    t1.errorid,
-    t1.errormsg,
-    t2.aeeventcodedesc lovdesceventcodename,
-    t1.shadowposting,
-    t1.trandesc,
-    t1.amounttype,
-    t1.acccy,
-    t1.postbranch,
-    t1.userbranch,
-    t1.tranorderid,
-    t1.transorder
-   FROM postings t1
-     JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-     JOIN (Select FinReference from FinanceMain UNION 
-           SELECT FinReference from FinanceMain_Temp) t3 ON t3.finreference = t1.finreference
-UNION ALL
- SELECT t1.linkedtranid,
-    t1.postref,
-    t1.postingid,
-    t3.primarylinkref finreference,
-    t1.finevent,
-    t1.postdate,
-    t1.valuedate,
-    t1.appvaluedate,
-    t1.appdate,
-    t1.trancode,
-    t1.revtrancode,
-    t1.drorcr,
-    t1.account,
-    t1.postamount,
-    t1.poststatus,
-    t1.errorid,
-    t1.errormsg,
-    t2.aeeventcodedesc lovdesceventcodename,
-    t1.shadowposting,
-    t1.trandesc,
-    t1.amounttype,
-    t1.acccy,
-    t1.postbranch,
-    t1.userbranch,
-    t1.tranorderid,
-    t1.transorder
-   FROM postings t1
-     JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-     JOIN vasrecording t3 ON t3.vasreference = t1.finreference
-UNION ALL
- SELECT t1.linkedtranid,
-    t1.postref,
-    t1.postingid,
-    t3.reference finreference,
-    t1.finevent,
-    t1.postdate,
-    t1.valuedate,
-    t1.appvaluedate,
-    t1.appdate,
-    t1.trancode,
-    t1.revtrancode,
-    t1.drorcr,
-    t1.account,
-    t1.postamount,
-    t1.poststatus,
-    t1.errorid,
-    t1.errormsg,
-    t2.aeeventcodedesc lovdesceventcodename,
-    t1.shadowposting,
-    t1.trandesc,
-    t1.amounttype,
-    t1.acccy,
-    t1.postbranch,
-    t1.userbranch,
-    t1.tranorderid,
-    t1.transorder
-   FROM postings t1
-     JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
-     JOIN jvpostings t3 ON t3.batchreference = t1.finreference
+		     SELECT t1.linkedtranid,
+		    t1.postref,
+		    t1.postingid,
+		    t1.finreference,
+		    t1.finevent,
+		    t1.postdate,
+		    t1.valuedate,
+		    t1.appvaluedate,
+		    t1.appdate,
+		    t1.trancode,
+		    t1.revtrancode,
+		    t1.drorcr,
+		    t1.account,
+		    t1.postamount,
+		    t1.poststatus,
+		    t1.errorid,
+		    t1.errormsg,
+		    t2.aeeventcodedesc lovdesceventcodename,
+		    t1.shadowposting,
+		    t1.trandesc,
+		    t1.amounttype,
+		    t1.acccy,
+		    t1.postbranch,
+		    t1.userbranch,
+		    t1.tranorderid,
+		    t1.transorder
+		   FROM postings t1
+		     JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+		     JOIN (Select FinReference from FinanceMain UNION 
+		           SELECT FinReference from FinanceMain_Temp) t3 ON t3.finreference = t1.finreference
+		UNION ALL
+		 SELECT t1.linkedtranid,
+		    t1.postref,
+		    t1.postingid,
+		    t3.primarylinkref finreference,
+		    t1.finevent,
+		    t1.postdate,
+		    t1.valuedate,
+		    t1.appvaluedate,
+		    t1.appdate,
+		    t1.trancode,
+		    t1.revtrancode,
+		    t1.drorcr,
+		    t1.account,
+		    t1.postamount,
+		    t1.poststatus,
+		    t1.errorid,
+		    t1.errormsg,
+		    t2.aeeventcodedesc lovdesceventcodename,
+		    t1.shadowposting,
+		    t1.trandesc,
+		    t1.amounttype,
+		    t1.acccy,
+		    t1.postbranch,
+		    t1.userbranch,
+		    t1.tranorderid,
+		    t1.transorder
+		   FROM postings t1
+		     JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+		     JOIN vasrecording t3 ON t3.vasreference = t1.finreference
+		UNION ALL
+		 SELECT t1.linkedtranid,
+		    t1.postref,
+		    t1.postingid,
+		    t3.reference finreference,
+		    t1.finevent,
+		    t1.postdate,
+		    t1.valuedate,
+		    t1.appvaluedate,
+		    t1.appdate,
+		    t1.trancode,
+		    t1.revtrancode,
+		    t1.drorcr,
+		    t1.account,
+		    t1.postamount,
+		    t1.poststatus,
+		    t1.errorid,
+		    t1.errormsg,
+		    t2.aeeventcodedesc lovdesceventcodename,
+		    t1.shadowposting,
+		    t1.trandesc,
+		    t1.amounttype,
+		    t1.acccy,
+		    t1.postbranch,
+		    t1.userbranch,
+		    t1.tranorderid,
+		    t1.transorder
+		   FROM postings t1
+		     JOIN bmtaeevents t2 ON t1.finevent = t2.aeeventcode
+		     JOIN jvpostings t3 ON cast(t3.batchreference as varchar(20)) = t1.finreference
 		</createView>
 	</changeSet>
 
-	<!--This change log xml is Freezed dont add change sets in this version. please add new change sets on change-log-{pff.version}.xml i.e pff.version from 
-		pom.xml in pff pff-aggregator -->
+	<!--This change log xml is Freezed dont add change sets in this version. please add new change sets on change-log-{pff.version}.xml 
+		i.e pff.version from pom.xml in pff pff-aggregator -->
 
 
 </databaseChangeLog>
