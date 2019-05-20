@@ -57,14 +57,12 @@
 								<row>
 									<label value="${c:l('label_TransactionMapping_POSId.value')}" />
 									<hbox>
-										<space spacing="1px" sclass="mandatory" />
 										<extendedcombobox id="posId" />
 									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_TransactionMapping_DealerCode.value')}" />
 									<hbox>
-										<space spacing="1px" sclass="mandatory" />
 										<extendedcombobox id="dealerCode" />
 									</hbox>
 								</row>
@@ -78,7 +76,6 @@
 								<row>
 									<label value="${c:l('label_TransactionMapping_MID.value')}" />
 									<hbox>
-										<space spacing="1px" sclass="mandatory" />
 										<extendedcombobox id="mid" />
 									</hbox>
 								</row>

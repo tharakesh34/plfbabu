@@ -124,16 +124,19 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		this.posId.setModuleName("POSId");
 		this.posId.setValueColumn("POSId");
 		this.posId.setDescColumn("StoreName");
+		this.posId.setMandatoryStyle(true);
 		this.posId.setValidateColumns(new String[] { "POSId" });
 
 		this.dealerCode.setModuleName("DealerCode");
 		this.dealerCode.setValueColumn("DealerCode");
 		this.dealerCode.setDescColumn("MerchantId");
+		this.dealerCode.setMandatoryStyle(true);
 		this.dealerCode.setValidateColumns(new String[] { "DealerCode" });
 
 		this.mid.setModuleName("Stores");
 		this.mid.setValueColumn("StoreId");
 		this.mid.setDescColumn("StoreName");
+		this.mid.setMandatoryStyle(true);
 		this.mid.setValidateColumns(new String[] { "StoreId" });
 
 		setStatusDetails();
