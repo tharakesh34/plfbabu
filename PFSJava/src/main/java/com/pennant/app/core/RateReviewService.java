@@ -57,6 +57,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.dao.finance.FinanceRateReviewDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceRateReview;
@@ -295,6 +296,7 @@ public class RateReviewService extends ServiceHelper {
 	 */
 	public FinScheduleData getFinSchDataByFinRef(FinEODEvent finEodEvent) {
 		logger.debug("Entering");
+		
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinReference(finEodEvent.getFinanceMain().getFinReference());
 		finSchData.setFinanceMain(finEodEvent.getFinanceMain());
@@ -302,10 +304,20 @@ public class RateReviewService extends ServiceHelper {
 		FinanceType fintype = getFinanceType(finEodEvent.getFinanceMain().getFinType());
 		finSchData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
+		
 		List<RepayInstruction> repayInstructions = getRepayInstructionDAO()
 				.getRepayInstrEOD(finSchData.getFinReference());
+		
 		finSchData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);
+		
+		// Finance Disbursement Details
+		List<FinanceDisbursement> finDisbDetails = getFinanceDisbursementDAO()
+				.getFinanceDisbursementDetails(finSchData.getFinReference(), "", false);
+
+		finSchData.setDisbursementDetails(finDisbDetails);
+		finEodEvent.setFinanceDisbursements(finDisbDetails);
+		
 		logger.debug("Leaving");
 		return finSchData;
 	}

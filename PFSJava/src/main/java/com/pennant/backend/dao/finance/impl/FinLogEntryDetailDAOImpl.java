@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -132,4 +133,35 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 		return maxPostDate;
 	}
 
+	@Override
+	public long getPrevSchedLogKey(String finReference, Date date) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("MonthEndDate", date);
+		source.addValue("SchdlRecal", 1);
+
+		StringBuilder selectSql = new StringBuilder(" Select MIN(LOGKEY)  ");
+		selectSql.append(" From FINLOGENTRYDETAIL");
+		selectSql.append(
+				" Where PostDate > :MonthEndDate AND SchdlRecal = :SchdlRecal AND  FinReference = :FinReference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		Long logKey;
+		try {
+			logKey = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.info(e);
+			logKey = 0L;
+		}
+
+		if (logKey == null) {
+			logKey = 0L;
+		}
+
+		logger.debug("Leaving");
+		return logKey;
+	}
 }

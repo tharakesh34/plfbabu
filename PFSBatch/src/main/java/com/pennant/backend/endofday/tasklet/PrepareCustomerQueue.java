@@ -44,6 +44,7 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -51,6 +52,9 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
+import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
@@ -59,6 +63,7 @@ public class PrepareCustomerQueue implements Tasklet {
 	private Logger logger = Logger.getLogger(PrepareCustomerQueue.class);
 
 	private CustomerQueuingDAO customerQueuingDAO;
+	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	public PrepareCustomerQueue() {
 
@@ -69,8 +74,34 @@ public class PrepareCustomerQueue implements Tasklet {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Prepare Customer Queue On : " + valueDate);
 
+		// Delete Future ACCRUAL Records before customer queuing
+
+		// ACCRUALS calculation for Amortization
+		String accrualCalForAMZ = SysParamUtil.getValueAsString(AmortizationConstants.MONTHENDACC_CALREQ);
+		if (StringUtils.endsWithIgnoreCase(accrualCalForAMZ, "Y")) {
+
+			if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0
+					|| StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
+
+				String fromFinStartDate = SysParamUtil.getValueAsString("MONTHENDACC_FROMFINSTARTDATE");
+
+				if ("Y".equals(fromFinStartDate)) {
+					projectedAmortizationDAO.deleteAllProjAccruals();
+				} else {
+					Date monthStart = DateUtility.getMonthStart(valueDate);
+					projectedAmortizationDAO.deleteFutureProjAccruals(monthStart);
+				}
+			}
+		}
+
+		// Clear CustomerQueueing
 		this.customerQueuingDAO.delete();
 		int count = customerQueuingDAO.prepareCustomerQueue(valueDate);
+
+		// update the LimitRebuild flag as true, if the Limit Structure has been
+		// changed
+		customerQueuingDAO.updateLimitRebuild();
+
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
 		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
 
@@ -78,7 +109,13 @@ public class PrepareCustomerQueue implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
+	// getters / setters
+
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
+	}
+
+	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
+		this.projectedAmortizationDAO = projectedAmortizationDAO;
 	}
 }

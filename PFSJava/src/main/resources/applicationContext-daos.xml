@@ -9173,43 +9173,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!-- Income Amortization IND AS -->
-	<!-- EOD -->
-	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl" parent="sequenceDao" />
-
-	<!-- IncomeAmortizationProcess -->
-	<bean id="incomeAmortizationProcess" class="com.pennant.app.eod.incomeamortization.IncomeAmortizationProcess">
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
-	</bean>
-
-	<!-- ProjectedAmortizationService -->
-	<bean id="projectedAmortizationService" class="com.pennant.app.core.ProjectedAmortizationService" parent="serviceHelper">
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
-		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-	</bean>
-	<bean id="changeScheduleMethodService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="changeScheduleMethodServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
 	<bean name="changeScheduleMethodServiceTarget" class="com.pennant.backend.financeservice.impl.ChangeScheduleMethodServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
@@ -10674,7 +10637,7 @@
 		<property name="schemeProductGroupDAO" ref="schemeProductGroupDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>	
-	
+
 	<!-- Dealer Mapping Service -->
 	<bean id="transactionMappingDAO" class="com.pennant.backend.dao.transactionmapping.impl.TransactionMappingDAOImpl" parent="sequenceDao" />
 
@@ -10706,5 +10669,46 @@
 	</bean>
 
 
+	<!-- Income Amortization IND AS -->
+	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl" parent="sequenceDao" />
 
+	<!-- ProjectedAmortizationService -->
+	<bean id="projectedAmortizationService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="projectedAmortizationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="prepareAMZDetails*">PROPAGATION_REQUIRED</prop>
+				<prop key="processMonthEndIncomeAMZ*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="projectedAmortizationServiceTarget" class="com.pennant.app.core.ProjectedAmortizationService">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+
+	<!-- Income Amortization One Time Activity -->
+	<bean name="incomeAmortizationService"
+		class="com.pennant.backend.service.incomeamortization.impl.IncomeAmortizationServiceImpl">
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+	</bean>
+	
 </beans>

@@ -4888,4 +4888,33 @@ public class PennantStaticListUtil {
 		return presetmentTypeList;
 	}
 
+	/**
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @param sortOrder
+	 * @return
+	 */
+	public static List<ValueLabel> getMonthEndList(Date startDate, Date endDate, String sortOrder) {
+
+		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
+		
+		/*startDate = DateUtility.getMonthEndDate(startDate);
+
+		// Prepare Month End list between two dates, by Default Ascending
+		while (DateUtility.getMonthEndDate(endDate).compareTo(startDate) > 0) {
+
+			monthEndList.add(new ValueLabel(DateUtility.format(startDate, PennantConstants.DBDateFormat),
+					DateUtility.format(startDate, DateFormat.LONG_MONTH.getPattern())));
+
+			startDate = DateUtility.addDays(startDate, 1);
+			startDate = DateUtility.getMonthEndDate(startDate);
+		}*/
+
+		// Month End List in Descending order
+		if (StringUtils.equals(sortOrder, PennantConstants.SortOrder_DESC)) {
+			Collections.reverse(monthEndList);
+		}
+		return monthEndList;
+	}
 }

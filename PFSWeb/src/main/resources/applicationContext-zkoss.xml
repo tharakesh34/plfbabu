@@ -5246,4 +5246,21 @@
 		scope="prototype">
 		<property name="receiptCalculator" ref="receiptCalculator" />
 	</bean>	
+	
+	<!-- Income Amortization One Time Activity -->
+	<bean id="incomeAmortizationCtrl" class="com.pennant.webui.incomeamortization.IncomeAmortizationCtrl" parent="basisCtrl" scope="prototype">
+		<property name="incomeAmortizationService" ref="incomeAmortizationService" />
+ 	</bean>
+
+	<!-- Calculate Average POS -->
+	<bean id="calAvgPOSCtrl" class="com.pennant.webui.incomeamortization.CalAvgPOSCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="incomeAmortizationService" ref="incomeAmortizationService" />
+	</bean>
+	
+	<!-- Amortization Process -->
+	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+	
 </beans>

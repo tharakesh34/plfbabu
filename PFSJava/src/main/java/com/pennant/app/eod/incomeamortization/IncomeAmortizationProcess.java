@@ -42,60 +42,9 @@
  */
 package com.pennant.app.eod.incomeamortization;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import com.pennant.app.core.FinEODEvent;
-import com.pennant.app.core.ProjectedAmortizationService;
-import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
-import com.pennant.backend.model.finance.ProjectedAccrual;
-
 public class IncomeAmortizationProcess {
-	private static final Logger logger = Logger.getLogger(IncomeAmortizationProcess.class);
 
-	private ProjectedAmortizationDAO projectedAmortizationDAO;
-	private ProjectedAmortizationService projectedAmortizationService;
 
-	private IncomeAmortizationProcess() {
-		super();
-	}
+	// Need to delete this file, NOT REQUIRED
 
-	/**
-	 * 
-	 * @throws Exception
-	 */
-	public void projectedIncomeAmortization() throws Exception {
-		logger.debug("Entering");
-
-		FinEODEvent finEODEvent = new FinEODEvent();
-
-		List<ProjectedAmortization> projAMZList = projectedAmortizationDAO.getActiveIncomeAMZDetails(true);
-		finEODEvent.setProjectedAMZList(projAMZList);
-
-		List<ProjectedAccrual> projAccrualList = projectedAmortizationDAO.getProjectedAccrualDetails();
-		finEODEvent.setProjectedAccrualList(projAccrualList);
-
-		// Income / Expense amortization calculations and save
-		List<ProjectedAmortization> projIncomeAMZList = projectedAmortizationService
-				.calculateMonthEndIncomeAmortizations(finEODEvent);
-		projectedAmortizationDAO.saveBatchProjIncomeAMZ(projIncomeAMZList);
-
-		// set amount values and update
-		finEODEvent = projectedAmortizationService.updateProjectedAMZAmounts(finEODEvent, projIncomeAMZList);
-		projectedAmortizationDAO.updateBatchIncomeAMZAmounts(finEODEvent.getProjectedAMZList());
-
-		logger.debug("Leaving");
-	}
-
-	// getters / setters
-
-	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {
-		this.projectedAmortizationDAO = projectedAmortizationDAO;
-	}
-
-	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
-		this.projectedAmortizationService = projectedAmortizationService;
-	}
 }

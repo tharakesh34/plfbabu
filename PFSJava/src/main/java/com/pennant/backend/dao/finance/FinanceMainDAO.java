@@ -337,13 +337,6 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceForAssignments(String finReference);
 
-	// Income Amortization
-	FinanceMain getFinanceForIncomeAMZ(String finReference);
-
-	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
-
-	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
-
 	void updateAssignmentId(String finReference, long assignmentId);
 
 	Map<String, Object> getGLSubHeadCodes(String finRef);
@@ -365,5 +358,12 @@ public interface FinanceMainDAO {
 	Map<String, Object> getGSTDataMap(long custId);
 
 	boolean isFinActive(String finReference);
+	
+	// Income Amortization
+	FinanceMain getFinanceForIncomeAMZ(String finReference);
+	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
+	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
 
+	// Calculate Average POS
+	List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate);
 }

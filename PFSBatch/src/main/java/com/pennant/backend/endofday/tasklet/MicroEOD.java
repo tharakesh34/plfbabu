@@ -65,8 +65,12 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
+import com.pennant.backend.util.AmortizationConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.eod.EodService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
@@ -74,7 +78,8 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 public class MicroEOD implements Tasklet {
 
 	private Logger logger = Logger.getLogger(MicroEOD.class);
-	private EodService eodService;
+	private EodService 					eodService;
+	private RuleDAO						ruleDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
@@ -109,6 +114,18 @@ public class MicroEOD implements Tasklet {
 				ps.setInt(2, EodConstants.PROGRESS_WAIT);
 			}
 		});
+		
+		// Get the Rules 
+		String				provisionRule = null;
+		String				amzMethodRule = null;
+
+		String provRule = SysParamUtil.getValueAsString("PROVISION_RULE");
+		if(provRule != null){
+			provisionRule = ruleDAO.getAmountRule(provRule, RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN);
+		}
+
+		amzMethodRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE,
+				AmortizationConstants.AMZ_METHOD_RULE);	
 
 		//to hold the exception till the process completed for all the customers
 		List<Exception> exceptions = new ArrayList<Exception>(1);
@@ -128,6 +145,9 @@ public class MicroEOD implements Tasklet {
 				txStatus = transactionManager.getTransaction(txDef);
 
 				CustEODEvent custEODEvent = new CustEODEvent();
+				custEODEvent.setProvisionRule(provisionRule);
+				custEODEvent.setAmzMethodRule(amzMethodRule); 
+
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);
 					Customer customer = eodService.getLoadFinanceData().getCustomerDAO().getCustomerEOD(custId);
@@ -220,4 +240,7 @@ public class MicroEOD implements Tasklet {
 		this.dataSource = dataSource;
 	}
 
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
 }

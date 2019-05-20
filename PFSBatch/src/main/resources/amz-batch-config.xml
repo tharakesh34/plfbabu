@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:lang="http://www.springframework.org/schema/lang"
+	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<import resource="launch-context.xml" />
+	<import resource="eod-batch-config-db.xml" />
+
+	<!-- _____________________________________________ JOB FLOW DEFINITION _________________________________________ -->
+
+	<!-- The job definition for the PLF Amortization -->
+	<job id="plfAMZJob" xmlns="http://www.springframework.org/schema/batch"
+		incrementer="PFSJobParametersIncrementer">
+
+		<listeners>
+			<listener ref="amzJobListener" />
+		</listeners>
+
+		<step id="beforeAMZProcess">
+			<tasklet ref="beforeAMZProcessTaskLet" />
+			<next on="*" to="prepareIncomeAMZDetails" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="prepareIncomeAMZDetails">
+			<tasklet ref="prepareIncomeAMZDetailsTaskLet" />
+			<next on="*" to="prepareAmortizationQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="prepareAmortizationQueue">
+			<tasklet ref="prepareAmortizationQueueTaskLet" />
+			<next on="*" to="amzMasterStep" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="amzMasterStep">
+			<partition step="amzProcess" partitioner="partitioningMasterAmortization">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="afterAMZProcess" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="afterAMZProcess">
+			<tasklet ref="afterAMZProcessTaskLet" />
+			<end on="*" exit-code="COMPLETED" />
+			<fail on="FAILED" />
+		</step>
+
+	</job>
+
+	<bean id="amzJobListener" class="com.pennant.backend.batch.listeners.AMZJobListener" />
+
+	<bean id="PFSJobParametersIncrementer"
+		class="com.pennant.backend.endofday.jobparameter.PFSJobParametersIncrementer" />
+
+	<step id="amzProcess" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="amzProcessTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+		<property name="ConcurrencyLimit" value="100" />
+	</bean>
+
+	<!-- Partitioning Master -->
+
+	<bean id="partitioningMasterAmortization"
+		class="com.pennant.backend.endofday.tasklet.PartitioningMasterAmortization">
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+	</bean>
+
+	<!-- TaskLets -->
+
+	<bean id="beforeAMZProcessTaskLet" class="com.pennant.backend.endofday.tasklet.BeforeAMZProcess" />
+
+	<bean id="prepareIncomeAMZDetailsTaskLet"
+		class="com.pennant.backend.endofday.tasklet.PrepareIncomeAMZDetails">
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+	</bean>
+
+	<bean id="prepareAmortizationQueueTaskLet"
+		class="com.pennant.backend.endofday.tasklet.PrepareAmortizationQueue">
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+	</bean>
+
+	<bean id="amzProcessTaskLet" class="com.pennant.backend.endofday.tasklet.AMZProcess">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="transactionManager" ref="pfsTransactionManager" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
+	</bean>
+
+	<bean id="afterAMZProcessTaskLet" class="com.pennant.backend.endofday.tasklet.AfterAMZProcess">
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+	</bean>
+
+	<!-- Services -->
+
+	<!-- ProjectedAmortizationService -->
+	<bean id="projectedAmortizationService" class="com.pennant.app.core.ProjectedAmortizationService">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExpenseDetailsDAO" ref="finExpenseDetailsDAO" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
+	</bean>
+
+	<!-- Beans -->
+
+	<bean name="ruleExecutionUtil" class="com.pennant.app.util.RuleExecutionUtil">
+		<property name="scriptEngine" ref="scriptEngine" />
+	</bean>
+
+	<bean id="projectedAmortizationDAO"
+		class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="financeMainDAO" class="com.pennant.backend.dao.finance.impl.FinanceMainDAOImpl"
+		parent="basisCodeDAO">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="profitDetailsDAO"
+		class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="finFeeDetailDAO"
+		class="com.pennant.backend.dao.finance.impl.FinFeeDetailDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="finExpenseDetailsDAO"
+		class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<bean id="manualAdviseDAO"
+		class="com.pennant.backend.dao.finance.impl.ManualAdviseDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+	<!-- Helpers -->
+
+	<bean id="scriptEngine" class="javax.script.ScriptEngine"
+		factory-method="getEngineByName" factory-bean="scriptEngineManager">
+		<constructor-arg value="javascript" />
+	</bean>
+
+	<bean id="scriptEngineManager" class="javax.script.ScriptEngineManager" />
+
+	<bean id="basisCodeDAO" abstract="true"
+		class="com.pennant.backend.dao.impl.BasisCodeDAO" />
+
+	<bean id="basisNextidDao" abstract="true"
+		class="com.pennant.backend.dao.impl.BasisNextidDaoImpl">
+		<property name="nextidviewDAO" ref="nextidviewDAO" />
+	</bean>
+
+	<bean id="nextidviewDAO" class="com.pennant.backend.dao.impl.NextIdViewSQLServerDaoImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+		<property name="errorDetailsDAO" ref="errorDetailsDAO" />
+	</bean>
+
+	<bean id="errorDetailsDAO" class="com.pennant.backend.dao.impl.ErrorDetailsDAOImpl">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
+</beans>

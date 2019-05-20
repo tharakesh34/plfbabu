@@ -4,15 +4,19 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
-import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
+import com.pennant.backend.util.AmortizationConstants;
 
 public class DatesUpdate implements Tasklet {
 	private Logger logger = Logger.getLogger(DatesUpdate.class);
@@ -21,26 +25,43 @@ public class DatesUpdate implements Tasklet {
 	private DataSource dataSource;
 	private DateService dateService;
 
-	private CustomerQueuingDAO customerQueuingDAO;
+	@Autowired
+	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Update Dates On : " + valueDate);
 
-		//stepExecution.getExecutionContext().put(stepExecution.getId().toString(), valueDate);
-		// Log the Customer queuing data and threads status
-		//customerQueuingDAO.logCustomerQueuing(EodConstants.PROGRESS_SUCCESS);
-		//check extended month end and update the dates.
+		// Previous Month End ACCRUAL Records to working table to allow indexing
+		// for next run
+		String accrualCalForAMZ = SysParamUtil.getValueAsString(AmortizationConstants.MONTHENDACC_CALREQ);
+		if (StringUtils.endsWithIgnoreCase(accrualCalForAMZ, "Y")) {
+
+			if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0
+					|| StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
+
+				Date monthStart = DateUtility.getMonthStart(valueDate);
+				Date prvMonthEnd = DateUtility.addDays(monthStart, -1);
+				Date curMonthEnd = DateUtility.addMonths(monthStart, 1);
+				curMonthEnd = DateUtility.addDays(curMonthEnd, -1);
+
+				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
+					projectedAmortizationDAO.preparePrvProjectedAccruals(curMonthEnd);
+				} else {
+					projectedAmortizationDAO.preparePrvProjectedAccruals(prvMonthEnd);
+				}
+			}
+		}
+
+		// check extended month end and update the dates.
 		dateService.doUpdateAftereod(true);
 
 		logger.debug("COMPLETE:  Update Dates On :" + valueDate);
 		return RepeatStatus.FINISHED;
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+	// getters / setters
 
 	public void setDateService(DateService dateService) {
 		this.dateService = dateService;
@@ -49,9 +70,4 @@ public class DatesUpdate implements Tasklet {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-
-	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
-		this.customerQueuingDAO = customerQueuingDAO;
-	}
-
 }

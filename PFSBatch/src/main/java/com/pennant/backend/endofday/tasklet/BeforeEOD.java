@@ -64,8 +64,12 @@ public class BeforeEOD implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+		
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Before EOD On : " + valueDate);
+
+		// Required if any new parameters added or updated from back end through scripts
+		// SysParamUtil.getParmList();
 
 		dateService.doUpdatebeforeEod(true);
 		//one time loan of eod Config

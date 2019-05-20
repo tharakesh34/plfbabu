@@ -2,6 +2,7 @@ package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -10,6 +11,8 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.core.FinMaturityService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.AmortizationConstants;
 
 public class ProcessInActiveFinances implements Tasklet {
 	private Logger logger = Logger.getLogger(ProcessInActiveFinances.class);
@@ -21,7 +24,12 @@ public class ProcessInActiveFinances implements Tasklet {
 		Date valueDate = DateUtility.getAppValueDate();
 		logger.debug("START: Process InActive Loans On : " + valueDate);
 
-		finMaturityService.processInActiveFinancesAMZ();
+		// ACCRUALS calculation for Amortization for Inactive Loans
+		String accrualCalForAMZ = SysParamUtil.getValueAsString(AmortizationConstants.MONTHENDACC_CALREQ);
+		if (StringUtils.endsWithIgnoreCase(accrualCalForAMZ, "Y")) {
+
+			finMaturityService.processInActiveFinancesAMZ();
+		}
 
 		logger.debug("COMPLETE: Process InActive Loans On : " + valueDate);
 		return RepeatStatus.FINISHED;

@@ -838,7 +838,14 @@
 		<property name="emailEngine" ref="emailEngine" />
 		<property name="smsEngine" ref="smsEngine" />
 	</bean>
-	
+
+	<!-- Income Amortization IND AS -->
+	<bean id="projectedAmortizationDAO"
+		class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
+		parent="basisNextidDao">
+		<property name="dataSource" ref="pfsDatasource" />
+	</bean>
+
 	<bean id="gstCalculator" class="com.pennant.app.util.GSTCalculator">
 		<constructor-arg ref="ruleDAO" />
 		<constructor-arg ref="branchDAO" />

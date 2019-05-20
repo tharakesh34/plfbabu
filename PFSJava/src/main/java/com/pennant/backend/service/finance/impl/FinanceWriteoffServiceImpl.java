@@ -618,6 +618,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		tranType = PennantConstants.TRAN_UPD;
 		financeMain.setRecordType("");
 		financeMain.setFinIsActive(false);
+		financeMain.setClosedDate(DateUtility.getAppDate());
 		financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
 		getFinanceMainDAO().update(financeMain, TableType.MAIN_TAB, false);
 

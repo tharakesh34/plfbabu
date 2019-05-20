@@ -873,4 +873,7 @@ public class PennantConstants {
 	public static final String PROCESS_PRESENTMENT = "P";
 	public static final String PROCESS_REPRESENTMENT = "R";
 
+	// Sorting
+	public static final String SortOrder_ASC = "ASC";
+	public static final String SortOrder_DESC = "DESC";
 }

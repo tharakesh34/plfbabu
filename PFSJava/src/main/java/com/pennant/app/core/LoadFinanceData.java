@@ -390,8 +390,8 @@ public class LoadFinanceData extends ServiceHelper {
 			returnDataSets.addAll(finEODEvent.getReturnDataSet());
 		}
 
-		// save or update the amortizations and ACCRUALS
-		processAMZDetails(custEODEvent);
+		// save or update ACCRUALS
+		saveProjAccruals(custEODEvent);
 
 		// save postings
 		saveAccountingEOD(returnDataSets);
@@ -412,51 +412,55 @@ public class LoadFinanceData extends ServiceHelper {
 	 * 
 	 * @param custEODEvent
 	 */
-	public void processAMZDetails(CustEODEvent custEODEvent) {
+	public void saveProjAccruals(CustEODEvent custEODEvent) {
 
-		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
+		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
 
-		for (FinEODEvent finEODEvent : finEODEvents) {
-			saveOrUpdateAMZDetails(finEODEvent);
+			List<ProjectedAccrual> projAccrualList = finEODEvent.getProjectedAccrualList();
+
+			// Monthly ACCRUALS and POS
+			if (projAccrualList != null && !projAccrualList.isEmpty()) {
+				getProjectedAmortizationDAO().saveBatchProjAccruals(projAccrualList);
+			}
 		}
 	}
 
 	/**
 	 * 
-	 * @param finEODEvent
+	 * @param custEODEvent
 	 */
-	private void saveOrUpdateAMZDetails(FinEODEvent finEODEvent) {
-		logger.debug(" Entering ");
+	public void saveOrUpdateIncomeAMZDetails(CustEODEvent custEODEvent) {
 
-		List<ProjectedAmortization> projSaveAMZList = new ArrayList<ProjectedAmortization>(1);
-		List<ProjectedAmortization> projUpdateAMZList = new ArrayList<ProjectedAmortization>(1);
+		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
 
-		List<ProjectedAccrual> accrualList = finEODEvent.getProjectedAccrualList();
-		List<ProjectedAmortization> projAMZList = finEODEvent.getProjectedAMZList();
+			List<ProjectedAmortization> projSaveAMZList = new ArrayList<ProjectedAmortization>(1);
+			List<ProjectedAmortization> projUpdateAMZList = new ArrayList<ProjectedAmortization>(1);
 
-		if (accrualList != null && !accrualList.isEmpty()) {
-			getProjectedAmortizationDAO().saveBatchProjAccruals(accrualList);
-		}
+			List<ProjectedAmortization> incomeAMZList = finEODEvent.getIncomeAMZList();
 
-		for (ProjectedAmortization projectedAMZ : projAMZList) {
-			if (projectedAMZ.isUpdProjAMZ()) {
-				projUpdateAMZList.add(projectedAMZ);
-			} else {
-				projSaveAMZList.add(projectedAMZ);
+			// Income Amortizations
+			if (incomeAMZList != null && !incomeAMZList.isEmpty()) {
+
+				for (ProjectedAmortization projectedAMZ : incomeAMZList) {
+					if (projectedAMZ.isUpdProjAMZ()) {
+						projUpdateAMZList.add(projectedAMZ);
+
+					} else if (projectedAMZ.isSaveProjAMZ()) {
+						projSaveAMZList.add(projectedAMZ);
+					}
+				}
+			}
+
+			if (!projSaveAMZList.isEmpty()) {
+				getProjectedAmortizationDAO().saveBatchIncomeAMZ(projSaveAMZList);
+			}
+
+			if (!projUpdateAMZList.isEmpty()) {
+				getProjectedAmortizationDAO().updateBatchIncomeAMZ(projUpdateAMZList);
 			}
 		}
-
-		if (!projSaveAMZList.isEmpty()) {
-			getProjectedAmortizationDAO().saveBatchIncomeAMZ(projSaveAMZList);
-		}
-
-		if (!projUpdateAMZList.isEmpty()) {
-			getProjectedAmortizationDAO().updateBatchIncomeAMZ(projUpdateAMZList);
-		}
-
-		logger.debug(" Leaving ");
 	}
-
+	
 	public void updateCustomerDate(long custId, Date date, String newCustStatus) {
 		logger.debug(" Entering ");
 		Date nextDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);

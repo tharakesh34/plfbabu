@@ -21,6 +21,7 @@
 
 	<bean id="prepareCustomerQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue">
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 	</bean>
 
 	<!-- MicroEOD -->
@@ -29,6 +30,7 @@
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="dataSource" ref="dataSource" />
+		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 
 	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor">
@@ -308,4 +310,10 @@
 		scope="step" />
 	<bean id="collateralRevaluationItemWriter" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemWriter"
 		scope="step" parent="basicDao"/>
+
+	<bean id="processInActiveFinancesTaskLet"
+		class="com.pennant.backend.endofday.tasklet.ProcessInActiveFinances">
+		<property name="finMaturityService" ref="finMaturityService" />
+	</bean>
+	
 </beans>

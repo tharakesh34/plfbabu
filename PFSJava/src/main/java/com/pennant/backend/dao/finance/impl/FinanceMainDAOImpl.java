@@ -1,26 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. All
- * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
- * Technologies.
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
  * 
- * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
- * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
- * violation of copyright law.
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
  */
 
 /**
- ******************************************************************************************** 
- * FILE HEADER *
- ******************************************************************************************** 
- * * FileName : FinanceMainDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * * Modified
- * Date : 15-11-2011 * * Description : * *
- ******************************************************************************************** 
- * Date Author Version Comments *
- ******************************************************************************************** 
- * 15-11-2011 Pennant 0.1 * * * * * * * * *
- ******************************************************************************************** 
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *
+ * FileName    		:  FinanceMainDAOImpl.java												*                           
+ *                                                                    
+ * Author      		:  PENNANT TECHONOLOGIES												*
+ *                                                                  
+ * Creation Date    :  24-12-2017															*
+ *                                                                  
+ * Modified Date    :  24-12-2017															*
+ *                                                                  
+ * Description 		:												 						*                                 
+ *                                                                                          
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 24-12-2017       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.impl;
 
@@ -822,6 +840,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PromotionCode = :PromotionCode");
 		sql.append(
 				", TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
+		
+		// For InActive Loans, Update Loan Closed Date
+		if (!financeMain.isFinIsActive()) {
+			if (financeMain.getClosedDate() == null) {
+				financeMain.setClosedDate(DateUtility.getAppDate());
+			}
+			sql.append(", ClosedDate = :ClosedDate ");
+		}
+		
 		sql.append(", Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -1171,6 +1198,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			financeMain.setFinIsActive(true);
 			financeMain.setClosingStatus(null);
 			updateSql.append(" , FinIsActive = :FinIsActive, ClosingStatus =:ClosingStatus ");
+		}
+		
+		// For InActive Loans, Update Loan Closed Date
+		if (!financeMain.isFinIsActive()) {
+			financeMain.setClosedDate(DateUtility.getAppDate());
+			updateSql.append(", ClosedDate = :ClosedDate ");
 		}
 
 		updateSql.append(" , FinStatus = :FinStatus , FinStsReason = :FinStsReason ");
@@ -2123,6 +2156,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		updateSql.append(" FinStatus = :FinStatus, FinStsReason = :FinStsReason, ");
 		updateSql.append("  FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus, ");
 		updateSql.append("  FinRepaymentAmount = :FinRepaymentAmount ");
+		
+		// For InActive Loans, Update Loan Closed Date
+		if (!financeMain.isFinIsActive()) {
+			financeMain.setClosedDate(DateUtility.getAppDate());
+			updateSql.append(", ClosedDate = :ClosedDate ");
+		}
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -2198,7 +2237,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder updateSql = new StringBuilder("Update FinanceMain");
 		updateSql.append(" Set FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus ");
+
+		// For InActive Loans, Update Loan Closed Date
+		if (!financeMain.isFinIsActive()) {
+			financeMain.setClosedDate(DateUtility.getAppDate());
+			updateSql.append(", ClosedDate = :ClosedDate ");
+		}
 		updateSql.append(" Where FinReference = :FinReference ");
+		
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
@@ -3888,30 +3934,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinanceForIncomeAMZ(String finReference) {
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
-
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where FinReference = :FinReference ");
-
-		// logger.debug("selectSql: " + selectSql.toString());
-		try {
-			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-		return null;
-	}
-
-	@Override
 	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
 		logger.debug("Entering");
 
@@ -3937,31 +3959,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug("Leaving");
 		return finMains;
-	}
-
-	@Override
-	public List<FinanceMain> getFinListForAMZ(Date monthEndDate) {
-		logger.debug("Entering");
-
-		// get the finances list
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("MonthStartDate", DateUtility.getMonthStart(monthEndDate));
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT FinReference, FinType, FinCcy, CustID, FinBranch, ");
-		selectSql.append(" FinStartDate, FinApprovedDate, MaturityDate, FinAssetValue, FinCurrAssetValue, FinAmount, ");
-		selectSql.append(" FinCategory, ProductCategory, FinStatus, ");
-		selectSql.append(" CalRoundingMode, RoundingTarget, ProfitDaysBasis, ");
-		selectSql.append(" ClosingStatus, FinIsActive, EntityCode, ClosedDate ");
-
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" WHERE MaturityDate >= :MonthStartDate ");
-
-		logger.debug("selectSql : " + selectSql.toString());
-		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
 	@Override
@@ -4291,13 +4288,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PastduePftCalMthd = :PastduePftCalMthd");
 		sql.append(", MMAId = :MMAId");
 		sql.append(", ReAgeBucket = :ReAgeBucket");
+		
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
 			if (financeMain.getClosedDate() == null) {
 				financeMain.setClosedDate(DateUtility.getAppDate());
 			}
-			sql.append(" ,ClosedDate = :ClosedDate ");
+			sql.append(", ClosedDate = :ClosedDate");
 		}
+
 		sql.append(" where FinReference = :FinReference");
 
 		// Execute the SQL, binding the arguments.
@@ -4507,5 +4506,103 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		return false;
 	}
+
+	// IND AS - START
+
+	/**
+	 * Calculate Average POS
+	 * 
+	 * @param finReference
+	 */
+	@Override
+	public List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate) {
+		logger.debug("Entering");
+
+		List<FinanceMain> finMains = null;
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FinReference, FinType, FinCcy, CustID, FinBranch, ");
+		selectSql.append(" FinStartDate, FinApprovedDate, MaturityDate, FinAssetValue, FinCurrAssetValue, FinAmount, ");
+		selectSql.append(" FinCategory, ProductCategory, FinStatus, ");
+		selectSql.append(" CalRoundingMode, RoundingTarget, ProfitDaysBasis, ");
+		selectSql.append(" ClosingStatus, FinIsActive, EntityCode ");
+
+		selectSql.append(" WHERE FinApprovedDate >= :FinApprovalStartDate And FinApprovedDate <= :FinApprovalEndDate");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinApprovalStartDate", finApprovalStartDate);
+		source.addValue("FinApprovalEndDate", finApprovalEndDate);
+
+		try {
+			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+			finMains = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finMains = new ArrayList<FinanceMain>();
+		}
+
+		logger.debug("Leaving");
+		return finMains;
+	}
+
+	/**
+	 * Method to get Finance for income Amortization.
+	 * 
+	 * @param finReference
+	 */
+	@Override
+	public FinanceMain getFinanceForIncomeAMZ(String finReference) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql
+		.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
+
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where FinReference = :FinReference ");
+
+		// logger.debug("selectSql: " + selectSql.toString());
+		try {
+			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public List<FinanceMain> getFinListForAMZ(Date monthEndDate) {
+		logger.debug("Entering");
+
+		// get the finances list
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("MonthStartDate", DateUtility.getMonthStart(monthEndDate));
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT FinReference, FinType, FinCcy, CustID, FinBranch, ");
+		selectSql.append(" FinStartDate, FinApprovedDate, MaturityDate, FinAssetValue, FinCurrAssetValue, FinAmount, ");
+		selectSql.append(" FinCategory, ProductCategory, FinStatus, ");
+		selectSql.append(" CalRoundingMode, RoundingTarget, ProfitDaysBasis, ");
+		selectSql.append(" ClosingStatus, FinIsActive, EntityCode, ClosedDate ");
+
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" WHERE MaturityDate >= :MonthStartDate ");
+
+		logger.debug("selectSql : " + selectSql.toString());
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
+
+	// IND AS - END
 	
 }

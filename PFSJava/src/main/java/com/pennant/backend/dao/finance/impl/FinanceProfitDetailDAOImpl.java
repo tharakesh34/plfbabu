@@ -1081,6 +1081,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 	}
 
+	// IND AS - START
 	@Override
 	public List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart) {
 
@@ -1096,7 +1097,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where MaturityDate >= :MaturityDate ");
 
-		//logger.debug("selectSql: " + selectSql.toString());
+		// logger.debug("selectSql: " + selectSql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("MaturityDate", curMonthStart);
@@ -1106,6 +1107,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 	}
 
+	/**
+	 * Method for get the FinanceProfitDetail Object by Key finReference
+	 */
 	@Override
 	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
 
@@ -1124,7 +1128,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference = :FinReference");
 
-		//logger.debug("selectSql: " + selectSql.toString());
+		// logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetails);
 		RowMapper<FinanceProfitDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
@@ -1139,6 +1143,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		return finProfitDetails;
 	}
 
+	/**
+	 * Update AMZMethod for same month created and EarlySettled Loans
+	 */
 	@Override
 	public void updateAMZMethod(String finReference, String amzMethod) {
 
@@ -1152,6 +1159,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 	}
+	// IND AS - END
 
 	@Override
 	public void updateSchPftPaid(FinanceProfitDetail profitDetail) {

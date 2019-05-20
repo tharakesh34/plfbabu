@@ -1,59 +1,98 @@
+/**
+ * Copyright 2011 - Pennant Technologies
+ * 
+ * This file is part of Pennant Java Application Framework and related Products. 
+ * All components/modules/functions/classes/logic in this software, unless 
+ * otherwise stated, the property of Pennant Technologies. 
+ * 
+ * Copyright and other intellectual property laws protect these materials. 
+ * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
+ * without the prior written consent of the copyright holder, is a violation of 
+ * copyright law.
+ */
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  ProjectedAmortization.java  			                                * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ * Creation Date    :  22-01-2018    														*
+ *                                                                  						*
+ * Modified Date    :  22-01-2018    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 22-01-2018       Pennant	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+ */
 package com.pennant.backend.model.amortization;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.util.PennantConstants;
 
 public class ProjectedAmortization implements Serializable, Entity {
 	private static final long serialVersionUID = 7690656031696834080L;
 
-	private long incomeAmzID = Long.MIN_VALUE;
+	private long amzLogId = Long.MIN_VALUE;
 	private String finReference;
 	private long custID;
 	private String finType;
 	private String incomeType;
-	private long refenceID;
+	private long referenceID;
+	private long incomeTypeID;
 	private String aMZMethod;
 	private Date lastMntOn;
-	private BigDecimal amount = BigDecimal.ZERO;
+	private Date calculatedOn;
 	private BigDecimal calcFactor = BigDecimal.ZERO;
+	private BigDecimal amount = BigDecimal.ZERO;
+	private BigDecimal actualAmount = BigDecimal.ZERO;
 	private BigDecimal amortizedAmount = BigDecimal.ZERO;
 	private BigDecimal unAmortizedAmount = BigDecimal.ZERO;
 	private BigDecimal curMonthAmz = BigDecimal.ZERO;
 	private BigDecimal prvMonthAmz = BigDecimal.ZERO;
 	private boolean active;
 
-	private long projIncomeAMZID = Long.MIN_VALUE;
 	private BigDecimal cumulativeAmount = BigDecimal.ZERO;
 	private Date monthEndDate;
 
 	private boolean updProjAMZ = false;
+	private boolean saveProjAMZ = false;
+
+	// One time activity fields
+	private long status;
+	private Timestamp startTime;
+	private Timestamp endTime;
+	private long lastMntBy;
+
+	// THREADS Implementation
+	private Date startDate;
 
 	public ProjectedAmortization() {
-
+		super();
 	}
 
 	// getters / setters
-
-	@Override
-	public long getId() {
-		return incomeAmzID;
-	}
-
-	@Override
-	public void setId(long id) {
-		this.incomeAmzID = id;
-	}
-
-	public long getIncomeAmzID() {
-		return incomeAmzID;
-	}
-
-	public void setIncomeAmzID(long incomeAmzID) {
-		this.incomeAmzID = incomeAmzID;
-	}
 
 	public String getFinReference() {
 		return finReference;
@@ -71,12 +110,12 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.incomeType = incomeType;
 	}
 
-	public long getRefenceID() {
-		return refenceID;
+	public long getReferenceID() {
+		return referenceID;
 	}
 
-	public void setRefenceID(long refenceID) {
-		this.refenceID = refenceID;
+	public void setReferenceID(long referenceID) {
+		this.referenceID = referenceID;
 	}
 
 	public Date getLastMntOn() {
@@ -151,20 +190,14 @@ public class ProjectedAmortization implements Serializable, Entity {
 		this.aMZMethod = aMZMethod;
 	}
 
-	public long getProjIncomeAMZID() {
-		return projIncomeAMZID;
-	}
-
-	public void setProjIncomeAMZID(long projIncomeAMZID) {
-		this.projIncomeAMZID = projIncomeAMZID;
-	}
-
 	public Date getMonthEndDate() {
 		return monthEndDate;
 	}
 
 	public void setMonthEndDate(Date monthEndDate) {
-		this.monthEndDate = monthEndDate;
+		this.monthEndDate = DateUtility.getDate(DateUtility.format(monthEndDate,
+				PennantConstants.dateFormat));
+
 	}
 
 	public BigDecimal getCumulativeAmount() {
@@ -202,5 +235,96 @@ public class ProjectedAmortization implements Serializable, Entity {
 
 	public void setFinType(String finType) {
 		this.finType = finType;
+	}
+
+	public BigDecimal getActualAmount() {
+		return actualAmount;
+	}
+
+	public void setActualAmount(BigDecimal actualAmount) {
+		this.actualAmount = actualAmount;
+	}
+
+	public Date getCalculatedOn() {
+		return calculatedOn;
+	}
+
+	public void setCalculatedOn(Date calculatedOn) {
+		this.calculatedOn = DateUtility.getDate(DateUtility.format(calculatedOn,
+				PennantConstants.dateFormat));
+	}
+
+	public boolean isSaveProjAMZ() {
+		return saveProjAMZ;
+	}
+
+	public void setSaveProjAMZ(boolean saveProjAMZ) {
+		this.saveProjAMZ = saveProjAMZ;
+	}
+
+	public long getIncomeTypeID() {
+		return incomeTypeID;
+	}
+
+	public void setIncomeTypeID(long incomeTypeID) {
+		this.incomeTypeID = incomeTypeID;
+	}
+
+	public long getStatus() {
+		return status;
+	}
+
+	public void setStatus(long status) {
+		this.status = status;
+	}
+
+	public Timestamp getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Timestamp startTime) {
+		this.startTime = startTime;
+	}
+
+	public Timestamp getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Timestamp endTime) {
+		this.endTime = endTime;
+	}
+
+	public long getLastMntBy() {
+		return lastMntBy;
+	}
+
+	public void setLastMntBy(long lastMntBy) {
+		this.lastMntBy = lastMntBy;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public long getAmzLogId() {
+		return amzLogId;
+	}
+
+	public void setAmzLogId(long amzLogId) {
+		this.amzLogId = amzLogId;
+	}
+
+	@Override
+	public long getId() {
+		return amzLogId;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.amzLogId = id;
 	}
 }

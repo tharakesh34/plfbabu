@@ -51,6 +51,15 @@ public class ProjectedAccrual implements Serializable {
 	private int noOfDays = 0;
 	private int cumulativeDays = 0;
 	private BigDecimal aMZPercentage = BigDecimal.ZERO;
+	
+	// Partial Settlements
+	private long partialPaymentID = Long.MIN_VALUE;
+	private BigDecimal partialPaidAmt = BigDecimal.ZERO;
+	private BigDecimal partialAMZPerc = BigDecimal.ZERO;
+	private boolean monthEnd;
+	
+	// Customer Profitability RFT
+	private BigDecimal avgPOS = BigDecimal.ZERO;
 
 	public ProjectedAccrual() {
 
@@ -394,6 +403,46 @@ public class ProjectedAccrual implements Serializable {
 
 	public void setCumulativePOS(BigDecimal cumulativePOS) {
 		this.cumulativePOS = cumulativePOS;
+	}
+
+	public BigDecimal getPartialPaidAmt() {
+		return partialPaidAmt;
+	}
+
+	public void setPartialPaidAmt(BigDecimal partialPaidAmt) {
+		this.partialPaidAmt = partialPaidAmt;
+	}
+
+	public long getPartialPaymentID() {
+		return partialPaymentID;
+	}
+
+	public void setPartialPaymentID(long partialPaymentID) {
+		this.partialPaymentID = partialPaymentID;
+	}
+
+	public BigDecimal getPartialAMZPerc() {
+		return partialAMZPerc;
+	}
+
+	public void setPartialAMZPerc(BigDecimal partialAMZPerc) {
+		this.partialAMZPerc = partialAMZPerc;
+	}
+
+	public boolean isMonthEnd() {
+		return monthEnd;
+	}
+
+	public void setMonthEnd(boolean monthEnd) {
+		this.monthEnd = monthEnd;
+	}
+
+	public BigDecimal getAvgPOS() {
+		return avgPOS;
+	}
+
+	public void setAvgPOS(BigDecimal avgPOS) {
+		this.avgPOS = avgPOS;
 	}
 
 }

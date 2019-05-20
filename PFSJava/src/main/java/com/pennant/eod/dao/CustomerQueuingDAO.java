@@ -52,4 +52,6 @@ public interface CustomerQueuingDAO {
 	void logCustomerQueuingByGrpId(long custId);
 
 	void deleteByGroupId(long groupId);
+
+	long getCustQueuingCount();
 }

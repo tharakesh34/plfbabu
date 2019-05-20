@@ -919,12 +919,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("loanCategory");
 		excludeFields.add("allowSubvention");
 		excludeFields.add("glSubHeadCodes");
-		excludeFields.add("closedDate");
 		excludeFields.add("recalIdx");
 		excludeFields.add("alwStrtPrdHday");
 		excludeFields.add("maxStrtPrdHdays");
 		excludeFields.add("strtPrdHdays");
 		excludeFields.add("strtprdCpzMethod");
+		
 		return excludeFields;
 	}
 	// ******************************************************//

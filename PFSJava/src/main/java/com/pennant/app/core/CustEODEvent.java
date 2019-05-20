@@ -12,6 +12,8 @@ public class CustEODEvent extends AbstractEntity {
 	private Customer customer;
 	private Date eodDate;
 	private Date eodValueDate;
+	private String provisionRule;
+	private String amzMethodRule;
 
 	private List<FinEODEvent> finEODEvents = new ArrayList<FinEODEvent>(1);
 	private boolean updCustomer = false;
@@ -126,6 +128,22 @@ public class CustEODEvent extends AbstractEntity {
 			}
 			this.finEODEvents.clear();
 		}
+	}
+
+	public String getProvisionRule() {
+		return provisionRule;
+	}
+
+	public void setProvisionRule(String provisionRule) {
+		this.provisionRule = provisionRule;
+	}
+	
+	public String getAmzMethodRule() {
+		return amzMethodRule;
+	}
+
+	public void setAmzMethodRule(String amzMethodRule) {
+		this.amzMethodRule = amzMethodRule;
 	}
 
 }

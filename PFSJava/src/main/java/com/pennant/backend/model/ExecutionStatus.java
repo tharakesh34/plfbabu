@@ -25,6 +25,10 @@ public class ExecutionStatus implements Serializable {
 	private int customerCount;
 	private int completed;
 	private Long totalCustomer;
+	
+	// IND AS : Amortization
+	private Long totalFinances;
+	private int financeCount;
 
 	public ExecutionStatus() {
 
@@ -174,5 +178,21 @@ public class ExecutionStatus implements Serializable {
 
 	public void setTotalCustomer(Long totalCustomer) {
 		this.totalCustomer = totalCustomer;
+	}
+
+	public Long getTotalFinances() {
+		return totalFinances;
+	}
+
+	public void setTotalFinances(Long totalFinances) {
+		this.totalFinances = totalFinances;
+	}
+
+	public int getFinanceCount() {
+		return financeCount;
+	}
+
+	public void setFinanceCount(int financeCount) {
+		this.financeCount = financeCount;
 	}
 }

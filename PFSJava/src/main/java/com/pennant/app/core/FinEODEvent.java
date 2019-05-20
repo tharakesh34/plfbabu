@@ -70,9 +70,10 @@ public class FinEODEvent implements Serializable {
 	private boolean updMonthEndPostings = false;
 	private List<String> finMainUpdateFields = new ArrayList<String>(1);
 
-	private String aMZMethod;
-	List<ProjectedAmortization> projectedAMZList = new ArrayList<ProjectedAmortization>(1);
-	List<ProjectedAccrual> ProjectedAccrualList = new ArrayList<ProjectedAccrual>(1);
+	// IND AS : Income / Expense Amortization 
+	private List<ProjectedAccrual> 		projectedAccrualList 	= new ArrayList<ProjectedAccrual>(1);
+	private List<ProjectedAmortization> incomeAMZList 			= new ArrayList<ProjectedAmortization>(1);
+	private Date appDate;
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;
@@ -405,29 +406,29 @@ public class FinEODEvent implements Serializable {
 	public void setFinExcessAmounts(List<FinExcessAmount> finExcessAmounts) {
 		this.finExcessAmounts = finExcessAmounts;
 	}
-
-	public String getAMZMethod() {
-		return aMZMethod;
-	}
-
-	public void setAMZMethod(String aMZMethod) {
-		this.aMZMethod = aMZMethod;
-	}
-
-	public List<ProjectedAmortization> getProjectedAMZList() {
-		return projectedAMZList;
-	}
-
-	public void setProjectedAMZList(List<ProjectedAmortization> projectedAMZList) {
-		this.projectedAMZList = projectedAMZList;
-	}
-
+	
 	public List<ProjectedAccrual> getProjectedAccrualList() {
-		return ProjectedAccrualList;
+		return projectedAccrualList;
 	}
 
 	public void setProjectedAccrualList(List<ProjectedAccrual> projectedAccrualList) {
-		ProjectedAccrualList = projectedAccrualList;
+		this.projectedAccrualList = projectedAccrualList;
+	}
+
+	public List<ProjectedAmortization> getIncomeAMZList() {
+		return incomeAMZList;
+	}
+
+	public void setIncomeAMZList(List<ProjectedAmortization> incomeAMZList) {
+		this.incomeAMZList = incomeAMZList;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 	public void destroy() {
@@ -445,7 +446,7 @@ public class FinEODEvent implements Serializable {
 		this.presentmentDetails.clear();
 		this.returnDataSet.clear();
 		this.provisions.clear();
-		this.projectedAMZList.clear();
-		this.ProjectedAccrualList.clear();
+		this.incomeAMZList.clear();
+		this.projectedAccrualList.clear();
 	}
 }

@@ -45,6 +45,12 @@
 
 		<step id="accountsUpdate">
 			<tasklet ref="accountsUpdateTaskLet" />
+			<next on="*" to="processInActiveFinances" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="processInActiveFinances">
+			<tasklet ref="processInActiveFinancesTaskLet" />
 			<next on="*" to="ledgerDownLoad" />
 			<fail on="FAILED" />
 		</step>

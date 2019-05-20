@@ -713,6 +713,14 @@
 			rightName="menuItem_Insurance_InsuranceSurrenderDialog" />
 	</menu>
 
+	<!-- Income Amortization -->
+	<menu id="menu_Category_IncomeAmortization" rightName="menuCat_Amortization">
+		 <menuItem id="menu_Item_AmortizationMethodRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AmortizationMethodRuleList.zul" rightName="menuItem_RulesFactory_AmortizationMethodRule" />
+		 <menuItem id="menu_Item_AMZProcess" zulNavigation="/WEB-INF/pages/Batch/AMZBatchAdmin.zul" rightName="menuItem_Amortization_IncomeAmortization" />
+	<!-- <menuItem id="menu_Item_CalAvgPOS" zulNavigation="/WEB-INF/pages/Amortization/CalAvgPOS.zul" rightName="menuItem_CustProfitability_CalAvgPOS"/> -->
+	<!-- <menuItem id="menu_Item_IncomeAmortization" zulNavigation="/WEB-INF/pages/Amortization/IncomeAmortization.zul" rightName="menuItem_Amortization_IncomeAmortization"/> -->
+	</menu>
+   
 	<!-- Enquiry -->
 	<menu id="menu_Category_Enquiry">
 		<menu id="menu_Category_CustomerEnquiry">

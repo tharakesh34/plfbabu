@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -22,8 +23,10 @@ import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.limitservice.LimitRebuild;
+import com.pennant.backend.util.AmortizationConstants;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class EodService {
@@ -146,8 +149,17 @@ public class EodService {
 		//Accrual posted on EOD only
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
-		// MonthEnd ACCRUALS, Income and Expense Amortization
-		//custEODEvent = projectedAmortizationService.processAmortization(custEODEvent);
+		// ACCRUALS calculation for Amortization
+		String accrualCalForAMZ = SysParamUtil.getValueAsString(AmortizationConstants.MONTHENDACC_CALREQ);
+		if (StringUtils.endsWithIgnoreCase(accrualCalForAMZ, "Y")) {
+
+			if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
+					|| StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("EOM_ON_EOD"))) {
+
+				// Calculate MonthEnd ACCRUALS
+				custEODEvent = projectedAmortizationService.prepareMonthEndAccruals(custEODEvent);
+			}
+		}
 
 		//Auto disbursements
 		if (ImplementationConstants.ALLOW_ADDDBSF) {

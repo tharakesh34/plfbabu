@@ -257,6 +257,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		if (tableType == TableType.MAIN_TAB) {
 			financeMain.setRcdMaintainSts("");
 			financeMain.setFinIsActive(false);
+			financeMain.setClosedDate(DateUtility.getAppDate());
 			financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		}
 
@@ -448,6 +449,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		FinanceScheduleDetail orgNextSchd = getFinanceScheduleDetailDAO().getNextSchPayment(finReference, curBDay);
 
 		financeMain.setFinIsActive(false);
+		financeMain.setClosedDate(DateUtility.getAppDate());
 		financeMain.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		financeMain.setRcdMaintainSts("");
 		financeMain.setRoleCode("");
