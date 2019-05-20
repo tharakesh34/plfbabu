@@ -127,7 +127,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 			lc.setStyle("font-weight:bold;color: #191a1c;");
 			lc.setParent(item);
 			
-			lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getPercentage(), 0));
+			lc = new Listcell(feeDetail.getPercentage().toString());
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			

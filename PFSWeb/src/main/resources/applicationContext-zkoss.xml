@@ -5240,5 +5240,10 @@
 	<bean id="transactionMappingDialogCtrl" class="com.pennant.webui.systemmasters.transactionmapping.TransactionMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 			<property name="transactionMappingService" ref="transactionMappingService"/>
+	</bean>
+	
+	<bean id="eventFeeDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.EventFeeDetailsDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="receiptCalculator" ref="receiptCalculator" />
 	</bean>	
 </beans>

@@ -1331,7 +1331,11 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			Listitem item = new Listitem();
 			Listcell lc = null;
 			item = new Listitem();
-			lc = new Listcell(Labels.getLabel("label_RecceiptDialog_ExcessType_EXCESS"));
+			String desc = Labels.getLabel("label_RecceiptDialog_ExcessType_EXCESS");
+			if (receiptPurposeCtg == 1) {
+				desc = Labels.getLabel("label_RecceiptDialog_ExcessType_PARTIAL");
+			}
+			lc = new Listcell(desc);
 			lc.setStyle("font-weight:bold;");
 			lc.setParent(item);
 

@@ -5400,7 +5400,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			recalEarlyPaySchedule(receiptData);
 			receiptData.setBuildProcess("I");
 			receiptData = receiptCalculator.initiateReceipt(receiptData, false);
-			receiptData.setActualReceiptAmount(rch.getReceiptAmount());
+			receiptData.setActualReceiptAmount(rch.getReceiptAmount().subtract(receiptData.getExcessAvailable()));
 			receiptData.setExcessAvailable(receiptCalculator.getExcessAmount(receiptData));
 			if (receiptData.isForeClosure()) {
 				rch.setReceiptAmount(BigDecimal.ZERO);
