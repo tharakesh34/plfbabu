@@ -444,8 +444,69 @@
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="30" author="Satya">
+		<createIndex tableName="AMORTIZATIONQUEUING" indexName="IDX_AMZQUEUE_THREAD">
+			<column name="THREADID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="31" author="Satya">
+		<createIndex tableName="AMORTIZATIONQUEUING" indexName="AMORTIZATIONQUEUING_NLS_IDX">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="32" author="Satya">
+		<createIndex tableName="PROJECTEDACCRUALS" indexName="IDX_PROJACCRUALS_ACCRUEON">
+			<column name="FINREFERENCE,ACCRUEDON" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="33" author="Satya">
+		<createIndex tableName="PROJECTEDACCRUALS" indexName="IDX_PA_ACRON">
+			<column name="ACCRUEDON" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="34" author="Satya">
+		<createIndex tableName="PROJECTEDACCRUALS" indexName="PROJECTEDACCRUALS_NLS_IDX">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="35" author="Satya">
+		<createIndex tableName="PROJECTEDACCRUALS_WORK" indexName="IDX_PROJECTEDACCRUALS_FINREF">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+
+	<changeSet id="36" author="Satya">
+		<createIndex tableName="PROJECTEDACCRUALS_WORK" indexName="PROJECTEDACCRUALS_WORK_NLS_IDX">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+
+	<changeSet id="37" author="Satya">
+		<createIndex tableName="INCOMEAMORTIZATION" indexName="IDX_INCAMZ_REF_INCTYPE_REFID">
+			<column name="FINREFERENCE, INCOMETYPE, REFERENCEID" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="38" author="Satya">
+		<createIndex tableName="INCOMEAMORTIZATION" indexName="INCOMEAMORTIZATION_NLS_IDX">
+			<column name="FINREFERENCE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="39" author="Satya">
+		<createIndex tableName="PROJECTEDINCOMEAMZ" indexName="IDX_PROJINCAMZ_EOM">
+			<column name="MONTHENDDATE" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="40" author="Satya">
 		<comment> IND AS - Performance </comment>
 		<sql>
 			<![CDATA[
@@ -454,7 +515,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="31" author="Satya">
+	<changeSet id="41" author="Satya">
 		<comment> IND AS - Performance </comment>
 		<sql>
 			<![CDATA[	
@@ -467,7 +528,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="32" author="Satya">
+	<changeSet id="42" author="Satya">
 		<comment> IND AS - Performance </comment>
 		<sql>
 			<![CDATA[	
@@ -480,32 +541,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="" author="">
-		<createIndex tableName="AMORTIZATIONQUEUING" indexName="IDX_AMZQUEUE_THREAD">
-			<column name="THREADID" />
-		</createIndex>
-	</changeSet>
 
-	<changeSet id="33" author="Satya">
-		<comment> IND AS - Indexes </comment>
-		<sql>	
-		    <![CDATA[
-								
-					CREATE INDEX IDX_AMZQUEUE_THREAD ON AMORTIZATIONQUEUING (THREADID);
-					CREATE INDEX AMORTIZATIONQUEUING_NLS_IDX on AMORTIZATIONQUEUING (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
-			
-					CREATE INDEX IDX_PROJACCRUALS_ACCRUEON ON PROJECTEDACCRUALS (FINREFERENCE, ACCRUEDON);
-					CREATE INDEX IDX_PA_ACRON ON PROJECTEDACCRUALS (ACCRUEDON);
-					CREATE INDEX PROJECTEDACCRUALS_NLS_IDX on PROJECTEDACCRUALS (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
-			
-					CREATE UNIQUE INDEX IDX_PROJECTEDACCRUALS_FINREF ON PROJECTEDACCRUALS_WORK (FINREFERENCE);
-					CREATE INDEX PROJECTEDACCRUALS_WORK_NLS_IDX on PROJECTEDACCRUALS_WORK (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
-			
-					CREATE INDEX IDX_INCAMZ_REF_INCTYPE_REFID ON INCOMEAMORTIZATION (FINREFERENCE, INCOMETYPE, REFERENCEID);
-					CREATE INDEX INCOMEAMORTIZATION_NLS_IDX on INCOMEAMORTIZATION (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
-					CREATE INDEX IDX_PROJINCAMZ_EOM ON PROJECTEDINCOMEAMZ (MONTHENDDATE);
-			]]>
-		</sql>
-	</changeSet>
 
 </databaseChangeLog>
