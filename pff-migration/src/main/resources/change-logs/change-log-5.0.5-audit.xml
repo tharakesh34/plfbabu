@@ -38,24 +38,24 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="Saikiran.v">
 		<addColumn tableName="adtRMTFinanceTypes">
-			<column name="TDSAllowToModify" type="boolean"/>
-			<column name="tdsApplicableTo" type="varchar(50)"/>
+			<column name="TDSAllowToModify" type="boolean" />
+			<column name="tdsApplicableTo" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="2" author="Saikiran.v">
 		<addColumn tableName="adtFinancemain">
-			<column name="tDSPercentage" type="decimal(18,2)"/>
-			<column name="tDSStartDate" type="datetime"/>
-			<column name="tDSEndDate" type="datetime"/>
-			<column name="tDSLimitAmt" type="decimal(18,2)"/>
+			<column name="tDSPercentage" type="decimal(18,2)" />
+			<column name="tDSStartDate" type="datetime" />
+			<column name="tDSEndDate" type="datetime" />
+			<column name="tDSLimitAmt" type="decimal(18,2)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="12" author="Irfan">
 		<sql>
 			<![CDATA[
@@ -63,7 +63,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="13" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -71,12 +71,76 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="14" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="TDSAllowToModify" tableName="adtRMTFinanceTypes" defaultValue="0" />
-    </changeSet>
-	
-	<changeSet id="15" author="Saikiran.v">
-		<addNotNullConstraint tableName="adtRMTFinanceTypes" columnName="TDSAllowToModify"/>
 	</changeSet>
+
+	<changeSet id="15" author="Saikiran.v">
+		<addNotNullConstraint tableName="adtRMTFinanceTypes" columnName="TDSAllowToModify" />
+	</changeSet>
+
+	<changeSet id="16" author="Varaprasad.K">
+		<addColumn tableName="AdtFinMaintainInstructions">
+			<column name="TdSApplicable" type="boolean" />
+			<column name="TdsPercentage" type="decimal(5,2)" />
+			<column name="TdsStartDate" type="datetime" />
+			<column name="TdsEndDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="17" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinMaintainInstructions Set TdSApplicable = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18.1" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtFinMaintainInstructions ADD CONSTRAINT DF_AdtFinMaintainInstructions_TdSApplicable DEFAULT 0 FOR TdSApplicable;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="18.1" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TdSApplicable" tableName="AdtFinMaintainInstructions" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="19" author="Varaprasad.K">
+		<addNotNullConstraint tableName="AdtFinMaintainInstructions" columnName="TdSApplicable" />
+	</changeSet>
+
+	<changeSet id="20" author="Varaprasad.K">
+		<addColumn tableName="AdtFinScheduleDetails">
+			<column name="TdSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="21" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinScheduleDetails Set TdSApplicable = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="22.1" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINSCHEDULEDETAILS ADD CONSTRAINT DF_ADTFINSCHEDULEDETAILS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="22.1" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TdSApplicable" tableName="AdtFinScheduleDetails" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="23" author="Varaprasad.K">
+		<addNotNullConstraint tableName="AdtFinScheduleDetails" columnName="TdSApplicable" />
+	</changeSet>
+
 </databaseChangeLog>
