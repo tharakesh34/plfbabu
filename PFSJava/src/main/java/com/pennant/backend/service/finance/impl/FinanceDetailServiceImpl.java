@@ -4817,8 +4817,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private void processAdvancePayment(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		String finReference = financeMain.getFinReference();
-		String finBranch = financeMain.getFinBranch();
 
 		if (finFeeDetails == null) {
 			return;
@@ -4838,9 +4836,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if (excessAmount != BigDecimal.ZERO) {
-				AdvancePayment advPayment = new AdvancePayment();
-				advPayment.setFinReference(finReference);
-				advPayment.setFinBranch(finBranch);
+				AdvancePayment advPayment = new AdvancePayment(financeMain);
 				advPayment.setAdvancePaymentType(advRule.name());
 				advPayment.setRequestedAmt(excessAmount);
 				advancePaymentService.excessAmountMovement(advPayment, null, AccountConstants.TRANTYPE_CREDIT);

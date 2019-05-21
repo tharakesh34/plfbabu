@@ -207,10 +207,9 @@ public class AEAmountCodes implements Serializable {
 
 	// Advance EMI/Interest changes
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
-	private BigDecimal intAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal intDue = BigDecimal.ZERO;
+	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiAdjusted = BigDecimal.ZERO;
-	private BigDecimal emiAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
@@ -1483,14 +1482,6 @@ public class AEAmountCodes implements Serializable {
 		this.intAdjusted = intAdjusted;
 	}
 
-	public BigDecimal getIntAdvAvailable() {
-		return intAdvAvailable;
-	}
-
-	public void setIntAdvAvailable(BigDecimal intAdvAvailable) {
-		this.intAdvAvailable = intAdvAvailable;
-	}
-
 	public BigDecimal getIntDue() {
 		return intDue;
 	}
@@ -1499,20 +1490,20 @@ public class AEAmountCodes implements Serializable {
 		this.intDue = intDue;
 	}
 
+	public BigDecimal getIntTdsAdjusted() {
+		return intTdsAdjusted;
+	}
+
+	public void setIntTdsAdjusted(BigDecimal intTdsAdjusted) {
+		this.intTdsAdjusted = intTdsAdjusted;
+	}
+
 	public BigDecimal getEmiAdjusted() {
 		return emiAdjusted;
 	}
 
 	public void setEmiAdjusted(BigDecimal emiAdjusted) {
 		this.emiAdjusted = emiAdjusted;
-	}
-
-	public BigDecimal getEmiAdvAvailable() {
-		return emiAdvAvailable;
-	}
-
-	public void setEmiAdvAvailable(BigDecimal emiAdvAvailable) {
-		this.emiAdvAvailable = emiAdvAvailable;
 	}
 
 	public BigDecimal getEmiDue() {

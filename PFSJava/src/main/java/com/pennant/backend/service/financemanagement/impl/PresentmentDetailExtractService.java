@@ -484,60 +484,6 @@ public class PresentmentDetailExtractService {
 	protected void updateChequeStatus(long chequeDetailsId, String status) {
 		chequeDetailDAO.updateChequeStatus(chequeDetailsId, status);
 	}
-
-	private boolean isPresentmentAmtFromAdvance(PresentmentDetail pd) {
-		AdvancePayment advancePayment = null;
-
-		List<FinExcessAmount> list = finExcessAmountDAO.getExcessAmountsByRef(pd.getFinReference());
-
-		List<FinExcessAmount> excessAmounts = new ArrayList<>();
-
-		for (FinExcessAmount finExcessAmount : list) {
-			if (AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVINT
-					|| AdvanceRuleCode.getRule(finExcessAmount.getAmountType()) == AdvanceRuleCode.ADVEMI) {
-				excessAmounts.add(finExcessAmount);
-			}
-		}
-
-		if (excessAmounts.isEmpty()) {
-			return false;
-		}
-
-		advancePayment = new AdvancePayment(pd.getGrcAdvType(), pd.getAdvType(), pd.getGrcPeriodEndDate());
-		advancePayment.setExcessAmounts(excessAmounts);
-		advancePayment.setSchdPriDue(pd.getSchPriDue());
-		advancePayment.setSchdIntDue(pd.getSchPftDue());
-		advancePayment.setValueDate(DateUtility.getAppValueDate());
-
-		AdvancePaymentUtil.calculatePresement(advancePayment);
-
-		if (AdvanceRuleCode.getRule(advancePayment.getAdvancePaymentType()) == AdvanceRuleCode.ADVINT) {
-			if (advancePayment.getIntDue().compareTo(pd.getSchAmtDue()) >= 0) {
-				pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
-				pd.setPresentmentAmt(BigDecimal.ZERO);
-				pd.setAdvanceAmt(advancePayment.getIntDue());
-			} else {
-				pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advancePayment.getIntDue()));
-				pd.setAdvanceAmt(advancePayment.getIntDue());
-			}
-			pd.setExcludeReason(RepayConstants.PEXC_ADVINT);
-		} else {
-			if (advancePayment.getEmiDue().compareTo(pd.getSchAmtDue()) >= 0) {
-				pd.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
-				pd.setPresentmentAmt(BigDecimal.ZERO);
-				pd.setAdvanceAmt(advancePayment.getEmiDue());
-			} else {
-				pd.setPresentmentAmt(pd.getSchAmtDue().subtract(advancePayment.getEmiDue()));
-				pd.setAdvanceAmt(advancePayment.getEmiDue());
-			}
-			pd.setExcludeReason(RepayConstants.PEXC_ADVEMI);
-		}
-
-		finExcessAmountDAO.updateUtilizedAndBalance(advancePayment.getFinExcessAmount());
-
-		return true;
-
-	}
 	
 	private void processAdvAmounts(PresentmentHeader detailHeader, PresentmentDetail prd) {
 

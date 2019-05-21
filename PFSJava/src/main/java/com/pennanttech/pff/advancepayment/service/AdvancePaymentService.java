@@ -28,7 +28,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
-import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -76,8 +76,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 		Date valueDate = custEODEvent.getEodValueDate();
 
-		AdvancePayment advancePayment = null;
-
 		FinanceMain fm = null;
 		for (FinEODEvent finEODEvent : finEODEvents) {
 
@@ -110,9 +108,131 @@ public class AdvancePaymentService extends ServiceHelper {
 				}
 			}
 
-			advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
-			advancePayment.setProfitDetail(finEODEvent.getFinProfitDetail());
-			createReceipt(advancePayment, fm, valueDate);
+			AdvanceType advanceType = null;
+			String amountType = "";
+
+			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+				advanceType = AdvanceType.getType(fm.getGrcAdvType());
+			} else {
+				advanceType = AdvanceType.getType(fm.getAdvType());
+			}
+
+			if (advanceType == null) {
+				return;
+			}
+
+			BigDecimal profitSchd = curSchd.getProfitSchd();
+			BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
+
+			BigDecimal principalSchd = curSchd.getPrincipalSchd();
+			BigDecimal schdPriPaid = curSchd.getSchdPriPaid();
+
+			BigDecimal feeSchd = curSchd.getFeeSchd();
+			BigDecimal schdFeePaid = curSchd.getSchdFeePaid();
+
+			BigDecimal tdsAmount = curSchd.getTDSAmount();
+			BigDecimal tdsPaid = curSchd.getTDSPaid();
+
+			BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid).subtract(tdsAmount).subtract(tdsPaid);
+			BigDecimal schdEmiDue = schdIntDue.add(principalSchd);
+			schdEmiDue = schdEmiDue.add(feeSchd);
+			schdEmiDue = schdEmiDue.subtract(schdPriPaid);
+			schdEmiDue = schdEmiDue.subtract(schdFeePaid);
+
+			//get excess
+			String finReference = fm.getFinReference();
+			BigDecimal dueAmt = BigDecimal.ZERO;
+
+			if (advanceType == AdvanceType.AE) {
+				amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
+				dueAmt = schdEmiDue;
+			} else {
+				amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+				dueAmt = schdIntDue;
+			}
+
+			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, amountType);
+
+			AdvancePayment advancePayment = new AdvancePayment(fm);
+			advancePayment.setCurSchd(curSchd);
+			advancePayment.setFinExcessAmount(excessAmount);
+
+			BigDecimal excessBal = excessAmount.getBalanceAmt();
+			BigDecimal adjustedAmount = BigDecimal.ZERO;
+
+			if (dueAmt.compareTo(BigDecimal.ZERO) > 0) {
+				if (excessBal != null && excessBal.compareTo(BigDecimal.ZERO) > 0) {
+					if (dueAmt.compareTo(excessBal) >= 0) {
+						adjustedAmount = excessBal;
+					} else {
+						adjustedAmount = dueAmt;
+					}
+				}
+			}
+
+			tdsPaid = tdsPaid.add(tdsAmount);
+			curSchd.setTDSPaid(tdsPaid);
+
+			if (advanceType == AdvanceType.AE) {
+				schdPriPaid = schdPriPaid.add(adjustedAmount);
+				curSchd.setSchdPriPaid(schdPriPaid);
+			} else {
+				schdPftPaid = schdPftPaid.add(adjustedAmount).add(tdsPaid);
+				curSchd.setSchdPftPaid(schdPftPaid);
+			}
+
+			if (curSchd.getSchdPftPaid().compareTo(profitSchd) >= 0) {
+				curSchd.setSchPftPaid(true);
+			}
+
+			financeScheduleDetailDAO.updateSchPftPaid(curSchd);
+
+			long linkedTranId = processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
+			advancePayment.setLinkedTranId(linkedTranId);
+
+			// 1. Receipt Header
+			FinReceiptHeader rch = getReceiptHeader(fm, adjustedAmount, advanceType.name(), valueDate);
+			finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
+
+			// 2. Receipt Details
+			long receiptID = rch.getReceiptID();
+			long excessID = advanceExcessMovement(excessAmount, adjustedAmount, receiptID,
+					AccountConstants.TRANTYPE_DEBIT, valueDate);
+			FinReceiptDetail rcd = getReceiptDetail(adjustedAmount, valueDate, receiptID, excessID, advanceType.name());
+			finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
+
+			// 3. Receipt Allocation Details
+			List<ReceiptAllocationDetail> allocations = getAdvIntAllocations(receiptID, adjustedAmount, tdsPaid,
+					BigDecimal.ZERO);
+			receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
+
+			// 4. Repay Header
+			FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
+			financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
+
+			// 5. Repay Schedule Details 
+			List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
+			financeRepaymentsDAO.saveRpySchdList(list, TableType.MAIN_TAB);
+
+			FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
+			profitDetail.setFinReference(finReference);
+
+			BigDecimal totalPftPaid = profitDetail.getTotalPftPaid();
+			totalPftPaid = totalPftPaid.add(schdPftPaid);
+			profitDetail.setTotalPftPaid(totalPftPaid);
+
+			BigDecimal tdTdsPaid = profitDetail.getTdTdsPaid();
+			profitDetail.setTdTdsPaid(tdsPaid);
+
+			BigDecimal tdTdsBal = profitDetail.getTdTdsBal();
+			profitDetail.setTdTdsBal(tdTdsBal);
+
+			financeProfitDetailDAO.updateSchPftPaid(profitDetail);
+
+			// 8. Fin Repayments 
+			FinanceRepayments financeRepayments = getFinanceRepayments(fm, curSchd, receiptID, linkedTranId, valueDate);
+			financeRepaymentsDAO.save(financeRepayments, TableType.MAIN_TAB.getSuffix());
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -120,78 +240,15 @@ public class AdvancePaymentService extends ServiceHelper {
 
 	public List<ReturnDataSet> processBackDatedAdvansePayments(FinanceDetail financeDetail,
 			FinanceProfitDetail profiDetails, Date appDate, String postBranch, boolean isApprove) {
-		logger.debug(Literal.ENTERING);
-		AdvancePayment advancePayment = null;
-
-		List<ReturnDataSet> datasets = new ArrayList<ReturnDataSet>();
-
-		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
-		CustEODEvent custEODEvent = new CustEODEvent();
-
-		Customer customer = new Customer();
-		customer.setCustAppDate(appDate);
-		custEODEvent.setCustomer(customer);
-		custEODEvent.setEodValueDate(appDate);
-
-		FinEODEvent finEODEvent = new FinEODEvent();
-		finEODEvent.setFinanceMain(fm);
-		finEODEvent.setFinExcessAmounts(new ArrayList<>());
-		finEODEvent.setFinProfitDetail(profiDetails);
-		finEODEvent.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
-
-		if (fm.getFinStartDate().compareTo(DateUtility.getAppDate()) >= 0) {
-			return datasets;
-		}
-
-		int index = 0;
-		for (FinanceScheduleDetail curSchd : finEODEvent.getFinanceScheduleDetails()) {
-			if (curSchd.getDefSchdDate().compareTo(DateUtility.getAppDate()) > 0) {
-				break;
-			}
-
-			index = index + 1;
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
-				if (fm.isAlwBPI() && StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, fm.getBpiTreatment())) {
-					continue;
-				}
-			}
-
-			if (fm.getGrcAdvType() == null && fm.getAdvType() == null) {
-				continue;
-			}
-
-			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
-				if (fm.getGrcAdvType() == null) {
-					continue;
-				}
-			}
-
-			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
-				if (fm.getAdvType() == null) {
-					continue;
-				}
-			}
-
-			advancePayment = processAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
-			if (isApprove) {
-				advancePayment.setProfitDetail(finEODEvent.getFinProfitDetail());
-				createReceipt(advancePayment, fm, appDate);
-			}
-
-		}
-
-		logger.debug(Literal.LEAVING);
-		return finEODEvent.getReturnDataSet();
+		return new ArrayList<>();
 	}
 
-	public AdvancePayment processAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd,
-			Date valueDate) {
+	public long processAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		Date schDate = curSchd.getSchDate();
 
-		List<FinExcessAmount> excessAmounts = finEODEvent.getFinExcessAmounts();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		FinanceProfitDetail profiDetails = finEODEvent.getFinProfitDetail();
 
@@ -201,42 +258,17 @@ public class AdvancePaymentService extends ServiceHelper {
 		aeEvent.getAcSetIDList().add(accountingID);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-
-		BigDecimal profitSchd = curSchd.getProfitSchd();
-		BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
-		BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid);
-
-		BigDecimal principalSchd = curSchd.getPrincipalSchd();
-		BigDecimal schdPriPaid = curSchd.getSchdPriPaid();
-		BigDecimal schdPriDue = principalSchd.subtract(schdPriPaid);
-
-		AdvancePayment advancePayment = new AdvancePayment(fm.getGrcAdvType(), fm.getAdvType(),
-				fm.getGrcPeriodEndDate());
-
-		advancePayment.setFinReference(fm.getFinReference());
-		advancePayment.setFinBranch(fm.getFinBranch());
-		advancePayment.setExcessAmounts(excessAmounts);
-		advancePayment.setSchdPriDue(schdPriDue);
-		advancePayment.setSchdIntDue(schdIntDue);
-		advancePayment.setValueDate(valueDate);
-		advancePayment.setCurSchd(curSchd);
-
-		AdvancePaymentUtil.calculateDue(advancePayment);
-
-		amountCodes.setIntAdjusted(advancePayment.getIntAdjusted());
-		amountCodes.setIntAdvAvailable(advancePayment.getIntAdvAvailable());
-		amountCodes.setIntDue(advancePayment.getIntDue());
-		amountCodes.setEmiAdjusted(advancePayment.getEmiAdjusted());
-		amountCodes.setEmiAdvAvailable(advancePayment.getEmiAdvAvailable());
-		amountCodes.setEmiDue(advancePayment.getEmiDue());
+		amountCodes.setEmiAdjusted(curSchd.getSchdPftPaid());
+		amountCodes.setIntAdjusted(curSchd.getSchdPriPaid());
+		amountCodes.setIntTdsAdjusted(curSchd.getTDSPaid());
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setPostDate(valueDate);
 		aeEvent.setValueDate(valueDate);
-		//Postings Process and save all postings related to finance for one time accounts update
 
+		//Postings Process and save all postings related to finance for one time accounts update
 		try {
 			aeEvent = postAccountingEOD(aeEvent);
 		} catch (Exception e) {
@@ -246,18 +278,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		logger.debug(Literal.LEAVING);
-		return advancePayment;
-	}
-
-	private void createReceipt(AdvancePayment advancePayment, FinanceMain fm, Date valueDate) {
-		FinanceScheduleDetail curSchd = advancePayment.getCurSchd();
-
-		if (AdvanceType.hasAdvInterest(fm.getGrcAdvType()) || AdvanceType.hasAdvInterest(fm.getAdvType())) {
-			createAdvIntReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
-
-		} else if (AdvanceType.hasAdvEMI(fm.getAdvType())) {
-			createAdvEMIReceipt(advancePayment, valueDate, curSchd, AccountConstants.TRANTYPE_DEBIT);
-		}
+		return aeEvent.getLinkedTranId();
 	}
 
 	/**
@@ -344,8 +365,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			advPayment = AdvancePaymentUtil.calculateRepayAdvPayment(finScheduleData);
 		}
 
-		AdvancePayment advancePayment = new AdvancePayment();
-		advancePayment.setFinReference(finReference);
+		AdvancePayment advancePayment = new AdvancePayment(financeMain);
 
 		Long feeTypeId;
 		BigDecimal adviseAmount = BigDecimal.ZERO;
@@ -383,7 +403,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public long excessAmountMovement(AdvancePayment advancePayment, Long receiptID, String txnType) {
-		String finReference = advancePayment.getFinReference();
+		String finReference = advancePayment.getFinanceMain().getFinReference();
 		String adviceType = advancePayment.getAdvancePaymentType();
 		AdvanceRuleCode advanceType = AdvanceRuleCode.getRule(adviceType);
 
@@ -446,26 +466,28 @@ public class AdvancePaymentService extends ServiceHelper {
 		return excessID;
 	}
 
-	public long advanceExcessMovement(AdvancePayment advPayment, Long receiptID, String txnType) {
-		String finRef = advPayment.getFinReference();
-		String adviceType = advPayment.getAdvancePaymentType();
+	private long advanceExcessMovement(FinExcessAmount excess, BigDecimal adjAmount, Long receiptID, String txnType,
+			Date valueDate) {
+		//String finRef = advPayment.getFinanceMain().getFinReference();
+		//String adviceType = advPayment.getAdvancePaymentType();
 		long excessID = Long.MIN_VALUE;
 
-		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finRef, adviceType);
+		//FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finRef, adviceType);
+
 		if (excess != null) {
 			excessID = excess.getExcessID();
 			FinExcessMovement excessAmovement = finExcessAmountDAO.getFinExcessMovement(excessID,
-					RepayConstants.PAYTYPE_PRESENTMENT, advPayment.getValueDate());
+					RepayConstants.PAYTYPE_PRESENTMENT, valueDate);
 
 			if (excessAmovement != null) {
 				//reserve exist
 				excess.setReservedAmt(excess.getReservedAmt().subtract(excessAmovement.getAmount()));
 			}
 
-			BigDecimal intAdjusted = advPayment.getIntAdjusted();
-			BigDecimal emiAdjusted = advPayment.getEmiAdjusted();
+			//BigDecimal intAdjusted = advPayment.getIntAdjusted();
+			//BigDecimal emiAdjusted = advPayment.getEmiAdjusted();
 			//since both can't co-exists
-			BigDecimal adjAmount = intAdjusted.add(emiAdjusted);
+			//BigDecimal adjAmount = intAdjusted.add(emiAdjusted);
 			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
 			finExcessAmountDAO.updateReserveUtilization(excess);
 
@@ -482,219 +504,34 @@ public class AdvancePaymentService extends ServiceHelper {
 		return excessID;
 	}
 
-	private void createAdvIntReceipt(AdvancePayment advancePayment, Date valueDate, FinanceScheduleDetail curSchd,
-			String txnType) {
-		String finReference = advancePayment.getFinReference();
-		String finBranch = advancePayment.getFinBranch();
-
-		BigDecimal intAdjusted = advancePayment.getIntAdjusted();
-
-		BigDecimal profitSchd = curSchd.getProfitSchd();
-		BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
-		BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid);
-		BigDecimal tDSPaid = curSchd.getTDSPaid();
-
-		BigDecimal payNow = BigDecimal.ZERO;
-		BigDecimal tdsPayNow = BigDecimal.ZERO;
-		BigDecimal netPay = BigDecimal.ZERO;
-
-		if (curSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(schdIntDue);
-		}
-
-		netPay = schdIntDue.subtract(tdsPayNow);
-		if (intAdjusted.compareTo(netPay) <= 0) {
-			netPay = intAdjusted;
-		}
-
-		if (curSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(netPay);
-		}
-		payNow = netPay.add(tdsPayNow);
-
-		if (payNow.compareTo(BigDecimal.ZERO) <= 0) {
-			return;
-		}
-
-		long excessID;
-		long receiptID = 0;
-
-		// 1. Receipt Header
-		FinReceiptHeader rch = getReceiptHeader(payNow, valueDate, finReference, finBranch, AdvanceRuleCode.ADVINT);
-		finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
-
-		// 2. Receipt Details
-		advancePayment.setRequestedAmt(intAdjusted);
-		receiptID = rch.getReceiptID();
-		excessID = advanceExcessMovement(advancePayment, receiptID, txnType);
-		FinReceiptDetail rcd = getReceiptDetail(payNow, valueDate, receiptID, excessID, AdvanceRuleCode.ADVINT);
-		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
-
-		// 3. Receipt Allocation Details
-		List<ReceiptAllocationDetail> allocations = getAdvIntAllocations(receiptID, payNow, tdsPayNow, netPay);
-		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
-
-		// 4. Repay Header		
-		FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
-		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
-
-		// 5. Repay Schedule Details 
-		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
-		financeRepaymentsDAO.saveRpySchdList(list, TableType.MAIN_TAB);
-
-		// 6. Schedule Details 
-		schdPftPaid = schdPftPaid.add(payNow);
-		tDSPaid = tDSPaid.add(tdsPayNow);
-		curSchd.setSchdPftPaid(schdPftPaid);
-		curSchd.setTDSPaid(tDSPaid);
-
-		if (schdPftPaid.equals(payNow)) {
-			curSchd.setSchPftPaid(true);
-		}
-		financeScheduleDetailDAO.updateSchPftPaid(curSchd);
-
-		// 7. Profit Details
-		FinanceProfitDetail profitDetail = advancePayment.getProfitDetail();
-		profitDetail.setFinReference(finReference);
-
-		BigDecimal totalPftPaid = profitDetail.getTotalPftPaid();
-		totalPftPaid = totalPftPaid.add(schdPftPaid);
-		profitDetail.setTotalPftPaid(totalPftPaid);
-
-		BigDecimal tdTdsPaid = profitDetail.getTdTdsPaid();
-		tdTdsPaid = tdTdsPaid.add(tDSPaid);
-		profitDetail.setTdTdsPaid(tdTdsPaid);
-
-		BigDecimal tdTdsBal = profitDetail.getTdTdsBal();
-		tdTdsBal = tdTdsBal.add(tDSPaid); //FIXME
-		profitDetail.setTdTdsBal(tdTdsBal);
-
-		financeProfitDetailDAO.updateSchPftPaid(profitDetail);
-
-	}
-
-	private void createAdvEMIReceipt(AdvancePayment advancePayment, Date valueDate, FinanceScheduleDetail curSchd,
-			String txnType) {
-		String finReference = curSchd.getFinReference();
-		String finBranch = advancePayment.getFinBranch();
-
-		BigDecimal emiAdjusted = advancePayment.getEmiAdjusted();
-
-		BigDecimal principalSchd = curSchd.getPrincipalSchd();
-		BigDecimal schdPriPaid = curSchd.getSchdPriPaid();
-		BigDecimal schdPriDue = principalSchd.subtract(schdPriPaid);
-
-		BigDecimal profitSchd = curSchd.getProfitSchd();
-		BigDecimal schdPftPaid = curSchd.getSchdPftPaid();
-		BigDecimal schdIntDue = profitSchd.subtract(schdPftPaid);
-
-		BigDecimal schdEmiDue = schdPriDue.add(schdPriPaid);
-
-		BigDecimal tDSPaid = curSchd.getTDSPaid();
-
-		BigDecimal payNow = BigDecimal.ZERO;
-		BigDecimal tdsPayNow = BigDecimal.ZERO;
-		BigDecimal netPay = BigDecimal.ZERO;
-
-		if (curSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(schdIntDue);
-		}
-
-		netPay = schdIntDue.subtract(tdsPayNow);
-		if (emiAdjusted.subtract(schdIntDue).compareTo(netPay) <= 0) {
-			netPay = emiAdjusted.subtract(schdIntDue);
-		}
-
-		if (curSchd.isTDSApplicable()) {
-			tdsPayNow = receiptCalculator.getTDS(netPay);
-		}
-		payNow = netPay.add(tdsPayNow);
-
-		payNow = payNow.add(schdEmiDue);
-
-		if (payNow.compareTo(BigDecimal.ZERO) <= 0) {
-			return;
-		}
-
-		long excessID;
-		long receiptID = 0;
-
-		// 1. Receipt Header
-		FinReceiptHeader rch = getReceiptHeader(payNow, valueDate, finReference, finBranch, AdvanceRuleCode.ADVEMI);
-		finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
-
-		// 2. Receipt Details
-		advancePayment.setRequestedAmt(emiAdjusted);
-		receiptID = rch.getReceiptID();
-		excessID = advanceExcessMovement(advancePayment, receiptID, txnType);
-		FinReceiptDetail rcd = getReceiptDetail(payNow, valueDate, receiptID, excessID, AdvanceRuleCode.ADVEMI);
-		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
-
-		// 3. Receipt Allocation Details
-		List<ReceiptAllocationDetail> allocations = getAdvIntAllocations(receiptID, payNow, tdsPayNow, netPay);
-		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
-
-		// 4. Repay Header
-		FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
-		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
-
-		// 5. Repay Schedule Details 
-		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
-		financeRepaymentsDAO.saveRpySchdList(list, TableType.MAIN_TAB);
-
-		// 6. Schedule Details 
-		schdPriPaid = schdPriPaid.add(payNow);
-		curSchd.setSchdPriPaid(schdPriPaid);
-
-		if (schdPriPaid.equals(payNow)) {
-			curSchd.setSchPriPaid(true);
-		}
-		financeScheduleDetailDAO.updateSchPriPaid(curSchd);
-
-		// 7. Profit Details
-		FinanceProfitDetail profitDetail = advancePayment.getProfitDetail();
-		profitDetail.setFinReference(finReference);
-
-		BigDecimal totalPriPaid = profitDetail.getTotalPriPaid();
-		totalPriPaid = totalPriPaid.add(schdPriPaid);
-		profitDetail.setTotalPriPaid(schdPriPaid);
-
-		BigDecimal tdTdsBal = profitDetail.getTdTdsBal();
-		tdTdsBal = tdTdsBal.add(tDSPaid); //FIXME
-		profitDetail.setTdTdsBal(tdTdsBal);
-
-		financeProfitDetailDAO.updateSchPriPaid(profitDetail);
-
-	}
-
-	private FinReceiptHeader getReceiptHeader(BigDecimal requestedAmt, Date valueDate, String finReference,
-			String finBranch, AdvanceRuleCode adviceType) {
+	private FinReceiptHeader getReceiptHeader(FinanceMain fm, BigDecimal receiptAmount, String receiptMode,
+			Date valueDate) {
 		FinReceiptHeader rch = new FinReceiptHeader();
-		rch.setReference(finReference);
+		rch.setReference(fm.getFinReference());
 		rch.setReceiptDate(valueDate);
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
 		rch.setExcessAdjustTo(PennantConstants.List_Select);
 		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		rch.setReceiptAmount(requestedAmt);
+		rch.setReceiptAmount(receiptAmount);
 		rch.setEffectSchdMethod(PennantConstants.List_Select);
-		rch.setReceiptMode(adviceType.name());
-		rch.setSubReceiptMode(adviceType.name());
+		rch.setReceiptMode(receiptMode);
+		rch.setSubReceiptMode(receiptMode);
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rch.setLogSchInPresentment(false);
-		rch.setPostBranch(finBranch);
+		rch.setPostBranch(fm.getFinBranch());
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		return rch;
 	}
 
 	private FinReceiptDetail getReceiptDetail(BigDecimal payNow, Date valueDate, long receiptID, long excessID,
-			AdvanceRuleCode adviceType) {
+			String paymentType) {
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceiptID(receiptID);
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		rcd.setPaymentType(adviceType.name());
+		rcd.setPaymentType(paymentType);
 		rcd.setPayAgainstID(excessID);
 		rcd.setAmount(payNow);
 		rcd.setDueAmount(payNow);
@@ -793,6 +630,38 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		list.add(rsd);
 		return list;
+	}
+
+	public FinanceRepayments getFinanceRepayments(FinanceMain fm, FinanceScheduleDetail curSchd, long receiptId,
+			long linkedTranId, Date valueDate) {
+		FinanceRepayments repayment = new FinanceRepayments();
+
+		repayment.setReceiptId(receiptId);
+		repayment.setFinReference(fm.getFinReference());
+		repayment.setFinSchdDate(curSchd.getSchDate());
+		repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);
+		repayment.setLinkedTranId(linkedTranId);
+
+		repayment.setFinRpyAmount(curSchd.getSchdPftPaid());
+		repayment.setFinPostDate(valueDate);
+		repayment.setFinValueDate(fm.getFinStartDate());
+		repayment.setFinBranch(fm.getFinBranch());
+		repayment.setFinType(fm.getFinType());
+		repayment.setFinCustID(fm.getCustID());
+		repayment.setFinSchdPftPaid(curSchd.getSchdPftPaid());
+		repayment.setFinSchdPriPaid(curSchd.getSchdPriPaid());
+		repayment.setFinTotSchdPaid(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
+		repayment.setFinFee(BigDecimal.ZERO);
+		repayment.setFinWaiver(BigDecimal.ZERO);
+		repayment.setFinRefund(BigDecimal.ZERO);
+
+		// Fee Details
+		repayment.setSchdFeePaid(BigDecimal.ZERO);
+		repayment.setSchdInsPaid(BigDecimal.ZERO);
+		repayment.setSchdSuplRentPaid(BigDecimal.ZERO);
+		repayment.setSchdIncrCostPaid(BigDecimal.ZERO);
+
+		return repayment;
 	}
 
 	private void createPayableAdvise(String finReference, Date valueDate, long feeTypeID, BigDecimal adviseAmount,

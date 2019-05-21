@@ -7,14 +7,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class AdvancePayment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String finReference;
-	private String finBranch;
+	private FinanceMain financeMain;
 	private String advancePaymentType;
 	private String grcAdvType;
 	private String advType;
@@ -24,18 +24,21 @@ public class AdvancePayment implements Serializable {
 	private List<FinExcessAmount> excessAmounts = new ArrayList<>();
 	private Date valueDate;
 
+	private BigDecimal adjustedAmount = BigDecimal.ZERO;
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
 	private BigDecimal intAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal intDue = BigDecimal.ZERO;
 	private BigDecimal emiAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiAdvAvailable = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
+	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
 	private BigDecimal availableAmt = BigDecimal.ZERO;
 	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private FinExcessAmount finExcessAmount;
 	private BigDecimal requestedAmt = BigDecimal.ZERO;
 	private FinanceScheduleDetail curSchd;
 	private FinanceProfitDetail profitDetail;
+	private Long linkedTranId;
 
 	public AdvancePayment() {
 		super();
@@ -48,20 +51,20 @@ public class AdvancePayment implements Serializable {
 		this.grcPeriodEndDate = grcPeriodEndDate;
 	}
 
-	public String getFinReference() {
-		return finReference;
+	public AdvancePayment(FinanceMain financeMain) {
+		super();
+		this.grcAdvType = financeMain.getGrcAdvType();
+		this.advType = financeMain.getAdvType();
+		this.grcPeriodEndDate = financeMain.getGrcPeriodEndDate();
+		this.financeMain = financeMain;
 	}
 
-	public void setFinReference(String finReference) {
-		this.finReference = finReference;
+	public FinanceMain getFinanceMain() {
+		return financeMain;
 	}
 
-	public String getFinBranch() {
-		return finBranch;
-	}
-
-	public void setFinBranch(String finBranch) {
-		this.finBranch = finBranch;
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
 	}
 
 	public String getAdvancePaymentType() {
@@ -128,6 +131,14 @@ public class AdvancePayment implements Serializable {
 		this.valueDate = valueDate;
 	}
 
+	public BigDecimal getAdjustedAmount() {
+		return adjustedAmount;
+	}
+
+	public void setAdjustedAmount(BigDecimal adjustedAmount) {
+		this.adjustedAmount = adjustedAmount;
+	}
+
 	public BigDecimal getIntAdjusted() {
 		return intAdjusted;
 	}
@@ -176,6 +187,14 @@ public class AdvancePayment implements Serializable {
 		this.emiDue = emiDue;
 	}
 
+	public BigDecimal getIntTdsAdjusted() {
+		return intTdsAdjusted;
+	}
+
+	public void setIntTdsAdjusted(BigDecimal intTdsAdjusted) {
+		this.intTdsAdjusted = intTdsAdjusted;
+	}
+
 	public BigDecimal getBalanceAmt() {
 		return balanceAmt;
 	}
@@ -222,6 +241,14 @@ public class AdvancePayment implements Serializable {
 
 	public void setProfitDetail(FinanceProfitDetail profitDetail) {
 		this.profitDetail = profitDetail;
+	}
+
+	public Long getLinkedTranId() {
+		return linkedTranId;
+	}
+
+	public void setLinkedTranId(Long linkedTranId) {
+		this.linkedTranId = linkedTranId;
 	}
 
 }

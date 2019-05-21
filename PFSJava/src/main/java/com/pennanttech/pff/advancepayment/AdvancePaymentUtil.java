@@ -7,13 +7,11 @@ import java.util.List;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.Property;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 
 public class AdvancePaymentUtil {
 
@@ -165,105 +163,6 @@ public class AdvancePaymentUtil {
 	}
 
 	/**
-	 * 
-	 * @param advancePayment
-	 */
-	public static void calculateDue(AdvancePayment advancePayment) {
-		calculate(advancePayment, false);
-	}
-
-	/**
-	 * 
-	 * @param advancePayment
-	 */
-	public static void calculatePresement(AdvancePayment advancePayment) {
-		calculate(advancePayment, true);
-	}
-
-	private static void calculate(AdvancePayment advancePayment, boolean presement) {
-		AdvanceType advanceType;
-		if (advancePayment.getValueDate().compareTo(advancePayment.getGrcPeriodEndDate()) <= 0) {
-			advanceType = AdvanceType.getType(advancePayment.getGrcAdvType());
-		} else {
-			advanceType = AdvanceType.getType(advancePayment.getAdvType());
-		}
-
-		if (advanceType == null) {
-			return;
-		}
-
-		switch (advanceType) {
-		case UT:
-		case UF:
-		case AF:
-			for (FinExcessAmount excessAmount : advancePayment.getExcessAmounts()) {
-				if (AdvanceRuleCode.getRule(excessAmount.getAmountType()) == AdvanceRuleCode.ADVINT) {
-					advancePayment.setAvailableAmt(excessAmount.getAmount());
-					advancePayment.setAdvancePaymentType(excessAmount.getAmountType());
-					advancePayment.setFinExcessAmount(excessAmount);
-					calculateAdvanceInterest(advancePayment);
-					break;
-				}
-			}
-
-			break;
-		case AE:
-			for (FinExcessAmount excessAmount : advancePayment.getExcessAmounts()) {
-				if (AdvanceRuleCode.getRule(excessAmount.getAmountType()) == AdvanceRuleCode.ADVEMI) {
-					advancePayment.setAdvancePaymentType(excessAmount.getAmountType());
-					advancePayment.setAvailableAmt(excessAmount.getAmount());
-					advancePayment.setFinExcessAmount(excessAmount);
-					calculateAdvanceEMI(advancePayment);
-					break;
-				}
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	private static void calculateAdvanceInterest(AdvancePayment advancePayment) {
-		BigDecimal intAdjusted;
-		BigDecimal intDue;
-		BigDecimal intAdvAvailable = advancePayment.getAvailableAmt();
-
-		intDue = advancePayment.getSchdIntDue();
-		if (advancePayment.getAvailableAmt().compareTo(intDue) >= 0) {
-			intAdjusted = intDue;
-		} else {
-			intAdjusted = advancePayment.getAvailableAmt();
-		}
-
-		intAdvAvailable = intAdvAvailable.subtract(intAdjusted);
-		intDue = intDue.subtract(intAdjusted);
-
-		advancePayment.setIntAdjusted(intAdjusted);
-		advancePayment.setIntAdvAvailable(intAdvAvailable);
-		advancePayment.setIntDue(intDue);
-	}
-
-	private static void calculateAdvanceEMI(AdvancePayment advancePayment) {
-		BigDecimal emiAdjusted;
-		BigDecimal emiDue;
-		BigDecimal emiAdvAvailable = advancePayment.getAvailableAmt();
-
-		emiDue = advancePayment.getSchdPriDue().add(advancePayment.getSchdIntDue());
-		if (emiAdvAvailable.compareTo(emiDue) >= 0) {
-			emiAdjusted = emiDue;
-		} else {
-			emiAdjusted = emiAdvAvailable;
-		}
-
-		emiAdvAvailable = emiAdvAvailable.subtract(emiAdjusted);
-		emiDue = emiDue.subtract(emiAdjusted);
-
-		advancePayment.setEmiAdjusted(emiAdjusted);
-		advancePayment.setEmiAdvAvailable(emiAdvAvailable);
-		advancePayment.setEmiDue(emiDue);
-	}
-
-	/**
 	 * This method will calculate the Advance Interest for LMS in the below case
 	 * <p>
 	 * Consider only Repayments terms
@@ -359,7 +258,7 @@ public class AdvancePaymentUtil {
 						grcTerm++;
 					}
 
-					amount = amount.add(sd.getProfitSchd());
+					amount = amount.add(sd.getProfitSchd().subtract(sd.getTDSAmount()));
 				} else {
 					if (AdvanceType.AE != rpyAdvType) {
 
@@ -370,7 +269,7 @@ public class AdvancePaymentUtil {
 						if (rpyAdvTerms > 0) {
 							rpyTerm++;
 						}
-						amount = amount.add(sd.getProfitSchd());
+						amount = amount.add(sd.getProfitSchd().subtract(sd.getTDSAmount()));
 					}
 				}
 			}
