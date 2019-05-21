@@ -144,8 +144,8 @@ public class AdvancePaymentService extends ServiceHelper {
 					}
 				}
 			}
-			//schedule updation
 
+			/* Schedule Update */
 			if (StringUtils.equals(amountType, RepayConstants.EXAMOUNTTYPE_ADVINT)) {
 
 				curSchd.setSchdPftPaid(adjustedAmount);
@@ -190,19 +190,20 @@ public class AdvancePaymentService extends ServiceHelper {
 				curSchd.setSchPriPaid(true);
 			}
 
-			///*************************postings
+			/* postings */
 
 			long linkedTranId = postAdvancePayments(finEODEvent, curSchd, custEODEvent.getEodValueDate());
 
-			///*************************Excess movement
+			/* Excess Movement */
 			FinReceiptHeader rch = new FinReceiptHeader();
 			rch.setReference(fm.getFinReference());
 			long receiptID = finReceiptHeaderDAO.generatedReceiptID(rch);
-			//update excess details
-			long excessID = advanceExcessMovement(excessAmount, adjustedAmount, receiptID, valueDate);
-			// receipt creation
-			prepareReceipt(rch, fm, adjustedAmount, advanceType.name(), valueDate, excessID, curSchd,linkedTranId);
 
+			/* Update excess details */
+			long excessID = advanceExcessMovement(excessAmount, adjustedAmount, receiptID, valueDate);
+
+			/* Receipt creation */
+			prepareReceipt(rch, fm, adjustedAmount, advanceType.name(), valueDate, excessID, curSchd, linkedTranId);
 			FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 			profitDetail.setFinReference(finReference);
 			profitDetail.setTotalPriPaid(profitDetail.getTotalPriPaid().add(curSchd.getSchdPriPaid()));
@@ -210,7 +211,8 @@ public class AdvancePaymentService extends ServiceHelper {
 			profitDetail.setTdTdsPaid(profitDetail.getTdTdsPaid().add(curSchd.getTDSPaid()));
 			profitDetail.setTdTdsBal(profitDetail.getTdTdsAmount().subtract(profitDetail.getTdTdsPaid()));
 			financeScheduleDetailDAO.updateSchPaid(curSchd);
-			//summary
+
+			/* Update Summary */
 			financeProfitDetailDAO.updateSchPaid(profitDetail);
 
 		}
@@ -446,14 +448,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		return excessID;
 	}
 
-	private long advanceExcessMovement(FinExcessAmount excess, BigDecimal adjAmount, Long receiptID,
-			Date valueDate) {
-		//String finRef = advPayment.getFinanceMain().getFinReference();
-		//String adviceType = advPayment.getAdvancePaymentType();
+	private long advanceExcessMovement(FinExcessAmount excess, BigDecimal adjAmount, Long receiptID, Date valueDate) {
 		long excessID = Long.MIN_VALUE;
-		
-
-		//FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finRef, adviceType);
 
 		if (excess != null) {
 			excessID = excess.getExcessID();
@@ -465,10 +461,6 @@ public class AdvancePaymentService extends ServiceHelper {
 				excess.setReservedAmt(excess.getReservedAmt().subtract(excessAmovement.getAmount()));
 			}
 
-			//BigDecimal intAdjusted = advPayment.getIntAdjusted();
-			//BigDecimal emiAdjusted = advPayment.getEmiAdjusted();
-			//since both can't co-exists
-			//BigDecimal adjAmount = intAdjusted.add(emiAdjusted);
 			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
 			finExcessAmountDAO.updateReserveUtilization(excess);
 
@@ -505,21 +497,22 @@ public class AdvancePaymentService extends ServiceHelper {
 		rch.setPostBranch(fm.getFinBranch());
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
-		// 2. Receipt Details
+		/* 2. Receipt Details */
 		long receiptID = rch.getReceiptID();
 		FinReceiptDetail rcd = getReceiptDetail(receiptAmount, valueDate, receiptID, excessID, receiptMode);
 
-		// 3. Receipt Allocation Details
+		/* 3. Receipt Allocation Details */
 		List<ReceiptAllocationDetail> allocations = getAdvIntAllocations(receiptID, receiptAmount, curSchd.getTDSPaid(),
 				BigDecimal.ZERO);
 
-		// 4. Repay Header
+		/* 4. Repay Header */
 		FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
-		// 5. Repay Schedule Details 
+
+		/* 5. Repay Schedule Details */
 		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
-		// 8. Fin Repayments 
+		/* 8. Fin Repayments */
 		FinanceRepayments financeRepayments = getFinanceRepayments(fm, curSchd, receiptID, linkedTranId, valueDate);
-		
+
 		finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);

@@ -2,14 +2,9 @@ package com.pennanttech.pff.advancepayment.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class AdvancePayment implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -19,36 +14,14 @@ public class AdvancePayment implements Serializable {
 	private String grcAdvType;
 	private String advType;
 	private Date grcPeriodEndDate;
-	private BigDecimal schdPriDue = BigDecimal.ZERO;
-	private BigDecimal schdIntDue = BigDecimal.ZERO;
-	private List<FinExcessAmount> excessAmounts = new ArrayList<>();
-	private Date valueDate;
 
-	private BigDecimal adjustedAmount = BigDecimal.ZERO;
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
-	private BigDecimal intAdvAvailable = BigDecimal.ZERO;
-	private BigDecimal intDue = BigDecimal.ZERO;
 	private BigDecimal emiAdjusted = BigDecimal.ZERO;
-	private BigDecimal emiAdvAvailable = BigDecimal.ZERO;
-	private BigDecimal emiDue = BigDecimal.ZERO;
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
-	private BigDecimal availableAmt = BigDecimal.ZERO;
-	private BigDecimal balanceAmt = BigDecimal.ZERO;
-	private FinExcessAmount finExcessAmount;
 	private BigDecimal requestedAmt = BigDecimal.ZERO;
-	private FinanceScheduleDetail curSchd;
-	private FinanceProfitDetail profitDetail;
-	private Long linkedTranId;
 
 	public AdvancePayment() {
 		super();
-	}
-
-	public AdvancePayment(String grcAdvType, String advType, Date grcPeriodEndDate) {
-		super();
-		this.grcAdvType = grcAdvType;
-		this.advType = advType;
-		this.grcPeriodEndDate = grcPeriodEndDate;
 	}
 
 	public AdvancePayment(FinanceMain financeMain) {
@@ -99,68 +72,12 @@ public class AdvancePayment implements Serializable {
 		this.advType = advType;
 	}
 
-	public BigDecimal getSchdPriDue() {
-		return schdPriDue;
-	}
-
-	public void setSchdPriDue(BigDecimal schdPriDue) {
-		this.schdPriDue = schdPriDue;
-	}
-
-	public BigDecimal getSchdIntDue() {
-		return schdIntDue;
-	}
-
-	public void setSchdIntDue(BigDecimal schdIntDue) {
-		this.schdIntDue = schdIntDue;
-	}
-
-	public List<FinExcessAmount> getExcessAmounts() {
-		return excessAmounts;
-	}
-
-	public void setExcessAmounts(List<FinExcessAmount> excessAmounts) {
-		this.excessAmounts = excessAmounts;
-	}
-
-	public Date getValueDate() {
-		return valueDate;
-	}
-
-	public void setValueDate(Date valueDate) {
-		this.valueDate = valueDate;
-	}
-
-	public BigDecimal getAdjustedAmount() {
-		return adjustedAmount;
-	}
-
-	public void setAdjustedAmount(BigDecimal adjustedAmount) {
-		this.adjustedAmount = adjustedAmount;
-	}
-
 	public BigDecimal getIntAdjusted() {
 		return intAdjusted;
 	}
 
 	public void setIntAdjusted(BigDecimal intAdjusted) {
 		this.intAdjusted = intAdjusted;
-	}
-
-	public BigDecimal getIntAdvAvailable() {
-		return intAdvAvailable;
-	}
-
-	public void setIntAdvAvailable(BigDecimal intAdvAvailable) {
-		this.intAdvAvailable = intAdvAvailable;
-	}
-
-	public BigDecimal getIntDue() {
-		return intDue;
-	}
-
-	public void setIntDue(BigDecimal intDue) {
-		this.intDue = intDue;
 	}
 
 	public BigDecimal getEmiAdjusted() {
@@ -171,52 +88,12 @@ public class AdvancePayment implements Serializable {
 		this.emiAdjusted = emiAdjusted;
 	}
 
-	public BigDecimal getEmiAdvAvailable() {
-		return emiAdvAvailable;
-	}
-
-	public void setEmiAdvAvailable(BigDecimal emiAdvAvailable) {
-		this.emiAdvAvailable = emiAdvAvailable;
-	}
-
-	public BigDecimal getEmiDue() {
-		return emiDue;
-	}
-
-	public void setEmiDue(BigDecimal emiDue) {
-		this.emiDue = emiDue;
-	}
-
 	public BigDecimal getIntTdsAdjusted() {
 		return intTdsAdjusted;
 	}
 
 	public void setIntTdsAdjusted(BigDecimal intTdsAdjusted) {
 		this.intTdsAdjusted = intTdsAdjusted;
-	}
-
-	public BigDecimal getBalanceAmt() {
-		return balanceAmt;
-	}
-
-	public void setBalanceAmt(BigDecimal balanceAmt) {
-		this.balanceAmt = balanceAmt;
-	}
-
-	public BigDecimal getAvailableAmt() {
-		return availableAmt;
-	}
-
-	public void setAvailableAmt(BigDecimal availableAmt) {
-		this.availableAmt = availableAmt;
-	}
-
-	public FinExcessAmount getFinExcessAmount() {
-		return finExcessAmount;
-	}
-
-	public void setFinExcessAmount(FinExcessAmount finExcessAmount) {
-		this.finExcessAmount = finExcessAmount;
 	}
 
 	public BigDecimal getRequestedAmt() {
@@ -226,29 +103,4 @@ public class AdvancePayment implements Serializable {
 	public void setRequestedAmt(BigDecimal requestedAmt) {
 		this.requestedAmt = requestedAmt;
 	}
-
-	public FinanceScheduleDetail getCurSchd() {
-		return curSchd;
-	}
-
-	public void setCurSchd(FinanceScheduleDetail curSchd) {
-		this.curSchd = curSchd;
-	}
-
-	public FinanceProfitDetail getProfitDetail() {
-		return profitDetail;
-	}
-
-	public void setProfitDetail(FinanceProfitDetail profitDetail) {
-		this.profitDetail = profitDetail;
-	}
-
-	public Long getLinkedTranId() {
-		return linkedTranId;
-	}
-
-	public void setLinkedTranId(Long linkedTranId) {
-		this.linkedTranId = linkedTranId;
-	}
-
 }
