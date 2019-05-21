@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="01" author="Satya">
+		<comment> IND AS - NewColumns </comment>
+		<addColumn tableName="FinanceMain">
+			<column name="ClosedDate" type="datetime" />
+		</addColumn>
+
+		<addColumn tableName="FinanceMain_Temp">
+			<column name="ClosedDate" type="datetime" />
+		</addColumn>
+
+		<addColumn tableName="RejectFinanceMain">
+			<column name="ClosedDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="02" author="Satya">
+		<comment> IND AS - Update New Columns </comment>
+		<sql>
+	        <![CDATA[
+				UPDATE FINANCEMAIN SET CLOSEDDATE = MATURITYDATE WHERE FINISACTIVE = 0 AND CLOSEDDATE IS NULL;
+				UPDATE FINANCEMAIN SET CLOSEDDATE = NULL WHERE FINISACTIVE = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="03" author="Satya">
+		<comment> IND AS - Security Rights </comment>
+		<sql>
+			<![CDATA[	
+				Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker');
+				Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Approver');
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_Amortization');
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_AmortizationMethodRule');
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_RuleList_NewAmortizationMethodRule');
+					
+				Delete from SecRights where RightName = 'menuCat_Amortization';
+				Delete from SecRights where RightName = 'menuItem_RulesFactory_AmortizationMethodRule';
+				Delete from SecRights where RightName = 'button_RuleList_NewAmortizationMethodRule';
+				
+				Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'AmortizationMethodRule_Maker') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+				Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'AmortizationMethodRule_Approver') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER');
+				Delete from SecGroups where GrpCode = 'AmortizationMethodRule_Maker';
+				Delete from SecGroups where GrpCode = 'AmortizationMethodRule_Approver';
+				
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_Amortization', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_RulesFactory_AmortizationMethodRule', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 2, 'button_RuleList_NewAmortizationMethodRule', 'RuleList', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'AmortizationMethodRule_Maker','WF Maker for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'AmortizationMethodRule_Approver','WF Approver for Rules', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+				
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'menuCat_Amortization'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_AmortizationMethodRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );		
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleList_NewAmortizationMethodRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleCode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleCodeDesc'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleEvent'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_returnType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_active'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_ruleModule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'RuleDialog_sqlRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Maker'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+				
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Approver'), (Select RightID from SecRights where RightName = 'button_RuleDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Approver'), (Select RightID from SecRights where RightName = 'menuCat_Amortization'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'AmortizationMethodRule_Approver'), (Select RightID from SecRights where RightName = 'menuItem_RulesFactory_AmortizationMethodRule'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+				INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'AmortizationMethodRule_Approver'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'AmortizationMethodRule_Maker'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups_View);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights_View);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups_View);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="04" author="Satya">
+		<comment> IND AS - Reports </comment>
+		<sql>
+		    <![CDATA[
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel: Fee Amortization Reference','Fee Amortization Reference',1,'FeeAmortizationDetailsRpt_Header','pfsDatasource',0,'menu_Item_FeeAmzReferenceReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel: Fee Amortization Loan Type','Fee Amortization Loan Type',1,'FeeAmortizationDetailsRpt_Header_fintype','pfsDatasource',0,'menu_Item_FeeAmzLoanTypeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport');
+				delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport');
+		
+				delete from REPORTCONFIGURATION where menuitemcode='menu_Item_FeeAmzReferenceReport';
+				delete from REPORTCONFIGURATION where menuitemcode='menu_Item_FeeAmzLoanTypeReport';
+		
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),3,'Date','DATE','Date','MONTHENDDATE',null,'---Select----',null,null,0,0,0,0,3,1,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport'),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport'),2,'FinType','LOVSEARCH','Loan Type','T1.FinType',null,'FinanceType','getFinType','getFinType',0,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport'),3,'Date','DATE','Date','MONTHENDDATE',null,'---Select----',null,null,0,0,0,0,3,1,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="05" author="Satya">
+		<comment> IND AS - SystemParameters </comment>
+		<sql>
+		    <![CDATA[
+				Delete From SMTparameters where SYSPARMCODE = 'APP_DEPLOYMENT_DATE';
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'INCOMEAMZ_RECAL_ACCRUALS'; 
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'INCOMEAMZ_THREAD_COUNT';
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'DEFAULT_FEEFACTOR_PERC'; 
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'MONTHENDACC_FROMFINSTARTDATE'; 
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'INCOMEAMZ_FROMFINSTARTDATE'; 
+				Delete from SMTPARAMETERS where SYSPARMCODE = 'AMZ_THREAD_COUNT';
+				Delete From SMTparameters where SYSPARMCODE = 'AMZ_MONTHEND';
+				Delete From SMTparameters where SYSPARMCODE = 'MONTHENDACC_CALREQ';
+						
+				INSERT INTO SMTparameters values ('APP_DEPLOYMENT_DATE', 'Application Deployment Date, LIVE Date.', 'Date', 1, '2017-08-16', 0, 0, 'MOD_DATEPICKER', NULL, 'Application Deployment Date, LIVE Date.', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTparameters values('INCOMEAMZ_RECAL_ACCRUALS','ReCalculate Month End Accruals for Income Amortization.Values Y/N', 'String', 1, 'N', 1, 0, NULL, NULL, 'ReCalculate Month End Accruals for Income Amortization.', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '',0);
+				INSERT INTO SMTparameters values('INCOMEAMZ_THREAD_COUNT', 'Number of Threads', 'int', 1, '10', 6, 0, NULL, NULL, 'Number of Threads', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '',0); 
+				INSERT INTO SMTparameters values('DEFAULT_FEEFACTOR_PERC', 'Default Fee Factor percentage for Income Amortization', 'Double', 1, 18, 3, 0, null, null, 'Default Fee Factor percentage for Income Amortization', 1, 1000, CURRENT_TIMESTAMP, 'Approved','','','','','',0);
+				INSERT INTO SMTparameters values('MONTHENDACC_FROMFINSTARTDATE','Accrual Calculation from LoanStartDate(Y) or Current MonthEndDate(N)', 'String', 1,'Y',1,0, NULL, NULL, 'Accrual Calculation from LoanStartDate or Current MonthEndDate', 1, 1000, CURRENT_TIMESTAMP, 'Approved','','','','','',0);
+				INSERT INTO SMTparameters values('INCOMEAMZ_FROMFINSTARTDATE','Income or Expense Amortization from  LoanStartDate(Y) or Current MonthEndDate(N)', 'String', 1,'Y',1,0, NULL, NULL, 'Income or Expense Amortization from  LoanStartDate or Current MonthEndDate', 1, 1000, CURRENT_TIMESTAMP, 'Approved','','','','','',0);
+				INSERT INTO SMTparameters values('AMZ_THREAD_COUNT', 'Number of Threads for AMZ.', 'int', 1, '10', 6, 0, NULL, NULL, 'Number of Threads for AMZ.', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SMTparameters values ('AMZ_MONTHEND', 'Completed Amortization Month.', 'Date', 0, '2018-08-31', 0, 0, 'MOD_DATEPICKER', NULL, 'Completed Amortization Month.', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTparameters values('MONTHENDACC_CALREQ', 'Month End Accruals Calculation. Values Y/N', 'String', 1, 'N', 1, 0, NULL, NULL, 'Month End Accruals Calculation.', 1, 1000, CURRENT_TIMESTAMP, 'Approved', '', '', '', '', '',0);
+	        ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="06" author="Satya">
+		<comment> IND AS - NewColumns </comment>
+		<addColumn tableName="FINPFTDETAILS">
+			<column name="AMZMethod" type="varchar(1)" />
+		</addColumn>
+
+		<addColumn tableName="FINPFTDETAILS_TEMP">
+			<column name="AMZMethod" type="varchar(1)" />
+		</addColumn>
+
+		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
+			<column name="AMZMethod" type="varchar(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="07" author="Satya">
+		<sql>
+		    <![CDATA[
+				Drop Table IncomeAmortization;
+				Drop Table ProjectedAccruals;
+				Drop Table ProjectedIncomeAMZ;
+				
+				Drop Table SeqIncomeAmortization;
+				Drop Table SeqProjectedAccruals;
+				Drop Table SeqProjectedIncomeAMZ;
+				
+				Drop Table AmortizationQueuing;
+				Drop Table AmortizationQueuing_LOG;
+						
+				Drop Table AmortizationLog;
+				Drop Table SeqAmortizationLog;
+				
+				Drop Table CalAvgPOSLog;
+				Drop Table SeqCalAvgPOSLog;
+				
+				Drop Table ProjectedAccruals_WORK;
+				DROP TABLE ProjectedIncomeAMZ_WORK;
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="08" author="Satya">
+		<createTable tableName="AmortizationQueuing">
+			<column name="FinReference" type="VARCHAR(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CustID" type="bigint" />
+			<column name="EodDate" type="datetime" />
+			<column name="ThreadId" type="varchar(50)" />
+			<column name="Progress" type="varchar(15)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="EodProcess" type="boolean" defaultValue="0" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="09" author="Satya">
+		<createTable tableName="AmortizationQueuing_Log">
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="CustID" type="bigint" />
+			<column name="EodDate" type="datetime" />
+			<column name="ThreadId" type="varchar(50)" />
+			<column name="Progress" type="varchar(15)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="EodProcess" type="boolean" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="10" author="Satya">
+		<createTable tableName="IncomeAmortization">
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="CustID" type="bigint" />
+			<column name="FinType" type="VARCHAR(20)" />
+			<column name="ReferenceID" type="bigint" />
+			<column name="IncomeTypeID" type="bigint" />
+			<column name="IncomeType" type="char(1)" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="CalculatedOn" type="datetime" />
+			<column name="CalcFactor" type="decimal(13, 9)" />
+			<column name="Amount" type="decimal(18, 0)" />
+			<column name="ActualAmount" type="decimal(18, 0)" />
+			<column name="AMZMethod" type="char(1)" />
+			<column name="MonthEndDate" type="datetime" />
+			<column name="AmortizedAmount" type="decimal(18, 0)" />
+			<column name="UnAmortizedAmount" type="decimal(18, 0)" />
+			<column name="CurMonthAmz" type="decimal(18, 0)" />
+			<column name="PrvMonthAmz" type="decimal(18, 0)" />
+			<column name="Active" type="boolean" defaultValue="0" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="11" author="Satya">
+		<createTable tableName="ProjectedAccruals">
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="AccruedOn" type="datetime" />
+			<column name="PftAccrued" type="decimal(18, 0)" />
+			<column name="CumulativeAccrued" type="decimal(18, 0)" />
+			<column name="POSAccrued" type="decimal(18, 0)" />
+			<column name="CumulativePOS" type="decimal(18, 0)" />
+			<column name="NoOfDays" type="number(10, 0)" />
+			<column name="CumulativeDays" type="number(10, 0)" />
+			<column name="AMZPercentage" type="decimal(13, 9)" />
+			<column name="PartialPaidAmt" type="decimal(18, 0)" />
+			<column name="PartialAMZPerc" type="decimal(13, 9)" />
+			<column name="MonthEnd" type="boolean" defaultValue="0" />
+			<column name="AVGPOS" type="decimal(18, 0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="12" author="Satya">
+		<createTable tableName="ProjectedIncomeAMZ">
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="FinType" type="VARCHAR(20)" />
+			<column name="ReferenceID" type="number(19,0)" />
+			<column name="IncomeTypeID" type="number(19,0)" />
+			<column name="IncomeType" type="Varchar(1)" />
+			<column name="MonthEndDate" type="date" />
+			<column name="AmortizedAmount" type="decimal(18,0)" />
+			<column name="CumulativeAmount" type="decimal(18,0)" />
+			<column name="UnAmortizedAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="13" author="Satya">
+		<createTable tableName="AmortizationLog">
+			<column name="Id" type="number(19,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MonthEndDate" type="date" />
+			<column name="Status" type="number(10,0)" defaultValue="0" />
+			<column name="StartTime" type="date" />
+			<column name="EndTime" type="date" />
+			<column name="LastMntBy" type="number(19,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="14" author="Satya">
+		<createSequence sequenceName="SeqAmortizationLog" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" cycle="false" />
+	</changeSet>
+
+	<changeSet id="15" author="Satya">
+		<createTable tableName="CalAvgPOSLog">
+			<column name="Id" type="number(19,0)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MonthEndDate" type="date" />
+			<column name="Status" type="number(10,0)" defaultValue="0" />
+			<column name="StartTime" type="date" />
+			<column name="EndTime" type="date" />
+			<column name="LastMntBy" type="number(19,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="16" author="Satya">
+		<createSequence sequenceName="SeqCalAvgPOSLog" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" cycle="false" />
+	</changeSet>
+
+	<changeSet id="17" author="Satya">
+		<createTable tableName="ProjectedAccruals_WORK">
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="AccruedOn" type="date" />
+			<column name="PftAccrued" type="decimal(18,0)" />
+			<column name="CumulativeAccrued" type="decimal(18,0)" />
+			<column name="POSAccrued" type="decimal(18,0)" />
+			<column name="CumulativePOS" type="decimal(18,0)" />
+			<column name="NoOfDays" type="number(10,0)" />
+			<column name="CumulativeDays" type="number(10,0)" />
+			<column name="AMZPercentage" type="decimal(13,9)" />
+			<column name="PartialPaidAmt" type="decimal(18,0)" />
+			<column name="PartialAMZPerc" type="decimal(13,9)" />
+			<column name="MonthEnd" type="boolean" defaultValue="0" />
+			<column name="AVGPOS" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="18" author="Satya">
+		<createTable tableName="ProjectedIncomeAMZ_WORK">
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="FinType" type="VARCHAR(20)" />
+			<column name="ReferenceID" type="number(19,0)" />
+			<column name="IncomeTypeID" type="number(19,0)" />
+			<column name="IncomeType" type="Varchar(1)" />
+			<column name="MonthEndDate" type="date" />
+			<column name="AmortizedAmount" type="decimal(18,0)" />
+			<column name="CumulativeAmount" type="decimal(18,0)" />
+			<column name="UnAmortizedAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="19" author="Satya">
+		<comment> IND AS - Update New Columns </comment>
+		<sql>
+	        <![CDATA[
+			UPDATE FINANCEMAIN SET CLOSEDDATE = MATURITYDATE WHERE FINISACTIVE = 0 AND CLOSEDDATE IS NULL;
+			UPDATE FINANCEMAIN SET CLOSEDDATE = NULL WHERE FINISACTIVE = 1;
+			
+			Update FINPFTDETAILS SET AMZMETHOD = 'I' WHERE AMZMETHOD IS NULL;
+			Update INCOMEAMORTIZATION SET AMZMETHOD = 'I' WHERE AMZMETHOD IS NULL;
+			
+			Update FINFEEDETAIL Set TAXPERCENT = 18 Where TAXPERCENT IS NULL;
+			Update FINFEEDETAIL set TAXPERCENT = 0 WHERE FEETYPEID IN (Select FEETYPEID from FEETYPES Where TAXAPPLICABLE = 0);		
+			
+			Update SMTparameters set SYSPARMVALUE = 'N' Where SYSPARMCODE in ('INCOMEAMZ_FROMFINSTARTDATE', 'MONTHENDACC_FROMFINSTARTDATE');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="20" author="Satya">
+		<comment> IND AS - Performance </comment>
+		<sql>
+			<![CDATA[
+			ALTER TABLE PROJECTEDINCOMEAMZ NOLOGGING;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="21" author="Satya">
+		<comment> IND AS - Performance </comment>
+		<sql>
+			<![CDATA[	
+				begin
+				for i in (select constraint_name, table_name from user_constraints where table_name = 'PROJECTEDACCRUALS') LOOP
+				execute immediate 'alter table '||i.table_name||' drop constraint '||i.constraint_name||'';
+				end loop;
+				end;
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="22" author="Satya">
+		<comment> IND AS - Performance </comment>
+		<sql>
+			<![CDATA[	
+				begin
+				for i in (select constraint_name, table_name from user_constraints where table_name = 'PROJECTEDINCOMEAMZ') LOOP
+				execute immediate 'alter table '||i.table_name||' drop constraint '||i.constraint_name||'';
+				end loop;
+				end;
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="23" author="Satya">
+		<comment> IND AS - Indexes </comment>
+		<sql>	
+		    <![CDATA[
+			DROP INDEX IDX_INCAMZ_CALON;
+			DROP INDEX IDX_FINREF_ACRON;
+			DROP INDEX IDX_INCOMEAMZ_REFID;
+			DROP INDEX IDX_PROJINCOMEAMZ_MONTHEND;
+			DROP INDEX IDX_PROJACCRUALS;
+			DROP INDEX IDX_FINRED_AMZMETHOD;
+			DROP INDEX IDX_FINREF_INCTYPE_REFID;
+	
+			DROP INDEX IDX_AMZQUEUE_THREAD;
+			DROP INDEX AMORTIZATIONQUEUING_NLS_IDX;
+			DROP INDEX IDX_PROJACCRUALS_ACCRUEON;
+			DROP INDEX IDX_PA_ACRON;
+			DROP INDEX PROJECTEDACCRUALS_NLS_IDX;
+			DROP INDEX IDX_PROJECTEDACCRUALS_FINREF;
+			DROP INDEX PROJECTEDACCRUALS_WORK_NLS_IDX;
+			DROP INDEX IDX_INCAMZ_REF_INCTYPE_REFID;
+			DROP INDEX INCOMEAMORTIZATION_NLS_IDX;
+			DROP INDEX IDX_PROJINCAMZ_EOM;
+	
+			CREATE INDEX IDX_AMZQUEUE_THREAD ON AMORTIZATIONQUEUING (THREADID);
+			CREATE INDEX AMORTIZATIONQUEUING_NLS_IDX on AMORTIZATIONQUEUING (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
+	
+			CREATE INDEX IDX_PROJACCRUALS_ACCRUEON ON PROJECTEDACCRUALS (FINREFERENCE, ACCRUEDON);
+			CREATE INDEX IDX_PA_ACRON ON PROJECTEDACCRUALS (ACCRUEDON);
+			CREATE INDEX PROJECTEDACCRUALS_NLS_IDX on PROJECTEDACCRUALS (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
+	
+			CREATE UNIQUE INDEX IDX_PROJECTEDACCRUALS_FINREF ON PROJECTEDACCRUALS_WORK (FINREFERENCE);
+			CREATE INDEX PROJECTEDACCRUALS_WORK_NLS_IDX on PROJECTEDACCRUALS_WORK (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
+	
+			CREATE INDEX IDX_INCAMZ_REF_INCTYPE_REFID ON INCOMEAMORTIZATION (FINREFERENCE, INCOMETYPE, REFERENCEID);
+			CREATE INDEX INCOMEAMORTIZATION_NLS_IDX on INCOMEAMORTIZATION (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
+			CREATE INDEX IDX_PROJINCAMZ_EOM ON PROJECTEDINCOMEAMZ (MONTHENDDATE);
+			]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>
