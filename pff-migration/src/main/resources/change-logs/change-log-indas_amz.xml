@@ -195,232 +195,234 @@
 
 	<changeSet id="08" author="Satya">
 		<createTable tableName="AmortizationQueuing">
-				<column name="FinReference" type="VARCHAR(20)">
-					<constraints primaryKey="true" nullable="false" />
-				</column>
-				<column name="CustID" type="bigint" />
-				<column name="EodDate" type="datetime" />
-				<column name="ThreadId" type="varchar(50)" />
-				<column name="Progress" type="varchar(15)" />
-				<column name="StartTime" type="datetime" />
-				<column name="EndTime" type="datetime" />
-				<column name="ErrorLog" type="varchar(2000)" />
-				<column name="EodProcess" type="boolean" />
+			<column name="FinReference" type="VARCHAR(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CustID" type="bigint" />
+			<column name="EodDate" type="datetime" />
+			<column name="ThreadId" type="varchar(50)" />
+			<column name="Progress" type="varchar(15)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="EodProcess" type="boolean" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="9.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE AmortizationQueuing ADD CONSTRAINT DF_AmortzatinQung_EodProcess DEFAULT 0 FOR EodProcess;
+				ALTER TABLE AMORTIZATIONQUEUING ADD CONSTRAINT DF_AMORTZATINQUNG_EODPROCESS DEFAULT 0 FOR EODPROCESS;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="9.1" author="Satya" dbms="postgresql, oracle">
-				<addDefaultValue columnName="EodProcess" tableName="AmortizationQueuing" defaultValue="0" />
+		<addDefaultValue columnName="EodProcess" tableName="AmortizationQueuing" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="10" author="Satya">
-				<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" />
+		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" />
 	</changeSet>
 
 	<changeSet id="11" author="Satya">
 		<createTable tableName="AmortizationQueuing_Log">
-				<column name="FinReference" type="VARCHAR(20)" />
-				<column name="CustID" type="bigint" />
-				<column name="EodDate" type="datetime" />
-				<column name="ThreadId" type="varchar(50)" />
-				<column name="Progress" type="varchar(15)" />
-				<column name="StartTime" type="datetime" />
-				<column name="EndTime" type="datetime" />
-				<column name="ErrorLog" type="varchar(2000)" />
-				<column name="EodProcess" type="boolean" />
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="CustID" type="bigint" />
+			<column name="EodDate" type="datetime" />
+			<column name="ThreadId" type="varchar(50)" />
+			<column name="Progress" type="varchar(15)" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="EodProcess" type="boolean" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="12.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE AmortizationQueuing_Log ADD CONSTRAINT DF_AmrtztnQung_Log_EodProcess DEFAULT 0 FOR EodProcess;
+				ALTER TABLE AMORTIZATIONQUEUING_LOG ADD CONSTRAINT DF_AMRTZTNQUNG_LOG_EODPROCESS DEFAULT 0 FOR EODPROCESS;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="12.1" author="Satya" dbms="postgresql, oracle">
-				<addDefaultValue columnName="EodProcess" tableName="AmortizationQueuing_Log" defaultValue="0" />
+		<addDefaultValue columnName="EodProcess" tableName="AmortizationQueuing_Log" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="13" author="Satya">
-				<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" />
+		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" />
 	</changeSet>
 
 	<changeSet id="14" author="Satya">
 		<createTable tableName="IncomeAmortization">
-				<column name="FinReference" type="VARCHAR(20)" />
-				<column name="CustID" type="bigint" />
-				<column name="FinType" type="VARCHAR(20)" />
-				<column name="ReferenceID" type="bigint" />
-				<column name="IncomeTypeID" type="bigint" />
-				<column name="IncomeType" type="char(1)" />
-				<column name="LastMntOn" type="datetime" />
-				<column name="CalculatedOn" type="datetime" />
-				<column name="CalcFactor" type="decimal(13, 9)" />
-				<column name="Amount" type="decimal(18, 0)" />
-				<column name="ActualAmount" type="decimal(18, 0)" />
-				<column name="AMZMethod" type="char(1)" />
-				<column name="MonthEndDate" type="datetime" />
-				<column name="AmortizedAmount" type="decimal(18, 0)" />
-				<column name="UnAmortizedAmount" type="decimal(18, 0)" />
-				<column name="CurMonthAmz" type="decimal(18, 0)" />
-				<column name="PrvMonthAmz" type="decimal(18, 0)" />
-				<column name="Active" type="boolean" />
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="CustID" type="bigint" />
+			<column name="FinType" type="VARCHAR(20)" />
+			<column name="ReferenceID" type="bigint" />
+			<column name="IncomeTypeID" type="bigint" />
+			<column name="IncomeType" type="char(1)" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="CalculatedOn" type="datetime" />
+			<column name="CalcFactor" type="decimal(13, 9)" />
+			<column name="Amount" type="decimal(18, 0)" />
+			<column name="ActualAmount" type="decimal(18, 0)" />
+			<column name="AMZMethod" type="char(1)" />
+			<column name="MonthEndDate" type="datetime" />
+			<column name="AmortizedAmount" type="decimal(18, 0)" />
+			<column name="UnAmortizedAmount" type="decimal(18, 0)" />
+			<column name="CurMonthAmz" type="decimal(18, 0)" />
+			<column name="PrvMonthAmz" type="decimal(18, 0)" />
+			<column name="Active" type="boolean" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="15.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE IncomeAmortization ADD CONSTRAINT DF_IncomeAmortization_Active DEFAULT 0 FOR Active;
+				ALTER TABLE INCOMEAMORTIZATION ADD CONSTRAINT DF_INCOMEAMORTIZATION_ACTIVE DEFAULT 0 FOR ACTIVE;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="15.1" author="Satya" dbms="postgresql, oracle">
-				<addDefaultValue columnName="Active" tableName="IncomeAmortization" defaultValue="0" />
+		<addDefaultValue columnName="Active" tableName="IncomeAmortization" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="16" author="Satya">
-				<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" />
+		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" />
 	</changeSet>
 
 	<changeSet id="17" author="Satya">
 		<createTable tableName="ProjectedAccruals">
-				<column name="FinReference" type="VARCHAR(20)" />
-				<column name="AccruedOn" type="datetime" />
-				<column name="PftAccrued" type="decimal(18, 0)" />
-				<column name="CumulativeAccrued" type="decimal(18, 0)" />
-				<column name="POSAccrued" type="decimal(18, 0)" />
-				<column name="CumulativePOS" type="decimal(18, 0)" />
-				<column name="NoOfDays" type="decimal(10, 0)" />
-				<column name="CumulativeDays" type="decimal(10, 0)" />
-				<column name="AMZPercentage" type="decimal(13, 9)" />
-				<column name="PartialPaidAmt" type="decimal(18, 0)" />
-				<column name="PartialAMZPerc" type="decimal(13, 9)" />
-				<column name="MonthEnd" type="boolean" />
-				<column name="AVGPOS" type="decimal(18, 0)" />
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="AccruedOn" type="datetime" />
+			<column name="PftAccrued" type="decimal(18, 0)" />
+			<column name="CumulativeAccrued" type="decimal(18, 0)" />
+			<column name="POSAccrued" type="decimal(18, 0)" />
+			<column name="CumulativePOS" type="decimal(18, 0)" />
+			<column name="NoOfDays" type="int" />
+			<column name="CumulativeDays" type="int" />
+			<column name="AMZPercentage" type="decimal(13, 9)" />
+			<column name="PartialPaidAmt" type="decimal(18, 0)" />
+			<column name="PartialAMZPerc" type="decimal(13, 9)" />
+			<column name="MonthEnd" type="boolean" />
+			<column name="AVGPOS" type="decimal(18, 0)" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="18.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE ProjectedAccruals ADD CONSTRAINT DF_ProjectedAccruals_MonthEnd DEFAULT 0 FOR MonthEnd;
+				ALTER TABLE PROJECTEDACCRUALS ADD CONSTRAINT DF_PROJECTEDACCRUALS_MONTHEND DEFAULT 0 FOR MONTHEND;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="18.1" author="Satya" dbms="postgresql, oracle">
-				<addDefaultValue columnName="MonthEnd" tableName="ProjectedAccruals" defaultValue="0" />
+		<addDefaultValue columnName="MonthEnd" tableName="ProjectedAccruals" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="19" author="Satya">
-				<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" />
+		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" />
 	</changeSet>
 
 	<changeSet id="20" author="Satya">
 		<createTable tableName="ProjectedIncomeAMZ">
-				<column name="FinReference" type="VARCHAR(20)" />
-				<column name="FinType" type="VARCHAR(20)" />
-				<column name="ReferenceID" type="bigint" />
-				<column name="IncomeTypeID" type="bigint" />
-				<column name="IncomeType" type="char(1)" />
-				<column name="MonthEndDate" type="datetime" />
-				<column name="AmortizedAmount" type="decimal(18,0)" />
-				<column name="CumulativeAmount" type="decimal(18,0)" />
-				<column name="UnAmortizedAmount" type="decimal(18,0)" />
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="FinType" type="VARCHAR(20)" />
+			<column name="ReferenceID" type="bigint" />
+			<column name="IncomeTypeID" type="bigint" />
+			<column name="IncomeType" type="char(1)" />
+			<column name="MonthEndDate" type="datetime" />
+			<column name="AmortizedAmount" type="decimal(18,0)" />
+			<column name="CumulativeAmount" type="decimal(18,0)" />
+			<column name="UnAmortizedAmount" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="21" author="Satya">
 		<createTable tableName="AmortizationLog">
-				<column name="Id" type="bigint">
-					<constraints primaryKey="true" nullable="false" />
-				</column>
-				<column name="MonthEndDate" type="datetime" />
-				<column name="Status" type="decimal(10,0)" defaultValue="0" />
-				<column name="StartTime" type="datetime" />
-				<column name="EndTime" type="datetime" />
-				<column name="LastMntBy" type="bigint" />
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MonthEndDate" type="datetime" />
+			<column name="Status" type="decimal(10,0)" defaultValue="0" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="22" author="Satya">
-		<createSequence sequenceName="SeqAmortizationLog" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
+		<createSequence sequenceName="SeqAmortizationLog" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" cycle="false" />
 	</changeSet>
 
 	<changeSet id="23" author="Satya">
 		<createTable tableName="CalAvgPOSLog">
-				<column name="Id" type="bigint">
-					<constraints primaryKey="true" nullable="false" />
-				</column>
-				<column name="MonthEndDate" type="datetime" />
-				<column name="Status" type="decimal(10,0)" defaultValue="0" />
-				<column name="StartTime" type="datetime" />
-				<column name="EndTime" type="datetime" />
-				<column name="LastMntBy" type="bigint" />
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MonthEndDate" type="datetime" />
+			<column name="Status" type="decimal(10,0)" defaultValue="0" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="24" author="Satya">
-		        <createSequence sequenceName="SeqCalAvgPOSLog" startValue="1" maxValue="9223372036854775807" incrementBy="1" cycle="false" />
+		<createSequence sequenceName="SeqCalAvgPOSLog" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" cycle="false" />
 	</changeSet>
 
 	<changeSet id="25" author="Satya">
 		<createTable tableName="ProjectedAccruals_WORK">
-				<column name="FinReference" type="VARCHAR(20)" />
-				<column name="AccruedOn" type="datetime" />
-				<column name="PftAccrued" type="decimal(18,0)" />
-				<column name="CumulativeAccrued" type="decimal(18,0)" />
-				<column name="POSAccrued" type="decimal(18,0)" />
-				<column name="CumulativePOS" type="decimal(18,0)" />
-				<column name="NoOfDays" type="decimal(10,0)" />
-				<column name="CumulativeDays" type="decimal(10,0)" />
-				<column name="AMZPercentage" type="decimal(13,9)" />
-				<column name="PartialPaidAmt" type="decimal(18,0)" />
-				<column name="PartialAMZPerc" type="decimal(13,9)" />
-				<column name="MonthEnd" type="boolean" />
-				<column name="AVGPOS" type="decimal(18,0)" />
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="AccruedOn" type="datetime" />
+			<column name="PftAccrued" type="decimal(18,0)" />
+			<column name="CumulativeAccrued" type="decimal(18,0)" />
+			<column name="POSAccrued" type="decimal(18,0)" />
+			<column name="CumulativePOS" type="decimal(18,0)" />
+			<column name="NoOfDays" type="int" />
+			<column name="CumulativeDays" type="int" />
+			<column name="AMZPercentage" type="decimal(13,9)" />
+			<column name="PartialPaidAmt" type="decimal(18,0)" />
+			<column name="PartialAMZPerc" type="decimal(13,9)" />
+			<column name="MonthEnd" type="boolean" />
+			<column name="AVGPOS" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="26.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE ProjectedAccruals_WORK ADD CONSTRAINT DF_PrjctedAccruals_WRK_MnthEnd DEFAULT 0 FOR MonthEnd;
+				ALTER TABLE PROJECTEDACCRUALS_WORK ADD CONSTRAINT DF_PRJCTEDACCRUALS_WRK_MNTHEND DEFAULT 0 FOR MONTHEND;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="26.1" author="Satya" dbms="postgresql, oracle">
-				<addDefaultValue columnName="MonthEnd" tableName="ProjectedAccruals_WORK" defaultValue="0" />
+		<addDefaultValue columnName="MonthEnd" tableName="ProjectedAccruals_WORK" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="27" author="Satya">
-				<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" />
+		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" />
 	</changeSet>
 
 	<changeSet id="28" author="Satya">
 		<createTable tableName="ProjectedIncomeAMZ_WORK">
-				<column name="FinReference" type="VARCHAR(20)" />
-				<column name="FinType" type="VARCHAR(20)" />
-				<column name="ReferenceID" type="bigint" />
-				<column name="IncomeTypeID" type="bigint" />
-				<column name="IncomeType" type="char(1)" />
-				<column name="MonthEndDate" type="datetime" />
-				<column name="AmortizedAmount" type="decimal(18,0)" />
-				<column name="CumulativeAmount" type="decimal(18,0)" />
-				<column name="UnAmortizedAmount" type="decimal(18,0)" />
+			<column name="FinReference" type="VARCHAR(20)" />
+			<column name="FinType" type="VARCHAR(20)" />
+			<column name="ReferenceID" type="bigint" />
+			<column name="IncomeTypeID" type="bigint" />
+			<column name="IncomeType" type="char(1)" />
+			<column name="MonthEndDate" type="datetime" />
+			<column name="AmortizedAmount" type="decimal(18,0)" />
+			<column name="CumulativeAmount" type="decimal(18,0)" />
+			<column name="UnAmortizedAmount" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
 
@@ -478,29 +480,17 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="" author="">
+		<createIndex tableName="AMORTIZATIONQUEUING" indexName="IDX_AMZQUEUE_THREAD">
+			<column name="THREADID" />
+		</createIndex>
+	</changeSet>
+
 	<changeSet id="33" author="Satya">
 		<comment> IND AS - Indexes </comment>
 		<sql>	
 		    <![CDATA[
-					DROP INDEX IDX_INCAMZ_CALON;
-					DROP INDEX IDX_FINREF_ACRON;
-					DROP INDEX IDX_INCOMEAMZ_REFID;
-					DROP INDEX IDX_PROJINCOMEAMZ_MONTHEND;
-					DROP INDEX IDX_PROJACCRUALS;
-					DROP INDEX IDX_FINRED_AMZMETHOD;
-					DROP INDEX IDX_FINREF_INCTYPE_REFID;
-			
-					DROP INDEX IDX_AMZQUEUE_THREAD;
-					DROP INDEX AMORTIZATIONQUEUING_NLS_IDX;
-					DROP INDEX IDX_PROJACCRUALS_ACCRUEON;
-					DROP INDEX IDX_PA_ACRON;
-					DROP INDEX PROJECTEDACCRUALS_NLS_IDX;
-					DROP INDEX IDX_PROJECTEDACCRUALS_FINREF;
-					DROP INDEX PROJECTEDACCRUALS_WORK_NLS_IDX;
-					DROP INDEX IDX_INCAMZ_REF_INCTYPE_REFID;
-					DROP INDEX INCOMEAMORTIZATION_NLS_IDX;
-					DROP INDEX IDX_PROJINCAMZ_EOM;
-			
+								
 					CREATE INDEX IDX_AMZQUEUE_THREAD ON AMORTIZATIONQUEUING (THREADID);
 					CREATE INDEX AMORTIZATIONQUEUING_NLS_IDX on AMORTIZATIONQUEUING (nlssort(FINREFERENCE,'NLS_SORT=BINARY_CI'));
 			
