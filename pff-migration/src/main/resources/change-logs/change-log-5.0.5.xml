@@ -2824,7 +2824,6 @@
 			update SECGROUPRIGHTS set recordstatus=null,rolecode=null,nextrolecode=null,taskid=null,nexttaskid=null,recordtype=null where  grpid=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER');
 			update SECGROUPRIGHTS set recordstatus=null,rolecode=null,nextrolecode=null,taskid=null,nexttaskid=null,recordtype=null where  grpid=(SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='ChangeTDS_APPROVER');
 		
-                		
 			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FinChangeTDSDialog_btnNew','ChangeTDSDialog',0,1000,CURRENT_TIMESTAMP,'Approved','NULL','NULL','NULL','NULL','NULL',0 FROM SeqSecRights WHERE 0=0;
 			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FinChangeTDSDialog_btnEdit','ChangeTDSDialog',0,1000,CURRENT_TIMESTAMP,'Approved','NULL','NULL','NULL','NULL ','NULL',0 FROM SeqSecRights WHERE 0=0;
 			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FinChangeTDSDialog_btnDelete','ChangeTDSDialog',0,1000,CURRENT_TIMESTAMP,'Approved','NULL','NULL','NULL','NULL','NULL',0 FROM SeqSecRights WHERE 0=0;
