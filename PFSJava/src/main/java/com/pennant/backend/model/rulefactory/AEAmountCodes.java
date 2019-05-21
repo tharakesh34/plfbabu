@@ -209,7 +209,7 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
 	private BigDecimal intDue = BigDecimal.ZERO;
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
-	private BigDecimal emiAdjusted = BigDecimal.ZERO;
+	private BigDecimal priAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
@@ -1498,13 +1498,6 @@ public class AEAmountCodes implements Serializable {
 		this.intTdsAdjusted = intTdsAdjusted;
 	}
 
-	public BigDecimal getEmiAdjusted() {
-		return emiAdjusted;
-	}
-
-	public void setEmiAdjusted(BigDecimal emiAdjusted) {
-		this.emiAdjusted = emiAdjusted;
-	}
 
 	public BigDecimal getEmiDue() {
 		return emiDue;
@@ -1512,5 +1505,13 @@ public class AEAmountCodes implements Serializable {
 
 	public void setEmiDue(BigDecimal emiDue) {
 		this.emiDue = emiDue;
+	}
+
+	public BigDecimal getPriAdjusted() {
+		return priAdjusted;
+	}
+
+	public void setPriAdjusted(BigDecimal priAdjusted) {
+		this.priAdjusted = priAdjusted;
 	}
 }

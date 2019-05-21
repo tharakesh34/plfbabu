@@ -131,7 +131,6 @@ public interface FinanceProfitDetailDAO {
 	FinanceProfitDetail getFinProfitForAMZ(String finReference);
 	void updateAMZMethod(String finReference, String amzMethod);
 
-	void updateSchPftPaid(FinanceProfitDetail profitDetail);
+	void updateSchPaid(FinanceProfitDetail profitDetail);
 
-	void updateSchPriPaid(FinanceProfitDetail profitDetail);
 }

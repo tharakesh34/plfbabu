@@ -1162,11 +1162,14 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	// IND AS - END
 
 	@Override
-	public void updateSchPftPaid(FinanceProfitDetail profitDetail) {
+	public void updateSchPaid(FinanceProfitDetail profitDetail) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Update FinPftDetails set");
 		sql.append(" TotalPftPaid = :TotalPftPaid");
+		sql.append(", TotalPriPaid = :TotalPriPaid");
+		sql.append(", TdTdsPaid = :TdTdsPaid");
+		sql.append(", TdTdsBal = :TdTdsBal");
 		sql.append(" where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -1181,24 +1184,5 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.LEAVING);
 	}
 
-	@Override
-	public void updateSchPriPaid(FinanceProfitDetail profitDetail) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
-		sql.append(" TotalPriPaid = :TotalPriPaid");
-		sql.append(" where FinReference =:FinReference");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(profitDetail);
-		int recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
 
 }

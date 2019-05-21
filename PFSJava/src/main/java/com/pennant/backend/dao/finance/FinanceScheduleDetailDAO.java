@@ -147,9 +147,7 @@ public interface FinanceScheduleDetailDAO {
 
 	boolean isInstallSchd(String finReference, Date lastPrevDate); //## Ticket id:124998(receipt upload) 16/8/2018
 
-	void updateSchPftPaid(FinanceScheduleDetail curSchd);
-
-	void updateSchPriPaid(FinanceScheduleDetail curSchd);
+	void updateSchPaid(FinanceScheduleDetail curSchd);
 
 	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
 
