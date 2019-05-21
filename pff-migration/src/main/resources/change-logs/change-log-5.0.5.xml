@@ -128,7 +128,7 @@
 			<column name="TDSApplicableTo" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="12" author="Irfan">
 		<sql>
 			<![CDATA[
@@ -137,7 +137,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="13" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -146,15 +146,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="14" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="TDSAllowToModify" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="TDSAllowToModify" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="15" author="Saikiran.v">
-		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TDSAllowToModify"/>
-		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="TDSAllowToModify"/>
+		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="TDSAllowToModify" />
 	</changeSet>
 
 	<changeSet id="16" author="Saikiran.v">
@@ -302,7 +302,7 @@
 			t1.finsuspremarks,
 			t1.alwmultipartydisb,
 			t1.collateraltype,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.manualschedule,
 			t1.applygrcpricing,
 			t1.grcpricingmethod,
@@ -378,7 +378,7 @@
 			t1.dsfreq,
 			t1.cashcollateralreq,
 			t1.TDSAllowToModify,
-			t1.tdsApplicableTo
+			t1.TDSApplicableTo
 			FROM rmtfinancetypes t1
 			LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
 			LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
@@ -541,7 +541,7 @@
 			t1.finsuspremarks,
 			t1.alwmultipartydisb,
 			t1.collateraltype,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.manualschedule,
 			t1.applygrcpricing,
 			t1.grcpricingmethod,
@@ -616,7 +616,7 @@
 			t1.dsfreq,
 			t1.cashcollateralreq,
 			t1.TDSAllowToModify,
-			t1.tdsApplicableTo
+			t1.TDSApplicableTo
 			FROM rmtfinancetypes_temp t1
 			LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
 			LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
@@ -775,7 +775,7 @@
 			t1.finsuspremarks,
 			t1.alwmultipartydisb,
 			t1.collateraltype,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.manualschedule,
 			t1.applygrcpricing,
 			t1.grcpricingmethod,
@@ -850,7 +850,7 @@
 			t1.dsfreq,
 			t1.cashcollateralreq,
 			t1.TDSAllowToModify,
-			t1.tdsApplicableTo
+			t1.TDSApplicableTo
 			FROM rmtfinancetypes t1
 			LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
 			LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
@@ -980,7 +980,7 @@
 			t1.downpayrule,
 			t1.alwmultipartydisb,
 			t1.collateraltype,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t5.rulecode downpayrulecode,
 			t5.rulecodedesc downpayruledesc,
 			t1.applygrcpricing,
@@ -1055,7 +1055,7 @@
 			t1.cashcollateralreq,
 			t1.alwearlypaymethods,
 			t1.TDSAllowToModify,
-			t1.tdsApplicableTo
+			t1.TDSApplicableTo
 			FROM rmtfinancetypes t1
 			JOIN smtdivisiondetail t3 ON t1.findivision = t3.divisioncode
 			LEFT JOIN steppolicyheader t4 ON t1.dftsteppolicy = t4.policycode
@@ -1068,19 +1068,19 @@
 
 	<changeSet id="19" author="Saikiran.v">
 		<addColumn tableName="Financemain_temp">
-			<column name="TDSPercentage" type="decimal(18,2)"/>
-			<column name="TDSStartDate" type="datetime"/>
-			<column name="TDSEndDate" type="datetime"/>
-			<column name="TDSLimitAmt" type="decimal(18,2)"/>
+			<column name="TDSPercentage" type="decimal(18,2)" />
+			<column name="TDSStartDate" type="datetime" />
+			<column name="TDSEndDate" type="datetime" />
+			<column name="TDSLimitAmt" type="decimal(18,2)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="20" author="Saikiran.v">
 		<addColumn tableName="Financemain">
-			<column name="TDSPercentage" type="decimal(18,2)"/>
-			<column name="TDSStartDate" type="datetime"/>
-			<column name="TDSEndDate" type="datetime"/>
-			<column name="TDSLimitAmt" type="decimal(18,2)"/>
+			<column name="TDSPercentage" type="decimal(18,2)" />
+			<column name="TDSStartDate" type="datetime" />
+			<column name="TDSEndDate" type="datetime" />
+			<column name="TDSLimitAmt" type="decimal(18,2)" />
 		</addColumn>
 	</changeSet>
 
@@ -1218,7 +1218,7 @@
 			t1.accounttype,
 			t1.ddareferenceno,
 			t7.finscheduleon lovdescfinscheduleon,
-			t1.custdsr,
+			t1.cusTDSr,
 			t1.jointaccount,
 			t1.jointcustid,
 			t1.downpaybank,
@@ -1272,7 +1272,7 @@
 			t28.dealercity lovdescsourcecity,
 			t1.dsacode,
 			t30.rofficerdesc dsacodedesc,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.mandateid,
 			t1.droplinefrq,
 			t1.firstdroplinedate,
@@ -1347,10 +1347,10 @@
 			t1.advtype,
 			t1.advterms,
 			t1.advstage,
-			t1.tDSPercentage,
-			t1.tDSStartDate,
-			t1.tDSEndDate,
-			t1.tDSLimitAmt
+			t1.TDSPercentage,
+			t1.TDSStartDate,
+			t1.TDSEndDate,
+			t1.TDSLimitAmt
 			FROM financemain_temp t1
 			JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
 			LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
@@ -1505,7 +1505,7 @@
 			t1.accounttype,
 			t1.ddareferenceno,
 			t7.finscheduleon lovdescfinscheduleon,
-			t1.custdsr,
+			t1.cusTDSr,
 			t1.jointaccount,
 			t1.jointcustid,
 			t1.downpaybank,
@@ -1559,7 +1559,7 @@
 			t28.dealercity lovdescsourcecity,
 			t1.dsacode,
 			t30.rofficerdesc dsacodedesc,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.mandateid,
 			t1.droplinefrq,
 			t1.firstdroplinedate,
@@ -1634,10 +1634,10 @@
 			t1.advtype,
 			t1.advterms,
 			t1.advstage,
-			t1.tDSPercentage,
-			t1.tDSStartDate,
-			t1.tDSEndDate,
-			t1.tDSLimitAmt
+			t1.TDSPercentage,
+			t1.TDSStartDate,
+			t1.TDSEndDate,
+			t1.TDSLimitAmt
 			FROM financemain_temp t1
 			JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
 			LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
@@ -1788,7 +1788,7 @@
 			t1.accounttype,
 			t1.ddareferenceno,
 			t7.finscheduleon lovdescfinscheduleon,
-			t1.custdsr,
+			t1.cusTDSr,
 			t1.jointaccount,
 			t1.jointcustid,
 			t1.downpaybank,
@@ -1842,7 +1842,7 @@
 			t28.dealercity lovdescsourcecity,
 			t1.dsacode,
 			t30.rofficerdesc dsacodedesc,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.mandateid,
 			t1.droplinefrq,
 			t1.firstdroplinedate,
@@ -1917,10 +1917,10 @@
 			t1.advtype,
 			t1.advterms,
 			t1.advstage,
-			t1.tDSPercentage,
-			t1.tDSStartDate,
-			t1.tDSEndDate,
-			t1.tDSLimitAmt
+			t1.TDSPercentage,
+			t1.TDSStartDate,
+			t1.TDSEndDate,
+			t1.TDSLimitAmt
 			FROM financemain t1
 			JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
 			LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
@@ -2078,7 +2078,7 @@
 			t1.accounttype,
 			t1.ddareferenceno,
 			t7.finscheduleon lovdescfinscheduleon,
-			t1.custdsr,
+			t1.cusTDSr,
 			t1.jointaccount,
 			t1.jointcustid,
 			t1.downpaybank,
@@ -2132,7 +2132,7 @@
 			t28.dealercity lovdescsourcecity,
 			t1.dsacode,
 			t30.rofficerdesc dsacodedesc,
-			t1.tdsapplicable,
+			t1.TDSapplicable,
 			t1.mandateid,
 			t1.droplinefrq,
 			t1.firstdroplinedate,
@@ -2207,10 +2207,10 @@
 			t1.advtype,
 			t1.advterms,
 			t1.advstage,
-			t1.tDSPercentage,
-			t1.tDSStartDate,
-			t1.tDSEndDate,
-			t1.tDSLimitAmt
+			t1.TDSPercentage,
+			t1.TDSStartDate,
+			t1.TDSEndDate,
+			t1.TDSLimitAmt
 			FROM financemain t1
 			JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
 			LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
@@ -2237,14 +2237,14 @@
 			  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 
-			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_tDSPercentage','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_tDSPercentage'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_tDSStartDate','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_tDSStartDate'),1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_tDSEndDate','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_tDSEndDate'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_tDSLimitAmt','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_tDSLimitAmt'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_TDSPercentage','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSPercentage'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_TDSStartDate','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSStartDate'),1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_TDSEndDate','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSEndDate'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_TDSLimitAmt','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSLimitAmt'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
 			  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
@@ -2260,4 +2260,206 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="26" author="Varaprasad.K">
+		<addColumn tableName="FinMaintainInstructions">
+			<column name="TDSApplicable" type="boolean" />
+			<column name="TDSPercentage" type="decimal(5, 2)" />
+			<column name="TDSStartDate" type="datetime" />
+			<column name="TDSEndDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="27" author="Varaprasad.K">
+		<addColumn tableName="FinMaintainInstructions_Temp">
+			<column name="TDSApplicable" type="boolean" />
+			<column name="TDSPercentage" type="decimal(5, 2)" />
+			<column name="TDSStartDate" type="datetime" />
+			<column name="TDSEndDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="28" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE FinMaintainInstructions Set TDSApplicable = 0;
+				UPDATE FinMaintainInstructions_temp Set TDSApplicable = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="28.1" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINMAINTAININSTRUCTIONS ADD CONSTRAINT DF_FINMAINTAININSTRUCTIONS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+				ALTER TABLE FINMAINTAININSTRUCTIONS_TEMP ADD CONSTRAINT DF_FINMAINTAININSTRUCTIONS_TEMP_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="28.1" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="29" author="Varaprasad.K">
+		<addNotNullConstraint tableName="FinMaintainInstructions" columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions_Temp" columnName="TDSApplicable" />
+	</changeSet>
+
+	<changeSet id="30" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+			     Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+                 Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights); 
+                
+                 INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'ChangeTDS_MAKER', 'Maker for Changes TDS', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+                 INSERT INTO SecGroups SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'ChangeTDS_APPROVER', 'Approver for Changes TDS', 0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
+			     INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ChangeTDSDialog_TDSPercentage', 'ChangeTDSDialog',1,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+                 INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ChangeTDSDialog_TDSStartDate', 'ChangeTDSDialog',1,1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+                 INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'ChangeTDSDialog_TDSEndDate', 'ChangeTDSDialog',1,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+                 INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_FinanceManagement_ChangeTDSApplicable','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
+                 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ChangeTDSDialog_TDSPercentage'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+                 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ChangeTDSDialog_TDSStartDate'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+                 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ChangeTDSDialog_TDSEndDate'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+                 INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ChangeTDSApplicable'), 1, 0, 10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+                 INSERT INTO SecGroupRights SELECT (SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='ChangeTDS_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ChangeTDSApplicable'), 1, 0, 10000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
+                 
+				 Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+                 Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+             ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="31" author="Varaprasad.K">
+		<comment>Loan Managment new menu item Change TDS Changes</comment>
+		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
+			  SELECT t1.finmaintainid,
+					t1.finreference,
+					t1.event,
+					t1.TDSApplicable,
+					t1.TDSPercentage,
+					t1.TDSStartDate,
+					t1.TDSEndDate,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+				   FROM finmaintaininstructions_temp t1
+				UNION ALL
+				 SELECT t1.finmaintainid,
+					t1.finreference,
+					t1.event,
+					t1.TDSApplicable,
+					t1.TDSPercentage,
+					t1.TDSStartDate,
+					t1.TDSEndDate,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+				   FROM finmaintaininstructions t1
+				  WHERE NOT (EXISTS ( SELECT 1
+						   FROM finmaintaininstructions_temp
+						  WHERE finmaintaininstructions_temp.finmaintainid = t1.finmaintainid))
+		</createView>
+	</changeSet>
+
+	<changeSet id="32" author="Varaprasad.K">
+		<comment>Loan Managment new menu item Change TDS Changes</comment>
+		<createView viewName="COMMODITIES_AVIEW" replaceIfExists="true">
+			  SELECT t1.finmaintainid,
+					t1.finreference,
+					t1.event,
+					t1.TDSApplicable,
+					t1.TDSPercentage,
+					t1.TDSStartDate,
+					t1.TDSEndDate,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+				   FROM finmaintaininstructions t1
+			</createView>
+	</changeSet>
+
+	<changeSet id="33" author="Varaprasad.K">
+		<comment>Loan Managment new menu item Change TDS Changes</comment>
+		<createView viewName="COMMODITIES_TVIEW" replaceIfExists="true">
+			  SELECT t1.finmaintainid,
+					t1.finreference,
+					t1.event,
+					t1.TDSApplicable,
+					t1.TDSPercentage,
+					t1.TDSStartDate,
+					t1.TDSEndDate,
+					t1.version,
+					t1.lastmntby,
+					t1.lastmnton,
+					t1.recordstatus,
+					t1.rolecode,
+					t1.nextrolecode,
+					t1.taskid,
+					t1.nexttaskid,
+					t1.recordtype,
+					t1.workflowid
+				   FROM FinMaintainInstructions_Temp t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="34" author="Varaprasad.K">
+		<addColumn tableName="FinScheduleDetails">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="35" author="Varaprasad.K">
+		<addColumn tableName="FinScheduleDetails_Temp">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="36" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE FinScheduleDetails Set TDSApplicable = 0;
+				UPDATE FinScheduleDetails_Temp Set TDSApplicable = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="37.1" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINSCHEDULEDETAILS ADD CONSTRAINT DF_FINSCHEDULEDETAILS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+				ALTER TABLE FINSCHEDULEDETAILS_TEMP ADD CONSTRAINT DF_FINSCHEDULEDETAILS_TEMP_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="37.1" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="38" author="Varaprasad.K">
+		<addNotNullConstraint tableName="FinMaintainInstructions" columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions_Temp" columnName="TDSApplicable" />
+	</changeSet>
 </databaseChangeLog>
