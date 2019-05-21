@@ -118,10 +118,10 @@ public class AdvancePaymentService extends ServiceHelper {
 					continue;
 				}
 				amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
-				dueAmt = profitDue;
+				dueAmt = principalDue.add(profitDue);
 			} else {
 				amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
-				dueAmt = principalDue.add(profitDue);
+				dueAmt = profitDue;
 			}
 
 			//excess fetch
@@ -182,7 +182,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				}
 			}
 
-			if (curSchd.getSchdPftPaid().compareTo(curSchd.getProfitSchd()) >= 0) {
+			if (curSchd.getSchdPftPaid().add(curSchd.getTDSPaid()).compareTo(curSchd.getProfitSchd()) >= 0) {
 				curSchd.setSchPftPaid(true);
 			}
 
@@ -203,13 +203,16 @@ public class AdvancePaymentService extends ServiceHelper {
 			long excessID = advanceExcessMovement(excessAmount, adjustedAmount, receiptID, valueDate);
 
 			/* Receipt creation */
+			//adjustedAmount = adjustedAmount.add(curSchd.getTDSPaid());
 			prepareReceipt(rch, fm, adjustedAmount, advanceType.name(), valueDate, excessID, curSchd, linkedTranId);
 			FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 			profitDetail.setFinReference(finReference);
 			profitDetail.setTotalPriPaid(profitDetail.getTotalPriPaid().add(curSchd.getSchdPriPaid()));
-			profitDetail.setTotalPftPaid(profitDetail.getTotalPftPaid().add(curSchd.getSchdPftPaid()));
+			profitDetail.setTotalPftPaid(profitDetail.getTotalPftPaid().add(curSchd.getSchdPftPaid().add(curSchd.getTDSPaid())));
 			profitDetail.setTdTdsPaid(profitDetail.getTdTdsPaid().add(curSchd.getTDSPaid()));
 			profitDetail.setTdTdsBal(profitDetail.getTdTdsAmount().subtract(profitDetail.getTdTdsPaid()));
+			
+			
 			financeScheduleDetailDAO.updateSchPaid(curSchd);
 
 			/* Update Summary */
@@ -510,6 +513,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		/* 5. Repay Schedule Details */
 		List<RepayScheduleDetail> list = getRepayScheduleDetail(curSchd, rph, valueDate, allocations);
+		
 		/* 8. Fin Repayments */
 		FinanceRepayments financeRepayments = getFinanceRepayments(fm, curSchd, receiptID, linkedTranId, valueDate);
 
@@ -517,6 +521,12 @@ public class AdvancePaymentService extends ServiceHelper {
 		finReceiptDetailDAO.save(rcd, TableType.MAIN_TAB);
 		receiptAllocationDetailDAO.saveAllocations(allocations, TableType.MAIN_TAB);
 		financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
+		
+		for (RepayScheduleDetail repayScheduleDetail : list) {
+			repayScheduleDetail.setRepayID(rph.getRepayID());
+			repayScheduleDetail.setLinkedTranId(linkedTranId);
+		}
+		
 		financeRepaymentsDAO.saveRpySchdList(list, TableType.MAIN_TAB);
 		financeRepaymentsDAO.save(financeRepayments, TableType.MAIN_TAB.getSuffix());
 
@@ -552,21 +562,21 @@ public class AdvancePaymentService extends ServiceHelper {
 		ReceiptAllocationDetail allocation;
 		String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PFT");
 		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_PFT, id, payNow, desc, 0, "", false);
-		allocation.setPaidAmount(payNow);
+		allocation.setPaidNow(payNow);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_TDS");
 		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_TDS, id, tdsPayNow, desc, 0, "", false);
-		allocation.setPaidAmount(tdsPayNow);
+		allocation.setPaidNow(tdsPayNow);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_NPFT");
 		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_NPFT, id, netPay, desc, 0, "", false);
-		allocation.setPaidAmount(netPay);
+		allocation.setPaidNow(netPay);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
@@ -649,6 +659,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		repayment.setFinSchdPftPaid(curSchd.getSchdPftPaid());
 		repayment.setFinSchdPriPaid(curSchd.getSchdPriPaid());
 		repayment.setFinTotSchdPaid(curSchd.getSchdPftPaid().add(curSchd.getSchdPriPaid()));
+		repayment.setFinSchdTdsPaid(curSchd.getTDSPaid());
 		repayment.setFinFee(BigDecimal.ZERO);
 		repayment.setFinWaiver(BigDecimal.ZERO);
 		repayment.setFinRefund(BigDecimal.ZERO);
