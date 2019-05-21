@@ -56,6 +56,24 @@ public class FinanceDataDefaulting {
 
 	// Constructor Details for Methods
 	public FinScheduleData defaultFinance(String vldGroup, FinScheduleData finScheduleData) {
+		
+		//customer Defaulting
+		
+		if (StringUtils.isNotBlank(finScheduleData.getFinanceMain().getCoreBankId())) {
+			Customer customer = customerDAO.getCustomerByCoreBankId(finScheduleData.getFinanceMain().getCoreBankId(),
+					"");
+			if (customer != null) {
+				finScheduleData.getFinanceMain().setLovDescCustCIF(customer.getCustCIF());
+			} else {
+				List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+				String[] valueParm = new String[2];
+				valueParm[0] = "CoreBankId";
+				valueParm[1] = finScheduleData.getFinanceMain().getCoreBankId();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+				finScheduleData.setErrorDetails(errorDetails);
+				return finScheduleData;
+			}
+		}
 
 		//Validate Fields data (Excluding Base & Special rates Validations)
 		validateMasterData(vldGroup, finScheduleData);
@@ -153,14 +171,20 @@ public class FinanceDataDefaulting {
 
 		//Validate Finance Type (Mandatory for Defaulting)
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(finMain.getFinType(), "_ORGView");
-		if (financeType == null || !financeType.isFinIsActive()) {
-			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getFinType(),
+		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+			Promotion promotion = promotionService.getApprovedPromotionById(finMain.getPromotionCode(),
 					FinanceConstants.MODULEID_PROMOTION, true);
 			if (promotion == null || !promotion.isActive()) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90202", valueParm)));
+				String[] valueParm = new String[2];
+				valueParm[0] = "Promotion";
+				valueParm[1] = finMain.getPromotionCode();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
 			} else {
+				if (!StringUtils.equals(finMain.getFinType(), promotion.getFinType())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = finMain.getFinType();
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90202", valueParm)));
+				}
 				financeType = financeTypeDAO.getOrgFinanceTypeByID(promotion.getFinType(), "_ORGView");
 				if (financeType != null) {
 					financeType.setPromotionType(true);

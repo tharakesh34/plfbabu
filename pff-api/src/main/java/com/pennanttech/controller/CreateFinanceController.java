@@ -110,6 +110,7 @@ import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
+import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
@@ -185,6 +186,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private NotificationService notificationService;
 	private AgreementGeneration agreementGeneration;
 	private FinanceTypeService financeTypeService;
+	private FinanceCancellationService financeCancellationService;
 
 	/**
 	 * Method for process create finance request
@@ -2917,7 +2919,48 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		return returnStatus;
 	}
 	
-	
+	public WSReturnStatus processCancelFinance(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = null;
+		financeDetail = financeDetailService.getFinanceDetailById(financeDetail.getFinReference(), false, "", false,
+				FinanceConstants.FINSER_EVENT_ORG, "");
+		financeDetail.getFinScheduleData().getFinanceMain()
+				.setVersion(financeDetail.getFinScheduleData().getFinanceMain().getVersion() + 1);
+		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
+		AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
+				financeDetail.getFinScheduleData().getFinanceMain().getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
+
+		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
+		auditHeader.setApiHeader(reqHeaderDetails);
+		auditHeader = financeCancellationService.doApprove(auditHeader, true);
+		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+			for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
+				response = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				logger.debug(Literal.LEAVING);
+				return response;
+			}
+		}
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				logger.debug(Literal.LEAVING);
+				return response;
+			}
+		}
+
+		if (auditHeader.getAuditDetail().getErrorDetails() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+				response = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				logger.debug(Literal.LEAVING);
+				return response;
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
+	}
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -3082,5 +3125,14 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
 	}
+
+	public FinanceCancellationService getFinanceCancellationService() {
+		return financeCancellationService;
+	}
+
+	public void setFinanceCancellationService(FinanceCancellationService financeCancellationService) {
+		this.financeCancellationService = financeCancellationService;
+	}
+
 
 }

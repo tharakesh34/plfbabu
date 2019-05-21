@@ -7,7 +7,7 @@
 
 	<!-- FinaceMain validations -->
 	<bean class="com.pennant.backend.model.finance.FinanceMain">
-		<field name="lovDescCustCIF">
+		<!-- <field name="lovDescCustCIF">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>90125</message>
 				<groups>
@@ -15,7 +15,7 @@
 					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
 				</groups>
 			</constraint>
-		</field>
+		</field> -->
 		<field name="finType">
 			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
 				<message>90126</message>

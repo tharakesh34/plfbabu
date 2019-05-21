@@ -44,4 +44,8 @@ public interface CreateFinanceSoapService {
 	
 	@WebResult(name = "finance")
 	FinanceInquiry getPendingFinanceWithCustomer(@WebParam(name = "cif") String custCif) throws ServiceException;
+	
+	@WebResult(name = "finance")
+	WSReturnStatus cancelFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
+
 }

@@ -324,12 +324,13 @@ public class FinanceDataValidation {
 			}
 		}
 
-		if (finMain.getFinAssetValue().compareTo(financeType.getFinMinAmount()) == -1) {
-			String[] valueParm = new String[1];
-			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), ccyFormat);
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
+		if (finMain.getFinAssetValue().compareTo(BigDecimal.ZERO) > 0) {
+			if (finMain.getFinAssetValue().compareTo(financeType.getFinMinAmount()) == -1) {
+				String[] valueParm = new String[1];
+				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), ccyFormat);
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
+			}
 		}
-
 		// Net Loan Amount
 		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
 		// This is violating Over Draft Loan
@@ -1159,6 +1160,16 @@ public class FinanceDataValidation {
 			}
 		}
 
+		if ((isCreateLoan && StringUtils.isNotBlank(finMain.getOldFinReference()))) {
+			FinanceMain financeMain = financeMainDAO.getFinanceMainByOldFinReference(finMain.getOldFinReference());
+			if (financeMain != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "HostReference";
+				valueParm[1] = finMain.getOldFinReference();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30506", valueParm)));
+			}
+
+		}
 		FinanceType financeType = finScheduleData.getFinanceType();
 		finScheduleData.setFinanceType(financeType);
 		if (finMain.getFinContractDate() == null) {

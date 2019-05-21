@@ -2299,4 +2299,38 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Leaving");
 		return customers;
 	}
+
+	@Override
+	public Customer getCustomerByCoreBankId(String externalCif, String type) {
+		logger.debug("Entering");
+		Customer customer = new Customer();
+		customer.setCustCoreBank(externalCif);
+		;
+
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
+		selectSql.append(
+				" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
+		selectSql.append(" , CasteId, ReligionId, SubCategory");
+		if (type.contains("View")) {
+			selectSql.append(" ,LovDescCustStsName");
+			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc");
+		}
+		selectSql.append(" FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustCoreBank = :CustCoreBank");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+
+		try {
+			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			customer = null;
+		}
+		logger.debug("Leaving");
+		return customer;
+	}
 }

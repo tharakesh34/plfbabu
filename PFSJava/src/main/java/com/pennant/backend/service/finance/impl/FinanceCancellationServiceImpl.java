@@ -534,7 +534,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		// Adding audit as deleted from TEMP table
-		if (isNotReqEOD) {
+		if (isNotReqEOD && auditHeader.getApiHeader() == null) {
 			getFinanceMainDAO().delete(financeMain, TableType.TEMP_TAB, false, true);
 		}
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],

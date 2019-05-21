@@ -674,7 +674,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" DsaCode, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ReferralId,EmployeeName, DmaCode, SalesDepartment, QuickDisb, WifReference,");
 			sql.append(
-					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes ");
+					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes,OldFinReference ");
 		}
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt)");
@@ -725,7 +725,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes ");
 		}
-		sql.append(", :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
+		sql.append(", :OldFinReference, :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt)");
 
 		// Execute the SQL, binding the arguments.
@@ -4505,6 +4505,33 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public FinanceMain getFinanceMainByOldFinReference(String oldFinReference) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT  FinReference, PlanDeferCount, ");
+		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
+		selectSql.append(" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference ");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where OldFinReference =:OldFinReference AND FinIsActive = :FinIsActive");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source.addValue("OldFinReference", oldFinReference);
+		source.addValue("FinIsActive", 1);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return null;
 	}
 
 	// IND AS - START

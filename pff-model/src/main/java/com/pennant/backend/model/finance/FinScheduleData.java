@@ -191,6 +191,9 @@ public class FinScheduleData implements Serializable {
 
 	//GST Tax Map
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
+	
+	@XmlElement(name="hostReference")
+	private String oldFinReference;
 
 	public FinScheduleData() {
 		super();
@@ -690,5 +693,13 @@ public class FinScheduleData implements Serializable {
 			finServiceInstruction = finServiceInstructions.get(0);
 		}
 		return finServiceInstruction;
+	}
+
+	public String getOldFinReference() {
+		return oldFinReference;
+	}
+
+	public void setOldFinReference(String oldFinReference) {
+		this.oldFinReference = oldFinReference;
 	}
 }

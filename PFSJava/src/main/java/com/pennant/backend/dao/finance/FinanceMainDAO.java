@@ -363,7 +363,7 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceForIncomeAMZ(String finReference);
 	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
 	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
-
+	FinanceMain getFinanceMainByOldFinReference(String oldFinReference);
 	// Calculate Average POS
 	List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate);
 }

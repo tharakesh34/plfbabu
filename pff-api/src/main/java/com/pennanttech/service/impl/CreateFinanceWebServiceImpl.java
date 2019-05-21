@@ -74,6 +74,15 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					validationUtility.validate(setup, CreateFinanceWithCollateral.class);
 			}
 		}
+		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF())
+				&& StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCoreBankId())) {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			String[] valueParm = new String[1];
+			valueParm[0] = "Cif/CoreBankId";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
 		//for logging purpose
 		String[] logFields = getLogFields(financeDetail);
 		APIErrorHandlerService.logKeyFields(logFields);
@@ -771,6 +780,61 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		
 		logger.debug(Literal.LEAVING);
 		
+		return returnStatus;
+	}
+
+	/**
+	 *  Method to cancel loan based on data provided by customer
+	 *  @param financeDetail {@link FinanceDetail}
+	 *  @return {@link WSReturnStatus}
+	 */
+	@Override
+	public WSReturnStatus cancelFinance(FinanceDetail financeDetail) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(financeDetail.getFinReference());
+		WSReturnStatus returnStatus = null;
+		if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())
+				&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getOldFinReference())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finReference";
+			valueParm[1] = "hostRefeence";
+			return returnStatus = APIErrorHandlerService.getFailedStatus("30511", valueParm);
+
+		}
+		// service level validations
+		if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())) {
+			returnStatus = validateFinReference(financeDetail.getFinReference());
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				return returnStatus;
+			}
+		} else {
+			returnStatus = validateOldFinReference(financeDetail);
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				return returnStatus;
+			}
+		}
+		returnStatus = createFinanceController.processCancelFinance(financeDetail);
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	private WSReturnStatus validateOldFinReference(FinanceDetail financeDetail) {
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		// check records in origination
+		FinanceMain finMain = financeMainDAO
+				.getFinanceMainByOldFinReference(financeDetail.getFinScheduleData().getOldFinReference());
+		if (finMain == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = financeDetail.getFinScheduleData().getOldFinReference();
+			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		} else {
+			financeDetail.setFinReference(finMain.getFinReference());
+		}
+
+		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
 

@@ -187,4 +187,6 @@ public interface CustomerDAO {
 	
 	List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type);
 
+	Customer getCustomerByCoreBankId(String externalCif, String type);
+
 }

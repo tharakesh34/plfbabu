@@ -105,6 +105,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private String finType;
 	private String lovDescFinTypeName;
+	@XmlElement
 	private String promotionCode;
 	@XmlElement
 	private String finCcy;
@@ -732,6 +733,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxStrtPrdHdays;
 	private int strtPrdHdays;
 	private String strtprdCpzMethod;
+	@XmlElement(name="hostReference")
+	private String oldFinReference;
+	@XmlElement
+	private String coreBankId;
 	private BigDecimal tdsPercentage;
 	private Date tdsStartDate;
 	private Date tdsEndDate;
@@ -924,6 +929,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("maxStrtPrdHdays");
 		excludeFields.add("strtPrdHdays");
 		excludeFields.add("strtprdCpzMethod");
+		excludeFields.add("coreBankId");
+		
 		
 		return excludeFields;
 	}
@@ -4287,6 +4294,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.strtprdCpzMethod = strtprdCpzMethod;
 	}
 
+	public String getOldFinReference() {
+		return oldFinReference;
+	}
+
+	public void setOldFinReference(String oldFinReference) {
+		this.oldFinReference = oldFinReference;
+	}
+
 	public BigDecimal getTdsPercentage() {
 		return tdsPercentage;
 	}
@@ -4317,5 +4332,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setTdsLimitAmt(BigDecimal tdsLimitAmt) {
 		this.tdsLimitAmt = tdsLimitAmt;
+	}
+
+	public String getCoreBankId() {
+		return coreBankId;
+	}
+
+	public void setCoreBankId(String coreBankId) {
+		this.coreBankId = coreBankId;
 	}
 }

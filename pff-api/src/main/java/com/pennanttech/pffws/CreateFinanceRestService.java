@@ -55,4 +55,8 @@ public interface CreateFinanceRestService {
 	@GET
 	@Path("/finance/getPendingFinanceWithCustomer/{cif}")
 	FinanceInquiry getPendingFinanceWithCustomer(@PathParam("cif") String custCif) throws ServiceException;
+	
+	@POST
+	@Path("/finance/cancelLoan")
+	WSReturnStatus cancelFinance(FinanceDetail financeDetail) throws ServiceException;
 }
