@@ -84,7 +84,6 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 public class DisbursementInstCtrl {
 	private static final Logger logger = Logger.getLogger(DisbursementInstCtrl.class);
@@ -259,9 +258,9 @@ public class DisbursementInstCtrl {
 					Listitem item = new Listitem();
 					lc = new Listcell(Integer.toString(detail.getPaymentSeq()));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.getlabelDesc(detail.getPaymentDetail(), paymentDetailList));
+					lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentDetail(), paymentDetailList));
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.getlabelDesc(detail.getPaymentType(), paymentTypeList));
+					lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentType(), paymentTypeList));
 					lc.setParent(item);
 
 					String bankName = "";
@@ -545,10 +544,10 @@ public class DisbursementInstCtrl {
 				if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 					totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 				}
-
-				if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
-					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
-				}
+				//Since this is moved Fees should not be used here. 
+				//				if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
+				//					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+				//				}
 			} else {
 				totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFromDisb());
 			}
@@ -577,14 +576,14 @@ public class DisbursementInstCtrl {
 			if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
 			}
-
-			if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
-				totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
-			}
+			//Since this is moved Fees should not be used here. 
+			//			if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
+			//				totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
+			//			}
 		} else {
 			totdisbAmt = totdisbAmt.subtract(disbursement.getDeductFromDisb());
 		}
-		
+
 		totdisbAmt = totdisbAmt.add(disbursement.getDisbAmount());
 		return totdisbAmt;
 

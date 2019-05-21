@@ -86,7 +86,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
@@ -698,10 +697,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
 
 		BigDecimal netFinAmount = totDisb.getDisbAmount();
-
-		if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
-			netFinAmount = netFinAmount.subtract(financeMain.getAdvanceEMI());
-		}
+		//Since this is moved Fees should not be used here. 
+		//	if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
+		//		netFinAmount = netFinAmount.subtract(financeMain.getAdvanceEMI());
+		//	}
 
 		List<ErrorDetail> errorList = new ArrayList<ErrorDetail>();
 		boolean checkMode = true;
@@ -774,10 +773,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 							.equals(FinanceConstants.BPI_DISBURSMENT)) {
 						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
 					}
-
-					if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
-						singletDisbursment = singletDisbursment.subtract(financeMain.getAdvanceEMI());
-					}
+					//Since this is moved Fees should not be used here. 
+					//	if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
+					//	singletDisbursment = singletDisbursment.subtract(financeMain.getAdvanceEMI());
+					//	}
 				} else {
 					singletDisbursment = singletDisbursment.subtract(disbursement.getDeductFromDisb());
 				}
