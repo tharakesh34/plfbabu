@@ -612,10 +612,4 @@ public final class DateUtility extends DateUtil {
 
 		return postingDate;
 	}
-	public static String formatUtilDate(java.util.Date date, String pattern) {
-		return date == null ? "" : formatDate(date, pattern);
-	}
-	public static String formatDate(java.util.Date date, String pattern) {
-		return date == null ? "" : new SimpleDateFormat(pattern).format(date);
-	}
 }

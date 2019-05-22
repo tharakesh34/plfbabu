@@ -56,11 +56,11 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 		MapSqlParameterSource source = null;
 		sql = new StringBuilder();
 		sql.append(
-				"  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName,FM.TDSAPPLICABLE,FM.FinAssetValue,FM.FinBranch,");
-		sql.append("  FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,");
-		sql.append("  FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,CURR.CCYCODE finCcy  FROM FINANCEMAIN FM");
-		sql.append("  INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
-		sql.append("  INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
+				"  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FM.TDSAPPLICABLE, FM.FinAssetValue, FM.FinBranch,");
+		sql.append(" FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,");
+		sql.append(" FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,CURR.CCYCODE finCcy  FROM FINANCEMAIN FM");
+		sql.append(" INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
+		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
 		sql.append(" INNER JOIN RMTCURRENCIES CURR ON CURR.CCYCODE = FM.FINCCY");
 		sql.append(" Where FM.FinReference = :FinReference");
 		logger.trace(Literal.SQL + sql.toString());
@@ -71,41 +71,40 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		} finally {
-			source = null;
-			sql = null;
-		}
+			logger.error(Literal.EXCEPTION, e);
+		} 
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public boolean isTDSCheck(String reference, Date appDate) {
+		logger.debug(Literal.ENTERING);
 
+		StringBuilder sql = new StringBuilder("Select tdsapplicable from FinScheduleDetails");
+		sql.append(" where FINREFERENCE=:Finreference");
+		sql.append(" and SCHDATE=");
+		sql.append(" (select max(SCHDATE) from FINSCHEDULEDETAILS");
+		sql.append(" where FINREFERENCE=:Finreference and SCHDATE<=:SchDate)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		
+		MapSqlParameterSource detail = new MapSqlParameterSource();
+		detail.addValue("Finreference", reference);
+		detail.addValue("SchDate", appDate);
+
+		
+		logger.debug(Literal.LEAVING);		
+		return this.jdbcTemplate.queryForObject(sql.toString(), detail, Boolean.class);
+
+	}
+
+	public Date getInstallmentDate(String reference, Date appDate) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource detail = new MapSqlParameterSource();
 		detail.addValue("Finreference", reference);
 		detail.addValue("SchDate", appDate);
-
-		StringBuilder selectSql = new StringBuilder("Select tdsapplicable from FinScheduleDetails ");
-		selectSql.append(
-				"where FINREFERENCE=:Finreference and SCHDATE=(select max(SCHDATE) from FINSCHEDULEDETAILS where FINREFERENCE=:Finreference and SCHDATE<=:SchDate)");
-
-		logger.debug("SelectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), detail, Boolean.class);
-
-	}
-
-	public Date getInstallmentDate(String reference, Date appDate) {
-
-		logger.debug("Entering");
-
-		MapSqlParameterSource detail = new MapSqlParameterSource();
-		detail.addValue("Finreference", reference);
-		detail.addValue("SchDate", new SimpleDateFormat("yyyy-MM-dd").format(appDate));
 
 		StringBuilder selectSql = new StringBuilder(" ");
 		selectSql.append(

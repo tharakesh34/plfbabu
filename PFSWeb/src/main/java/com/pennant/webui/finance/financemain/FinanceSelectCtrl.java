@@ -3363,14 +3363,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 					if (doCheckAuthority(aFinanceMain, whereCond)
 							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
-						showFinChangeTDSMaintanceView(finMaintainInstruction);
+						showFinChangeTDSMaintanceView(finMaintainInstruction, aFinanceMain);
 					} else {
 						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 					}
 				} else {
 					if (doCheckAuthority(aFinanceMain, whereCond)
 							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
-						showFinChangeTDSMaintanceView(finMaintainInstruction);
+						showFinChangeTDSMaintanceView(finMaintainInstruction, aFinanceMain);
 					} else {
 						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 					}
@@ -3380,16 +3380,17 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 	
-	private void showFinChangeTDSMaintanceView(FinMaintainInstruction finMaintainInstruction) {
+	private void showFinChangeTDSMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceMain financeMain) {
 
 		logger.debug("Entering");
 
 		if (finMaintainInstruction.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			finMaintainInstruction.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		FinanceMain financeMain = getChangeTDSService()
-				.getFinanceBasicDetailByRef(finMaintainInstruction.getFinReference());
-
+		String finReference = finMaintainInstruction.getFinReference();
+		/*FinanceMain financeMain = getChangeTDSService()
+				.getFinanceBasicDetailByRef(finReference);*/
+		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(finReference, "_AView", false);
 		boolean isTDSCheck = false;
 		Date date = DateUtility.getAppDate();
 		if (finMaintainInstruction.isNewRecord()) {
@@ -3397,7 +3398,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else {
 			isTDSCheck = finMaintainInstruction.istDSApplicable();
 		}
-
+		
 		map.put("finMaintainInstruction", finMaintainInstruction);
 		map.put("financeSelectCtrl", this);
 		map.put("financeMain", financeMain);
@@ -3407,7 +3408,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		map.put("menuItemRightName", menuItemRightName);
 		map.put("eventCode", eventCodeRef);
 		map.put("isEnquiry", false);
-		map.put("roleCode", getRole());
+		map.put("roleCode", finMaintainInstruction.getNextRoleCode());
+		map.put("financeDetail", financeDetail);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {

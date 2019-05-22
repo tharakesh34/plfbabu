@@ -193,6 +193,11 @@
 											</hbox>
 
 										</row>
+										<row id="row_TDS3">
+											<label id="label_TdsLimit" value="${c:l('label_ChangeTDS_TdsLimit.value')}" />
+												<currencyBox id="tdsLimit" width="180px" />
+
+										</row>
 										<row>
 											<separator />
 										</row>

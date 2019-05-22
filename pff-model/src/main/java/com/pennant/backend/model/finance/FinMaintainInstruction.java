@@ -37,6 +37,7 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	private BigDecimal tdsPercentage;
 	private Date tdsStartDate;
 	private Date tdsEndDate;
+	private BigDecimal tdsLimit = BigDecimal.ZERO;
 	
 
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
@@ -199,6 +200,14 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 
 	public void setTdsEndDate(Date tdsEndDate) {
 		this.tdsEndDate = tdsEndDate;
+	}
+
+	public BigDecimal getTdsLimit() {
+		return tdsLimit;
+	}
+
+	public void setTdsLimit(BigDecimal tdsLimit) {
+		this.tdsLimit = tdsLimit;
 	}
 
 	
