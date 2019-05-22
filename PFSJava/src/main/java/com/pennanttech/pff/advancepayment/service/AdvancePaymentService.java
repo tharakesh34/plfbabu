@@ -222,11 +222,12 @@ public class AdvancePaymentService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public List<ReturnDataSet> processBackDatedAdvansePayments(FinanceDetail financeDetail,
-			FinanceProfitDetail profiDetails, Date appDate, String postBranch, boolean isApprove) {
-		return new ArrayList<>();
-	}
-
+	/**
+	 * @param finEODEvent
+	 * @param curSchd
+	 * @param valueDate
+	 * @return
+	 */
 	public long postAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -263,6 +264,47 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
+	}
+
+	/**
+	 * @param excess
+	 * @param adjAmount
+	 * @param receiptID
+	 * @param valueDate
+	 * @return
+	 */
+	private long advanceExcessMovement(FinExcessAmount excess, BigDecimal adjAmount, Long receiptID, Date valueDate) {
+		long excessID = Long.MIN_VALUE;
+
+		if (excess != null) {
+			excessID = excess.getExcessID();
+			FinExcessMovement excessAmovement = finExcessAmountDAO.getFinExcessMovement(excessID,
+					RepayConstants.PAYTYPE_PRESENTMENT, valueDate);
+
+			if (excessAmovement != null) {
+				//reserve exist
+				excess.setReservedAmt(excess.getReservedAmt().subtract(excessAmovement.getAmount()));
+			}
+
+			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
+			finExcessAmountDAO.updateReserveUtilization(excess);
+
+			//movement
+			FinExcessMovement excessMovement = new FinExcessMovement();
+			excessMovement.setExcessID(excessID);
+			excessMovement.setAmount(adjAmount);
+			excessMovement.setReceiptID(receiptID);
+			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
+			excessMovement.setTranType(AccountConstants.TRANTYPE_DEBIT);
+			finExcessAmountDAO.saveExcessMovement(excessMovement);
+		}
+
+		return excessID;
+	}
+
+	public List<ReturnDataSet> processBackDatedAdvansePayments(FinanceDetail financeDetail,
+			FinanceProfitDetail profiDetails, Date appDate, String postBranch, boolean isApprove) {
+		return new ArrayList<>();
 	}
 
 	/**
@@ -445,35 +487,6 @@ public class AdvancePaymentService extends ServiceHelper {
 			} else if (advanceType == AdvanceRuleCode.ADVEMI) {
 				advancePayment.setEmiAdjusted(reqAmount);
 			}
-		}
-
-		return excessID;
-	}
-
-	private long advanceExcessMovement(FinExcessAmount excess, BigDecimal adjAmount, Long receiptID, Date valueDate) {
-		long excessID = Long.MIN_VALUE;
-
-		if (excess != null) {
-			excessID = excess.getExcessID();
-			FinExcessMovement excessAmovement = finExcessAmountDAO.getFinExcessMovement(excessID,
-					RepayConstants.PAYTYPE_PRESENTMENT, valueDate);
-
-			if (excessAmovement != null) {
-				//reserve exist
-				excess.setReservedAmt(excess.getReservedAmt().subtract(excessAmovement.getAmount()));
-			}
-
-			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
-			finExcessAmountDAO.updateReserveUtilization(excess);
-
-			//movement
-			FinExcessMovement excessMovement = new FinExcessMovement();
-			excessMovement.setExcessID(excessID);
-			excessMovement.setAmount(adjAmount);
-			excessMovement.setReceiptID(receiptID);
-			excessMovement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-			excessMovement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-			finExcessAmountDAO.saveExcessMovement(excessMovement);
 		}
 
 		return excessID;
