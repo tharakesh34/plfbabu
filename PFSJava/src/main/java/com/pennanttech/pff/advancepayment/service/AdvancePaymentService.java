@@ -208,8 +208,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 			profitDetail.setFinReference(finReference);
 			profitDetail.setTotalPriPaid(profitDetail.getTotalPriPaid().add(curSchd.getSchdPriPaid()));
-			profitDetail.setTotalPftPaid(
-					profitDetail.getTotalPftPaid().add(curSchd.getSchdPftPaid().add(curSchd.getTDSPaid())));
+			profitDetail.setTotalPftPaid(profitDetail.getTotalPftPaid().add(curSchd.getSchdPftPaid()));
 			profitDetail.setTdTdsPaid(profitDetail.getTdTdsPaid().add(curSchd.getTDSPaid()));
 			profitDetail.setTdTdsBal(profitDetail.getTdTdsAmount().subtract(profitDetail.getTdTdsPaid()));
 
