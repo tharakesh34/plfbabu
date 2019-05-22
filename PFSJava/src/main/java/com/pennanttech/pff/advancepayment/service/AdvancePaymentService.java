@@ -127,9 +127,12 @@ public class AdvancePaymentService extends ServiceHelper {
 			//excess fetch
 			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, amountType);
 
-			BigDecimal excessBal = excessAmount.getBalanceAmt();
-			if (excessBal == null || excessBal.compareTo(BigDecimal.ZERO) <= 0) {
-				continue;
+			BigDecimal excessBal = BigDecimal.ZERO;
+			if (excessAmount != null) {
+				excessBal = excessAmount.getBalanceAmt();
+				if (excessBal == null || excessBal.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
 			}
 
 			//Allocations
