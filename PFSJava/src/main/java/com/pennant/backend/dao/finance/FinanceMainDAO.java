@@ -359,6 +359,10 @@ public interface FinanceMainDAO {
 
 	boolean isFinActive(String finReference);
 	
+	String getFinanceMainByRcdMaintenance(String finReference, String type);
+
+	void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize);
+	
 	// Income Amortization
 	FinanceMain getFinanceForIncomeAMZ(String finReference);
 	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);

@@ -64,7 +64,8 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FinMaintainInstruction</code> with set of CRUD operations.
+ * Data access layer implementation for <code>FinMaintainInstruction</code> with
+ * set of CRUD operations.
  */
 
 public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstruction>
@@ -135,7 +136,8 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		finMaintainInstruction.setEvent(event);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select FinMaintainId, FinReference, Event, ");
+		selectSql.append(
+				" Select FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate, TdsEndDate,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -205,10 +207,11 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" (FinMaintainId, FinReference, Event,");
+		sql.append(" (FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate, TdsEndDate,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:FinMaintainId, :FinReference, :Event,");
+		sql.append(
+				" values(:FinMaintainId, :FinReference, :Event, :TDSApplicable, :TdsPercentage, :TdsStartDate, :TdsEndDate,");
 		sql.append(
 				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -240,13 +243,14 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 
 		StringBuilder sql = new StringBuilder("update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event,");
+		sql.append(
+				" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event, TDSApplicable = :TDSApplicable, TdsPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate,");
 		sql.append(
 				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 
 		sql.append(" where FinMaintainId = :FinMaintainId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -271,7 +275,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		StringBuilder sql = new StringBuilder("delete From FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" where FinMaintainId = :FinMaintainId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

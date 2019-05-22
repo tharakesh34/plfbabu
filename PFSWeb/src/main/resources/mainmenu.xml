@@ -515,6 +515,8 @@
 				rightName="menuItem_Finance_HoldDisbursement" />
 			<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul"
 				rightName="menuItem_payment_PaymentInstructions" />
+			<menuItem id="menu_Item_ChangeTDS" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
+			rightName="menuItem_FinanceManagement_ChangeTDSApplicable" />
 		</menu>
 		<menu id="menu_Category_LmsReceipts">
 			<!-- <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" 

@@ -4506,6 +4506,62 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		return false;
 	}
+	@Override
+	public String getFinanceMainByRcdMaintenance(String finReference, String type) {
+		logger.debug("Entering");
+
+		String rcdMaintenStats = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		StringBuilder sql = new StringBuilder("SELECT RcdMaintainSts From ");
+		sql.append("FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = :FinReference");
+		logger.debug("selectSql: " + sql.toString());
+
+		try {
+			rcdMaintenStats = this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			rcdMaintenStats = null;
+		}
+
+		logger.debug("Leaving");
+		return rcdMaintenStats;
+	}
+	@Override
+	public void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from");
+		if (wifi) {
+			sql.append(" WIFFinanceMain");
+		} else {
+			sql.append(" FinanceMain");
+		}
+		sql.append(tableType.getSuffix());
+		sql.append(" where FinReference = :FinReference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
 
 	@Override
 	public FinanceMain getFinanceMainByOldFinReference(String oldFinReference) {

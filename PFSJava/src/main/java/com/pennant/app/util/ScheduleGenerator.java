@@ -118,6 +118,7 @@ public class ScheduleGenerator {
 
 			//Interest Days basis kept as same for both grace and repayment periods.
 			curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
 
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
@@ -243,7 +244,7 @@ public class ScheduleGenerator {
 
 			//Interest Days basis kept as same for both grace and repayment periods.
 			curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
-
+			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setActRate(financeMain.getGrcPftRate());
 				curSchd.setBaseRate(financeMain.getGraceBaseRate());

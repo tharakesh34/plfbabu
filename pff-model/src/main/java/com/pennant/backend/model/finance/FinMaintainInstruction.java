@@ -1,7 +1,9 @@
 package com.pennant.backend.model.finance;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,12 +34,27 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	private FinMaintainInstruction befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private BigDecimal tdsPercentage;
+	private Date tdsStartDate;
+	private Date tdsEndDate;
+	
 
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private List<FinCovenantType> finCovenantTypeList = new ArrayList<>(1);
 	private List<Covenant> covenants = new ArrayList<>();
 	private List<FinOption> finOptions = new ArrayList<>();
+	
+	//Is TDS Applicable
+	private boolean tDSApplicable = false;//Clix added new TDS Applicable Flag
 
+
+	public boolean istDSApplicable() {
+		return tDSApplicable;
+	}
+
+	public void settDSApplicable(boolean tDSApplicable) {
+		this.tDSApplicable = tDSApplicable;
+	}
 
 	public FinMaintainInstruction() {
 		super();
@@ -159,6 +176,32 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	public void setFinOptions(List<FinOption> finOptions) {
 		this.finOptions = finOptions;
 	}
+
+	public BigDecimal getTdsPercentage() {
+		return tdsPercentage;
+	}
+
+	public void setTdsPercentage(BigDecimal tdsPercentage) {
+		this.tdsPercentage = tdsPercentage;
+	}
+
+	public Date getTdsStartDate() {
+		return tdsStartDate;
+	}
+
+	public void setTdsStartDate(Date tdsStartDate) {
+		this.tdsStartDate = tdsStartDate;
+	}
+
+	public Date getTdsEndDate() {
+		return tdsEndDate;
+	}
+
+	public void setTdsEndDate(Date tdsEndDate) {
+		this.tdsEndDate = tdsEndDate;
+	}
+
+	
 	
 
 }

@@ -96,6 +96,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
+import com.pennant.backend.service.finance.ChangeTDSService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
@@ -128,8 +129,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
-
 /**
+
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
  */
 public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
@@ -219,6 +220,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	final Map<String, Object> map = getDefaultArguments();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private List<String> usrfinRolesList = new ArrayList<String>();
+	private transient ChangeTDSService changeTDSService;//Clix Requirement added new change TDS Service
+
+	
 
 	/**
 	 * Default constructor
@@ -801,9 +805,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		getSearchObj(false);
 
-		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
+		/*if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
 			return;
-		}
+		}*/
 
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
@@ -824,7 +828,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				} else if (searchOpId == Filter.OP_NOT_IN) {
 					this.searchObject.addFilter(
 							new Filter("lovDescCustCIF", this.custCIF.getValue().trim().split(","), Filter.OP_NOT_IN));
-				} else {
+				}
+				else {
 					searchObject.addFilter(new Filter("lovDescCustCIF", this.custCIF.getValue(), searchOpId));
 				}
 			}
@@ -1158,7 +1163,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE + "' and AdviseAmount-PaidAmount-WaivedAmount >0)");
 			whereClause.append(
 					" OR FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
+		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
+			whereClause.append(" AND  MaturityDate > '" + appDate + "' AND  FinStartDate <= '" + appDate + "'");
 		}
+		
 
 		//Written Off Finance Reference Details Condition
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
@@ -1268,7 +1276,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)
-				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)
+				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
 
 			openFinanceMainDialog(item);
 
@@ -1315,6 +1324,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {
 
 			openFeeWaiverHeaderDialog(item);
+
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
+
+			openFinChangeTDSMaintanceDialog(item);
 
 		} else {
 			if (this.getListBoxFinance().getSelectedItem() != null) {
@@ -3116,6 +3129,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
 					workflowCode = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
+				}else if ("tab_ChangeTDS".equals(tab.getId())) {
+					eventCodeRef = "";
+					moduleDefiner = FinanceConstants.FINSER_EVENT_CHANGETDS;
+					workflowCode = FinanceConstants.FINSER_EVENT_CHANGETDS;
 				}
 				return;
 			}
@@ -3268,6 +3285,139 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		return arrayRoleCode;
 	}
+	
+	private void openFinChangeTDSMaintanceDialog(Listitem item) throws Exception {
+		logger.debug("Entering ");
+		// get the selected FinanceMain object
+
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
+
+			// Set WorkFlow Details
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if (workFlowDetails == null) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+
+			// FinMaintainInstruction
+			FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
+			finMaintainInstruction.setFinReference(aFinanceMain.getFinReference());
+			if (StringUtils.equals(aFinanceMain.getRcdMaintainSts(), moduleDefiner)) {
+				finMaintainInstruction = finCovenantMaintanceService
+						.getFinMaintainInstructionByFinRef(aFinanceMain.getFinReference(), moduleDefiner);
+			} else {
+				finMaintainInstruction.setNewRecord(true);
+			}
+
+			// Role Code State Checking
+			String userRole = finMaintainInstruction.getNextRoleCode();
+			if (StringUtils.isEmpty(userRole)) {
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+
+			String nextroleCode = finMaintainInstruction.getNextRoleCode();
+			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+				logger.debug("Leaving");
+				return;
+			}
+
+			String maintainSts = "";
+			if (finMaintainInstruction != null) {
+				maintainSts = StringUtils.trimToEmpty(finMaintainInstruction.getEvent());
+			}
+
+			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getId();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+			} else {
+				String whereCond = " FinReference='" + aFinanceMain.getFinReference() + "'";
+				if (isWorkFlowEnabled()) {
+
+					if (doCheckAuthority(aFinanceMain, whereCond)
+							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+						showFinChangeTDSMaintanceView(finMaintainInstruction);
+					} else {
+						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
+					}
+				} else {
+					if (doCheckAuthority(aFinanceMain, whereCond)
+							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+						showFinChangeTDSMaintanceView(finMaintainInstruction);
+					} else {
+						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
+					}
+				}
+			}
+		}
+		logger.debug("Leaving ");
+	}
+	
+	private void showFinChangeTDSMaintanceView(FinMaintainInstruction finMaintainInstruction) {
+
+		logger.debug("Entering");
+
+		if (finMaintainInstruction.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			finMaintainInstruction.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		FinanceMain financeMain = getChangeTDSService()
+				.getFinanceBasicDetailByRef(finMaintainInstruction.getFinReference());
+
+		boolean isTDSCheck = false;
+		Date date = DateUtility.getAppDate();
+		if (finMaintainInstruction.isNewRecord()) {
+			isTDSCheck = getChangeTDSService().isTDSCheck(finMaintainInstruction.getFinReference(), date);
+		} else {
+			isTDSCheck = finMaintainInstruction.istDSApplicable();
+		}
+
+		map.put("finMaintainInstruction", finMaintainInstruction);
+		map.put("financeSelectCtrl", this);
+		map.put("financeMain", financeMain);
+		map.put("TDSCheck", isTDSCheck);
+		map.put("moduleCode", moduleDefiner);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName", menuItemRightName);
+		map.put("eventCode", eventCodeRef);
+		map.put("isEnquiry", false);
+		map.put("roleCode", getRole());
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ChangeTDSDialog.zul", null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+
+	}
 
 	public void setSearchObj(JdbcSearchObject<FinanceMain> searchObj) {
 		this.searchObject = searchObj;
@@ -3399,6 +3549,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setFinOptionMaintanceService(FinOptionMaintanceService finOptionMaintanceService) {
 		this.finOptionMaintanceService = finOptionMaintanceService;
+	}
+	public ChangeTDSService getChangeTDSService() {
+		return changeTDSService;
+	}
+
+	public void setChangeTDSService(ChangeTDSService changeTDSService) {
+		this.changeTDSService = changeTDSService;
 	}
 
 }

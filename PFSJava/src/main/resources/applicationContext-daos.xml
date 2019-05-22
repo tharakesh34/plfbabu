@@ -10667,8 +10667,35 @@
 	<bean name="multiReceiptThreadProcess" class="com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess">
 		<property name="receiptService" ref="receiptService" />
 	</bean>
+    <!-- Change TDS -->
+	<bean id="changeTDSDAO" class="com.pennant.backend.dao.finance.impl.ChangeTDSDAOImpl" parent="basicDao" />
 
-
+	<bean id="changeTDSService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="changeTDSServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="changeTDSServiceTarget" class="com.pennant.backend.service.finance.impl.ChangeTDSServiceImpl">
+		<property name="changeTDSDAO" ref="changeTDSDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
+	</bean>
 	<!-- Income Amortization IND AS -->
 	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl" parent="sequenceDao" />
 

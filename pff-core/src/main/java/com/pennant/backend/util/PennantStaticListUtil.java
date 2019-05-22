@@ -2296,6 +2296,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_ReceiptForeClosure"), "RFC"));
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_RECEIPTKNOCKOFF_CAN,
 					Labels.getLabel("label_FinSerEvent_ReceiptKnockOffCancel"), "RKNC"));
+			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHANGETDS,
+					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
 
 
 		}

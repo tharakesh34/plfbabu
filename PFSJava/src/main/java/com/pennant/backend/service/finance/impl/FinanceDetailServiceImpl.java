@@ -9978,6 +9978,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.LEAVING);
 		return repayment;
 	}
+	
+	@Override
+	public String getFinanceMainByRcdMaintenance(String reference, String type) {
+		return getFinanceMainDAO().getFinanceMainByRcdMaintenance(reference, type);
+	}
 
 	@Override
 	public List<FinanceDisbursement> getFinanceDisbursements(String finReferecne, String type, boolean isWIF) {

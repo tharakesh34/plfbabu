@@ -927,4 +927,37 @@ public class PennantApplicationUtil {
 		}
 		return false;
 	}
+	public static String getSavingStatus(String roleCode, String nextRoleCode, String reference, String moduleCode,
+			String recordStatus, boolean isCancel) {
+		String roleCodeDesc = "";
+		if (StringUtils.isBlank(nextRoleCode) || roleCode.equals(nextRoleCode)
+				|| StringUtils.trimToEmpty(recordStatus).equalsIgnoreCase(PennantConstants.RCD_STATUS_SAVED)) {
+			if (isCancel) {
+				return moduleCode + " with Reference : " + reference + " cancellation completed successfully.";
+			} else {
+				return moduleCode + " with Reference : " + reference + " " + recordStatus + " successfully.";
+			}
+		} else {
+			JdbcSearchObject<SecurityRole> searchObject = new JdbcSearchObject<SecurityRole>(SecurityRole.class);
+			if (nextRoleCode.contains(",")) {
+				String roleCodes[] = nextRoleCode.split(",");
+				searchObject.addFilterIn("RoleCd", Arrays.asList(roleCodes));
+			} else {
+				searchObject.addFilterEqual("RoleCd", nextRoleCode);
+			}
+			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+			List<SecurityRole> rolesList = pagedListService.getBySearchObject(searchObject);
+			if (rolesList != null && !rolesList.isEmpty()) {
+				for (SecurityRole securityRole : rolesList) {
+					if (StringUtils.isEmpty(roleCodeDesc)) {
+						roleCodeDesc = securityRole.getRoleDesc();
+					} else {
+						roleCodeDesc = roleCodeDesc.concat(" And " + securityRole.getRoleDesc());
+					}
+				}
+			}
+			return moduleCode + " with Reference: " + reference + " moved to "
+					+ (StringUtils.isBlank(roleCodeDesc) ? "" : roleCodeDesc) + " successfully.";
+		}
+	}
 }

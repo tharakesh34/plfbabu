@@ -319,4 +319,6 @@ public interface FinanceDetailService {
 	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
 
 	FinanceMain getFinanceMainForRateReport(String finReference, String type);
+	
+	String getFinanceMainByRcdMaintenance(String reference, String type);
 }

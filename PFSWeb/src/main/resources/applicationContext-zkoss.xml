@@ -1819,6 +1819,7 @@
 		<property name="finCovenantMaintanceService" ref="finCovenantMaintanceService" />
 		<property name="feeWaiverHeaderService" ref="feeWaiverHeaderService" />
 		<property name="finOptionMaintanceService" ref="finOptionMaintanceService" />
+		<property name="changeTDSService" ref="changeTDSService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -5246,7 +5247,11 @@
 		scope="prototype">
 		<property name="receiptCalculator" ref="receiptCalculator" />
 	</bean>	
-	
+	<bean id="changeTDSDialogCtrl" class="com.pennant.webui.finance.financemain.ChangeTDSDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="changeTDSService" ref="changeTDSService" />
+
+	</bean>
 	<!-- Income Amortization One Time Activity -->
 	<bean id="incomeAmortizationCtrl" class="com.pennant.webui.incomeamortization.IncomeAmortizationCtrl" parent="basisCtrl" scope="prototype">
 		<property name="incomeAmortizationService" ref="incomeAmortizationService" />
@@ -5262,5 +5267,4 @@
 	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype">
 		<property name="dataSource" ref="pfsDatasource" />
 	</bean>
-	
 </beans>

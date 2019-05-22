@@ -327,7 +327,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (!isWIF) {
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal,WriteoffPrincipal, WriteoffProfit, ");
 			insertSql.append(
-					" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, PresentmentId, ");
+					" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, PresentmentId, TDSApplicable, ");
 			if (type.contains("Log")) {
 				insertSql.append(" LogKey , ");
 			}
@@ -352,7 +352,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (!isWIF) {
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
 			insertSql.append(
-					" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt,:PresentmentId, ");
+					" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt,:PresentmentId, :TDSApplicable , ");
 			if (type.contains("Log")) {
 				insertSql.append(" :LogKey , ");
 			}
@@ -431,6 +431,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			updateSql.append(" WriteoffIns=:WriteoffIns , PresentmentId=:PresentmentId, ");
 			updateSql.append(
 					" WriteoffIncrCost=:WriteoffIncrCost, WriteoffSuplRent=:WriteoffSuplRent, WriteoffSchFee=:WriteoffSchFee, PartialPaidAmt=:PartialPaidAmt,  ");
+			updateSql.append(" tDSApplicable=:tDSApplicable,");
 		}
 		updateSql.append(" DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod, ");
 		updateSql.append(
@@ -540,7 +541,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		if (!isWIF) {
 			sql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
-			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt ");
+			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt,tdsApplicable ");
 
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				sql.append(", WriteoffIncrCost, WriteoffSuplRent ");
