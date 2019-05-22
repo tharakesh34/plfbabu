@@ -103,6 +103,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	private String grcAdvType;
 	private String advType;
+	private String advStage;
 	private Date grcPeriodEndDate;
 	private BigDecimal advAdjusted = BigDecimal.ZERO;
 
@@ -124,6 +125,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		excludeFields.add("advType");
 		excludeFields.add("grcPeriodEndDate");
 		excludeFields.add("advAdjusted");
+		excludeFields.add("advStage");
 		return excludeFields;
 	}
 
@@ -510,6 +512,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 
 	public void setAdvAdjusted(BigDecimal advAdjusted) {
 		this.advAdjusted = advAdjusted;
+	}
+
+	public String getAdvStage() {
+		return advStage;
+	}
+
+	public void setAdvStage(String advStage) {
+		this.advStage = advStage;
 	}
 
 }

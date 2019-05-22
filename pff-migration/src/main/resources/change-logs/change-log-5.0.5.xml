@@ -2832,4 +2832,11 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="43" author="Ganesh.p">
+		<sql>
+		<![CDATA[
+		Update DATA_ENGINE_TABLE SET KeyFields='JOB_ID',Filter='JOB_ID = :JOB_ID' WHERE ID =(Select ID from DATA_ENGINE_TABLE where ConfigId =(Select ID from DATA_ENGINE_CONFIG where NAME = 'PRESENTMENT_REQUEST'));
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

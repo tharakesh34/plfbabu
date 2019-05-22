@@ -96,6 +96,10 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	String getPaymenyMode(String presentmentRef);
 
+	void updatePresentmentIdAsZero(List<Long> presentmentIds);
+
+	List<PresentmentDetail> getPresentmensByExcludereason(long presentmentId, int excludeReason);
+
 	List<PresentmentDetail> getDMPresentmentDetailsByRef(String finReference, String type);
 
 	List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type);

@@ -876,4 +876,5 @@ public class PennantConstants {
 	// Sorting
 	public static final String SortOrder_ASC = "ASC";
 	public static final String SortOrder_DESC = "DESC";
+	public static final int BULKPROCESSING_SIZE = 500;
 }

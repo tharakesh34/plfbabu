@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,6 +232,20 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
+	public void updatePresentmentIdAsZero(List<Long> presentmentIds) {
+		List<List<Long>> idList = new ArrayList<>(1);
+		if (presentmentIds.size() > PennantConstants.BULKPROCESSING_SIZE) {
+			idList = ListUtils.partition(presentmentIds, PennantConstants.BULKPROCESSING_SIZE);
+		} else {
+			idList.add(presentmentIds);
+		}
+		for (List<Long> list : idList) {
+			getPresentmentDetailDAO().updatePresentmentIdAsZero(list);
+		}
+		idList.clear();
+	}
+
+	@Override
 	public long getSeqNumber(String tableNme) {
 		return getPresentmentDetailDAO().getSeqNumber(tableNme);
 	}
@@ -284,15 +299,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		} else if ("Submit".equals(userAction)) {
 			submitPresentments(excludeList, includeList, presentmentId, partnerBankId);
 		} else if ("Approve".equals(userAction)) {
-
-			// update presentment id as zero
-			List<PresentmentDetail> listPrstitems = this.presentmentDetailDAO.getExcludeDetails(presentmentId);
-			if (listPrstitems != null && !listPrstitems.isEmpty()) {
-				for (PresentmentDetail presentmentDetail : listPrstitems) {
-					updatePresentmentIdAsZero(presentmentDetail.getId());
-				}
-			}
-			approvePresentments(presentmentId, userDetails, isPDC);
+			approvePresentments(excludeList, presentmentId, userDetails, isPDC);
 		} else if ("Resubmit".equals(userAction)) {
 			resubmitPresentments(presentmentId, partnerBankId);
 		} else if ("Cancel".equals(userAction)) {
@@ -332,13 +339,25 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 				partnerBankId);
 	}
 
-	private void approvePresentments(long presentmentId, LoggedInUser userDetails, boolean isPDC) throws Exception {
+	private void approvePresentments(List<Long> excludeList, long presentmentId, LoggedInUser userDetails,
+			boolean isPDC) throws Exception {
 
-		//update presentment id as zero
-		List<PresentmentDetail> listPrstitems = getPresentmentDetailDAO().getExcludeDetails(presentmentId);
-		if (listPrstitems != null && !listPrstitems.isEmpty()) {
-			for (PresentmentDetail presentmentDetail : listPrstitems) {
-				updatePresentmentIdAsZero(presentmentDetail.getId());
+		if (excludeList != null && !excludeList.isEmpty()) {
+			updatePresentmentIdAsZero(excludeList);
+			List<PresentmentDetail> excludePresentmentList = getPresentmentDetailDAO()
+					.getPresentmensByExcludereason(presentmentId, RepayConstants.PEXC_MANUAL_EXCLUDE);
+			if (excludePresentmentList != null && !excludePresentmentList.isEmpty()) {
+				for (PresentmentDetail item : excludePresentmentList) {
+					//in case of partial amount is reserved and that presentment moved to manualexclude
+					//then reverse that amount.
+					if (item.getExcessID() != 0) {
+						finExcessAmountDAO.updateExcessAmount(item.getExcessID(), item.getAdvanceAmt());
+					}
+					//in case of PDC Change the cheque the status to new
+					if (isPDC) {
+						updateChequeStatus(item.getMandateId(), PennantConstants.CHEQUESTATUS_NEW);
+					}
+				}
 			}
 		}
 

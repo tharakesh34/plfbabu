@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +27,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
-import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.core.TableType;
 
 public class PresentmentDetailExtractService {
@@ -117,6 +114,13 @@ public class PresentmentDetailExtractService {
 				pDetail.setWorkflowId(0);
 				pDetail.setEntityCode(rs.getString("ENTITYCODE"));
 
+				if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT,
+						presentmentHeader.getPresentmentType())) {
+					pDetail.setGrcAdvType(rs.getString("GRCADVTYPE"));
+					pDetail.setAdvType(rs.getString("ADVTYPE"));
+					pDetail.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
+				}
+
 				doPDCCalculations(pDetail, presentmentHeader);
 
 				if (pDetail.getExcessID() != 0) {
@@ -134,8 +138,10 @@ public class PresentmentDetailExtractService {
 						presentmentHeader.setBankCode(bankCode);
 						presentmentHeader.setEntityCode(entity);
 						presentmentId = savePresentmentHeaderDetails(presentmentHeader);
-						//reset on the header is save
-						presentmentHeader.setId(Long.MIN_VALUE);
+						//new header should be created resetting the id
+						if (!map.isEmpty()) {
+							presentmentHeader.setId(Long.MIN_VALUE);
+						}
 						map.put(defSchDate, presentmentId);
 						map.put(bankCode, presentmentId);
 						map.put(entity, presentmentId);
@@ -237,9 +243,12 @@ public class PresentmentDetailExtractService {
 				pDetail.setWorkflowId(0);
 				pDetail.setEntityCode(rs.getString("ENTITYCODE"));
 
-				pDetail.setGrcAdvType(rs.getString("GRCADVTYPE"));
-				pDetail.setAdvType(rs.getString("ADVTYPE"));
-				pDetail.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
+				if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, ph.getPresentmentType())) {
+					pDetail.setGrcAdvType(rs.getString("GRCADVTYPE"));
+					pDetail.setAdvType(rs.getString("ADVTYPE"));
+					pDetail.setAdvStage(rs.getString("ADVSTAGE"));
+					pDetail.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
+				}
 
 				doCalculations(pDetail, ph);
 
@@ -259,7 +268,9 @@ public class PresentmentDetailExtractService {
 						ph.setEntityCode(entity);
 						presentmentId = savePresentmentHeaderDetails(ph);
 						//new header should be created resetting the id
-						ph.setId(Long.MIN_VALUE);
+						if (!map.isEmpty()) {
+							ph.setId(Long.MIN_VALUE);
+						}
 						map.put(defSchDate, presentmentId);
 						map.put(bankCode, presentmentId);
 						map.put(entity, presentmentId);
@@ -506,6 +517,9 @@ public class PresentmentDetailExtractService {
 		BigDecimal dueAmt = BigDecimal.ZERO;
 
 		if (advanceType == AdvanceType.AE) {
+			if (AdvanceStage.getStage(prd.getAdvStage()) == AdvanceStage.FE) {
+				return;
+			}
 			amountType = RepayConstants.EXAMOUNTTYPE_ADVEMI;
 			dueAmt = prd.getSchAmtDue();
 			exculdeReason = RepayConstants.PEXC_ADVEMI;

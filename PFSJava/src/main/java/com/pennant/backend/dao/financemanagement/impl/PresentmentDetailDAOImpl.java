@@ -64,10 +64,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -288,7 +288,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(" FEESCHD, SCHDFEEPAID, INSSCHD, T2.MANDATEID, T1.DEFSCHDDATE, T4.MANDATETYPE, T4.STATUS,");
 			sql.append(" T4.EXPIRYDATE, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
 			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH");
-			sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE");
+			sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE");
 			sql.append(" FROM FINSCHEDULEDETAILS T1");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE");
 			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
@@ -333,11 +333,19 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				sql.append(" AND (T7.ENTITYCODE = ?) ");
 			}
 
+			//For Presentment records not exit in the PresentmentDetails table with that scheduleDate
+			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
 			sql.append(
-					" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE ");
-			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
-			// sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <>
-			// '6' AND T6.STATUS <> 'A') ORDER BY T1.DEFSCHDDATE ");
+					" AND T6.SCHDATE = T1.SCHDATE  AND (T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' OR T6.ExcludeReason = '12' OR T6.ExcludeReason = '13' )) ");
+
+			//if record is manual exclude  and batch not complete approve in that case record not extracted again until batch is complete approve.
+			//#Bug Fix related to 135196
+			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
+			sql.append(" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
+			
+			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
+
+			//sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6'  AND T6.STATUS <> 'A')  ORDER BY T1.DEFSCHDDATE ");
 
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
@@ -410,7 +418,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" T8.CHEQUEDATE, T8.CHEQUEDETAILSID, T2.FINTYPE LOANTYPE, T5.BRANCHCODE, T1.TDSAMOUNT, T6.BANKCODE, T7.ENTITYCODE,");
 			sql.append(" T1.INSTNUMBER EMINO, T2.FINBRANCH");
-			sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE");
+			sql.append(", T2.GRCADVTYPE, T2.ADVTYPE, T2.GRCPERIODENDDATE,T2.ADVSTAGE");
 			sql.append(" FROM FINSCHEDULEDETAILS T1");
 			sql.append(" INNER JOIN FINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE");
 			sql.append(" INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE");
@@ -456,9 +464,18 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				sql.append(" AND (T7.ENTITYCODE = ?) ");
 			}
 
+			//For Presentment records not exit in the PresentmentDetails table with that scheduleDate
+			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference ");
 			sql.append(
-					" AND  Not Exists( Select 1 from PresentmentDetails T6 where T1.FinReference = T6.FinReference AND T6.SCHDATE = T1.SCHDATE ");
-			sql.append(" AND T6.ExcludeReason = '0')  ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
+					" AND T6.SCHDATE = T1.SCHDATE  AND (T6.ExcludeReason = '0' OR T6.ExcludeReason = '1'  OR T6.ExcludeReason = '12' OR T6.ExcludeReason = '13' )) ");
+
+			//if record is manual exclude  and batch not complete approve in that case record not extracted again until batch is complete approve.
+			//#Bug Fix related to 135196
+			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
+			sql.append(" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
+
+			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
+
 			Connection conn = DataSourceUtils.doGetConnection(this.dataSource);
 			stmt = conn.prepareStatement(sql.toString());
 			stmt.setInt(1, 1);
@@ -595,25 +612,31 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public void updatePresentmentDetials(long presentmentId, List<Long> list, int mnualExclude) {
 		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
 		sql.append(
-				" UPDATE PRESENTMENTDETAILS Set EXCLUDEREASON = :EXCLUDEREASON Where PRESENTMENTID = :PRESENTMENTID AND  ID in (:ID)");
+				" UPDATE PRESENTMENTDETAILS Set EXCLUDEREASON = :EXCLUDEREASON Where PRESENTMENTID = :PRESENTMENTID AND  ID = :ID");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("EXCLUDEREASON", mnualExclude);
-		source.addValue("PRESENTMENTID", presentmentId);
-		source.addValue("ID", list);
+		//Fix related Bulk-Processing in case of list having huge records IN operator is not working.
+		//So instead on IN Operator using BatchUpdate.
+		List<MapSqlParameterSource> sources = new ArrayList<MapSqlParameterSource>();
 
-		try {
-			this.jdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+		for (Long id : list) {
+			MapSqlParameterSource batchValues = new MapSqlParameterSource();
+			batchValues.addValue("EXCLUDEREASON", mnualExclude);
+			batchValues.addValue("PRESENTMENTID", presentmentId);
+			batchValues.addValue("ID", id);
+			sources.add(batchValues);
+			if (sources.size() == PennantConstants.BULKPROCESSING_SIZE) {
+				this.jdbcTemplate.batchUpdate(sql.toString(), sources.toArray(new SqlParameterSource[sources.size()]));
+				sources.clear();
+			}
+		}
+		if (sources.size() > 0) {
+			this.jdbcTemplate.batchUpdate(sql.toString(), sources.toArray(new SqlParameterSource[sources.size()]));
+			sources.clear();
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -685,6 +708,32 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		source = new MapSqlParameterSource();
 		source.addValue("PresentmentId", presentmentId);
+		source.addValue("SetId", 0);
+		try {
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.error("Exception :", e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void updatePresentmentIdAsZero(List<Long> presentmentIds) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+
+		sql = new StringBuilder();
+		sql.append(" UPDATE FINSCHEDULEDETAILS Set PresentmentId = :SetId Where PresentmentId IN  (:PresentmentIds)  ");
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PresentmentIds", presentmentIds);
 		source.addValue("SetId", 0);
 		try {
 			this.jdbcTemplate.update(sql.toString(), source);
@@ -1020,6 +1069,38 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return null;
 	}
 
+	@Override
+	public List<PresentmentDetail> getPresentmensByExcludereason(long presentmentId, int excludeReason) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select id, presentmentId, finReference, schDate, mandateId, schAmtDue, schPriDue, schPftDue, ");
+		sql.append(" schFeeDue, schInsDue, schPenaltyDue, advanceAmt, excessID, adviseAmt, presentmentAmt, ");
+		sql.append(" Emino, status, presentmentRef, ecsReturn, receiptID, excludeReason, Version, LastMntOn, ");
+		sql.append(" LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" From PRESENTMENTDETAILS WHERE PresentmentId = :PresentmentId AND ExcludeReason = :ExcludeReason ");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PresentmentId", presentmentId);
+		source.addValue("ExcludeReason", excludeReason);
+
+		RowMapper<PresentmentDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(PresentmentDetail.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 	// MIGRATION PURPOSE
 	@Override
 	public List<PresentmentHeader> getPresentmentHeadersByRef(String reference, String type) {
@@ -1202,7 +1283,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			// And Status not exists with I,A,S (extract,approved,success) And
 			// ExcludeReason (EMIINCLUDE 0, EMIINADVANCE 1)
 			sql.append(
-					" AND ( T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' ) AND ( T6.Status='I' OR T6.Status='S' OR T6.Status='A') ) ");
+					" AND ( T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' OR T6.ExcludeReason = '12' OR T6.ExcludeReason = '13' ) AND ( T6.Status='I' OR T6.Status='S' OR T6.Status='A') ) ");
 
 			// if record is manual exclude and batch not complete approve in
 			// that case record not extracted again until batch is complete
@@ -1337,7 +1418,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			// And Status not exists with I,A,S (extract,approved,success) And
 			// ExcludeReason (EMIINCLUDE 0, EMIINADVANCE 1)
 			sql.append(
-					" AND ( T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' ) AND ( T6.Status='I' OR T6.Status='S' OR T6.Status='A') ) ");
+					" AND ( T6.ExcludeReason = '0' OR T6.ExcludeReason = '1' OR T6.ExcludeReason = '12' OR T6.ExcludeReason = '13' ) AND ( T6.Status='I' OR T6.Status='S' OR T6.Status='A') ) ");
 
 			// if record is manual exclude and batch not complete approve in
 			// that case record not extracted again until batch is complete

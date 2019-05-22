@@ -82,6 +82,8 @@ public interface PresentmentDetailService {
 
 	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
 
+	void updatePresentmentIdAsZero(List<Long> presentmentIds);
+
 	FinanceDetail getFinanceDetailsByRef(String finReference);
 
 }

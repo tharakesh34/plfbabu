@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.model.presentment.Presentment;
@@ -38,7 +39,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	private long processedCount;
 
 	@Override
-	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList ,long headerId, boolean isError, boolean isPDC) {
+	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long headerId, boolean isError,
+			boolean isPDC) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		this.presentmentId = headerId;
@@ -55,8 +57,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			}
 
 			MapSqlParameterSource paramMap = new MapSqlParameterSource();
-			paramMap.addValue("IdList", idList);
-			paramMap.addValue("EXCLUDEREASON", 0);
+			paramMap.addValue("PRESENTMENTID", presentmentId);
+			paramMap.addValue("EXCLUDEREASON", RepayConstants.PEXC_EMIINCLUDE);
+			paramMap.addValue("STATUS", RepayConstants.PEXC_APPROV);
 
 			List<Presentment> presements = namedJdbcTemplate.query(sql.toString(), paramMap,
 					new PresentmentRowMapper());
@@ -88,51 +91,21 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 						updatePresentmentHeader(presentmentId, 4, presentmentId, processedCount);
 					}
 					updatePresentmentDetails(idList, "A", RepayConstants.PEXC_EMIINCLUDE);
-				}
 
-				boolean isPresentMentFileDownnloadReq = false;
-				String presentmentReq = (String) getSMTParameter(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD,
-						String.class);
-				if (StringUtils.isNotBlank(presentmentReq)) {
-					isPresentMentFileDownnloadReq = presentmentReq.equalsIgnoreCase("Y");
-				}
-
-
-				if (isPresentMentFileDownnloadReq && !isBatchFail) {
-					prepareRequestFile(idList, presentmentId);
+					String alwPresentmentDwnld = (String) getSMTParameter(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD,
+							String.class);
+					if ("Y".equalsIgnoreCase(alwPresentmentDwnld)) {
+						prepareRequestFile(presentmentId);
+					}
 				}
 			}
 		}
-		
-		if (idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
-			 updatePresentmentExcludeDetails(idExcludeEmiList, "A");
+		if (!isBatchFail && idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
+			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updatePresentmentExcludeDetails(List<Long> idList, String status) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS Where ID in (:IDList) ");
-
-		logger.trace(Literal.SQL + sql.toString());
-		
-		MapSqlParameterSource source = null;
-
-		source = new MapSqlParameterSource();
-		source.addValue("IDList", idList);
-		source.addValue("STATUS", status);
-
-		try {
-			this.namedJdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		}
-		logger.debug(Literal.LEAVING);
-	}
 
 	/**
 	 * Method for creating PRESENTMENT_REQUEST file.
@@ -141,7 +114,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile(List<Long> idList, long presentmentId) {
+	public void prepareRequestFile(Long presentMentID) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -153,7 +126,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			DataEngineExport dataEngine = null;
 			dataEngine = new DataEngineExport(dataSource, new Long(1000), App.DATABASE.name(), true, getValueDate());
 			Map<String, Object> filterMap = new HashMap<>();
-			filterMap.put("TXN_REF", idList);
+			filterMap.put("JOB_ID", presentMentID);
 			dataEngine.setFilterMap(filterMap);
 
 			if (smtPaymentModeConfig != null) {
@@ -190,7 +163,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T11 ON T11.DIVISIONCODE=T9.FINDIVISION");
-		sql.append(" WHERE T1.ID IN(:IdList) AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
+		sql.append(
+				" WHERE T1.PRESENTMENTID = :PRESENTMENTID AND T1.EXCLUDEREASON = :EXCLUDEREASON AND T1.STATUS <> :STATUS ");
 		return sql;
 	}
 
@@ -217,7 +191,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T11 ON T11.DIVISIONCODE=T9.FINDIVISION");
-		sql.append(" WHERE T1.ID IN(:IdList) AND T1.EXCLUDEREASON = :EXCLUDEREASON ");
+		sql.append(
+				" WHERE T1.PRESENTMENTID = :PRESENTMENTID AND T1.EXCLUDEREASON = :EXCLUDEREASON AND T1.STATUS <> :STATUS ");
 		return sql;
 	}
 
@@ -461,28 +436,36 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
 
 		sql = new StringBuilder();
+
 		sql.append(
-				" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID IN(:IDList) AND EXCLUDEREASON = :EXCLUDEREASON ");
+				" UPDATE PRESENTMENTDETAILS Set STATUS = :STATUS,  ErrorDesc = :ErrorDesc Where ID =:ID AND EXCLUDEREASON = :EXCLUDEREASON ");
 		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("IDList", idList);
-		source.addValue("STATUS", status);
-		source.addValue("ErrorDesc", null);
-		source.addValue("EXCLUDEREASON", excludeReason);
-
-		try {
-			this.namedJdbcTemplate.update(sql.toString(), source);
-		} catch (Exception e) {
-			logger.error("Exception :", e);
-			throw e;
+		//Fix related Bulk-Processing in case of list having huge records IN operator is not working.
+		//So instead on IN Operator using BatchUpdate.
+		List<MapSqlParameterSource> sources = new ArrayList<MapSqlParameterSource>();
+		for (Long id : idList) {
+			MapSqlParameterSource batchValues = new MapSqlParameterSource();
+			batchValues.addValue("STATUS", status);
+			batchValues.addValue("ErrorDesc", null);
+			batchValues.addValue("EXCLUDEREASON", excludeReason);
+			batchValues.addValue("ID", id);
+			sources.add(batchValues);
+			SqlParameterSource[] batchArgs = sources.toArray(new SqlParameterSource[sources.size()]);
+			if (sources.size() == PennantConstants.BULKPROCESSING_SIZE) {
+				this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
+				sources.clear();
+			}
+		}
+		if (sources.size() > 0) {
+			SqlParameterSource[] batchArgs = sources.toArray(new SqlParameterSource[sources.size()]);
+			this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
+			sources.clear();
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
 	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long dBStatusId, long totalRecords) {
 		logger.debug(Literal.ENTERING);
 
