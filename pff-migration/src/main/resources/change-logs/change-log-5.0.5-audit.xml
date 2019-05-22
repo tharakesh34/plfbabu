@@ -113,34 +113,15 @@
 		<addNotNullConstraint tableName="AdtFinMaintainInstructions" columnName="TdSApplicable" />
 	</changeSet>
 
-	<changeSet id="20" author="Varaprasad.K">
-		<addColumn tableName="AdtFinScheduleDetails">
-			<column name="TdSApplicable" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="21" author="Varaprasad.K">
-		<sql>
-			<![CDATA[
-				UPDATE AdtFinScheduleDetails Set TdSApplicable = 0;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="22.1" author="Varaprasad.K" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE ADTFINSCHEDULEDETAILS ADD CONSTRAINT DF_ADTFINSCHEDULEDETAILS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="22.1" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="TdSApplicable" tableName="AdtFinScheduleDetails" defaultValue="0" />
-	</changeSet>
-
 	<changeSet id="23" author="Varaprasad.K">
 		<addNotNullConstraint tableName="AdtFinScheduleDetails" columnName="TdSApplicable" />
 	</changeSet>
+
+	<changeSet id="07" author="Varaprasad.K">
+		<addColumn tableName="AdtFinMaintainInstructions">
+			<column name="TdsLimit" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
 
 </databaseChangeLog>

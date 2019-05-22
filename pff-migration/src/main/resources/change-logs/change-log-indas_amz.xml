@@ -160,42 +160,13 @@
 			<column name="AMZMethod" type="char(1)" />
 		</addColumn>
 
-		<addColumn tableName="FINPFTDETAILS_TEMP">
-			<column name="AMZMethod" type="char(1)" />
-		</addColumn>
-
 		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
 			<column name="AMZMethod" type="char(1)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="07" author="Satya">
-		<sql>
-		    <![CDATA[
-				Drop Table IncomeAmortization;
-				Drop Table ProjectedAccruals;
-				Drop Table ProjectedIncomeAMZ;
-				
-				Drop Table SeqIncomeAmortization;
-				Drop Table SeqProjectedAccruals;
-				Drop Table SeqProjectedIncomeAMZ;
-				
-				Drop Table AmortizationQueuing;
-				Drop Table AmortizationQueuing_LOG;
-						
-				Drop Table AmortizationLog;
-				Drop Table SeqAmortizationLog;
-				
-				Drop Table CalAvgPOSLog;
-				Drop Table SeqCalAvgPOSLog;
-				
-				Drop Table ProjectedAccruals_WORK;
-				DROP TABLE ProjectedIncomeAMZ_WORK;
-			 ]]>
-		</sql>
-	</changeSet>
 
-	<changeSet id="08" author="Satya">
+	<changeSet id="07" author="Satya">
 		<createTable tableName="AmortizationQueuing">
 			<column name="FinReference" type="VARCHAR(20)">
 				<constraints primaryKey="true" nullable="false" />
@@ -211,7 +182,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="9.1" author="Satya" dbms="mssql">
+	<changeSet id="8.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE AMORTIZATIONQUEUING ADD CONSTRAINT DF_AMORTZATINQUNG_EODPROCESS DEFAULT 0 FOR EODPROCESS;
@@ -219,15 +190,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="9.1" author="Satya" dbms="postgresql, oracle">
+	<changeSet id="8.1" author="Satya" dbms="postgresql, oracle">
 		<addDefaultValue columnName="EodProcess" tableName="AmortizationQueuing" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="10" author="Satya">
+	<changeSet id="9" author="Satya">
 		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" />
 	</changeSet>
 
-	<changeSet id="11" author="Satya">
+	<changeSet id="10" author="Satya">
 		<createTable tableName="AmortizationQueuing_Log">
 			<column name="FinReference" type="VARCHAR(20)" />
 			<column name="CustID" type="bigint" />
@@ -241,7 +212,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="12.1" author="Satya" dbms="mssql">
+	<changeSet id="11.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE AMORTIZATIONQUEUING_LOG ADD CONSTRAINT DF_AMRTZTNQUNG_LOG_EODPROCESS DEFAULT 0 FOR EODPROCESS;
@@ -249,15 +220,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="12.1" author="Satya" dbms="postgresql, oracle">
+	<changeSet id="11.1" author="Satya" dbms="postgresql, oracle">
 		<addDefaultValue columnName="EodProcess" tableName="AmortizationQueuing_Log" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="13" author="Satya">
+	<changeSet id="12" author="Satya">
 		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" />
 	</changeSet>
 
-	<changeSet id="14" author="Satya">
+	<changeSet id="13" author="Satya">
 		<createTable tableName="IncomeAmortization">
 			<column name="FinReference" type="VARCHAR(20)" />
 			<column name="CustID" type="bigint" />
@@ -280,7 +251,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="15.1" author="Satya" dbms="mssql">
+	<changeSet id="14.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE INCOMEAMORTIZATION ADD CONSTRAINT DF_INCOMEAMORTIZATION_ACTIVE DEFAULT 0 FOR ACTIVE;
@@ -288,15 +259,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="15.1" author="Satya" dbms="postgresql, oracle">
+	<changeSet id="14.1" author="Satya" dbms="postgresql, oracle">
 		<addDefaultValue columnName="Active" tableName="IncomeAmortization" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="16" author="Satya">
+	<changeSet id="15" author="Satya">
 		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" />
 	</changeSet>
 
-	<changeSet id="17" author="Satya">
+	<changeSet id="16" author="Satya">
 		<createTable tableName="ProjectedAccruals">
 			<column name="FinReference" type="VARCHAR(20)" />
 			<column name="AccruedOn" type="datetime" />
@@ -314,7 +285,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="18.1" author="Satya" dbms="mssql">
+	<changeSet id="17.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE PROJECTEDACCRUALS ADD CONSTRAINT DF_PROJECTEDACCRUALS_MONTHEND DEFAULT 0 FOR MONTHEND;
@@ -322,15 +293,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="18.1" author="Satya" dbms="postgresql, oracle">
+	<changeSet id="17.1" author="Satya" dbms="postgresql, oracle">
 		<addDefaultValue columnName="MonthEnd" tableName="ProjectedAccruals" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="19" author="Satya">
+	<changeSet id="18" author="Satya">
 		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" />
 	</changeSet>
 
-	<changeSet id="20" author="Satya">
+	<changeSet id="19" author="Satya">
 		<createTable tableName="ProjectedIncomeAMZ">
 			<column name="FinReference" type="VARCHAR(20)" />
 			<column name="FinType" type="VARCHAR(20)" />
@@ -344,7 +315,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="21" author="Satya">
+	<changeSet id="20" author="Satya">
 		<createTable tableName="AmortizationLog">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -357,12 +328,12 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="22" author="Satya">
+	<changeSet id="21" author="Satya">
 		<createSequence sequenceName="SeqAmortizationLog" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" cycle="false" />
 	</changeSet>
 
-	<changeSet id="23" author="Satya">
+	<changeSet id="22" author="Satya">
 		<createTable tableName="CalAvgPOSLog">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -375,12 +346,12 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="24" author="Satya">
+	<changeSet id="23" author="Satya">
 		<createSequence sequenceName="SeqCalAvgPOSLog" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" cycle="false" />
 	</changeSet>
 
-	<changeSet id="25" author="Satya">
+	<changeSet id="24" author="Satya">
 		<createTable tableName="ProjectedAccruals_WORK">
 			<column name="FinReference" type="VARCHAR(20)" />
 			<column name="AccruedOn" type="datetime" />
@@ -398,7 +369,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="26.1" author="Satya" dbms="mssql">
+	<changeSet id="25.1" author="Satya" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE PROJECTEDACCRUALS_WORK ADD CONSTRAINT DF_PRJCTEDACCRUALS_WRK_MNTHEND DEFAULT 0 FOR MONTHEND;
@@ -406,15 +377,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="26.1" author="Satya" dbms="postgresql, oracle">
+	<changeSet id="25.1" author="Satya" dbms="postgresql, oracle">
 		<addDefaultValue columnName="MonthEnd" tableName="ProjectedAccruals_WORK" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="27" author="Satya">
+	<changeSet id="26" author="Satya">
 		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" />
 	</changeSet>
 
-	<changeSet id="28" author="Satya">
+	<changeSet id="27" author="Satya">
 		<createTable tableName="ProjectedIncomeAMZ_WORK">
 			<column name="FinReference" type="VARCHAR(20)" />
 			<column name="FinType" type="VARCHAR(20)" />
@@ -428,7 +399,7 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="29" author="Satya">
+	<changeSet id="28" author="Satya">
 		<comment> IND AS - Update New Columns </comment>
 		<sql>
 	        <![CDATA[
@@ -446,99 +417,81 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="30" author="Satya">
+	<changeSet id="29" author="Satya">
 		<createIndex tableName="AMORTIZATIONQUEUING" indexName="IDX_AMZQUEUE_THREAD">
 			<column name="THREADID" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="31" author="Satya">
+	<changeSet id="30" author="Satya">
 		<createIndex tableName="AMORTIZATIONQUEUING" indexName="AMORTIZATIONQUEUING_NLS_IDX">
 			<column name="FINREFERENCE" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="32" author="Satya">
+	<changeSet id="31" author="Satya">
 		<createIndex tableName="PROJECTEDACCRUALS" indexName="IDX_PROJACCRUALS_ACCRUEON">
-			<column name="FINREFERENCE,ACCRUEDON" />
+			<column name="FINREFERENCE" />
+			<column name="ACCRUEDON" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="33" author="Satya">
+	<changeSet id="32" author="Satya">
 		<createIndex tableName="PROJECTEDACCRUALS" indexName="IDX_PA_ACRON">
 			<column name="ACCRUEDON" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="34" author="Satya">
+	<changeSet id="33" author="Satya">
 		<createIndex tableName="PROJECTEDACCRUALS" indexName="PROJECTEDACCRUALS_NLS_IDX">
 			<column name="FINREFERENCE" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="35" author="Satya">
+	<changeSet id="34" author="Satya">
 		<createIndex tableName="PROJECTEDACCRUALS_WORK" indexName="IDX_PROJECTEDACCRUALS_FINREF">
 			<column name="FINREFERENCE" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="36" author="Satya">
+	<changeSet id="35" author="Satya">
 		<createIndex tableName="PROJECTEDACCRUALS_WORK" indexName="PROJECTEDACCRUALS_WORK_NLS_IDX">
 			<column name="FINREFERENCE" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="37" author="Satya">
+	<changeSet id="36" author="Satya">
 		<createIndex tableName="INCOMEAMORTIZATION" indexName="IDX_INCAMZ_REF_INCTYPE_REFID">
-			<column name="FINREFERENCE, INCOMETYPE, REFERENCEID" />
+			<column name="FINREFERENCE" />
+			<column name="INCOMETYPE" />
+			<column name="REFERENCEID" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="38" author="Satya">
+	<changeSet id="37" author="Satya">
 		<createIndex tableName="INCOMEAMORTIZATION" indexName="INCOMEAMORTIZATION_NLS_IDX">
 			<column name="FINREFERENCE" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="39" author="Satya">
+	<changeSet id="38" author="Satya">
 		<createIndex tableName="PROJECTEDINCOMEAMZ" indexName="IDX_PROJINCAMZ_EOM">
 			<column name="MONTHENDDATE" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="40" author="Satya">
+	<changeSet id="39" author="Satya" dbms="oracle">
 		<comment> IND AS - Performance </comment>
 		<sql>
 			<![CDATA[
-					ALTER TABLE PROJECTEDINCOMEAMZ NOLOGGING;
+				ALTER TABLE PROJECTEDINCOMEAMZ NOLOGGING;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="41" author="Satya">
-		<comment> IND AS - Performance </comment>
-		<sql>
-			<![CDATA[	
-					begin
-					for i in (select constraint_name, table_name from user_constraints where table_name = 'PROJECTEDACCRUALS') LOOP
-					execute immediate 'alter table '||i.table_name||' drop constraint '||i.constraint_name||'';
-					end loop;
-					end;
-			 ]]>
-		</sql>
+	<changeSet id="40" author="Satya">
+		<dropDefaultValue tableName="PROJECTEDACCRUALS" columnName="MONTHEND" />
+		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" />
 	</changeSet>
 
-	<changeSet id="42" author="Satya">
-		<comment> IND AS - Performance </comment>
-		<sql>
-			<![CDATA[	
-					begin
-					for i in (select constraint_name, table_name from user_constraints where table_name = 'PROJECTEDINCOMEAMZ') LOOP
-					execute immediate 'alter table '||i.table_name||' drop constraint '||i.constraint_name||'';
-					end loop;
-					end;
-			 ]]>
-		</sql>
-	</changeSet>
-    
 </databaseChangeLog>
