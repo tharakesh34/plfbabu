@@ -5331,17 +5331,17 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="72" author="satyanarayana.g">
 		<addColumn tableName="FinFeeDetail">
 			<column name="ActPercentage" type="smallint" />
 		</addColumn>
-		
+
 		<addColumn tableName="FinFeeDetail_temp">
 			<column name="ActPercentage" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="72.1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -5350,7 +5350,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="72.2" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -5364,7 +5364,7 @@
 		<addDefaultValue columnName="ACTPERCENTAGE" tableName="FINFEEDETAIL" defaultValue="0" />
 		<addDefaultValue columnName="ACTPERCENTAGE" tableName="FINFEEDETAIL_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="73" author="satyanarayana.g">
 		<comment>ADDED ActPercentage COLUMN TO FinfeeDetail_VIEW </comment>
 		<createView viewName="FINFEEDETAIL_VIEW" replaceIfExists="true">
@@ -5486,7 +5486,7 @@
 					))
       	</createView>
 	</changeSet>
-	
+
 	<changeSet id="74" author="satyanarayana.g">
 		<comment>ADDED ActPercentage COLUMN TO FINFEEDETAIL_TVIEW </comment>
 		<createView viewName="FINFEEDETAIL_TVIEW" replaceIfExists="true">
@@ -5548,7 +5548,7 @@
 					LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
       	</createView>
 	</changeSet>
-	
+
 	<changeSet id="75" author="satyanarayana.g">
 		<comment>ADDED ActPercentage COLUMN TO FINFEEDETAIL_AVIEW </comment>
 		<createView viewName="FINFEEDETAIL_AVIEW" replaceIfExists="true">
@@ -5610,34 +5610,498 @@
 					LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
       	</createView>
 	</changeSet>
-	
+
 	<changeSet id="76" author="satyanarayana.g">
 		<createTable tableName="FinReceiptQueueLog">
-			<column name="UploadId" type="bigint"/>
-			<column name="ReceiptId" type="bigint"/>
-			<column name="FinReference" type="varchar(20)"/>
-			<column name="TransactionDate" type="datetime"/>
-			<column name="ThreadId" type="bigint"/>
-			<column name="Progress" type="int"/>
-			<column name="StartTime" type="varchar(20)"/>
-			<column name="EndTime" type="varchar(20)"/>
-			<column name="ErrorLog" type="varchar(1000)"/>
+			<column name="UploadId" type="bigint" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="TransactionDate" type="datetime" />
+			<column name="ThreadId" type="bigint" />
+			<column name="Progress" type="int" />
+			<column name="StartTime" type="varchar(20)" />
+			<column name="EndTime" type="varchar(20)" />
+			<column name="ErrorLog" type="varchar(1000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="76.1" author="satyanarayana.g">
-    	<addPrimaryKey 
-            columnNames="BatchId, ReceiptId"
-            constraintName="pk_MultiReceiptApproval"
-            tableName="MultiReceiptApproval"/>
+		<addPrimaryKey columnNames="BatchId, ReceiptId" constraintName="pk_MultiReceiptApproval" tableName="MultiReceiptApproval" />
 	</changeSet>
-	
+
 	<changeSet id="77" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 			   Insert into SMTPARAMETERS values ('MULTI_REC_THREAD_COUNT','Number Of Threads For MultiReceipt','int',0,'10',2,0,null,null,'Number Of Threads For MultiReceipt',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0)
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
+
+	<changeSet id="78_pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SECUSERS DROP CONSTRAINT DF_SECUSERS_ACCESSTOALLBRANCHES;
+				ALTER TABLE SECUSERS_TEMP DROP DF_SECUSERS_TEMP_ACCESSTOALLBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_save_and_drop_dependencies ('plf', 'secusers');
+			   select deps_save_and_drop_dependencies ('plf', 'secusers_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="78" author="satyanarayana.g">
+		<modifyDataType tableName="SECUSERS" columnName="ACCESSTOALLBRANCHES" newDataType="boolean" />
+		<modifyDataType tableName="SECUSERS_TEMP" columnName="ACCESSTOALLBRANCHES" newDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="78_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'secusers');
+			   select deps_restore_dependencies ('plf', 'secusers_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78_post" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE SECUSERS ADD CONSTRAINT DF_SECUSERS_ACCESSTOALLBRANCHES DEFAULT 1 FOR ACCESSTOALLBRANCHES;
+				ALTER TABLE SECUSERS_TEMP ADD CONSTRAINT DF_SECUSERS_TEMP_ACCESSTOALLBRANCHES DEFAULT 1 FOR ACCESSTOALLBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="79" author="satyanarayana.g">
+		<addColumn tableName="FinScheduleDetails">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="79.1" author="satyanarayana.g">
+		<addColumn tableName="FinScheduleDetails_Temp">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="79.2" author="satyanarayana.g">
+		<addColumn tableName="FinScheduleDetails_Log">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="79.3" author="satyanarayana.g">
+		<addColumn tableName="FinScheduleDetails_PA">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="79.4" author="satyanarayana.g">
+		<addColumn tableName="RejectFinScheduleDetails">
+			<column name="TDSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="81" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE FinScheduleDetails Set TDSApplicable = 0 where TDSApplicable is null;
+				UPDATE FinScheduleDetails_Temp Set TDSApplicable = 0  where TDSApplicable is null;
+				UPDATE FinScheduleDetails_Log Set TDSApplicable = 0  where TDSApplicable is null;
+				UPDATE FinScheduleDetails_PA Set TDSApplicable = 0  where TDSApplicable is null;
+				UPDATE RejectFinScheduleDetails Set TDSApplicable = 0  where TDSApplicable is null;
+				
+				UPDATE FinScheduleDetails Set TDSApplicable = 1 where TDSAmount > 0;
+				UPDATE FinScheduleDetails_Temp Set TDSApplicable = 1 where TDSAmount > 0;
+				UPDATE FinScheduleDetails_Log Set TDSApplicable = 1 where TDSAmount > 0;
+				UPDATE FinScheduleDetails_PA Set TDSApplicable = 1 where TDSAmount > 0;
+				UPDATE RejectFinScheduleDetails Set TDSApplicable = 1 where TDSAmount > 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="82" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FINSCHEDULEDETAILS ADD CONSTRAINT DF_FINSCHEDULEDETAILS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+				ALTER TABLE FINSCHEDULEDETAILS_TEMP ADD CONSTRAINT DF_FINSCHEDULEDETAILS_TEMP_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+				
+				ALTER TABLE FINSCHEDULEDETAILS_LOG ADD CONSTRAINT DF_FINSCHEDULEDETAILS_LOG_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+				ALTER TABLE FINSCHEDULEDETAILS_PA ADD CONSTRAINT DF_FINSCHEDULEDETAILS_PA_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+				ALTER TABLE REJECTFINSCHEDULEDETAILS ADD CONSTRAINT DF_REJECTFINSCHEDULEDETAILS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="82" author="satyanarayana.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TDSApplicable" tableName="FINSCHEDULEDETAILS" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FINSCHEDULEDETAILS_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FINSCHEDULEDETAILS_LOG" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FINSCHEDULEDETAILS_PA" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="REJECTFINSCHEDULEDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="83" author="satyanarayana.g">
+		<addNotNullConstraint tableName="FINSCHEDULEDETAILS" columnName="TDSApplicable" columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINSCHEDULEDETAILS_TEMP" columnName="TDSApplicable"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINSCHEDULEDETAILS_LOG" columnName="TDSApplicable"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="FINSCHEDULEDETAILS_PA" columnName="TDSApplicable"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="REJECTFINSCHEDULEDETAILS" columnName="TDSApplicable"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="06" author="Varaprasad.K">
+		<createView viewName="finscheduledetails_aview" replaceIfExists="true">
+			  SELECT t1.finreference,
+					t1.schseq,
+					t1.schdate,
+					t1.pftonschdate,
+					t1.repayonschdate,
+					t1.cpzonschdate,
+					t1.rvwonschdate,
+					t1.disbonschdate,
+					t1.downpaymentonschdate,
+					t1.balanceforpftcal,
+					t1.baserate,
+					t1.splrate,
+					t1.actrate,
+					t1.noofdays,
+					t1.dayfactor,
+					t1.profitcalc,
+					t1.profitschd,
+					t1.principalschd,
+					t1.repayamount,
+					t1.profitbalance,
+					t1.disbamount,
+					t1.cpzamount,
+					t1.downpaymentamount,
+					t1.closingbalance,
+					t1.profitfraction,
+					t1.prvrepayamount,
+					t1.schdpftpaid,
+					t1.schpftpaid,
+					t1.schdpripaid,
+					t1.schpripaid,
+					t1.specifier,
+					t1.defschddate,
+					t1.schdmethod,
+					t1.mrgrate,
+					t1.calonindrate,
+					t1.feechargeamt,
+					t1.calculatedrate,
+					t1.earlypaidbal,
+					t1.earlypaid,
+					t1.refundorwaiver,
+					t1.writeoffprincipal,
+					t1.writeoffprofit,
+					t1.orgpft,
+					t1.orgpri,
+					t1.orgendbal,
+					t1.orgplanpft,
+					t1.feeschd,
+					t1.schdfeepaid,
+					t1.schdfeeos,
+					t1.insschd,
+					t1.schdinspaid,
+					t1.advpftrate,
+					t1.advprofit,
+					t1.advrepayamount,
+					t1.advbaserate,
+					t1.advmargin,
+					t1.advcalrate,
+					t1.suplrent,
+					t1.incrcost,
+					t1.suplrentpaid,
+					t1.incrcostpaid,
+					t1.rolloveronschdate,
+					t1.rolloveramount,
+					t1.rolloveramountpaid,
+					t1.tdsamount,
+					t1.tdspaid,
+					t1.pftdaysbasis,
+					t1.writeoffins,
+					t1.writeoffincrcost,
+					t1.writeoffsuplrent,
+					t1.writeoffschfee,
+					t1.insuranceamt,
+					t1.instnumber,
+					t1.bpiorholiday,
+					t1.frqdate,
+					t1.presentmentid,
+					t1.partialpaidamt,
+					t1.feetax,
+					t1.recallock,
+					t1.tdsApplicable
+			FROM finscheduledetails t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="07" author="Varaprasad.K">
+		<createView viewName="finscheduledetails_tview" replaceIfExists="true">
+			  SELECT t1.finreference,
+						t1.schseq,
+						t1.schdate,
+						t1.pftonschdate,
+						t1.repayonschdate,
+						t1.cpzonschdate,
+						t1.rvwonschdate,
+						t1.disbonschdate,
+						t1.downpaymentonschdate,
+						t1.balanceforpftcal,
+						t1.baserate,
+						t1.splrate,
+						t1.actrate,
+						t1.noofdays,
+						t1.dayfactor,
+						t1.profitcalc,
+						t1.profitschd,
+						t1.principalschd,
+						t1.repayamount,
+						t1.profitbalance,
+						t1.disbamount,
+						t1.cpzamount,
+						t1.downpaymentamount,
+						t1.closingbalance,
+						t1.profitfraction,
+						t1.prvrepayamount,
+						t1.schdpftpaid,
+						t1.schpftpaid,
+						t1.schdpripaid,
+						t1.schpripaid,
+						t1.specifier,
+						t1.defschddate,
+						t1.schdmethod,
+						t1.mrgrate,
+						t1.calonindrate,
+						t1.feechargeamt,
+						t1.calculatedrate,
+						t1.earlypaidbal,
+						t1.earlypaid,
+						t1.refundorwaiver,
+						t1.writeoffprincipal,
+						t1.writeoffprofit,
+						t1.orgpft,
+						t1.orgpri,
+						t1.orgendbal,
+						t1.orgplanpft,
+						t1.feeschd,
+						t1.schdfeepaid,
+						t1.schdfeeos,
+						t1.insschd,
+						t1.schdinspaid,
+						t1.advpftrate,
+						t1.advprofit,
+						t1.advrepayamount,
+						t1.advbaserate,
+						t1.advmargin,
+						t1.advcalrate,
+						t1.suplrent,
+						t1.incrcost,
+						t1.suplrentpaid,
+						t1.incrcostpaid,
+						t1.rolloveronschdate,
+						t1.rolloveramount,
+						t1.rolloveramountpaid,
+						t1.tdsamount,
+						t1.tdspaid,
+						t1.pftdaysbasis,
+						t1.writeoffins,
+						t1.writeoffincrcost,
+						t1.writeoffsuplrent,
+						t1.writeoffschfee,
+						t1.insuranceamt,
+						t1.instnumber,
+						t1.bpiorholiday,
+						t1.frqdate,
+						t1.presentmentid,
+						t1.partialpaidamt,
+						t1.feetax,
+						t1.recallock,
+						t1.tdsApplicable
+            FROM finscheduledetails_temp t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="08" author="Varaprasad.K">
+		<createView viewName="finscheduledetails_view" replaceIfExists="true">
+			  SELECT t1.finreference,
+					t1.schseq,
+					t1.schdate,
+					t1.pftonschdate,
+					t1.repayonschdate,
+					t1.cpzonschdate,
+					t1.rvwonschdate,
+					t1.disbonschdate,
+					t1.downpaymentonschdate,
+					t1.balanceforpftcal,
+					t1.baserate,
+					t1.splrate,
+					t1.actrate,
+					t1.noofdays,
+					t1.dayfactor,
+					t1.profitcalc,
+					t1.profitschd,
+					t1.principalschd,
+					t1.repayamount,
+					t1.profitbalance,
+					t1.disbamount,
+					t1.cpzamount,
+					t1.downpaymentamount,
+					t1.closingbalance,
+					t1.profitfraction,
+					t1.prvrepayamount,
+					t1.schdpftpaid,
+					t1.schpftpaid,
+					t1.schdpripaid,
+					t1.schpripaid,
+					t1.specifier,
+					t1.defschddate,
+					t1.schdmethod,
+					t1.mrgrate,
+					t1.calonindrate,
+					t1.feechargeamt,
+					t1.calculatedrate,
+					t1.earlypaidbal,
+					t1.earlypaid,
+					t1.refundorwaiver,
+					t1.writeoffprincipal,
+					t1.writeoffprofit,
+					t1.orgpft,
+					t1.orgpri,
+					t1.orgendbal,
+					t1.orgplanpft,
+					t1.feeschd,
+					t1.schdfeepaid,
+					t1.schdfeeos,
+					t1.insschd,
+					t1.schdinspaid,
+					t1.advpftrate,
+					t1.advprofit,
+					t1.advrepayamount,
+					t1.advbaserate,
+					t1.advmargin,
+					t1.advcalrate,
+					t1.suplrent,
+					t1.incrcost,
+					t1.suplrentpaid,
+					t1.incrcostpaid,
+					t1.rolloveronschdate,
+					t1.rolloveramount,
+					t1.rolloveramountpaid,
+					t1.tdsamount,
+					t1.tdspaid,
+					t1.pftdaysbasis,
+					t1.writeoffins,
+					t1.writeoffincrcost,
+					t1.writeoffsuplrent,
+					t1.writeoffschfee,
+					t1.insuranceamt,
+					t1.instnumber,
+					t1.bpiorholiday,
+					t1.frqdate,
+					t1.presentmentid,
+					t1.partialpaidamt,
+					t1.feetax,
+					t1.recallock,
+					t1.tdsApplicable
+				   FROM finscheduledetails_temp t1
+				UNION ALL
+				 SELECT t1.finreference,
+					t1.schseq,
+					t1.schdate,
+					t1.pftonschdate,
+					t1.repayonschdate,
+					t1.cpzonschdate,
+					t1.rvwonschdate,
+					t1.disbonschdate,
+					t1.downpaymentonschdate,
+					t1.balanceforpftcal,
+					t1.baserate,
+					t1.splrate,
+					t1.actrate,
+					t1.noofdays,
+					t1.dayfactor,
+					t1.profitcalc,
+					t1.profitschd,
+					t1.principalschd,
+					t1.repayamount,
+					t1.profitbalance,
+					t1.disbamount,
+					t1.cpzamount,
+					t1.downpaymentamount,
+					t1.closingbalance,
+					t1.profitfraction,
+					t1.prvrepayamount,
+					t1.schdpftpaid,
+					t1.schpftpaid,
+					t1.schdpripaid,
+					t1.schpripaid,
+					t1.specifier,
+					t1.defschddate,
+					t1.schdmethod,
+					t1.mrgrate,
+					t1.calonindrate,
+					t1.feechargeamt,
+					t1.calculatedrate,
+					t1.earlypaidbal,
+					t1.earlypaid,
+					t1.refundorwaiver,
+					t1.writeoffprincipal,
+					t1.writeoffprofit,
+					t1.orgpft,
+					t1.orgpri,
+					t1.orgendbal,
+					t1.orgplanpft,
+					t1.feeschd,
+					t1.schdfeepaid,
+					t1.schdfeeos,
+					t1.insschd,
+					t1.schdinspaid,
+					t1.advpftrate,
+					t1.advprofit,
+					t1.advrepayamount,
+					t1.advbaserate,
+					t1.advmargin,
+					t1.advcalrate,
+					t1.suplrent,
+					t1.incrcost,
+					t1.suplrentpaid,
+					t1.incrcostpaid,
+					t1.rolloveronschdate,
+					t1.rolloveramount,
+					t1.rolloveramountpaid,
+					t1.tdsamount,
+					t1.tdspaid,
+					t1.pftdaysbasis,
+					t1.writeoffins,
+					t1.writeoffincrcost,
+					t1.writeoffsuplrent,
+					t1.writeoffschfee,
+					t1.insuranceamt,
+					t1.instnumber,
+					t1.bpiorholiday,
+					t1.frqdate,
+					t1.presentmentid,
+					t1.partialpaidamt,
+					t1.feetax,
+					t1.recallock,
+					t1.tdsApplicable
+				   FROM finscheduledetails t1
+				  WHERE NOT (EXISTS ( SELECT 1
+						   FROM finscheduledetails_temp
+						  WHERE finscheduledetails_temp.finreference = t1.finreference))
+				
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>

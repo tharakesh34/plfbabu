@@ -7,12 +7,12 @@
 	<property name="call.concatenate" value="||" dbms="oracle" />
 	<property name="call.maindb" value="PLF.." dbms="mssql" />
 	<property name="call.maindb" value="PLF." dbms="oracle" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="ADARSH" runAlways="true" dbms="postgresql">
-	<sql>
-		Set search_path = plfaudit,public,pg_catalog;
-	</sql>
-   </changeSet>
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
 
 	<changeSet id="1" author="Vidhya">
 		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="Remarks" newDataType="varchar2(500)" />
@@ -127,16 +127,17 @@
 	</changeSet>
 
 	<changeSet id="5.3" author="satyanarayana.g">
-		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="COLLECTIONAGENTID" columnDataType="bigint" />
+		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="COLLECTIONAGENTID"
+			columnDataType="bigint" />
 	</changeSet>
-	
+
 	<changeSet id="6" author="satyanarayana.g">
-	 <comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
+		<comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
 		<addColumn tableName="ADTFINRECEIPTHEADER">
-			<column name="ACTFINRECEIPT" type="NUMBER(1)"/>
+			<column name="ACTFINRECEIPT" type="NUMBER(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="6.0" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -161,7 +162,7 @@
 	<changeSet id="6.3" author="satyanarayana.g">
 		<addNotNullConstraint tableName="ADTFINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
 	</changeSet>
-	
+
 	<changeSet id="7_Pre" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -169,12 +170,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="7" author="satyanarayana.g">
-		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="actFinReceipt"
-			newDataType="boolean" />
+		<modifyDataType tableName="ADTFINRECEIPTHEADER" columnName="actFinReceipt" newDataType="boolean" />
 	</changeSet>
-	
+
 	<changeSet id="7_Post" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -182,13 +182,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8" author="satyanarayana.g">
 		<addColumn tableName="AdtFinFeeDetail">
 			<column name="ActPercentage" type="smallint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="8.1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -196,9 +196,67 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8.2" author="satyanarayana.g" dbms="postgresql,oracle">
 		<addDefaultValue columnName="ACTPERCENTAGE" tableName="ADTFINFEEDETAIL" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="9_Pre" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTSECUSERS DROP CONSTRAINT DF_ADTSECUSERS_ACCESSTOALLBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="9" author="satyanarayana.g">
+		<modifyDataType tableName="ADTSECUSERS" columnName="ACCESSTOALLBRANCHES" newDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="9.1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINFEEDETAIL set ACTPERCENTAGE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="9_Post" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTSECUSERS ADD CONSTRAINT DF_SECUSERS_ACCESSTOALLBRANCHES DEFAULT 1 FOR ACCESSTOALLBRANCHES;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10" author="satyanarayana.g">
+		<addColumn tableName="AdtFinScheduleDetails">
+			<column name="TdSApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="11" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinScheduleDetails Set TdSApplicable = 0 where TdSApplicable is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="11.1" author="satyanarayana.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINSCHEDULEDETAILS ADD CONSTRAINT DF_ADTFINSCHEDULEDETAILS_TDSAPPLICABLE DEFAULT 0 FOR TDSAPPLICABLE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="11.1" author="satyanarayana.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="TdSApplicable" tableName="AdtFinScheduleDetails" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="12" author="satyanarayana.g">
+		<addNotNullConstraint tableName="AdtFinScheduleDetails" columnName="TdSApplicable" columnDataType="boolean"/>
 	</changeSet>
 
 </databaseChangeLog>
