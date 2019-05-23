@@ -316,7 +316,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinChangeTDSDialog_btnNew"));
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_FinChangeTDSDialog_btnEdit"));
 		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_FinChangeTDSDialog_btnDelete"));
-		this.btnSave.setVisible(true);
+		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_FinChangeTDSDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
 		logger.debug("Leaving");
@@ -340,7 +340,9 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
 		Cloner cloner = new Cloner();
 		aFinMaintainInstruction = cloner.deepClone(getFinMaintainInstruction());
+		
 		doSetValidation();
+		
 		doWriteComponentsToBean(aFinMaintainInstruction);
 
 		boolean isNew;
@@ -874,18 +876,31 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 	private void doSetValidation() {
 		logger.debug("Entering");
-
-
-		if (!this.tdsStartDate.isDisabled()) {
-			this.tdsStartDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsStartDate.value"), false));
-		}
-
-		if (!this.tdsEndDate.isDisabled()) {
-			this.tdsEndDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), false));
-		}
-		
+		BigDecimal tdsPerc = new BigDecimal(
+				SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+        if(tdsPerc.compareTo(this.tdsPercentage.getValue())!= 0){
+			if (!this.tdsStartDate.isDisabled()) {
+				this.tdsStartDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsStartDate.value"), true));
+			}
+	
+			if (!this.tdsEndDate.isDisabled()) {
+				this.tdsEndDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), true));
+			}
+        }else{
+        	this.tdsStartDate.setErrorMessage("");
+        	this.tdsEndDate.setErrorMessage("");
+        	if (!this.tdsStartDate.isDisabled()) {
+				this.tdsStartDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsStartDate.value"), false));
+			}
+	
+			if (!this.tdsEndDate.isDisabled()) {
+				this.tdsEndDate.setConstraint(
+						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), false));
+			}
+        }
 		if (!this.tdsLimit.isReadonly()) {
 			this.tdsLimit.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_ChangeTDS_TdsLimit.value"),
@@ -926,10 +941,15 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 */
 	public void onChange$tdsStartDate(Event event) {
 		logger.debug("Entering" + event.toString());
+		
+		
+		
 		if(this.tdsStartDate.getValue() != null){
+			
 			int month=DateUtility.getMonth(this.tdsStartDate.getValue());
 			int year =DateUtility.getYear(this.tdsStartDate.getValue());
 			this.row_TDS3.setVisible(true);
+			
 			if(month > 3){
 				Date tdsformateEndDate = null;
 				try {
@@ -952,6 +972,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		}else{
 			this.tdsEndDate.setValue(null);
 			this.row_TDS3.setVisible(false);
+			this.tdsLimit.setValue(BigDecimal.ZERO);
 		}
 		logger.debug("Leaving" + event.toString());
 		
@@ -962,7 +983,9 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 */
 	public void onChange$tdsEndDate(Event event) {
 		logger.debug("Entering" + event.toString());
+		finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
 		if(this.tdsStartDate.getValue() != null && this.tdsEndDate.getValue() != null){
+			
 			int startDatemonth=DateUtility.getMonth(this.tdsStartDate.getValue());
 			int startDateyear =DateUtility.getYear(this.tdsStartDate.getValue());
 			this.row_TDS3.setVisible(true);
@@ -996,6 +1019,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		}else{
 			this.tdsEndDate.setValue(null);
 			this.row_TDS3.setVisible(false);
+			this.tdsLimit.setValue(BigDecimal.ZERO);
 		}
 		
 		logger.debug("Leaving" + event.toString());

@@ -3363,14 +3363,14 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 					if (doCheckAuthority(aFinanceMain, whereCond)
 							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
-						showFinChangeTDSMaintanceView(finMaintainInstruction, aFinanceMain);
+						showFinChangeTDSMaintanceView(finMaintainInstruction);
 					} else {
 						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 					}
 				} else {
 					if (doCheckAuthority(aFinanceMain, whereCond)
 							|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
-						showFinChangeTDSMaintanceView(finMaintainInstruction, aFinanceMain);
+						showFinChangeTDSMaintanceView(finMaintainInstruction);
 					} else {
 						MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 					}
@@ -3380,7 +3380,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 	
-	private void showFinChangeTDSMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceMain financeMain) {
+	private void showFinChangeTDSMaintanceView(FinMaintainInstruction finMaintainInstruction) {
 
 		logger.debug("Entering");
 
@@ -3388,8 +3388,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			finMaintainInstruction.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		String finReference = finMaintainInstruction.getFinReference();
-		/*FinanceMain financeMain = getChangeTDSService()
-				.getFinanceBasicDetailByRef(finReference);*/
+		FinanceMain financeMain = getChangeTDSService()
+				.getFinanceBasicDetailByRef(finReference);
 		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(finReference, "_AView", false);
 		boolean isTDSCheck = false;
 		Date date = DateUtility.getAppDate();
