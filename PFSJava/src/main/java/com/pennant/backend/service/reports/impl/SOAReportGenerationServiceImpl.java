@@ -1095,30 +1095,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				if (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C")) {
 
-					//Add disbursement
-					if (finSchdDetail.isDisbOnSchDate()) {
-
-						BigDecimal transactionAmount = BigDecimal.ZERO;
-
-						if (finSchdDetail.getDisbAmount() != null) {
-							transactionAmount = finSchdDetail.getDisbAmount();
-						}
-
-						if (DateUtility.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
-							transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
-						}
-
-						soaTranReport = new SOATransactionReport();
-						soaTranReport.setEvent(finSchedulePayable + finRef);
-						soaTranReport.setTransactionDate(finMain.getFinApprovedDate());
-						soaTranReport.setValueDate(finMain.getFinStartDate());
-						soaTranReport.setCreditAmount(transactionAmount);
-						soaTranReport.setDebitAmount(BigDecimal.ZERO);
-						soaTranReport.setPriority(1);
-
-						soaTransactionReports.add(soaTranReport);
-					}
-
 					//Broken Period Interest Receivable- Due
 					if (StringUtils.equalsIgnoreCase("B", bpiOrHoliday) && repayAmount != null
 							&& repayAmount.compareTo(BigDecimal.ZERO) > 0) {
