@@ -136,6 +136,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -145,7 +146,6 @@ import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CreateFinanceController extends SummaryDetailService {
-
 	private static final Logger logger = Logger.getLogger(CreateFinanceController.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -180,13 +180,12 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RuleExecutionUtil ruleExecutionUtil;
 	private DedupParmService dedupParmService;
 	private AgreementDefinitionService agreementDefinitionService;
-	@Autowired
 	private NotificationsService notificationsService;
-	@Autowired
 	private NotificationService notificationService;
 	private AgreementGeneration agreementGeneration;
 	private FinanceTypeService financeTypeService;
 	private FinanceCancellationService financeCancellationService;
+	private PostValidationHook postValidationHook;
 
 	/**
 	 * Method for process create finance request
@@ -201,6 +200,19 @@ public class CreateFinanceController extends SummaryDetailService {
 		String finReference = null;
 
 		try {
+			// post hook validation
+			if (postValidationHook != null) {
+				List<ErrorDetail> errors = postValidationHook.apiValidation(financeDetail);
+				if (CollectionUtils.isNotEmpty(errors)) {
+					for (ErrorDetail errorDetail : errors) {
+						FinanceDetail response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(
+								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+						return response;
+					}
+				}
+			}
 			// financeMain details
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -316,7 +328,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					if (financeDetail.getFinScheduleData().getOverdraftScheduleDetails() != null) {
 						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().clear();
 					}
-					//To Rebuild the overdraft if any fields are changed
+					// To Rebuild the overdraft if any fields are changed
 					financeDetail.getFinScheduleData().getFinanceMain()
 							.setEventFromDate(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate());
 					finScheduleData = ScheduleCalculator.buildODSchedule(financeDetail.getFinScheduleData());
@@ -398,7 +410,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			// save the finance details into main table
 			if (stp && !financeMain.isQuickDisb()) {
-				WSReturnStatus returnStatus=prepareAgrrementDetails(auditHeader);
+				WSReturnStatus returnStatus = prepareAgrrementDetails(auditHeader);
 				if (returnStatus != null && StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 					FinanceDetail response = new FinanceDetail();
 					String[] valueParm = new String[1];
@@ -420,7 +432,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					financeMain.setRecordStatus("Saved");
 					role = workFlow.firstTaskOwner();
 				}
-				//dedup check 
+				// dedup check
 				if (!stp) {
 					List<FinanceDedup> financeDedupList = prepareFinanceDedup(role, financeDetail);
 					if (CollectionUtils.isNotEmpty(financeDedupList)) {
@@ -560,7 +572,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						} catch (Exception e) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "Loan Aggrement template ";
-							return APIErrorHandlerService.getFailedStatus("API004",valueParm);
+							return APIErrorHandlerService.getFailedStatus("API004", valueParm);
 						}
 					}
 				}
@@ -574,7 +586,8 @@ public class CreateFinanceController extends SummaryDetailService {
 					try {
 						documentDetails = autoGenerateAgreement(finRefMap.get(tempName), financeDetail, aggdef,
 								financeDetail.getDocumentDetailsList(), agrData);
-						if(documentDetails.getReturnStatus()!=null && StringUtils.isNotBlank(documentDetails.getReturnStatus().getReturnCode())){
+						if (documentDetails.getReturnStatus() != null
+								&& StringUtils.isNotBlank(documentDetails.getReturnStatus().getReturnCode())) {
 							return documentDetails.getReturnStatus();
 						}
 					} catch (Exception e) {
@@ -595,6 +608,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		return null;
 	}
+
 	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
 			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
 			AgreementDetail detail) throws Exception {
@@ -622,21 +636,23 @@ public class CreateFinanceController extends SummaryDetailService {
 				getAgreementGeneration().setExtendedMasterDescription(financeDetail, engine);
 				getAgreementGeneration().setFeeDetails(financeDetail, engine);
 
-				//if (agreementDefinition.isAutoDownload()) {
+				// if (agreementDefinition.isAutoDownload()) {
 				if (StringUtils.equals(agreementDefinition.getAggtype(), PennantConstants.DOC_TYPE_PDF)) {
 					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
-					//engine.showDocument(this.window_documentDetailDialog, reportName, SaveFormat.PDF);
+					// engine.showDocument(this.window_documentDetailDialog,
+					// reportName, SaveFormat.PDF);
 				} else {
 					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
-					//engine.showDocument(this.window_documentDetailDialog, reportName, SaveFormat.DOCX);
+					// engine.showDocument(this.window_documentDetailDialog,
+					// reportName, SaveFormat.DOCX);
 				}
-				//}
+				// }
 
 				DocumentDetails exstDetails = null;
-				if (existingUploadDocList.size() > 0){
-					exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition,financeDetail);
+				if (existingUploadDocList.size() > 0) {
+					exstDetails = getExistDocDetails(existingUploadDocList, agreementDefinition, financeDetail);
 				}
-				
+
 				if (exstDetails != null) {
 					if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
 						exstDetails.setDocImage(engine.getDocumentInByteArray(
@@ -646,7 +662,8 @@ public class CreateFinanceController extends SummaryDetailService {
 								templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
 					}
 
-					//since it is an existing document record has to be store in document manager
+					// since it is an existing document record has to be store
+					// in document manager
 					exstDetails.setDocRefId(Long.MIN_VALUE);
 					return exstDetails;
 				}
@@ -670,7 +687,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
-				//details.setCategoryCode(agreementDefinition.getModuleName());
+				// details.setCategoryCode(agreementDefinition.getModuleName());
 				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -683,16 +700,16 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
 					|| e.getMessage().equals("Template site does not exist.")
 					|| e.getMessage().equals("Template does not exist."))) {
-				
+
 				String[] valueParm = new String[1];
 				valueParm[0] = "Loan Aggrement template ";
-				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004",valueParm));
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
 				return details;
-				
+
 			} else {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Loan Aggrement template ";
-				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004",valueParm));
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
 				return details;
 			}
 		}
@@ -772,8 +789,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		return null;
 	}
+
 	private List<FinanceDedup> prepareFinanceDedup(String userRole, FinanceDetail aFinanceDetail) {
-		//Data Preparation for Rule Executions
+		// Data Preparation for Rule Executions
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		FinanceDedup financeDedup = new FinanceDedup();
 		financeDedup.setCustId(customer.getCustID());
@@ -790,10 +808,10 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeDedup.setMobileNumber(getCustMobileNum(aFinanceDetail));
 		financeDedup.setTradeLicenceNo(customer.getCustTradeLicenceNum());
 
-		//Check Customer is Existing or New Customer Object
+		// Check Customer is Existing or New Customer Object
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		//finance data to set in to finance dedup 
+		// finance data to set in to finance dedup
 		financeDedup.setFinanceAmount(aFinanceMain.getFinAmount());
 		financeDedup.setProfitAmount(aFinanceMain.getTotalGrossPft());
 		financeDedup.setFinanceType(aFinanceMain.getFinType());
@@ -808,14 +826,15 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeDedup
 				.setLikeCustLName(financeDedup.getCustLName() != null ? "%" + financeDedup.getCustLName() + "%" : "");
 
-		//For Existing Customer/ New Customer
+		// For Existing Customer/ New Customer
 		List<FinanceDedup> loanDedup = new ArrayList<FinanceDedup>();
 		List<FinanceDedup> dedupeRuleData = dedupParmService.fetchFinDedupDetails(userRole, financeDedup, null,
 				aFinanceMain.getFinType());
 		loanDedup.addAll(dedupeRuleData);
 		return loanDedup;
 	}
-	//get the mobile number for Customer
+
+	// get the mobile number for Customer
 	private String getCustMobileNum(FinanceDetail aFinanceDetail) {
 		String custMobileNumber = "";
 		if (aFinanceDetail.getCustomerDetails().getCustomerPhoneNumList() != null) {
@@ -829,6 +848,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		return custMobileNumber;
 	}
+
 	private FinanceDetail nonStpProcess(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -863,12 +883,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setRoleCode(roleCode);
 			financeMain.setWorkflowId(workflowId);
 		}
-		if(financeMain.isLegalRequired()) {
-			String finType= financeMain.getFinType();
+		if (financeMain.isLegalRequired()) {
+			String finType = financeMain.getFinType();
 			int finRefType = FinanceConstants.PROCEDT_LIMIT;
 			String quickDisbCode = FinanceConstants.PROCEDT_LEGAL_INIT;
 			String roles = financeReferenceDetailDAO.getAllowedRolesByCode(finType, finRefType, quickDisbCode);
-			boolean allowed=false;
+			boolean allowed = false;
 			if (StringUtils.isNotBlank(roles)) {
 				String[] roleCodes = roles.split(PennantConstants.DELIMITER_COMMA);
 				for (String roleCod : roleCodes) {
@@ -878,7 +898,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 				}
 			}
-			if(!allowed) {
+			if (!allowed) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				String[] valueParm = new String[2];
@@ -913,7 +933,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	/**
-	 * prepare finance detail object with required data to process finance origination.<br>
+	 * prepare finance detail object with required data to process finance
+	 * origination.<br>
 	 * 
 	 * @param financeDetail
 	 * @param loanWithWIF
@@ -971,11 +992,15 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
 				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (!finType.isAlwMaxDisbCheckReq()) {
-				financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());//FIXME: override actual finAsset value
+				financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());// FIXME:
+																					// override
+																					// actual
+																					// finAsset
+																					// value
 			}
 		}
 
-		//vas Details
+		// vas Details
 		for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setNewRecord(true);
@@ -984,7 +1009,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 			vasRecording.setVasStatus("N");
-			//workflow related
+			// workflow related
 			vasRecording.setWorkflowId(financeMain.getWorkflowId());
 			vasRecording.setRoleCode(financeMain.getRoleCode());
 			vasRecording.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1003,7 +1028,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				exdFieldRender.setVersion(1);
-				//workflow related
+				// workflow related
 				exdFieldRender.setWorkflowId(financeMain.getWorkflowId());
 				exdFieldRender.setRoleCode(financeMain.getRoleCode());
 				exdFieldRender.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1051,7 +1076,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				flagDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				flagDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 				flagDetail.setUserDetails(financeMain.getUserDetails());
-				//workflow related
+				// workflow related
 				flagDetail.setWorkflowId(financeMain.getWorkflowId());
 				flagDetail.setRoleCode(financeMain.getRoleCode());
 				flagDetail.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1073,7 +1098,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			jointAccDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 			jointAccDetail.setUserDetails(financeMain.getUserDetails());
 			jointAccDetail.setVersion(1);
-			//workflow
+			// workflow
 			jointAccDetail.setWorkflowId(financeMain.getWorkflowId());
 			jointAccDetail.setRoleCode(financeMain.getRoleCode());
 			jointAccDetail.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1113,7 +1138,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			guarantorDetail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 			guarantorDetail.setUserDetails(financeMain.getUserDetails());
 			guarantorDetail.setVersion(1);
-			//workflow
+			// workflow
 			guarantorDetail.setWorkflowId(financeMain.getWorkflowId());
 			guarantorDetail.setRoleCode(financeMain.getRoleCode());
 			guarantorDetail.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1129,7 +1154,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setVersion(1);
 			detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
-			//workflow relates
+			// workflow relates
 			detail.setWorkflowId(financeMain.getWorkflowId());
 			detail.setRoleCode(financeMain.getRoleCode());
 			detail.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1159,19 +1184,19 @@ public class CreateFinanceController extends SummaryDetailService {
 				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 				detail.setVersion(1);
-				//workflow relates
+				// workflow relates
 				detail.setWorkflowId(financeMain.getWorkflowId());
 				detail.setRoleCode(financeMain.getRoleCode());
 				detail.setNextRoleCode(financeMain.getNextRoleCode());
 				detail.setTaskId(financeMain.getTaskId());
 				detail.setNextTaskId(financeMain.getNextTaskId());
-			} 
-			
+			}
+
 		}
 		if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals())) {
 			BigDecimal curAssignValue = BigDecimal.ZERO;
 			BigDecimal totalAvailAssignValue = BigDecimal.ZERO;
-			Boolean flag=false;
+			Boolean flag = false;
 			for (CollateralAssignment detail : financeDetail.getCollateralAssignmentList()) {
 				for (CollateralSetup collsetup : financeDetail.getCollaterals()) {
 					if (StringUtils.isNotBlank(detail.getAssignmentReference())
@@ -1179,7 +1204,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						if (StringUtils.equals(detail.getAssignmentReference(), collsetup.getAssignmentReference())) {
 							processCollateralsetupDetails(userDetails, stp, financeMain, customerDetails, detail,
 									collsetup);
-							flag=true;
+							flag = true;
 							curAssignValue = curAssignValue.add(collsetup.getBankValuation()
 									.multiply(detail.getAssignPerc() == null ? BigDecimal.ZERO : detail.getAssignPerc())
 									.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
@@ -1189,10 +1214,11 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 				}
 			}
-			if(!flag) {
+			if (!flag) {
 				financeDetail.setCollaterals(null);
 			}
-			//Collateral coverage will be calculated based on the flag "Partially Secured?” defined loan type.
+			// Collateral coverage will be calculated based on the flag
+			// "Partially Secured?” defined loan type.
 			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured() && flag) {
 				if (curAssignValue.compareTo(financeMain.getFinAmount()) < 0) {
 					String[] valueParm = new String[2];
@@ -1219,7 +1245,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 		}
-		
 
 		// Set VAS reference as feeCode for VAS related fees
 		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
@@ -1232,10 +1257,10 @@ public class CreateFinanceController extends SummaryDetailService {
 					feeDetail.setFixedAmount(vasRecording.getFee());
 					feeDetail.setAlwDeviation(true);
 					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
-					//feeDetail.setAlwModifyFee(true);
+					// feeDetail.setAlwModifyFee(true);
 					feeDetail.setAlwModifyFeeSchdMthd(true);
 					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-					//Fee Details set to the VasRecording
+					// Fee Details set to the VasRecording
 					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
 					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
 				}
@@ -1342,11 +1367,11 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
-		//### 02-05-2018-Start- story #334 Extended fields for loan servicing
+		// ### 02-05-2018-Start- story #334 Extended fields for loan servicing
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG,
 				"");
-		//### 02-05-2018-END
+		// ### 02-05-2018-END
 
 		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
 
@@ -1384,7 +1409,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.setExtendedFieldRender(exdFieldRender);
 		}
 
-		//set's the default chequeHeader to the financeDetail if chequeCapture is required.
+		// set's the default chequeHeader to the financeDetail if chequeCapture
+		// is required.
 		if (MandateConstants.TYPE_PDC.equals(financeMain.getFinRepayMethod()) || finType.isChequeCaptureReq()) {
 			doSetDefaultChequeHeader(financeDetail);
 		}
@@ -1392,8 +1418,8 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	private void processCollateralsetupDetails(LoggedInUser userDetails, boolean stp, FinanceMain financeMain,
-			CustomerDetails customerDetails, CollateralAssignment detail,CollateralSetup colSetup) {
-		//collateral setup defaulting
+			CustomerDetails customerDetails, CollateralAssignment detail, CollateralSetup colSetup) {
+		// collateral setup defaulting
 		colSetup.setUserDetails(financeMain.getUserDetails());
 		colSetup.setSourceId(APIConstants.FINSOURCE_ID_API);
 		colSetup.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
@@ -1408,7 +1434,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		colSetup.setRoleCode(financeMain.getRoleCode());
 		colSetup.setNextRoleCode(financeMain.getNextRoleCode());
 		colSetup.setTaskId(financeMain.getTaskId());
-		colSetup.setNextTaskId(financeMain.getNextTaskId());	
+		colSetup.setNextTaskId(financeMain.getNextTaskId());
 		List<CollateralThirdParty> thirdPartyCollaterals = colSetup.getCollateralThirdPartyList();
 		if (thirdPartyCollaterals != null) {
 			for (CollateralThirdParty thirdPartyColl : thirdPartyCollaterals) {
@@ -1418,8 +1444,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				thirdPartyColl.setUserDetails(userDetails);
 
 				// fetch customer id from cif
-				Customer thrdPartyCustomer = customerDetailsService
-						.getCustomerByCIF(thirdPartyColl.getCustCIF());
+				Customer thrdPartyCustomer = customerDetailsService.getCustomerByCIF(thirdPartyColl.getCustCIF());
 				if (thrdPartyCustomer != null) {
 					thirdPartyColl.setCustomerId(thrdPartyCustomer.getCustID());
 				}
@@ -1430,7 +1455,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				thirdPartyColl.setRoleCode(financeMain.getRoleCode());
 				thirdPartyColl.setNextRoleCode(financeMain.getNextRoleCode());
 				thirdPartyColl.setTaskId(financeMain.getTaskId());
-				thirdPartyColl.setNextTaskId(financeMain.getNextTaskId());	
+				thirdPartyColl.setNextTaskId(financeMain.getNextTaskId());
 			}
 		}
 
@@ -1445,8 +1470,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				coOwnerDetail.setUserDetails(userDetails);
 				coOwnerDetail.setLastMntBy(userDetails.getUserId());
 
-				Customer coOwnerCustomer = customerDetailsService
-						.getCustomerByCIF(coOwnerDetail.getCoOwnerCIF());
+				Customer coOwnerCustomer = customerDetailsService.getCustomerByCIF(coOwnerDetail.getCoOwnerCIF());
 				if (coOwnerCustomer != null) {
 					coOwnerDetail.setCustomerId(coOwnerCustomer.getCustID());
 				}
@@ -1459,7 +1483,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				coOwnerDetail.setRoleCode(financeMain.getRoleCode());
 				coOwnerDetail.setNextRoleCode(financeMain.getNextRoleCode());
 				coOwnerDetail.setTaskId(financeMain.getTaskId());
-				coOwnerDetail.setNextTaskId(financeMain.getNextTaskId());	
+				coOwnerDetail.setNextTaskId(financeMain.getNextTaskId());
 
 			}
 
@@ -1468,11 +1492,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		CollateralStructure collateralStructure = null;
 		String collateralType = colSetup.getCollateralType();
 		if (StringUtils.isNotBlank(collateralType)) {
-			collateralStructure = collateralStructureService
-					.getApprovedCollateralStructureByType(collateralType);
+			collateralStructure = collateralStructureService.getApprovedCollateralStructureByType(collateralType);
 		} else if (StringUtils.isNotBlank(colSetup.getCollateralRef())) {
-			CollateralSetup setup = collateralSetupService
-					.getApprovedCollateralSetupById(colSetup.getCollateralRef());
+			CollateralSetup setup = collateralSetupService.getApprovedCollateralSetupById(colSetup.getCollateralRef());
 			if (setup != null) {
 				collateralStructure = collateralStructureService
 						.getApprovedCollateralStructureByType(setup.getCollateralType());
@@ -1496,12 +1518,12 @@ public class CreateFinanceController extends SummaryDetailService {
 				exdFieldRender.setSeqNo(++seqNo);
 				exdFieldRender.setNewRecord(true);
 				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				
+
 				exdFieldRender.setWorkflowId(financeMain.getWorkflowId());
 				exdFieldRender.setRoleCode(financeMain.getRoleCode());
 				exdFieldRender.setNextRoleCode(financeMain.getNextRoleCode());
 				exdFieldRender.setTaskId(financeMain.getTaskId());
-				exdFieldRender.setNextTaskId(financeMain.getNextTaskId());	
+				exdFieldRender.setNextTaskId(financeMain.getNextTaskId());
 
 				Map<String, Object> mapValues = new HashMap<String, Object>();
 				int noOfUnits = 0;
@@ -1546,9 +1568,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				if (custDetails != null) {
 					colSetup.setCustomerDetails(customerDetails);
 				}
-				
-				Map<String, Object> declaredMap = colSetup.getCustomerDetails().getCustomer()
-						.getDeclaredFieldValues();
+
+				Map<String, Object> declaredMap = colSetup.getCustomerDetails().getCustomer().getDeclaredFieldValues();
 				declaredMap.put("collateralType", colSetup.getCollateralType());
 				declaredMap.put("collateralCcy", colSetup.getCollateralCcy());
 				try {
@@ -1559,8 +1580,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					logger.error("Exception: ", e);
 					ruleResult = "0";
 				}
-				colSetup.setBankLTV(
-						ruleResult == null ? BigDecimal.ZERO : new BigDecimal(ruleResult.toString()));
+				colSetup.setBankLTV(ruleResult == null ? BigDecimal.ZERO : new BigDecimal(ruleResult.toString()));
 			}
 
 			// calculate Bank Valuation
@@ -1569,8 +1589,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				ltvValue = colSetup.getSpecialLTV();
 			}
 
-			BigDecimal colValue = colSetup.getCollateralValue().multiply(ltvValue).divide(new BigDecimal(100),
-					0, RoundingMode.HALF_DOWN);
+			BigDecimal colValue = colSetup.getCollateralValue().multiply(ltvValue).divide(new BigDecimal(100), 0,
+					RoundingMode.HALF_DOWN);
 			if (colSetup.getMaxCollateralValue().compareTo(BigDecimal.ZERO) > 0
 					&& colValue.compareTo(colSetup.getMaxCollateralValue()) > 0) {
 				colValue = colSetup.getMaxCollateralValue();
@@ -1593,25 +1613,25 @@ public class CreateFinanceController extends SummaryDetailService {
 				documentDetail.setRoleCode(financeMain.getRoleCode());
 				documentDetail.setNextRoleCode(financeMain.getNextRoleCode());
 				documentDetail.setTaskId(financeMain.getTaskId());
-				documentDetail.setNextTaskId(financeMain.getNextTaskId());	
+				documentDetail.setNextTaskId(financeMain.getNextTaskId());
 			}
 		}
-detail.setCollateralValue(colSetup.getCollateralValue());
-detail.setNewRecord(true);
-detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-detail.setModule(FinanceConstants.MODULE_NAME);
-detail.setUserDetails(financeMain.getUserDetails());
-detail.setLastMntBy(userDetails.getUserId());
-detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
-detail.setVersion(1);
-//workflow relates
-detail.setWorkflowId(financeMain.getWorkflowId());
-detail.setRoleCode(financeMain.getRoleCode());
-detail.setNextRoleCode(financeMain.getNextRoleCode());
-detail.setTaskId(financeMain.getTaskId());
-detail.setNextTaskId(financeMain.getNextTaskId());
-detail.setCollateralRef(colSetup.getCollateralRef());
+		detail.setCollateralValue(colSetup.getCollateralValue());
+		detail.setNewRecord(true);
+		detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		detail.setModule(FinanceConstants.MODULE_NAME);
+		detail.setUserDetails(financeMain.getUserDetails());
+		detail.setLastMntBy(userDetails.getUserId());
+		detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		detail.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
+		detail.setVersion(1);
+		// workflow relates
+		detail.setWorkflowId(financeMain.getWorkflowId());
+		detail.setRoleCode(financeMain.getRoleCode());
+		detail.setNextRoleCode(financeMain.getNextRoleCode());
+		detail.setTaskId(financeMain.getTaskId());
+		detail.setNextTaskId(financeMain.getNextTaskId());
+		detail.setCollateralRef(colSetup.getCollateralRef());
 	}
 
 	/**
@@ -1649,13 +1669,16 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			financeDetail.getMandate().setUserDetails(financeMain.getUserDetails());
 			financeDetail.getMandate().setMandateCcy(SysParamUtil.getAppCurrency());
 			financeDetail.getMandate().setEntityCode(entityCode);
-			//workflow
+			// workflow
 			/*
-			 * financeDetail.getMandate().setWorkflowId(financeMain.getWorkflowId());
-			 * financeDetail.getMandate().setRoleCode(financeMain.getRoleCode());
-			 * financeDetail.getMandate().setNextRoleCode(financeMain.getNextRoleCode());
+			 * financeDetail.getMandate().setWorkflowId(financeMain.
+			 * getWorkflowId());
+			 * financeDetail.getMandate().setRoleCode(financeMain.getRoleCode())
+			 * ; financeDetail.getMandate().setNextRoleCode(financeMain.
+			 * getNextRoleCode());
 			 * financeDetail.getMandate().setTaskId(financeMain.getTaskId());
-			 * financeDetail.getMandate().setNextTaskId(financeMain.getNextTaskId());
+			 * financeDetail.getMandate().setNextTaskId(financeMain.
+			 * getNextTaskId());
 			 */
 
 			// mandate details
@@ -1720,7 +1743,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 				advPayment.setDisbCCy(financeMain.getFinCcy());
 				paymentSeq++;
 
-				//workflow related
+				// workflow related
 				advPayment.setWorkflowId(financeMain.getWorkflowId());
 				advPayment.setRoleCode(financeMain.getRoleCode());
 				advPayment.setNextRoleCode(financeMain.getNextRoleCode());
@@ -1929,8 +1952,8 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			//auditHeader.setApiHeader(reqHeaderDetails);
-			WSReturnStatus returnStatus=prepareAgrrementDetails(auditHeader);
+			// auditHeader.setApiHeader(reqHeaderDetails);
+			WSReturnStatus returnStatus = prepareAgrrementDetails(auditHeader);
 			if (returnStatus != null && StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Loan Aggrement template ";
@@ -2080,7 +2103,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 	 * @param ID
 	 * @return FinanceDetail
 	 */
-	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType,boolean isPending) {
+	public FinanceInquiry getFinanceDetailsById(String reference, String serviceType, boolean isPending) {
 		logger.debug("Entering");
 		try {
 			FinanceInquiry financeInquiry = new FinanceInquiry();
@@ -2108,7 +2131,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			List<FinInquiryDetail> finance = new ArrayList<FinInquiryDetail>();
 			for (FinanceMain financeMain : financeMainList) {
 				if (isPending
-					&& StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+						&& StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
 					continue;
 				}
 				FinInquiryDetail finInquiryDetail = new FinInquiryDetail();
@@ -2287,7 +2310,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			detail.setDocModule(FinanceConstants.MODULE_NAME);
 			detail.setUserDetails(financeMain.getUserDetails());
 			detail.setRecordStatus(financeMain.getRecordStatus());
-			//workflow relates
+			// workflow relates
 			detail.setWorkflowId(financeMain.getWorkflowId());
 			detail.setRoleCode(financeMain.getRoleCode());
 			detail.setNextRoleCode(financeMain.getNextRoleCode());
@@ -2392,12 +2415,12 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		financeDetail.getFinScheduleData().setPlanEMIHmonths(null);
 		financeDetail.setFinFlagsDetails(null);
 		financeDetail.setCovenantTypeList(null);
-		//ReqStage and Status
+		// ReqStage and Status
 		financeDetail.getFinScheduleData().getFinanceMain()
 				.setStatus(financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus());
 		financeDetail.getFinScheduleData().getFinanceMain()
 				.setStage(financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode());
-		//disbursement Dates
+		// disbursement Dates
 		List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 			@Override
@@ -2563,25 +2586,37 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 							}
 						}
 						if (feeAmountPaid.compareTo(BigDecimal.ZERO) <= 0) {
-							//Throw validation error and break the loop
+							// Throw validation error and break the loop
 						}
 					}
 
 				}
 				feeDetailMap.put(feeDetail.getFeeTypeCode(), feeDetail);
 			}
-			Map<Long, FinReceiptHeader> receiptHeaderMap = new HashMap<>();// map to save receipt header
+			Map<Long, FinReceiptHeader> receiptHeaderMap = new HashMap<>();// map
+																			// to
+																			// save
+																			// receipt
+																			// header
 			List<FinReceiptHeader> receiptHeaderList = finReceiptHeaderDAO
 					.getUpFrontReceiptHeaderByExtRef(detail.getExternalReference(), "");
 			for (FinReceiptHeader header : receiptHeaderList) {
 				receiptHeaderMap.put(header.getReceiptID(), header);
 			}
-			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating existing finfee details list from finscheduledata
+			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
+																		// existing
+																		// finfee
+																		// details
+																		// list
+																		// from
+																		// finscheduledata
 				if (feeDetailMap.containsKey(feeDtl.getFeeTypeCode())) {
 					FinFeeDetail finFeeDetail = feeDetailMap.get(feeDtl.getFeeTypeCode());
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if (finFeeDetail.getFinFeeReceipts() != null && finFeeDetail.getFinFeeReceipts().size() > 0) {
-							for (FinFeeReceipt feeReceipt : finFeeDetail.getFinFeeReceipts()) {// iterating receipt details
+							for (FinFeeReceipt feeReceipt : finFeeDetail.getFinFeeReceipts()) {// iterating
+																								// receipt
+																								// details
 								if (receiptHeaderMap.containsKey(feeReceipt.getReceiptID())) {
 
 									FinReceiptHeader header = receiptHeaderMap.get(feeReceipt.getReceiptID());
@@ -2611,7 +2646,8 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 						}
 					}
 				} /*
-					 * else{//Throw error if fee code does not exist in request and break the loop
+					 * else{//Throw error if fee code does not exist in request
+					 * and break the loop
 					 * 
 					 * }
 					 */
@@ -2686,7 +2722,13 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		}
 
 		if (detail.getFinFeeDetailList() != null && detail.getFinFeeDetailList().size() > 0 && errorDetails.isEmpty()) {
-			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating existing finfee details list from finscheduledata
+			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
+																		// existing
+																		// finfee
+																		// details
+																		// list
+																		// from
+																		// finscheduledata
 				if (!paidFeeDetailMap.containsKey(feeDtl.getFeeTypeCode())) {
 					if (feeDtl.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 						BigDecimal feePaidAmount = feeDtl.getPaidAmount();
@@ -2738,6 +2780,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 
 		return errorDetails;
 	}
+
 	private String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		String templateName = "";
@@ -2756,96 +2799,99 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		}
 		return msg;
 	}
-	
-	public List<ErrorDetail> rejectFinanceValidations(final FinanceDetail financeDetail)	{
+
+	public List<ErrorDetail> rejectFinanceValidations(final FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errorsList = new ArrayList<>();
 
-		if(StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF()))	{
+		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF())) {
 			String[] param = new String[1];
 			param[0] = "cif";
-				
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
-			
+
 			return errorsList;
 		}
-		
-		Customer customer = customerDetailsService.getCustomerByCIF(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF());
-		if(null == customer)	{
+
+		Customer customer = customerDetailsService
+				.getCustomerByCIF(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF());
+		if (null == customer) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "cif: " + financeDetail.getFinScheduleData().getFinanceMain().getCustCIF();
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinType()))	{
+
+		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinType())) {
 			String[] param = new String[1];
 			param[0] = "finType";
-				
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
-			
+
 			return errorsList;
 		}
-		
-		FinanceType financeType = financeTypeService.getFinanceTypeByFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
-		if(null == financeType)	{
+
+		FinanceType financeType = financeTypeService
+				.getFinanceTypeByFinType(financeDetail.getFinScheduleData().getFinanceMain().getFinType());
+		if (null == financeType) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finType: " + financeDetail.getFinScheduleData().getFinanceMain().getFinType();
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(null == financeDetail.getFinScheduleData().getFinanceMain().getFinAmount())	{
+
+		if (null == financeDetail.getFinScheduleData().getFinanceMain().getFinAmount()) {
 			financeDetail.getFinScheduleData().getFinanceMain().setFinAmount(BigDecimal.ZERO);
 		}
-		
-		if(null == financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue())	{
+
+		if (null == financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()) {
 			financeDetail.getFinScheduleData().getFinanceMain().setFinAssetValue(BigDecimal.ZERO);
 		}
-		
-		if(NumberUtils.compare(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms(), 0) == 0)	{
+
+		if (NumberUtils.compare(financeDetail.getFinScheduleData().getFinanceMain().getNumberOfTerms(), 0) == 0) {
 			String[] param = new String[1];
 			param[0] = "numberOfTerms";
-				
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
-			
+
 			return errorsList;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return errorsList;
 	}
-		
+
 	private WSReturnStatus prepareAndExecuteAuditHeader(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		WSReturnStatus returnStatus = null;
-		
+
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFinanceDetail.getBefImage(), aFinanceDetail);
-		AuditHeader auditHeader = new AuditHeader(aFinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail, aFinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
-		
+		AuditHeader auditHeader = new AuditHeader(aFinanceDetail.getFinScheduleData().getFinReference(), null, null,
+				null, auditDetail, aFinanceDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+
 		AuditHeader rejectAuditHeader = financeDetailService.doReject(auditHeader, false, false);
 		if (rejectAuditHeader.getAuditError() != null) {
 			for (ErrorDetail errorDetail : rejectAuditHeader.getErrorMessage()) {
 				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
-		} else	{
+		} else {
 			returnStatus = APIErrorHandlerService.getSuccessStatus();
 		}
-			
+
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
-	
-	public WSReturnStatus processRejectFinance(FinanceDetail financeDetail, boolean finReferenceAvailable)	{
+
+	public WSReturnStatus processRejectFinance(FinanceDetail financeDetail, boolean finReferenceAvailable) {
 		logger.debug(Literal.ENTERING);
-		
+
 		WSReturnStatus returnStatus = null;
-		
+
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		// mandatory fields
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
@@ -2856,17 +2902,18 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
-		
+
 		// customer details
 		Customer customer = customerDetailsService.getCustomerByCIF(financeMain.getCustCIF());
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(customer);
 		financeDetail.setCustomerDetails(customerDetails);
 		String tranType = PennantConstants.TRAN_WF;
-		
-		if(!finReferenceAvailable)	{
+
+		if (!finReferenceAvailable) {
 			if (StringUtils.isBlank(financeMain.getFinReference())) {
-				financeMain.setFinReference(String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(financeMain, financeDetail.getFinScheduleData().getFinanceType()))));
+				financeMain.setFinReference(String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(financeMain,
+						financeDetail.getFinScheduleData().getFinanceType()))));
 			}
 			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			financeMain.setCustID(customer.getCustID());
@@ -2878,9 +2925,10 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 			financeMain.setLastRepayCpzDate(financeMain.getFinStartDate());
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 
-			returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);	
-		} else	{
-			FinanceMain dbFinanceMain = financeDetailService.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
+			returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);
+		} else {
+			FinanceMain dbFinanceMain = financeDetailService
+					.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
 			if (null != dbFinanceMain) {
 				financeMain.setFinReference(dbFinanceMain.getFinReference());
 				financeMain.setLastMntOn(dbFinanceMain.getLastMntOn());
@@ -2891,34 +2939,34 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 				financeMain.setLastRepayPftDate(dbFinanceMain.getLastRepayPftDate());
 				financeMain.setLastRepayRvwDate(dbFinanceMain.getLastRepayRvwDate());
 				financeMain.setLastRepayCpzDate(dbFinanceMain.getLastRepayCpzDate());
-	
+
 				// override received fields with fetch data
 				financeMain.setLovDescCustCIF(dbFinanceMain.getCustCIF());
 				financeMain.setFinType(dbFinanceMain.getFinType());
 				financeMain.setFinAmount(dbFinanceMain.getFinAmount());
 				financeMain.setFinAssetValue(dbFinanceMain.getFinAssetValue());
 				financeMain.setNumberOfTerms(dbFinanceMain.getNumberOfTerms());
-				
+
 				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 				financeDetail.setUserDetails(userDetails);
 				financeDetail.setCustomerDetails(customerDetails);
 				FinanceType dbFinanceType = financeTypeService.getFinanceTypeById(dbFinanceMain.getFinType());
 				financeDetail.getFinScheduleData().setFinanceType(dbFinanceType);
-				
+
 				returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);
 			} else {
 				// throw validation error
 				String[] valueParam = new String[1];
 				valueParam[0] = "finreference: " + financeDetail.getFinScheduleData().getFinReference();
-	
+
 				returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParam);
 			}
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 		return returnStatus;
 	}
-	
+
 	public WSReturnStatus processCancelFinance(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
@@ -2961,6 +3009,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
+
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -3089,7 +3138,7 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
 		this.finFeeReceiptDAO = finFeeReceiptDAO;
 	}
-	
+
 	public void setCollateralStructureService(CollateralStructureService collateralStructureService) {
 		this.collateralStructureService = collateralStructureService;
 	}
@@ -3114,6 +3163,14 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		this.agreementDefinitionService = agreementDefinitionService;
 	}
 
+	public void setNotificationsService(NotificationsService notificationsService) {
+		this.notificationsService = notificationsService;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
+
 	public AgreementGeneration getAgreementGeneration() {
 		return agreementGeneration;
 	}
@@ -3134,5 +3191,9 @@ detail.setCollateralRef(colSetup.getCollateralRef());
 		this.financeCancellationService = financeCancellationService;
 	}
 
+	@Autowired(required = false)
+	public void setPostValidationHook(PostValidationHook postValidationHook) {
+		this.postValidationHook = postValidationHook;
+	}
 
 }

@@ -3267,7 +3267,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("TransactionMapping",
 				new ModuleMapping("TransactionMapping", TransactionMapping.class,
 						new String[] { "TransactionMapping", "TransactionMapping_AVIEW" }, masterWF,
-						new String[] { "DealerCode", "DealerName" }, null, 600));
+						new String[] { "MID", "TID" }, null, 600));
 
 		registerCustomModules();
 	}

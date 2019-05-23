@@ -10,4 +10,6 @@ public interface TransactionMappingDAO extends BasicCrudDao<TransactionMapping> 
 
 	TransactionMapping getTransactionMappingById(long id, String type);
 
+	int getcountByMID(long mid, long tid);
+
 }

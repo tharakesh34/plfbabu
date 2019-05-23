@@ -3,6 +3,7 @@ package com.pennant.backend.dao.transactionmapping.impl;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -172,6 +173,33 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	@Override
+	public int getcountByMID(long mid, long tid) {
+		logger.debug("Entering");
+		TransactionMapping transactionMapping = new TransactionMapping();
+		transactionMapping.setMid(mid);
+		transactionMapping.setTid(tid);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT COUNT(*) FROM TransactionMapping");
+		selectSql.append(" WHERE mid = :mid AND tid = :tid");
+
+		logger.debug("SelectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionMapping);
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception :", e);
+			recordCount = 0;
+		}
+
+		logger.debug("Leaving");
+		return recordCount;
 	}
 
 }
