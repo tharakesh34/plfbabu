@@ -74,7 +74,7 @@ public class PennantConstants {
 	public static final String defaultNoLimiterFormate = "####";
 	public static final String DFTNUMCONVFMT = "B";
 	public static final int rateFormate = 9;
-	
+
 	public static final String amountFormate4 = "#,##0.0000";
 	public static final String amountFormate3 = "#,##0.000";
 	public static final String amountFormate2 = "#,##0.00";
@@ -92,13 +92,13 @@ public class PennantConstants {
 	public static final String integralAmtFormat2 = "#,###.00";
 	public static final String integralAmtFormat1 = "#,###.0";
 	public static final String integralAmtFormat0 = "#,###";
-	
+
 	public static final String in_amountFormate4 = "#,##0.0000";
 	public static final String in_amountFormate3 = "#,##0.000";
 	public static final String in_amountFormate2 = "#,##0.00";
 	public static final String in_amountFormate1 = "#,##0.0";
 	public static final String in_amountFormate0 = "#,##0";
-	
+
 	public static final String in_integralAmtFormat4 = "#,###.0000";
 	public static final String in_integralAmtFormat3 = "#,###.000";
 	public static final String in_integralAmtFormat2 = "#,###.00";
@@ -869,12 +869,12 @@ public class PennantConstants {
 	public static final String FLEXI_HYBRID = "H";
 	public static final String TERM_LOAN = "TL";
 	public static final String COLLATERAL_VALUE_UPDATE = "COLLETARAL_VALUE_UPDATE";
-	
+
 	public static final String PROCESS_PRESENTMENT = "P";
 	public static final String PROCESS_REPRESENTMENT = "R";
+	public static final int BULKPROCESSING_SIZE = 500;
 
 	// Sorting
 	public static final String SortOrder_ASC = "ASC";
 	public static final String SortOrder_DESC = "DESC";
-	public static final int BULKPROCESSING_SIZE = 500;
 }

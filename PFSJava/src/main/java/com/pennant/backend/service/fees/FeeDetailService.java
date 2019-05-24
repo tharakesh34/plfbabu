@@ -71,7 +71,6 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -523,32 +522,6 @@ public class FeeDetailService {
 		}
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-
-		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		String branchCode = userDetails.getBranchCode();
-		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
-
-		String custDftBranch = null;
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-		if (financeDetail.getCustomerDetails() != null) {
-			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-
-			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						highPriorityState = customerAddres.getCustAddrProvince();
-						highPriorityCountry = customerAddres.getCustAddrCountry();
-						break;
-					}
-				}
-			}
-		}
-
-		Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetails(fromBranchCode,
-				custDftBranch, highPriorityState, highPriorityCountry, financeDetail.getFinanceTaxDetail(), branchCode);
 
 		// set FinType fees details
 		String finReference = finScheduleData.getFinanceMain().getFinReference();

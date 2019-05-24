@@ -610,7 +610,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 		}
 
-		HashMap<String, Object> gstExecutionMap = finFeeDetailService.prepareGstMappingDetails(main.getFinBranch(),
+		Map<String, Object> gstExecutionMap = finFeeDetailService.prepareGstMappingDetails(main.getFinBranch(),
 				custDftBranch, highPriorityState, highPriorityCountry, detail.getFinanceTaxDetail(),
 				main.getFinBranch());
 
@@ -767,7 +767,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * @param financeDetail
 	 * @return
 	 */
-	public Map<String, BigDecimal> getTaxPercentages(HashMap<String, Object> dataMap, String finCcy) {
+	public Map<String, BigDecimal> getTaxPercentages(Map<String, Object> dataMap, String finCcy) {
 
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 
@@ -808,7 +808,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	 * 
 	 * @return
 	 */
-	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy) {
+	private BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		logger.debug("Entering");
 
 		BigDecimal result = BigDecimal.ZERO;

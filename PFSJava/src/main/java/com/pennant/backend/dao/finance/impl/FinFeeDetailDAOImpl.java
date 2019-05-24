@@ -427,7 +427,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", NextRoleCode = :NextRoleCode");
 		sql.append(", TaskId = :TaskId");
 		sql.append(", NextTaskId = :NextTaskId");
-		sql.append("  RecordType = :RecordType");
+		sql.append(", RecordType = :RecordType");
 		sql.append(", WorkflowId = :WorkflowId");
 		sql.append("  Where FeeID = :FeeID ");
 
@@ -726,9 +726,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		int count = 0;
 		try {
-			count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
+			
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//logger.error(Literal.EXCEPTION, e);
 		}
 		return count > 0;
 	}

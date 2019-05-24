@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -59,6 +60,7 @@ import com.google.common.cache.LoadingCache;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO {
 	private static Logger logger = Logger.getLogger(WorkFlowDetailsDAOImpl.class);
@@ -105,29 +107,28 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 	 * @return workFlowDetails
 	 */
 	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType) {
-		logger.debug("Entering + getWorkFlowDetailsByFlowType()");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc");
+		sql.append(", WorkFlowXml, WorkFlowRoles, FirstTaskOwner, WorkFlowActive");
+		sql.append(", Version, LastMntBy, LastMntOn from WorkFlowDetails");
+		sql.append(" where WorkFlowType = :WorkFlowType and WorkFlowActive= :WorkFlowActive");
 
-		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
-		workFlowDetails.setWorkFlowType(workFlowType);
+		logger.trace(Literal.SQL + sql.toString());
 
-		String selectListSql = "select WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc,"
-				+ " WorkFlowXml, WorkFlowRoles,FirstTaskOwner, WorkFlowActive ,"
-				+ " Version , LastMntBy, LastMntOn from WorkFlowDetails "
-				+ " where WorkFlowType =:WorkFlowType AND WorkFlowActive=1";
-		logger.debug("selectListSql: " + selectListSql);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("WorkFlowType", workFlowType);
+		parameterSource.addValue("WorkFlowActive", 1);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
 		RowMapper<WorkFlowDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(WorkFlowDetails.class);
 
 		try {
-			workFlowDetails = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			workFlowDetails = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		return workFlowDetails;
+		return null;
 	}
 
 	public List<WorkFlowDetails> getActiveWorkFlowDetails() {

@@ -404,9 +404,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		source.addValue("LimitLine", limitItem);
 		source.addValue("GroupCodes", groupcode);
 		source.addValue("LimitHeaderId", headerId);
-		
+
 		RowMapper<LimitDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LimitDetails.class);
-		
+
 		logger.debug(Literal.LEAVING);
 
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);

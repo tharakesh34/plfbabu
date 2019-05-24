@@ -100,7 +100,7 @@ public interface FinFeeDetailService {
 	//GST
 	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal taxableAmount, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages, boolean apiRequest);
-	
+
 	BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy, Map<String, Object> gstExecutionMap);
 
 	BigDecimal getFeeResult(String sqlRule, Map<String, Object> executionMap, String finCcy);
@@ -114,11 +114,11 @@ public interface FinFeeDetailService {
 
 	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail,
 			Map<String, BigDecimal> gstExecutionMap, boolean apiRequest);
-	
+
 	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages);
 
-	HashMap<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
+	Map<String, Object> prepareGstMappingDetails(String fromBranchCode, String dftBranch, String highPriorityState,
 			String highPriorityCountry, FinanceTaxDetail taxDetail, String branchCode);
 
 	Map<String, Object> prepareGstMapping(String fromStateCOde, String toStateCode);
@@ -128,6 +128,5 @@ public interface FinFeeDetailService {
 	BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId);
 
 	Branch getBranchById(String branchCode, String type);
-
 
 }

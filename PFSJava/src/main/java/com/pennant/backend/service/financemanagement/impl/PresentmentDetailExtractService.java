@@ -50,14 +50,14 @@ public class PresentmentDetailExtractService {
 	 */
 	public String savePDCPresentments(PresentmentHeader presentmentHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		boolean isEmptyRecords = false;
 		Map<Object, Long> map = new HashMap<Object, Long>();
 		long presentmentId = 0;
 		ResultSet rs = null;
 		List<Object> resultList = null;
 		try {
-			
+
 			if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT,
 					presentmentHeader.getPresentmentType())) {
 				resultList = presentmentDetailDAO.getPDCPresentmentDetails(presentmentHeader);
@@ -67,8 +67,27 @@ public class PresentmentDetailExtractService {
 			}
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
-				//generate header id if the not available
-				generateID(presentmentHeader);
+
+				Date defSchDate = rs.getDate("DEFSCHDDATE");
+				String bankCode = rs.getString("BANKCODE");
+				String entity = rs.getString("ENTITYCODE");
+				if (defSchDate != null) {
+					if (!map.containsKey(defSchDate)
+							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
+							|| !map.containsKey(entity)) {
+						presentmentHeader.setSchdate(defSchDate);
+						presentmentHeader.setBankCode(bankCode);
+						presentmentHeader.setEntityCode(entity);
+						if (presentmentHeader.getId() != Long.MIN_VALUE) {
+							presentmentHeader.setId(Long.MIN_VALUE);
+						}
+						presentmentId = savePresentmentHeaderDetails(presentmentHeader);
+						map.put(defSchDate, presentmentId);
+						map.put(bankCode, presentmentId);
+						map.put(entity, presentmentId);
+					}
+				}
+
 				PresentmentDetail pDetail = new PresentmentDetail();
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
 				pDetail.setStatus(RepayConstants.PEXC_IMPORT);
@@ -127,26 +146,6 @@ public class PresentmentDetailExtractService {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
 				}
 
-				Date defSchDate = rs.getDate("DEFSCHDDATE");
-				String bankCode = rs.getString("BANKCODE");
-				String entity = rs.getString("ENTITYCODE");
-				if (defSchDate != null) {
-					if (!map.containsKey(defSchDate)
-							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
-							|| !map.containsKey(entity)) {
-						presentmentHeader.setSchdate(defSchDate);
-						presentmentHeader.setBankCode(bankCode);
-						presentmentHeader.setEntityCode(entity);
-						presentmentId = savePresentmentHeaderDetails(presentmentHeader);
-						//new header should be created resetting the id
-						if (!map.isEmpty()) {
-							presentmentHeader.setId(Long.MIN_VALUE);
-						}
-						map.put(defSchDate, presentmentId);
-						map.put(bankCode, presentmentId);
-						map.put(entity, presentmentId);
-					}
-				}
 				isEmptyRecords = true;
 
 				// PresentmentDetail saving
@@ -195,8 +194,25 @@ public class PresentmentDetailExtractService {
 			resultList = presentmentDetailDAO.getPresentmentDetails(ph);
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
-				//generate for the header in header is not set
-				generateID(ph);
+				Date defSchDate = rs.getDate("DEFSCHDDATE");
+				String bankCode = rs.getString("BANKCODE");
+				String entity = rs.getString("ENTITYCODE");
+				if (defSchDate != null) {
+					if (!map.containsKey(defSchDate)
+							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
+							|| !map.containsKey(entity)) {
+						ph.setSchdate(defSchDate);
+						ph.setBankCode(bankCode);
+						ph.setEntityCode(entity);
+						if (ph.getId() != Long.MIN_VALUE) {
+							ph.setId(Long.MIN_VALUE);
+						}
+						presentmentId = savePresentmentHeaderDetails(ph);
+						map.put(defSchDate, presentmentId);
+						map.put(bankCode, presentmentId);
+						map.put(entity, presentmentId);
+					}
+				}
 
 				PresentmentDetail pDetail = new PresentmentDetail();
 				pDetail.setPresentmentAmt(BigDecimal.ZERO);
@@ -256,26 +272,6 @@ public class PresentmentDetailExtractService {
 					finExcessAmountDAO.updateExcessAmount(pDetail.getExcessID(), "R", pDetail.getAdvanceAmt());
 				}
 
-				Date defSchDate = rs.getDate("DEFSCHDDATE");
-				String bankCode = rs.getString("BANKCODE");
-				String entity = rs.getString("ENTITYCODE");
-				if (defSchDate != null) {
-					if (!map.containsKey(defSchDate)
-							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
-							|| !map.containsKey(entity)) {
-						ph.setSchdate(defSchDate);
-						ph.setBankCode(bankCode);
-						ph.setEntityCode(entity);
-						presentmentId = savePresentmentHeaderDetails(ph);
-						//new header should be created resetting the id
-						if (!map.isEmpty()) {
-							ph.setId(Long.MIN_VALUE);
-						}
-						map.put(defSchDate, presentmentId);
-						map.put(bankCode, presentmentId);
-						map.put(entity, presentmentId);
-					}
-				}
 				isEmptyRecords = true;
 
 				// PresentmentDetail saving
@@ -353,7 +349,7 @@ public class PresentmentDetailExtractService {
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (finExcessAmount != null) {
 			emiInAdvanceAmt = finExcessAmount.getBalanceAmt();
-			
+
 			if ((emiInAdvanceAmt.compareTo(BigDecimal.ZERO) > 0)
 					&& emiInAdvanceAmt.compareTo(presentmentDetail.getSchAmtDue()) >= 0) {
 				presentmentDetail.setExcludeReason(RepayConstants.PEXC_EMIINADVANCE);
@@ -368,11 +364,10 @@ public class PresentmentDetailExtractService {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue());
 			presentmentDetail.setAdvanceAmt(BigDecimal.ZERO);
 		}
-		
+
 		BigDecimal advAmount = presentmentDetail.getAdvAdjusted();
 		presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advAmount));
 		presentmentDetail.setAdvanceAmt(presentmentDetail.getAdvanceAmt().add(advAmount));
-
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -415,17 +410,16 @@ public class PresentmentDetailExtractService {
 				return;
 			}
 		}
-		
 
 		//at first advance interest and EMI then EMI advance 
-		processAdvAmounts(detailHeader,presentmentDetail);
+		processAdvAmounts(detailHeader, presentmentDetail);
 
 		// EMI IN ADVANCE
 		//if there is no due no need to proceed further.
 		if (presentmentDetail.getSchAmtDue().compareTo(BigDecimal.ZERO) <= 0) {
 			return;
 		}
-		
+
 		// EMI IN ADVANCE
 		FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
@@ -444,7 +438,7 @@ public class PresentmentDetailExtractService {
 			presentmentDetail.setPresentmentAmt(presentmentDetail.getSchAmtDue().subtract(emiInAdvanceAmt));
 			presentmentDetail.setAdvanceAmt(emiInAdvanceAmt);
 		}
-		
+
 		BigDecimal advAmount = presentmentDetail.getAdvAdjusted();
 		presentmentDetail.setPresentmentAmt(presentmentDetail.getPresentmentAmt().subtract(advAmount));
 		presentmentDetail.setAdvanceAmt(presentmentDetail.getAdvanceAmt().add(advAmount));
@@ -455,7 +449,7 @@ public class PresentmentDetailExtractService {
 	private long savePresentmentHeaderDetails(PresentmentHeader header) {
 		logger.debug(Literal.ENTERING);
 		generateID(header);
-		
+
 		String reference = StringUtils.leftPad(String.valueOf(header.getId()), 15, "0");
 		header.setStatus(RepayConstants.PEXC_EXTRACT);
 		header.setPresentmentDate(DateUtility.getSysDate());
@@ -472,9 +466,9 @@ public class PresentmentDetailExtractService {
 		return header.getId();
 
 	}
-	
+
 	public void generateID(PresentmentHeader header) {
-		if (header.getId()==Long.MIN_VALUE) {
+		if (header.getId() == Long.MIN_VALUE) {
 			long id = presentmentDetailDAO.getSeqNumber("SeqPresentmentHeader");
 			header.setId(id);
 		}
@@ -495,7 +489,7 @@ public class PresentmentDetailExtractService {
 	protected void updateChequeStatus(long chequeDetailsId, String status) {
 		chequeDetailDAO.updateChequeStatus(chequeDetailsId, status);
 	}
-	
+
 	private void processAdvAmounts(PresentmentHeader detailHeader, PresentmentDetail prd) {
 
 		AdvanceType advanceType = null;
@@ -526,7 +520,7 @@ public class PresentmentDetailExtractService {
 		} else {
 			amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
 			dueAmt = prd.getSchPftDue();
-			if (prd.getSchPriDue().compareTo(BigDecimal.ZERO)==0) {
+			if (prd.getSchPriDue().compareTo(BigDecimal.ZERO) == 0) {
 				exculdeReason = RepayConstants.PEXC_ADVINT;
 			}
 		}

@@ -1318,10 +1318,9 @@ public class LimitManagement {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtil.formatToLongDate(limitDetail.getExpiryDate());
 				valueParm[1] = DateUtil.formatToLongDate(loanMaturityDate);
-				return  ErrorUtil.getErrorDetail(new ErrorDetail("60317", valueParm));
+				return ErrorUtil.getErrorDetail(new ErrorDetail("60317", valueParm));
 			}
 		}
-
 
 		BigDecimal limitAmount = BigDecimal.ZERO;
 		if (StringUtils.equals(LimitConstants.LIMIT_CHECK_RESERVED, limitDetail.getLimitChkMethod())) {

@@ -67,6 +67,7 @@ import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -93,8 +94,6 @@ public class RuleExecutionUtil implements Serializable {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String getGlobalVariables(String templateStr, List<GlobalVariable> globalList) {
-		logger.debug("Entering");
-
 		StringWriter result = new StringWriter();
 		Configuration cfg = null;
 		LinkedHashMap root = null;
@@ -124,14 +123,13 @@ public class RuleExecutionUtil implements Serializable {
 			// Process the output to StringWriter and convert that to String
 			t.process(root, result);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			root = null;
 			t1 = null;
 			t = null;
 			cfg = null;
 		}
-		logger.debug("Leaving");
 		return result.getBuffer().toString();
 	}
 
@@ -148,7 +146,6 @@ public class RuleExecutionUtil implements Serializable {
 	 */
 	public Object executeRule(String rule, Map<String, Object> fieldsandvalues, String finccy,
 			RuleReturnType returnType) {
-		logger.debug("Entering");
 
 		Bindings bindings = new SimpleBindings();
 
@@ -162,11 +159,10 @@ public class RuleExecutionUtil implements Serializable {
 		try {
 			result = processEngineRule(rule, bindings, returnType);
 		} catch (DatatypeConfigurationException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		// fieldsandvalues.clear();
-		logger.debug("Leaving");
 		return result;
 	}
 
@@ -183,7 +179,6 @@ public class RuleExecutionUtil implements Serializable {
 	 */
 	private Object processEngineRule(String rule, Bindings bindings, RuleReturnType returnType)
 			throws DatatypeConfigurationException {
-		logger.debug("Entering");
 
 		List<GlobalVariable> globalVariables = SysParamUtil.getGlobaVariableList();
 		if (globalVariables != null && globalVariables.size() > 0) {
@@ -210,7 +205,7 @@ public class RuleExecutionUtil implements Serializable {
 				// pass script
 				result = engine.eval(scriptRule, bindings);
 			} catch (Exception exception) { // FIXME should be throw the Exception
-				logger.error("Exception : ", exception);
+				logger.error(Literal.EXCEPTION, exception);
 			}
 		}
 
@@ -283,7 +278,6 @@ public class RuleExecutionUtil implements Serializable {
 			break;
 		}
 
-		logger.debug("Leaving");
 		return result;
 	}
 
@@ -293,8 +287,6 @@ public class RuleExecutionUtil implements Serializable {
 	 * @return
 	 */
 	public String replaceCurrencyCode(String rule, String finccy) {
-		logger.debug(" Entering ");
-
 		Pattern pattern = Pattern.compile(RuleConstants.RULEFIELD_CCY + "[A-Z]{3}[0-9]+");
 		Matcher matcher = pattern.matcher(rule);
 		String group = null;
@@ -309,7 +301,6 @@ public class RuleExecutionUtil implements Serializable {
 			matcher = pattern.matcher(rule);
 		}
 
-		logger.debug(" Leaving ");
 		return rule;
 	}
 
@@ -351,7 +342,7 @@ public class RuleExecutionUtil implements Serializable {
 			try {
 				return object.getClass().getMethod(methodName).invoke(object);
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		return null;

@@ -125,12 +125,13 @@ public interface FinanceProfitDetailDAO {
 	void updateAssignmentBPIAmounts(FinanceProfitDetail finProfitDetails); //Assignments
 
 	void updateFinPftMaturity(String finReference, String closingStatus, boolean finIsActive);
-	
+
 	// IND AS One Time Activity
 	List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart);
+
 	FinanceProfitDetail getFinProfitForAMZ(String finReference);
+
 	void updateAMZMethod(String finReference, String amzMethod);
 
 	void updateSchPaid(FinanceProfitDetail profitDetail);
-
 }

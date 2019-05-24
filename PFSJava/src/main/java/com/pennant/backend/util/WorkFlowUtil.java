@@ -66,9 +66,12 @@ public class WorkFlowUtil {
 	}
 
 	public static WorkFlowDetails getDetailsByType(String workFlowType) {
-
 		if (workFlowMap == null) {
 			loadWorkFlowData();
+		}
+
+		if (workFlowType == null) {
+			return null;
 		}
 
 		return workFlowDetailsService.getWorkFlowDetailsByFlowType(workFlowType);
@@ -82,7 +85,7 @@ public class WorkFlowUtil {
 		}
 
 		ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(moduleName);
-		if (moduleMapping != null) {
+		if (moduleMapping != null && moduleMapping.getWorkflowType() != null) {
 			workFlowDetails = WorkFlowUtil.getDetailsByType(moduleMapping.getWorkflowType());
 
 		}

@@ -541,7 +541,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		if (!isWIF) {
 			sql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
-			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt,tdsApplicable ");
+			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt, TdsApplicable");
 
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				sql.append(", WriteoffIncrCost, WriteoffSuplRent ");

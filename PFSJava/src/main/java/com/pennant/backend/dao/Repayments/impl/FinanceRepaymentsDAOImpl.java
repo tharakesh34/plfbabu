@@ -64,6 +64,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -116,30 +117,29 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	 */
 	@Override
 	public long save(FinanceRepayments financeRepayments, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (financeRepayments.getId() == Long.MIN_VALUE || financeRepayments.getId() == 0) {
 			financeRepayments.setFinPaySeq(getFinancePaySeq(financeRepayments));
 		}
 
-		StringBuilder insertSql = new StringBuilder(" Insert Into FinRepayDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, FinSchdDate, FinRpyFor, FinPaySeq,LinkedTranId,");
-		insertSql.append(" FinRpyAmount, FinPostDate , FinValueDate, FinBranch,");
-		insertSql.append(" FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid,");
-		insertSql.append(" SchdFeePaid , SchdInsPaid , SchdSuplRentPaid , SchdIncrCostPaid,");
-		insertSql.append(
-				" FinTotSchdPaid, FinFee, FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId) Values(");
-		insertSql.append(" :FinReference, :FinSchdDate, :FinRpyFor, :FinPaySeq,:LinkedTranId,");
-		insertSql.append(" :FinRpyAmount, :FinPostDate, :FinValueDate, :FinBranch,");
-		insertSql.append(" :FinType, :FinCustID, :FinSchdPriPaid, :FinSchdPftPaid,:FinSchdTdsPaid,");
-		insertSql.append(" :SchdFeePaid , :SchdInsPaid ,  :SchdSuplRentPaid , :SchdIncrCostPaid,");
-		insertSql.append(" :FinTotSchdPaid,:FinFee, :FinWaiver, :FinRefund, :PenaltyPaid, :PenaltyWaived, :ReceiptId)");
+		StringBuilder sql = new StringBuilder("Insert Into FinRepayDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinReference, FinSchdDate, FinRpyFor, FinPaySeq,LinkedTranId,");
+		sql.append(" FinRpyAmount, FinPostDate , FinValueDate, FinBranch,");
+		sql.append(" FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid,");
+		sql.append(" SchdFeePaid , SchdInsPaid , SchdSuplRentPaid , SchdIncrCostPaid,");
+		sql.append(" FinTotSchdPaid, FinFee, FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId) Values(");
+		sql.append(" :FinReference, :FinSchdDate, :FinRpyFor, :FinPaySeq,:LinkedTranId,");
+		sql.append(" :FinRpyAmount, :FinPostDate, :FinValueDate, :FinBranch,");
+		sql.append(" :FinType, :FinCustID, :FinSchdPriPaid, :FinSchdPftPaid,:FinSchdTdsPaid,");
+		sql.append(" :SchdFeePaid , :SchdInsPaid ,  :SchdSuplRentPaid , :SchdIncrCostPaid,");
+		sql.append(" :FinTotSchdPaid,:FinFee, :FinWaiver, :FinRefund, :PenaltyPaid, :PenaltyWaived, :ReceiptId)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return financeRepayments.getId();
 	}
 

@@ -78,8 +78,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>PresentmentHeader</code> with set
- * of CRUD operations.
+ * Data access layer implementation for <code>PresentmentHeader</code> with set of CRUD operations.
  */
 public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> implements PresentmentDetailDAO {
 	private static Logger logger = Logger.getLogger(PresentmentDetailDAOImpl.class);
@@ -340,9 +339,11 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 			//if record is manual exclude  and batch not complete approve in that case record not extracted again until batch is complete approve.
 			//#Bug Fix related to 135196
-			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
-			sql.append(" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
-			
+			sql.append(
+					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
+			sql.append(
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
+
 			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
 
 			//sql.append(" AND T6.ExcludeReason = '0' AND T6.ExcludeReason <> '6'  AND T6.STATUS <> 'A')  ORDER BY T1.DEFSCHDDATE ");
@@ -471,8 +472,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 			//if record is manual exclude  and batch not complete approve in that case record not extracted again until batch is complete approve.
 			//#Bug Fix related to 135196
-			sql.append(" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
-			sql.append(" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
+			sql.append(
+					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
+			sql.append(
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
 
 			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
 
@@ -1019,8 +1022,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different
-	 * Finances/Commitments
+	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
 	 */
 	@Override
 	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
@@ -1173,8 +1175,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	}
 
 	/**
-	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI
-	 * Advance
+	 * get exclude list which doesnot contain exclude reason EMIINclude and EMI Advance
 	 * 
 	 * @param presentmentId
 	 */

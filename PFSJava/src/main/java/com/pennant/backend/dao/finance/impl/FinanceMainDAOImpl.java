@@ -43,6 +43,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -960,7 +962,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, NextUserId=:NextUserId, Priority=:Priority, MinDownPayPerc=:MinDownPayPerc");
-		updateSql.append(" ,PromotionCode = :PromotionCode ");
+		updateSql.append(", PromotionCode = :PromotionCode");
 		updateSql.append(" Where FinReference =:FinReference");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("  AND Version= :Version-1");
@@ -2633,7 +2635,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * @param custId
 	 */
 	@Override
-	public List<FinanceMain> getFinanceByCustId(long custId,String type) {
+	public List<FinanceMain> getFinanceByCustId(long custId, String type) {
 		logger.debug("Entering");
 
 		FinanceMain financeMain = new FinanceMain();
@@ -2641,7 +2643,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference,FM.FinAmount, FM.FinType, FM.FinCcy,");
 		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,");
-		selectSql.append(" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus,FM.RecordStatus");
+		selectSql.append(
+				" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus,FM.RecordStatus");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" FM INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
@@ -4429,8 +4432,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public Map<String, Object> getGSTDataMap(String finReference) {
-		StringBuilder sql = new StringBuilder();
+		Map<String, Object> map = new HashMap<>();
 
+		StringBuilder sql = new StringBuilder();
 		sql.append("select fm.FinReference, fm.FinCCY, fm.finbranch FinBranch, cu.custdftbranch CustBranch");
 		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry");
 		sql.append(" from FinanceMain_view fm");
@@ -4441,21 +4445,34 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
-		source.addValue("AddrPriority", PennantConstants.KYC_PRIORITY_VERY_HIGH);
+		source.addValue("AddrPriority", Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
 
 		try {
-			return this.jdbcTemplate.queryForMap(sql.toString(), source);
+			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+
+				@Override
+				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+					map.put("FinReference", rs.getString("FinReference"));
+					map.put("FinCCY", rs.getString("FinCCY"));
+					map.put("FinBranch", rs.getString("FinBranch"));
+					map.put("CustBranch", rs.getString("CustBranch"));
+					map.put("CustProvince", rs.getString("CustProvince"));
+					map.put("CustCountry", rs.getString("CustCountry"));
+					return map;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		return new HashMap<>();
+		return map;
 	}
-	
+
 	@Override
 	public Map<String, Object> getGSTDataMap(long custId) {
-		StringBuilder sql = new StringBuilder();
+		Map<String, Object> map = new HashMap<>();
 
+		StringBuilder sql = new StringBuilder();
 		sql.append("select cu.custdftbranch CustBranch");
 		sql.append(", ca.custaddrprovince CustProvince, ca.custaddrcountry CustCountry");
 		sql.append(" from Customers_View cu");
@@ -4468,7 +4485,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		source.addValue("AddrPriority", Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
 
 		try {
-			return this.jdbcTemplate.queryForMap(sql.toString(), source);
+			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {
+
+				@Override
+				public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+					map.put("CustBranch", rs.getString("CustBranch"));
+					map.put("CustProvince", rs.getString("CustProvince"));
+					map.put("CustCountry", rs.getString("CustCountry"));
+					return map;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}

@@ -144,7 +144,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		}
 
 		// Setting LPI Amount from Overdue Details for LPI amortization
-		HashMap<String, Object> gstExecutionMap = null;
+		Map<String, Object> gstExecutionMap = null;
 		Map<String, BigDecimal> taxPercmap = null;
 		FeeType lpiFeeType = null;
 		FeeType lppFeeType = null;
@@ -610,7 +610,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 	 * @param financeDetail
 	 * @return
 	 */
-	public Map<String, BigDecimal> getTaxPercentages(HashMap<String, Object> dataMap, String finCcy) {
+	public Map<String, BigDecimal> getTaxPercentages(Map<String, Object> dataMap, String finCcy) {
 
 		List<Rule> rules = getRuleDAO().getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 
@@ -651,7 +651,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 	 * 
 	 * @return
 	 */
-	private BigDecimal getRuleResult(String sqlRule, HashMap<String, Object> executionMap, String finCcy) {
+	private BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
 		logger.debug("Entering");
 
 		BigDecimal result = BigDecimal.ZERO;
