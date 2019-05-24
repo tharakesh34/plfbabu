@@ -2456,4 +2456,110 @@
 		</sql>
 	</changeSet>
 
+    <changeSet id="45" author="Varaprasad.K">
+        <sql>
+            <![CDATA[
+                INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'button_FinChangeTDSDialog_tDSApplicable', 'ChangeTDSDialog',1,1000,CURRENT_TIMESTAMP,'NULL','NULL','NULL','NULL','NULL','NULL',0 FROM SEQSECRIGHTS WHERE 0=0;
+                INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinChangeTDSDialog_tDSApplicable'), 1, 0, 1000,CURRENT_TIMESTAMP,'NULL','NULL','NULL','NULL','NULL','NULL',0);
+            ]]>
+        </sql>
+</changeSet>
+
+<changeSet id="46" author="Varaprasad.K">
+        <comment>Added new parameter TdsLimit</comment>
+        <createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
+              SELECT t1.finmaintainid,
+                    t1.finreference,
+                    t1.event,
+                    t1.TDSApplicable,
+                    t1.TDSPercentage,
+                    t1.TDSStartDate,
+                    t1.TDSEndDate,
+                    t1.TdsLimit,
+                    t1.version,
+                    t1.lastmntby,
+                    t1.lastmnton,
+                    t1.recordstatus,
+                    t1.rolecode,
+                    t1.nextrolecode,
+                    t1.taskid,
+                    t1.nexttaskid,
+                    t1.recordtype,
+                    t1.workflowid
+                   FROM finmaintaininstructions_temp t1
+                UNION ALL
+                 SELECT t1.finmaintainid,
+                    t1.finreference,
+                    t1.event,
+                    t1.TDSApplicable,
+                    t1.TDSPercentage,
+                    t1.TDSStartDate,
+                    t1.TDSEndDate,
+                    t1.TdsLimit,
+                    t1.version,
+                    t1.lastmntby,
+                    t1.lastmnton,
+                    t1.recordstatus,
+                    t1.rolecode,
+                    t1.nextrolecode,
+                    t1.taskid,
+                    t1.nexttaskid,
+                    t1.recordtype,
+                    t1.workflowid
+                   FROM finmaintaininstructions t1
+                  WHERE NOT (EXISTS ( SELECT 1
+                           FROM finmaintaininstructions_temp
+                          WHERE finmaintaininstructions_temp.finmaintainid = t1.finmaintainid))
+        </createView>
+    </changeSet>
+
+    <changeSet id="47" author="Varaprasad.K">
+        <comment>Added new parameter TdsLimit</comment>
+        <createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
+              SELECT t1.finmaintainid,
+                    t1.finreference,
+                    t1.event,
+                    t1.TDSApplicable,
+                    t1.TDSPercentage,
+                    t1.TDSStartDate,
+                    t1.TDSEndDate,
+                    t1.TdsLimit,
+                    t1.version,
+                    t1.lastmntby,
+                    t1.lastmnton,
+                    t1.recordstatus,
+                    t1.rolecode,
+                    t1.nextrolecode,
+                    t1.taskid,
+                    t1.nexttaskid,
+                    t1.recordtype,
+                    t1.workflowid
+                   FROM finmaintaininstructions t1
+            </createView>
+    </changeSet>
+
+    <changeSet id="48" author="Varaprasad.K">
+        <comment>Added new parameter TdsLimit</comment>
+        <createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
+              SELECT t1.finmaintainid,
+                    t1.finreference,
+                    t1.event,
+                    t1.TDSApplicable,
+                    t1.TDSPercentage,
+                    t1.TDSStartDate,
+                    t1.TDSEndDate,
+                    t1.TdsLimit,
+                    t1.version,
+                    t1.lastmntby,
+                    t1.lastmnton,
+                    t1.recordstatus,
+                    t1.rolecode,
+                    t1.nextrolecode,
+                    t1.taskid,
+                    t1.nexttaskid,
+                    t1.recordtype,
+                    t1.workflowid
+                   FROM FinMaintainInstructions_Temp t1
+        </createView>
+    </changeSet>
 </databaseChangeLog>
