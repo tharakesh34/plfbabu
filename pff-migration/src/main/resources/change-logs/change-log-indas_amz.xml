@@ -494,4 +494,40 @@
 		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" />
 	</changeSet>
 
+	<changeSet id="41" author="Satya">
+		<sql>
+	       <![CDATA[
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups_View);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights_View);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups_View);
+				
+				Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_FEEAMZREFRPT');
+				Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'REPORTS_FEEAMZFINTYPE');
+				
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_FeeAmzReferenceReport');
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menu_Item_FeeAmzLoanTypeReport');
+				
+				Delete from SecGroups where GrpCode = 'REPORTS_FEEAMZREFRPT';
+				Delete from SecGroups where GrpCode = 'REPORTS_FEEAMZFINTYPE';
+				
+				Delete from SecRights where RightName = 'menu_Item_FeeAmzReferenceReport';
+				Delete from SecRights where RightName = 'menu_Item_FeeAmzLoanTypeReport';
+				
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_FEEAMZREFRPT','Report Group For Amortization by Loan Reference', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'REPORTS_FEEAMZFINTYPE','Report Group For Amortization by Loan Type', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+				
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_FeeAmzReferenceReport', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_FeeAmzLoanTypeReport', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_FEEAMZREFRPT'), (Select RightID from SecRights where RightName = 'menu_Item_FeeAmzReferenceReport'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'REPORTS_FEEAMZFINTYPE'), (Select RightID from SecRights where RightName = 'menu_Item_FeeAmzLoanTypeReport'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				 
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups_View);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights_View);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups_View);
+	       ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
