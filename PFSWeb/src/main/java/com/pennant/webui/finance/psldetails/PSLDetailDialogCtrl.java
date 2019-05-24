@@ -548,7 +548,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		onFullfillAggriculture();
 		logger.debug("Leaving");
 	}
-	
+
 	public void onFullfillAggriculture() {
 		if ("Agriculture".equals(categoryCode.getValue())) {
 			this.endUse.setDisplayStyle(2);
@@ -562,7 +562,6 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.endUse.setMandatoryStyle(true);
 		}
 	}
-	
 
 	/**
 	 * This method is for append finance basic details to respective parent tabs
