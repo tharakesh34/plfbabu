@@ -2,11 +2,8 @@ package com.pennant.eod;
 
 import java.util.Date;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -15,7 +12,6 @@ import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayBucketService;
-import com.pennant.app.core.LatePayDueCreationService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
@@ -30,27 +26,18 @@ import com.pennant.backend.util.AmortizationConstants;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 
 public class EodService {
-
-	@SuppressWarnings("unused")
-	private DataSource dataSource;
-
 	private LatePayMarkingService latePayMarkingService;
-	@Autowired
 	private LatePayBucketService latePayBuketService;
 	private NPAService npaService;
 	private DateRollOverService dateRollOverService;
 	private LoadFinanceData loadFinanceData;
 	private RateReviewService rateReviewService;
 	private AccrualService accrualService;
-	private LatePayDueCreationService latePayDueCreationService;
 	private AutoDisbursementService autoDisbursementService;
 	private ReceiptPaymentService receiptPaymentService;
 	private InstallmentDueService installmentDueService;
 	private AdvancePaymentService advancePaymentService;
-	@Autowired
 	private LimitRebuild limitRebuild;
-
-	private PlatformTransactionManager transactionManager;
 	private ProjectedAmortizationService projectedAmortizationService;
 
 	public EodService() {
@@ -60,10 +47,10 @@ public class EodService {
 	public void doUpdate(CustEODEvent custEODEvent) throws Exception {
 		Customer customer = custEODEvent.getCustomer();
 		//update customer EOD
-		getLoadFinanceData().updateFinEODEvents(custEODEvent);
+		loadFinanceData.updateFinEODEvents(custEODEvent);
 		//receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
-			getReceiptPaymentService().processrReceipts(custEODEvent);
+			receiptPaymentService.processrReceipts(custEODEvent);
 		}
 
 		limitRebuild.processCustomerRebuild(custEODEvent.getCustomer().getCustID(), true);
@@ -73,17 +60,17 @@ public class EodService {
 			newCustStatus = customer.getCustSts();
 		}
 
-		getLoadFinanceData().updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
+		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
 
 	}
 
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
 		Customer customer = custEODEvent.getCustomer();
 		//update customer EOD
-		getLoadFinanceData().updateFinEODEvents(custEODEvent);
+		loadFinanceData.updateFinEODEvents(custEODEvent);
 		//receipt postings on SOD
 		if (custEODEvent.isCheckPresentment()) {
-			getReceiptPaymentService().processrReceipts(custEODEvent);
+			receiptPaymentService.processrReceipts(custEODEvent);
 		}
 
 		if (isLimitRebuild) {
@@ -96,7 +83,7 @@ public class EodService {
 			newCustStatus = customer.getCustSts();
 		}
 
-		getLoadFinanceData().updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
+		loadFinanceData.updateCustomerDate(customer.getCustID(), custEODEvent.getEodValueDate(), newCustStatus);
 	}
 
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
@@ -126,7 +113,7 @@ public class EodService {
 
 		//NPA Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
-		
+
 		//LatePay Due creation Service
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
 
@@ -176,75 +163,73 @@ public class EodService {
 
 	}
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
+	@Autowired
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
 	}
 
+	@Autowired
 	public void setRateReviewService(RateReviewService rateReviewService) {
 		this.rateReviewService = rateReviewService;
 	}
 
+	@Autowired
 	public void setDateRollOverService(DateRollOverService dateRollOverService) {
 		this.dateRollOverService = dateRollOverService;
 	}
 
+	@Autowired
 	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
 		this.advancePaymentService = advancePaymentService;
 	}
 
+	@Autowired
 	public void setInstallmentDueService(InstallmentDueService installmentDueService) {
 		this.installmentDueService = installmentDueService;
 	}
 
+	@Autowired
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
 	}
 
+	@Autowired
+	public void setLatePayBuketService(LatePayBucketService latePayBuketService) {
+		this.latePayBuketService = latePayBuketService;
+	}
+
+	@Autowired
 	public void setNpaService(NPAService npaService) {
 		this.npaService = npaService;
 	}
 
+	@Autowired
 	public void setAutoDisbursementService(AutoDisbursementService autoDisbursementService) {
 		this.autoDisbursementService = autoDisbursementService;
 	}
 
+	@Autowired
+	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
+		this.loadFinanceData = loadFinanceData;
+	}
+	
 	public LoadFinanceData getLoadFinanceData() {
 		return loadFinanceData;
 	}
 
-	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
-		this.loadFinanceData = loadFinanceData;
-	}
-
-	public PlatformTransactionManager getTransactionManager() {
-		return transactionManager;
-	}
-
-	public void setTransactionManager(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
-	}
-
-	public ReceiptPaymentService getReceiptPaymentService() {
-		return receiptPaymentService;
-	}
-
+	@Autowired
 	public void setReceiptPaymentService(ReceiptPaymentService receiptPaymentService) {
 		this.receiptPaymentService = receiptPaymentService;
 	}
 
+	@Autowired
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {
 		this.projectedAmortizationService = projectedAmortizationService;
 	}
 
-	public LatePayDueCreationService getLatePayDueCreationService() {
-		return latePayDueCreationService;
+	@Autowired
+	public void setLimitRebuild(LimitRebuild limitRebuild) {
+		this.limitRebuild = limitRebuild;
 	}
 
-	public void setLatePayDueCreationService(LatePayDueCreationService latePayDueCreationService) {
-		this.latePayDueCreationService = latePayDueCreationService;
-	}
 }

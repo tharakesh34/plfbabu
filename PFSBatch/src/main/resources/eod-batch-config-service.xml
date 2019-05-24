@@ -4,9 +4,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch-3.0.xsd">
+
+	<import resource="classpath:applicationContext-jdbc.xml" />
+
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil" init-method="init" lazy-init="false">
 		<property name="currencyDAO" ref="currencyDAO" />
 	</bean>
+
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
@@ -62,16 +66,13 @@
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
-
 	</bean>
 
 	<!-- Late Pay Buckets -->
-	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper">
-	</bean>
+	<bean id="latePayBucketService" class="com.pennant.app.core.LatePayBucketService" parent="serviceHelper" />
 
 	<!-- Late Pay Interest -->
-	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper">
-	</bean>
+	<bean id="latePayInterestService" class="com.pennant.app.core.LatePayInterestService" parent="serviceHelper" />
 
 	<!-- Late Pay Penalty -->
 	<bean id="latePayPenaltyService" class="com.pennant.app.core.LatePayPenaltyService" parent="serviceHelper">
@@ -85,7 +86,6 @@
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
-
 
 	<!-- Suspense -->
 	<bean id="coreSuspenseService" class="com.pennant.app.core.SuspenseService" parent="serviceHelper">
@@ -113,8 +113,8 @@
 	</bean>
 
 	<!-- Finance Status movements -->
-	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper">
-	</bean>
+	<bean id="statusMovementService" class="com.pennant.app.core.StatusMovementService" parent="serviceHelper" />
+
 	<!-- Rate review -->
 	<bean id="rateReviewService" class="com.pennant.app.core.RateReviewService" parent="serviceHelper">
 		<property name="financeRateReviewDAO" ref="financeRateReviewDAO" />
@@ -133,8 +133,8 @@
 
 	<bean id="advancePaymentService" class="com.pennanttech.pff.advancepayment.service.AdvancePaymentService" parent="serviceHelper" />
 
-	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper">
-	</bean>
+	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper"/>
+	
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
 		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 	</bean>
@@ -148,45 +148,27 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-
 	<bean id="snapshotService" class="com.pennant.app.core.SnapshotService">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+
 	<bean id="collateralService" class="com.pennant.app.core.CollateralService">
 		<property name="collateralMarkProcess" ref="collateralMarkProcess" />
 	</bean>
+
 	<!-- No EOd -->
 	<bean id="customerQueuingDAO" class="com.pennant.eod.dao.impl.CustomerQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+
 	<bean id="customerGroupQueuingDAO" class="com.pennant.eod.dao.impl.CustomerGroupQueuingDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+
 	<!-- No end of day Service -->
-	<bean id="eodService" class="com.pennant.eod.EodService">
-		<property name="dataSource" ref="dataSource" />
-		<property name="accrualService" ref="accrualService" />
-		<property name="rateReviewService" ref="rateReviewService" />
-		<property name="dateRollOverService" ref="dateRollOverService" />
-		<property name="installmentDueService" ref="installmentDueService" />
-		<property name="advancePaymentService" ref="advancePaymentService" />
-		<property name="latePayMarkingService" ref="latePayMarkingService" />
-		<property name="npaService" ref="npaService" />
-		<property name="autoDisbursementService" ref="autoDisbursementService" />
-		<property name="receiptPaymentService" ref="receiptPaymentService" />
-		<property name="loadFinanceData" ref="loadFinanceData" />
-		<property name="transactionManager" ref="transactionManager" />
-		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
-		<property name="latePayDueCreationService" ref="latePayDueCreationService" />
-	</bean>
-	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper">
-	</bean>
+	<bean id="eodService" class="com.pennant.eod.EodService" />
 
-	<import resource="classpath:applicationContext-jdbc.xml" />
-
-	<!-- ====================================================== -->
-	<!-- Audit Details Configuration -->
-	<!-- ====================================================== -->
+	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper" />
 
 	<bean id="auditHeaderDAO" class="com.pennant.backend.dao.audit.impl.AuditHeaderDAOImpl" parent="auditSequenceDao" />
 
@@ -516,7 +498,7 @@
 
 	<!-- Income Amortization IND AS for InActive Loans -->
 	<bean id="finMaturityService" class="com.pennant.app.core.FinMaturityService" parent="serviceHelper">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />

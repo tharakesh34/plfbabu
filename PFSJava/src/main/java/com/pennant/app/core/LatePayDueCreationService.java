@@ -88,7 +88,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LatePayDueCreationService extends ServiceHelper {
-
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = Logger.getLogger(LatePayDueCreationService.class);
 
@@ -100,6 +99,10 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 	//GST Invoice Report changes
 	private GSTInvoiceTxnService gstInvoiceTxnService;
+	
+	public LatePayDueCreationService() {
+		super();
+	}
 
 	public CustEODEvent processLatePayAccrual(CustEODEvent custEODEvent) throws Exception {
 		logger.debug(" Entering ");

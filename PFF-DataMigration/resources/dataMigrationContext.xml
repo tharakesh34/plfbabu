@@ -283,8 +283,6 @@
 		<property name="interfaceDAO" ref="interfaceDAO" />
 	</bean>
 
-	<bean id="ddaProcess" class="com.pennant.corebanking.process.impl.DDAProcessmpl" />
-
 	<bean id="depositDetailProcess" class="com.pennant.corebanking.process.impl.DepositDetailProcessImpl">
 	</bean>
 

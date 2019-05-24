@@ -57,6 +57,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -66,6 +67,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
@@ -76,19 +78,20 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
 public class MicroEOD implements Tasklet {
-
 	private Logger logger = Logger.getLogger(MicroEOD.class);
-	private EodService 					eodService;
-	private RuleDAO						ruleDAO;
+
+	private EodService eodService;
+	private RuleDAO ruleDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
+	private CustomerDAO customerDAO;
 
 	// ##_0.2
-	private static final String customerSQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
+	private static final String CUSTOMER_SQL = "Select CustID, LoanExist, LimitRebuild from CustomerQueuing  Where ThreadID = ? and Progress= ?";
 
 	public MicroEOD() {
-
+		super();
 	}
 
 	@Override
@@ -104,7 +107,7 @@ public class MicroEOD implements Tasklet {
 		TransactionStatus txStatus = null;
 
 		JdbcCursorItemReader<CustomerQueuing> cursorItemReader = new JdbcCursorItemReader<CustomerQueuing>();
-		cursorItemReader.setSql(customerSQL);
+		cursorItemReader.setSql(CUSTOMER_SQL);
 		cursorItemReader.setDataSource(dataSource);
 		cursorItemReader.setRowMapper(ParameterizedBeanPropertyRowMapper.newInstance(CustomerQueuing.class));
 		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
@@ -114,18 +117,18 @@ public class MicroEOD implements Tasklet {
 				ps.setInt(2, EodConstants.PROGRESS_WAIT);
 			}
 		});
-		
+
 		// Get the Rules 
-		String				provisionRule = null;
-		String				amzMethodRule = null;
+		String provisionRule = null;
+		String amzMethodRule = null;
 
 		String provRule = SysParamUtil.getValueAsString("PROVISION_RULE");
-		if(provRule != null){
+		if (provRule != null) {
 			provisionRule = ruleDAO.getAmountRule(provRule, RuleConstants.MODULE_PROVSN, RuleConstants.EVENT_PROVSN);
 		}
 
-		amzMethodRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE,
-				AmortizationConstants.AMZ_METHOD_RULE);	
+		amzMethodRule = ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
+				AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
 
 		//to hold the exception till the process completed for all the customers
 		List<Exception> exceptions = new ArrayList<Exception>(1);
@@ -146,11 +149,11 @@ public class MicroEOD implements Tasklet {
 
 				CustEODEvent custEODEvent = new CustEODEvent();
 				custEODEvent.setProvisionRule(provisionRule);
-				custEODEvent.setAmzMethodRule(amzMethodRule); 
+				custEODEvent.setAmzMethodRule(amzMethodRule);
 
 				if (customerQueuing.isLoanExist()) {
 					customerQueuing.setLoanExist(false);
-					Customer customer = eodService.getLoadFinanceData().getCustomerDAO().getCustomerEOD(custId);
+					Customer customer = customerDAO.getCustomerEOD(custId);
 					custEODEvent.setCustomer(customer);
 					custEODEvent.setEodDate(appDate);
 					custEODEvent.setEodValueDate(appDate);
@@ -224,23 +227,34 @@ public class MicroEOD implements Tasklet {
 
 	}
 
+	@Autowired
 	public void setEodService(EodService eodService) {
 		this.eodService = eodService;
 	}
 
+	@Autowired
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
 
+	@Autowired
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
+	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
+	@Autowired
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
 }

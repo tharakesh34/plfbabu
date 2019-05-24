@@ -113,8 +113,8 @@
 				delete from REPORTCONFIGURATION where menuitemcode='menu_Item_FeeAmzReferenceReport';
 				delete from REPORTCONFIGURATION where menuitemcode='menu_Item_FeeAmzLoanTypeReport';
 				
-				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel: Fee Amortization Reference','Fee Amortization Reference',1,'FeeAmortizationDetailsRpt_Header','pfsDatasource',0,'menu_Item_FeeAmzReferenceReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
-				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel: Fee Amortization Loan Type','Fee Amortization Loan Type',1,'FeeAmortizationDetailsRpt_Header_fintype','pfsDatasource',0,'menu_Item_FeeAmzLoanTypeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel: Fee Amortization Reference','Fee Amortization Reference',1,'FeeAmortizationDetailsRpt_Header','dataSource',0,'menu_Item_FeeAmzReferenceReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel: Fee Amortization Loan Type','Fee Amortization Loan Type',1,'FeeAmortizationDetailsRpt_Header_fintype','dataSource',0,'menu_Item_FeeAmzLoanTypeReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
 		
 				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),1,'Entity','LOVSEARCH','Entity','EntityCode',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport'),2,'FinReference','LOVSEARCH','Loan Reference','FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);

@@ -72,6 +72,12 @@
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.ibm.jbatch</groupId>
+					<artifactId>com.ibm.jbatch-tck-spi</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>

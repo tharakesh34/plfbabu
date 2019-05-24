@@ -33,7 +33,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 public class LoadFinanceData extends ServiceHelper {
-
 	private static Logger logger = Logger.getLogger(LoadFinanceData.class);
 
 	private static final long serialVersionUID = -281578785120363314L;

@@ -13,16 +13,14 @@
     http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<!-- these are included in the dependency jar -->
-	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
-
-
-	<context:component-scan base-package="com.pennanttech" />
+	<context:component-scan base-package="com.pennant, com.pennanttech" />
 
 	<!-- Process annotations on registered beans like @Autowired... -->
 	<context:annotation-config />
 
+	<!-- these are included in the dependency jar -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
 	<bean id="logInterceptor" class="com.pennanttech.security.LogRequestInterceptor" />
 	<bean id="logOutInterceptor" class="com.pennanttech.security.LogResponseInterceptor" />
@@ -287,8 +285,8 @@
 	<jaxws:endpoint id="beneficiarySoapService" implementor="#wsBeneficiaryService" address="/beneficiarySoap"
 		publish="false">
 	</jaxws:endpoint>
-	
-	
+
+
 
 	<!-- Collateral API gateway -->
 	<bean id="wsCollateralService" class="com.pennanttech.service.impl.CollateralWebServiceImpl" />
@@ -551,10 +549,10 @@
 	<!-- soap container -->
 	<jaxws:endpoint id="queryModuleSOAPService" implementor="#wsQueryModuleService" address="/querySoap"
 		publish="false" />
-		
+
 	<!-- Remarks API Gateway -->
 	<bean id="wsRemarksService" class="com.pennanttech.service.impl.RemarksWebServiceImpl" />
-	
+
 	<!-- REST Container -->
 	<jaxrs:server id="remarksRestService" address="/remarksRest" publish="true">
 		<jaxrs:serviceBeans>
@@ -576,13 +574,12 @@
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
 
-	<jaxws:endpoint id="remarksSoapService" implementor="#wsRemarksService" address="/remarksSoap"
-		publish="false">
+	<jaxws:endpoint id="remarksSoapService" implementor="#wsRemarksService" address="/remarksSoap" publish="false">
 	</jaxws:endpoint>
-	
+
 	<!-- Miscellaneous Post API Gateway -->
 	<bean id="wsMiscellaneousService" class="com.pennanttech.service.impl.MiscellaneousWebServiceImpl" />
-	
+
 	<!-- REST Container -->
 	<jaxrs:server id="miscellaneousRestService" address="/miscellaneousRest" publish="true">
 		<jaxrs:serviceBeans>
@@ -607,14 +604,14 @@
 	<jaxws:endpoint id="miscellaneousSoapService" implementor="#wsMiscellaneousService" address="/miscellaneousSoap"
 		publish="false">
 	</jaxws:endpoint>
-	
+
 	<!-- Document POST API Gateway -->
 	<bean id="wsDocumentService" class="com.pennanttech.service.impl.DocumentWebServiceImpl" />
-	
+
 	<!-- Document Rest Container -->
 	<jaxrs:server id="documentRestService" address="/documentRest" publish="true">
 		<jaxrs:serviceBeans>
-			<ref bean="wsDocumentService"/>
+			<ref bean="wsDocumentService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="jsonProvider" />
@@ -625,13 +622,14 @@
 			<bean class="com.pennant.ws.exception.ExceptionHandler" />
 		</jaxrs:providers>
 		<jaxrs:inInterceptors>
-			<ref bean="restInHeaderInterceptor"/>
+			<ref bean="restInHeaderInterceptor" />
 		</jaxrs:inInterceptors>
 		<jaxrs:outInterceptors>
-			<ref bean="restOutHeaderInterceptor"/>
+			<ref bean="restOutHeaderInterceptor" />
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
-	
+
 	<!-- Document Soap Container -->
-	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap" publish="false"/>
+	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap"
+		publish="false" />
 </beans>

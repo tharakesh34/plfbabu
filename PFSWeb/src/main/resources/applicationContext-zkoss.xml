@@ -5263,6 +5263,6 @@
 	
 	<!-- Amortization Process -->
 	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype">
-		<property name="dataSource" ref="pfsDatasource" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 </beans>

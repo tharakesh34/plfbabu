@@ -48,6 +48,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Li;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.NorkamCheckService;
@@ -60,6 +61,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.constants.InterfaceConstants;
 import com.pennant.coreinterface.model.customer.InterfaceNorkamCheck;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -286,10 +288,14 @@ public class DedupValidation implements Serializable {
 		interfaceNorkamCheck.setCustomerAddress(customer.getCustAddlVar1());
 
 		InterfaceNorkamCheck norkomCheck = getNorkamCheckService().doNorkamCheck(interfaceNorkamCheck);
+		
+		if(norkomCheck == null) {
+			return true;
+		}
 
-		if (StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+		if (InterfaceConstants.SUCCESS_CODE.equals(norkomCheck.getReturnCode())) {
 			isProcessCompleted = true;
-		} else if (StringUtils.equals(norkomCheck.getReturnCode(), InterfaceConstants.BLACKLIST_HIT)) {
+		} else if (InterfaceConstants.BLACKLIST_HIT.equals(norkomCheck.getReturnCode())) {
 			try {
 				if (MessageUtil.confirm(Labels.getLabel("NORKOM_BLACKLIST")) == MessageUtil.YES) {
 					isProcessCompleted = true;
@@ -297,11 +303,11 @@ public class DedupValidation implements Serializable {
 					isProcessCompleted = false;
 				}
 			} catch (Exception e) {
-				logger.error("Exception: ", e);
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return isProcessCompleted;
 	}
 

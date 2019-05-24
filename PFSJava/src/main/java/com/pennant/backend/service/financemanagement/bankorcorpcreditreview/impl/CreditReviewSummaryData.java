@@ -1,6 +1,7 @@
 package com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,10 @@ public class CreditReviewSummaryData {
 
 				if (detailedMap.get(String.valueOf(dataYear)) != null) {
 					List<FinCreditReviewSummary> listOfCreditReviewSummary = this.detailsMap.get(dataYear);
+					if(listOfCreditReviewSummary ==  null) {
+						listOfCreditReviewSummary = new ArrayList<>();
+					}
+					
 					for (FinCreditReviewSummary finCreditReviewSummary : listOfCreditReviewSummary) {
 						engine.put("YM" + finCreditReviewSummary.getSubCategoryCode(),
 								finCreditReviewSummary.getItemValue() != null
