@@ -2456,18 +2456,18 @@
 		</sql>
 	</changeSet>
 
-    <changeSet id="45" author="Varaprasad.K">
-        <sql>
+	<changeSet id="45" author="Varaprasad.K">
+		<sql>
             <![CDATA[
                 INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'button_FinChangeTDSDialog_tDSApplicable', 'ChangeTDSDialog',1,1000,CURRENT_TIMESTAMP,'NULL','NULL','NULL','NULL','NULL','NULL',0 FROM SEQSECRIGHTS WHERE 0=0;
                 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinChangeTDSDialog_tDSApplicable'), 1, 0, 1000,CURRENT_TIMESTAMP,'NULL','NULL','NULL','NULL','NULL','NULL',0);
             ]]>
-        </sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="46" author="Varaprasad.K">
-        <comment>Added new parameter TdsLimit</comment>
-        <createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
+	<changeSet id="46" author="Varaprasad.K">
+		<comment>Added new parameter TdsLimit</comment>
+		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2511,11 +2511,11 @@
                            FROM finmaintaininstructions_temp
                           WHERE finmaintaininstructions_temp.finmaintainid = t1.finmaintainid))
         </createView>
-    </changeSet>
+	</changeSet>
 
-    <changeSet id="47" author="Varaprasad.K">
-        <comment>Added new parameter TdsLimit</comment>
-        <createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
+	<changeSet id="47" author="Varaprasad.K">
+		<comment>Added new parameter TdsLimit</comment>
+		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2536,11 +2536,11 @@
                     t1.workflowid
                    FROM finmaintaininstructions t1
             </createView>
-    </changeSet>
+	</changeSet>
 
-    <changeSet id="48" author="Varaprasad.K">
-        <comment>Added new parameter TdsLimit</comment>
-        <createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
+	<changeSet id="48" author="Varaprasad.K">
+		<comment>Added new parameter TdsLimit</comment>
+		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2561,5 +2561,161 @@
                     t1.workflowid
                    FROM FinMaintainInstructions_Temp t1
         </createView>
-    </changeSet>
+	</changeSet>
+
+	<changeSet id="49" author="Saikiran.v">
+		<createSequence sequenceName="SEQGST_RATES" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+
+	<changeSet id="50" author="Saikiran.v">
+		<createTable tableName="GST_RATES">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FromState" type="varchar(8)" />
+			<column name="ToState" type="varchar(8)" />
+			<column name="TaxType" type="varchar(4)" />
+			<column name="CalcType" type="char(1)" />
+			<column name="Amount" type="decimal(18,0)" />
+			<column name="Percentage" type="decimal(5,2)" />
+			<column name="CalcOn" type="varchar(10)" />
+			<column name="Active" type="boolean" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="51" author="Saikiran.v">
+		<createTable tableName="GST_RATES_Temp">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FromState" type="varchar(8)" />
+			<column name="ToState" type="varchar(8)" />
+			<column name="TaxType" type="varchar(4)" />
+			<column name="CalcType" type="char(1)" />
+			<column name="Amount" type="decimal(18,0)" />
+			<column name="Percentage" type="decimal(5,2)" />
+			<column name="CalcOn" type="varchar(10)" />
+			<column name="Active" type="boolean" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="52" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE GST_RATES ADD CONSTRAINT DF_GST_RATES_ACTIVE DEFAULT 1 FOR ACTIVE;
+				ALTER TABLE GST_RATES_Temp ADD CONSTRAINT DF_GST_RATES_Temp_ACTIVE DEFAULT 1 FOR ACTIVE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="52" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Active" tableName="GST_RATES" defaultValue="1" />
+		<addDefaultValue columnName="Active" tableName="GST_RATES_Temp" defaultValue="1" />
+	</changeSet>
+
+	<changeSet id="53" author="Saikiran.v">
+		<addNotNullConstraint tableName="GST_RATES" columnName="Active" />
+		<addNotNullConstraint tableName="GST_RATES_Temp" columnName="Active" />
+	</changeSet>
+
+
+	<changeSet id="54" author="Saikiran.v">
+		<addUniqueConstraint tableName="GST_RATES" columnNames="FromState, ToState, TaxType" />
+		<addUniqueConstraint tableName="GST_RATES_Temp" columnNames="FromState, ToState, TaxType" />
+	</changeSet>
+
+	<changeSet id="55" author="Saikiran.v">
+		<createView viewName="GST_RATES_AView" replaceIfExists="true">
+	       		SELECT T1.Id, T1.FromState, T1.ToState, T1.TaxType, T1.CalcType, T1.Amount, T1.Percentage, T1.CalcOn, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId FROM   GST_RATES T1 
+	    </createView>
+	</changeSet>
+
+	<changeSet id="56" author="Saikiran.v">
+		<createView viewName="GST_RATES_View" replaceIfExists="true">
+				SELECT T1.Id, T1.FromState, T1.ToState, T1.TaxType, T1.CalcType, T1.Amount, T1.Percentage, T1.CalcOn, T1.Active	, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId FROM    	GST_RATES_Temp T1 
+				UNION ALL
+				SELECT	T1.Id, T1.FromState, T1.ToState, T1.TaxType, T1.CalcType, T1.Amount, T1.Percentage, T1.CalcOn, T1.Active, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId FROM    	GST_RATES T1 
+				WHERE  NOT EXISTS (SELECT 1 FROM GST_RATES_TEMP WHERE Id = T1.Id)
+       </createView>
+	</changeSet>
+
+	<changeSet id="57" author="saikiran.v">
+		<sql>
+			<![CDATA[
+				update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+				update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+				update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+				
+				INSERT INTO SecGroups VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTRATE_VIEW', 'Allow to view GSTRate', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroups VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTRATE_MAKER', 'WF Maker for GSTRate', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroups VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTRATE_APPROVER', 'WF Approver for GSTRate', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_RMTMasters_GSTRate','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_RMTMasters_GSTRateEnquiry','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GSTRateList_PrintList','GSTRateList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GSTRateList_NewGSTRate','GSTRateList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GSTRateDialog_btnNew','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GSTRateDialog_btnEdit','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GSTRateDialog_btnDelete','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_GSTRateDialog_btnSave','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_FromState','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_ToState','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_TaxType','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_CalcType','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_Amount','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_Percentage','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_CalcOn','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecRights VALUES((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'GSTRateDialog_Active','GSTRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='menuItem_RMTMasters_GSTRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='menuItem_RMTMasters_GSTRateEnquiry'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_GSTRateList_PrintList'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_GSTRateList_NewGSTRate'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_GSTRateDialog_btnNew'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_GSTRateDialog_btnEdit'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_GSTRateDialog_btnDelete'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_GSTRateDialog_btnSave'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_FromState'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_ToState'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_TaxType'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_CalcType'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_Percentage'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_CalcOn'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select max(RightID) from SecRights WHERE RightName='GSTRateDialog_Active'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_APPROVER'), (select RightID from SecRights WHERE RightName='menuItem_RMTMasters_GSTRate'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_APPROVER'), (select RightID from SecRights WHERE RightName='button_GSTRateDialog_btnSave'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				
+				update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+				update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+				update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+				]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
