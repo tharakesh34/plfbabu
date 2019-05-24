@@ -13,7 +13,7 @@
 			classpath:applicationContext-daos.xml,
 			classpath:applicationContext-txn.xml,
  			classpath:securityContext.xml,
- 			classpath:applicationContext-core-interface.xml,
+ 		    <!-- classpath:applicationContext-core-interface.xml,  -->
  			classpath:interfaceContext-core.xml,
  			classpath:interfaceContext.xml,
  			classpath:extensionContext.xml

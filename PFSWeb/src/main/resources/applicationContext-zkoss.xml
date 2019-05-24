@@ -3048,7 +3048,6 @@
 	<bean id="customerSummaryListCtrl" class="com.pennant.customer.enquiry.CustomerSummaryListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="customerLimitIntefaceService" ref="custLimitIntefaceService" />
-		<property name="customerDataProcess" ref="customerDataProcess" />
 		<property name="currencyService" ref="currencyService" />
 	</bean>
 
@@ -3233,7 +3232,6 @@
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="facilityService" ref="facilityService" />
 		<property name="customerLimitIntefaceService" ref="custLimitIntefaceService" />
-		<property name="customerDataProcess" ref="customerDataProcess" />
 		<property name="notificationService" ref="notificationService" />
 	</bean>
 
