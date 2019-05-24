@@ -347,6 +347,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.queryId.setModuleName("DedupParm");
 		this.queryId.setValueColumn("QueryId");
 		this.queryId.setDescColumn("QueryCode");
+		this.queryId.setValueType(DataType.LONG);
 		this.queryId.setValidateColumns(new String[] { "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
 
 		this.commodity.setModuleName("Commodity");
@@ -908,7 +909,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 		}
 
-		if (collateralStructure.getCommodityId() != null) {
+		if (collateralStructure.getCommodityId() != null && collateralStructure.getCommodityId() != 0) {
 			Commodity commodity = getCommodityData(collateralStructure.getCommodityId());
 			this.commodity.setValue(commodity.getCommodityTypeCode());
 			this.commodity.setDescription(commodity.getCode());
@@ -969,7 +970,11 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 
 		try {
-			collateralStructure.setThresholdLtvPercentage(this.thresholdLtv.getValue());
+			if (rw_commodity.isVisible()) {
+				collateralStructure.setThresholdLtvPercentage(this.thresholdLtv.getValue());
+			} else {
+				collateralStructure.setThresholdLtvPercentage(BigDecimal.ZERO);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1028,9 +1033,13 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 
 		try {
-			Object obj = this.commodity.getObject();
-			if (obj != null) {
-				collateralStructure.setCommodityId(((Commodity) obj).getId());
+			if (rw_commodity.isVisible()) {
+				Object obj = this.commodity.getObject();
+				if (obj != null) {
+					collateralStructure.setCommodityId(((Commodity) obj).getId());
+				}
+			} else {
+				collateralStructure.setCommodityId((long) 0);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1216,16 +1225,6 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			}
 		}
 
-		if (this.thresholdLtv.isVisible()) {
-			if (!this.thresholdLtv.isDisabled()) {
-				if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
-					this.thresholdLtv.setConstraint(new PTDecimalValidator(
-							Labels.getLabel("label_CollateralStructureDialog_ThresholdLtv.value"), 2, true, false,
-							100));
-				}
-			}
-		}
-
 		// LTV Rules tab
 		if (!this.ltvType.isDisabled()) {
 			this.ltvType.setConstraint(new StaticListValidator(PennantStaticListUtil.getListLtvTypes(),
@@ -1246,10 +1245,20 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			this.nextValuationDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"), true));
 		}
-		if (!this.commodity.isReadonly() && this.commodity.isVisible()) {
-			this.commodity.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_CollateralStructureDialog_commodity.value"), null, true));
+		if (this.rw_commodity.isVisible()) {
+			if (!this.commodity.getButton().isDisabled()) {
+				this.commodity.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_CollateralStructureDialog_commodity.value"), null, true));
+			}
+			if (!this.thresholdLtv.isDisabled()) {
+				if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
+					this.thresholdLtv.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_CollateralStructureDialog_ThresholdLtv.value"), 2, true, false,
+							100));
+				}
+			}
 		}
+		
 		logger.debug("Leaving");
 	}
 

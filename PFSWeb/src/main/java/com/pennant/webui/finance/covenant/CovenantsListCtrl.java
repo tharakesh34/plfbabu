@@ -168,10 +168,12 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
-				financeMainDialogCtrl.setFinCovenantTypeListCtrl(this);
-				this.covenantListWindow.setTitle("");
-				setNewFinance(true);
+				if (arguments.get("financeMainDialogCtrl") instanceof FinanceMainBaseCtrl) {
+					financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
+					financeMainDialogCtrl.setFinCovenantTypeListCtrl(this);
+					this.covenantListWindow.setTitle("");
+					setNewFinance(true);
+				}
 			}
 
 			if (arguments.containsKey("roleCode")) {

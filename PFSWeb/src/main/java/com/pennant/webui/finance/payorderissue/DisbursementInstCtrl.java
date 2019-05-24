@@ -81,7 +81,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -258,7 +257,8 @@ public class DisbursementInstCtrl {
 					Listitem item = new Listitem();
 					lc = new Listcell(Integer.toString(detail.getPaymentSeq()));
 					lc.setParent(item);
-					lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentDetail(), paymentDetailList));
+					lc = new Listcell(
+							PennantApplicationUtil.getLabelDesc(detail.getPaymentDetail(), paymentDetailList));
 					lc.setParent(item);
 					lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentType(), paymentTypeList));
 					lc.setParent(item);
@@ -548,9 +548,9 @@ public class DisbursementInstCtrl {
 				//				if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
 				//					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
 				//				}
-			} else {
+			} /*else {
 				totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFromDisb());
-			}
+			}*/
 			totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 		}
 

@@ -10,7 +10,6 @@ import org.zkoss.zul.Constraint;
 public class PTEmailValidator implements Constraint {
 	private String fieldParm;
 	private boolean mandatory = false;
-	//private final String EMAIL_REGEX = "^[a-zA-Z]+[0-9]*((\\.?[a-zA-Z0-9]+)*|(\\_?[a-zA-Z0-9]+)*)?\\@{1}[a-zA-z]+[0-9]*(\\.?[a-zA-Z]{2,4})?\\.{1}[a-zA-Z]{2,3}";
 	private int maxLength = 100;
 
 	public PTEmailValidator(String fieldParm, boolean mandatory) {
@@ -19,7 +18,7 @@ public class PTEmailValidator implements Constraint {
 	}
 
 	@Override
-	public void validate(Component comp, Object value) throws WrongValueException {
+	public void validate(Component comp, Object value) {
 		String errorMessage = getErrorMessage(value);
 		if (StringUtils.isNotBlank(errorMessage)) {
 			throw new WrongValueException(comp, errorMessage);
@@ -39,7 +38,6 @@ public class PTEmailValidator implements Constraint {
 			if (isMandatory()) {
 				return Labels.getLabel("FIELD_IS_MAND", new String[] { fieldParm });
 			} else {
-				compValue = "";
 				return null;
 			}
 		} else {
@@ -49,7 +47,7 @@ public class PTEmailValidator implements Constraint {
 						new String[] { fieldParm, String.valueOf(maxLength) });
 			}
 
-			validRegex = EmailValidator.getInstance().isValid(compValue);
+			validRegex = EmailValidator.getInstance(true).isValid(compValue);
 
 			if (!validRegex) {
 				return Labels.getLabel("FIELD_MAIL", new String[] { fieldParm });

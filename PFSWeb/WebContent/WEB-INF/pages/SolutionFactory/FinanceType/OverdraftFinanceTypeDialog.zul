@@ -821,13 +821,83 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
-											<row>
-												<label id="label_FinanceTypeDialog_TaxNoMand" value="${c:l('label_FinanceTypeDialog_TaxNoMand.value')}" />
+											<row id="row_GrcAdvMinTerms"
+												visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_MinimunAdvanceTerms.value')}" />
 												<hbox>
-													<space spacing="2px" />
-													<checkbox id="taxNoMand" checked="false" />
+													<space
+														spacing="2px" />
+													<intbox
+														id="grcAdvMinTerms" width="45px" maxlength="3"
+														style="text-align:right" />
 												</hbox>
- 											</row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_MaximumAdvanceTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="grcAdvMaxTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row
+												id="row_GrcAdvDefaultTerms" visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_DefaultAdvanceTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="grcAdvDefaultTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row id="row_AdvMinTerms"
+												visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_MinimunAdvanceTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="advMinTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+												<label
+													value="${c:l('label_FinanceTypeDialog_MaximumAdvanceTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="advMaxTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row
+												id="row_AdvDefaultTerms" visible="false">
+												<label
+													value="${c:l('label_FinanceTypeDialog_DefaultAdvanceTerms.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<intbox
+														id="advDefaultTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													id="label_FinanceTypeDialog_TaxNoMand"
+													value="${c:l('label_FinanceTypeDialog_TaxNoMand.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<checkbox
+														id="taxNoMand" checked="false" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 									<groupbox id="gb_VasDetails"

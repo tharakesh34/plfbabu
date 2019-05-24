@@ -15,7 +15,6 @@ public class PTMobileNumberValidator implements Constraint {
 	private String fieldParm;
 	private boolean mandatory = false;
 	private String regex;
-	private int maxLength = 10;
 
 	public PTMobileNumberValidator(String fieldParm, boolean mandatory) {
 		setFieldParm(fieldParm);
@@ -32,11 +31,10 @@ public class PTMobileNumberValidator implements Constraint {
 		setFieldParm(fieldParm);
 		setMandatory(mandatory);
 		setRegex(regex);
-		setMaxLength(length);
 	}
 
 	@Override
-	public void validate(Component comp, Object value) throws WrongValueException {
+	public void validate(Component comp, Object value)  {
 		String errorMessage = getErrorMessage(value);
 		if (StringUtils.isNotBlank(errorMessage)) {
 			throw new WrongValueException(comp, errorMessage);
@@ -44,7 +42,6 @@ public class PTMobileNumberValidator implements Constraint {
 	}
 
 	private String getErrorMessage(Object value) {
-
 		String compValue = null;
 		boolean validRegex = false;
 
@@ -56,7 +53,6 @@ public class PTMobileNumberValidator implements Constraint {
 			if (isMandatory()) {
 				return Labels.getLabel("FIELD_IS_MAND", new String[] { fieldParm });
 			} else {
-				compValue = "";
 				return null;
 			}
 		} else {
@@ -66,10 +62,6 @@ public class PTMobileNumberValidator implements Constraint {
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(compValue);
 			validRegex = matcher.matches();
-
-			if (compValue.length() > maxLength) {
-				return Labels.getLabel("FIELD_ALLOWED_MANFILL", new String[] { fieldParm, String.valueOf(maxLength) });
-			}
 
 			if (!validRegex) {
 				return Labels.getLabel("FIELD_MOBILE", new String[] { fieldParm, String.valueOf(pattern) });
@@ -102,13 +94,4 @@ public class PTMobileNumberValidator implements Constraint {
 	public void setRegex(String regex) {
 		this.regex = regex;
 	}
-
-	public int getMaxLength() {
-		return maxLength;
-	}
-
-	public void setMaxLength(int maxLength) {
-		this.maxLength = maxLength;
-	}
-
 }

@@ -44,11 +44,11 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 	private FinReceiptData receiptData;
 	private String buttonId;
-	private BigDecimal newPercent =  BigDecimal.ZERO;
-	
+	private BigDecimal newPercent = BigDecimal.ZERO;
+
 	private ReceiptAllocationDetail summary = null;
 	private ReceiptAllocationDetail detail = null;
-	private FinFeeDetail feeDetail =null;
+	private FinFeeDetail feeDetail = null;
 	private ReceiptDialogCtrl receiptDialogCtrl;
 	private LoanClosureEnquiryDialogCtrl loanClosureEnquiryDialogCtrl;
 	private boolean isLoanClosure = false;
@@ -63,17 +63,18 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 			if (arguments.containsKey("data")) {
 				this.receiptData = (FinReceiptData) arguments.get("data");
-			} 
+			}
 			if (arguments.containsKey("receiptDialogCtrl")) {
 				this.receiptDialogCtrl = (ReceiptDialogCtrl) arguments.get("receiptDialogCtrl");
-			} 
+			}
 			if (arguments.containsKey("loanClosureEnquiryDialogCtrl")) {
-				this.loanClosureEnquiryDialogCtrl = (LoanClosureEnquiryDialogCtrl) arguments.get("loanClosureEnquiryDialogCtrl");
-			} 
+				this.loanClosureEnquiryDialogCtrl = (LoanClosureEnquiryDialogCtrl) arguments
+						.get("loanClosureEnquiryDialogCtrl");
+			}
 			if (arguments.containsKey("isLoanClosure")) {
 				this.isLoanClosure = (boolean) arguments.get("isLoanClosure");
-			} 
-			
+			}
+
 			if (arguments.containsKey("buttonId")) {
 				this.buttonId = (String) arguments.get("buttonId");
 				setButtonId(this.buttonId);
@@ -97,15 +98,15 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		setDialog(DialogType.EMBEDDED);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		summary = rch.getAllocationsSummary().get(Integer.parseInt(buttonId));
-		
-		for (FinFeeDetail fee: receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()){
-			if (summary.getAllocationTo() == -(fee.getFeeTypeID())){
+
+		for (FinFeeDetail fee : receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList()) {
+			if (summary.getAllocationTo() == -(fee.getFeeTypeID())) {
 				feeDetail = fee;
 				break;
 			}
 		}
-		for (ReceiptAllocationDetail allocate:rch.getAllocations()){
-			if (summary.getAllocationTo() == allocate.getAllocationTo()){
+		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
+			if (summary.getAllocationTo() == allocate.getAllocationTo()) {
 				detail = allocate;
 				break;
 			}
@@ -116,74 +117,73 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 	}
 
 	public void doFillDetails(FinFeeDetail feeDetail) {
-		
+
 		logger.debug("Entering");
 		this.listDetails.getItems().clear();
 		Listitem item = null;
 		Listcell lc = null;
-			
+
 		item = new Listitem();
-			lc = new Listcell(feeDetail.getFeeTypeDesc());
-			lc.setStyle("font-weight:bold;color: #191a1c;");
-			lc.setParent(item);
-			
-			lc = new Listcell(feeDetail.getPercentage().toString());
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
-			
-			lc = new Listcell();
-			CurrencyBox allocationPaid = new CurrencyBox();
-			allocationPaid.setStyle("text-align:right;");
-			allocationPaid.setId("NewPercentage");
-			setProps(allocationPaid, false, 2, 120);
-			allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_excessAdjustTo"));
-			allocationPaid.setValue(feeDetail.getActPercentage().toString());
-			allocationPaid.addForward("onFulfill", this.window_EventFeeDetails, "onAllocatePaidChange", 1);
-			lc.appendChild(allocationPaid);
-			lc.setParent(item);
-			
-			lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getCalculatedAmount(), 2));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
-			
-			lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getActualAmount(), 2));
-			lc.setStyle("text-align:right;");
-			lc.setParent(item);
-			
-			this.listDetails.appendChild(item);
-			
+		lc = new Listcell(feeDetail.getFeeTypeDesc());
+		lc.setStyle("font-weight:bold;color: #191a1c;");
+		lc.setParent(item);
+
+		lc = new Listcell(feeDetail.getPercentage().toString());
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		lc = new Listcell();
+		CurrencyBox allocationPaid = new CurrencyBox();
+		allocationPaid.setStyle("text-align:right;");
+		allocationPaid.setId("NewPercentage");
+		setProps(allocationPaid, false, 2, 120);
+		allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_excessAdjustTo"));
+		allocationPaid.setValue(feeDetail.getActPercentage().toString());
+		allocationPaid.addForward("onFulfill", this.window_EventFeeDetails, "onAllocatePaidChange", 1);
+		lc.appendChild(allocationPaid);
+		lc.setParent(item);
+
+		lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getCalculatedAmount(), 2));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		lc = new Listcell(PennantApplicationUtil.amountFormate(feeDetail.getActualAmount(), 2));
+		lc.setStyle("text-align:right;");
+		lc.setParent(item);
+
+		this.listDetails.appendChild(item);
+
 		logger.debug("Leaving");
 	}
 
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
 		receiptCalculator.setTotals(receiptData, 0);
-		if (isLoanClosure){
+		if (isLoanClosure) {
 			loanClosureEnquiryDialogCtrl.doFillAllocationDetail();
-		}else{
+		} else {
 			receiptDialogCtrl.doFillAllocationDetail();
 		}
 		doClose(this.btnSave.isVisible());
 		logger.debug("Leaving" + event.toString());
 
 	}
-	
+
 	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
-		String id= "NewPercentage";
+		String id = "NewPercentage";
 		CurrencyBox newPercentage = (CurrencyBox) this.listDetails.getFellow(id);
 		newPercent = newPercentage.getValidateValue();
 		feeDetail.setActPercentage(newPercent);
 		BigDecimal paidAmount = BigDecimal.ZERO;
 		BigDecimal calculatedAmt = feeDetail.getCalculatedOn();
 		FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		calculatedAmt = calculatedAmt.multiply(newPercent).divide(BigDecimal.valueOf(100), 2,
-				RoundingMode.HALF_DOWN);
+		calculatedAmt = calculatedAmt.multiply(newPercent).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);
 		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
 		feeDetail.setActualAmount(calculatedAmt);
 		paidAmount = summary.getPaidAmount();
-		if (paidAmount.compareTo(BigDecimal.ZERO)>0 ){
-			if (paidAmount.compareTo(calculatedAmt)>0){
+		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+			if (paidAmount.compareTo(calculatedAmt) > 0) {
 				paidAmount = calculatedAmt;
 			}
 		}
@@ -198,7 +198,6 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		doFillDetails(feeDetail);
 	}
 
-
 	public String getButtonId() {
 		return buttonId;
 	}
@@ -210,6 +209,5 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
-
 
 }

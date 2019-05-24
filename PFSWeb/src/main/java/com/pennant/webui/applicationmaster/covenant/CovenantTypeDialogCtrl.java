@@ -1109,7 +1109,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 				closeDialog();
 			}
 
-		} catch (final DataAccessException e) {
+		} catch (final Exception e) {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}

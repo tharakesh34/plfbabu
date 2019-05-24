@@ -907,6 +907,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				days = 180;
 			else if (frequencyValue.equals("A"))
 				days = 365;
+			else if (frequencyValue.equals("B"))
+				days = 750;
 
 			String optionComboLabel = Labels.getLabel("FinOption_Option.label");
 			if (!optionCombo.isDisabled()) {

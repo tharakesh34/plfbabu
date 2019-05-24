@@ -275,6 +275,10 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 	public void onFulfill$assetType(Event event) throws ScriptException {
 		logger.debug("Entering  " + event.toString());
 
+		if (this.assetType.isReadonly()) {
+			return;
+		}
+		
 		Object dataObject = assetType.getObject();
 		if (dataObject instanceof String) {
 			this.assetType.setValue(dataObject.toString());
@@ -285,7 +289,6 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				this.assetType.setValue(details.getAssetType());
 				this.assetType.setDescription(details.getAssetDesc());
 				try {
-
 					this.assetType.setReadonly(true);
 					AssetType assetType = assetTypeService.getAssetTypeById(details.getAssetType());
 					getExtendedFieldRender().setTypeCode(assetType.getAssetType());
@@ -294,15 +297,14 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 					setPostValidationScript(assetType.getPostValidation());
 					setExtendedFieldHeader(assetType.getExtendedFieldHeader());
 
-					//Pre-Validation Checking & Setting Defaults
+					// Pre-Validation Checking & Setting Defaults
 					Map<String, Object> fieldValuesMap = null;
 					if (getExtendedFieldRender().getMapValues() != null) {
 						fieldValuesMap = getExtendedFieldRender().getMapValues();
 					}
 
 					if (newRecord) {
-
-						//get pre-validation script if record is new
+						// get pre-validation script if record is new
 						if (StringUtils.isNotEmpty(getPreValidationScript())) {
 							ScriptErrors defaults = getScriptValidationService()
 									.setPreValidationDefaults(getPreValidationScript(), fieldValuesMap);

@@ -93,7 +93,7 @@ public class ExtendedCombobox extends Hbox {
 	private int displayStyle = 1;
 	private String valueColumn;
 	private DataType valueType = DataType.STRING;
-	private boolean isdisplayError = false;
+	private boolean isdisplayError = true;
 	private boolean inputAllowed = true;
 	private boolean isWindowOpened = false;
 	private boolean mandatory = false;
@@ -192,24 +192,31 @@ public class ExtendedCombobox extends Hbox {
 		this.label.setTooltiptext("");
 		Clients.clearWrongValue(this.button);
 		selctedValue = "";
-		if (list == null) {
+
+		setObject();
+
+		if (list == null && inputAllowed && !this.textbox.isReadonly()) {
 			validateValue(false);
-		} else {
+		} else if(CollectionUtils.isNotEmpty(list)){
 			selectFromDefinedList();
 		}
-		if (this.object != null) {
-			try {
-				doWrite();
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			} finally {
-				if (StringUtils.isNotEmpty(this.rateModule)) {
-					Events.postEvent(ON_FUL_FILL, this.getParent().getParent(), this.rateModule);
-				} else {
-					Events.postEvent(ON_FUL_FILL, this, null);
-				}
+
+		if (this.object == null) {
+			return;
+		}
+
+		try {
+			doWrite();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			if (StringUtils.isNotEmpty(this.rateModule)) {
+				Events.postEvent(ON_FUL_FILL, this.getParent().getParent(), this.rateModule);
+			} else {
+				Events.postEvent(ON_FUL_FILL, this, null);
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -480,15 +487,7 @@ public class ExtendedCombobox extends Hbox {
 	 * @param showError
 	 */
 	public void validateValue(boolean showError) {
-		this.object = null;
-		if (getValidateColumns() == null || getValidateColumns().length == 0 || isMultySelection()) {
-			return;
-		}
-
-		final SearchResult<?> searchResult = getSearchProcessor().getResults(getSearch(), false);
-
-		if (CollectionUtils.isNotEmpty(searchResult.getResult())) {
-			this.object = searchResult.getResult().get(0);
+		if (this.object != null) {
 			return;
 		}
 
@@ -509,10 +508,7 @@ public class ExtendedCombobox extends Hbox {
 					throw new WrongValueException(this.button, String.format(DATA_NOT_AVAILABLE, value));
 				}
 			} else {
-				if (!StringUtils.isBlank(this.textbox.getValue())) {
-					Events.postEvent("onClick", this.button, Events.ON_CLICK);
-				}
-				
+				Events.postEvent("onClick", this.button, Events.ON_CLICK);
 			}
 
 		} catch (WrongValueException e) {
@@ -524,6 +520,18 @@ public class ExtendedCombobox extends Hbox {
 			throw new WrongValueException(this.button, String.format(DATA_NOT_AVAILABLE, value));
 		}
 
+	}
+
+	private void setObject() {
+		if (getValidateColumns() == null || getValidateColumns().length == 0 || isMultySelection()) {
+			return;
+		}
+
+		this.object = null;
+		final SearchResult<?> searchResult = getSearchProcessor().getResults(getSearch(), false);
+		if (CollectionUtils.isNotEmpty(searchResult.getResult())) {
+			this.object = searchResult.getResult().get(0);
+		}
 	}
 
 	public void setModuleName(String moduleName) {
@@ -599,6 +607,9 @@ public class ExtendedCombobox extends Hbox {
 	 * @return String
 	 */
 	public String getValidatedValue() {
+
+		setObject();
+
 		this.textbox.getValue();//to call the constraint if any
 		if (StringUtils.isNotBlank(this.textbox.getValue())) {
 			if (inputAllowed && !this.textbox.isReadonly()) {

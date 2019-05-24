@@ -520,7 +520,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		this.listbox.setModel(getListModelList());
 
 		try {
-			this.setParent(getParent());
 			doModal();
 		} catch (final SuspendNotAllowedException e) {
 			logger.fatal("", e);

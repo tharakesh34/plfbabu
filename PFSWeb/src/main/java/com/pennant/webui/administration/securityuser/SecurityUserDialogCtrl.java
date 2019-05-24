@@ -132,9 +132,11 @@ import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.security.LdapContext;
 import com.pennanttech.pennapps.core.security.UserType;
 import com.pennanttech.pennapps.core.security.user.UserSearch;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -320,7 +322,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrFName.setMaxlength(50);
 		this.usrMName.setMaxlength(50);
 		this.usrLName.setMaxlength(50);
-		this.usrMobile.setMaxlength(10);
+		this.usrMobile.setMaxlength(13);
 		this.usrEmail.setMaxlength(50);
 
 		this.usrLanguage.setMaxlength(4);
@@ -426,7 +428,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				usrDesg.setValue(user.getDesignation());
 			}
 			findUser = true;
-		} catch (UsernameNotFoundException e) {
+		} catch (InterfaceException e) {
 			if(externalUserSearch!=null){
 				usrEmail.setValue("");
 				usrMobile.setValue("");
@@ -439,7 +441,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				usrDeptCode.setValue("");
 				usrDesg.setValue("");
 			}
-			throw new WrongValueException(this.usrLogin, e.getMessage());
+			MessageUtil.showError(e.getMessage());
 		}
 	}
 
@@ -654,8 +656,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 
 				try {
-					if (StringUtils.isBlank(this.usrConfirmPwd.getValue())
-							&& this.rowSecurityUserDialogUsrPwd.isVisible()) {
+					if (this.rowSecurityUserDialogUsrPwd.isVisible()
+							&& StringUtils.isBlank(this.usrConfirmPwd.getValue())) {
 						throw new WrongValueException(this.usrConfirmPwd, Labels.getLabel("FIELD_NO_EMPTY",
 								new String[] { Labels.getLabel("label_SecurityUserDialog_UsrconfirmPwd.value") }));
 					}
@@ -665,12 +667,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 				try {
 					/* Check Password and confirm password are same or not */
-					if (StringUtils.isNotBlank(this.usrPwd.getValue())
-							&& StringUtils.isNotBlank(this.usrConfirmPwd.getValue())) {
-						if (!(StringUtils.trimToEmpty(this.usrPwd.getValue())
-								.equals(StringUtils.trimToEmpty(this.usrConfirmPwd.getValue())))) {
-							throw new WrongValueException(usrConfirmPwd,
-									Labels.getLabel("label_SecurityUserDialog_Pwd_not_match.value"));
+					if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
+						if (StringUtils.isNotBlank(this.usrPwd.getValue())
+								&& StringUtils.isNotBlank(this.usrConfirmPwd.getValue())) {
+							if (!(StringUtils.trimToEmpty(this.usrPwd.getValue())
+									.equals(StringUtils.trimToEmpty(this.usrConfirmPwd.getValue())))) {
+								throw new WrongValueException(usrConfirmPwd,
+										Labels.getLabel("label_SecurityUserDialog_Pwd_not_match.value"));
+							}
 						}
 					}
 				} catch (WrongValueException we) {
@@ -678,16 +682,20 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 
 				try {
-					if (StringUtils.isNotBlank(this.usrPwd.getValue())) {
-						this.validate(this.usrPwd, StringUtils.trimToEmpty(this.usrPwd.getValue()));
+					if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
+						if (StringUtils.isNotBlank(this.usrPwd.getValue())) {
+							this.validate(this.usrPwd, StringUtils.trimToEmpty(this.usrPwd.getValue()));
+						}
 					}
 				} catch (WrongValueException we) {
 					tab1.add(we);
 				}
 
-				if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
-					PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
-					aSecurityUser.setUsrPwd(pwdEncoder.encode(aSecurityUser.getUsrPwd()));
+				if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
+					if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
+						PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
+						aSecurityUser.setUsrPwd(pwdEncoder.encode(aSecurityUser.getUsrPwd()));
+					}
 				}
 			} else {
 				aSecurityUser.setUsrPwd(null);

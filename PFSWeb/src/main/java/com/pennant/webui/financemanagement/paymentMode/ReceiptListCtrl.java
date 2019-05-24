@@ -877,6 +877,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			} else {
 				roleCode = finReceiptHeader.getNextRoleCode();
 			}
+			finReceiptHeader.setRecordStatus(recordAction);
 			recHeaderMap.put(receiptId, finReceiptHeader);
 		}
 

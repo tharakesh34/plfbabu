@@ -545,7 +545,11 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 	public void onFulfill$purpose(Event event) {
 		logger.debug("Entering");
-
+		onFullfillAggriculture();
+		logger.debug("Leaving");
+	}
+	
+	public void onFullfillAggriculture() {
 		if ("Agriculture".equals(categoryCode.getValue())) {
 			this.endUse.setDisplayStyle(2);
 			this.endUse.setModuleName("PSLEndUse");
@@ -557,9 +561,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.endUse.setValidateColumns(new String[] { "purposeCode", "Code", "Description" });
 			this.endUse.setMandatoryStyle(true);
 		}
-
-		logger.debug("Leaving");
 	}
+	
 
 	/**
 	 * This method is for append finance basic details to respective parent tabs
@@ -842,6 +845,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 		this.purpose.setValue(aPSLDetail.getPurpose());
 		this.purpose.setDescription(aPSLDetail.getPurposeName());
+		onFullfillAggriculture();
 		this.endUse.setValue(aPSLDetail.getEndUse());
 		this.endUse.setDescription(aPSLDetail.getEndUseName());
 

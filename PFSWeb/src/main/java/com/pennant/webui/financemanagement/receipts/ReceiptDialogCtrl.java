@@ -75,7 +75,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -217,8 +216,12 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -456,6 +459,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private boolean isForeClosure = false;
 	private boolean isEarlySettle = false;
 	private Space panSpace;
+
+	private static final String RECEIPT_PREFIX = "Receipt";
+	private static final String TEMPLATE_PATH = App.getResourcePath(PathUtil.REPORTS_FINANCE);
+	private static final String RECEIPT_TEMPLATE = RECEIPT_PREFIX + PennantConstants.DOC_TYPE_WORD_EXT;
 
 	/**
 	 * default constructor.<br>
@@ -2299,21 +2306,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					nextTaskId = getNextTaskIds(taskId, rch);
 				}
 
-				if ("".equals(nextTaskId)) {
-					nextRoleCode = getFirstTaskOwner();
-				} else {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode += getTaskOwner(nextTasks[i]);
-						}
-					}
-				}
-
 				if (isNotesMandatory(taskId, rch)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
@@ -2429,35 +2421,27 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					refreshMaintainList();
 				}
 
-				// Customer Notification for Role Identification
-				if (StringUtils.isBlank(rch.getNextTaskId())) {
-					rch.setNextRoleCode("");
+				String userAction = StringUtils.trimToEmpty(this.userAction.getSelectedItem().getLabel());
 
-					// Auto Printing of Cashier Receipt on Submission from
-					// Cashier Stage
-					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
-							&& !this.userAction.getSelectedItem().getLabel().contains("Reject")) {
+				if (StringUtils.isBlank(nextRoleCode)) {
+					if (!"Save".equalsIgnoreCase(userAction) && !"Cancel".equalsIgnoreCase(userAction)
+							&& !"Resubmit".equalsIgnoreCase(userAction) && !userAction.contains("Reject") && !userAction.contains("Submit")) {
 
-						if (!StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
-								&& !StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
-							Events.sendEvent("onClick", this.btnPrint, null);
+						if (!RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())
+								&& !RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
+							printReceipt();
 						}
 					}
 
 				}
+
 				String msg = PennantApplicationUtil.getSavingStatus(rch.getRoleCode(), rch.getNextRoleCode(),
 						rch.getReference(), " Loan ", rch.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
-				// Mail Alert Notification for Customer/Dealer/Provider...etc
 				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
 					FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 					Notification notification = new Notification();
-					// notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-					// // FIXME Check with siva
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
 					notification.setModule("RECEIPTS");
@@ -2507,7 +2491,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				closeDialog();
 			}
 
-		} catch (final DataAccessException e) {
+		} catch (final Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
@@ -3946,7 +3930,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
 			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
 				extDataMap.put("EAI_ReceiptAmount", receiptDetail.getAmount());
-			}  else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)) {
+			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)) {
 				extDataMap.put("EAE_ReceiptAmount", receiptDetail.getAmount());
 			} else {
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
@@ -5542,7 +5526,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				 */ else {
 
 				// Check the max Schedule payment amount
-				BigDecimal closingBal = null;
+				BigDecimal closingBal = BigDecimal.ZERO;
 				boolean isValidPPDate = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
@@ -5954,65 +5938,60 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	// Printer integration starts
 
 	public void onClick$btnPrint(Event event) throws Exception {
+		printReceipt();
+	}
+
+	private void printReceipt() throws Exception {
 		logger.debug(Literal.ENTERING);
-		// FIXME: PV: CODE REVIEW PENDING
+
+		AgreementEngine engine = null;
+
 		try {
-
-			String reportName = "Receipt";
-			String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/";
-			String templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT;
-			AgreementEngine engine = new AgreementEngine(templatePath, templatePath);
-			engine.setTemplate(templateName);
+			engine = new AgreementEngine(TEMPLATE_PATH, TEMPLATE_PATH);
+			engine.setTemplate(RECEIPT_TEMPLATE);
 			engine.loadTemplate();
-			reportName = "Receipt_" + this.finReference.getValue() + "_"
-					+ receiptData.getReceiptHeader().getReceiptID();
+		} catch (Exception e) {
+			throw new AppException(
+					String.format("%s Template not available in %s loaction", RECEIPT_TEMPLATE, TEMPLATE_PATH));
+		}
 
-			ReceiptReport receipt = new ReceiptReport();
-			receipt.setUserName(getUserWorkspace().getLoggedInUser().getUserName() + " - "
-					+ getUserWorkspace().getLoggedInUser().getFullName());
-			receipt.setFinReference(this.finReference.getValue());
-			receipt.setCustName(receiptData.getReceiptHeader().getCustShrtName());
+		String reportName = RECEIPT_PREFIX.concat("_");
+		reportName = reportName.concat(this.finReference.getValue());
+		reportName = reportName.concat("_");
+		reportName = reportName.concat(String.valueOf(receiptData.getReceiptHeader().getReceiptID()));
 
-			BigDecimal totalReceiptAmt = receiptData.getTotReceiptAmount();
-			int finFormatter = CurrencyUtil
-					.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-			receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
-			receipt.setReceiptAmountInWords(NumberToEnglishWords
-					.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
-			receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
+		ReceiptReport receipt = new ReceiptReport();
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		receipt.setUserName(loggedInUser.getUserName() + " - " + loggedInUser.getFullName());
+		receipt.setFinReference(this.finReference.getValue());
+		receipt.setCustName(receiptData.getReceiptHeader().getCustShrtName());
 
-			/*
-			 * Date eventFromDate = this.receivedDate.getValue(); if (eventFromDate == null) { eventFromDate =
-			 * DateUtility.getAppDate(); }
-			 */
-			// receipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
-			receipt.setReceiptNo(this.paymentRef.getValue());
-			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
-			engine.mergeFields(receipt);
+		BigDecimal totalReceiptAmt = receiptData.getTotReceiptAmount();
+		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		int finFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
+		receipt.setReceiptAmountInWords(NumberToEnglishWords
+				.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
+		receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.getAppDate()));
+		receipt.setReceiptNo(this.paymentRef.getValue());
+		receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());
+		receipt.setReceiptDate(DateUtil.formatToLongDate(receiptDate.getValue()));
+		
 
-			boolean isDirectPrint = false;
-			try {
-				if (isDirectPrint) {
-					try {
-						byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
-						String encodedString = Base64.encodeBase64String(documentByteArray);
-						Clients.evalJavaScript(
-								"PrinterUtil.print('window_ReceiptDialog','onPrintSuccess','" + encodedString + "')");
+		engine.mergeFields(receipt);
 
-					} catch (Exception e) {
-						logger.error(Labels.getLabel("message.error.printerNotImpl"));
-						engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF);
-					}
-				} else {
-					engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF);
-				}
-			} catch (Exception e) {
-				logger.error(Labels.getLabel("message.error.agreementNotFound"));
-			}
+		try {
+			byte[] documentByteArray = engine.getDocumentInByteArray(reportName, SaveFormat.PDF);
+			String encodedString = Base64.encodeBase64String(documentByteArray);
+			Clients.evalJavaScript(
+					"PrinterUtil.print('window_ReceiptDialog','onPrintSuccess','" + encodedString + "')");
 
 		} catch (Exception e) {
-			logger.error(Labels.getLabel("message.error.agreementNotFound"));
+			logger.error(Labels.getLabel("message.error.printerNotImpl"));
+		} finally {
+			engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

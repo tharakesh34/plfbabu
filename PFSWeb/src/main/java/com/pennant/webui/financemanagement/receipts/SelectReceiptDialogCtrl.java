@@ -587,6 +587,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				receiptData = prepareReceiptData(receiptHeader);
 			}
 
+			receiptData.setReceiptHeader(receiptHeader);
 			String taskId = getTaskId(roleCode);
 
 			// Check for service tasks. If one exists perform the task(s)
@@ -786,23 +787,22 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Set the role codes for the next tasks
-		String nextRoleCode = "";
-
-		if ("".equals(nextTaskId)) {
-			nextRoleCode = getFirstTaskOwner();
-		} else {
+		if (StringUtils.isNotBlank(nextTaskId)) {
 			String[] nextTasks = nextTaskId.split(";");
 
-			if (nextTasks.length > 0) {
+			if (nextTasks != null && nextTasks.length > 0) {
 				for (int i = 0; i < nextTasks.length; i++) {
+
 					if (nextRoleCode.length() > 1) {
 						nextRoleCode = nextRoleCode.concat(",");
 					}
-					nextRoleCode += getTaskOwner(nextTasks[i]);
+					nextRoleCode = getTaskOwner(nextTasks[i]);
 				}
+			} else {
+				nextRoleCode = getTaskOwner(nextTaskId);
 			}
 		}
-
+		
 		receiptHeader.setTaskId(taskId);
 		receiptHeader.setNextTaskId(nextTaskId);
 		receiptHeader.setRoleCode(roleCode);

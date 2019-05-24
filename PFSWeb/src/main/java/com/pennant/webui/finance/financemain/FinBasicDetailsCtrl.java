@@ -97,6 +97,30 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		logger.debug("Leaving " + event.toString());
 	}
+	
+	private String getString(List<Object> finHeaderList, int index) {
+		if(finHeaderList.size() <= index) {
+			return "";
+		}
+		
+		return String.valueOf(finHeaderList.get(index));
+	}
+	
+	private Date getDate(List<Object> finHeaderList, int index) {
+		if(finHeaderList.size() <= index) {
+			return null;
+		}
+		
+		return (Date) finHeaderList.get(index);
+	}
+	
+	private boolean getBoolean(List<Object> finHeaderList, int index) {
+		if(finHeaderList.size() <= index) {
+			return false;
+		}
+		
+		return (Boolean) finHeaderList.get(index);
+	}
 
 	public void doWriteBeanToComponents(ArrayList<Object> finHeaderList) {
 		logger.debug("Entering");
@@ -104,16 +128,18 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (finHeaderList != null) {
 			this.finHeaderList = finHeaderList;
 		}
-		this.finBasic_finType.setValue(String.valueOf(finHeaderList.get(0)));
-		this.finBasic_finCcy.setValue(String.valueOf(finHeaderList.get(1)));
-		this.finBasic_scheduleMethod.setValue(String.valueOf(finHeaderList.get(2)));
-		this.finBasic_finReference.setValue(String.valueOf(finHeaderList.get(3)));
-		this.finBasic_profitDaysBasis.setValue(String.valueOf(finHeaderList.get(4)));
+		
+		
+		this.finBasic_finType.setValue(getString(finHeaderList, 0));
+		this.finBasic_finCcy.setValue(getString(finHeaderList, 1));
+		this.finBasic_scheduleMethod.setValue(getString(finHeaderList, 2));
+		this.finBasic_finReference.setValue(getString(finHeaderList, 3));
+		this.finBasic_profitDaysBasis.setValue(getString(finHeaderList, 4));
 
-		Date grcEndDate = (Date) finHeaderList.get(5);
-		Boolean allowgrace = (Boolean) finHeaderList.get(6);
-		String finCategory = String.valueOf(finHeaderList.get(8));
-		this.finBasic_custShrtName.setValue(String.valueOf(finHeaderList.get(9)));
+		Date grcEndDate = getDate(finHeaderList, 5);
+		Boolean allowgrace = getBoolean(finHeaderList, 6);
+		String finCategory = getString(finHeaderList, 8);
+		this.finBasic_custShrtName.setValue(getString(finHeaderList, 9));
 		if (StringUtils.equals(finCategory, FinanceConstants.PRODUCT_ISTISNA)) {
 			allowgrace = true;
 		}
@@ -129,13 +155,13 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.row_grcPeriodEndDate.setVisible(false);
 		}
 
-		Boolean promotion = (Boolean) finHeaderList.get(7);
+		Boolean promotion = getBoolean(finHeaderList, 7);
 		if (promotion) {
 			this.label_FinBasicDetails_FinType.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 
-		Boolean newRecord = (Boolean) finHeaderList.get(10);
-		this.finEventCode = String.valueOf(finHeaderList.get(11));
+		Boolean newRecord = getBoolean(finHeaderList, 10);
+		this.finEventCode = getString(finHeaderList, 11);
 
 		if (!newRecord && isActivityLogVisible(finEventCode)) {
 			this.userActivityLog.setVisible(true);
