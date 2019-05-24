@@ -26,6 +26,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 	private static Logger logger = Logger.getLogger(AccountInterfaceServiceImpl.class);
 
 	protected AccountDetailProcess accountDetailProcess;
+
 	protected AccountDataProcess accountDataProcess;
 
 	public AccountInterfaceServiceImpl() {
@@ -63,30 +64,33 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 		}
 
 		//Connecting to CoreBanking Interface
-		coreBankAccountDetails = getAccountDetailProcess().fetchAccount(coreBankAccountDetails, createNow);
+		if (accountDetailProcess != null) {
+			coreBankAccountDetails = accountDetailProcess.fetchAccount(coreBankAccountDetails, createNow);
 
-		//Fill the Account data using Core Banking Object
-		List<IAccounts> accountResList = new ArrayList<IAccounts>(coreBankAccountDetails.size());
-		for (int i = 0; i < coreBankAccountDetails.size(); i++) {
-			iAccount = new IAccounts();
-			CoreBankAccountDetail detail = coreBankAccountDetails.get(i);
+			//Fill the Account data using Core Banking Object
+			List<IAccounts> accountResList = new ArrayList<IAccounts>(coreBankAccountDetails.size());
+			for (int i = 0; i < coreBankAccountDetails.size(); i++) {
+				iAccount = new IAccounts();
+				CoreBankAccountDetail detail = coreBankAccountDetails.get(i);
 
-			iAccount.setAccountId(detail.getAccountNumber());
-			iAccount.setAcCustCIF(detail.getCustCIF());
-			iAccount.setAcCcy(detail.getAcCcy());
-			iAccount.setAcType(detail.getAcType());
-			iAccount.setTransOrder(detail.getTransOrder());
-			iAccount.setAcBranch(detail.getAcBranch());
-			iAccount.setFlagCreateNew(detail.getCreateNew());
-			iAccount.setFlagCreateIfNF(detail.getCreateIfNF());
-			iAccount.setInternalAc(detail.getInternalAc());
-			iAccount.setFlagPostStatus(detail.getOpenStatus());
-			iAccount.setErrorCode(detail.getErrorCode());
-			iAccount.setErrorMsg(detail.getErrorMessage());
-			accountResList.add(iAccount);
+				iAccount.setAccountId(detail.getAccountNumber());
+				iAccount.setAcCustCIF(detail.getCustCIF());
+				iAccount.setAcCcy(detail.getAcCcy());
+				iAccount.setAcType(detail.getAcType());
+				iAccount.setTransOrder(detail.getTransOrder());
+				iAccount.setAcBranch(detail.getAcBranch());
+				iAccount.setFlagCreateNew(detail.getCreateNew());
+				iAccount.setFlagCreateIfNF(detail.getCreateIfNF());
+				iAccount.setInternalAc(detail.getInternalAc());
+				iAccount.setFlagPostStatus(detail.getOpenStatus());
+				iAccount.setErrorCode(detail.getErrorCode());
+				iAccount.setErrorMsg(detail.getErrorMessage());
+				accountResList.add(iAccount);
+			}
+			logger.debug("Leaving");
+			return accountResList;
 		}
-		logger.debug("Leaving");
-		return accountResList;
+		return null;
 	}
 
 	/**
@@ -109,29 +113,32 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 		coreAccount.setDivision(processAccount.getDivision());
 
 		//Connecting to CoreBanking Interface
-		List<CoreBankAccountDetail> coreBankingAccountList = getAccountDetailProcess()
-				.fetchCustomerAccounts(coreAccount);
-		CoreBankAccountDetail coreBankAccountDetail = null;
-		//Fill the Account data using Core Banking Object
-		if (coreBankingAccountList != null) {
-			for (int i = 0; i < coreBankingAccountList.size(); i++) {
-				coreBankAccountDetail = coreBankingAccountList.get(i);
-				account = new IAccounts();
-				account.setAccountId(coreBankAccountDetail.getAccountNumber());
-				account.setAcType(coreBankAccountDetail.getAcType());
-				account.setAcCcy(coreBankAccountDetail.getAcCcy());
-				account.setAcShortName(coreBankAccountDetail.getCustShrtName());
-				account.setAcAvailableBal(coreBankAccountDetail.getAcBal());
-				if (StringUtils.equals(coreBankAccountDetail.getAmountSign(), "-")) {
-					account.setAcAvailableBal(BigDecimal.ZERO.subtract(account.getAcAvailableBal()));
+		if (accountDetailProcess != null) {
+			List<CoreBankAccountDetail> coreBankingAccountList = accountDetailProcess
+					.fetchCustomerAccounts(coreAccount);
+			CoreBankAccountDetail coreBankAccountDetail = null;
+			//Fill the Account data using Core Banking Object
+			if (coreBankingAccountList != null) {
+				for (int i = 0; i < coreBankingAccountList.size(); i++) {
+					coreBankAccountDetail = coreBankingAccountList.get(i);
+					account = new IAccounts();
+					account.setAccountId(coreBankAccountDetail.getAccountNumber());
+					account.setAcType(coreBankAccountDetail.getAcType());
+					account.setAcCcy(coreBankAccountDetail.getAcCcy());
+					account.setAcShortName(coreBankAccountDetail.getCustShrtName());
+					account.setAcAvailableBal(coreBankAccountDetail.getAcBal());
+					if (StringUtils.equals(coreBankAccountDetail.getAmountSign(), "-")) {
+						account.setAcAvailableBal(BigDecimal.ZERO.subtract(account.getAcAvailableBal()));
+					}
+
+					accountList.add(account);
 				}
-
-				accountList.add(account);
 			}
-		}
 
-		logger.debug("Leaving");
-		return accountList;
+			logger.debug("Leaving");
+			return accountList;
+		}
+		return null;
 	}
 
 	/**
@@ -150,27 +157,30 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 		coreAccount.setAccountNumber(processAccount);
 
 		//Connecting to CoreBanking Interface
-		List<CoreBankAccountDetail> coreBankingAccountList = getAccountDetailProcess().fetchAccountDetails(coreAccount);
-		CoreBankAccountDetail coreBankAccountDetail = null;
-		//Fill the Account data using Core Banking Object
-		if (coreBankingAccountList != null) {
-			for (int i = 0; i < coreBankingAccountList.size(); i++) {
-				coreBankAccountDetail = coreBankingAccountList.get(i);
-				iAccount = new IAccounts();
-				iAccount.setAccountId(coreBankAccountDetail.getAccountNumber());
-				iAccount.setAcType(coreBankAccountDetail.getAcType());
-				iAccount.setAcCcy(coreBankAccountDetail.getAcCcy());
-				iAccount.setAcShortName(coreBankAccountDetail.getCustShrtName());
-				iAccount.setAcAvailableBal(coreBankAccountDetail.getAcBal());
-				if (StringUtils.equals(coreBankAccountDetail.getAmountSign(), "-")) {
-					iAccount.setAcAvailableBal(BigDecimal.ZERO.subtract(iAccount.getAcAvailableBal()));
+		if (accountDetailProcess != null) {
+			List<CoreBankAccountDetail> coreBankingAccountList = accountDetailProcess.fetchAccountDetails(coreAccount);
+			CoreBankAccountDetail coreBankAccountDetail = null;
+			//Fill the Account data using Core Banking Object
+			if (coreBankingAccountList != null) {
+				for (int i = 0; i < coreBankingAccountList.size(); i++) {
+					coreBankAccountDetail = coreBankingAccountList.get(i);
+					iAccount = new IAccounts();
+					iAccount.setAccountId(coreBankAccountDetail.getAccountNumber());
+					iAccount.setAcType(coreBankAccountDetail.getAcType());
+					iAccount.setAcCcy(coreBankAccountDetail.getAcCcy());
+					iAccount.setAcShortName(coreBankAccountDetail.getCustShrtName());
+					iAccount.setAcAvailableBal(coreBankAccountDetail.getAcBal());
+					if (StringUtils.equals(coreBankAccountDetail.getAmountSign(), "-")) {
+						iAccount.setAcAvailableBal(BigDecimal.ZERO.subtract(iAccount.getAcAvailableBal()));
+					}
+					iAccount.setIban(coreBankAccountDetail.getIBAN());
 				}
-				iAccount.setIban(coreBankAccountDetail.getIBAN());
 			}
-		}
 
-		logger.debug("Leaving");
-		return iAccount;
+			logger.debug("Leaving");
+			return iAccount;
+		}
+		return null;
 	}
 
 	/**
@@ -189,7 +199,9 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetail = getAccountDetailProcess().fetchAccountAvailableBal(coreBankAccountDetail);
+			if (accountDetailProcess != null) {
+				coreBankAccountDetail = accountDetailProcess.fetchAccountAvailableBal(coreBankAccountDetail);
+			}
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 		}
@@ -215,8 +227,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 	@Override
 	public List<CoreBankAccountDetail> checkAccountID(List<CoreBankAccountDetail> coreAcctList)
 			throws InterfaceException {
-		return getAccountDetailProcess().fetchAccountsListAvailableBal(coreAcctList, false);
-
+		if (accountDetailProcess != null) {
+			return accountDetailProcess.fetchAccountsListAvailableBal(coreAcctList, false);
+		}
+		return null;
 	}
 
 	/**
@@ -240,8 +254,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetailList = getAccountDetailProcess()
-					.fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
+			if (accountDetailProcess != null) {
+				coreBankAccountDetailList = accountDetailProcess
+						.fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
+			}
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			//TODO ADD ERROR TO ERROR DETAILS
@@ -286,8 +302,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetailList = getAccountDetailProcess()
-					.fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
+			if (accountDetailProcess != null) {
+				coreBankAccountDetailList = accountDetailProcess
+						.fetchAccountsListAvailableBal(coreBankAccountDetailList, false);
+			}
 		} catch (InterfaceException e) {
 			throw e;
 		}
@@ -338,8 +356,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 
 		//Connecting to CoreBanking Interface
 		try {
-			coreBankAccountDetailList = getAccountDetailProcess()
-					.fetchAccountsListAvailableBal(coreBankAccountDetailList, true);
+			if (accountDetailProcess != null) {
+				coreBankAccountDetailList = accountDetailProcess
+						.fetchAccountsListAvailableBal(coreBankAccountDetailList, true);
+			}
 		} catch (InterfaceException e) {
 			throw e;
 		}
@@ -363,7 +383,11 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 	 */
 	@Override
 	public int removeAccountHolds() throws Exception {
-		return getAccountDataProcess().removeAccountHolds();
+		if (accountDataProcess != null) {
+			return accountDataProcess.removeAccountHolds();
+		}
+
+		return 0;
 	}
 
 	/**
@@ -389,17 +413,20 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 		}
 
 		if (!acBalList.isEmpty()) {
-			List<AccountBalance> returnAcBalList = getAccountDataProcess().addAccountHolds(acBalList, holdType);
-			AccountHoldStatus holdStatus = null;
-			for (AccountBalance accountBalance : returnAcBalList) {
-				holdStatus = new AccountHoldStatus();
-				holdStatus.setAccount(accountBalance.getRepayAccount());
-				holdStatus.setCurODAmount(accountBalance.getAccBalance());
-				holdStatus.setHoldStatus(accountBalance.getAcHoldStatus());
-				holdStatus.setStatusDesc(accountBalance.getStatusDesc());
-				holdStatus.setValueDate(valueDate);
-				holdStatus.setHoldType(holdType);
-				acBalStatusList.add(holdStatus);
+			if (accountDataProcess != null) {
+				List<AccountBalance> returnAcBalList = accountDataProcess.addAccountHolds(acBalList, holdType);
+
+				AccountHoldStatus holdStatus = null;
+				for (AccountBalance accountBalance : returnAcBalList) {
+					holdStatus = new AccountHoldStatus();
+					holdStatus.setAccount(accountBalance.getRepayAccount());
+					holdStatus.setCurODAmount(accountBalance.getAccBalance());
+					holdStatus.setHoldStatus(accountBalance.getAcHoldStatus());
+					holdStatus.setStatusDesc(accountBalance.getStatusDesc());
+					holdStatus.setValueDate(valueDate);
+					holdStatus.setHoldType(holdType);
+					acBalStatusList.add(holdStatus);
+				}
 			}
 		}
 
@@ -426,8 +453,10 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 		interfaceAccount.setIntroducer("1234567");
 		interfaceAccount.setShoppingCardIssue("NO");
 
-		logger.debug("Leaving");
-		return getAccountDataProcess().createAccount(interfaceAccount);
+		if (accountDataProcess != null) {
+			return accountDataProcess.createAccount(interfaceAccount);
+		}
+		return null;
 	}
 
 	/**
@@ -442,7 +471,7 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 	public CollateralMark collateralMarking(CollateralMark coltralMarkReq) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
-		return getAccountDataProcess().collateralMarking(coltralMarkReq);
+		return accountDataProcess.collateralMarking(coltralMarkReq);
 	}
 
 	/**
@@ -455,29 +484,12 @@ public class AccountInterfaceServiceImpl implements AccountInterfaceService {
 	 */
 	@Override
 	public CollateralMark collateralDeMarking(CollateralMark coltralMarkReq) throws InterfaceException {
-		logger.debug("Entering");
-		logger.debug("Leaving");
-		return getAccountDataProcess().collateralDeMarking(coltralMarkReq);
-	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+		if (accountDataProcess != null) {
+			return accountDataProcess.collateralDeMarking(coltralMarkReq);
+		}
 
-	public AccountDetailProcess getAccountDetailProcess() {
-		return accountDetailProcess;
-	}
-
-	public void setAccountDetailProcess(AccountDetailProcess accountDetailProcess) {
-		this.accountDetailProcess = accountDetailProcess;
-	}
-
-	public AccountDataProcess getAccountDataProcess() {
-		return accountDataProcess;
-	}
-
-	public void setAccountDataProcess(AccountDataProcess accountDataProcess) {
-		this.accountDataProcess = accountDataProcess;
+		return null;
 	}
 
 }

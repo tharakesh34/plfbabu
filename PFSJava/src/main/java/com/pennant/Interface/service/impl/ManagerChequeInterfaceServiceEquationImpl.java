@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.ManagerChequeInterfaceService;
 import com.pennant.equation.process.ManagerChequeProcess;
@@ -24,8 +25,10 @@ public class ManagerChequeInterfaceServiceEquationImpl implements ManagerChequeI
 	public void validateChequeNumber(String accountNum, String chequeNum) throws AccountNotFoundException {
 		logger.debug("Entering");
 		try {
-			//Connecting to CoreBanking Interface
-			getManagerChequeProcess().validateChequeNumber(accountNum, chequeNum);
+			// Connecting to CoreBanking Interface
+			if (managerChequeProcess != null) {
+				managerChequeProcess.validateChequeNumber(accountNum, chequeNum);
+			}
 		} catch (AccountNotFoundException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -52,16 +55,10 @@ public class ManagerChequeInterfaceServiceEquationImpl implements ManagerChequeI
 		 * e; } finally { logger.debug("Leaving"); }
 		 */
 
-		return "0099";//AHB
-	}
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-	// ++++++++++++++++++ getter / setter +++++++++++++++++++//
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-	public ManagerChequeProcess getManagerChequeProcess() {
-		return managerChequeProcess;
+		return "0099";// AHB
 	}
 
+	@Autowired(required = false)
 	public void setManagerChequeProcess(ManagerChequeProcess managerChequeProcess) {
 		this.managerChequeProcess = managerChequeProcess;
 	}

@@ -2,6 +2,7 @@ package com.pennant.Interface.service.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.DDAInterfaceService;
 import com.pennant.backend.model.finance.DDAProcessData;
@@ -36,12 +37,15 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 		BeanUtils.copyProperties(ddaProcessRequest, ddaRegistration);
 
 		// Send DDA Registration request to middleware
-		ddaRegistration = getDdaProcess().sendDDARequest(ddaRegistration);
+		if (ddaProcess != null) {
+			ddaRegistration = ddaProcess.sendDDARequest(ddaRegistration);
 
-		BeanUtils.copyProperties(ddaRegistration, ddaProcessRequest);
+			BeanUtils.copyProperties(ddaRegistration, ddaProcessRequest);
 
-		logger.debug("Leaving");
-		return ddaProcessRequest;
+			logger.debug("Leaving");
+			return ddaProcessRequest;
+		}
+		return null;
 	}
 
 	/**
@@ -55,7 +59,10 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 	public DDAAmendment sendDDAAmendmentReq(DDAAmendment ddaAmendment) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
-		return getDdaProcess().sendDDAAmendment(ddaAmendment);
+		if (ddaProcess != null) {
+			return ddaProcess.sendDDAAmendment(ddaAmendment);
+		}
+		return null;
 	}
 
 	/**
@@ -69,7 +76,10 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 	public DDAUpdate sendDDAUpdateReq(DDAUpdate ddaUpdate) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
-		return getDdaProcess().sendDDAUpdate(ddaUpdate);
+		if (ddaProcess != null) {
+			return ddaProcess.sendDDAUpdate(ddaUpdate);
+		}
+		return null;
 	}
 
 	/**
@@ -90,25 +100,28 @@ public class DDAInterfaceServiceImpl implements DDAInterfaceService {
 		ddaCancellation.setDdaRegFormData(ddaProcessData.getDdaRegFormData());
 
 		// Send DDA.CANCELLATION Request to interface
-		ddaCancellation = getDdaProcess().cancelDDARegistration(ddaCancellation);
+		if (ddaProcess != null) {
+			ddaCancellation = ddaProcess.cancelDDARegistration(ddaCancellation);
 
-		if (ddaCancellation != null) {
-			ddaProcessData.setReferenceNum(ddaCancellation.getReferenceNum());
-			ddaProcessData.setReturnCode(ddaCancellation.getReturnCode());
-			ddaProcessData.setReturnText(ddaCancellation.getReturnText());
+			if (ddaCancellation != null) {
+				ddaProcessData.setReferenceNum(ddaCancellation.getReferenceNum());
+				ddaProcessData.setReturnCode(ddaCancellation.getReturnCode());
+				ddaProcessData.setReturnText(ddaCancellation.getReturnText());
+			}
+			logger.debug("Leaving");
+
+			return ddaProcessData;
 		}
-		logger.debug("Leaving");
-
-		return ddaProcessData;
+		return null;
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public DDAProcess getDdaProcess() {
-		return ddaProcess;
-	}
-
+	/*
+	 * public DDAProcess getDdaProcess() { return ddaProcess; }
+	 */
+	@Autowired(required = false)
 	public void setDdaProcess(DDAProcess ddaProcess) {
 		this.ddaProcess = ddaProcess;
 	}

@@ -27,7 +27,10 @@ public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 	public FetchDeposit fetchDeposits(FetchDeposit fetchDeposit) throws InterfaceException {
 		logger.debug("Entering");
 		logger.debug("Leaving");
-		return getDepositDetailProcess().fetchDeposits(fetchDeposit);
+		if (depositDetailProcess != null) {
+			return depositDetailProcess.fetchDeposits(fetchDeposit);
+		}
+		return null;
 	}
 
 	/**
@@ -40,32 +43,35 @@ public class DepositInterfaceServiceImpl implements DepositInterfaceService {
 
 		FetchDepositDetail fetchDepositDetail = new FetchDepositDetail();
 		fetchDepositDetail.setInvstContractNo(depositReference);
-		fetchDepositDetail = getDepositDetailProcess().fetchDepositDetails(fetchDepositDetail);
+		if (depositDetailProcess != null) {
+			fetchDepositDetail = depositDetailProcess.fetchDepositDetails(fetchDepositDetail);
 
-		FinCollaterals finCollaterals = new FinCollaterals();
-		if (fetchDepositDetail != null) {
-			finCollaterals.setReference(fetchDepositDetail.getInvstContractNo());
-			finCollaterals.setCcy(fetchDepositDetail.getCurrencyCode());
-			finCollaterals.setValue(fetchDepositDetail.getInvstAmount());
-			finCollaterals.setTenor(fetchDepositDetail.getDepositTenor());
-			finCollaterals.setRate(fetchDepositDetail.getProfitRate());
-			finCollaterals.setStartDate(fetchDepositDetail.getOpenDate());
-			finCollaterals.setMaturityDate(fetchDepositDetail.getMaturityDate());
-			finCollaterals.setRemarks(fetchDepositDetail.getStatus());
+			FinCollaterals finCollaterals = new FinCollaterals();
+			if (fetchDepositDetail != null) {
+				finCollaterals.setReference(fetchDepositDetail.getInvstContractNo());
+				finCollaterals.setCcy(fetchDepositDetail.getCurrencyCode());
+				finCollaterals.setValue(fetchDepositDetail.getInvstAmount());
+				finCollaterals.setTenor(fetchDepositDetail.getDepositTenor());
+				finCollaterals.setRate(fetchDepositDetail.getProfitRate());
+				finCollaterals.setStartDate(fetchDepositDetail.getOpenDate());
+				finCollaterals.setMaturityDate(fetchDepositDetail.getMaturityDate());
+				finCollaterals.setRemarks(fetchDepositDetail.getStatus());
+			}
+
+			logger.debug("Leaving");
+
+			return finCollaterals;
 		}
-
-		logger.debug("Leaving");
-
-		return finCollaterals;
+		return null;
 	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public DepositDetailProcess getDepositDetailProcess() {
-		return depositDetailProcess;
-	}
+	/*
+	 * public DepositDetailProcess getDepositDetailProcess() { return depositDetailProcess; }
+	 */
 
 	public void setDepositDetailProcess(DepositDetailProcess depositDetailProcess) {
 		this.depositDetailProcess = depositDetailProcess;

@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.util.CalculationUtil;
@@ -81,44 +82,48 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		coreCust.setCustomerMnemonic(customer.getCustCIF());
 
 		try {
-			coreCust = getCustomerDataProcess().fetchInformation(coreCust);
+			if (customerDataProcess != null) {
+				coreCust = customerDataProcess.fetchInformation(coreCust);
 
-			//Fill the customer data using Core Customer Banking Object
-			customer.setCustCoreBank(coreCust.getCustomerMnemonic());
+				//Fill the customer data using Core Customer Banking Object
+				customer.setCustCoreBank(coreCust.getCustomerMnemonic());
 
-			// TODO This has To be Changed Based on The PCML
-			/*
-			 * String[] names = coreCust.getCustomerFullName().split(" "); customer.setCustFName(names[0]);
-			 * if(names.length > 2){ customer.setCustMName(names[1]); customer.setCustLName(names[2]); }else{
-			 * if(names.length > 1){ customer.setCustMName(""); customer.setCustLName(names[1]); }else{
-			 * customer.setCustMName(""); customer.setCustLName(""); } }
-			 * customer.setCustShrtName(coreCust.getDefaultAccountShortName());
-			 * customer.setCustTypeCode(coreCust.getCustomerType());
-			 * customer.setCustIsBlocked(coreCust.getCustomerClosed().equals("N")?false:true);
-			 * customer.setCustIsClosed(coreCust.getCustomerClosed().equals("N")?false:true);
-			 * customer.setCustIsDecease(coreCust.getCustomerClosed().equals("N")?false:true);
-			 * customer.setCustIsActive(coreCust.getCustomerInactive().equals("N")?true:false);
-			 * //customer.setCustLng(coreCust.getLanguageCode());
-			 * customer.setCustParentCountry(coreCust.getParentCountry());
-			 * customer.setCustCOB(coreCust.getParentCountry()); customer.setCustRiskCountry(coreCust.getRiskCountry());
-			 * customer.setCustResdCountry(coreCust.getResidentCountry());
-			 * customer.setCustDftBranch(coreCust.getCustomerBranchMnemonic());
-			 * //customer.setCustGroupSts(coreCust.getGroupStatus());
-			 * //customer.setCustGroupID(coreCust.getGroupName());
-			 * //customer.setCustSegment(coreCust.getSegmentIdentifier());
-			 * customer.setCustSalutationCode(coreCust.getSalutation()); customer.setCustDOB(coreCust.getCustDOB());
-			 * customer.setCustGenderCode(coreCust.getGenderCode()); customer.setCustPOB(coreCust.getCustPOB());
-			 * customer.setCustPassportNo(coreCust.getCustPassportNum());
-			 * customer.setCustPassportExpiry(coreCust.getCustPassportExpiry());
-			 * customer.setCustIsMinor(coreCust.getMinor().equals("N")?false:true);
-			 * customer.setCustTradeLicenceNum(coreCust.getTradeLicNumber());
-			 * customer.setCustTradeLicenceExpiry(coreCust.getTradeLicExpiry());
-			 * customer.setCustVisaNum(coreCust.getVisaNumber()); customer.setCustVisaExpiry(coreCust.getVisaExpiry());
-			 * customer.setCustNationality(coreCust.getNationality());
-			 */
+				// TODO This has To be Changed Based on The PCML
+				/*
+				 * String[] names = coreCust.getCustomerFullName().split(" "); customer.setCustFName(names[0]);
+				 * if(names.length > 2){ customer.setCustMName(names[1]); customer.setCustLName(names[2]); }else{
+				 * if(names.length > 1){ customer.setCustMName(""); customer.setCustLName(names[1]); }else{
+				 * customer.setCustMName(""); customer.setCustLName(""); } }
+				 * customer.setCustShrtName(coreCust.getDefaultAccountShortName());
+				 * customer.setCustTypeCode(coreCust.getCustomerType());
+				 * customer.setCustIsBlocked(coreCust.getCustomerClosed().equals("N")?false:true);
+				 * customer.setCustIsClosed(coreCust.getCustomerClosed().equals("N")?false:true);
+				 * customer.setCustIsDecease(coreCust.getCustomerClosed().equals("N")?false:true);
+				 * customer.setCustIsActive(coreCust.getCustomerInactive().equals("N")?true:false);
+				 * //customer.setCustLng(coreCust.getLanguageCode());
+				 * customer.setCustParentCountry(coreCust.getParentCountry());
+				 * customer.setCustCOB(coreCust.getParentCountry());
+				 * customer.setCustRiskCountry(coreCust.getRiskCountry());
+				 * customer.setCustResdCountry(coreCust.getResidentCountry());
+				 * customer.setCustDftBranch(coreCust.getCustomerBranchMnemonic());
+				 * //customer.setCustGroupSts(coreCust.getGroupStatus());
+				 * //customer.setCustGroupID(coreCust.getGroupName());
+				 * //customer.setCustSegment(coreCust.getSegmentIdentifier());
+				 * customer.setCustSalutationCode(coreCust.getSalutation()); customer.setCustDOB(coreCust.getCustDOB());
+				 * customer.setCustGenderCode(coreCust.getGenderCode()); customer.setCustPOB(coreCust.getCustPOB());
+				 * customer.setCustPassportNo(coreCust.getCustPassportNum());
+				 * customer.setCustPassportExpiry(coreCust.getCustPassportExpiry());
+				 * customer.setCustIsMinor(coreCust.getMinor().equals("N")?false:true);
+				 * customer.setCustTradeLicenceNum(coreCust.getTradeLicNumber());
+				 * customer.setCustTradeLicenceExpiry(coreCust.getTradeLicExpiry());
+				 * customer.setCustVisaNum(coreCust.getVisaNumber());
+				 * customer.setCustVisaExpiry(coreCust.getVisaExpiry());
+				 * customer.setCustNationality(coreCust.getNationality());
+				 */
 
-			customer.setNewRecord(true);
+				customer.setNewRecord(true);
 
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			throw new InterfaceException("9999", e.getMessage());
@@ -150,7 +155,9 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		}
 
 		try {
-			custCIF = getCustomerCreationProcess().generateNewCIF(coreCust);
+			if (customerCreationProcess != null) {
+				custCIF = customerCreationProcess.generateNewCIF(coreCust);
+			}
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -181,90 +188,90 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		coreCust.setCollateralRequired(detail.isCollateralRequired() ? "Y" : "N");
 
 		try {
+			if (customerDataProcess != null) {
+				coreCust = customerDataProcess.fetchAvailInformation(coreCust);
 
-			coreCust = getCustomerDataProcess().fetchAvailInformation(coreCust);
+				String custRspData = coreCust.getCustRspData();
+				String limitCcy = "BHD";
+				int limitCcyEdit = 3;
 
-			String custRspData = coreCust.getCustRspData();
-			String limitCcy = "BHD";
-			int limitCcyEdit = 3;
+				if (coreCust.getCustomerLimit() != null) {
+					limitCcy = coreCust.getCustomerLimit().getLimitCurrency();
+					limitCcyEdit = coreCust.getCustomerLimit().getLimitCcyEdit();
+				}
 
-			if (coreCust.getCustomerLimit() != null) {
-				limitCcy = coreCust.getCustomerLimit().getLimitCurrency();
-				limitCcyEdit = coreCust.getCustomerLimit().getLimitCcyEdit();
+				//Preparation of OFF-Balance Sheet Account Details
+				int startIndex = 0;
+				int acLenth = 51;
+				if (coreCust.getOffBSCount() > 0) {
+					detail.setOffBSAcList(getAccountList(startIndex, coreCust.getOffBSCount(), custRspData, detail,
+							limitCcy, limitCcyEdit));
+					startIndex = acLenth * coreCust.getOffBSCount();
+				}
+
+				//Preparation of Account Receivable Details
+				if (coreCust.getAcRcvblCount() > 0) {
+					detail.setAcRcvblList(getAccountList(startIndex, coreCust.getAcRcvblCount(), custRspData, detail,
+							limitCcy, limitCcyEdit));
+					startIndex = startIndex + (acLenth * coreCust.getAcRcvblCount());
+				}
+
+				//Preparation of Account Payable Details
+				if (coreCust.getAcPayblCount() > 0) {
+					detail.setAcPayblList(getAccountList(startIndex, coreCust.getAcPayblCount(), custRspData, detail,
+							limitCcy, limitCcyEdit));
+					startIndex = startIndex + (acLenth * coreCust.getAcPayblCount());
+				}
+
+				//Preparation of Account Unclassified Details
+				if (coreCust.getAcUnclsCount() > 0) {
+					detail.setAcUnclsList(getAccountList(startIndex, coreCust.getAcUnclsCount(), custRspData, detail,
+							limitCcy, limitCcyEdit));
+					startIndex = startIndex + (acLenth * coreCust.getAcUnclsCount());
+				}
+
+				//Preparation of Collateral Details
+				if (coreCust.getCollateralCount() > 0) {
+					detail.setColList(getCollateralList(startIndex, coreCust.getCollateralCount(), custRspData));
+				}
+
+				//Finalized Account Balances
+				detail.setCustActualBal(coreCust.getCustActualBal());
+				detail.setCustBlockedBal(coreCust.getCustBlockedBal());
+				detail.setCustDeposit(coreCust.getCustDeposit());
+				detail.setCustBlockedDeposit(coreCust.getCustBlockedDeposit());
+				detail.setTotalCustBal(coreCust.getTotalCustBal());
+				detail.setTotalCustBlockedBal(coreCust.getTotalCustBlockedBal());
+
+				//Set Limit Summary Details
+				AvailLimit availLimit = null;
+				CustomerLimit custLimit = coreCust.getCustomerLimit();
+				if (custLimit != null) {
+
+					BigDecimal curExposure = CalculationUtil.getConvertedAmount(ccy, custLimit.getLimitCurrency(),
+							newExposure);
+
+					availLimit = new AvailLimit();
+					availLimit.setLimitExpiry(DateUtility.formatToLongDate(custLimit.getLimitExpiry()));
+					availLimit.setLimitAmount(PennantApplicationUtil.amountFormate(custLimit.getLimitAmount(),
+							custLimit.getLimitCcyEdit()));
+					availLimit.setRiskAmount(PennantApplicationUtil.amountFormate(custLimit.getRiskAmount(),
+							custLimit.getLimitCcyEdit()));
+					availLimit.setLimitAvailAmt(PennantApplicationUtil.amountFormate(custLimit.getAvailAmount(),
+							custLimit.getLimitCcyEdit()));
+					availLimit.setLimitCcy(custLimit.getLimitCurrency());
+					availLimit.setLimitCcyEdit(custLimit.getLimitCcyEdit());
+					availLimit.setCurrentExposureLimit(PennantApplicationUtil.amountFormate(custLimit.getRiskAmount(),
+							custLimit.getLimitCcyEdit()));
+					availLimit.setNewExposure(PennantApplicationUtil
+							.amountFormate(custLimit.getRiskAmount().add(curExposure), custLimit.getLimitCcyEdit()));
+					availLimit.setAvailableLimit(PennantApplicationUtil.amountFormate(
+							custLimit.getLimitAmount().subtract(custLimit.getRiskAmount().add(curExposure)),
+							custLimit.getLimitCcyEdit()));
+					availLimit.setLimitRemarks(custLimit.getRemarks().trim());
+					detail.setAvailLimit(availLimit);
+				}
 			}
-
-			//Preparation of OFF-Balance Sheet Account Details
-			int startIndex = 0;
-			int acLenth = 51;
-			if (coreCust.getOffBSCount() > 0) {
-				detail.setOffBSAcList(getAccountList(startIndex, coreCust.getOffBSCount(), custRspData, detail,
-						limitCcy, limitCcyEdit));
-				startIndex = acLenth * coreCust.getOffBSCount();
-			}
-
-			//Preparation of Account Receivable Details
-			if (coreCust.getAcRcvblCount() > 0) {
-				detail.setAcRcvblList(getAccountList(startIndex, coreCust.getAcRcvblCount(), custRspData, detail,
-						limitCcy, limitCcyEdit));
-				startIndex = startIndex + (acLenth * coreCust.getAcRcvblCount());
-			}
-
-			//Preparation of Account Payable Details
-			if (coreCust.getAcPayblCount() > 0) {
-				detail.setAcPayblList(getAccountList(startIndex, coreCust.getAcPayblCount(), custRspData, detail,
-						limitCcy, limitCcyEdit));
-				startIndex = startIndex + (acLenth * coreCust.getAcPayblCount());
-			}
-
-			//Preparation of Account Unclassified Details
-			if (coreCust.getAcUnclsCount() > 0) {
-				detail.setAcUnclsList(getAccountList(startIndex, coreCust.getAcUnclsCount(), custRspData, detail,
-						limitCcy, limitCcyEdit));
-				startIndex = startIndex + (acLenth * coreCust.getAcUnclsCount());
-			}
-
-			//Preparation of Collateral Details
-			if (coreCust.getCollateralCount() > 0) {
-				detail.setColList(getCollateralList(startIndex, coreCust.getCollateralCount(), custRspData));
-			}
-
-			//Finalized Account Balances
-			detail.setCustActualBal(coreCust.getCustActualBal());
-			detail.setCustBlockedBal(coreCust.getCustBlockedBal());
-			detail.setCustDeposit(coreCust.getCustDeposit());
-			detail.setCustBlockedDeposit(coreCust.getCustBlockedDeposit());
-			detail.setTotalCustBal(coreCust.getTotalCustBal());
-			detail.setTotalCustBlockedBal(coreCust.getTotalCustBlockedBal());
-
-			//Set Limit Summary Details
-			AvailLimit availLimit = null;
-			CustomerLimit custLimit = coreCust.getCustomerLimit();
-			if (custLimit != null) {
-
-				BigDecimal curExposure = CalculationUtil.getConvertedAmount(ccy, custLimit.getLimitCurrency(),
-						newExposure);
-
-				availLimit = new AvailLimit();
-				availLimit.setLimitExpiry(DateUtility.formatToLongDate(custLimit.getLimitExpiry()));
-				availLimit.setLimitAmount(
-						PennantApplicationUtil.amountFormate(custLimit.getLimitAmount(), custLimit.getLimitCcyEdit()));
-				availLimit.setRiskAmount(
-						PennantApplicationUtil.amountFormate(custLimit.getRiskAmount(), custLimit.getLimitCcyEdit()));
-				availLimit.setLimitAvailAmt(
-						PennantApplicationUtil.amountFormate(custLimit.getAvailAmount(), custLimit.getLimitCcyEdit()));
-				availLimit.setLimitCcy(custLimit.getLimitCurrency());
-				availLimit.setLimitCcyEdit(custLimit.getLimitCcyEdit());
-				availLimit.setCurrentExposureLimit(
-						PennantApplicationUtil.amountFormate(custLimit.getRiskAmount(), custLimit.getLimitCcyEdit()));
-				availLimit.setNewExposure(PennantApplicationUtil
-						.amountFormate(custLimit.getRiskAmount().add(curExposure), custLimit.getLimitCcyEdit()));
-				availLimit.setAvailableLimit(PennantApplicationUtil.amountFormate(
-						custLimit.getLimitAmount().subtract(custLimit.getRiskAmount().add(curExposure)),
-						custLimit.getLimitCcyEdit()));
-				availLimit.setLimitRemarks(custLimit.getRemarks().trim());
-				detail.setAvailLimit(availLimit);
-			}
-
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
@@ -393,16 +400,17 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		CustomerDetails customerDetails = null;
 		try {
 			logger.debug("Before Customer Data Process Call ");
-			InterfaceCustomerDetail interfaceCustomerDetail = getCustomerDataProcess().getCustomerFullDetails(custCIF,
-					custLoc);
-			logger.debug("After Customer Data Process Call ");
-			if (interfaceCustomerDetail != null) {
-				customerDetails = processCustInformation(interfaceCustomerDetail);
-				if (customerDetails != null) {
-					setCustomerStatus(customerDetails);
+			if (customerDataProcess != null) {
+				InterfaceCustomerDetail interfaceCustomerDetail = customerDataProcess.getCustomerFullDetails(custCIF,
+						custLoc);
+				logger.debug("After Customer Data Process Call ");
+				if (interfaceCustomerDetail != null) {
+					customerDetails = processCustInformation(interfaceCustomerDetail);
+					if (customerDetails != null) {
+						setCustomerStatus(customerDetails);
+					}
 				}
 			}
-
 		} catch (InterfaceException pfe) {
 			throw pfe;
 		} catch (Exception e) {
@@ -757,7 +765,7 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 					masterValueMissedDetails.add(masterMissedDetail);
 					customer.setCustSalutationCode("");
 				}
-				if (customer.getCustRO1() == 0 || customer.getCustRO1() == Long.MIN_VALUE) {
+				if (("").equals(customer.getCustRO1())) {
 					customer.setCustRO1(0);
 				} else if (!valueExistInMaster(String.valueOf(customer.getCustRO1()), rShipOfficerCodeMasterList)) {
 					masterMissedDetail.setFieldName("CustRO1");
@@ -979,18 +987,20 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		CoreCustomerDedup coreCustomerDedup = new CoreCustomerDedup();
 		BeanUtils.copyProperties(customerDedup, coreCustomerDedup);
 		List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
-		List<CoreCustomerDedup> custDedupList = getCustomerCreationProcess()
-				.fetchCustomerDedupDetails(coreCustomerDedup);
+		if (customerCreationProcess != null) {
+			List<CoreCustomerDedup> custDedupList = customerCreationProcess
+					.fetchCustomerDedupDetails(coreCustomerDedup);
 
-		if (custDedupList != null) {
-			for (CoreCustomerDedup coreCustDedup : custDedupList) {
-				CustomerDedup custDedup = new CustomerDedup();
-				BeanUtils.copyProperties(coreCustDedup, custDedup);
-				custDedup.setFinReference(customerDedup.getFinReference());
-				custDedup.setQueryField(InterfaceConstants.DEDUP_CORE);
-				custDedup.setDedupRule(custDedup.getQueryField());
-				custDedup.setOverride(true);
-				customerDedupList.add(custDedup);
+			if (custDedupList != null) {
+				for (CoreCustomerDedup coreCustDedup : custDedupList) {
+					CustomerDedup custDedup = new CustomerDedup();
+					BeanUtils.copyProperties(coreCustDedup, custDedup);
+					custDedup.setFinReference(customerDedup.getFinReference());
+					custDedup.setQueryField(InterfaceConstants.DEDUP_CORE);
+					custDedup.setDedupRule(custDedup.getQueryField());
+					custDedup.setOverride(true);
+					customerDedupList.add(custDedup);
+				}
 			}
 		}
 		return customerDedupList;
@@ -1014,10 +1024,13 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		InterfaceCustomerDetail interfaceCustomerDetail = processCustInterfaceData(customerDetail);
 
 		//set ReleaseCIF reference number to coreReferenceNum variable
-		customerDetail.setCoreReferenceNum(getCustomerCreationProcess().createNewCustomer(interfaceCustomerDetail));
+		if (customerCreationProcess != null) {
+			customerDetail.setCoreReferenceNum(customerCreationProcess.createNewCustomer(interfaceCustomerDetail));
 
-		logger.debug("Leaving");
-		return customerDetail.getCoreReferenceNum();
+			logger.debug("Leaving");
+			return customerDetail.getCoreReferenceNum();
+		}
+		return null;
 	}
 
 	/**
@@ -1032,9 +1045,12 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 
 		InterfaceCustomerDetail interfaceCustomerDetail = processCustInterfaceData(customerDetails);
 		//set ReserveCIF reference number to coreReferenceNum variable
-		getCustomerCreationProcess().updateCoreCustomer(interfaceCustomerDetail);
+		if (customerCreationProcess != null) {
+			customerCreationProcess.updateCoreCustomer(interfaceCustomerDetail);
 
-		logger.debug("Leaving");
+			logger.debug("Leaving");
+		}
+
 	}
 
 	private InterfaceCustomerDetail processCustInterfaceData(CustomerDetails customerDetail) {
@@ -1136,7 +1152,11 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 
 		InterfaceCustomer coreCustomer = new InterfaceCustomer();
 		BeanUtils.copyProperties(customer, coreCustomer);
-		return getCustomerCreationProcess().reserveCIF(coreCustomer);
+		if (customerCreationProcess != null) {
+			return customerCreationProcess.reserveCIF(coreCustomer);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -1148,13 +1168,15 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 	 */
 	@Override
 	public String releaseCIF(Customer customer, String reserveRefNum) throws InterfaceException {
-		logger.debug("Entering");
 
 		InterfaceCustomer coreCustomer = new InterfaceCustomer();
 		BeanUtils.copyProperties(customer, coreCustomer);
 
-		logger.debug("Entering");
-		return getCustomerCreationProcess().releaseCIF(coreCustomer, reserveRefNum);
+		if (customerCreationProcess != null) {
+			return customerCreationProcess.releaseCIF(coreCustomer, reserveRefNum);
+		} else {
+			return null;
+		}
 	}
 
 	// ******************************************************//
@@ -1177,13 +1199,14 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		this.coreInterfaceDAO = coreInterfaceDAO;
 	}
 
+	@Autowired(required = false)
 	public void setCustomerDataProcess(CustomerDataProcess customerDataProcess) {
 		this.customerDataProcess = customerDataProcess;
 	}
 
-	public CustomerDataProcess getCustomerDataProcess() {
-		return customerDataProcess;
-	}
+	/*
+	 * public CustomerDataProcess getCustomerDataProcess() { return customerDataProcess; }
+	 */
 
 	public DesignationDAO getDesignationDAO() {
 		return designationDAO;
@@ -1193,10 +1216,7 @@ public class CustomerInterfaceServiceImpl implements CustomerInterfaceService {
 		this.designationDAO = designationDAO;
 	}
 
-	public CustomerCreationProcess getCustomerCreationProcess() {
-		return customerCreationProcess;
-	}
-
+	@Autowired(required = false)
 	public void setCustomerCreationProcess(CustomerCreationProcess customerCreationProcess) {
 		this.customerCreationProcess = customerCreationProcess;
 	}

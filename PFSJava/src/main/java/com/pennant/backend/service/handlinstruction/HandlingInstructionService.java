@@ -2,6 +2,7 @@ package com.pennant.backend.service.handlinstruction;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -37,27 +38,30 @@ public class HandlingInstructionService {
 		if (finCollaterals != null) {
 
 			// Send Handling instruction request to ICCS interface
-			HandlingInstruction handlInstResponse = getFinanceMaintenanceProcess()
-					.sendHandlingInstruction(handlingInstruction);
+			if (financeMaintenanceProcess != null) {
+				HandlingInstruction handlInstResponse = financeMaintenanceProcess
+						.sendHandlingInstruction(handlingInstruction);
 
-			if (handlInstResponse == null) {
-				throw new InterfaceException("PTI7001", Labels.getLabel("FAILED_HANDLINST"));
+				if (handlInstResponse == null) {
+					throw new InterfaceException("PTI7001", Labels.getLabel("FAILED_HANDLINST"));
+				}
+				if (StringUtils.equals(handlInstResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
+
+					handlingInstruction.setReferenceNum(handlInstResponse.getReferenceNum());
+					handlingInstruction.setReturnCode(handlInstResponse.getReturnCode());
+					handlingInstruction.setReturnText(handlInstResponse.getReturnText());
+
+					// Save Request and Response details
+					saveHandlingInstructionLogDetails(handlingInstruction);
+				} else {
+					throw new InterfaceException(handlInstResponse.getReturnCode(),
+							handlingInstruction.getReturnText());
+				}
+
 			}
-			if (StringUtils.equals(handlInstResponse.getReturnCode(), InterfaceConstants.SUCCESS_CODE)) {
 
-				handlingInstruction.setReferenceNum(handlInstResponse.getReferenceNum());
-				handlingInstruction.setReturnCode(handlInstResponse.getReturnCode());
-				handlingInstruction.setReturnText(handlInstResponse.getReturnText());
-
-				// Save Request and Response details
-				saveHandlingInstructionLogDetails(handlingInstruction);
-			} else {
-				throw new InterfaceException(handlInstResponse.getReturnCode(), handlingInstruction.getReturnText());
-			}
-
+			logger.debug("Leaving");
 		}
-
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -77,10 +81,10 @@ public class HandlingInstructionService {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public FinanceMaintenanceProcess getFinanceMaintenanceProcess() {
-		return financeMaintenanceProcess;
-	}
-
+	/*
+	 * public FinanceMaintenanceProcess getFinanceMaintenanceProcess() { return financeMaintenanceProcess; }
+	 */
+	@Autowired(required = false)
 	public void setFinanceMaintenanceProcess(FinanceMaintenanceProcess financeMaintenanceProcess) {
 		this.financeMaintenanceProcess = financeMaintenanceProcess;
 	}
