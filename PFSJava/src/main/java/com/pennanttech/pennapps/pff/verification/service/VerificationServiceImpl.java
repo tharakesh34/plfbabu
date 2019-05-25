@@ -134,10 +134,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private TechnicalVerificationDAO technicalVerificationDAO;
 	@Autowired
 	private RiskContainmentUnitDAO riskContainmentUnitDAO;
-	
+
 	@Autowired
 	private transient PersonalDiscussionService personalDiscussionService;
-	
+
 	@Autowired
 	private PersonalDiscussionDAO personalDiscussionDAO;
 
@@ -170,9 +170,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			verification = financeDetail.getPdVerification();
 			idList = personalDiscussionService.getPersonalDiscussionIds(verification.getVerifications(),
 					verification.getKeyReference());
-		} 
-		
-		if(verification == null) {
+		}
+
+		if (verification == null) {
 			return auditDetails;
 		}
 
@@ -193,7 +193,8 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (isInitTab) {
 				// delete non verification Records from FI,TV and PD
 				if (item.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
-						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI || verificationType == VerificationType.PD)) {// FIXME
+						&& (verificationType == VerificationType.TV || verificationType == VerificationType.FI
+								|| verificationType == VerificationType.PD)) {// FIXME
 					verificationDAO.delete(item, TableType.BOTH_TAB);
 					continue;
 				}
@@ -237,7 +238,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 							saveLV(financeDetail, item);
 						} else if (verificationType == VerificationType.RCU) {
 							saveRCU(financeDetail, item);
-						}else if (verificationType == VerificationType.PD) {
+						} else if (verificationType == VerificationType.PD) {
 							savePD(financeDetail, item);
 						}
 					}
@@ -314,7 +315,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		if (verificationType != VerificationType.FI) {
 			setVerificationData(financeDetail, item, verificationType);
 		}
-		
+
 		if (verificationType != VerificationType.PD) {
 			setVerificationData(financeDetail, item, verificationType);
 		}
@@ -352,7 +353,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (item.getReinitid() == null) {
 				saveRCU(financeDetail, item);
 			}
-		}else if (verificationType == VerificationType.LV) {
+		} else if (verificationType == VerificationType.LV) {
 			savePD(financeDetail, item);
 		}
 	}
@@ -477,6 +478,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			}
 		}
 	}
+
 	private void savePD(FinanceDetail financeDetail, Verification item) {
 		List<CustomerDetails> customerDetails = new ArrayList<>();
 		customerDetails.add(financeDetail.getCustomerDetails());
@@ -623,10 +625,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 		for (LVDocument lvDocument : item.getLvDocuments()) {
 			if (lvDocument.getDocumentType() == DocumentType.COLLATRL.getKey()) {
 				DocumentDetails document = collateralDocumentMap.get(lvDocument.getDocumentId());
+				if (document == null) {
+					continue;
+				}
 				lvDocument.setDocumentId(document.getId());
 				lvDocument.setDocumentSubId(document.getDocCategory());
 				lvDocument.setDocumentRefId(document.getDocRefId());
 				lvDocument.setDocumentUri(document.getDocUri());
+
 			}
 		}
 	}
@@ -712,10 +718,12 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * verifications by using verificationsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and Adtverifications by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table verifications by using verificationsDAO's delete method with type
+	 * as Blank 3) Audit the record in to AuditHeader and Adtverifications by
+	 * using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -741,8 +749,9 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * getApprovedverificationsById fetch the details by using verificationsDAO's getverificationsById method . with
-	 * parameter id and type as blank. it fetches the approved records from the verifications.
+	 * getApprovedverificationsById fetch the details by using
+	 * verificationsDAO's getverificationsById method . with parameter id and
+	 * type as blank. it fetches the approved records from the verifications.
 	 * 
 	 * @param id
 	 *            id of the Verification. (String)
@@ -753,15 +762,19 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using verificationDAO.delete with parameters
-	 * verification,"" b) NEW Add new record in to main table by using verificationDAO.save with parameters
-	 * verification,"" c) EDIT Update record in the main table by using verificationDAO.update with parameters
-	 * verification,"" 3) Delete the record from the workFlow table by using verificationDAO.delete with parameters
-	 * verification,"_Temp" 4) Audit the record in to AuditHeader and Adtverifications by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and Adtverifications by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using verificationDAO.delete with parameters verification,"" b) NEW Add
+	 * new record in to main table by using verificationDAO.save with parameters
+	 * verification,"" c) EDIT Update record in the main table by using
+	 * verificationDAO.update with parameters verification,"" 3) Delete the
+	 * record from the workFlow table by using verificationDAO.delete with
+	 * parameters verification,"_Temp" 4) Audit the record in to AuditHeader and
+	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and Adtverifications by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -822,10 +835,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using verificationDAO.delete with parameters verification,"_Temp" 3) Audit the record in to
-	 * AuditHeader and Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using verificationDAO.delete with parameters
+	 * verification,"_Temp" 3) Audit the record in to AuditHeader and
+	 * Adtverifications by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -853,8 +869,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -873,9 +891,10 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from verificationDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * verificationDAO.getErrorDetail with Error ID and language as parameters.
+	 * if any error/Warnings then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -947,14 +966,14 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 			} else if (verificationType == VerificationType.RCU.getKey()) {
 
-			}else if (verificationType == VerificationType.PD.getKey()) {
+			} else if (verificationType == VerificationType.PD.getKey()) {
 				if (personalDiscussionService.isAddressChanged(verification)) {
 					verification.setLastStatus(0);
 					verification.setLastVerificationDate(null);
 					verification.setLastAgency("");
 				}
 
-			} 
+			}
 		}
 	}
 
@@ -1020,7 +1039,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (verification.getReference() == null) {
 				verification.setReference(customer.getCustCIF());
 			}
-		}else if (verificationType != VerificationType.PD) {
+		} else if (verificationType != VerificationType.PD) {
 			verification.setCif(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 			verification.setCustId(customer.getCustID());
 			verification.setCustomerName(customer.getCustShrtName());
@@ -1053,7 +1072,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 					verification.getRcuDocument()) != null) {
 				exists = true;
 			}
-		}else if (verificationType == VerificationType.PD) {
+		} else if (verificationType == VerificationType.PD) {
 			if (personalDiscussionService.getVerificationFromRecording(verification.getId()) != null) {
 				exists = true;
 			}

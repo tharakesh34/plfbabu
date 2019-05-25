@@ -2743,18 +2743,32 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				item.appendChild(lc);
 
 				BigDecimal utilizedAmt = BigDecimal.ZERO;
-				if (assignmentDetail.getTotalUtilized() != null
-						&& assignmentDetail.getTotalUtilized().compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal finAssetValue = assignmentDetail.getFinAssetValue();
+				BigDecimal totalUtilized = assignmentDetail.getTotalUtilized();
+				BigDecimal finCurrentAssetValue = assignmentDetail.getFinCurrAssetValue();
 
+				if (finAssetValue == null) {
+					finAssetValue = BigDecimal.ZERO;
+				}
+
+				if (totalUtilized == null) {
+					totalUtilized = BigDecimal.ZERO;
+				}
+
+				if (finCurrentAssetValue == null) {
+					finCurrentAssetValue = BigDecimal.ZERO;
+				}
+
+				if (totalUtilized.compareTo(BigDecimal.ZERO) > 0) {
 					if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(assignmentDetail.getFinLTVCheck())) {
-
-						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinAssetValue())
-								.divide(assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+						utilizedAmt = assignedvalue.multiply(finAssetValue).divide(totalUtilized, 0,
+								RoundingMode.HALF_DOWN);
 					} else {
-						utilizedAmt = assignedvalue.multiply(assignmentDetail.getFinCurrAssetValue())
-								.divide(assignmentDetail.getTotalUtilized(), 0, RoundingMode.HALF_DOWN);
+						utilizedAmt = assignedvalue.multiply(finCurrentAssetValue).divide(totalUtilized, 0,
+								RoundingMode.HALF_DOWN);
 					}
 				}
+				
 				lc = new Listcell(PennantApplicationUtil.amountFormate(utilizedAmt, getCcyFormat()));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);

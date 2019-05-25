@@ -726,9 +726,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		int count = 0;
 		try {
-			
+			count = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, Integer.class);
 		} catch (EmptyResultDataAccessException e) {
-			//logger.error(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return count > 0;
 	}
